@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_height="match_parent"
+  android:layout_width="match_parent"
+  android:orientation="vertical">
+
+  <RelativeLayout
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent"
+    android:orientation="vertical"
+    android:layout_weight="1.0">
+
+    <LinearLayout
+      android:layout_height="?attr/actionBarSize"
+      android:layout_width="match_parent"
+      android:gravity="center_vertical"
+      android:padding="10dp"
+      android:id="@+id/toolbar">
+
+      <com.google.android.material.textview.MaterialTextView
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:singleLine="true"
+        android:text="@string/file_manager_title"
+        android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+      android:layout_height="match_parent"
+      android:layout_width="match_parent"
+      android:layout_below="@id/toolbar"
+      android:id="@+id/swiperefreshlayout">
+
+      <RelativeLayout
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+          android:layout_height="match_parent"
+          android:layout_width="match_parent"
+          android:scrollbars="vertical"
+          android:fadeScrollbars="true"
+          android:layoutAnimation="@anim/layout_animation"
+          android:id="@+id/rv_files"
+          android:overScrollMode="ifContentScrolls" />
+
+        <RelativeLayout
+          android:layout_height="match_parent"
+          android:layout_width="match_parent"
+          android:visibility="gone"
+          android:id="@+id/empty_layout">
+
+          <com.google.android.material.imageview.ShapeableImageView
+            android:layout_height="60dp"
+            android:layout_width="60dp"
+            android:layout_marginBottom="5dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/folder_open" />
+
+        </RelativeLayout>
+
+      </RelativeLayout>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+  </RelativeLayout>
+
+  <com.google.android.material.divider.MaterialDivider
+    android:layout_height="1px"
+    android:layout_width="match_parent"
+    android:alpha="0.5" />
+
+  <com.raredev.vcspace.ui.widget.NavigationSpace
+    android:layout_height="45dp"
+    android:layout_width="match_parent"
+    android:id="@+id/navigation_space" />
+
+</LinearLayout>

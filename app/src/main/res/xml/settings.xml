@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto">
+
+  <PreferenceCategory
+    app:iconSpaceReserved="false"
+    app:title="@string/appearance">
+
+    <ListPreference
+      app:defaultValue="default"
+      app:entries="@array/settings_theme_entries"
+      app:entryValues="@array/pref_entry_values_theme"
+      app:icon="@drawable/theme_light_dark"
+      app:key="theme"
+      app:title="@string/title_theme"
+      app:useSimpleSummaryProvider="true" />
+  </PreferenceCategory>
+
+  <PreferenceCategory
+    app:iconSpaceReserved="false"
+    app:title="@string/editor">
+
+    <EditTextPreference
+      app:defaultValue="14"
+      app:dialogTitle="@string/title_textsize"
+      android:digits="0123456789"
+      app:icon="@drawable/format_size"
+      android:inputType="numberDecimal"
+      app:key="textsize"
+      app:title="@string/title_textsize"
+      app:useSimpleSummaryProvider="true" />
+
+    <SwitchPreferenceCompat
+      app:key="softtab"
+      app:title="@string/title_softtab"
+      app:summary="@string/message_softtab" />
+
+    <SwitchPreferenceCompat
+      app:key="deletefast"
+      app:title="@string/title_deleteemptylinefast" />
+  </PreferenceCategory>
+
+  <PreferenceCategory
+    app:iconSpaceReserved="false"
+    app:title="@string/info">
+
+    <Preference
+      app:icon="@drawable/github"
+      app:key="github"
+      app:summary="https://github.com/raredeveloperofc/Visual-Code-Space"
+      app:title="Github:" />
+  </PreferenceCategory>
+
+</PreferenceScreen>

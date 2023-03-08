@@ -1,0 +1,38 @@
+name: Test and Build
+
+on:
+  push:
+    branches: [ "main" ]
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    branches: [ "main" ]
+    paths-ignore:
+      - '**.md'
+  workflow_dispatch:
+
+jobs:
+  unit_tests:
+    name: Unit Tests
+    runs-on: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Unit tests
+        run: ./gradlew test
+  
+  build:
+    name: Generate Debug APK
+    needs: [ unit_tests ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Generate Debug APK
+        run: ./gradlew --warning-mode all assembleDebug
+
+      - uses: actions/upload-artifact@master
+        with:
+          name: app-debug
+          path: app/build/outputs/apk/debug/app-debug.apk

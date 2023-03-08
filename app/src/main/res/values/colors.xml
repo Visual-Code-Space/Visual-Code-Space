@@ -1,0 +1,12 @@
+<resources>
+
+    <color name="primaryColor">@color/black</color>
+    <color name="primaryVariantColor">@color/black</color>
+    <color name="secondaryColor">#FF555555</color>
+    <color name="secondaryVariantColor">@color/white</color>
+    
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="gray">#ff2b2b2b</color>
+    
+</resources>

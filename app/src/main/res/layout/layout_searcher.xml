@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+     xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:app="http://schemas.android.com/apk/res-auto"
+     android:layout_height="match_parent"
+     android:layout_width="match_parent"
+     android:padding="5dp"
+     android:orientation="vertical">
+
+    <LinearLayout
+         android:layout_height="wrap_content"
+         android:layout_width="match_parent"
+         android:orientation="vertical">
+
+        <LinearLayout
+             android:layout_height="wrap_content"
+             android:layout_width="match_parent"
+             android:layout_gravity="center_vertical">
+
+            <TextView
+                 android:layout_height="wrap_content"
+                 android:layout_width="wrap_content"
+                 android:hint="Find:" />
+
+            <EditText
+                 android:layout_height="wrap_content"
+                 android:layout_width="match_parent"
+                 android:hint="@string/search"
+                 android:id="@+id/search_editor" />
+
+        </LinearLayout>
+
+        <LinearLayout
+             android:layout_height="wrap_content"
+             android:layout_width="match_parent"
+             android:layout_gravity="center_vertical">
+
+            <TextView
+                 android:layout_height="wrap_content"
+                 android:layout_width="wrap_content"
+                 android:hint="Rep:" />
+
+            <EditText
+                 android:layout_height="wrap_content"
+                 android:layout_width="match_parent"
+                 android:hint="@string/replace"
+                 android:id="@+id/replace_editor" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+         android:layout_height="50dp"
+         android:layout_width="match_parent">
+
+        <Button
+             android:layout_height="match_parent"
+             android:layout_width="match_parent"
+             android:layout_weight="1.0"
+             android:id="@+id/goto_last"
+             android:text="PREV" />
+
+        <Button
+             android:layout_height="match_parent"
+             android:layout_width="match_parent"
+             android:layout_weight="1.0"
+             android:id="@+id/goto_next"
+             android:text="NEXT" />
+
+        <Button
+             android:layout_height="match_parent"
+             android:layout_width="match_parent"
+             android:layout_weight="1.0"
+             android:id="@+id/replace"
+             android:text="REP" />
+
+        <Button
+             android:layout_height="match_parent"
+             android:layout_width="match_parent"
+             android:layout_weight="1.0"
+             android:id="@+id/replace_all"
+             android:text="REP ALL" />
+
+    </LinearLayout>
+
+</LinearLayout>

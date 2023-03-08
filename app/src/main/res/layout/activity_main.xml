@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_height="match_parent"
+  android:layout_width="match_parent"
+  android:id="@+id/drawerLayout">
+
+  <androidx.coordinatorlayout.widget.CoordinatorLayout
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent">
+
+    <com.google.android.material.appbar.AppBarLayout
+      android:layout_height="wrap_content"
+      android:layout_width="match_parent"
+      android:id="@+id/app_bar"
+      app:layout_behavior="com.google.android.material.appbar.AppBarLayout$Behavior">
+
+      <com.google.android.material.appbar.MaterialToolbar
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:id="@+id/toolbar" />
+
+      <com.google.android.material.tabs.TabLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        app:tabMode="scrollable"
+        app:tabGravity="start"
+        app:tabTextAppearance="@style/TabLayout.TextStyle"
+        android:id="@+id/tab_layout" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <RelativeLayout
+      android:layout_height="match_parent"
+      android:layout_width="match_parent"
+      app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+      <LinearLayout
+        android:id="@+id/layout"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:orientation="vertical">
+
+        <ViewFlipper
+          android:layout_height="match_parent"
+          android:layout_width="match_parent"
+          android:layout_weight="1"
+          android:id="@+id/container" />
+
+        <com.google.android.material.divider.MaterialDivider
+          android:layout_height="1px"
+          android:layout_width="match_parent"/>
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+          android:layout_height="wrap_content"
+          android:layout_width="match_parent"
+          android:visibility="gone"
+          android:indeterminate="true"
+          android:id="@+id/progress" />
+
+        <HorizontalScrollView
+          android:layout_height="40dp"
+          android:layout_width="match_parent"
+          android:scrollbars="none">
+
+          <com.raredev.vcspace.ui.editor.widget.SymbolInputView
+            android:layout_height="40dp"
+            android:layout_width="wrap_content"
+            android:id="@+id/shortcuts" />
+
+        </HorizontalScrollView>
+
+      </LinearLayout>
+
+      <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/empty"
+        android:gravity="center"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:text="@string/open_a_file"
+        android:textSize="15sp" />
+
+    </RelativeLayout>
+
+  </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+  <com.google.android.material.navigation.NavigationView
+    android:layout_height="match_parent"
+    android:layout_width="300dp"
+    android:background="?attr/colorSurface"
+    android:layout_gravity="start">
+
+    <androidx.fragment.app.FragmentContainerView
+      android:layout_height="match_parent"
+      android:layout_width="match_parent"
+      android:name="com.raredev.vcspace.fragments.FileManagerFragment"
+      android:id="@+id/fragment_fileexplorer" />
+
+  </com.google.android.material.navigation.NavigationView>
+
+</androidx.drawerlayout.widget.DrawerLayout>

@@ -1,0 +1,16 @@
+{
+  "json": "source.json",
+  "java": "source.java",
+  "kt": "source.kotlin",
+  "kts": "source.kotlin",
+  "py": "source.python",
+  "xml": "text.xml",
+  "html": "text.html.basic",
+  "css": "source.css",
+  "c++": "source.cpp",
+  "c#": "source.cs",
+  "lua": "source.lua",
+  "gradle": "source.groovy",
+  "groovy": "source.groovy",
+  "js": "source.js"
+}

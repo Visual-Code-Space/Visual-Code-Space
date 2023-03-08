@@ -1,0 +1,69 @@
+<resources>
+    <!-- English Language -->
+    <string name="app_name">Visual Code Space</string>
+    <string name="open">Open</string>
+    <string name="remove">Remove</string>
+    <string name="close">Close</string>
+    <string name="close_others">Close others</string>
+    <string name="close_all">Close all</string>
+    <string name="open_a_file">Swipe right for files!</string>
+    <string name="refresh">Refresh</string>
+    <string name="empty">Empty :)</string>
+
+    <!-- Menus Strings -->
+    <string name="menu_save">Save</string>
+    <string name="menu_saveall">Save all</string>
+    <string name="menu_execute">Execute</string>
+    <string name="menu_format">Format</string>
+    <string name="menu_search">Search</string>
+    <string name="menu_rename">Rename</string>
+    <string name="menu_reload">Reload</string>
+    <string name="menu_recentfiles">Recent Files</string>
+    <string name="menu_settings">Settings</string>
+
+    <!-- Buttons And Titles -->
+    <string name="saved_files"> saved files</string>
+    <string name="existing_file">A file with this name already exists!</string>
+    <string name="newfilemanagertab">New files tab</string>
+    <string name="delete">Delete</string>
+    <string name="delete_message">Delete NAME?</string>
+    <string name="create">Create</string>
+    <string name="cancel">Cancel</string>
+    <string name="file">File</string>
+    <string name="folder">Folder</string>
+    <string name="file_name_hint">File name:</string>
+    <string name="folder_name_hint">Folder name:</string>
+    <string name="newlyopenedfile">Newly Opened Files</string>
+
+    <string name="search">Search</string>
+    <string name="replace">Replace</string>
+    <string name="file_manager_title">File Manager</string>
+    <string name="new_file_title">New file</string>
+    <string name="new_folder_title">New folder</string>
+
+    <!-- Settings String -->
+    <string name="appearance">Aparence</string>
+    <string name="editor">Editor</string>
+    <string name="info">Information</string>
+
+    <string name="title_theme">Theme</string>
+    <string name="pref_theme_system">System theme</string>
+    <string name="pref_theme_dark">Dark theme</string>
+    <string name="pref_theme_light">Light theme</string>
+    <string-array name="settings_theme_entries">
+        <item>@string/pref_theme_system</item>
+        <item>@string/pref_theme_dark</item>
+        <item>@string/pref_theme_light</item>
+    </string-array>
+    <string-array name="pref_entry_values_theme">
+        <item>default</item>
+        <item>dark</item>
+        <item>light</item>
+    </string-array>
+
+    <!-- Editor -->
+    <string name="title_textsize">Font size</string>
+    <string name="title_softtab">Use soft tab</string>
+    <string name="message_softtab">Choose whether to use spaces instead of (\\t)</string>
+    <string name="title_deleteemptylinefast">Delete empty line fast</string>
+</resources>

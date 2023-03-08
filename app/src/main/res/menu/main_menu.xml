@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
+    <item
+        android:id="@+id/menu_folder"
+        android:icon="@drawable/ic_folder"
+        android:title="@string/file"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/menu_save"
+                android:icon="@drawable/ic_save"
+                android:title="@string/menu_save"/>
+        </menu>
+    </item>
+    <item
+        android:id="@+id/menu_editor"
+        android:icon="@drawable/pencil"
+        android:title="Editor"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/menu_undo"
+                android:icon="@drawable/ic_undo"
+                android:title="Undo"/>
+            <item
+                android:id="@+id/menu_redo"
+                android:icon="@drawable/ic_redo"
+                android:title="Redo"/>
+            <item
+                android:id="@+id/menu_compile"
+                android:icon="@drawable/ic_play"
+                android:title="@string/menu_execute"/>
+            <item
+                android:id="@+id/menu_search"
+                android:checkable="true"
+                android:icon="@drawable/ic_search"
+                android:title="@string/menu_search"/>
+            <item
+                android:id="@+id/menu_format"
+                android:title="@string/menu_format"/>
+        </menu>
+    </item>
+    <item
+        android:id="@+id/menu_settings"
+        android:title="@string/menu_settings"/>
+</menu>

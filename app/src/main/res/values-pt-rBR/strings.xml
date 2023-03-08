@@ -1,0 +1,70 @@
+<resources>
+    <!-- Linguagem Portugues Brasil -->
+    <string name="app_name">Visual Code Space</string>
+    <string name="open">Abrir</string>
+    <string name="remove">Remover</string>
+    <string name="close">Fechar</string>
+    <string name="close_others">Fechar outros</string>
+    <string name="close_all">Fechar tudo</string>
+    <string name="open_a_file">Deslize à direita para arquivos!</string>
+    <string name="refresh">Atualizar</string>
+    <string name="empty">Vazio :)</string>
+    
+    <!-- Menus Strings -->
+    <string name="menu_save">Salvar</string>
+    <string name="menu_saveall">Salvar tudo</string>
+    <string name="menu_execute">Executar</string>
+    <string name="menu_format">Formatar</string>
+    <string name="menu_search">Pesquisar</string>
+    <string name="menu_rename">Renomear</string>
+    <string name="menu_reload">Recarregar</string>
+    <string name="menu_recentfiles">Arquivos Recentes</string>
+    <string name="menu_settings">Definições</string>
+
+    <!-- Buttons And Titles -->
+    <string name="saved_files"> arquivos salvos</string>
+    <string name="existing_file">Já existe um arquivo com este nome!</string>
+    <string name="newfilemanagertab">Nova aba de arquivos</string>
+    <string name="delete">Deletar</string>
+    <string name="delete_message">Deletar NAME?</string>
+    <string name="create">Criar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="file">Arquivo</string>
+    <string name="folder">Pasta</string>
+    <string name="file_name_hint">Nome do arquivo:</string>
+    <string name="folder_name_hint">Nome da pasta:</string>
+    <string name="newlyopenedfile">Arquivos recém-abertos</string>
+    
+    <string name="search">Pesquisar</string>
+    <string name="replace">Substituir</string>
+    <string name="file_manager_title">File Manager</string>
+    <string name="new_file_title">Novo arquivo</string>
+    <string name="new_folder_title">Nova pasta</string>
+    
+    <!-- Settings String -->
+    <string name="appearance">Aparência</string>
+    <string name="editor">Editor</string>
+    <string name="info">Informações</string>
+    
+    <!-- theme-->
+    <string name="title_theme">Tema</string>
+    <string name="pref_theme_system">Tema do sistema</string>
+    <string name="pref_theme_dark">Tema escuro</string>
+    <string name="pref_theme_light">Tema claro</string>
+    <string-array name="settings_theme_entries">
+        <item>@string/pref_theme_system</item>
+        <item>@string/pref_theme_dark</item>
+        <item>@string/pref_theme_light</item>
+    </string-array>
+    <string-array name="pref_entry_values_theme">
+        <item>default</item>
+        <item>dark</item>
+        <item>light</item>
+    </string-array>
+    
+    <!-- Editor -->
+    <string name="title_textsize">Tamanho da fonte</string>
+    <string name="title_softtab">Usar soft tab</string>
+    <string name="message_softtab">Escolha se deseja usar espaços em vez de (\\t)</string>
+    <string name="title_deleteemptylinefast">Apagar linha vazia rapidamente</string>
+</resources>
