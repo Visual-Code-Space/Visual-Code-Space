@@ -6,7 +6,6 @@ import android.content.res.Configuration;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import androidx.core.content.res.ResourcesCompat;
-import com.blankj.utilcode.util.ToastUtils;
 import com.raredev.common.util.FileUtil;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.LayoutCodeEditorBinding;
@@ -75,7 +74,6 @@ public class CodeEditorView extends LinearLayout
   public void release() {
     PreferencesUtils.getDefaultPrefs().unregisterOnSharedPreferenceChangeListener(this);
     binding.editor.release();
-    binding = null;
   }
 
   public File getFile() {

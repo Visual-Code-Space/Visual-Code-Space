@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:orientation="vertical"
+  android:padding="10dp">
+
+  <com.google.android.material.textfield.TextInputLayout
+    android:id="@+id/tvInputLayout"
+    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingLeft="20dp"
-    android:paddingRight="20dp"
-    android:paddingTop="30dp">
+    android:hint="@string/file_name_hint">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tvInputLayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/file_name_hint">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_input"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:singleLine="true" />
-    </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputEditText
+      android:id="@+id/et_input"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:singleLine="true" />
+  </com.google.android.material.textfield.TextInputLayout>
 </LinearLayout>

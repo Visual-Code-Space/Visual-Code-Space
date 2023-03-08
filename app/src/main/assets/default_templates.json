@@ -1,0 +1,4 @@
+{
+  "java":"public class <?NAME?> {\n    public static void main(String[] args) {\n        \n    }\n}",
+  "html":"<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\n    <title>My Website<\/title>\n  <\/head>\n  <body>\n    <main>\n        <h1>Welcome to My Website<\/h1>  \n    <\/main>\n  <\/body>\n<\/html>"
+}

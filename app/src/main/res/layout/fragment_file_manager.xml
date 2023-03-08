@@ -42,10 +42,8 @@
           android:layout_height="match_parent"
           android:layout_width="match_parent"
           android:scrollbars="vertical"
-          android:fadeScrollbars="true"
           android:layoutAnimation="@anim/layout_animation"
-          android:id="@+id/rv_files"
-          android:overScrollMode="ifContentScrolls" />
+          android:id="@+id/rv_files" />
 
         <RelativeLayout
           android:layout_height="match_parent"

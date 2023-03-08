@@ -1,7 +1,5 @@
 package com.raredev.vcspace.adapters;
 
-import android.app.*;
-import android.graphics.*;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +25,7 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.VH> {
   @Override
   public VH onCreateViewHolder(ViewGroup parent, int arg1) {
     View itemView =
-        LayoutInflater.from(parent.getContext()).inflate(R.layout.file_item, parent, false);
+        LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_file_item, parent, false);
     return new VH(itemView);
   }
 
@@ -40,8 +38,6 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.VH> {
     if (position == 0) {
       holder.img_icon.setImageResource(R.drawable.ic_folder);
     }
-
-    holder.tvInfo.setVisibility(View.GONE);
 
     if (position == getItemCount() - 1) {
       holder.divider.setVisibility(View.GONE);
@@ -80,16 +76,15 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.VH> {
 
   public class VH extends RecyclerView.ViewHolder {
     ShapeableImageView img_icon;
-    MaterialDivider divider;
+    MaterialTextView tv_name;
 
-    MaterialTextView tv_name, tvInfo;
+    MaterialDivider divider;
 
     public VH(View v) {
       super(v);
       divider = v.findViewById(R.id.divider);
-      img_icon = v.findViewById(R.id.img_icon);
-      tv_name = v.findViewById(R.id.file_name);
-      tvInfo = v.findViewById(R.id.file_path);
+      img_icon = v.findViewById(R.id.icon);
+      tv_name = v.findViewById(R.id.name);
     }
   }
 }

@@ -35,6 +35,9 @@
       android:name=".activity.WebViewActivity"
       android:exported="true" />
     <activity
+      android:name=".activity.FileTemplatesActivity"
+      android:exported="true" />
+    <activity
       android:name=".activity.CrashActivity"
       android:exported="true" />
 

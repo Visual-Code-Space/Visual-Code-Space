@@ -6,10 +6,11 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 import com.blankj.utilcode.util.ToastUtils;
 import com.google.android.material.tabs.TabLayout;
-import com.raredev.common.util.FileUtil;
+import com.raredev.common.Indexer;
 import com.raredev.vcspace.ui.editor.CodeEditorView;
 import com.raredev.vcspace.ui.editor.EditorViewModel;
 import java.io.File;
+import java.util.List;
 
 public class EditorManager {
   private ViewFlipper container;
@@ -19,12 +20,15 @@ public class EditorManager {
 
   private EditorViewModel viewModel;
 
+  private Indexer indexer;
+
   public EditorManager(Context context, ViewFlipper container, TabLayout tabLayout) {
     this.context = context;
     this.container = container;
     this.tabLayout = tabLayout;
 
     viewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(EditorViewModel.class);
+    indexer = new Indexer(context.getExternalFilesDir("editor") + "/oppenedFiles.json");
   }
 
   public EditorViewModel getViewModel() {
@@ -39,7 +43,20 @@ public class EditorManager {
     getCurrentEditor().redo();
   }
 
+  public void openOpenedFiles() {
+    List<File> files = indexer.getList("openedFiles");
+    for (int i = 0; i < files.size(); i++) {
+      if (!viewModel.contains(files.get(i)) && files.get(i).exists()) {
+        openFile(files.get(i), false);
+      }
+    }
+  }
+
   public void openFile(File file) {
+    openFile(file, true);
+  }
+
+  public void openFile(File file, boolean setCurrent) {
     viewModel.setDrawerState(false);
     if (!file.exists()) {
       return;
@@ -51,11 +68,11 @@ public class EditorManager {
     }
     viewModel.openFile(file);
     CodeEditorView editor = new CodeEditorView(context, file);
-
     container.addView(editor);
 
     tabLayout.addTab(tabLayout.newTab().setText(file.getName()));
-    setCurrentPosition(viewModel.indexOf(file));
+    if (setCurrent) setCurrentPosition(viewModel.indexOf(file));
+    saveOpenedFiles();
   }
 
   public void closeFile(int index) {
@@ -94,15 +111,28 @@ public class EditorManager {
     viewModel.clear();
   }
 
+  public void saveAll(boolean showMsg) {
+    saveAllFiles(showMsg);
+    saveOpenedFiles();
+  }
+
   public void saveAllFiles(boolean showMsg) {
     if (!viewModel.getFiles().getValue().isEmpty()) {
       for (int i = 0; i < viewModel.getFiles().getValue().size(); i++) {
         getEditorAtIndex(i).save();
       }
-      
+
       if (showMsg) {
         ToastUtils.showShort("All Files Saved");
       }
+    }
+  }
+
+  public void saveOpenedFiles() {
+    try {
+      indexer.put("openedFiles", viewModel.getFiles().getValue()).flush();
+    } catch (Exception e) {
+      e.printStackTrace();
     }
   }
 

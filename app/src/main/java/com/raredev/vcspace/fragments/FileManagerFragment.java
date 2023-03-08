@@ -21,7 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.raredev.common.util.Utils;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.adapters.FilesAdapter;
-import com.raredev.vcspace.databinding.FragmentDrawerBinding;
+import com.raredev.vcspace.databinding.FragmentFileManagerBinding;
 import com.raredev.vcspace.fragments.callback.FileManagerCallBack;
 import com.raredev.vcspace.util.ApkInstaller;
 import com.raredev.vcspace.util.FileManagerUtils;
@@ -32,7 +32,7 @@ import java.util.List;
 
 @SuppressWarnings("deprecation")
 public class FileManagerFragment extends Fragment {
-  private FragmentDrawerBinding binding;
+  private FragmentFileManagerBinding binding;
 
   private FileManagerCallBack callback;
 
@@ -51,7 +51,7 @@ public class FileManagerFragment extends Fragment {
   @Override
   public View onCreateView(
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    binding = FragmentDrawerBinding.inflate(inflater, container, false);
+    binding = FragmentFileManagerBinding.inflate(inflater, container, false);
     return binding.getRoot();
   }
 
@@ -160,7 +160,7 @@ public class FileManagerFragment extends Fragment {
     if (Utils.isPermissionGaranted(getContext())) {
       listArchives(dir);
       runAnimation();
-      if (mFiles.isEmpty()) {
+      if (mFiles.size() <= 1) {
         binding.emptyLayout.setVisibility(View.VISIBLE);
       } else {
         binding.emptyLayout.setVisibility(View.GONE);

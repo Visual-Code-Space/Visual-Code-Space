@@ -11,7 +11,7 @@
 
 ### TODO
 - [ ] Code structure view
-- [ ] Create code templates for file extensions
+- [X] Create code templates for file extensions
 - [ ] Copy and move files
 - [ ] Read zipped files
 

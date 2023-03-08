@@ -11,8 +11,8 @@ import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.tabs.TabLayout;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.ActivityMainBinding;
-import com.raredev.vcspace.fragments.FileManagerFragment;
 import com.raredev.vcspace.fragments.callback.FileManagerCallBack;
+import com.raredev.vcspace.tools.TemplatesParser;
 import com.raredev.vcspace.ui.editor.EditorViewModel;
 import com.raredev.vcspace.ui.editor.action.FormatterAction;
 import com.raredev.vcspace.ui.editor.language.html.ExecuteHtml;
@@ -23,12 +23,10 @@ import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.model.ThemeModel;
 import io.github.rosemoe.sora.langs.textmate.registry.provider.AssetsFileResolver;
 import java.io.File;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.CompletableFuture;
 import org.eclipse.tm4e.core.registry.IThemeSource;
 
 public class MainActivity extends VCSpaceActivity implements FileManagerCallBack {
-  private static final ExecutorService mService = Executors.newSingleThreadExecutor();
   private ActivityMainBinding binding;
 
   private EditorViewModel viewModel;
@@ -104,8 +102,6 @@ public class MainActivity extends VCSpaceActivity implements FileManagerCallBack
                 binding.drawerLayout.close();
               }
             });
-
-    initialize();
   }
 
   @Override
@@ -137,10 +133,10 @@ public class MainActivity extends VCSpaceActivity implements FileManagerCallBack
         editorManager.redo();
         break;
       case R.id.menu_save:
-        editorManager.saveAllFiles(true);
+        editorManager.saveAll(true);
         break;
       case R.id.menu_compile:
-        // editor.saveAllFilesAndTabs(true);
+        editorManager.saveAll(true);
         new ExecuteHtml(this, viewModel.getCurrentFile());
         break;
       case R.id.menu_format:
@@ -150,6 +146,9 @@ public class MainActivity extends VCSpaceActivity implements FileManagerCallBack
         break;
       case R.id.menu_settings:
         startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+        break;
+      case R.id.menu_templates:
+        startActivity(new Intent(getApplicationContext(), FileTemplatesActivity.class));
         break;
     }
     return true;
@@ -163,6 +162,12 @@ public class MainActivity extends VCSpaceActivity implements FileManagerCallBack
     }
     editorManager.saveAllFiles(false);
     super.onBackPressed();
+  }
+
+  @Override
+  protected void onStart() {
+    super.onStart();
+    initialize();
   }
 
   @Override
@@ -180,33 +185,26 @@ public class MainActivity extends VCSpaceActivity implements FileManagerCallBack
   }
 
   public void initialize() {
-    LinearProgressIndicator progress = binding.progress;
-    progress.setVisibility(View.VISIBLE);
+    binding.progress.setVisibility(View.VISIBLE);
     getSupportActionBar().setSubtitle("Loading..");
-    mService.submit(
-            () -> {
-              try {
-                loadDefaultThemes();
-                loadDefaultLanguages();
+    CompletableFuture.runAsync(
+        () -> {
+          try {
+            TemplatesParser.loadTemplatesFromJson(this);
+            loadDefaultThemes();
+            loadDefaultLanguages();
 
-                runOnUiThread(
-                    () -> {
-                      createFileManagerFragment();
-                      loadShortcuts();
-                      getSupportActionBar().setSubtitle(null);
-                      progress.setVisibility(View.GONE);
-                    });
-              } catch (Exception e) {
-                e.printStackTrace();
-              }
-            });
-  }
-
-  private void createFileManagerFragment() {
-    getSupportFragmentManager()
-        .beginTransaction()
-        .add(R.id.file_manager_container, new FileManagerFragment())
-        .commit();
+            runOnUiThread(
+                () -> {
+                  editorManager.openOpenedFiles();
+                  loadShortcuts();
+                  getSupportActionBar().setSubtitle(null);
+                  binding.progress.setVisibility(View.GONE);
+                });
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
+        });
   }
 
   private void updateTab(int pos) {
@@ -230,6 +228,7 @@ public class MainActivity extends VCSpaceActivity implements FileManagerCallBack
           } else if (item.getTitle() == getResources().getString(R.string.close_all)) {
             editorManager.closeAllFiles();
           }
+          editorManager.saveOpenedFiles();
           invalidateOptionsMenu();
           return true;
         });

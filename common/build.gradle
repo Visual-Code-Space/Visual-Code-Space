@@ -1,29 +1,22 @@
 plugins {
     id 'com.android.library'
-    id 'org.jetbrains.kotlin.android'
 }
 
 android {
     namespace 'com.raredev.common'
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         minSdk 26
-        targetSdk 32
+        targetSdk 33
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
-    
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.4.2'
-    implementation 'com.google.android.material:material:1.6.1'
     implementation 'com.google.code.gson:gson:2.8.7'
 }

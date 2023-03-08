@@ -2,6 +2,8 @@ package com.raredev.vcspace.util;
 
 import android.app.Activity;
 import android.content.Context;
+import com.raredev.vcspace.adapters.model.FileTemplateModel;
+import com.raredev.vcspace.tools.TemplatesParser;
 import java.text.DecimalFormat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +15,7 @@ import com.raredev.common.util.Utils;
 import com.raredev.vcspace.R;
 import java.io.File;
 import java.util.Comparator;
+import java.util.List;
 
 public class FileManagerUtils {
 
@@ -128,34 +131,22 @@ public class FileManagerUtils {
         .setPositiveButton(
             R.string.file,
             (dlg, i) -> {
-              act.runOnUiThread(
-                  () -> {
-                    if (FileUtil.isExistFile(
-                        file.getAbsolutePath() + "/" + et_filename.getText().toString())) {
-                      Utils.showToast(act, act.getResources().getString(R.string.existing_file));
-                      return;
-                    }
-                    if (FileUtil.writeFile(
-                        file.getAbsolutePath() + "/" + et_filename.getText().toString(), "")) {
-                      concluded.concluded();
-                    }
-                  });
+              File newFile = new File(file, "/" + et_filename.getText().toString());
+              if (!newFile.exists()) {
+                if (createFileWithTemplate(newFile)) {
+                  concluded.concluded();
+                }
+              }
             })
         .setNegativeButton(
             R.string.folder,
             (dlg, i) -> {
-              act.runOnUiThread(
-                  () -> {
-                    if (FileUtil.isExistFile(
-                        file.getAbsolutePath() + "/" + et_filename.getText().toString())) {
-                      Utils.showToast(act, act.getResources().getString(R.string.existing_file));
-                      return;
-                    }
-                    if (FileUtil.makeDir(
-                        file.getAbsolutePath() + "/" + et_filename.getText().toString())) {
-                      concluded.concluded();
-                    }
-                  });
+              File newFolder = new File(file, "/" + et_filename.getText().toString());
+              if (!newFolder.exists()) {
+                if (newFolder.mkdirs()) {
+                  concluded.concluded();
+                }
+              }
             })
         .setNeutralButton(R.string.cancel, null)
         .setView(v)
@@ -173,14 +164,13 @@ public class FileManagerUtils {
         .setPositiveButton(
             R.string.menu_rename,
             (dlg, i) -> {
-              if (FileUtil.isExistFile(
-                  file.getParentFile() + "/" + et_filename.getText().toString())) {
-                Utils.showToast(act, act.getResources().getString(R.string.existing_file));
-                return;
-              }
-              if (FileUtil.rename(file.getAbsolutePath(), et_filename.getText().toString())) {
-                onFileRenamed.onFileRenamed(
-                    file, new File(file.getParent() + "/" + et_filename.getText().toString()));
+              File newFile = new File(file.getAbsolutePath());
+
+              if (newFile.exists()) {
+                if (newFile.renameTo(
+                    new File(file.getParentFile(), et_filename.getText().toString()))) {
+                  onFileRenamed.onFileRenamed(file, newFile);
+                }
               }
             })
         .setNegativeButton(R.string.cancel, null)
@@ -203,6 +193,29 @@ public class FileManagerUtils {
         });
     dlg_delete.setNegativeButton(R.string.cancel, null);
     dlg_delete.show();
+  }
+
+  private static boolean createFileWithTemplate(File file) {
+    String fileExtension = file.getName().substring(file.getName().lastIndexOf(".") + 1);
+    String fileName = file.getName().replace("." +fileExtension, "");
+
+    String templateContent = "";
+    if (!fileExtension.isEmpty()) {
+      for (FileTemplateModel template : TemplatesParser.getTemplates()) {
+        if (template.getFileExtension().equals(fileExtension)) {
+          templateContent = formatTemplateContent(fileName, template.getTemplateContent());
+        }
+      }
+    }
+
+    return FileUtil.writeFile(file.getAbsolutePath(), templateContent);
+  }
+
+  private static String formatTemplateContent(String fileName, String templateContent) {
+    if (templateContent.contains("<?NAME?>")) {
+      return templateContent.replace("<?NAME?>", fileName);
+    }
+    return templateContent;
   }
 
   public interface OnFileRenamed {

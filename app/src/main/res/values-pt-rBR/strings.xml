@@ -40,6 +40,8 @@
     <string name="file_manager_title">File Manager</string>
     <string name="new_file_title">Novo arquivo</string>
     <string name="new_folder_title">Nova pasta</string>
+    <string name="new_file_template">Novo modelo de arquivo</string>
+    <string name="edit_file_template">Editar modelo de arquivo</string>
     
     <!-- Settings String -->
     <string name="appearance">Aparência</string>

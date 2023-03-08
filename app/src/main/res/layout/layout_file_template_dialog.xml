@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_height="match_parent"
+  android:layout_width="match_parent"
+  android:padding="10dp">
+
+  <com.google.android.material.textfield.TextInputLayout
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+    android:id="@+id/til_file_extension">
+
+    <com.google.android.material.textfield.TextInputEditText
+      android:layout_height="match_parent"
+      android:layout_width="match_parent"
+      android:hint="File extension"
+      android:id="@+id/et_file_extension" />
+
+  </com.google.android.material.textfield.TextInputLayout>
+
+  <com.google.android.material.textfield.TextInputLayout
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_below="@id/til_file_extension"
+    android:hint="Template Code"
+    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+    android:layout_marginTop="10dp">
+
+    <com.google.android.material.textfield.TextInputEditText
+      android:layout_height="match_parent"
+      android:layout_width="match_parent"
+      android:id="@+id/et_template_code" />
+
+  </com.google.android.material.textfield.TextInputLayout>
+
+</RelativeLayout>

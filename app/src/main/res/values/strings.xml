@@ -40,6 +40,8 @@
     <string name="file_manager_title">File Manager</string>
     <string name="new_file_title">New file</string>
     <string name="new_folder_title">New folder</string>
+    <string name="new_file_template">New File Template</string>
+    <string name="edit_file_template">Edit File Template</string>
 
     <!-- Settings String -->
     <string name="appearance">Aparence</string>
