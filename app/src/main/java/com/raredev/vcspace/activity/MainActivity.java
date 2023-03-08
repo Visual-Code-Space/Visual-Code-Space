@@ -6,14 +6,15 @@ import android.view.MenuItem;
 import android.view.View;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.core.view.GravityCompat;
-import com.blankj.utilcode.util.ToastUtils;
 import com.google.android.material.elevation.SurfaceColors;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.tabs.TabLayout;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.ActivityMainBinding;
+import com.raredev.vcspace.fragments.FileManagerFragment;
 import com.raredev.vcspace.fragments.callback.FileManagerCallBack;
 import com.raredev.vcspace.ui.editor.EditorViewModel;
-import com.raredev.vcspace.ui.editor.action.*;
+import com.raredev.vcspace.ui.editor.action.FormatterAction;
 import com.raredev.vcspace.ui.editor.language.html.ExecuteHtml;
 import com.raredev.vcspace.ui.editor.manager.EditorManager;
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry;
@@ -22,9 +23,12 @@ import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.model.ThemeModel;
 import io.github.rosemoe.sora.langs.textmate.registry.provider.AssetsFileResolver;
 import java.io.File;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.eclipse.tm4e.core.registry.IThemeSource;
 
 public class MainActivity extends VCSpaceActivity implements FileManagerCallBack {
+  private static final ExecutorService mService = Executors.newSingleThreadExecutor();
   private ActivityMainBinding binding;
 
   private EditorViewModel viewModel;
@@ -43,9 +47,6 @@ public class MainActivity extends VCSpaceActivity implements FileManagerCallBack
   @Override
   public void onCreate() {
     setSupportActionBar(binding.toolbar);
-    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    getSupportActionBar().setHomeButtonEnabled(false);
-
     binding.toolbar.setNavigationIcon(R.drawable.ic_menu);
     binding.toolbar.setNavigationOnClickListener(
         v -> {
@@ -103,13 +104,8 @@ public class MainActivity extends VCSpaceActivity implements FileManagerCallBack
                 binding.drawerLayout.close();
               }
             });
-    try {
-      loadDefaultThemes();
-      loadDefaultLanguages();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    loadShortcuts();
+
+    initialize();
   }
 
   @Override
@@ -183,13 +179,34 @@ public class MainActivity extends VCSpaceActivity implements FileManagerCallBack
     // onTabRemoved();
   }
 
-  private void loadShortcuts() {
-    binding.shortcuts.setBackgroundColor(SurfaceColors.SURFACE_0.getColor(this));
-    binding.shortcuts.removeSymbols();
+  public void initialize() {
+    LinearProgressIndicator progress = binding.progress;
+    progress.setVisibility(View.VISIBLE);
+    getSupportActionBar().setSubtitle("Loading..");
+    mService.submit(
+            () -> {
+              try {
+                loadDefaultThemes();
+                loadDefaultLanguages();
 
-    binding.shortcuts.addSymbols(
-        new String[] {"→", "\"", ";", "(", ")", "{", "}", "[", "]", "<", ">"},
-        new String[] {"    ", "\"", ";", "(", ")", "{", "}", "[", "]", "<", ">"});
+                runOnUiThread(
+                    () -> {
+                      createFileManagerFragment();
+                      loadShortcuts();
+                      getSupportActionBar().setSubtitle(null);
+                      progress.setVisibility(View.GONE);
+                    });
+              } catch (Exception e) {
+                e.printStackTrace();
+              }
+            });
+  }
+
+  private void createFileManagerFragment() {
+    getSupportFragmentManager()
+        .beginTransaction()
+        .add(R.id.file_manager_container, new FileManagerFragment())
+        .commit();
   }
 
   private void updateTab(int pos) {
@@ -217,6 +234,15 @@ public class MainActivity extends VCSpaceActivity implements FileManagerCallBack
           return true;
         });
     pm.show();
+  }
+
+  private void loadShortcuts() {
+    binding.shortcuts.setBackgroundColor(SurfaceColors.SURFACE_0.getColor(this));
+    binding.shortcuts.removeSymbols();
+
+    binding.shortcuts.addSymbols(
+        new String[] {"→", "\"", ";", "(", ")", "{", "}", "[", "]", "<", ">"},
+        new String[] {"    ", "\"", ";", "(", ")", "{", "}", "[", "]", "<", ">"});
   }
 
   private void loadDefaultThemes() throws Exception {

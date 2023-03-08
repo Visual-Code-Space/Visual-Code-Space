@@ -1,6 +1,7 @@
 package com.raredev.vcspace.ui.editor;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
@@ -9,6 +10,7 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.raredev.common.util.FileUtil;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.LayoutCodeEditorBinding;
+import com.raredev.vcspace.util.PreferencesUtils;
 import io.github.rosemoe.sora.lang.EmptyLanguage;
 import io.github.rosemoe.sora.langs.textmate.TextMateColorScheme;
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage;
@@ -20,7 +22,8 @@ import java.util.concurrent.CompletableFuture;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
 
-public class CodeEditorView extends LinearLayout {
+public class CodeEditorView extends LinearLayout
+    implements SharedPreferences.OnSharedPreferenceChangeListener {
   private LayoutCodeEditorBinding binding;
 
   private File file;
@@ -36,6 +39,7 @@ public class CodeEditorView extends LinearLayout {
             | CodeEditor.FLAG_DRAW_WHITESPACE_INNER
             | CodeEditor.FLAG_DRAW_WHITESPACE_FOR_EMPTY_LINE);
     binding.editor.setTypefaceText(ResourcesCompat.getFont(context, R.font.jetbrains_mono));
+    binding.editor.setTypefaceLineNumber(ResourcesCompat.getFont(context, R.font.jetbrains_mono));
     binding.editor.setDefaultFocusHighlightEnabled(true);
     setupTheme();
 
@@ -53,6 +57,25 @@ public class CodeEditorView extends LinearLayout {
             ioe.printStackTrace();
           }
         });
+    PreferencesUtils.getDefaultPrefs().registerOnSharedPreferenceChangeListener(this);
+  }
+
+  @Override
+  public void onSharedPreferenceChanged(SharedPreferences pref, String key) {
+    switch (key) {
+      case "textsize":
+        updateTextSize();
+        break;
+      case "deletefast":
+        updateDeleteEmptyLineFast();
+        break;
+    }
+  }
+
+  public void release() {
+    PreferencesUtils.getDefaultPrefs().unregisterOnSharedPreferenceChangeListener(this);
+    binding.editor.release();
+    binding = null;
   }
 
   public File getFile() {
@@ -74,14 +97,14 @@ public class CodeEditorView extends LinearLayout {
   public void redo() {
     if (binding.editor.canRedo()) binding.editor.redo();
   }
-  
+
   private void setLanguage() {
     try {
       var editor = binding.editor;
       JSONObject jsonObj =
           new JSONObject(FileUtil.readAssetFile(getContext(), "textmate/language_scopes.json"));
       String extension = file.getName().substring(file.getName().lastIndexOf(".") + 1);
-      
+
       if (extension != null) {
         editor.setEditorLanguage(TextMateLanguage.create(jsonObj.getString(extension), true));
       } else {
@@ -101,6 +124,18 @@ public class CodeEditorView extends LinearLayout {
     } catch (Exception e) {
       e.printStackTrace();
     }
+  }
+
+  private void updateTextSize() {
+    int textSize = PreferencesUtils.getTextSize();
+    if (textSize < 14) {
+      textSize = 14;
+    }
+    binding.editor.setTextSize(textSize);
+  }
+
+  private void updateDeleteEmptyLineFast() {
+    binding.editor.getProps().deleteEmptyLineFast = PreferencesUtils.isDeleleteEmptyLineFast();
   }
 
   private boolean isDarkMode() {

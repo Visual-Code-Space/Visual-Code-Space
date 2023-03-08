@@ -26,8 +26,8 @@ import com.raredev.vcspace.fragments.callback.FileManagerCallBack;
 import com.raredev.vcspace.util.ApkInstaller;
 import com.raredev.vcspace.util.FileManagerUtils;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 @SuppressWarnings("deprecation")
@@ -36,7 +36,7 @@ public class FileManagerFragment extends Fragment {
 
   private FileManagerCallBack callback;
 
-  private List<File> mFiles = new ArrayList<>();
+  private List<File> mFiles = new LinkedList<>();
   private FilesAdapter mAdapter;
 
   private File currentDir = new File(Environment.getExternalStorageDirectory().toString());
@@ -160,7 +160,6 @@ public class FileManagerFragment extends Fragment {
     if (Utils.isPermissionGaranted(getContext())) {
       listArchives(dir);
       runAnimation();
-
       if (mFiles.isEmpty()) {
         binding.emptyLayout.setVisibility(View.VISIBLE);
       } else {
@@ -174,6 +173,7 @@ public class FileManagerFragment extends Fragment {
   public void listArchives(File dir) {
     currentDir = dir;
     mFiles.clear();
+
     mFiles.add(new File(".."));
 
     File[] listFiles = dir.listFiles();
@@ -181,7 +181,6 @@ public class FileManagerFragment extends Fragment {
       for (File file : listFiles) {
         mFiles.add(file);
       }
-
       Collections.sort(mFiles, FileManagerUtils.COMPARATOR);
     }
   }

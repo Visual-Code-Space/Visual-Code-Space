@@ -65,6 +65,7 @@ public class EditorManager {
         getEditorAtIndex(index).save();
       }
 
+      getEditorAtIndex(index).release();
       viewModel.removeFile(file);
       tabLayout.removeTabAt(index);
       container.removeViewAt(index);
@@ -85,6 +86,9 @@ public class EditorManager {
 
   public void closeAllFiles() {
     saveAllFiles(false);
+    for (int i = 0; i < viewModel.getFiles().getValue().size(); i++) {
+      getEditorAtIndex(i).release();
+    }
     container.removeAllViews();
     tabLayout.removeAllTabs();
     viewModel.clear();
