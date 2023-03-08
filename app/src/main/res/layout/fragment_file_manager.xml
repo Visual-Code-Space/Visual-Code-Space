@@ -28,41 +28,33 @@
 
     </LinearLayout>
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    <RelativeLayout
       android:layout_height="match_parent"
       android:layout_width="match_parent"
-      android:layout_below="@id/toolbar"
-      android:id="@+id/swiperefreshlayout">
+      android:layout_below="@id/toolbar">
+
+      <androidx.recyclerview.widget.RecyclerView
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:scrollbars="vertical"
+        android:id="@+id/rv_files" />
 
       <RelativeLayout
         android:layout_height="match_parent"
-        android:layout_width="match_parent">
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:id="@+id/empty_layout">
 
-        <androidx.recyclerview.widget.RecyclerView
-          android:layout_height="match_parent"
-          android:layout_width="match_parent"
-          android:scrollbars="vertical"
-          android:layoutAnimation="@anim/layout_animation"
-          android:id="@+id/rv_files" />
-
-        <RelativeLayout
-          android:layout_height="match_parent"
-          android:layout_width="match_parent"
-          android:visibility="gone"
-          android:id="@+id/empty_layout">
-
-          <com.google.android.material.imageview.ShapeableImageView
-            android:layout_height="60dp"
-            android:layout_width="60dp"
-            android:layout_marginBottom="5dp"
-            android:layout_centerInParent="true"
-            android:src="@drawable/folder_open" />
-
-        </RelativeLayout>
+        <com.google.android.material.imageview.ShapeableImageView
+          android:layout_height="60dp"
+          android:layout_width="60dp"
+          android:layout_marginBottom="5dp"
+          android:layout_centerInParent="true"
+          android:src="@drawable/folder_open" />
 
       </RelativeLayout>
 
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    </RelativeLayout>
 
   </RelativeLayout>
 

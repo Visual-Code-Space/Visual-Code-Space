@@ -1,5 +1,6 @@
 package com.raredev.vcspace.activity;
 
+import android.os.Bundle;
 import android.view.View;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -34,6 +35,7 @@ public class FileTemplatesActivity extends VCSpaceActivity {
   @Override
   public void onCreate() {
     setSupportActionBar(binding.toolbar);
+    binding.toolbar.setNavigationOnClickListener((v) -> onBackPressed());
     mTemplates = TemplatesParser.getTemplates();
     mAdapter = new FileTemplateAdapter(mTemplates);
 

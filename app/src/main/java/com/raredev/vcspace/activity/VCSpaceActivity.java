@@ -4,8 +4,6 @@ import android.os.Bundle;
 import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import com.raredev.vcspace.CrashHandler;
-import com.raredev.vcspace.fragments.callback.FileManagerCallBack;
-import java.io.File;
 
 public class VCSpaceActivity extends AppCompatActivity {
 

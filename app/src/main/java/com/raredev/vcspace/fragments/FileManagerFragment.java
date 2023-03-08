@@ -1,7 +1,6 @@
 package com.raredev.vcspace.fragments;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -11,41 +10,30 @@ import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
-import android.view.animation.LayoutAnimationController;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import com.raredev.common.util.Utils;
 import com.raredev.vcspace.R;
+import com.raredev.vcspace.activity.MainActivity;
 import com.raredev.vcspace.adapters.FilesAdapter;
 import com.raredev.vcspace.databinding.FragmentFileManagerBinding;
-import com.raredev.vcspace.fragments.callback.FileManagerCallBack;
 import com.raredev.vcspace.util.ApkInstaller;
 import com.raredev.vcspace.util.FileManagerUtils;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 @SuppressWarnings("deprecation")
 public class FileManagerFragment extends Fragment {
   private FragmentFileManagerBinding binding;
 
-  private FileManagerCallBack callback;
-
-  private List<File> mFiles = new LinkedList<>();
+  private List<File> mFiles = new ArrayList<>();
   private FilesAdapter mAdapter;
 
   private File currentDir = new File(Environment.getExternalStorageDirectory().toString());
-
-  @Override
-  public void onAttach(Context activity) {
-    super.onAttach(activity);
-    callback = (FileManagerCallBack) activity;
-  }
 
   @Nullable
   @Override
@@ -76,9 +64,7 @@ public class FileManagerFragment extends Fragment {
 
               } else {
                 if (FileManagerUtils.isValidTextFile(mFiles.get(position).getName())) {
-                  if (callback != null) {
-                    callback.onFileClicked(mFiles.get(position));
-                  }
+                  ((MainActivity) getActivity()).getEditorManager().openFile(mFiles.get(position));
                 } else if (mFiles.get(position).getName().endsWith(".apk")) {
                   ApkInstaller.installApplication(getContext(), mFiles.get(position));
                 }
@@ -101,17 +87,11 @@ public class FileManagerFragment extends Fragment {
                         getActivity(),
                         mFiles.get(position),
                         (oldFile, newFile) -> {
-                          callback.onFileRenamed(oldFile, newFile);
                           reloadFiles();
                         });
                   } else {
                     FileManagerUtils.deleteFile(
-                        getActivity(),
-                        mFiles.get(position),
-                        () -> {
-                          callback.onFileDeleted();
-                          reloadFiles();
-                        });
+                        getActivity(), mFiles.get(position), () -> reloadFiles());
                   }
                   return true;
                 });
@@ -133,17 +113,16 @@ public class FileManagerFragment extends Fragment {
         getResources().getString(R.string.create),
         R.drawable.ic_add,
         (v) -> {
-          FileManagerUtils.createFile(getActivity(), currentDir, () -> reloadFiles(currentDir));
+          FileManagerUtils.createFile(getActivity(), currentDir, () -> reloadFiles());
         });
-
-    binding.swiperefreshlayout.setOnRefreshListener(
-        () -> {
-          reloadFiles();
-          binding.swiperefreshlayout.setRefreshing(false);
-        });
-
     binding.rvFiles.setLayoutManager(new LinearLayoutManager(getContext()));
     binding.rvFiles.setAdapter(mAdapter);
+  }
+
+  @Override
+  public void onDestroyView() {
+    super.onDestroyView();
+    binding = null;
   }
 
   @Override
@@ -157,9 +136,9 @@ public class FileManagerFragment extends Fragment {
   }
 
   private void reloadFiles(File dir) {
-    if (Utils.isPermissionGaranted(getContext())) {
+    if (FileManagerUtils.isPermissionGaranted(getContext())) {
       listArchives(dir);
-      runAnimation();
+
       if (mFiles.size() <= 1) {
         binding.emptyLayout.setVisibility(View.VISIBLE);
       } else {
@@ -172,25 +151,18 @@ public class FileManagerFragment extends Fragment {
 
   public void listArchives(File dir) {
     currentDir = dir;
-    mFiles.clear();
-
-    mFiles.add(new File(".."));
+    List<File> filesList = new ArrayList<>();
+    filesList.add(new File(".."));
 
     File[] listFiles = dir.listFiles();
     if (listFiles != null) {
       for (File file : listFiles) {
-        mFiles.add(file);
+        filesList.add(file);
       }
-      Collections.sort(mFiles, FileManagerUtils.COMPARATOR);
+      Collections.sort(filesList, FileManagerUtils.COMPARATOR);
     }
-  }
-
-  private void runAnimation() {
-    final LayoutAnimationController controller =
-        AnimationUtils.loadLayoutAnimation(getActivity(), R.anim.layout_animation);
-    binding.rvFiles.setLayoutAnimation(controller);
-    mAdapter.notifyDataSetChanged();
-    binding.rvFiles.scheduleLayoutAnimation();
+    mFiles = filesList;
+    mAdapter.refresh(mFiles);
   }
 
   private void takePermissions() {

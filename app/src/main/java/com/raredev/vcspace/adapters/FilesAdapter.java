@@ -3,12 +3,14 @@ package com.raredev.vcspace.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.divider.MaterialDivider;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textview.MaterialTextView;
 import com.raredev.vcspace.R;
+import com.raredev.vcspace.tools.FileExtension;
 import com.raredev.vcspace.util.FileManagerUtils;
 import java.io.File;
 import java.util.List;
@@ -31,11 +33,15 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.VH> {
 
   @Override
   public void onBindViewHolder(VH holder, int position) {
-    holder.tv_name.setText(filesList.get(position).getName());
-    FileManagerUtils.getFilesIcon(
-        holder.itemView.getContext(), filesList.get(position).getAbsolutePath(), holder.img_icon);
+    File file = filesList.get(position);
+    holder.itemView.setAnimation(
+        AnimationUtils.loadAnimation(holder.itemView.getContext(), android.R.anim.fade_in));
 
-    if (position == 0) {
+    holder.tv_name.setText(file.getName());
+
+    if (file.isFile() && position > 0) {
+      holder.img_icon.setImageResource(FileExtension.getIcon(file.getName()).icon);
+    } else {
       holder.img_icon.setImageResource(R.drawable.ic_folder);
     }
 
@@ -62,6 +68,11 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.VH> {
   @Override
   public int getItemCount() {
     return filesList.size();
+  }
+
+  public void refresh(List<File> list) {
+    this.filesList = list;
+    notifyDataSetChanged();
   }
 
   public void setFileListener(FileListener listener) {

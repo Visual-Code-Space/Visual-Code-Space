@@ -1,14 +1,10 @@
 package com.raredev.common.util;
 
-import android.app.*;
+import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Environment;
-import androidx.core.content.FileProvider;
-import com.google.android.material.imageview.ShapeableImageView;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;

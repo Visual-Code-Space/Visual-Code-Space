@@ -31,22 +31,24 @@ public class CodeEditorView extends LinearLayout
     super(context);
     this.file = file;
     binding = LayoutCodeEditorBinding.inflate(LayoutInflater.from(context));
-    addView(
-        binding.getRoot(), new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
     binding.editor.setNonPrintablePaintingFlags(
         CodeEditor.FLAG_DRAW_WHITESPACE_LEADING
             | CodeEditor.FLAG_DRAW_WHITESPACE_INNER
             | CodeEditor.FLAG_DRAW_WHITESPACE_FOR_EMPTY_LINE);
+    binding.editor.setHighlightCurrentBlock(true);
     binding.editor.setTypefaceText(ResourcesCompat.getFont(context, R.font.jetbrains_mono));
     binding.editor.setTypefaceLineNumber(ResourcesCompat.getFont(context, R.font.jetbrains_mono));
-    binding.editor.setDefaultFocusHighlightEnabled(true);
     setupTheme();
+    
+    removeAllViews();
+    addView(
+        binding.getRoot(), new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
     CompletableFuture.runAsync(
         () -> {
           try {
-            var editor = binding.editor;
             var content = FileUtils.readFileToString(file);
+            var editor = binding.editor;
             editor.post(
                 () -> {
                   editor.setText(content);
@@ -56,7 +58,13 @@ public class CodeEditorView extends LinearLayout
             ioe.printStackTrace();
           }
         });
+    configureEditor();
     PreferencesUtils.getDefaultPrefs().registerOnSharedPreferenceChangeListener(this);
+  }
+  
+  private void configureEditor() {
+    updateTextSize();
+    updateDeleteEmptyLineFast();
   }
 
   @Override
@@ -108,6 +116,7 @@ public class CodeEditorView extends LinearLayout
       } else {
         editor.setEditorLanguage(new EmptyLanguage());
       }
+      jsonObj = null;
     } catch (Exception e) {
       e.printStackTrace();
     }

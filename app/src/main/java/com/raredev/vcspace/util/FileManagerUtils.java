@@ -1,21 +1,22 @@
 package com.raredev.vcspace.util;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
-import com.raredev.vcspace.adapters.model.FileTemplateModel;
-import com.raredev.vcspace.tools.TemplatesParser;
-import java.text.DecimalFormat;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import androidx.core.content.ContextCompat;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.imageview.ShapeableImageView;
 import com.raredev.common.util.FileUtil;
-import com.raredev.common.util.Utils;
 import com.raredev.vcspace.R;
+import com.raredev.vcspace.adapters.model.FileTemplateModel;
+import com.raredev.vcspace.tools.TemplatesParser;
 import java.io.File;
 import java.util.Comparator;
-import java.util.List;
 
 public class FileManagerUtils {
 
@@ -30,95 +31,18 @@ public class FileManagerUtils {
         }
       };
 
-  public static boolean isValidTextFile(String filename) {
-    if (filename.endsWith(".ttf")
-        || filename.endsWith(".png")
-        || filename.endsWith(".jpg")
-        || filename.endsWith(".jpeg")
-        || filename.endsWith(".bmp")
-        || filename.endsWith(".mp4")
-        || filename.endsWith(".mp3")
-        || filename.endsWith(".m4a")
-        || filename.endsWith(".iso")
-        || filename.endsWith(".so")
-        || filename.endsWith(".zip")
-        || filename.endsWith(".jar")
-        || filename.endsWith(".dex")
-        || filename.endsWith(".odex")
-        || filename.endsWith(".vdex")
-        || filename.endsWith(".7z")
-        || filename.endsWith(".apk")
-        || filename.endsWith(".apks")
-        || filename.endsWith(".xapk")) {
-      return false;
+  public static boolean isPermissionGaranted(Context context) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+      return Environment.isExternalStorageManager();
+    } else {
+      return ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)
+          == PackageManager.PERMISSION_GRANTED;
     }
-    return true;
   }
 
-  public static void getFilesIcon(Context context, String path, ShapeableImageView img) {
-    File file = new File(path);
-    if (file.isDirectory()) {
-      img.setImageResource(R.drawable.ic_folder);
-
-    } else if (file.isFile()) {
-      if (file.getName().endsWith(".zip")) {
-        img.setImageResource(R.drawable.ic_zip);
-
-      } else if (file.getName().endsWith(".ttf")) {
-        img.setImageResource(R.drawable.ic_font);
-
-      } else if (file.getName().endsWith(".java")) {
-        img.setImageResource(R.drawable.language_java);
-
-      } else if (file.getName().endsWith(".kt")) {
-        img.setImageResource(R.drawable.language_kotlin);
-
-      } else if (file.getName().endsWith(".php")) {
-        img.setImageResource(R.drawable.language_php);
-
-      } else if (file.getName().endsWith(".xml")) {
-        img.setImageResource(R.drawable.language_xml);
-
-      } else if (file.getName().endsWith(".json")) {
-        img.setImageResource(R.drawable.language_json);
-
-      } else if (file.getName().endsWith(".cpp")) {
-        img.setImageResource(R.drawable.language_cpp);
-
-      } else if (file.getName().endsWith(".c#")) {
-        img.setImageResource(R.drawable.language_csharp);
-
-      } else if (file.getName().endsWith(".c")) {
-        img.setImageResource(R.drawable.language_c);
-
-      } else if (file.getName().endsWith(".html")) {
-        img.setImageResource(R.drawable.language_html5);
-
-      } else if (file.getName().endsWith(".css")) {
-        img.setImageResource(R.drawable.language_css3);
-
-      } else if (file.getName().endsWith(".js")) {
-        img.setImageResource(R.drawable.language_javascript);
-
-      } else if (file.getName().endsWith(".py")) {
-        img.setImageResource(R.drawable.language_python);
-
-      } else if (file.getName().endsWith(".go")) {
-        img.setImageResource(R.drawable.language_go);
-
-      } else if (file.getName().endsWith(".lua")) {
-        img.setImageResource(R.drawable.language_lua);
-
-      } else if (file.getName().endsWith(".txt")) {
-        img.setImageResource(R.drawable.language_txt);
-
-      } else if (file.getName().endsWith(".apk")) {
-        img.setImageResource(R.drawable.ic_file);
-
-      } else {
-        img.setImageResource(R.drawable.ic_file);
-      }
-    }
+  public static boolean isValidTextFile(String filename) {
+    return !filename.matches(
+        ".*\\.(bin|ttf|png|jpe?g|bmp|mp4|mp3|m4a|iso|so|zip|jar|dex|odex|vdex|7z|apk|apks|xapk)$");
   }
 
   public static void createFile(Activity act, File file, Concluded concluded) {
@@ -197,7 +121,7 @@ public class FileManagerUtils {
 
   private static boolean createFileWithTemplate(File file) {
     String fileExtension = file.getName().substring(file.getName().lastIndexOf(".") + 1);
-    String fileName = file.getName().replace("." +fileExtension, "");
+    String fileName = file.getName().replace("." + fileExtension, "");
 
     String templateContent = "";
     if (!fileExtension.isEmpty()) {

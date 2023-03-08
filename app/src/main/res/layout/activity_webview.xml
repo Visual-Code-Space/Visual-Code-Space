@@ -1,26 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_height="match_parent"
+  android:layout_width="match_parent">
+
+  <com.google.android.material.appbar.AppBarLayout
+    android:layout_height="wrap_content"
     android:layout_width="match_parent"
+    app:layout_behavior="com.google.android.material.appbar.AppBarLayout$Behavior"
+    android:id="@+id/app_bar">
+
+    <com.google.android.material.appbar.MaterialToolbar
+      android:layout_height="wrap_content"
+      android:layout_width="match_parent"
+      android:id="@+id/toolbar" />
+
+  </com.google.android.material.appbar.AppBarLayout>
+
+  <android.webkit.WebView
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:layout_width="match_parent"
+    app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+    android:id="@+id/web_view" />
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/app_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            style="@style/Widget.Material3.Toolbar.Surface"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize" />
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <WebView
-        android:id="@+id/web_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

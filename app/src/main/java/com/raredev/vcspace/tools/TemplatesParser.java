@@ -2,6 +2,7 @@ package com.raredev.vcspace.tools;
 
 import android.content.Context;
 import com.raredev.common.util.FileUtil;
+import com.raredev.vcspace.VCSpaceApplication;
 import com.raredev.vcspace.adapters.model.FileTemplateModel;
 import java.io.File;
 import java.util.ArrayList;
@@ -13,6 +14,9 @@ public class TemplatesParser {
   private static List<FileTemplateModel> templates = new ArrayList<>();
 
   public static List<FileTemplateModel> getTemplates() {
+    if (templates.isEmpty()) {
+      loadTemplatesFromJson(VCSpaceApplication.appContext);
+    }
     return templates;
   }
 

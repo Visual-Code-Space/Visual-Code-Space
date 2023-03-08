@@ -11,7 +11,11 @@ public class PreferencesUtils {
   }
   
   public static int getTextSize() {
-    return Integer.parseInt(getDefaultPrefs().getString("textsize", "14"));
+    try {
+      return Integer.parseInt(getDefaultPrefs().getString("textsize", "14"));
+    } catch (Exception e) {
+      return 14;
+    }
   }
   
   public static boolean isSoftTab() {

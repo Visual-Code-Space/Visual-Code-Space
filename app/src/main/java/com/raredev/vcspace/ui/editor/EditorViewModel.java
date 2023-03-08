@@ -9,18 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EditorViewModel extends ViewModel {
-  private final MutableLiveData<Boolean> mDrawerState = new MutableLiveData<>(false);
   private final MutableLiveData<Integer> currentPosition = new MutableLiveData<>(-1);
 
-  private MutableLiveData<List<File>> mFiles;
-
-  public LiveData<Boolean> getDrawerState() {
-    return mDrawerState;
-  }
-
-  public void setDrawerState(boolean isOpen) {
-    mDrawerState.setValue(isOpen);
-  }
+  private MutableLiveData<List<File>> mFiles = new MutableLiveData<>(new ArrayList<>());
 
   public int getCurrentPosition() {
     return currentPosition.getValue();
@@ -30,61 +21,32 @@ public class EditorViewModel extends ViewModel {
     currentPosition.setValue(pos);
   }
 
-  public void setFiles(@NonNull List<File> files) {
-    if (mFiles == null) {
-      mFiles = new MutableLiveData<>(new ArrayList<>());
-    }
-    mFiles.setValue(files);
-  }
-
   public LiveData<List<File>> getFiles() {
-    if (mFiles == null) {
-      mFiles = new MutableLiveData<>(new ArrayList<>());
-    }
     return mFiles;
   }
 
   public File getCurrentFile() {
-    List<File> files = getFiles().getValue();
-    if (files == null) {
-      return null;
-    }
-
-    return files.get(currentPosition.getValue());
+    return getFiles().getValue().get(currentPosition.getValue());
   }
 
   public void clear() {
     List<File> value = getFiles().getValue();
-    if (value != null) {
-      value.clear();
-      mFiles.setValue(value);
-    }
+
+    value.clear();
+    mFiles.setValue(value);
   }
 
-  public boolean openFile(File file) {
-    setDrawerState(false);
-
-    addFile(file);
-    return true;
-  }
-
-  public void addFile(File file) {
+  public void openFile(File file) {
     List<File> files = getFiles().getValue();
-    if (files == null) {
-      files = new ArrayList<>();
-    }
+
     files.add(file);
     mFiles.setValue(files);
-    setCurrentPosition(files.indexOf(file));
   }
 
-  public void removeFile(@NonNull File file) {
+  public void removeFile(int index) {
     List<File> files = getFiles().getValue();
-    if (files == null) {
-      return;
-    }
 
-    files.remove(file);
+    files.remove(index);
     mFiles.setValue(files);
   }
 

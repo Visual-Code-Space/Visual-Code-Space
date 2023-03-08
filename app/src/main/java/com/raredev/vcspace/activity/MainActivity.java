@@ -4,14 +4,13 @@ import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.core.view.GravityCompat;
 import com.google.android.material.elevation.SurfaceColors;
-import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.tabs.TabLayout;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.ActivityMainBinding;
-import com.raredev.vcspace.fragments.callback.FileManagerCallBack;
 import com.raredev.vcspace.tools.TemplatesParser;
 import com.raredev.vcspace.ui.editor.EditorViewModel;
 import com.raredev.vcspace.ui.editor.action.FormatterAction;
@@ -22,11 +21,10 @@ import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.model.ThemeModel;
 import io.github.rosemoe.sora.langs.textmate.registry.provider.AssetsFileResolver;
-import java.io.File;
 import java.util.concurrent.CompletableFuture;
 import org.eclipse.tm4e.core.registry.IThemeSource;
 
-public class MainActivity extends VCSpaceActivity implements FileManagerCallBack {
+public class MainActivity extends VCSpaceActivity {
   private ActivityMainBinding binding;
 
   private EditorViewModel viewModel;
@@ -45,17 +43,14 @@ public class MainActivity extends VCSpaceActivity implements FileManagerCallBack
   @Override
   public void onCreate() {
     setSupportActionBar(binding.toolbar);
-    binding.toolbar.setNavigationIcon(R.drawable.ic_menu);
-    binding.toolbar.setNavigationOnClickListener(
-        v -> {
-          if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            viewModel.setDrawerState(false);
-          } else {
-            viewModel.setDrawerState(true);
-          }
-        });
 
-    editorManager = new EditorManager(MainActivity.this, binding.container, binding.tabLayout);
+    ActionBarDrawerToggle toggle =
+        new ActionBarDrawerToggle(
+            this, binding.drawerLayout, binding.toolbar, R.string.open, R.string.close);
+    binding.drawerLayout.addDrawerListener(toggle);
+    toggle.syncState();
+
+    editorManager = new EditorManager(MainActivity.this, binding);
     viewModel = editorManager.getViewModel();
 
     binding.tabLayout.addOnTabSelectedListener(
@@ -91,17 +86,7 @@ public class MainActivity extends VCSpaceActivity implements FileManagerCallBack
                 binding.empty.setVisibility(View.GONE);
               }
             });
-    viewModel
-        .getDrawerState()
-        .observe(
-            this,
-            (state) -> {
-              if (state) {
-                binding.drawerLayout.open();
-              } else {
-                binding.drawerLayout.close();
-              }
-            });
+    initialize();
   }
 
   @Override
@@ -156,8 +141,8 @@ public class MainActivity extends VCSpaceActivity implements FileManagerCallBack
 
   @Override
   public void onBackPressed() {
-    if (viewModel.getDrawerState().getValue()) {
-      viewModel.setDrawerState(false);
+    if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+      binding.drawerLayout.close();
       return;
     }
     editorManager.saveAllFiles(false);
@@ -167,39 +152,28 @@ public class MainActivity extends VCSpaceActivity implements FileManagerCallBack
   @Override
   protected void onStart() {
     super.onStart();
-    initialize();
+    TemplatesParser.loadTemplatesFromJson(this);
   }
 
-  @Override
-  public void onFileClicked(File file) {
-    editorManager.openFile(file);
+  public EditorManager getEditorManager() {
+    return editorManager;
   }
 
-  @Override
-  public void onFileRenamed(File old, File file) {}
-
-  @Override
-  public void onFileDeleted() {
-    // editor.onFileDeleted();
-    // onTabRemoved();
-  }
-
-  public void initialize() {
+  private void initialize() {
     binding.progress.setVisibility(View.VISIBLE);
     getSupportActionBar().setSubtitle("Loading..");
     CompletableFuture.runAsync(
         () -> {
           try {
-            TemplatesParser.loadTemplatesFromJson(this);
             loadDefaultThemes();
             loadDefaultLanguages();
 
             runOnUiThread(
                 () -> {
-                  editorManager.openOpenedFiles();
                   loadShortcuts();
                   getSupportActionBar().setSubtitle(null);
                   binding.progress.setVisibility(View.GONE);
+                  editorManager.openRecentOpenedFiles();
                 });
           } catch (Exception e) {
             e.printStackTrace();

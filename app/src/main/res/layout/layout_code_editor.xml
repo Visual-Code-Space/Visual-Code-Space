@@ -12,10 +12,4 @@
     android:layout_width="match_parent"
     android:layout_weight="1.0" />
 
-  <com.raredev.vcspace.ui.editor.widget.VCSpaceSearcher
-    android:layout_height="wrap_content"
-    android:layout_width="match_parent"
-    android:visibility="gone"
-    android:id="@+id/searcher" />
-
 </LinearLayout>

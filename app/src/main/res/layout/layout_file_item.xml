@@ -10,6 +10,7 @@
     android:layout_height="26dp"
     android:layout_width="26dp"
     android:scaleType="fitCenter"
+    android:src="@drawable/ic_folder"
     android:layout_centerVertical="true"
     android:layout_marginLeft="5dp"
     android:id="@+id/icon" />
