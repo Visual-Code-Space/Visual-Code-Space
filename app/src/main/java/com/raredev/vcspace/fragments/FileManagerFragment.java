@@ -1,6 +1,7 @@
 package com.raredev.vcspace.fragments;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -10,17 +11,24 @@ import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import com.blankj.utilcode.util.ToastUtils;
+import com.raredev.common.util.FileUtil;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.activity.MainActivity;
 import com.raredev.vcspace.adapters.FilesAdapter;
 import com.raredev.vcspace.databinding.FragmentFileManagerBinding;
 import com.raredev.vcspace.util.ApkInstaller;
 import com.raredev.vcspace.util.FileManagerUtils;
+import com.raredev.vcspace.util.ViewUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,6 +43,8 @@ public class FileManagerFragment extends Fragment {
 
   private File currentDir = new File(Environment.getExternalStorageDirectory().toString());
 
+  ActivityResultLauncher<Intent> mStartForResult;
+
   @Nullable
   @Override
   public View onCreateView(
@@ -47,6 +57,38 @@ public class FileManagerFragment extends Fragment {
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     mAdapter = new FilesAdapter(mFiles);
+    mStartForResult =
+        requireActivity()
+            .registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                  @Override
+                  public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                      Intent intent = result.getData();
+                      // Handle the Intent
+                      Uri uri = intent.getData();
+                      if (uri != null) {
+                        try {
+                          currentDir = FileUtil.getFileFromUri(requireContext(), uri);
+                          reloadFiles(currentDir);
+                        } catch (Exception e) {
+                          e.printStackTrace();
+                          ToastUtils.showLong(e.toString());
+                        }
+                        binding.expandCollapse.setVisibility(View.GONE);
+                        binding.containerOpen.setVisibility(View.GONE);
+                        binding.fileManager.setVisibility(View.VISIBLE);
+                        binding.navigationSpace.setVisibility(View.VISIBLE);
+                      } else {
+                        binding.expandCollapse.setVisibility(View.VISIBLE);
+                        binding.containerOpen.setVisibility(View.VISIBLE);
+                        binding.fileManager.setVisibility(View.GONE);
+                        binding.navigationSpace.setVisibility(View.GONE);
+                      }
+                    }
+                  }
+                });
 
     mAdapter.setFileListener(
         new FilesAdapter.FileListener() {
@@ -124,6 +166,22 @@ public class FileManagerFragment extends Fragment {
         });
     binding.rvFiles.setLayoutManager(new LinearLayoutManager(getContext()));
     binding.rvFiles.setAdapter(mAdapter);
+
+    ViewUtils.rotateChevron(ViewUtils.isExpanded(binding.containerOpen), binding.downButton);
+    binding.expandCollapse.setOnClickListener(
+        v -> {
+          if (ViewUtils.isExpanded(binding.containerOpen)) {
+            ViewUtils.collapse(binding.containerOpen);
+            ViewUtils.rotateChevron(false, binding.downButton);
+          } else {
+            ViewUtils.expand(binding.containerOpen);
+            ViewUtils.rotateChevron(true, binding.downButton);
+          }
+        });
+    binding.openFolder.setOnClickListener(
+        v -> {
+          mStartForResult.launch(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE));
+        });
   }
 
   @Override

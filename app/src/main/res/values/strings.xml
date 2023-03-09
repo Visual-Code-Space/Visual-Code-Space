@@ -30,10 +30,14 @@
   <string name="cancel">Cancel</string>
   <string name="file">File</string>
   <string name="folder">Folder</string>
+  <string name="open_folder">Open Folder</string>
+  <string name="open_recent">Open Recent</string>
   <string name="file_name_hint">File name:</string>
   <string name="folder_name_hint">Folder name:</string>
   <string name="newlyopenedfile">Newly Opened Files</string>
-
+  <string name="folder_not_yet_opened">You have not yet opened a folder.</string>
+  <string name="no_folder_opened">NO FOLDER OPENED</string>
+  <string name="explorer">EXPLORER</string>
   <string name="search">Search</string>
   <string name="replace">Replace</string>
   <string name="file_manager_title">File Manager</string>
