@@ -34,8 +34,6 @@ public class CodeEditorView extends LinearLayout
             | CodeEditor.FLAG_DRAW_WHITESPACE_INNER
             | CodeEditor.FLAG_DRAW_WHITESPACE_FOR_EMPTY_LINE);
     binding.editor.setHighlightCurrentBlock(true);
-    binding.editor.setTypefaceText(ResourcesCompat.getFont(context, R.font.firacode_retina));
-    binding.editor.setTypefaceLineNumber(ResourcesCompat.getFont(context, R.font.jetbrains_mono));
     setupTheme();
 
     removeAllViews();
@@ -57,6 +55,7 @@ public class CodeEditorView extends LinearLayout
   }
 
   private void configureEditor() {
+    updateEditorFont();
     updateTextSize();
     updateDeleteEmptyLineFast();
   }
@@ -69,6 +68,9 @@ public class CodeEditorView extends LinearLayout
         break;
       case "deletefast":
         updateDeleteEmptyLineFast();
+        break;
+      case "editorfont":
+        updateEditorFont();
         break;
     }
   }
@@ -133,6 +135,13 @@ public class CodeEditorView extends LinearLayout
       textSize = 14;
     }
     binding.editor.setTextSize(textSize);
+  }
+
+  private void updateEditorFont() {
+    binding.editor.setTypefaceText(
+        ResourcesCompat.getFont(getContext(), PreferencesUtils.getSelectedFont()));
+    binding.editor.setTypefaceLineNumber(
+        ResourcesCompat.getFont(getContext(), PreferencesUtils.getSelectedFont()));
   }
 
   private void updateDeleteEmptyLineFast() {
