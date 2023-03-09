@@ -39,6 +39,7 @@
         android:title="@string/menu_search" />
       <item
         android:id="@+id/menu_format"
+        android:icon="@drawable/format_align_left"
         android:title="@string/menu_format" />
     </menu>
   </item>

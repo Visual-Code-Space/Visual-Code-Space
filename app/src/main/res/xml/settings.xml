@@ -23,22 +23,33 @@
 
     <EditTextPreference
       app:defaultValue="14"
-      app:dialogTitle="@string/title_textsize"
+      app:dialogTitle="@string/pref_editor_textsize"
       android:digits="0123456789"
       app:icon="@drawable/format_size"
       android:inputType="numberDecimal"
       app:key="textsize"
-      app:title="@string/title_textsize"
+      app:title="@string/pref_editor_textsize"
+      app:useSimpleSummaryProvider="true" />
+    
+    <ListPreference
+      app:defaultValue="firacode"
+      app:entries="@array/settings_font_entries"
+      app:entryValues="@array/pref_entry_values_font"
+      app:icon="@drawable/format_font"
+      app:key="editorfont"
+      app:title="@string/pref_editor_font"
       app:useSimpleSummaryProvider="true" />
 
     <SwitchPreferenceCompat
+      app:icon="@drawable/keyboard_tab"
       app:key="softtab"
-      app:title="@string/title_softtab"
-      app:summary="@string/message_softtab" />
+      app:title="@string/pref_editor_usesofttab"
+      app:summary="@string/pref_editor_usesofttab_summary" />
 
     <SwitchPreferenceCompat
+      app:icon="@drawable/form_textbox_password"
       app:key="deletefast"
-      app:title="@string/title_deleteemptylinefast" />
+      app:title="@string/pref_editor_deleteemptylinefast" />
   </PreferenceCategory>
 
   <PreferenceCategory

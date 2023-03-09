@@ -4,6 +4,7 @@ import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import com.raredev.common.util.FileUtil;
 import com.raredev.vcspace.databinding.ActivityWebviewBinding;
 
 public class WebViewActivity extends VCSpaceActivity {
@@ -24,14 +25,17 @@ public class WebViewActivity extends VCSpaceActivity {
     setSupportActionBar(binding.toolbar);
 
     binding.toolbar.setNavigationOnClickListener((v) -> onBackPressed());
-    binding.webView.loadUrl(getIntent().getStringExtra("html_file"));
     binding.webView.getSettings().setAllowContentAccess(true);
     binding.webView.getSettings().setAllowFileAccess(true);
+    binding.webView.getSettings().setAllowFileAccessFromFileURLs(true);
     binding.webView.getSettings().setJavaScriptEnabled(true);
     binding.webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
     binding.webView.getSettings().setSupportZoom(true);
     binding.webView.getSettings().setBuiltInZoomControls(true);
     binding.webView.getSettings().setDisplayZoomControls(false);
+
+    String htmlPath = getIntent().getStringExtra("html_file");
+    binding.webView.loadUrl("file://" + htmlPath);
 
     binding.webView.setWebChromeClient(
         new WebChromeClient() {

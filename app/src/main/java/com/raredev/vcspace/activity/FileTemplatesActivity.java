@@ -82,23 +82,27 @@ public class FileTemplatesActivity extends VCSpaceActivity {
 
   private void saveTemplates() {
     binding.progress.setVisibility(View.VISIBLE);
-    CompletableFuture.runAsync(
-        () -> {
-          String templatesFile = getExternalFilesDir("template") + "/templates.json";
+    CompletableFuture.supplyAsync(
+            () -> {
+              String templatesFile = getExternalFilesDir("template") + "/templates.json";
 
-          try {
-            JSONObject jsonObj = new JSONObject();
-            for (FileTemplateModel template : mTemplates) {
-              jsonObj.put(template.getFileExtension(), template.getTemplateContent());
-            }
-            FileUtil.writeFile(templatesFile, jsonObj.toString());
-          } catch (JSONException jsone) {
-            jsone.printStackTrace();
-          }
-          runOnUiThread(
-              () -> {
-                binding.progress.setVisibility(View.GONE);
-              });
-        });
+              try {
+                JSONObject jsonObj = new JSONObject();
+                for (FileTemplateModel template : mTemplates) {
+                  jsonObj.put(template.getFileExtension(), template.getTemplateContent());
+                }
+                return FileUtil.writeFile(templatesFile, jsonObj.toString());
+              } catch (JSONException jsone) {
+                jsone.printStackTrace();
+                return false;
+              }
+            })
+        .whenComplete(
+            (result, throwable) -> {
+              runOnUiThread(
+                  () -> {
+                    binding.progress.setVisibility(View.GONE);
+                  });
+            });
   }
 }

@@ -95,7 +95,9 @@ public class FileManagerFragment extends Fragment {
           @Override
           public void onFileClick(int position, View v) {
             if (position == 0) {
-              if (currentDir.getAbsolutePath().equals("/storage/emulated/0")) return;
+              if (currentDir
+                  .getAbsolutePath()
+                  .equals(Environment.getExternalStorageDirectory().toString())) return;
               reloadFiles(currentDir.getParentFile());
               return;
             }
@@ -133,7 +135,12 @@ public class FileManagerFragment extends Fragment {
                         });
                   } else {
                     FileManagerUtils.deleteFile(
-                        getActivity(), mFiles.get(position), () -> reloadFiles());
+                        getActivity(),
+                        mFiles.get(position),
+                        () -> {
+                          ((MainActivity) getActivity()).getEditorManager().onFileDeleted();
+                          reloadFiles();
+                        });
                   }
                   return true;
                 });
@@ -145,7 +152,7 @@ public class FileManagerFragment extends Fragment {
     binding.navigationSpace.addItem(
         getActivity(),
         getResources().getString(R.string.refresh),
-        R.drawable.ic_baseline_restart_alt_24,
+        R.drawable.ic_refresh,
         (v) -> {
           reloadFiles(currentDir);
         });

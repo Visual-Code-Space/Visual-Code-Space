@@ -2,9 +2,7 @@ package com.raredev.vcspace.ui.editor.language.html;
 
 import android.content.Context;
 import android.content.Intent;
-
 import com.raredev.vcspace.activity.WebViewActivity;
-
 import java.io.File;
 
 public class ExecuteHtml {

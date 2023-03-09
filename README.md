@@ -1,6 +1,6 @@
 <div align="center">
     <img width="125" height="125" src="./images/ic_launcher.png" alt="Visual Code Space" title="Visual Code Space">
-    <p>Visual Code Space</p>
+    <h1>Visual Code Space</h1>
 </div>
 
 # Screenshots

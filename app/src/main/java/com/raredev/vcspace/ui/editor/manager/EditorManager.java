@@ -14,7 +14,6 @@ import com.raredev.vcspace.databinding.ActivityMainBinding;
 import com.raredev.vcspace.ui.editor.CodeEditorView;
 import com.raredev.vcspace.ui.editor.EditorViewModel;
 import java.io.File;
-import java.util.List;
 
 public class EditorManager {
   private final String LAST_FILES_TAG = "lastOpenedFiles";
@@ -52,12 +51,8 @@ public class EditorManager {
   }
 
   public void openRecentOpenedFiles() {
-    if (viewModel.getFiles().getValue().isEmpty()) {
-      for (File file : indexer.getList(LAST_FILES_TAG)) {
-        if (!viewModel.contains(file) && file.exists()) {
-          openFile(file, false);
-        }
-      }
+    for (File file : indexer.getList(LAST_FILES_TAG)) {
+      openFile(file, false);
     }
   }
 
@@ -73,8 +68,9 @@ public class EditorManager {
       return;
     }
 
-    if (viewModel.contains(file)) {
-      setCurrentPosition(viewModel.indexOf(file));
+    int openedFile = viewModel.indexOf(file);
+    if (openedFile != -1) {
+      if (setCurrent) setCurrentPosition(openedFile);
       return;
     }
 
@@ -88,27 +84,28 @@ public class EditorManager {
 
   public void closeFile(int index) {
     if (index >= 0 && index < viewModel.getFiles().getValue().size()) {
-      File file = viewModel.getFiles().getValue().get(index);
-      if (file.exists()) {
-        getEditorAtIndex(index).save();
+      CodeEditorView editor = getEditorAtIndex(index);
+      if (editor.getFile().exists()) {
+        editor.save();
       }
+      editor.release();
 
-      getEditorAtIndex(index).release();
       viewModel.removeFile(index);
       tabLayout.removeTabAt(index);
       container.removeViewAt(index);
+
+      tabLayout.requestLayout();
     }
-    tabLayout.requestLayout();
   }
 
   public void closeOthers() {
     saveAllFiles(false);
 
-    File editorFile = getEditorAtIndex(viewModel.getCurrentPosition()).getFile();
+    File file = viewModel.getCurrentFile();
     for (int i = 0; i < viewModel.getFiles().getValue().size(); i++) {
       CodeEditorView editor = getEditorAtIndex(i);
       if (editor != null) {
-        if (editorFile != viewModel.getFiles().getValue().get(i)) {
+        if (file != viewModel.getFiles().getValue().get(i)) {
           closeFile(i);
         }
       }
@@ -149,6 +146,15 @@ public class EditorManager {
       indexer.put(LAST_FILES_TAG, viewModel.getFiles().getValue()).flush();
     } catch (Exception e) {
       e.printStackTrace();
+    }
+  }
+
+  public void onFileDeleted() {
+    for (int i = 0; i < viewModel.getFiles().getValue().size(); i++) {
+      File file = viewModel.getFiles().getValue().get(i);
+      if (!file.exists()) {
+        closeFile(i);
+      }
     }
   }
 
