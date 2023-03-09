@@ -8,7 +8,6 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.core.view.GravityCompat;
 import com.blankj.utilcode.util.ClipboardUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.elevation.SurfaceColors;
 import com.google.android.material.tabs.TabLayout;
@@ -68,7 +67,6 @@ public class MainActivity extends VCSpaceActivity {
 
           @Override
           public void onTabSelected(TabLayout.Tab p1) {
-            viewModel.setCurrentPosition(p1.getPosition());
             updateTab(p1.getPosition());
           }
         });
@@ -103,6 +101,8 @@ public class MainActivity extends VCSpaceActivity {
     if (!viewModel.getFiles().getValue().isEmpty()) {
       menu.findItem(R.id.menu_save).setEnabled(true);
       menu.findItem(R.id.menu_editor).setVisible(true);
+      menu.findItem(R.id.menu_compile)
+          .setVisible(viewModel.getCurrentFile().getName().equals(".html"));
     } else {
       menu.findItem(R.id.menu_save).setEnabled(false);
       menu.findItem(R.id.menu_editor).setVisible(false);
@@ -124,7 +124,7 @@ public class MainActivity extends VCSpaceActivity {
         editorManager.saveAll(true);
         break;
       case R.id.menu_compile:
-        editorManager.saveAll(true);
+        editorManager.saveAll(false);
         new ExecuteHtml(this, viewModel.getCurrentFile());
         break;
       case R.id.menu_format:
@@ -165,33 +165,42 @@ public class MainActivity extends VCSpaceActivity {
   private void initialize() {
     binding.progress.setVisibility(View.VISIBLE);
     getSupportActionBar().setSubtitle("Loading..");
-    CompletableFuture.runAsync(
-        () -> {
-          try {
-            loadDefaultThemes();
-            loadDefaultLanguages();
 
-            runOnUiThread(
-                () -> {
-                  loadShortcuts();
-                  getSupportActionBar().setSubtitle(null);
-                  binding.progress.setVisibility(View.GONE);
-                  editorManager.openRecentOpenedFiles();
-                });
-          } catch (Exception e) {
-            runOnUiThread(
-                () -> {
-                  new MaterialAlertDialogBuilder(this)
-                      .setMessage(e.toString())
-                      .setPositiveButton("a", (dlg, i) -> ClipboardUtils.copyText(e.toString()))
-                      .show();
-                });
-            e.printStackTrace();
-          }
-        });
+    CompletableFuture.supplyAsync(
+            () -> {
+              try {
+                loadDefaultThemes();
+                loadDefaultLanguages();
+
+                return true;
+              } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+              }
+            })
+        .whenComplete(
+            (result, throwable) -> {
+              runOnUiThread(
+                  () -> {
+                    if (result == false) {
+                      new MaterialAlertDialogBuilder(this)
+                          .setTitle(throwable.getMessage())
+                          .setMessage(throwable.toString())
+                          .setNeutralButton(
+                              "Copy", (dlg, i) -> ClipboardUtils.copyText(throwable.toString()))
+                          .setPositiveButton("Ok", (dlg, i) -> {})
+                          .show();
+                    }
+                    loadShortcuts();
+                    getSupportActionBar().setSubtitle(null);
+                    binding.progress.setVisibility(View.GONE);
+                    editorManager.openRecentOpenedFiles();
+                  });
+            });
   }
 
   private void updateTab(int pos) {
+    viewModel.setCurrentPosition(pos);
     binding.container.setDisplayedChild(pos);
     editorManager.getEditorAtIndex(pos).requestFocus();
     binding.shortcuts.bindEditor(editorManager.getEditorAtIndex(pos).getEditor());

@@ -14,6 +14,7 @@ public enum FileExtension {
   JAVA("java", R.drawable.language_java),
   JAR("jar", R.drawable.language_java),
   JSON("json", R.drawable.language_json),
+  JAVASCRIPT("js", R.drawable.language_javascript),
   KT("kt", R.drawable.language_kotlin),
   KTS("kts", R.drawable.language_kotlin),
   LOG("log", R.drawable.language_txt),

@@ -64,7 +64,7 @@
       "scopeName": "source.json",
       "languageConfiguration": "textmate/json/language-configuration.json",
       "embeddedLanguages": {
-        "json-comments": "source.json.comments"
+        "source.json.comments": "json-comments"
       }
     },
     {

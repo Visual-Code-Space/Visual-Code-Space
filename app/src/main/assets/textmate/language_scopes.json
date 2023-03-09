@@ -13,7 +13,9 @@
   "kt": "source.kotlin",
   "kts": "source.kotlin",
   "lua": "source.lua",
+  "md": "text.html.markdown",
   "php": "source.php",
   "py": "source.python",
+  "Rmd": "text.html.markdown",
   "xml": "text.xml"
 }
