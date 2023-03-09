@@ -7,6 +7,9 @@ import android.view.View;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.core.view.GravityCompat;
+import com.blankj.utilcode.util.ClipboardUtils;
+import com.blankj.utilcode.util.ToastUtils;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.elevation.SurfaceColors;
 import com.google.android.material.tabs.TabLayout;
 import com.raredev.vcspace.R;
@@ -176,6 +179,13 @@ public class MainActivity extends VCSpaceActivity {
                   editorManager.openRecentOpenedFiles();
                 });
           } catch (Exception e) {
+            runOnUiThread(
+                () -> {
+                  new MaterialAlertDialogBuilder(this)
+                      .setMessage(e.toString())
+                      .setPositiveButton("a", (dlg, i) -> ClipboardUtils.copyText(e.toString()))
+                      .show();
+                });
             e.printStackTrace();
           }
         });

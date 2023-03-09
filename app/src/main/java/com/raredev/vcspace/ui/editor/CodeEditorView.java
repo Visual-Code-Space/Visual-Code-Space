@@ -16,9 +16,7 @@ import io.github.rosemoe.sora.langs.textmate.TextMateLanguage;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import io.github.rosemoe.sora.widget.CodeEditor;
 import java.io.File;
-import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
-import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
 
 public class CodeEditorView extends LinearLayout
@@ -36,32 +34,28 @@ public class CodeEditorView extends LinearLayout
             | CodeEditor.FLAG_DRAW_WHITESPACE_INNER
             | CodeEditor.FLAG_DRAW_WHITESPACE_FOR_EMPTY_LINE);
     binding.editor.setHighlightCurrentBlock(true);
-    binding.editor.setTypefaceText(ResourcesCompat.getFont(context, R.font.jetbrains_mono));
+    binding.editor.setTypefaceText(ResourcesCompat.getFont(context, R.font.firacode_retina));
     binding.editor.setTypefaceLineNumber(ResourcesCompat.getFont(context, R.font.jetbrains_mono));
     setupTheme();
-    
+
     removeAllViews();
     addView(
         binding.getRoot(), new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
     CompletableFuture.runAsync(
         () -> {
-          try {
-            var content = FileUtils.readFileToString(file);
-            var editor = binding.editor;
-            editor.post(
-                () -> {
-                  editor.setText(content);
-                  setLanguage();
-                });
-          } catch (IOException ioe) {
-            ioe.printStackTrace();
-          }
+          var content = FileUtil.readFile(file.getAbsolutePath());
+          var editor = binding.editor;
+          editor.post(
+              () -> {
+                editor.setText(content);
+                setLanguage();
+              });
         });
     configureEditor();
     PreferencesUtils.getDefaultPrefs().registerOnSharedPreferenceChangeListener(this);
   }
-  
+
   private void configureEditor() {
     updateTextSize();
     updateDeleteEmptyLineFast();

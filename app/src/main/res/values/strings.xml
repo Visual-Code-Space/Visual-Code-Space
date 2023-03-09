@@ -8,7 +8,7 @@
     <string name="close_all">Close all</string>
     <string name="open_a_file">Swipe right for files!</string>
     <string name="refresh">Refresh</string>
-    <string name="empty">Empty :)</string>
+    <string name="empty">Empty</string>
 
     <!-- Menus Strings -->
     <string name="menu_save">Save</string>

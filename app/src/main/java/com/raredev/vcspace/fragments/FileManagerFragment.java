@@ -53,7 +53,7 @@ public class FileManagerFragment extends Fragment {
           @Override
           public void onFileClick(int position, View v) {
             if (position == 0) {
-              if (currentDir.getAbsolutePath().equals("/storage/emulated/0")) return;
+              if (currentDir.getAbsolutePath().equals(Environment.getExternalStorageDirectory().toString())) return;
               reloadFiles(currentDir.getParentFile());
               return;
             }

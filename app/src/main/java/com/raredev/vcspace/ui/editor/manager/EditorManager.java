@@ -54,9 +54,7 @@ public class EditorManager {
   public void openRecentOpenedFiles() {
     if (viewModel.getFiles().getValue().isEmpty()) {
       for (File file : indexer.getList(LAST_FILES_TAG)) {
-        if (!viewModel.contains(file) && file.exists()) {
-          openFile(file, false);
-        }
+        openFile(file, false);
       }
     }
   }

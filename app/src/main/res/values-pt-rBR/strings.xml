@@ -8,11 +8,10 @@
     <string name="close_all">Fechar tudo</string>
     <string name="open_a_file">Deslize à direita para arquivos!</string>
     <string name="refresh">Atualizar</string>
-    <string name="empty">Vazio :)</string>
+    <string name="empty">Vazio</string>
     
     <!-- Menus Strings -->
     <string name="menu_save">Salvar</string>
-    <string name="menu_saveall">Salvar tudo</string>
     <string name="menu_execute">Executar</string>
     <string name="menu_format">Formatar</string>
     <string name="menu_search">Pesquisar</string>
@@ -22,7 +21,7 @@
     <string name="menu_settings">Definições</string>
 
     <!-- Buttons And Titles -->
-    <string name="saved_files"> arquivos salvos</string>
+    <string name="saved_files">Arquivos salvos</string>
     <string name="existing_file">Já existe um arquivo com este nome!</string>
     <string name="newfilemanagertab">Nova aba de arquivos</string>
     <string name="delete">Deletar</string>
