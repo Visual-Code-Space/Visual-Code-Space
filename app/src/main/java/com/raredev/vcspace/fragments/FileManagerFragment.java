@@ -3,10 +3,10 @@ package com.raredev.vcspace.fragments;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,10 +17,9 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.PopupMenu;
-import androidx.core.app.ActivityCompat;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import com.blankj.utilcode.util.ToastUtils;
 import com.raredev.common.util.FileUtil;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.activity.MainActivity;
@@ -28,6 +27,7 @@ import com.raredev.vcspace.adapters.FilesAdapter;
 import com.raredev.vcspace.databinding.FragmentFileManagerBinding;
 import com.raredev.vcspace.util.ApkInstaller;
 import com.raredev.vcspace.util.FileManagerUtils;
+import com.raredev.vcspace.util.PreferencesUtils;
 import com.raredev.vcspace.util.ViewUtils;
 import java.io.File;
 import java.util.ArrayList;
@@ -36,20 +36,24 @@ import java.util.List;
 
 @SuppressWarnings("deprecation")
 public class FileManagerFragment extends Fragment {
+  private static final String KEY_RECENT_FOLDER = "recentFolderPath";
   private FragmentFileManagerBinding binding;
 
   private List<File> mFiles = new ArrayList<>();
   private FilesAdapter mAdapter;
 
-  private File currentDir = new File(Environment.getExternalStorageDirectory().toString());
+  private File currentDir = null;
+  private File rootDir = null;
 
-  ActivityResultLauncher<Intent> mStartForResult;
+  private ActivityResultLauncher<Intent> mStartForResult;
+  private SharedPreferences prefs;
 
   @Nullable
   @Override
   public View onCreateView(
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     binding = FragmentFileManagerBinding.inflate(inflater, container, false);
+    prefs = PreferencesUtils.getFileManagerPrefs();
     return binding.getRoot();
   }
 
@@ -70,22 +74,15 @@ public class FileManagerFragment extends Fragment {
                       Uri uri = intent.getData();
                       if (uri != null) {
                         try {
-                          currentDir = FileUtil.getFileFromUri(requireContext(), uri);
-                          reloadFiles(currentDir);
+                          DocumentFile pickedDir = DocumentFile.fromTreeUri(getContext(), uri);
+                          rootDir = FileUtil.getFileFromUri(requireContext(), pickedDir.getUri());
+                          prefs.edit().putString(KEY_RECENT_FOLDER, rootDir.toString()).apply();
+                          reloadFiles(rootDir);
                         } catch (Exception e) {
                           e.printStackTrace();
-                          ToastUtils.showLong(e.toString());
                         }
-                        binding.expandCollapse.setVisibility(View.GONE);
-                        binding.containerOpen.setVisibility(View.GONE);
-                        binding.fileManager.setVisibility(View.VISIBLE);
-                        binding.navigationSpace.setVisibility(View.VISIBLE);
-                      } else {
-                        binding.expandCollapse.setVisibility(View.VISIBLE);
-                        binding.containerOpen.setVisibility(View.VISIBLE);
-                        binding.fileManager.setVisibility(View.GONE);
-                        binding.navigationSpace.setVisibility(View.GONE);
                       }
+                      updateViewsVisibility();
                     }
                   }
                 });
@@ -95,9 +92,7 @@ public class FileManagerFragment extends Fragment {
           @Override
           public void onFileClick(int position, View v) {
             if (position == 0) {
-              if (currentDir
-                  .getAbsolutePath()
-                  .equals(Environment.getExternalStorageDirectory().toString())) return;
+              if (currentDir.getAbsolutePath().equals(rootDir.toString())) return;
               reloadFiles(currentDir.getParentFile());
               return;
             }
@@ -182,18 +177,21 @@ public class FileManagerFragment extends Fragment {
         v -> {
           mStartForResult.launch(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE));
         });
+    binding.openRecent.setOnClickListener(
+        v -> {
+          String recentFolderPath = prefs.getString(KEY_RECENT_FOLDER, "");
+          if (!recentFolderPath.isEmpty()) {
+            rootDir = new File(recentFolderPath);
+            reloadFiles(rootDir);
+          }
+          updateViewsVisibility();
+        });
   }
 
   @Override
   public void onDestroyView() {
     super.onDestroyView();
     binding = null;
-  }
-
-  @Override
-  public void onStart() {
-    super.onStart();
-    reloadFiles();
   }
 
   private void reloadFiles() {
@@ -210,7 +208,7 @@ public class FileManagerFragment extends Fragment {
         binding.emptyLayout.setVisibility(View.GONE);
       }
     } else {
-      takePermissions();
+      takeFilePermissions();
     }
   }
 
@@ -230,7 +228,21 @@ public class FileManagerFragment extends Fragment {
     mAdapter.refresh(mFiles);
   }
 
-  private void takePermissions() {
+  private void updateViewsVisibility() {
+    if (mFiles.isEmpty()) {
+      binding.expandCollapse.setVisibility(View.VISIBLE);
+      binding.containerOpen.setVisibility(View.VISIBLE);
+      binding.fileManager.setVisibility(View.GONE);
+      binding.navigationSpace.setVisibility(View.GONE);
+    } else {
+      binding.expandCollapse.setVisibility(View.GONE);
+      binding.containerOpen.setVisibility(View.GONE);
+      binding.fileManager.setVisibility(View.VISIBLE);
+      binding.navigationSpace.setVisibility(View.VISIBLE);
+    }
+  }
+
+  private void takeFilePermissions() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
       Intent intent = new Intent();
       intent.setAction(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
@@ -238,8 +250,7 @@ public class FileManagerFragment extends Fragment {
       intent.setData(uri);
       startActivity(intent);
     } else {
-      ActivityCompat.requestPermissions(
-          getActivity(),
+      requestPermissions(
           new String[] {
             Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.MANAGE_EXTERNAL_STORAGE
           },

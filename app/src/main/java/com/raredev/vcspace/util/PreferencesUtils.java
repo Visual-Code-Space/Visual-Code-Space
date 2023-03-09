@@ -1,12 +1,17 @@
 package com.raredev.vcspace.util;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Typeface;
 import android.preference.PreferenceManager;
 import com.raredev.vcspace.VCSpaceApplication;
 import com.raredev.vcspace.R;
 
 public class PreferencesUtils {
+
+  public static SharedPreferences getFileManagerPrefs() {
+    return VCSpaceApplication.appContext.getSharedPreferences("filemanager", Activity.MODE_PRIVATE);
+  }
 
   public static SharedPreferences getDefaultPrefs() {
     return PreferenceManager.getDefaultSharedPreferences(VCSpaceApplication.appContext);
@@ -40,7 +45,7 @@ public class PreferencesUtils {
       case "jetbrains":
         return R.font.jetbrains_mono;
       default:
-        return R.font.jetbrains_mono;
+        return R.font.firacode_regular;
     }
   }
 }

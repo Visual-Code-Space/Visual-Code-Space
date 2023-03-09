@@ -9,6 +9,8 @@
   <string name="open_a_file">Swipe right for files!</string>
   <string name="refresh">Refresh</string>
   <string name="empty">Empty</string>
+  <string name="yes">Yes</string>
+  <string name="no">No</string>
 
   <!-- Menus Strings -->
   <string name="menu_save">Save</string>
@@ -23,7 +25,6 @@
   <!-- Buttons And Titles -->
   <string name="saved_files">Saved files</string>
   <string name="existing_file">A file with this name already exists!</string>
-  <string name="newfilemanagertab">New files tab</string>
   <string name="delete">Delete</string>
   <string name="delete_message">Delete NAME?</string>
   <string name="create">Create</string>
@@ -40,7 +41,6 @@
   <string name="explorer">EXPLORER</string>
   <string name="search">Search</string>
   <string name="replace">Replace</string>
-  <string name="file_manager_title">File Manager</string>
   <string name="new_file_title">New file</string>
   <string name="new_folder_title">New folder</string>
   <string name="new_file_template">New File Template</string>

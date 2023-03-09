@@ -7,6 +7,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 import com.blankj.utilcode.util.ToastUtils;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.tabs.TabLayout;
 import com.raredev.common.Indexer;
 import com.raredev.vcspace.R;
@@ -16,7 +17,7 @@ import com.raredev.vcspace.ui.editor.EditorViewModel;
 import java.io.File;
 
 public class EditorManager {
-  private final String LAST_FILES_TAG = "lastOpenedFiles";
+  private final String LAST_FILES_KEY = "lastOpenedFiles";
 
   private DrawerLayout drawerLayout;
   private ViewFlipper container;
@@ -51,7 +52,8 @@ public class EditorManager {
   }
 
   public void openRecentOpenedFiles() {
-    for (File file : indexer.getList(LAST_FILES_TAG)) {
+    viewModel.clear();
+    for (File file : indexer.getList(LAST_FILES_KEY)) {
       openFile(file, false);
     }
   }
@@ -64,13 +66,12 @@ public class EditorManager {
   }
 
   public void openFile(File file, boolean setCurrent) {
-    if (!file.exists()) {
+    if (!file.isFile() && !file.exists()) {
       return;
     }
 
-    int openedFile = viewModel.indexOf(file);
-    if (openedFile != -1) {
-      if (setCurrent) setCurrentPosition(openedFile);
+    if (viewModel.contains(file)) {
+      if (setCurrent) setCurrentPosition(viewModel.indexOf(file));
       return;
     }
 
@@ -85,42 +86,44 @@ public class EditorManager {
   public void closeFile(int index) {
     if (index >= 0 && index < viewModel.getFiles().getValue().size()) {
       CodeEditorView editor = getEditorAtIndex(index);
-      if (editor.getFile().exists()) {
-        editor.save();
+      if (editor != null) {
+        editor.release();
       }
-      editor.release();
 
       viewModel.removeFile(index);
       tabLayout.removeTabAt(index);
       container.removeViewAt(index);
-
-      tabLayout.requestLayout();
     }
+    tabLayout.requestLayout();
   }
 
   public void closeOthers() {
-    saveAllFiles(false);
-
-    File file = viewModel.getCurrentFile();
-    for (int i = 0; i < viewModel.getFiles().getValue().size(); i++) {
-      CodeEditorView editor = getEditorAtIndex(i);
-      if (editor != null) {
-        if (file != viewModel.getFiles().getValue().get(i)) {
-          closeFile(i);
-        }
-      }
-    }
+    if (viewModel.getCurrentPosition() <= 0) return;
+    notifySaveFiles(
+        () -> {
+          File file = getEditorAtIndex(viewModel.getCurrentPosition()).getFile();
+          for (int i = 0; i < viewModel.getFiles().getValue().size(); i++) {
+            CodeEditorView editor = getEditorAtIndex(i);
+            if (editor != null) {
+              if (file != editor.getFile()) {
+                closeFile(i);
+              }
+            }
+          }
+        });
   }
 
   public void closeAllFiles() {
     if (!viewModel.getFiles().getValue().isEmpty()) {
-      saveAllFiles(false);
-      for (int i = 0; i < viewModel.getFiles().getValue().size(); i++) {
-        getEditorAtIndex(i).release();
-      }
-      container.removeAllViews();
-      tabLayout.removeAllTabs();
-      viewModel.clear();
+      notifySaveFiles(
+          () -> {
+            for (int i = 0; i < viewModel.getFiles().getValue().size(); i++) {
+              getEditorAtIndex(i).release();
+            }
+            container.removeAllViews();
+            tabLayout.removeAllTabs();
+            viewModel.clear();
+          });
     }
   }
 
@@ -143,7 +146,7 @@ public class EditorManager {
 
   public void saveOpenedFiles() {
     try {
-      indexer.put(LAST_FILES_TAG, viewModel.getFiles().getValue()).flush();
+      indexer.put(LAST_FILES_KEY, viewModel.getFiles().getValue()).flush();
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -172,5 +175,23 @@ public class EditorManager {
       tab.select();
     }
     viewModel.setCurrentPosition(index);
+  }
+
+  private void notifySaveFiles(Runnable runnable) {
+    new MaterialAlertDialogBuilder(context)
+        .setTitle("Save files")
+        .setMessage("Would you like to close and save the files?")
+        .setPositiveButton(
+            R.string.menu_save,
+            (dlg, i) -> {
+              saveAllFiles(true);
+              runnable.run();
+            })
+        .setNegativeButton(
+            R.string.no,
+            (dlg, i) -> {
+              runnable.run();
+            })
+        .show();
   }
 }
