@@ -74,7 +74,7 @@ public class FileManagerFragment extends Fragment {
                       Uri uri = intent.getData();
                       if (uri != null) {
                         try {
-                          DocumentFile pickedDir = DocumentFile.fromTreeUri(getContext(), uri);
+                          DocumentFile pickedDir = DocumentFile.fromTreeUri(requireContext(), uri);
                           rootDir = FileUtil.getFileFromUri(requireContext(), pickedDir.getUri());
                           prefs.edit().putString(KEY_RECENT_FOLDER, rootDir.toString()).apply();
                           reloadFiles(rootDir);
@@ -103,9 +103,9 @@ public class FileManagerFragment extends Fragment {
 
               } else {
                 if (FileManagerUtils.isValidTextFile(mFiles.get(position).getName())) {
-                  ((MainActivity) getActivity()).getEditorManager().openFile(mFiles.get(position));
+                  ((MainActivity) requireActivity()).getEditorManager().openFile(mFiles.get(position));
                 } else if (mFiles.get(position).getName().endsWith(".apk")) {
-                  ApkInstaller.installApplication(getContext(), mFiles.get(position));
+                  ApkInstaller.installApplication(requireContext(), mFiles.get(position));
                 }
               }
             }
@@ -121,19 +121,19 @@ public class FileManagerFragment extends Fragment {
             menu.setOnMenuItemClickListener(
                 (item) -> {
                   String title = (String) item.getTitle();
-                  if (title == getActivity().getResources().getString(R.string.menu_rename)) {
+                  if (title == requireActivity().getResources().getString(R.string.menu_rename)) {
                     FileManagerUtils.renameFile(
-                        getActivity(),
+                        requireActivity(),
                         mFiles.get(position),
                         (oldFile, newFile) -> {
                           reloadFiles();
                         });
                   } else {
                     FileManagerUtils.deleteFile(
-                        getActivity(),
+                        requireActivity(),
                         mFiles.get(position),
                         () -> {
-                          ((MainActivity) getActivity()).getEditorManager().onFileDeleted();
+                          ((MainActivity) requireActivity()).getEditorManager().onFileDeleted();
                           reloadFiles();
                         });
                   }
@@ -145,7 +145,7 @@ public class FileManagerFragment extends Fragment {
         });
 
     binding.navigationSpace.addItem(
-        getActivity(),
+        requireActivity(),
         getResources().getString(R.string.refresh),
         R.drawable.ic_refresh,
         (v) -> {
@@ -153,13 +153,13 @@ public class FileManagerFragment extends Fragment {
         });
 
     binding.navigationSpace.addItem(
-        getActivity(),
+        requireActivity(),
         getResources().getString(R.string.create),
         R.drawable.ic_add,
         (v) -> {
-          FileManagerUtils.createFile(getActivity(), currentDir, () -> reloadFiles());
+          FileManagerUtils.createFile(requireActivity(), currentDir, () -> reloadFiles());
         });
-    binding.rvFiles.setLayoutManager(new LinearLayoutManager(getContext()));
+    binding.rvFiles.setLayoutManager(new LinearLayoutManager(requireContext()));
     binding.rvFiles.setAdapter(mAdapter);
 
     ViewUtils.rotateChevron(ViewUtils.isExpanded(binding.containerOpen), binding.downButton);
@@ -199,7 +199,7 @@ public class FileManagerFragment extends Fragment {
   }
 
   private void reloadFiles(File dir) {
-    if (FileManagerUtils.isPermissionGaranted(getContext())) {
+    if (FileManagerUtils.isPermissionGaranted(requireContext())) {
       listArchives(dir);
 
       if (mFiles.size() <= 1) {
@@ -246,7 +246,7 @@ public class FileManagerFragment extends Fragment {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
       Intent intent = new Intent();
       intent.setAction(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-      Uri uri = Uri.fromParts("package", getActivity().getPackageName(), null);
+      Uri uri = Uri.fromParts("package", requireActivity().getPackageName(), null);
       intent.setData(uri);
       startActivity(intent);
     } else {
