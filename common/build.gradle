@@ -5,6 +5,7 @@ plugins {
 android {
     namespace 'com.raredev.common'
     compileSdk 33
+    buildToolsVersion "33.0.0"
 
     defaultConfig {
         minSdk 26
