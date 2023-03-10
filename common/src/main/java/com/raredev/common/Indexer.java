@@ -1,13 +1,11 @@
 package com.raredev.common;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import com.raredev.common.util.FileUtil;
 import java.util.Arrays;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 

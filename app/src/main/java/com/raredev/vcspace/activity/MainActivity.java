@@ -152,7 +152,7 @@ public class MainActivity extends VCSpaceActivity {
   @Override
   protected void onStart() {
     super.onStart();
-    TemplatesParser.loadTemplatesFromJson(this);
+    TemplatesParser.loadTemplates(this);
   }
 
   public EditorManager getEditorManager() {

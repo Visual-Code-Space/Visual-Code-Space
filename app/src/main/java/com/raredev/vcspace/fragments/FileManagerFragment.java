@@ -17,6 +17,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.core.app.ActivityCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -103,7 +104,9 @@ public class FileManagerFragment extends Fragment {
 
               } else {
                 if (FileManagerUtils.isValidTextFile(mFiles.get(position).getName())) {
-                  ((MainActivity) requireActivity()).getEditorManager().openFile(mFiles.get(position));
+                  ((MainActivity) requireActivity())
+                      .getEditorManager()
+                      .openFile(mFiles.get(position));
                 } else if (mFiles.get(position).getName().endsWith(".apk")) {
                   ApkInstaller.installApplication(requireContext(), mFiles.get(position));
                 }
@@ -250,7 +253,8 @@ public class FileManagerFragment extends Fragment {
       intent.setData(uri);
       startActivity(intent);
     } else {
-      requestPermissions(
+      ActivityCompat.requestPermissions(
+          requireActivity(),
           new String[] {
             Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.MANAGE_EXTERNAL_STORAGE
           },

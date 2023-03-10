@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import androidx.core.content.res.ResourcesCompat;
 import com.raredev.common.util.FileUtil;
-import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.LayoutCodeEditorBinding;
 import com.raredev.vcspace.util.PreferencesUtils;
 import io.github.rosemoe.sora.lang.EmptyLanguage;
@@ -89,7 +88,14 @@ public class CodeEditorView extends LinearLayout
   }
 
   public void save() {
-    FileUtil.writeFile(file.getAbsolutePath(), binding.editor.getText().toString());
+    if (file != null && file.exists()) {
+      String oldContent = FileUtil.readFile(file.getAbsolutePath());
+      String newContent = binding.editor.getText().toString();
+
+      if (oldContent == newContent) return;
+
+      FileUtil.writeFile(file.getAbsolutePath(), binding.editor.getText().toString());
+    }
   }
 
   public void undo() {

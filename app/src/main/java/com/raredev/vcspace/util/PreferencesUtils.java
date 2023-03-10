@@ -38,8 +38,8 @@ public class PreferencesUtils {
     return getDefaultPrefs().getBoolean("deletefast", false);
   }
 
-  private static int getFont(String selectedTheme) {
-    switch (selectedTheme) {
+  private static int getFont(String selectedFont) {
+    switch (selectedFont) {
       case "firacode":
         return R.font.firacode_regular;
       case "jetbrains":

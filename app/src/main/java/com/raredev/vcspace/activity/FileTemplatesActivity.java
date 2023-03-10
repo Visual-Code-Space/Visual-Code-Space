@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.raredev.common.Indexer;
 import com.raredev.common.util.FileUtil;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.adapters.FileTemplateAdapter;

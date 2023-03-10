@@ -15,12 +15,12 @@ public class TemplatesParser {
 
   public static List<FileTemplateModel> getTemplates() {
     if (templates.isEmpty()) {
-      loadTemplatesFromJson(VCSpaceApplication.appContext);
+      loadTemplates(VCSpaceApplication.appContext);
     }
     return templates;
   }
 
-  public static void loadTemplatesFromJson(Context context) {
+  public static void loadTemplates(Context context) {
     try {
       String templatesFile = context.getExternalFilesDir("template") + "/templates.json";
       if (!new File(templatesFile).exists()) {

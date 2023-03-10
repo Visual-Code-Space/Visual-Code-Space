@@ -1,11 +1,7 @@
 package com.raredev.common.util;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -13,7 +9,6 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
-import android.text.TextUtils;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -21,17 +16,14 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URLDecoder;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 
 public class FileUtil {
-
-  public static String getExternalStorageDir() {
-    return Environment.getExternalStorageDirectory().getAbsolutePath();
-  }
 
   public static boolean rename(String filePath, String name) {
     File file = new File(filePath);
@@ -50,47 +42,43 @@ public class FileUtil {
     return false;
   }
 
-  public static boolean writeFile(String path, String content) {
-    File file = new File(path);
-    if (file == null || content == null) return false;
-    BufferedWriter bw = null;
-    try {
-      bw = new BufferedWriter(new FileWriter(file, false));
-      bw.write(content);
+  public static boolean writeFile(String path, String text) {
+    File file =
+        new File(
+            path.substring(0, path.lastIndexOf('/')), path.substring(path.lastIndexOf('/') + 1));
+
+    try (Writer writer =
+        new BufferedWriter(
+            new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))) {
+      writer.write(text);
       return true;
     } catch (IOException e) {
       e.printStackTrace();
       return false;
-    } finally {
-      try {
-        if (bw != null) {
-          bw.close();
-        }
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
     }
   }
 
-  public static boolean delete(String path) {
-    File file = new File(path);
-    if (!file.exists()) return false;
+  public static boolean delete(String str) {
+    File file = new File(str);
 
+    if (!file.exists()) return false;
     if (file.isFile()) {
       return file.delete();
     }
-    File[] fileArr = file.listFiles();
-    if (fileArr != null) {
-      for (File subFile : fileArr) {
-        if (subFile.isDirectory()) {
-          delete(subFile.getAbsolutePath());
-        }
 
-        if (subFile.isFile()) {
-          subFile.delete();
+    File[] listFiles = file.listFiles();
+
+    if (listFiles != null) {
+      for (File file2 : listFiles) {
+        if (file2.isDirectory()) {
+          delete(file2.getAbsolutePath());
+        }
+        if (file2.isFile()) {
+          file2.delete();
         }
       }
     }
+
     return file.delete();
   }
 

@@ -7,7 +7,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 import com.blankj.utilcode.util.ToastUtils;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.tabs.TabLayout;
 import com.raredev.common.Indexer;
 import com.raredev.vcspace.R;
@@ -17,7 +16,7 @@ import com.raredev.vcspace.ui.editor.EditorViewModel;
 import java.io.File;
 
 public class EditorManager {
-  private final String LAST_FILES_KEY = "lastOpenedFiles";
+  private static final String LAST_FILES_KEY = "lastOpenedFiles";
 
   private DrawerLayout drawerLayout;
   private ViewFlipper container;
@@ -36,7 +35,7 @@ public class EditorManager {
     this.tabLayout = binding.tabLayout;
 
     viewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(EditorViewModel.class);
-    indexer = new Indexer(context.getExternalFilesDir("editor") + "/oppenedFiles.json");
+    indexer = new Indexer(context.getExternalFilesDir("editor") + "/openedFiles.json");
   }
 
   public EditorViewModel getViewModel() {
@@ -99,31 +98,26 @@ public class EditorManager {
 
   public void closeOthers() {
     if (viewModel.getCurrentPosition() <= 0) return;
-    notifySaveFiles(
-        () -> {
-          File file = getEditorAtIndex(viewModel.getCurrentPosition()).getFile();
-          for (int i = 0; i < viewModel.getFiles().getValue().size(); i++) {
-            CodeEditorView editor = getEditorAtIndex(i);
-            if (editor != null) {
-              if (file != editor.getFile()) {
-                closeFile(i);
-              }
-            }
-          }
-        });
+    File file = getEditorAtIndex(viewModel.getCurrentPosition()).getFile();
+    for (int i = 0; i < viewModel.getFiles().getValue().size(); i++) {
+      CodeEditorView editor = getEditorAtIndex(i);
+      if (editor != null) {
+        if (file != editor.getFile()) {
+          closeFile(i);
+        }
+      }
+    }
   }
 
   public void closeAllFiles() {
     if (!viewModel.getFiles().getValue().isEmpty()) {
-      notifySaveFiles(
-          () -> {
-            for (int i = 0; i < viewModel.getFiles().getValue().size(); i++) {
-              getEditorAtIndex(i).release();
-            }
-            container.removeAllViews();
-            tabLayout.removeAllTabs();
-            viewModel.clear();
-          });
+
+      for (int i = 0; i < viewModel.getFiles().getValue().size(); i++) {
+        getEditorAtIndex(i).release();
+      }
+      container.removeAllViews();
+      tabLayout.removeAllTabs();
+      viewModel.clear();
     }
   }
 
@@ -177,21 +171,7 @@ public class EditorManager {
     viewModel.setCurrentPosition(index);
   }
 
-  private void notifySaveFiles(Runnable runnable) {
-    new MaterialAlertDialogBuilder(context)
-        .setTitle("Save files")
-        .setMessage("Would you like to close and save the files?")
-        .setPositiveButton(
-            R.string.menu_save,
-            (dlg, i) -> {
-              saveAllFiles(true);
-              runnable.run();
-            })
-        .setNegativeButton(
-            R.string.no,
-            (dlg, i) -> {
-              runnable.run();
-            })
-        .show();
+  interface AlertListener {
+    void confirm(boolean arg01);
   }
 }

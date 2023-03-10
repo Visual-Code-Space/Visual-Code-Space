@@ -2,6 +2,8 @@ package com.raredev.vcspace.ui.editor.action;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.fasterxml.jackson.core.util.DefaultIndenter;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -43,7 +45,11 @@ public class FormatterAction {
   private String formatHtml() {
     String html = editor.getEditor().getText().toString();
     Document doc = Jsoup.parse(html);
-    doc.outputSettings(new Document.OutputSettings().prettyPrint(true));
+
+    var outputSettings = new Document.OutputSettings();
+    outputSettings.indentAmount(4);
+
+    doc.outputSettings(outputSettings.prettyPrint(true));
     if (doc.toString().contains("<!doctype html>")) {
       return doc.html().replace("<!doctype html>", "<!DOCTYPE html>");
     }
@@ -53,8 +59,15 @@ public class FormatterAction {
   private String formatJson() {
     try {
       ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+
+      DefaultPrettyPrinter prettyPrinter = new DefaultPrettyPrinter();
+      
+      prettyPrinter.indentArraysWith(new DefaultPrettyPrinter.FixedSpaceIndenter());
+      prettyPrinter.indentObjectsWith(new DefaultIndenter("    ", "\n"));
+
       Object jsonObject = mapper.readValue(editor.getEditor().getText().toString(), Object.class);
-      String prettyJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject);
+
+      String prettyJson = mapper.writer(prettyPrinter).writeValueAsString(jsonObject);
       return prettyJson;
     } catch (IOException ioe) {
       return editor.getEditor().getText().toString();
