@@ -1,15 +1,45 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
+  <style name="AppTheme" parent="Theme.Material3.Dark.NoActionBar">
+    <item name="colorPrimary">@color/dark_primary</item>
+    <item name="colorOnPrimary">@color/dark_onPrimary</item>
+    <item name="colorPrimaryContainer">@color/dark_primaryContainer</item>
+    <item name="colorOnPrimaryContainer">@color/dark_onPrimaryContainer</item>
+    <item name="colorSecondary">@color/dark_secondary</item>
+    <item name="colorOnSecondary">@color/dark_onSecondary</item>
+    <item name="colorSecondaryContainer">@color/dark_secondaryContainer</item>
+    <item name="colorOnSecondaryContainer">@color/dark_onSecondaryContainer</item>
+    <item name="colorTertiary">@color/dark_tertiary</item>
+    <item name="colorOnTertiary">@color/dark_onTertiary</item>
+    <item name="colorTertiaryContainer">@color/dark_tertiaryContainer</item>
+    <item name="colorOnTertiaryContainer">@color/dark_onTertiaryContainer</item>
+    <item name="colorError">@color/dark_error</item>
+    <item name="colorErrorContainer">@color/dark_errorContainer</item>
+    <item name="colorOnError">@color/dark_onError</item>
+    <item name="colorOnErrorContainer">@color/dark_onErrorContainer</item>
+    <item name="android:colorBackground">@color/dark_background</item>
+    <item name="colorOnBackground">@color/dark_onBackground</item>
+    <item name="colorSurface">@color/dark_surface</item>
+    <item name="colorOnSurface">@color/dark_onSurface</item>
+    <item name="colorSurfaceVariant">@color/dark_surfaceVariant</item>
+    <item name="colorOnSurfaceVariant">@color/dark_onSurfaceVariant</item>
+    <item name="colorOutline">@color/dark_outline</item>
+    <item name="colorOnSurfaceInverse">@color/dark_inverseOnSurface</item>
+    <item name="colorSurfaceInverse">@color/dark_inverseSurface</item>
+    <item name="colorPrimaryInverse">@color/dark_inversePrimary</item>
 
-  <!-- Base application theme. -->
-  <style name="Theme.MyApplication" parent="Theme.Material3.Dark.NoActionBar">
-    <item name="windowActionBar">false</item>
-    <item name="windowNoTitle">true</item>
+    <item name="android:windowLightStatusBar">false</item>
+    <item name="android:fontFamily">@font/josefin_sans</item>
+    <item name="switchPreferenceCompatStyle">@style/AppTheme.SwitchPreference</item>
+    <item name="materialAlertDialogTheme">@style/ThemeOverlay.Material3.MaterialAlertDialog</item>
+    <item name="alertDialogTheme">@style/ThemeOverlay.Material3.MaterialAlertDialog</item>
+    <item name="dialogCornerRadius">28dp</item>
+  </style>
 
-    <item name="android:navigationBarColor">@android:color/transparent</item>
-    <item name="android:statusBarColor">@android:color/transparent</item>
-
+  <style name="TabLayout.TextStyle" parent="@android:style/TextAppearance.Widget.TabWidget">
     <item name="android:fontFamily">@font/josefin_sans</item>
   </style>
 
+  <style name="AppTheme.SwitchPreference" parent="Preference.SwitchPreference.Material">
+    <item name="android:widgetLayout">@layout/layout_material_switch_style</item>
+  </style>
 </resources>
