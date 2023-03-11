@@ -15,8 +15,10 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.raredev.common.task.TaskExecutor;
 import com.raredev.common.util.DialogUtils;
 import com.raredev.common.util.FileUtil;
+import com.raredev.common.util.Utils;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.adapters.model.FileTemplateModel;
+import com.raredev.vcspace.databinding.DialogInputBinding;
 import com.raredev.vcspace.tools.TemplatesParser;
 import java.io.File;
 import java.util.Comparator;
@@ -49,34 +51,48 @@ public class FileManagerUtils {
   }
 
   public static void createFile(Activity act, File file, Concluded concluded) {
+    createNew(act, file, concluded, false);
+  }
+
+  public static void createFolder(Activity act, File file, Concluded concluded) {
+    createNew(act, file, concluded, true);
+  }
+
+  @SuppressWarnings("deprecation")
+  private static void createNew(Activity act, File file, Concluded concluded, boolean isFolder) {
     LayoutInflater inflater = act.getLayoutInflater();
-    View v = inflater.inflate(R.layout.dialog_input, null);
-    EditText et_filename = v.findViewById(R.id.et_input);
+    DialogInputBinding binding = DialogInputBinding.inflate(inflater);
+    EditText et_filename = binding.etInput;
+    binding.tvInputLayout.setHint(
+        isFolder
+            ? act.getString(R.string.folder_name_hint)
+            : act.getString(R.string.file_name_hint));
+
+    var padding = Utils.pxToDp(act, 10);
 
     new MaterialAlertDialogBuilder(act)
-        .setTitle(R.string.new_file_title)
+        .setTitle(isFolder ? R.string.new_folder_title : R.string.new_file_title)
         .setPositiveButton(
-            R.string.file,
+            R.string.create,
             (dlg, i) -> {
-              File newFile = new File(file, "/" + et_filename.getText().toString());
-              if (!newFile.exists()) {
-                if (createFileWithTemplate(newFile)) {
-                  concluded.concluded();
+              if (isFolder) {
+                File newFolder = new File(file, "/" + et_filename.getText().toString());
+                if (!newFolder.exists()) {
+                  if (newFolder.mkdirs()) {
+                    concluded.concluded();
+                  }
+                }
+              } else {
+                File newFile = new File(file, "/" + et_filename.getText().toString());
+                if (!newFile.exists()) {
+                  if (createFileWithTemplate(newFile)) {
+                    concluded.concluded();
+                  }
                 }
               }
             })
-        .setNegativeButton(
-            R.string.folder,
-            (dlg, i) -> {
-              File newFolder = new File(file, "/" + et_filename.getText().toString());
-              if (!newFolder.exists()) {
-                if (newFolder.mkdirs()) {
-                  concluded.concluded();
-                }
-              }
-            })
-        .setNeutralButton(R.string.cancel, null)
-        .setView(v)
+        .setNegativeButton(R.string.cancel, null)
+        .setView(binding.getRoot(), padding, padding, padding, padding)
         .show();
   }
 

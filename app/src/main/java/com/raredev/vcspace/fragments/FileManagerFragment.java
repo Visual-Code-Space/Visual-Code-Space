@@ -54,12 +54,42 @@ public class FileManagerFragment extends Fragment {
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     mAdapter = new FilesAdapter(mFiles);
+<<<<<<< HEAD
+=======
+    mStartForResult =
+        requireActivity()
+            .registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                  @Override
+                  public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                      Intent intent = result.getData();
+                      // Handle the Intent
+                      Uri uri = intent.getData();
+                      if (uri != null) {
+                        try {
+                          DocumentFile pickedDir = DocumentFile.fromTreeUri(requireContext(), uri);
+                          rootDir = FileUtil.getFileFromUri(requireContext(), pickedDir.getUri());
+                          prefs.edit().putString(KEY_RECENT_FOLDER, rootDir.toString()).apply();
+                          binding.folderName.setText(
+                              FileUtil.getFileName(requireContext(), pickedDir.getUri()));
+                          reloadFiles(rootDir);
+                        } catch (Exception e) {
+                          e.printStackTrace();
+                        }
+                        updateViewsVisibility(Uri.fromFile(rootDir));
+                      }
+                    }
+                  }
+                });
+>>>>>>> 508a73274371f63c4de859aa22e25cb1b5aaab36
 
     mAdapter.setFileListener(
         new FilesAdapter.FileListener() {
           @Override
           public void onFileClick(int position, View v) {
-            if (position == 0) {
+            if (mFiles.get(position).getName().equals("..")) {
               if (currentDir.getAbsolutePath().equals(rootDir.toString())) return;
               reloadFiles(currentDir.getParentFile());
               return;
@@ -113,6 +143,7 @@ public class FileManagerFragment extends Fragment {
             return true;
           }
         });
+<<<<<<< HEAD
 
     binding.navigationSpace.addItem(
         requireActivity(),
@@ -150,20 +181,21 @@ public class FileManagerFragment extends Fragment {
                 }
               });
         });
+=======
+>>>>>>> 508a73274371f63c4de859aa22e25cb1b5aaab36
     binding.rvFiles.setLayoutManager(new LinearLayoutManager(requireContext()));
     binding.rvFiles.setAdapter(mAdapter);
 
     ViewUtils.rotateChevron(ViewUtils.isExpanded(binding.containerOpen), binding.downButton);
     binding.expandCollapse.setOnClickListener(
         v -> {
-          if (ViewUtils.isExpanded(binding.containerOpen)) {
-            ViewUtils.collapse(binding.containerOpen);
-            ViewUtils.rotateChevron(false, binding.downButton);
-          } else {
-            ViewUtils.expand(binding.containerOpen);
-            ViewUtils.rotateChevron(true, binding.downButton);
-          }
+          expandCollapseView();
         });
+    binding.downButton.setOnClickListener(
+        v -> {
+          expandCollapseView();
+        });
+
     binding.openFolder.setOnClickListener(
         v -> {
           Fragment fragment = getParentFragment();
@@ -178,9 +210,23 @@ public class FileManagerFragment extends Fragment {
               PreferencesUtils.getFileManagerPrefs().getString(ToolsFragment.KEY_RECENT_FOLDER, "");
           if (!recentFolderPath.isEmpty()) {
             rootDir = new File(recentFolderPath);
+            binding.folderName.setText(
+                FileUtil.getFileName(requireContext(), Uri.fromFile(rootDir)));
             reloadFiles(rootDir);
           }
-          updateViewsVisibility();
+          updateViewsVisibility(Uri.fromFile(rootDir));
+        });
+    binding.refresh.setOnClickListener(
+        v -> {
+          reloadFiles(currentDir);
+        });
+    binding.newFolder.setOnClickListener(
+        v -> {
+          FileManagerUtils.createFolder(requireActivity(), currentDir, () -> reloadFiles());
+        });
+    binding.newFile.setOnClickListener(
+        v -> {
+          FileManagerUtils.createFile(requireActivity(), currentDir, () -> reloadFiles());
         });
   }
 
@@ -218,7 +264,12 @@ public class FileManagerFragment extends Fragment {
   public void listArchives(File dir) {
     currentDir = dir;
     List<File> filesList = new ArrayList<>();
-    filesList.add(new File(".."));
+    if (!binding
+        .folderName
+        .getText()
+        .equals(FileUtil.getFileName(requireContext(), Uri.fromFile(currentDir)))) {
+      filesList.add(new File(".."));
+    }
 
     File[] listFiles = dir.listFiles();
     if (listFiles != null) {
@@ -231,17 +282,20 @@ public class FileManagerFragment extends Fragment {
     mAdapter.refresh(mFiles);
   }
 
-  private void updateViewsVisibility() {
+  private void updateViewsVisibility(Uri uri) {
     if (mFiles.isEmpty()) {
-      binding.expandCollapse.setVisibility(View.VISIBLE);
       binding.containerOpen.setVisibility(View.VISIBLE);
       binding.fileManager.setVisibility(View.GONE);
-      binding.navigationSpace.setVisibility(View.GONE);
+      binding.refresh.setVisibility(View.INVISIBLE);
+      binding.newFile.setVisibility(View.INVISIBLE);
+      binding.newFolder.setVisibility(View.INVISIBLE);
     } else {
-      binding.expandCollapse.setVisibility(View.GONE);
+      binding.folderName.setText(FileUtil.getFileName(requireContext(), uri));
       binding.containerOpen.setVisibility(View.GONE);
       binding.fileManager.setVisibility(View.VISIBLE);
-      binding.navigationSpace.setVisibility(View.VISIBLE);
+      binding.refresh.setVisibility(View.VISIBLE);
+      binding.newFile.setVisibility(View.VISIBLE);
+      binding.newFolder.setVisibility(View.VISIBLE);
     }
   }
 
@@ -259,6 +313,32 @@ public class FileManagerFragment extends Fragment {
             Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.MANAGE_EXTERNAL_STORAGE
           },
           1);
+    }
+  }
+
+  private void expandCollapseView() {
+    if (mFiles.isEmpty()) {
+      if (ViewUtils.isExpanded(binding.containerOpen)) {
+        ViewUtils.collapse(binding.containerOpen);
+        ViewUtils.rotateChevron(false, binding.downButton);
+      } else {
+        ViewUtils.expand(binding.containerOpen);
+        ViewUtils.rotateChevron(true, binding.downButton);
+      }
+    } else {
+      if (ViewUtils.isExpanded(binding.fileManager)) {
+        ViewUtils.collapse(binding.fileManager);
+        binding.refresh.setVisibility(View.INVISIBLE);
+        binding.newFile.setVisibility(View.INVISIBLE);
+        binding.newFolder.setVisibility(View.INVISIBLE);
+        ViewUtils.rotateChevron(false, binding.downButton);
+      } else {
+        ViewUtils.expand(binding.fileManager);
+        binding.refresh.setVisibility(View.VISIBLE);
+        binding.newFile.setVisibility(View.VISIBLE);
+        binding.newFolder.setVisibility(View.VISIBLE);
+        ViewUtils.rotateChevron(true, binding.downButton);
+      }
     }
   }
 }

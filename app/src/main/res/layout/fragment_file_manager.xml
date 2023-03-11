@@ -27,28 +27,69 @@
     android:layout_width="match_parent"
     android:alpha="0.5" />
 
-  <LinearLayout
+  <RelativeLayout
     android:id="@+id/expand_collapse"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
     android:padding="8dp"
-    android:gravity="center_vertical">
+    android:background="@drawable/ripple_effect">
 
     <ImageView
-      android:id="@+id/down_button"
       android:layout_width="20dp"
       android:layout_height="20dp"
-      android:src="@drawable/chevron_down" />
+      android:src="@drawable/chevron_down"
+      android:id="@+id/down_button"
+      android:layout_centerVertical="true"
+      android:background="@drawable/ripple_effect" />
 
     <TextView
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:text="@string/no_folder_opened"
-      android:textSize="14sp"
-      android:paddingLeft="10dp" />
+      android:layout_toRightOf="@id/down_button"
+      android:layout_centerVertical="true"
+      android:layout_margin="5dp"
+      android:padding="2dp"
+      android:id="@+id/folder_name"
+      android:textSize="14sp" />
 
-  </LinearLayout>
+    <ImageView
+      android:layout_width="22dp"
+      android:layout_height="22dp"
+      android:src="@drawable/ic_refresh"
+      android:layout_alignParentRight="true"
+      android:id="@+id/refresh"
+      android:layout_centerVertical="true"
+      android:layout_margin="3dp"
+      android:background="@drawable/ripple_effect"
+      android:padding="4dp"
+      android:visibility="invisible" />
+
+    <ImageView
+      android:layout_width="22dp"
+      android:layout_height="22dp"
+      android:src="@drawable/folder_plus_outline"
+      android:layout_toLeftOf="@id/refresh"
+      android:id="@+id/new_folder"
+      android:layout_centerVertical="true"
+      android:layout_margin="3dp"
+      android:background="@drawable/ripple_effect"
+      android:padding="4dp"
+      android:visibility="invisible" />
+
+    <ImageView
+      android:layout_width="22dp"
+      android:layout_height="22dp"
+      android:src="@drawable/file_plus_outline"
+      android:layout_toLeftOf="@id/new_folder"
+      android:id="@+id/new_file"
+      android:layout_centerVertical="true"
+      android:layout_margin="3dp"
+      android:background="@drawable/ripple_effect"
+      android:padding="4dp"
+      android:visibility="invisible" />
+
+  </RelativeLayout>
 
   <LinearLayout
     android:id="@+id/container_open"
@@ -79,12 +120,11 @@
 
   </LinearLayout>
 
-  <RelativeLayout
+  <LinearLayout
     android:id="@+id/file_manager"
-    android:layout_height="fill_parent"
-    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
     android:orientation="vertical"
-    android:layout_weight="1.0"
     android:visibility="gone">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -108,17 +148,11 @@
 
     </RelativeLayout>
 
-  </RelativeLayout>
+  </LinearLayout>
 
   <com.google.android.material.divider.MaterialDivider
     android:layout_height="1px"
     android:layout_width="match_parent"
     android:alpha="0.5" />
-
-  <com.raredev.vcspace.ui.widget.NavigationSpace
-    android:layout_height="45dp"
-    android:layout_width="match_parent"
-    android:id="@+id/navigation_space"
-    android:visibility="gone" />
 
 </LinearLayout>
