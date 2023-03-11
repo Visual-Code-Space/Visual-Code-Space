@@ -148,22 +148,6 @@ public class FileManagerFragment extends Fragment {
             return true;
           }
         });
-
-    binding.navigationSpace.addItem(
-        requireActivity(),
-        getResources().getString(R.string.refresh),
-        R.drawable.ic_refresh,
-        (v) -> {
-          reloadFiles(currentDir);
-        });
-
-    binding.navigationSpace.addItem(
-        requireActivity(),
-        getResources().getString(R.string.create),
-        R.drawable.ic_add,
-        (v) -> {
-          FileManagerUtils.createFile(requireActivity(), currentDir, () -> reloadFiles());
-        });
     binding.rvFiles.setLayoutManager(new LinearLayoutManager(requireContext()));
     binding.rvFiles.setAdapter(mAdapter);
 
@@ -186,6 +170,8 @@ public class FileManagerFragment extends Fragment {
           String recentFolderPath = prefs.getString(KEY_RECENT_FOLDER, "");
           if (!recentFolderPath.isEmpty()) {
             rootDir = new File(recentFolderPath);
+            binding.folderName.setText(
+                FileUtil.getFileName(requireContext(), Uri.fromFile(rootDir)));
             reloadFiles(rootDir);
           }
           updateViewsVisibility(Uri.fromFile(rootDir));
@@ -295,15 +281,15 @@ public class FileManagerFragment extends Fragment {
     } else {
       if (ViewUtils.isExpanded(binding.fileManager)) {
         ViewUtils.collapse(binding.fileManager);
-        // ViewUtils.collapse(binding.refresh);
-        // ViewUtils.collapse(binding.newFile);
-        // ViewUtils.collapse(binding.newFolder);
+        binding.refresh.setVisibility(View.INVISIBLE);
+        binding.newFile.setVisibility(View.INVISIBLE);
+        binding.newFolder.setVisibility(View.INVISIBLE);
         ViewUtils.rotateChevron(false, binding.downButton);
       } else {
         ViewUtils.expand(binding.fileManager);
-        // ViewUtils.expand(binding.refresh);
-        // ViewUtils.expand(binding.newFile);
-        // ViewUtils.expand(binding.newFolder);
+        binding.refresh.setVisibility(View.VISIBLE);
+        binding.newFile.setVisibility(View.VISIBLE);
+        binding.newFolder.setVisibility(View.VISIBLE);
         ViewUtils.rotateChevron(true, binding.downButton);
       }
     }

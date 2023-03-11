@@ -155,10 +155,4 @@
     android:layout_width="match_parent"
     android:alpha="0.5" />
 
-  <com.raredev.vcspace.ui.widget.NavigationSpace
-    android:layout_height="45dp"
-    android:layout_width="match_parent"
-    android:id="@+id/navigation_space"
-    android:visibility="gone" />
-
 </LinearLayout>
