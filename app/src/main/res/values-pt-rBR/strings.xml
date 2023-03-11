@@ -33,6 +33,8 @@
   <string name="cancel">Cancelar</string>
   <string name="file">Arquivo</string>
   <string name="folder">Pasta</string>
+  <string name="open_folder">Abrir uma pasta</string>
+  <string name="open_recent">Abrir recente</string>
   <string name="file_name_hint">Nome do arquivo:</string>
   <string name="folder_name_hint">Nome da pasta:</string>
   <string name="newlyopenedfile">Arquivos recém-abertos</string>

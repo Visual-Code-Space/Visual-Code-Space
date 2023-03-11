@@ -7,8 +7,11 @@ import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import com.raredev.vcspace.fragments.FileManagerFragment;
 import com.raredev.vcspace.fragments.GitToolsFragment;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ToolsPagerAdapter extends FragmentStateAdapter {
+  private List<Fragment> fragmentList = new ArrayList<>();
 
   public ToolsPagerAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
     super(fragmentManager, lifecycle);
@@ -16,17 +19,15 @@ public class ToolsPagerAdapter extends FragmentStateAdapter {
 
   @Override
   public int getItemCount() {
-    return 2;
+    return fragmentList.size();
   }
 
   @Override
   public Fragment createFragment(int position) {
-    switch (position) {
-      case 0:
-        return new FileManagerFragment();
-      case 1:
-        return new GitToolsFragment();
-    }
-    return null;
+    return fragmentList.get(position);
+  }
+
+  public void addFragment(Fragment fragment) {
+    fragmentList.add(fragment);
   }
 }

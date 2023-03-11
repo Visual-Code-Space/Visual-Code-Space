@@ -5,8 +5,6 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.raredev.vcspace.ui.editor.CodeEditorView;
-import io.github.rosemoe.sora.text.Cursor;
-import io.github.rosemoe.sora.widget.CodeEditor;
 import java.io.IOException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

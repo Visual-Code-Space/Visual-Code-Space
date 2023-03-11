@@ -46,7 +46,4 @@
   <item
     android:id="@+id/menu_settings"
     android:title="@string/menu_settings" />
-  <item
-    android:id="@+id/menu_templates"
-    android:title="Code Templates" />
 </menu>

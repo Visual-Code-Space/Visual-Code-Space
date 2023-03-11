@@ -1,28 +1,18 @@
 package com.raredev.vcspace.fragments;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.PopupMenu;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import com.raredev.common.util.DialogUtils;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.activity.MainActivity;
 import com.raredev.vcspace.adapters.FilesAdapter;
 import com.raredev.vcspace.databinding.FragmentFileManagerBinding;
-import com.raredev.vcspace.fragments.ToolsFragment;
-import com.raredev.vcspace.git.CloneRepository;
 import com.raredev.vcspace.util.ApkInstaller;
 import com.raredev.vcspace.util.FileManagerUtils;
 import com.raredev.vcspace.util.PreferencesUtils;
@@ -40,13 +30,28 @@ public class FileManagerFragment extends Fragment {
   private FilesAdapter mAdapter;
 
   private File currentDir = null;
+
+  public File getCurrentDir() {
+    return currentDir;
+  }
+
   private File rootDir = null;
+
+  public void setRootDir(File dir) {
+    rootDir = dir;
+    reloadFiles(dir);
+  }
+
+  public File getRootDir() {
+    return rootDir;
+  }
 
   @Nullable
   @Override
   public View onCreateView(
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     binding = FragmentFileManagerBinding.inflate(inflater, container, false);
+    ViewUtils.rotateChevron(ViewUtils.isExpanded(binding.containerOpen), binding.downButton);
     return binding.getRoot();
   }
 
@@ -54,43 +59,12 @@ public class FileManagerFragment extends Fragment {
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     mAdapter = new FilesAdapter(mFiles);
-<<<<<<< HEAD
-=======
-    mStartForResult =
-        requireActivity()
-            .registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
-                  @Override
-                  public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                      Intent intent = result.getData();
-                      // Handle the Intent
-                      Uri uri = intent.getData();
-                      if (uri != null) {
-                        try {
-                          DocumentFile pickedDir = DocumentFile.fromTreeUri(requireContext(), uri);
-                          rootDir = FileUtil.getFileFromUri(requireContext(), pickedDir.getUri());
-                          prefs.edit().putString(KEY_RECENT_FOLDER, rootDir.toString()).apply();
-                          binding.folderName.setText(
-                              FileUtil.getFileName(requireContext(), pickedDir.getUri()));
-                          reloadFiles(rootDir);
-                        } catch (Exception e) {
-                          e.printStackTrace();
-                        }
-                        updateViewsVisibility(Uri.fromFile(rootDir));
-                      }
-                    }
-                  }
-                });
->>>>>>> 508a73274371f63c4de859aa22e25cb1b5aaab36
 
     mAdapter.setFileListener(
         new FilesAdapter.FileListener() {
           @Override
           public void onFileClick(int position, View v) {
-            if (mFiles.get(position).getName().equals("..")) {
-              if (currentDir.getAbsolutePath().equals(rootDir.toString())) return;
+            if (!currentDir.getAbsolutePath().equals(rootDir.getAbsolutePath()) && position == 0) {
               reloadFiles(currentDir.getParentFile());
               return;
             }
@@ -113,7 +87,9 @@ public class FileManagerFragment extends Fragment {
 
           @Override
           public boolean onFileLongClick(int position, View v) {
-            if (position == 0) return false;
+            if (!currentDir.getAbsolutePath().equals(rootDir.getAbsolutePath()) && position == 0) {
+              return false;
+            }
             PopupMenu menu = new PopupMenu(requireActivity(), v);
             menu.getMenu().add(R.string.menu_rename);
             menu.getMenu().add(R.string.delete);
@@ -143,59 +119,14 @@ public class FileManagerFragment extends Fragment {
             return true;
           }
         });
-<<<<<<< HEAD
 
-    binding.navigationSpace.addItem(
-        requireActivity(),
-        getResources().getString(R.string.refresh),
-        R.drawable.ic_refresh,
-        (v) -> {
-          reloadFiles(currentDir);
-        });
-
-    binding.navigationSpace.addItem(
-        requireActivity(),
-        getResources().getString(R.string.create),
-        R.drawable.ic_add,
-        (v) -> {
-          FileManagerUtils.createFile(requireActivity(), currentDir, () -> reloadFiles());
-        });
-    binding.navigationSpace.addItem(
-        requireActivity(),
-        getResources().getString(R.string.create),
-        R.drawable.ic_add,
-        (v) -> {
-          CloneRepository clone = new CloneRepository(requireContext());
-          clone.cloneRepository(currentDir);
-          clone.setListener(
-              new CloneRepository.CloneListener() {
-
-                @Override
-                public void onCloneSuccess(File output) {
-                  reloadFiles(output);
-                }
-
-                @Override
-                public void onCloneFailed(String message) {
-                  DialogUtils.newErrorDialog(requireContext(), "Clone error", message);
-                }
-              });
-        });
-=======
->>>>>>> 508a73274371f63c4de859aa22e25cb1b5aaab36
     binding.rvFiles.setLayoutManager(new LinearLayoutManager(requireContext()));
     binding.rvFiles.setAdapter(mAdapter);
 
-    ViewUtils.rotateChevron(ViewUtils.isExpanded(binding.containerOpen), binding.downButton);
     binding.expandCollapse.setOnClickListener(
         v -> {
           expandCollapseView();
         });
-    binding.downButton.setOnClickListener(
-        v -> {
-          expandCollapseView();
-        });
-
     binding.openFolder.setOnClickListener(
         v -> {
           Fragment fragment = getParentFragment();
@@ -210,11 +141,8 @@ public class FileManagerFragment extends Fragment {
               PreferencesUtils.getFileManagerPrefs().getString(ToolsFragment.KEY_RECENT_FOLDER, "");
           if (!recentFolderPath.isEmpty()) {
             rootDir = new File(recentFolderPath);
-            binding.folderName.setText(
-                FileUtil.getFileName(requireContext(), Uri.fromFile(rootDir)));
             reloadFiles(rootDir);
           }
-          updateViewsVisibility(Uri.fromFile(rootDir));
         });
     binding.refresh.setOnClickListener(
         v -> {
@@ -236,38 +164,29 @@ public class FileManagerFragment extends Fragment {
     binding = null;
   }
 
-  public void onPickedDir(File dir) {
-    rootDir = dir;
-    reloadFiles(dir);
-
-    updateViewsVisibility();
-  }
-
-  private void reloadFiles() {
+  public void reloadFiles() {
     reloadFiles(currentDir);
   }
 
-  private void reloadFiles(File dir) {
+  public void reloadFiles(File dir) {
     if (FileManagerUtils.isPermissionGaranted(requireContext())) {
       listArchives(dir);
 
-      if (mFiles.size() <= 1) {
+      if (mFiles.isEmpty()) {
         binding.emptyLayout.setVisibility(View.VISIBLE);
       } else {
         binding.emptyLayout.setVisibility(View.GONE);
       }
+      updateViewsVisibility();
     } else {
-      takeFilePermissions();
+      FileManagerUtils.takeFilePermissions(requireActivity());
     }
   }
 
-  public void listArchives(File dir) {
+  private void listArchives(File dir) {
     currentDir = dir;
     List<File> filesList = new ArrayList<>();
-    if (!binding
-        .folderName
-        .getText()
-        .equals(FileUtil.getFileName(requireContext(), Uri.fromFile(currentDir)))) {
+    if (!currentDir.getAbsolutePath().equals(rootDir.getAbsolutePath())) {
       filesList.add(new File(".."));
     }
 
@@ -282,63 +201,41 @@ public class FileManagerFragment extends Fragment {
     mAdapter.refresh(mFiles);
   }
 
-  private void updateViewsVisibility(Uri uri) {
-    if (mFiles.isEmpty()) {
-      binding.containerOpen.setVisibility(View.VISIBLE);
-      binding.fileManager.setVisibility(View.GONE);
+  private void expandCollapseView() {
+    if (ViewUtils.isExpanded(binding.expandableLayout)) {
+      ViewUtils.collapse(binding.expandableLayout);
+      ViewUtils.rotateChevron(false, binding.downButton);
+    } else {
+      ViewUtils.expand(binding.expandableLayout);
+      ViewUtils.rotateChevron(true, binding.downButton);
+    }
+    if (rootDir == null) {
       binding.refresh.setVisibility(View.INVISIBLE);
       binding.newFile.setVisibility(View.INVISIBLE);
       binding.newFolder.setVisibility(View.INVISIBLE);
+
     } else {
-      binding.folderName.setText(FileUtil.getFileName(requireContext(), uri));
-      binding.containerOpen.setVisibility(View.GONE);
-      binding.fileManager.setVisibility(View.VISIBLE);
       binding.refresh.setVisibility(View.VISIBLE);
       binding.newFile.setVisibility(View.VISIBLE);
       binding.newFolder.setVisibility(View.VISIBLE);
     }
   }
 
-  private void takeFilePermissions() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-      Intent intent = new Intent();
-      intent.setAction(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-      Uri uri = Uri.fromParts("package", requireActivity().getPackageName(), null);
-      intent.setData(uri);
-      startActivity(intent);
+  private void updateViewsVisibility() {
+    if (rootDir == null) {
+      binding.folderName.setText(R.string.no_folder_opened);
+      binding.containerOpen.setVisibility(View.VISIBLE);
+      binding.fileManager.setVisibility(View.GONE);
+      binding.refresh.setVisibility(View.INVISIBLE);
+      binding.newFile.setVisibility(View.INVISIBLE);
+      binding.newFolder.setVisibility(View.INVISIBLE);
     } else {
-      ActivityCompat.requestPermissions(
-          requireActivity(),
-          new String[] {
-            Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.MANAGE_EXTERNAL_STORAGE
-          },
-          1);
-    }
-  }
-
-  private void expandCollapseView() {
-    if (mFiles.isEmpty()) {
-      if (ViewUtils.isExpanded(binding.containerOpen)) {
-        ViewUtils.collapse(binding.containerOpen);
-        ViewUtils.rotateChevron(false, binding.downButton);
-      } else {
-        ViewUtils.expand(binding.containerOpen);
-        ViewUtils.rotateChevron(true, binding.downButton);
-      }
-    } else {
-      if (ViewUtils.isExpanded(binding.fileManager)) {
-        ViewUtils.collapse(binding.fileManager);
-        binding.refresh.setVisibility(View.INVISIBLE);
-        binding.newFile.setVisibility(View.INVISIBLE);
-        binding.newFolder.setVisibility(View.INVISIBLE);
-        ViewUtils.rotateChevron(false, binding.downButton);
-      } else {
-        ViewUtils.expand(binding.fileManager);
-        binding.refresh.setVisibility(View.VISIBLE);
-        binding.newFile.setVisibility(View.VISIBLE);
-        binding.newFolder.setVisibility(View.VISIBLE);
-        ViewUtils.rotateChevron(true, binding.downButton);
-      }
+      binding.folderName.setText(rootDir.getName());
+      binding.containerOpen.setVisibility(View.GONE);
+      binding.fileManager.setVisibility(View.VISIBLE);
+      binding.refresh.setVisibility(View.VISIBLE);
+      binding.newFile.setVisibility(View.VISIBLE);
+      binding.newFolder.setVisibility(View.VISIBLE);
     }
   }
 }

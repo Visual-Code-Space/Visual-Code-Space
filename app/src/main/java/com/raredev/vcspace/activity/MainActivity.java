@@ -14,7 +14,6 @@ import com.raredev.common.task.TaskExecutor;
 import com.raredev.common.util.DialogUtils;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.ActivityMainBinding;
-import com.raredev.vcspace.tools.TemplatesParser;
 import com.raredev.vcspace.ui.editor.EditorViewModel;
 import com.raredev.vcspace.ui.editor.action.FormatterAction;
 import com.raredev.vcspace.ui.editor.language.html.ExecuteHtml;
@@ -24,7 +23,6 @@ import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.model.ThemeModel;
 import io.github.rosemoe.sora.langs.textmate.registry.provider.AssetsFileResolver;
-import java.util.concurrent.CompletableFuture;
 import org.eclipse.tm4e.core.registry.IThemeSource;
 
 public class MainActivity extends VCSpaceActivity {
@@ -136,9 +134,6 @@ public class MainActivity extends VCSpaceActivity {
       case R.id.menu_settings:
         startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
         break;
-      case R.id.menu_templates:
-        startActivity(new Intent(getApplicationContext(), FileTemplatesActivity.class));
-        break;
     }
     return true;
   }
@@ -151,12 +146,6 @@ public class MainActivity extends VCSpaceActivity {
     }
     editorManager.saveAllFiles(false);
     super.onBackPressed();
-  }
-
-  @Override
-  protected void onStart() {
-    super.onStart();
-    TemplatesParser.loadTemplates(this);
   }
 
   public EditorManager getEditorManager() {
@@ -177,7 +166,7 @@ public class MainActivity extends VCSpaceActivity {
           }
           getSupportActionBar().setSubtitle(null);
           binding.progress.setVisibility(View.GONE);
-          editorManager.openRecentOpenedFiles();
+          //editorManager.openRecentOpenedFiles();
           loadShortcuts();
         });
   }

@@ -65,7 +65,7 @@ public class EditorManager {
   }
 
   public void openFile(File file, boolean setCurrent) {
-    if (!file.isFile() && !file.exists()) {
+    if (file == null && !file.isFile() && !file.exists()) {
       return;
     }
 
@@ -166,9 +166,9 @@ public class EditorManager {
   public void setCurrentPosition(int index) {
     final var tab = tabLayout.getTabAt(index);
     if (tab != null && index >= 0 && !tab.isSelected()) {
+      viewModel.setCurrentPosition(index);
       tab.select();
     }
-    viewModel.setCurrentPosition(index);
   }
 
   interface AlertListener {

@@ -39,7 +39,7 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.VH> {
 
     holder.tv_name.setText(file.getName());
 
-    if (file.isFile() && position > 0) {
+    if (file.isFile()) {
       holder.img_icon.setImageResource(FileExtension.getIcon(file.getName()).icon);
     } else {
       holder.img_icon.setImageResource(R.drawable.ic_folder);
