@@ -9,6 +9,8 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.raredev.common.task.TaskExecutor;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -58,8 +60,8 @@ public class FileUtil {
     }
   }
 
-  public static boolean delete(String str) {
-    File file = new File(str);
+  public static boolean delete(String path) {
+    File file = new File(path);
 
     if (!file.exists()) return false;
     if (file.isFile()) {

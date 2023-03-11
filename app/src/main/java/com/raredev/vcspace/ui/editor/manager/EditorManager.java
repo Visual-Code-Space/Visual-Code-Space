@@ -27,14 +27,14 @@ public class EditorManager {
   private EditorViewModel viewModel;
   private Indexer indexer;
 
-  public EditorManager(Context context, ActivityMainBinding binding) {
+  public EditorManager(Context context, ActivityMainBinding binding, EditorViewModel viewModel) {
     this.context = context;
 
     this.drawerLayout = binding.drawerLayout;
     this.container = binding.container;
     this.tabLayout = binding.tabLayout;
-
-    viewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(EditorViewModel.class);
+    this.viewModel = viewModel;
+    
     indexer = new Indexer(context.getExternalFilesDir("editor") + "/openedFiles.json");
   }
 

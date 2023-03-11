@@ -1,0 +1,8 @@
+<resources>
+  <string name="clone">Clonar</string>
+  <string name="clone_repo">Clonar Repositório</string>
+  <string name="clone_url_hint">URL do repositório</string>
+  <string name="successfully_cloned">Clonado com sucesso</string>
+
+  <string name="clone_error_empty_url">URL do repositório não pode estar vazio</string>
+</resources>

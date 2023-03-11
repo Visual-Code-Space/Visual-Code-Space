@@ -1,7 +1,6 @@
 package com.raredev.vcspace.fragments;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -11,21 +10,19 @@ import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.core.app.ActivityCompat;
-import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import com.raredev.common.util.FileUtil;
+import com.raredev.common.util.DialogUtils;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.activity.MainActivity;
 import com.raredev.vcspace.adapters.FilesAdapter;
 import com.raredev.vcspace.databinding.FragmentFileManagerBinding;
+import com.raredev.vcspace.fragments.ToolsFragment;
+import com.raredev.vcspace.git.CloneRepository;
 import com.raredev.vcspace.util.ApkInstaller;
 import com.raredev.vcspace.util.FileManagerUtils;
 import com.raredev.vcspace.util.PreferencesUtils;
@@ -37,7 +34,6 @@ import java.util.List;
 
 @SuppressWarnings("deprecation")
 public class FileManagerFragment extends Fragment {
-  private static final String KEY_RECENT_FOLDER = "recentFolderPath";
   private FragmentFileManagerBinding binding;
 
   private List<File> mFiles = new ArrayList<>();
@@ -46,15 +42,11 @@ public class FileManagerFragment extends Fragment {
   private File currentDir = null;
   private File rootDir = null;
 
-  private ActivityResultLauncher<Intent> mStartForResult;
-  private SharedPreferences prefs;
-
   @Nullable
   @Override
   public View onCreateView(
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     binding = FragmentFileManagerBinding.inflate(inflater, container, false);
-    prefs = PreferencesUtils.getFileManagerPrefs();
     return binding.getRoot();
   }
 
@@ -62,31 +54,6 @@ public class FileManagerFragment extends Fragment {
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     mAdapter = new FilesAdapter(mFiles);
-    mStartForResult =
-        requireActivity()
-            .registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
-                  @Override
-                  public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                      Intent intent = result.getData();
-                      // Handle the Intent
-                      Uri uri = intent.getData();
-                      if (uri != null) {
-                        try {
-                          DocumentFile pickedDir = DocumentFile.fromTreeUri(requireContext(), uri);
-                          rootDir = FileUtil.getFileFromUri(requireContext(), pickedDir.getUri());
-                          prefs.edit().putString(KEY_RECENT_FOLDER, rootDir.toString()).apply();
-                          reloadFiles(rootDir);
-                        } catch (Exception e) {
-                          e.printStackTrace();
-                        }
-                      }
-                      updateViewsVisibility();
-                    }
-                  }
-                });
 
     mAdapter.setFileListener(
         new FilesAdapter.FileListener() {
@@ -162,6 +129,27 @@ public class FileManagerFragment extends Fragment {
         (v) -> {
           FileManagerUtils.createFile(requireActivity(), currentDir, () -> reloadFiles());
         });
+    binding.navigationSpace.addItem(
+        requireActivity(),
+        getResources().getString(R.string.create),
+        R.drawable.ic_add,
+        (v) -> {
+          CloneRepository clone = new CloneRepository(requireContext());
+          clone.cloneRepository(currentDir);
+          clone.setListener(
+              new CloneRepository.CloneListener() {
+
+                @Override
+                public void onCloneSuccess(File output) {
+                  reloadFiles(output);
+                }
+
+                @Override
+                public void onCloneFailed(String message) {
+                  DialogUtils.newErrorDialog(requireContext(), "Clone error", message);
+                }
+              });
+        });
     binding.rvFiles.setLayoutManager(new LinearLayoutManager(requireContext()));
     binding.rvFiles.setAdapter(mAdapter);
 
@@ -178,11 +166,16 @@ public class FileManagerFragment extends Fragment {
         });
     binding.openFolder.setOnClickListener(
         v -> {
-          mStartForResult.launch(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE));
+          Fragment fragment = getParentFragment();
+          if (fragment != null && fragment instanceof ToolsFragment) {
+            ((ToolsFragment) fragment)
+                .mStartForResult.launch(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE));
+          }
         });
     binding.openRecent.setOnClickListener(
         v -> {
-          String recentFolderPath = prefs.getString(KEY_RECENT_FOLDER, "");
+          String recentFolderPath =
+              PreferencesUtils.getFileManagerPrefs().getString(ToolsFragment.KEY_RECENT_FOLDER, "");
           if (!recentFolderPath.isEmpty()) {
             rootDir = new File(recentFolderPath);
             reloadFiles(rootDir);
@@ -195,6 +188,13 @@ public class FileManagerFragment extends Fragment {
   public void onDestroyView() {
     super.onDestroyView();
     binding = null;
+  }
+
+  public void onPickedDir(File dir) {
+    rootDir = dir;
+    reloadFiles(dir);
+
+    updateViewsVisibility();
   }
 
   private void reloadFiles() {

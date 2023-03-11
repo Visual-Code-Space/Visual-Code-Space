@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.divider.MaterialDivider;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textview.MaterialTextView;
+import com.raredev.vcspace.databinding.LayoutFileItemBinding;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.tools.FileExtension;
 import com.raredev.vcspace.util.FileManagerUtils;
@@ -26,9 +27,8 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.VH> {
   @NonNull
   @Override
   public VH onCreateViewHolder(ViewGroup parent, int arg1) {
-    View itemView =
-        LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_file_item, parent, false);
-    return new VH(itemView);
+    return new VH(
+        LayoutFileItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
   }
 
   @Override
@@ -91,11 +91,11 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.VH> {
 
     MaterialDivider divider;
 
-    public VH(View v) {
-      super(v);
-      divider = v.findViewById(R.id.divider);
-      img_icon = v.findViewById(R.id.icon);
-      tv_name = v.findViewById(R.id.name);
+    public VH(LayoutFileItemBinding binding) {
+      super(binding.getRoot());
+      divider = binding.divider;
+      img_icon = binding.icon;
+      tv_name = binding.name;
     }
   }
 }

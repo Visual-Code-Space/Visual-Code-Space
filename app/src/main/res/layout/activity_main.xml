@@ -94,8 +94,8 @@
     <androidx.fragment.app.FragmentContainerView
       android:layout_height="match_parent"
       android:layout_width="match_parent"
-      android:name="com.raredev.vcspace.fragments.FileManagerFragment"
-      android:id="@+id/file_manager_container" />
+      android:name="com.raredev.vcspace.fragments.ToolsFragment"
+      android:id="@+id/tools_fragment" />
 
   </com.google.android.material.navigation.NavigationView>
 

@@ -7,8 +7,11 @@ import android.view.View;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.core.view.GravityCompat;
+import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.elevation.SurfaceColors;
 import com.google.android.material.tabs.TabLayout;
+import com.raredev.common.task.TaskExecutor;
+import com.raredev.common.util.DialogUtils;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.ActivityMainBinding;
 import com.raredev.vcspace.tools.TemplatesParser;
@@ -50,8 +53,8 @@ public class MainActivity extends VCSpaceActivity {
     binding.drawerLayout.addDrawerListener(toggle);
     toggle.syncState();
 
-    editorManager = new EditorManager(MainActivity.this, binding);
-    viewModel = editorManager.getViewModel();
+    viewModel = new ViewModelProvider(this).get(EditorViewModel.class);
+    editorManager = new EditorManager(MainActivity.this, binding, viewModel);
 
     binding.tabLayout.addOnTabSelectedListener(
         new TabLayout.OnTabSelectedListener() {
@@ -110,6 +113,7 @@ public class MainActivity extends VCSpaceActivity {
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     int id = item.getItemId();
+
     switch (id) {
       case R.id.menu_undo:
         editorManager.undo();
@@ -162,28 +166,20 @@ public class MainActivity extends VCSpaceActivity {
   private void initialize() {
     binding.progress.setVisibility(View.VISIBLE);
     getSupportActionBar().setSubtitle("Loading..");
-    CompletableFuture.supplyAsync(
-            () -> {
-              try {
-                loadDefaultThemes();
-                loadDefaultLanguages();
-
-                return true;
-              } catch (Exception e) {
-                e.printStackTrace();
-                return false;
-              }
-            })
-        .whenComplete(
-            (result, throwable) -> {
-              runOnUiThread(
-                  () -> {
-                    loadShortcuts();
-                    getSupportActionBar().setSubtitle(null);
-                    binding.progress.setVisibility(View.GONE);
-                    editorManager.openRecentOpenedFiles();
-                  });
-            });
+    TaskExecutor.executeAsyncProvideError(
+        () -> {
+          loadTextMate();
+          return null;
+        },
+        (result, error) -> {
+          if (error != null) {
+            DialogUtils.newErrorDialog(this, "Editor", error.toString());
+          }
+          getSupportActionBar().setSubtitle(null);
+          binding.progress.setVisibility(View.GONE);
+          editorManager.openRecentOpenedFiles();
+          loadShortcuts();
+        });
   }
 
   private void updateTab(int pos) {
@@ -223,7 +219,8 @@ public class MainActivity extends VCSpaceActivity {
         new String[] {"    ", "\"", ";", "(", ")", "{", "}", "[", "]", "<", ">"});
   }
 
-  private void loadDefaultThemes() throws Exception {
+  private void loadTextMate() throws Exception {
+    // Load editor themes
     FileProviderRegistry.getInstance().addFileProvider(new AssetsFileResolver(getAssets()));
 
     String[] themes = new String[] {"darcula", "quietlight"};
@@ -236,9 +233,7 @@ public class MainActivity extends VCSpaceActivity {
                   FileProviderRegistry.getInstance().tryGetInputStream(path), path, null),
               name));
     }
-  }
-
-  private void loadDefaultLanguages() {
+    // Load editor languages
     GrammarRegistry.getInstance().loadGrammars("textmate/languages.json");
   }
 }

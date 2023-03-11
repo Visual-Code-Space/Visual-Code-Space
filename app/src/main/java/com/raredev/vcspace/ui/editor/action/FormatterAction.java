@@ -1,17 +1,15 @@
 package com.raredev.vcspace.ui.editor.action;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
 import com.raredev.vcspace.ui.editor.CodeEditorView;
+import io.github.rosemoe.sora.text.Cursor;
+import io.github.rosemoe.sora.widget.CodeEditor;
+import java.io.IOException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-
-import java.io.IOException;
 
 public class FormatterAction {
   private CodeEditorView editor;
@@ -25,21 +23,13 @@ public class FormatterAction {
   }
 
   public void format() {
+    String codeFormatted = editor.getEditor().getText().toString();
     if (fileName.endsWith(".html")) {
-      editor.getEditor().setText(formatHtml());
+      codeFormatted = formatHtml();
     } else if (fileName.endsWith(".json")) {
-      editor.getEditor().setText(formatJson());
+      codeFormatted = formatJson();
     }
-  }
-
-  public boolean isValidLanguage() {
-    if (fileName.endsWith(".html")) {
-      return true;
-    } else if (fileName.endsWith(".json")) {
-      return true;
-    } else {
-      return false;
-    }
+    editor.getEditor().getText().replace(0, editor.getEditor().getText().length(), codeFormatted);
   }
 
   private String formatHtml() {
@@ -61,7 +51,7 @@ public class FormatterAction {
       ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
       DefaultPrettyPrinter prettyPrinter = new DefaultPrettyPrinter();
-      
+
       prettyPrinter.indentArraysWith(new DefaultPrettyPrinter.FixedSpaceIndenter());
       prettyPrinter.indentObjectsWith(new DefaultIndenter("    ", "\n"));
 

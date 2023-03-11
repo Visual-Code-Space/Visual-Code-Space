@@ -9,6 +9,8 @@
   <string name="open_a_file">Deslize à direita para arquivos!</string>
   <string name="refresh">Atualizar</string>
   <string name="empty">Vazio</string>
+  <string name="yes">Sim</string>
+  <string name="no">Não</string>
 
   <!-- Menus Strings -->
   <string name="menu_save">Salvar</string>
@@ -24,7 +26,9 @@
   <string name="saved_files">Arquivos salvos</string>
   <string name="existing_file">Já existe um arquivo com este nome!</string>
   <string name="delete">Deletar</string>
-  <string name="delete_message">Deletar NAME?</string>
+  <string name="delete_message">Tem certeza que deseja deletar NAME?</string>
+  <string name="deleting">Apagando</string>
+  <string name="deleting_plase_wait">Apagando por favor aguarde.</string>
   <string name="create">Criar</string>
   <string name="cancel">Cancelar</string>
   <string name="file">Arquivo</string>

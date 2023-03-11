@@ -9,8 +9,11 @@ import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.raredev.common.task.TaskExecutor;
+import com.raredev.common.util.DialogUtils;
 import com.raredev.common.util.FileUtil;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.adapters.model.FileTemplateModel;
@@ -111,9 +114,18 @@ public class FileManagerUtils {
     dlg_delete.setPositiveButton(
         R.string.delete,
         (dlg, i) -> {
-          if (FileUtil.delete(file.getAbsolutePath())) {
-            concluded.concluded();
-          }
+          AlertDialog progress =
+              DialogUtils.newProgressDialog(act, act.getString(R.string.deleting), act.getString(R.string.deleting_plase_wait)).create();
+          progress.setCancelable(false);
+          progress.show();
+          TaskExecutor.executeAsyncProvideError(
+              () -> {
+                return FileUtil.delete(file.getAbsolutePath());
+              },
+              (result, error) -> {
+                concluded.concluded();
+                progress.cancel();
+              });
         });
     dlg_delete.setNegativeButton(R.string.cancel, null);
     dlg_delete.show();

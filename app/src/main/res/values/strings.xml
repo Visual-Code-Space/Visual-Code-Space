@@ -26,7 +26,9 @@
   <string name="saved_files">Saved files</string>
   <string name="existing_file">A file with this name already exists!</string>
   <string name="delete">Delete</string>
-  <string name="delete_message">Delete NAME?</string>
+  <string name="delete_message">Are you sure you want to delete NAME?</string>
+  <string name="deleting">Deleting</string>
+  <string name="deleting_plase_wait">Deleting please wait.</string>
   <string name="create">Create</string>
   <string name="cancel">Cancel</string>
   <string name="file">File</string>
