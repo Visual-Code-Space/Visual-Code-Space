@@ -9,6 +9,7 @@ import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.raredev.common.util.FileUtil;
@@ -46,6 +47,14 @@ public class FileManagerUtils {
   }
 
   public static void createFile(Activity act, File file, Concluded concluded) {
+    createNew(act, file, concluded, false);
+  }
+  
+  public static void createFolder(Activity act, File file, Concluded concluded) {
+    createNew(act, file, concluded, true);
+  }
+
+  private static void createNew(Activity act, File file, Concluded concluded, boolean isFolder) {
     LayoutInflater inflater = act.getLayoutInflater();
     View v = inflater.inflate(R.layout.dialog_input, null);
     EditText et_filename = v.findViewById(R.id.et_input);
@@ -53,26 +62,25 @@ public class FileManagerUtils {
     new MaterialAlertDialogBuilder(act)
         .setTitle(R.string.new_file_title)
         .setPositiveButton(
-            R.string.file,
+            R.string.create,
             (dlg, i) -> {
-              File newFile = new File(file, "/" + et_filename.getText().toString());
-              if (!newFile.exists()) {
-                if (createFileWithTemplate(newFile)) {
-                  concluded.concluded();
+              if (isFolder) {
+                File newFolder = new File(file, "/" + et_filename.getText().toString());
+                if (!newFolder.exists()) {
+                  if (newFolder.mkdirs()) {
+                    concluded.concluded();
+                  }
+                }
+              } else {
+                File newFile = new File(file, "/" + et_filename.getText().toString());
+                if (!newFile.exists()) {
+                  if (createFileWithTemplate(newFile)) {
+                    concluded.concluded();
+                  }
                 }
               }
             })
-        .setNegativeButton(
-            R.string.folder,
-            (dlg, i) -> {
-              File newFolder = new File(file, "/" + et_filename.getText().toString());
-              if (!newFolder.exists()) {
-                if (newFolder.mkdirs()) {
-                  concluded.concluded();
-                }
-              }
-            })
-        .setNeutralButton(R.string.cancel, null)
+        .setNegativeButton(R.string.cancel, null)
         .setView(v)
         .show();
   }
