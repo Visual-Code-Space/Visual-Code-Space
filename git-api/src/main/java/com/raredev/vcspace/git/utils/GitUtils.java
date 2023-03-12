@@ -4,20 +4,29 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import org.eclipse.jgit.api.DiffCommand;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.errors.AmbiguousObjectException;
 import org.eclipse.jgit.errors.IncorrectObjectTypeException;
+import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevTree;
+import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.AbstractTreeIterator;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
+import org.eclipse.jgit.treewalk.EmptyTreeIterator;
+import org.eclipse.jgit.treewalk.TreeWalk;
 
 public class GitUtils {
   private Git git;
@@ -161,5 +170,129 @@ public class GitUtils {
    */
   public void cherryPick(ObjectId commitId) throws GitAPIException {
     git.cherryPick().include(commitId).call();
+  }
+
+  /**
+   * Push changes to remote repository
+   *
+   * @param remoteName The name of the remote repository to push to
+   * @throws GitAPIException
+   */
+  public void push(String remoteName) throws GitAPIException {
+    git.push().setRemote(remoteName).call();
+  }
+
+  /**
+   * Pull changes from remote repository
+   *
+   * @param remoteName The name of the remote repository to pull from
+   * @throws GitAPIException
+   */
+  public void pull(String remoteName) throws GitAPIException {
+    git.pull().setRemote(remoteName).call();
+  }
+
+  /**
+   * Add a file or directory to the index
+   *
+   * @param fileOrDirPath The path to the file or directory to add
+   * @throws GitAPIException
+   */
+  public void add(String fileOrDirPath) throws GitAPIException {
+    git.add().addFilepattern(fileOrDirPath).call();
+  }
+
+  /**
+   * Checkout the given branch
+   *
+   * @param branchName The name of the branch to checkout
+   * @throws GitAPIException
+   */
+  public void checkout(String branchName) throws GitAPIException {
+    git.checkout().setName(branchName).call();
+  }
+
+  /**
+   * Get the status of the repository
+   *
+   * @return A Status object representing the repository status
+   * @throws GitAPIException
+   */
+  public Status getStatus() throws GitAPIException {
+    return git.status().call();
+  }
+
+  /**
+   * Get the status of the repository as a string
+   *
+   * @return A string representation of the repository status
+   * @throws GitAPIException
+   */
+  public String getStatusAsString() throws GitAPIException {
+    Status status = git.status().call();
+    StringBuilder sb = new StringBuilder();
+    sb.append("Added: " + status.getAdded() + "\n");
+    sb.append("Changed: " + status.getChanged() + "\n");
+    sb.append("Conflicting: " + status.getConflicting() + "\n");
+    sb.append("IgnoredNotInIndex: " + status.getIgnoredNotInIndex() + "\n");
+    sb.append("Missing: " + status.getMissing() + "\n");
+    sb.append("Modified: " + status.getModified() + "\n");
+    sb.append("Removed: " + status.getRemoved() + "\n");
+    sb.append("Untracked: " + status.getUntracked() + "\n");
+    sb.append("UntrackedFolders: " + status.getUntrackedFolders() + "\n");
+    return sb.toString();
+  }
+
+  /**
+   * Get the list of uncommitted changes in the repository
+   *
+   * @return A list of uncommitted changes as DiffEntry objects
+   * @throws GitAPIException
+   * @throws IOException
+   */
+  public List<DiffEntry> getUncommittedChanges() throws GitAPIException, IOException {
+    List<DiffEntry> diffs = new ArrayList<>();
+    ObjectReader reader = git.getRepository().newObjectReader();
+    try (RevWalk walk = new RevWalk(reader)) {
+      RevCommit commit = walk.parseCommit(git.getRepository().resolve(Constants.HEAD));
+      RevTree tree = commit.getTree();
+      try (TreeWalk treeWalk = new TreeWalk(reader)) {
+        treeWalk.addTree(tree);
+        treeWalk.setRecursive(true);
+        while (treeWalk.next()) {
+          diffs.addAll(
+              git.diff()
+                  .setOldTree(new EmptyTreeIterator())
+                  .setNewTree(new CanonicalTreeParser(null, reader, treeWalk.getObjectId(0)))
+                  .call());
+        }
+      }
+    }
+    return diffs;
+  }
+
+  /**
+   * Get the current branch name
+   *
+   * @return The name of the current branch
+   * @throws IOException
+   */
+  public String getCurrentBranchName() throws IOException {
+    return git.getRepository().getBranch();
+  }
+
+  /**
+   * Get the list of commits in the repository for the current branch
+   *
+   * @return A list of commit objects
+   * @throws GitAPIException
+   */
+  public List<RevCommit> getCommitsForCurrentBranch() throws GitAPIException {
+    List<RevCommit> commits = new ArrayList<>();
+    Iterator<RevCommit> it = git.log().call().iterator();
+    while (it.hasNext()) {
+      commits.add(it.next());
+    }
+    return commits;
   }
 }
