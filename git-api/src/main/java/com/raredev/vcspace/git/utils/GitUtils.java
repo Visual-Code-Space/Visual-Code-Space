@@ -1,17 +1,23 @@
 package com.raredev.vcspace.git.utils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import org.eclipse.jgit.api.DiffCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.errors.AmbiguousObjectException;
 import org.eclipse.jgit.errors.IncorrectObjectTypeException;
 import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.treewalk.AbstractTreeIterator;
+import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 
 public class GitUtils {
   private Git git;
@@ -93,6 +99,46 @@ public class GitUtils {
       throws IncorrectObjectTypeException, IOException {
     RevCommit commit = git.getRepository().parseCommit(commitId);
     return commit.getFullMessage();
+  }
+
+  /**
+   * Get the diff between two commits
+   *
+   * @param oldCommitId The ID of the old commit
+   * @param newCommitId The ID of the new commit
+   * @return A string representing the diff
+   * @throws GitAPIException
+   * @throws IOException
+   */
+  public String getDiff(ObjectId oldCommitId, ObjectId newCommitId)
+      throws GitAPIException, IOException {
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    DiffCommand diffCommand = git.diff().setOutputStream(out);
+    if (oldCommitId != null) {
+      try (ObjectReader reader = git.getRepository().newObjectReader()) {
+        AbstractTreeIterator oldTree = new CanonicalTreeParser(null, reader, oldCommitId);
+        diffCommand.setOldTree(oldTree);
+      }
+    }
+    try (ObjectReader reader = git.getRepository().newObjectReader()) {
+      AbstractTreeIterator newTree = new CanonicalTreeParser(null, reader, newCommitId);
+      diffCommand.setNewTree(newTree).call();
+    }
+    return out.toString(StandardCharsets.UTF_8.name());
+  }
+
+  /**
+   * Get the diff between the current commit and the previous commit
+   *
+   * @return A string representing the diff
+   * @throws GitAPIException
+   * @throws IOException
+   */
+  public String getDiff() throws GitAPIException, IOException {
+    ObjectId head = git.getRepository().resolve("HEAD");
+    RevCommit commit = git.log().add(head).setMaxCount(1).call().iterator().next();
+    RevCommit parent = commit.getParent(0);
+    return getDiff(parent.getId(), head);
   }
 
   /**
