@@ -1,18 +1,22 @@
 package com.raredev.vcspace.ui.editor.manager;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.widget.ViewFlipper;
 import androidx.core.view.GravityCompat;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStoreOwner;
 import com.blankj.utilcode.util.ToastUtils;
 import com.google.android.material.tabs.TabLayout;
 import com.raredev.common.Indexer;
+import com.raredev.common.util.DialogUtils;
+import com.raredev.common.util.FileUtil;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.ActivityMainBinding;
 import com.raredev.vcspace.ui.editor.CodeEditorView;
 import com.raredev.vcspace.ui.editor.EditorViewModel;
+import com.raredev.vcspace.util.PreferencesUtils;
 import java.io.File;
 
 public class EditorManager {
@@ -34,7 +38,7 @@ public class EditorManager {
     this.container = binding.container;
     this.tabLayout = binding.tabLayout;
     this.viewModel = viewModel;
-    
+
     indexer = new Indexer(context.getExternalFilesDir("editor") + "/openedFiles.json");
   }
 
@@ -50,10 +54,36 @@ public class EditorManager {
     getCurrentEditor().redo();
   }
 
-  public void openRecentOpenedFiles() {
-    viewModel.clear();
-    for (File file : indexer.getList(LAST_FILES_KEY)) {
-      openFile(file, false);
+  public void tryOpenFileFromIntent(Intent it) {
+    try {
+      Uri uri = it.getData();
+      if (uri != null) {
+        DocumentFile pickedFile = DocumentFile.fromSingleUri(context, uri);
+        File file = FileUtil.getFileFromUri(context, pickedFile.getUri());
+
+        openFile(file);
+      }
+    } catch (Exception e) {
+      DialogUtils.newErrorDialog(
+          context,
+          context.getString(R.string.error),
+          context.getString(R.string.error_opening_recent_files) + "\n\n" + e.toString());
+    }
+  }
+
+  public void tryOpenRecentOpenedFiles() {
+    if (PreferencesUtils.useOpenRecentsAutomatically()) {
+      try {
+        viewModel.clear();
+        for (File file : indexer.getList(LAST_FILES_KEY)) {
+          openFile(file, false);
+        }
+      } catch (Throwable e) {
+        DialogUtils.newErrorDialog(
+            context,
+            context.getString(R.string.error),
+            context.getString(R.string.error_opening_recent_files) + "\n\n" + e.toString());
+      }
     }
   }
 
@@ -65,7 +95,10 @@ public class EditorManager {
   }
 
   public void openFile(File file, boolean setCurrent) {
-    if (file == null && !file.isFile() && !file.exists()) {
+    if (file == null) {
+      return;
+    }
+    if (!file.isFile() && !file.exists()) {
       return;
     }
 
@@ -98,7 +131,7 @@ public class EditorManager {
 
   public void closeOthers() {
     if (viewModel.getCurrentPosition() <= 0) return;
-    File file = getEditorAtIndex(viewModel.getCurrentPosition()).getFile();
+    File file = viewModel.getCurrentFile();
     for (int i = 0; i < viewModel.getFiles().getValue().size(); i++) {
       CodeEditorView editor = getEditorAtIndex(i);
       if (editor != null) {
@@ -111,13 +144,13 @@ public class EditorManager {
 
   public void closeAllFiles() {
     if (!viewModel.getFiles().getValue().isEmpty()) {
-
       for (int i = 0; i < viewModel.getFiles().getValue().size(); i++) {
         getEditorAtIndex(i).release();
       }
-      container.removeAllViews();
-      tabLayout.removeAllTabs();
       viewModel.clear();
+      tabLayout.removeAllTabs();
+      tabLayout.requestLayout();
+      container.removeAllViews();
     }
   }
 
@@ -139,10 +172,12 @@ public class EditorManager {
   }
 
   public void saveOpenedFiles() {
-    try {
-      indexer.put(LAST_FILES_KEY, viewModel.getFiles().getValue()).flush();
-    } catch (Exception e) {
-      e.printStackTrace();
+    if (PreferencesUtils.useOpenRecentsAutomatically()) {
+      try {
+        indexer.put(LAST_FILES_KEY, viewModel.getFiles().getValue()).flush();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
   }
 
@@ -166,12 +201,8 @@ public class EditorManager {
   public void setCurrentPosition(int index) {
     final var tab = tabLayout.getTabAt(index);
     if (tab != null && index >= 0 && !tab.isSelected()) {
-      viewModel.setCurrentPosition(index);
       tab.select();
     }
-  }
-
-  interface AlertListener {
-    void confirm(boolean arg01);
+    viewModel.setCurrentPosition(index);
   }
 }

@@ -20,12 +20,19 @@
     android:theme="@style/AppTheme">
     <activity
       android:name=".activity.MainActivity"
-      android:exported="true"
-      android:windowSoftInputMode="adjustResize">
+      android:configChanges="orientation|screenSize"
+      android:windowSoftInputMode="adjustResize"
+      android:exported="true">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
 
         <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+      <intent-filter>
+        <category android:name="android.intent.category.DEFAULT" />
+        <action android:name="android.intent.action.VIEW" />
+        <action android:name="android.intent.action.EDIT" />
+        <data android:mimeType="text/*" />
       </intent-filter>
     </activity>
     <activity

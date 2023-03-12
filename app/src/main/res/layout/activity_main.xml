@@ -59,25 +59,24 @@
           android:layout_height="1px"
           android:layout_width="match_parent" />
 
-        <HorizontalScrollView
-          android:layout_height="40dp"
-          android:layout_width="match_parent"
-          android:scrollbars="none">
-
-          <com.raredev.vcspace.ui.editor.widget.SymbolInputView
-            android:layout_height="40dp"
-            android:layout_width="wrap_content"
-            android:id="@+id/shortcuts" />
-
-        </HorizontalScrollView>
+        <com.raredev.vcspace.ui.editor.symbol.SymbolInputView
+          android:layout_height="wrap_content"
+          android:layout_width="wrap_content"
+          android:id="@+id/symbol_input" />
+        
+        <com.raredev.vcspace.ui.VCSpaceSearcher
+          android:layout_height="wrap_content"
+          android:layout_width="wrap_content"
+          android:visibility="gone"
+          android:id="@+id/searcher" />
 
       </LinearLayout>
 
       <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/empty"
-        android:gravity="center"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
+        android:id="@+id/no_file_opened"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_centerInParent="true"
         android:text="@string/open_a_file"
         android:textSize="15sp" />
 

@@ -5,16 +5,30 @@
 
   <PreferenceCategory
     app:iconSpaceReserved="false"
-    app:title="@string/appearance">
+    app:title="@string/application">
 
     <ListPreference
       app:defaultValue="default"
       app:entries="@array/settings_theme_entries"
       app:entryValues="@array/pref_entry_values_theme"
       app:icon="@drawable/theme_light_dark"
-      app:key="theme"
+      app:key="pref_theme"
       app:title="@string/title_theme"
       app:useSimpleSummaryProvider="true" />
+
+    <SwitchPreferenceCompat
+      app:defaultValue="true"
+      app:icon="@drawable/palette"
+      app:key="pref_dynamiccolors"
+      app:title="@string/pref_dynamic_colors"
+      app:summary="@string/pref_dynamic_colors_summary" />
+    
+    <SwitchPreferenceCompat
+      app:defaultValue="false"
+      app:icon="@drawable/folder_open"
+      app:key="pref_openrecentsautomatically"
+      app:title="@string/pref_open_recents_automatically"
+      app:summary="@string/pref_open_recents_automatically_summary" />
   </PreferenceCategory>
 
   <PreferenceCategory
@@ -22,39 +36,40 @@
     app:title="@string/editor">
 
     <EditTextPreference
-      app:defaultValue="14"
       app:dialogTitle="@string/pref_editor_textsize"
-      android:digits="0123456789"
       app:icon="@drawable/format_size"
-      android:inputType="numberDecimal"
-      app:key="textsize"
+      app:key="pref_editortextsize"
       app:title="@string/pref_editor_textsize"
+      app:defaultValue="14"
       app:useSimpleSummaryProvider="true" />
-    
+
     <ListPreference
       app:defaultValue="firacode"
       app:entries="@array/settings_font_entries"
       app:entryValues="@array/pref_entry_values_font"
       app:icon="@drawable/format_font"
-      app:key="editorfont"
+      app:key="pref_editorfont"
       app:title="@string/pref_editor_font"
       app:useSimpleSummaryProvider="true" />
 
     <SwitchPreferenceCompat
+      app:defaultValue="true"
       app:icon="@drawable/keyboard_tab"
-      app:key="softtab"
-      app:title="@string/pref_editor_usesofttab"
-      app:summary="@string/pref_editor_usesofttab_summary" />
+      app:key="pref_usespaces"
+      app:title="@string/pref_editor_use_spaces"
+      app:summary="@string/pref_editor_use_spaces_summary" />
 
     <SwitchPreferenceCompat
+      app:defaultValue="true"
       app:icon="@drawable/form_textbox_password"
-      app:key="deletefast"
-      app:title="@string/pref_editor_deleteemptylinefast" />
+      app:key="pref_deleteemptylinefast"
+      app:title="@string/pref_editor_deleteemptylinefast"
+      app:summary="@string/pref_editor_deleteemptylinefast_summary" />
   </PreferenceCategory>
 
   <PreferenceCategory
     app:iconSpaceReserved="false"
-    app:title="@string/info">
+    app:title="@string/about">
 
     <Preference
       app:icon="@drawable/github"

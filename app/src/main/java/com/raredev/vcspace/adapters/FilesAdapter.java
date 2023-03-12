@@ -11,7 +11,7 @@ import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textview.MaterialTextView;
 import com.raredev.vcspace.databinding.LayoutFileItemBinding;
 import com.raredev.vcspace.R;
-import com.raredev.vcspace.tools.FileExtension;
+import com.raredev.vcspace.models.FileExtension;
 import com.raredev.vcspace.util.FileManagerUtils;
 import java.io.File;
 import java.util.List;

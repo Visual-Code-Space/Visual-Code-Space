@@ -4,10 +4,12 @@
   <string name="open">Open</string>
   <string name="remove">Remove</string>
   <string name="close">Close</string>
+  <string name="info">Info</string>
   <string name="close_others">Close others</string>
   <string name="close_all">Close all</string>
   <string name="open_a_file">Swipe right for files!</string>
   <string name="refresh">Refresh</string>
+  <string name="loading">Loading..</string>
   <string name="empty">Empty</string>
   <string name="yes">Yes</string>
   <string name="no">No</string>
@@ -17,10 +19,12 @@
   <string name="menu_execute">Execute</string>
   <string name="menu_format">Format</string>
   <string name="menu_search">Search</string>
-  <string name="menu_rename">Rename</string>
   <string name="menu_reload">Reload</string>
-  <string name="menu_recentfiles">Recent Files</string>
   <string name="menu_settings">Settings</string>
+  
+  <!-- Errors Strings-->
+  <string name="error">Error</string>
+  <string name="error_opening_recent_files">Error when trying to open recent files:</string>
 
   <!-- Buttons And Titles -->
   <string name="saved_files">Saved files</string>
@@ -33,11 +37,12 @@
   <string name="cancel">Cancel</string>
   <string name="file">File</string>
   <string name="folder">Folder</string>
+  <string name="rename">Rename</string>
+  <string name="rename_hint">Enter a new name:</string>
   <string name="open_folder">Open Folder</string>
   <string name="open_recent">Open Recent</string>
   <string name="file_name_hint">File name:</string>
   <string name="folder_name_hint">Folder name:</string>
-  <string name="newlyopenedfile">Newly Opened Files</string>
   <string name="folder_not_yet_opened">You have not yet opened a folder.</string>
   <string name="no_folder_opened">NO FOLDER OPENED</string>
   <string name="explorer">EXPLORER</string>
@@ -45,13 +50,11 @@
   <string name="replace">Replace</string>
   <string name="new_file_title">New file</string>
   <string name="new_folder_title">New folder</string>
-  <string name="new_file_template">New File Template</string>
-  <string name="edit_file_template">Edit File Template</string>
 
   <!-- Settings String -->
-  <string name="appearance">Aparence</string>
+  <string name="application">Application</string>
   <string name="editor">Editor</string>
-  <string name="info">Information</string>
+  <string name="about">About</string>
 
   <string name="title_theme">Theme</string>
   <string name="pref_theme_system">System theme</string>
@@ -67,6 +70,10 @@
     <item>dark</item>
     <item>light</item>
   </string-array>
+  <string name="pref_dynamic_colors">Use Dynamic theme</string>
+  <string name="pref_dynamic_colors_summary">Applies your wallpaper colors to the app (Requires reboot)</string>
+  <string name="pref_open_recents_automatically">Automatically open recents</string>
+  <string name="pref_open_recents_automatically_summary">Automatically open recently used files and folders</string>
 
   <!-- Editor -->
   <string name="pref_editor_textsize">Font size</string>
@@ -82,7 +89,8 @@
     <item>jetbrains</item>
   </string-array>
 
-  <string name="pref_editor_usesofttab">Use soft tab</string>
-  <string name="pref_editor_usesofttab_summary">Choose whether to use spaces instead of (\\t)</string>
+  <string name="pref_editor_use_spaces">Use spaces</string>
+  <string name="pref_editor_use_spaces_summary">Use spaces instead of tabs(\\t)</string>
   <string name="pref_editor_deleteemptylinefast">Delete empty line fast</string>
+  <string name="pref_editor_deleteemptylinefast_summary">If the current line has only spaces it will be deleted quickly.</string>
 </resources>

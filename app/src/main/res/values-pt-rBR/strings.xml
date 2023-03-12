@@ -4,10 +4,12 @@
   <string name="open">Abrir</string>
   <string name="remove">Remover</string>
   <string name="close">Fechar</string>
+  <string name="info">Informações</string>
   <string name="close_others">Fechar outros</string>
   <string name="close_all">Fechar tudo</string>
   <string name="open_a_file">Deslize à direita para arquivos!</string>
   <string name="refresh">Atualizar</string>
+  <string name="loading">Carregando..</string>
   <string name="empty">Vazio</string>
   <string name="yes">Sim</string>
   <string name="no">Não</string>
@@ -17,11 +19,13 @@
   <string name="menu_execute">Executar</string>
   <string name="menu_format">Formatar</string>
   <string name="menu_search">Pesquisar</string>
-  <string name="menu_rename">Renomear</string>
   <string name="menu_reload">Recarregar</string>
-  <string name="menu_recentfiles">Arquivos Recentes</string>
   <string name="menu_settings">Definições</string>
 
+  <!-- Errors Strings -->
+  <string name="error">Erro</string>
+  <string name="error_opening_recent_files">Erro ao tentar abrir arquivos recentes:</string>
+  
   <!-- Buttons And Titles -->
   <string name="saved_files">Arquivos salvos</string>
   <string name="existing_file">Já existe um arquivo com este nome!</string>
@@ -33,11 +37,12 @@
   <string name="cancel">Cancelar</string>
   <string name="file">Arquivo</string>
   <string name="folder">Pasta</string>
+  <string name="rename">Renomear</string>
+  <string name="rename_hint">Digite um novo nome:</string>
   <string name="open_folder">Abrir uma pasta</string>
   <string name="open_recent">Abrir recente</string>
   <string name="file_name_hint">Nome do arquivo:</string>
   <string name="folder_name_hint">Nome da pasta:</string>
-  <string name="newlyopenedfile">Arquivos recém-abertos</string>
   <string name="folder_not_yet_opened">Você ainda não abriu uma pasta.</string>
   <string name="no_folder_opened">NENHUMA PASTA ABERTA</string>
   <string name="explorer">EXPLORADOR</string>
@@ -45,13 +50,11 @@
   <string name="replace">Substituir</string>
   <string name="new_file_title">Novo arquivo</string>
   <string name="new_folder_title">Nova pasta</string>
-  <string name="new_file_template">Novo modelo de arquivo</string>
-  <string name="edit_file_template">Editar modelo de arquivo</string>
 
   <!-- Settings String -->
-  <string name="appearance">Aparência</string>
+  <string name="application">Aplicativo</string>
   <string name="editor">Editor</string>
-  <string name="info">Informações</string>
+  <string name="about">Sobre</string>
 
   <!-- theme -->
   <string name="title_theme">Tema</string>
@@ -68,6 +71,10 @@
     <item>dark</item>
     <item>light</item>
   </string-array>
+  <string name="pref_dynamic_colors">Usar tema dinâmico</string>
+  <string name="pref_dynamic_colors_summary">Aplica as cores do papel de parede ao aplicativo (Requer reinicialização)</string>
+  <string name="pref_open_recents_automatically">Abrir recentes automaticamente</string>
+  <string name="pref_open_recents_automatically_summary">Abra automaticamente arquivos e pastas usados recentemente</string>
 
   <!-- Editor -->
   <string name="pref_editor_textsize">Tamanho da fonte</string>
@@ -82,7 +89,8 @@
     <item>firacode</item>
     <item>jetbrains</item>
   </string-array>
-  <string name="pref_editor_usesofttab">Usar soft tab</string>
-  <string name="pref_editor_usesofttab_summary">Escolha se deseja usar espaços em vez de (\\t)</string>
+  <string name="pref_editor_use_spaces">Usar espaços</string>
+  <string name="pref_editor_use_spaces_summary">Use espaços em vez de tabs(\\t) </string>
   <string name="pref_editor_deleteemptylinefast">Apagar linha vazia rapidamente</string>
+  <string name="pref_editor_deleteemptylinefast_summary">Se a linha atual tiver apenas espaços, ela será apagada rapidamente.</string>
 </resources>

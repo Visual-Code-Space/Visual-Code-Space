@@ -1,6 +1,5 @@
 package com.raredev.vcspace.ui.editor;
 
-import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -34,6 +33,7 @@ public class EditorViewModel extends ViewModel {
 
     value.clear();
     mFiles.setValue(value);
+    setCurrentPosition(-1);
   }
 
   public void openFile(File file) {
@@ -47,6 +47,10 @@ public class EditorViewModel extends ViewModel {
     List<File> files = getFiles().getValue();
 
     files.remove(index);
+    
+    if (files.isEmpty()) {
+      currentPosition.setValue(-1);
+    }
     mFiles.setValue(files);
   }
 

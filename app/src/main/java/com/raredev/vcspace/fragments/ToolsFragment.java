@@ -41,7 +41,7 @@ public class ToolsFragment extends Fragment {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    toolsPrefs = PreferencesUtils.getFileManagerPrefs();
+    toolsPrefs = PreferencesUtils.getToolsPrefs();
 
     mStartForResult =
         requireActivity()

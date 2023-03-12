@@ -9,35 +9,64 @@ import com.raredev.vcspace.R;
 
 public class PreferencesUtils {
 
-  public static SharedPreferences getFileManagerPrefs() {
-    return VCSpaceApplication.appContext.getSharedPreferences("filemanager", Activity.MODE_PRIVATE);
+  public static SharedPreferences getToolsPrefs() {
+    return VCSpaceApplication.appContext.getSharedPreferences("tools", Activity.MODE_PRIVATE);
   }
 
   public static SharedPreferences getDefaultPrefs() {
     return PreferenceManager.getDefaultSharedPreferences(VCSpaceApplication.appContext);
   }
 
-  public static int getTextSize() {
+  /*
+   * Returns if the user wants to use dynamic theme(Material3)
+   */
+  public static boolean useDynamicColors() {
+    return getDefaultPrefs().getBoolean("pref_dynamiccolors", true);
+  }
+
+  /*
+   * Returns whether the user wants the app to open recent files and folders
+   */
+  public static boolean useOpenRecentsAutomatically() {
+    return getDefaultPrefs().getBoolean("pref_openrecentsautomatically", false);
+  }
+
+  /*
+   * Returns the user-selected font value
+   */
+  public static int getEditorTextSize() {
     try {
-      return Integer.parseInt(getDefaultPrefs().getString("textsize", "14"));
+      return Integer.parseInt(getDefaultPrefs().getString("pref_editortextsize", "14"));
     } catch (Exception e) {
       return 14;
     }
   }
 
+  /*
+   * Returns the font the user wants to use in the editor
+   */
   public static int getSelectedFont() {
-    String selectedFont = getDefaultPrefs().getString("editorfont", "firacode");
+    String selectedFont = getDefaultPrefs().getString("pref_editorfont", "firacode");
     return getFont(selectedFont);
   }
 
-  public static boolean isSoftTab() {
-    return getDefaultPrefs().getBoolean("softtab", false);
+  /*
+   * Returns whether the user wants to use spaces instead of tabs(\t)
+   */
+  public static boolean useUseSpaces() {
+    return getDefaultPrefs().getBoolean("pref_usespaces", true);
   }
 
-  public static boolean isDeleleteEmptyLineFast() {
-    return getDefaultPrefs().getBoolean("deletefast", false);
+  /*
+   * Returns whether the user wants to quickly delete empty lines
+   */
+  public static boolean useDeleteEmptyLineFast() {
+    return getDefaultPrefs().getBoolean("pref_deleteemptylinefast", true);
   }
 
+  /*
+   * Returns the font selected by the user
+   */
   private static int getFont(String selectedFont) {
     switch (selectedFont) {
       case "firacode":

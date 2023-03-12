@@ -2,18 +2,20 @@ package com.raredev.vcspace.ui.editor;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import androidx.core.content.res.ResourcesCompat;
 import com.raredev.common.util.FileUtil;
 import com.raredev.vcspace.databinding.LayoutCodeEditorBinding;
+import com.raredev.vcspace.ui.editor.textmate.DynamicTextMateColorScheme;
+import com.raredev.vcspace.ui.editor.textmate.VCSpaceTextMateLanguage;
 import com.raredev.vcspace.util.PreferencesUtils;
 import io.github.rosemoe.sora.lang.EmptyLanguage;
-import io.github.rosemoe.sora.langs.textmate.TextMateColorScheme;
-import io.github.rosemoe.sora.langs.textmate.TextMateLanguage;
+import io.github.rosemoe.sora.lang.Language;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
+import io.github.rosemoe.sora.text.LineSeparator;
 import io.github.rosemoe.sora.widget.CodeEditor;
+import io.github.rosemoe.sora.widget.schemes.EditorColorScheme;
 import java.io.File;
 import java.util.concurrent.CompletableFuture;
 import org.json.JSONObject;
@@ -28,12 +30,9 @@ public class CodeEditorView extends LinearLayout
     super(context);
     this.file = file;
     binding = LayoutCodeEditorBinding.inflate(LayoutInflater.from(context));
-    binding.editor.setNonPrintablePaintingFlags(
-        CodeEditor.FLAG_DRAW_WHITESPACE_LEADING
-            | CodeEditor.FLAG_DRAW_WHITESPACE_INNER
-            | CodeEditor.FLAG_DRAW_WHITESPACE_FOR_EMPTY_LINE);
     binding.editor.setHighlightCurrentBlock(true);
-    setupTheme();
+    binding.editor.setColorScheme(createScheme());
+    binding.editor.setLineSeparator(LineSeparator.LF);
 
     removeAllViews();
     addView(
@@ -43,10 +42,11 @@ public class CodeEditorView extends LinearLayout
         () -> {
           var content = FileUtil.readFile(file.getAbsolutePath());
           var editor = binding.editor;
+
           editor.post(
               () -> {
                 editor.setText(content);
-                setLanguage();
+                editor.setEditorLanguage(createLanguage());
               });
         });
     configureEditor();
@@ -57,6 +57,10 @@ public class CodeEditorView extends LinearLayout
     updateEditorFont();
     updateTextSize();
     updateDeleteEmptyLineFast();
+  }
+  
+  public void format() {
+    binding.editor.formatCodeAsync();
   }
 
   @Override
@@ -106,37 +110,28 @@ public class CodeEditorView extends LinearLayout
     if (binding.editor.canRedo()) binding.editor.redo();
   }
 
-  private void setLanguage() {
+  private EditorColorScheme createScheme() {
     try {
-      var editor = binding.editor;
+      return DynamicTextMateColorScheme.create(getContext(), ThemeRegistry.getInstance());
+    } catch (Exception e) {
+      return new EditorColorScheme();
+    }
+  }
+
+  private Language createLanguage() {
+    try {
       JSONObject jsonObj =
           new JSONObject(FileUtil.readAssetFile(getContext(), "textmate/language_scopes.json"));
       String extension = file.getName().substring(file.getName().lastIndexOf(".") + 1);
 
-      if (extension != null) {
-        editor.setEditorLanguage(TextMateLanguage.create(jsonObj.getString(extension), true));
-      } else {
-        editor.setEditorLanguage(new EmptyLanguage());
-      }
-      jsonObj = null;
+      return VCSpaceTextMateLanguage.create(jsonObj.getString(extension), extension);
     } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
-  private void setupTheme() {
-    try {
-      ThemeRegistry.getInstance().setTheme(isDarkMode() ? "darcula" : "quietlight");
-
-      var editor = binding.editor;
-      editor.setColorScheme(TextMateColorScheme.create(ThemeRegistry.getInstance()));
-    } catch (Exception e) {
-      e.printStackTrace();
+      return new EmptyLanguage();
     }
   }
 
   private void updateTextSize() {
-    int textSize = PreferencesUtils.getTextSize();
+    int textSize = PreferencesUtils.getEditorTextSize();
     if (textSize < 14) {
       textSize = 14;
     }
@@ -151,12 +146,13 @@ public class CodeEditorView extends LinearLayout
   }
 
   private void updateDeleteEmptyLineFast() {
-    binding.editor.getProps().deleteEmptyLineFast = PreferencesUtils.isDeleleteEmptyLineFast();
+    binding.editor.getProps().deleteEmptyLineFast = PreferencesUtils.useDeleteEmptyLineFast();
   }
 
-  private boolean isDarkMode() {
-    int uiMode =
-        getContext().getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-    return uiMode == Configuration.UI_MODE_NIGHT_YES;
+  private void updateNonPrintablePaintingFlags() {
+    /*binding.editor.setNonPrintablePaintingFlags(
+    CodeEditor.FLAG_DRAW_WHITESPACE_LEADING
+        | CodeEditor.FLAG_DRAW_WHITESPACE_INNER
+        | CodeEditor.FLAG_DRAW_WHITESPACE_FOR_EMPTY_LINE);*/
   }
 }

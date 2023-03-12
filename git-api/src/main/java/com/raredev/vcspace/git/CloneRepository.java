@@ -2,12 +2,13 @@ package com.raredev.vcspace.git;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.raredev.common.databinding.LayoutProgressDialogBinding;
 import com.raredev.common.task.TaskExecutor;
-import com.raredev.common.util.DialogUtils;
 import com.raredev.vcspace.git.databinding.LayoutCloneDialogBinding;
 import java.io.File;
 import org.eclipse.jgit.api.Git;
@@ -51,11 +52,18 @@ public class CloneRepository {
       return;
     }
 
-    MaterialAlertDialogBuilder progress =
-        DialogUtils.newProgressDialog(context, "Cloning repo", "Cloning..");
+    LayoutProgressDialogBinding binding =
+        LayoutProgressDialogBinding.inflate(LayoutInflater.from(context));
+    AlertDialog progressDialog =
+        new MaterialAlertDialogBuilder(context)
+            .setView(binding.getRoot())
+            .setTitle("Cloning repository")
+            .setPositiveButton(android.R.string.cancel, null)
+            .create();
+    binding.message.setText("Starting..");
 
     var output = new File(root, extractRepositoryNameFromURL(repoURL));
-    var monitor = new CloneProgressMonitor(progress);
+    var monitor = new CloneProgressMonitor(binding.message);
 
     var task =
         TaskExecutor.executeAsyncProvideError(
@@ -73,23 +81,25 @@ public class CloneRepository {
               return git;
             });
 
-    progress.setPositiveButton(
-        android.R.string.cancel,
-        (di, which) -> {
-          monitor.cancel();
-          if (git != null) git.close();
-          task.cancel(true);
-        });
+    if (progressDialog.isShowing()) {
+      progressDialog
+          .getButton(AlertDialog.BUTTON_POSITIVE)
+          .setOnClickListener(
+              v -> {
+                monitor.cancel();
+                if (git != null) git.close();
+                task.cancel(true);
+              });
+    }
 
-    AlertDialog dialog = progress.create();
-    dialog.setCancelable(false);
-    dialog.show();
+    progressDialog.setCancelable(false);
+    progressDialog.show();
 
     task.whenComplete(
         (result, error) -> {
           ThreadUtils.runOnUiThread(
               () -> {
-                dialog.cancel();
+                progressDialog.cancel();
                 if (result != null && error == null) {
                   result.close();
                   ToastUtils.showShort(context.getString(R.string.successfully_cloned));
@@ -117,11 +127,11 @@ public class CloneRepository {
   }
 
   public class CloneProgressMonitor implements ProgressMonitor {
-    private MaterialAlertDialogBuilder progressDialog;
+    private TextView message;
     public boolean cancelled = false;
 
-    public CloneProgressMonitor(MaterialAlertDialogBuilder progress) {
-      progressDialog = progress;
+    public CloneProgressMonitor(TextView message) {
+      this.message = message;
     }
 
     public void cancel() {
@@ -133,7 +143,7 @@ public class CloneRepository {
 
     @Override
     public void beginTask(String title, int totalWork) {
-      ThreadUtils.runOnUiThread(() -> progressDialog.setMessage(title));
+      ThreadUtils.runOnUiThread(() -> message.setText(title));
     }
 
     @Override

@@ -1,6 +1,5 @@
-package com.raredev.vcspace.tools;
+package com.raredev.vcspace.models;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.raredev.vcspace.R;
 
 public enum FileExtension {

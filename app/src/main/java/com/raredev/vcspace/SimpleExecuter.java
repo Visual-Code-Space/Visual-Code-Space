@@ -1,12 +1,13 @@
-package com.raredev.vcspace.ui.editor.language.html;
+package com.raredev.vcspace;
 
 import android.content.Context;
 import android.content.Intent;
 import com.raredev.vcspace.activity.WebViewActivity;
 import java.io.File;
 
-public class ExecuteHtml {
-  public ExecuteHtml(Context context, File file) {
+public class SimpleExecuter {
+
+  public SimpleExecuter(Context context, File file) {
     if (file.getName().endsWith(".html")) {
       execute(context, file);
     }

@@ -34,7 +34,6 @@
         android:title="@string/menu_execute" />
       <item
         android:id="@+id/menu_search"
-        android:checkable="true"
         android:icon="@drawable/ic_search"
         android:title="@string/menu_search" />
       <item

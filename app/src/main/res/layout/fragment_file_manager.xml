@@ -51,12 +51,24 @@
       android:padding="2dp"
       android:id="@+id/folder_name"
       android:textSize="14sp" />
+    
+    <ImageView
+      android:layout_width="22dp"
+      android:layout_height="22dp"
+      android:src="@drawable/close"
+      android:id="@+id/close"
+      android:layout_alignParentRight="true"
+      android:layout_centerVertical="true"
+      android:layout_margin="3dp"
+      android:background="@drawable/ripple_effect"
+      android:padding="4dp"
+      android:visibility="invisible" />
 
     <ImageView
       android:layout_width="22dp"
       android:layout_height="22dp"
       android:src="@drawable/ic_refresh"
-      android:layout_alignParentRight="true"
+      android:layout_toLeftOf="@id/close"
       android:id="@+id/refresh"
       android:layout_centerVertical="true"
       android:layout_margin="3dp"

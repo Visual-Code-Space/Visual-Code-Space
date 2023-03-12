@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import com.raredev.common.util.DialogUtils;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.activity.MainActivity;
 import com.raredev.vcspace.adapters.FilesAdapter;
@@ -91,22 +92,22 @@ public class FileManagerFragment extends Fragment {
               return false;
             }
             PopupMenu menu = new PopupMenu(requireActivity(), v);
-            menu.getMenu().add(R.string.menu_rename);
+            menu.getMenu().add(R.string.rename);
             menu.getMenu().add(R.string.delete);
 
             menu.setOnMenuItemClickListener(
                 (item) -> {
                   String title = (String) item.getTitle();
-                  if (title == requireActivity().getResources().getString(R.string.menu_rename)) {
+                  if (title == getString(R.string.rename)) {
                     FileManagerUtils.renameFile(
-                        requireActivity(),
+                        requireContext(),
                         mFiles.get(position),
                         (oldFile, newFile) -> {
                           reloadFiles();
                         });
                   } else {
                     FileManagerUtils.deleteFile(
-                        requireActivity(),
+                        requireContext(),
                         mFiles.get(position),
                         () -> {
                           ((MainActivity) requireActivity()).getEditorManager().onFileDeleted();
@@ -135,27 +136,17 @@ public class FileManagerFragment extends Fragment {
                 .mStartForResult.launch(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE));
           }
         });
-    binding.openRecent.setOnClickListener(
-        v -> {
-          String recentFolderPath =
-              PreferencesUtils.getFileManagerPrefs().getString(ToolsFragment.KEY_RECENT_FOLDER, "");
-          if (!recentFolderPath.isEmpty()) {
-            rootDir = new File(recentFolderPath);
-            reloadFiles(rootDir);
-          }
-        });
-    binding.refresh.setOnClickListener(
-        v -> {
-          reloadFiles(currentDir);
-        });
+    binding.openRecent.setOnClickListener(v -> tryOpenRecentDir());
+    binding.refresh.setOnClickListener(v -> reloadFiles(currentDir));
     binding.newFolder.setOnClickListener(
-        v -> {
-          FileManagerUtils.createFolder(requireActivity(), currentDir, () -> reloadFiles());
-        });
+        v -> FileManagerUtils.createFolder(requireActivity(), currentDir, () -> reloadFiles()));
     binding.newFile.setOnClickListener(
-        v -> {
-          FileManagerUtils.createFile(requireActivity(), currentDir, () -> reloadFiles());
-        });
+        v -> FileManagerUtils.createFile(requireActivity(), currentDir, () -> reloadFiles()));
+    binding.close.setOnClickListener(v -> doCloseFolder());
+
+    if (PreferencesUtils.useOpenRecentsAutomatically()) {
+      tryOpenRecentDir();
+    }
   }
 
   @Override
@@ -164,7 +155,30 @@ public class FileManagerFragment extends Fragment {
     binding = null;
   }
 
+  @Override
+  public void onResume() {
+    super.onResume();
+    reloadFiles();
+  }
+
+  public void doCloseFolder() {
+    if (rootDir != null) {
+      rootDir = null;
+      currentDir = null;
+      mFiles.clear();
+
+      PreferencesUtils.getToolsPrefs()
+          .edit()
+          .putString(ToolsFragment.KEY_RECENT_FOLDER, "")
+          .apply();
+      updateViewsVisibility();
+    }
+  }
+
   public void reloadFiles() {
+    if (rootDir == null && currentDir == null) {
+      return;
+    }
     reloadFiles(currentDir);
   }
 
@@ -180,6 +194,22 @@ public class FileManagerFragment extends Fragment {
       updateViewsVisibility();
     } else {
       FileManagerUtils.takeFilePermissions(requireActivity());
+    }
+  }
+
+  private void tryOpenRecentDir() {
+    try {
+      String recentFolderPath =
+          PreferencesUtils.getToolsPrefs().getString(ToolsFragment.KEY_RECENT_FOLDER, "");
+      if (!recentFolderPath.isEmpty()) {
+        rootDir = new File(recentFolderPath);
+        reloadFiles(rootDir);
+      }
+    } catch (Throwable e) {
+      DialogUtils.newErrorDialog(
+          requireContext(),
+          getString(R.string.error),
+          getString(R.string.error_opening_recent_files) + "\n\n" + e.toString());
     }
   }
 
@@ -209,16 +239,7 @@ public class FileManagerFragment extends Fragment {
       ViewUtils.expand(binding.expandableLayout);
       ViewUtils.rotateChevron(true, binding.downButton);
     }
-    if (rootDir == null) {
-      binding.refresh.setVisibility(View.INVISIBLE);
-      binding.newFile.setVisibility(View.INVISIBLE);
-      binding.newFolder.setVisibility(View.INVISIBLE);
-
-    } else {
-      binding.refresh.setVisibility(View.VISIBLE);
-      binding.newFile.setVisibility(View.VISIBLE);
-      binding.newFolder.setVisibility(View.VISIBLE);
-    }
+    updateViewsVisibility();
   }
 
   private void updateViewsVisibility() {
@@ -229,6 +250,7 @@ public class FileManagerFragment extends Fragment {
       binding.refresh.setVisibility(View.INVISIBLE);
       binding.newFile.setVisibility(View.INVISIBLE);
       binding.newFolder.setVisibility(View.INVISIBLE);
+      binding.close.setVisibility(View.INVISIBLE);
     } else {
       binding.folderName.setText(rootDir.getName());
       binding.containerOpen.setVisibility(View.GONE);
@@ -236,6 +258,7 @@ public class FileManagerFragment extends Fragment {
       binding.refresh.setVisibility(View.VISIBLE);
       binding.newFile.setVisibility(View.VISIBLE);
       binding.newFolder.setVisibility(View.VISIBLE);
+      binding.close.setVisibility(View.VISIBLE);
     }
   }
 }

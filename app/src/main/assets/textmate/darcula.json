@@ -6,6 +6,8 @@
             "foreground": "#cccccc",
             "lineHighlight": "#2B2B2B",
             "selection": "#214283",
+            "lineNumber": "#b3b4b5",
+            "currentLineNumber": "#d4d9d6",
             "highlightedDelimetersForeground": "#ffffff"
         }
     },

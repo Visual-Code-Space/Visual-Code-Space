@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
   android:layout_height="match_parent"
@@ -7,52 +7,23 @@
   android:padding="5dp"
   android:orientation="vertical">
 
-  <LinearLayout
+  <EditText
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    android:orientation="vertical">
+    android:hint="@string/search"
+    android:id="@+id/search_text" />
 
-    <LinearLayout
-      android:layout_height="wrap_content"
-      android:layout_width="match_parent"
-      android:layout_gravity="center_vertical">
-
-      <TextView
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:hint="Find:" />
-
-      <EditText
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:hint="@string/search"
-        android:id="@+id/search_editor" />
-
-    </LinearLayout>
-
-    <LinearLayout
-      android:layout_height="wrap_content"
-      android:layout_width="match_parent"
-      android:layout_gravity="center_vertical">
-
-      <TextView
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:hint="Rep:" />
-
-      <EditText
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:hint="@string/replace"
-        android:id="@+id/replace_editor" />
-
-    </LinearLayout>
-
-  </LinearLayout>
+  <EditText
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_below="@id/search_text"
+    android:hint="@string/search"
+    android:id="@+id/replace_text" />
 
   <LinearLayout
     android:layout_height="50dp"
-    android:layout_width="match_parent">
+    android:layout_width="match_parent"
+    android:layout_below="@id/replace_text">
 
     <Button
       android:layout_height="match_parent"
@@ -84,4 +55,4 @@
 
   </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>

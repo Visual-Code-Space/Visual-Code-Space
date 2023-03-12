@@ -8,15 +8,14 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.core.view.GravityCompat;
 import androidx.lifecycle.ViewModelProvider;
-import com.google.android.material.elevation.SurfaceColors;
 import com.google.android.material.tabs.TabLayout;
 import com.raredev.common.task.TaskExecutor;
 import com.raredev.common.util.DialogUtils;
+import com.raredev.common.util.Utils;
 import com.raredev.vcspace.R;
+import com.raredev.vcspace.SimpleExecuter;
 import com.raredev.vcspace.databinding.ActivityMainBinding;
 import com.raredev.vcspace.ui.editor.EditorViewModel;
-import com.raredev.vcspace.ui.editor.action.FormatterAction;
-import com.raredev.vcspace.ui.editor.language.html.ExecuteHtml;
 import com.raredev.vcspace.ui.editor.manager.EditorManager;
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;
@@ -80,11 +79,12 @@ public class MainActivity extends VCSpaceActivity {
               if (files.isEmpty()) {
                 binding.tabLayout.setVisibility(View.GONE);
                 binding.layout.setVisibility(View.GONE);
-                binding.empty.setVisibility(View.VISIBLE);
+                binding.noFileOpened.setVisibility(View.VISIBLE);
+                binding.searcher.hide();
               } else {
                 binding.tabLayout.setVisibility(View.VISIBLE);
                 binding.layout.setVisibility(View.VISIBLE);
-                binding.empty.setVisibility(View.GONE);
+                binding.noFileOpened.setVisibility(View.GONE);
               }
             });
     initialize();
@@ -124,12 +124,13 @@ public class MainActivity extends VCSpaceActivity {
         break;
       case R.id.menu_compile:
         editorManager.saveAll(false);
-        new ExecuteHtml(this, viewModel.getCurrentFile());
+        new SimpleExecuter(this, viewModel.getCurrentFile());
         break;
       case R.id.menu_format:
-        new FormatterAction(editorManager.getCurrentEditor()).format();
+        editorManager.getCurrentEditor().format();
         break;
       case R.id.menu_search:
+        binding.searcher.showAndHide();
         break;
       case R.id.menu_settings:
         startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
@@ -144,6 +145,10 @@ public class MainActivity extends VCSpaceActivity {
       binding.drawerLayout.close();
       return;
     }
+    if (binding.searcher.isShowing) {
+      binding.searcher.hide();
+      return;
+    }
     editorManager.saveAllFiles(false);
     super.onBackPressed();
   }
@@ -154,7 +159,7 @@ public class MainActivity extends VCSpaceActivity {
 
   private void initialize() {
     binding.progress.setVisibility(View.VISIBLE);
-    getSupportActionBar().setSubtitle("Loading..");
+    getSupportActionBar().setSubtitle(R.string.loading);
     TaskExecutor.executeAsyncProvideError(
         () -> {
           loadTextMate();
@@ -162,19 +167,20 @@ public class MainActivity extends VCSpaceActivity {
         },
         (result, error) -> {
           if (error != null) {
-            DialogUtils.newErrorDialog(this, "Editor", error.toString());
+            DialogUtils.newErrorDialog(this, getString(R.string.error), error.toString());
           }
           getSupportActionBar().setSubtitle(null);
           binding.progress.setVisibility(View.GONE);
-          //editorManager.openRecentOpenedFiles();
-          loadShortcuts();
+          editorManager.tryOpenRecentOpenedFiles();
+          editorManager.tryOpenFileFromIntent(getIntent());
         });
   }
 
   private void updateTab(int pos) {
     binding.container.setDisplayedChild(pos);
     editorManager.getEditorAtIndex(pos).requestFocus();
-    binding.shortcuts.bindEditor(editorManager.getEditorAtIndex(pos).getEditor());
+    binding.searcher.bindEditor(editorManager.getEditorAtIndex(pos).getEditor());
+    binding.symbolInput.bindEditor(editorManager.getEditorAtIndex(pos).getEditor());
     invalidateOptionsMenu();
   }
 
@@ -185,11 +191,12 @@ public class MainActivity extends VCSpaceActivity {
     pm.getMenu().add(R.string.close_all);
     pm.setOnMenuItemClickListener(
         item -> {
-          if (item.getTitle() == getResources().getString(R.string.close)) {
+          var title = item.getTitle();
+          if (title == getString(R.string.close)) {
             editorManager.closeFile(pos);
-          } else if (item.getTitle() == getResources().getString(R.string.close_others)) {
+          } else if (title == getString(R.string.close_others)) {
             editorManager.closeOthers();
-          } else if (item.getTitle() == getResources().getString(R.string.close_all)) {
+          } else if (title == getString(R.string.close_all)) {
             editorManager.closeAllFiles();
           }
           editorManager.saveOpenedFiles();
@@ -197,15 +204,6 @@ public class MainActivity extends VCSpaceActivity {
           return true;
         });
     pm.show();
-  }
-
-  private void loadShortcuts() {
-    binding.shortcuts.setBackgroundColor(SurfaceColors.SURFACE_0.getColor(this));
-    binding.shortcuts.removeSymbols();
-
-    binding.shortcuts.addSymbols(
-        new String[] {"→", "\"", ";", "(", ")", "{", "}", "[", "]", "<", ">"},
-        new String[] {"    ", "\"", ";", "(", ")", "{", "}", "[", "]", "<", ">"});
   }
 
   private void loadTextMate() throws Exception {
@@ -224,5 +222,7 @@ public class MainActivity extends VCSpaceActivity {
     }
     // Load editor languages
     GrammarRegistry.getInstance().loadGrammars("textmate/languages.json");
+    // Register current theme
+    ThemeRegistry.getInstance().setTheme(Utils.isDarkMode(this) ? "darcula" : "quietlight");
   }
 }

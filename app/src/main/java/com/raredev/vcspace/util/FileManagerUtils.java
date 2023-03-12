@@ -10,7 +10,6 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.Settings;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.EditText;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
@@ -20,8 +19,7 @@ import com.raredev.common.task.TaskExecutor;
 import com.raredev.common.util.DialogUtils;
 import com.raredev.common.util.FileUtil;
 import com.raredev.vcspace.R;
-import com.raredev.vcspace.VCSpaceApplication;
-import com.raredev.vcspace.databinding.DialogInputBinding;
+import com.raredev.vcspace.databinding.LayoutTextinputBinding;
 import java.io.File;
 import java.util.Comparator;
 
@@ -52,25 +50,25 @@ public class FileManagerUtils {
         ".*\\.(bin|ttf|png|jpe?g|bmp|mp4|mp3|m4a|iso|so|zip|jar|dex|odex|vdex|7z|apk|apks|xapk)$");
   }
 
-  public static void createFile(Activity act, File file, Concluded concluded) {
-    createNew(act, file, concluded, false);
+  public static void createFile(Context context, File file, Concluded concluded) {
+    createNew(context, file, concluded, false);
   }
 
-  public static void createFolder(Activity act, File file, Concluded concluded) {
-    createNew(act, file, concluded, true);
+  public static void createFolder(Context context, File file, Concluded concluded) {
+    createNew(context, file, concluded, true);
   }
 
   @SuppressWarnings("deprecation")
-  private static void createNew(Activity act, File file, Concluded concluded, boolean isFolder) {
-    LayoutInflater inflater = act.getLayoutInflater();
-    DialogInputBinding binding = DialogInputBinding.inflate(inflater);
+  private static void createNew(Context context, File file, Concluded concluded, boolean isFolder) {
+    LayoutInflater inflater = LayoutInflater.from(context);
+    LayoutTextinputBinding binding = LayoutTextinputBinding.inflate(inflater);
     EditText et_filename = binding.etInput;
     binding.tvInputLayout.setHint(
         isFolder
-            ? act.getString(R.string.folder_name_hint)
-            : act.getString(R.string.file_name_hint));
+            ? context.getString(R.string.folder_name_hint)
+            : context.getString(R.string.file_name_hint));
 
-    new MaterialAlertDialogBuilder(act)
+    new MaterialAlertDialogBuilder(context)
         .setTitle(isFolder ? R.string.new_folder_title : R.string.new_file_title)
         .setPositiveButton(
             R.string.create,
@@ -96,16 +94,18 @@ public class FileManagerUtils {
         .show();
   }
 
-  public static void renameFile(Activity act, File file, OnFileRenamed onFileRenamed) {
-    LayoutInflater inflater = act.getLayoutInflater();
-    View v = inflater.inflate(R.layout.dialog_input, null);
-    EditText et_filename = v.findViewById(R.id.et_input);
+  public static void renameFile(Context context, File file, OnFileRenamed onFileRenamed) {
+    LayoutInflater inflater = LayoutInflater.from(context);
+    LayoutTextinputBinding binding = LayoutTextinputBinding.inflate(inflater);
+    EditText et_filename = binding.etInput;
+    binding.tvInputLayout.setHint(R.string.rename_hint);
+
     et_filename.setText(file.getName());
 
-    new MaterialAlertDialogBuilder(act)
-        .setTitle(R.string.menu_rename)
+    new MaterialAlertDialogBuilder(context)
+        .setTitle(R.string.rename)
         .setPositiveButton(
-            R.string.menu_rename,
+            R.string.rename,
             (dlg, i) -> {
               File newFile = new File(file.getAbsolutePath());
 
@@ -117,23 +117,22 @@ public class FileManagerUtils {
               }
             })
         .setNegativeButton(R.string.cancel, null)
-        .setView(v)
+        .setView(binding.getRoot())
         .show();
   }
 
-  public static void deleteFile(Activity act, File file, Concluded concluded) {
-    new MaterialAlertDialogBuilder(act)
+  public static void deleteFile(Context context, File file, Concluded concluded) {
+    new MaterialAlertDialogBuilder(context)
         .setTitle(R.string.delete)
-        .setMessage(
-            act.getResources().getString(R.string.delete_message).replace("NAME", file.getName()))
+        .setMessage(context.getString(R.string.delete_message).replace("NAME", file.getName()))
         .setPositiveButton(
             R.string.delete,
             (dlg, i) -> {
               AlertDialog progress =
                   DialogUtils.newProgressDialog(
-                          act,
-                          act.getString(R.string.deleting),
-                          act.getString(R.string.deleting_plase_wait))
+                          context,
+                          context.getString(R.string.deleting),
+                          context.getString(R.string.deleting_plase_wait))
                       .create();
               progress.setCancelable(false);
               progress.show();
