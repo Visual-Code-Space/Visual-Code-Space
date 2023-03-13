@@ -126,17 +126,10 @@ public class ToolsFragment extends Fragment {
     super.onViewCreated(view, savedInstanceState);
   }
 
-  public void reloadFileManagerFiles(File dir) {
-    if (fileManagerFragment != null) {
-      setCurrentFragment(0);
-      fileManagerFragment.reloadFiles(dir);
-    }
-  }
-
   public void parseRootDirToFileManager(File dir) {
     if (fileManagerFragment != null && dir != null) {
       setCurrentFragment(0);
-      fileManagerFragment.setRootDir(dir);
+      fileManagerFragment.loadTreeView(dir);
     }
   }
 

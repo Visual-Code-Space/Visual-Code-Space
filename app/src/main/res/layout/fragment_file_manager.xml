@@ -35,8 +35,8 @@
     android:background="@drawable/ripple_effect">
 
     <ImageView
-      android:layout_width="20dp"
-      android:layout_height="20dp"
+      android:layout_width="@dimen/dimen22dp"
+      android:layout_height="@dimen/dimen22dp"
       android:src="@drawable/chevron_down"
       android:id="@+id/down_button"
       android:layout_centerVertical="true" />
@@ -51,10 +51,10 @@
       android:padding="2dp"
       android:id="@+id/folder_name"
       android:textSize="14sp" />
-    
+
     <ImageView
-      android:layout_width="22dp"
-      android:layout_height="22dp"
+      android:layout_width="@dimen/dimen22dp"
+      android:layout_height="@dimen/dimen22dp"
       android:src="@drawable/close"
       android:id="@+id/close"
       android:layout_alignParentRight="true"
@@ -65,35 +65,11 @@
       android:visibility="invisible" />
 
     <ImageView
-      android:layout_width="22dp"
-      android:layout_height="22dp"
+      android:layout_width="@dimen/dimen22dp"
+      android:layout_height="@dimen/dimen22dp"
       android:src="@drawable/ic_refresh"
       android:layout_toLeftOf="@id/close"
       android:id="@+id/refresh"
-      android:layout_centerVertical="true"
-      android:layout_margin="3dp"
-      android:background="@drawable/ripple_effect"
-      android:padding="4dp"
-      android:visibility="invisible" />
-
-    <ImageView
-      android:layout_width="22dp"
-      android:layout_height="22dp"
-      android:src="@drawable/folder_plus_outline"
-      android:layout_toLeftOf="@id/refresh"
-      android:id="@+id/new_folder"
-      android:layout_centerVertical="true"
-      android:layout_margin="3dp"
-      android:background="@drawable/ripple_effect"
-      android:padding="4dp"
-      android:visibility="invisible" />
-
-    <ImageView
-      android:layout_width="22dp"
-      android:layout_height="22dp"
-      android:src="@drawable/file_plus_outline"
-      android:layout_toLeftOf="@id/new_folder"
-      android:id="@+id/new_file"
       android:layout_centerVertical="true"
       android:layout_margin="3dp"
       android:background="@drawable/ripple_effect"
@@ -143,26 +119,11 @@
       android:orientation="vertical"
       android:visibility="gone">
 
-      <androidx.recyclerview.widget.RecyclerView
-        android:layout_height="match_parent"
+      <HorizontalScrollView
+        android:id="@+id/horizontal_scroll"
         android:layout_width="match_parent"
-        android:scrollbars="vertical"
-        android:id="@+id/rv_files" />
-
-      <RelativeLayout
         android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:visibility="gone"
-        android:id="@+id/empty_layout">
-
-        <ImageView
-          android:layout_height="60dp"
-          android:layout_width="60dp"
-          android:layout_marginBottom="5dp"
-          android:layout_centerInParent="true"
-          android:src="@drawable/folder_open" />
-
-      </RelativeLayout>
+        android:fillViewport="true" />
 
     </LinearLayout>
 

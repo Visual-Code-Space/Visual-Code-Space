@@ -157,7 +157,7 @@ public class MainActivity extends VCSpaceActivity {
     return editorManager;
   }
 
-  private void initialize() {
+  private synchronized void initialize() {
     binding.progress.setVisibility(View.VISIBLE);
     getSupportActionBar().setSubtitle(R.string.loading);
     TaskExecutor.executeAsyncProvideError(

@@ -77,14 +77,14 @@ public class FileManagerUtils {
                 File newFolder = new File(file, "/" + et_filename.getText().toString());
                 if (!newFolder.exists()) {
                   if (newFolder.mkdirs()) {
-                    concluded.concluded();
+                    concluded.concluded(newFolder);
                   }
                 }
               } else {
                 File newFile = new File(file, "/" + et_filename.getText().toString());
                 if (!newFile.exists()) {
                   if (FileUtil.writeFile(newFile.getAbsolutePath(), "")) {
-                    concluded.concluded();
+                    concluded.concluded(newFile);
                   }
                 }
               }
@@ -141,7 +141,7 @@ public class FileManagerUtils {
                     return FileUtil.delete(file.getAbsolutePath());
                   },
                   (result, error) -> {
-                    concluded.concluded();
+                    concluded.concluded(file);
                     progress.cancel();
                   });
             })
@@ -171,6 +171,6 @@ public class FileManagerUtils {
   }
 
   public interface Concluded {
-    void concluded();
+    void concluded(File file);
   }
 }

@@ -13,7 +13,7 @@ android {
         versionCode 4
         versionName "1.1"
     }
-    
+
     signingConfigs {
         global {
             storeFile file ("vcspace.keystore")
@@ -79,4 +79,5 @@ dependencies {
 
     implementation project(path: ':common')
     implementation project(path: ':git-api')
+    implementation project(path: ':treeview')
 }

@@ -10,7 +10,7 @@
     <img width="30%" src="./images/screenshot2.png" alt="Screenshot2" title="Screenshot2">
 </div>
 
-### TODO
+## TODO
 - [ ] IntelliSense: Provides intelligent code completion suggestions as you type, based on the language you're working with.
 - [ ] Debugging: Built-in debugging tools allow you to debug your code directly in the editor.
 - [ ] Git integration: Manage your source code with Git integration, including support for branching, merging, and committing changes.
@@ -26,6 +26,20 @@
 - [ ] Interactive playgrounds: Explore and experiment with code in a live, interactive environment.
 - [ ] Integrated documentation: Access documentation for libraries and frameworks directly in the app.
 
-### Thanks to
+## Thanks to
 - [Rosemoe](https://github.com/Rosemoe) for [sora-editor](https://github.com/Rosemoe/sora-editor)
+- [Bogdan Melnychuk](https://github.com/bmelnychuk) for [AndroidTreeView](https://github.com/bmelnychuk/AndroidTreeView)
 - [Akash Yadav](https://github.com/itsaky) for the awesome [AndroidIDE](https://github.com/AndroidIDEOfficial/AndroidIDE)
+
+To contribute to this project:
+
+## Requirements
+
+- JDK 11
+
+## Source code format
+
+- Indents : 2-space
+- Java : `GoogleStyle`. Either use `google-java-format` or import [this](https://raw.githubusercontent.com/google/styleguide/gh-pages/intellij-java-google-style.xml) code style.
+- Kotlin : kotlin will not be used in this project
+- XML : Default Android Studio or AndroidIDE formatter with 2-space indentations.
