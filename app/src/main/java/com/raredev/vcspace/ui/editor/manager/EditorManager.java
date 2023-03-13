@@ -132,22 +132,29 @@ public class EditorManager {
   public void closeOthers() {
     File currentFile = viewModel.getCurrentFile();
     CodeEditorView currentEditor = getCurrentEditor();
-    
-    viewModel.clear();
-    tabLayout.removeAllTabs();
-    tabLayout.requestLayout();
-    container.removeAllViews();
 
+    closeAllFiles(true);
+
+    currentEditor.getEditor().requestFocus();
     container.addView(currentEditor);
+    
     tabLayout.addTab(tabLayout.newTab().setText(currentFile.getName()));
 
     viewModel.openFile(currentFile);
   }
 
-  public void closeAllFiles() {
+  public void closeAllFiles(boolean ignoreCurrent) {
     if (!viewModel.getFiles().getValue().isEmpty()) {
       for (int i = 0; i < viewModel.getFiles().getValue().size(); i++) {
-        getEditorAtIndex(i).release();
+        CodeEditorView editor = getEditorAtIndex(i);
+        // If ignoreCurrent is true then closeAll will
+        // ignore and not trigger the release for the current editor 
+        if (ignoreCurrent) {
+          if (i != viewModel.getCurrentPosition())
+            editor.release();
+        } else {
+          editor.release();
+        }
       }
       viewModel.clear();
       tabLayout.removeAllTabs();

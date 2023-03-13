@@ -60,6 +60,7 @@
       android:layout_alignParentRight="true"
       android:layout_centerVertical="true"
       android:layout_margin="3dp"
+      android:padding="2dp"
       android:background="@drawable/ripple_effect"
       android:visibility="invisible" />
 
@@ -71,6 +72,7 @@
       android:id="@+id/refresh"
       android:layout_centerVertical="true"
       android:layout_margin="3dp"
+      android:padding="2dp"
       android:background="@drawable/ripple_effect"
       android:visibility="invisible" />
 

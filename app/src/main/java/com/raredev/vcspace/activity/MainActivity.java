@@ -197,7 +197,7 @@ public class MainActivity extends VCSpaceActivity {
           } else if (title == getString(R.string.close_others)) {
             editorManager.closeOthers();
           } else if (title == getString(R.string.close_all)) {
-            editorManager.closeAllFiles();
+            editorManager.closeAllFiles(false);
           }
           editorManager.saveOpenedFiles();
           invalidateOptionsMenu();
