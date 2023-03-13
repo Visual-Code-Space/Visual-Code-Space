@@ -50,6 +50,8 @@
   <string name="replace">Replace</string>
   <string name="new_file_title">New file</string>
   <string name="new_folder_title">New folder</string>
+  <string name="close_folder_title">Close Folder</string>
+  <string name="close_folder_message">Do you want to close this folder? Any unsaved changes will be lost.</string>
 
   <!-- Settings String -->
   <string name="application">Application</string>

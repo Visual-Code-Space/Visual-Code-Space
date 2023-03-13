@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.raredev.common.util.DialogUtils;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.activity.MainActivity;
@@ -142,7 +143,15 @@ public class FileManagerFragment extends Fragment {
         v -> FileManagerUtils.createFolder(requireActivity(), currentDir, () -> reloadFiles()));
     binding.newFile.setOnClickListener(
         v -> FileManagerUtils.createFile(requireActivity(), currentDir, () -> reloadFiles()));
-    binding.close.setOnClickListener(v -> doCloseFolder());
+    binding.close.setOnClickListener(
+        v -> {
+          new MaterialAlertDialogBuilder(requireContext())
+              .setTitle(R.string.close_folder_title)
+              .setMessage(R.string.close_folder_message)
+              .setPositiveButton(R.string.close, (di, which) -> doCloseFolder())
+              .setNegativeButton(R.string.cancel, (di, which) -> di.dismiss())
+              .show();
+        });
 
     if (PreferencesUtils.useOpenRecentsAutomatically()) {
       tryOpenRecentDir();
