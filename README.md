@@ -32,7 +32,7 @@
 - [Bogdan Melnychuk](https://github.com/bmelnychuk) for [AndroidTreeView](https://github.com/bmelnychuk/AndroidTreeView)
 - [Akash Yadav](https://github.com/itsaky) for the awesome [AndroidIDE](https://github.com/AndroidIDEOfficial/AndroidIDE) and [TreeView](https://github.com/AndroidIDEOfficial/AndroidIDE/tree/dev/treeview)
 
-To contribute to this project:
+## To contribute to this project:
 
 ## Requirements
 

@@ -61,7 +61,6 @@
       android:layout_centerVertical="true"
       android:layout_margin="3dp"
       android:background="@drawable/ripple_effect"
-      android:padding="4dp"
       android:visibility="invisible" />
 
     <ImageView
@@ -73,7 +72,6 @@
       android:layout_centerVertical="true"
       android:layout_margin="3dp"
       android:background="@drawable/ripple_effect"
-      android:padding="4dp"
       android:visibility="invisible" />
 
   </RelativeLayout>
