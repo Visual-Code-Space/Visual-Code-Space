@@ -24,7 +24,8 @@
 
   <!-- Errors Strings -->
   <string name="error">Erro</string>
-  <string name="error_opening_recent_files">Erro ao tentar abrir arquivos recentes:</string>
+  <string name="error_treeview_opening_recent_files">Erro ao tentar abrir pasta recente:</string>
+  <string name="error_editor_opening_recent_files">Erro ao tentar abrir arquivos recentes:</string>
   
   <!-- Buttons And Titles -->
   <string name="saved_files">Arquivos salvos</string>
@@ -50,6 +51,8 @@
   <string name="replace">Substituir</string>
   <string name="new_file_title">Novo arquivo</string>
   <string name="new_folder_title">Nova pasta</string>
+  <string name="close_folder_title">Fechar pasta</string>
+  <string name="close_folder_message">Deseja fechar esta pasta?</string>
 
   <!-- Settings String -->
   <string name="application">Aplicativo</string>

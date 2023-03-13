@@ -12,6 +12,7 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
+import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.errors.AmbiguousObjectException;
 import org.eclipse.jgit.errors.IncorrectObjectTypeException;
 import org.eclipse.jgit.lib.Constants;
@@ -23,6 +24,7 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.transport.RefSpec;
 import org.eclipse.jgit.treewalk.AbstractTreeIterator;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.eclipse.jgit.treewalk.EmptyTreeIterator;
@@ -183,6 +185,17 @@ public class GitUtils {
   }
 
   /**
+   * Push all committed changes to a remote branch
+   *
+   * @param remote The name of the remote
+   * @param branch The name of the branch
+   * @throws GitAPIException
+   */
+  public void push(String remote, String branch) throws GitAPIException {
+    git.push().setRemote(remote).setRefSpecs(new RefSpec(branch)).call();
+  }
+
+  /**
    * Pull changes from remote repository
    *
    * @param remoteName The name of the remote repository to pull from
@@ -190,6 +203,17 @@ public class GitUtils {
    */
   public void pull(String remoteName) throws GitAPIException {
     git.pull().setRemote(remoteName).call();
+  }
+
+  /**
+   * Pull changes from a remote branch into the current branch
+   *
+   * @param remote The name of the remote
+   * @param branch The name of the branch
+   * @throws GitAPIException
+   */
+  public void pull(String remote, String branch) throws GitAPIException {
+    git.pull().setRemote(remote).setRemoteBranchName(branch).call();
   }
 
   /**
@@ -272,6 +296,24 @@ public class GitUtils {
   }
 
   /**
+   * Get the list of uncommitted changes in the repository as a string
+   *
+   * @return A string representing the uncommitted changes
+   * @throws GitAPIException
+   * @throws IOException
+   */
+  public String getUncommittedChangesAsString() throws GitAPIException, IOException {
+    List<DiffEntry> diffs = getUncommittedChanges();
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    DiffFormatter formatter = new DiffFormatter(outputStream);
+    formatter.setRepository(git.getRepository());
+    for (DiffEntry entry : diffs) {
+      formatter.format(entry);
+    }
+    return outputStream.toString();
+  }
+
+  /**
    * Get the current branch name
    *
    * @return The name of the current branch
@@ -294,5 +336,24 @@ public class GitUtils {
       commits.add(it.next());
     }
     return commits;
+  }
+
+  /**
+   * Get the list of commits on the current branch as a string
+   *
+   * @return A string representing the commits on the current branch
+   * @throws GitAPIException
+   * @throws IOException
+   */
+  public String getCommitsForCurrentBranchAsString() throws GitAPIException, IOException {
+    Iterable<RevCommit> commits = git.log().call();
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    RevCommit commit;
+    for (Iterator<RevCommit> i = commits.iterator(); i.hasNext(); ) {
+      commit = i.next();
+      outputStream.write(commit.getFullMessage().getBytes());
+      outputStream.write(System.lineSeparator().getBytes());
+    }
+    return outputStream.toString();
   }
 }

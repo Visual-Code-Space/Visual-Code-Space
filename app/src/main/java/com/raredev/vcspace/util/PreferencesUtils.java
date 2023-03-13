@@ -8,6 +8,7 @@ import com.raredev.vcspace.VCSpaceApplication;
 import com.raredev.vcspace.R;
 
 public class PreferencesUtils {
+  public static final String KEY_RECENT_FOLDER = "recentFolderPath";
 
   public static SharedPreferences getToolsPrefs() {
     return VCSpaceApplication.appContext.getSharedPreferences("tools", Activity.MODE_PRIVATE);

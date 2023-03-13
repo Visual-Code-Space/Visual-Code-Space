@@ -67,7 +67,7 @@ public class EditorManager {
       DialogUtils.newErrorDialog(
           context,
           context.getString(R.string.error),
-          context.getString(R.string.error_opening_recent_files) + "\n\n" + e.toString());
+          context.getString(R.string.error_editor_opening_recent_files) + "\n\n" + e.toString());
     }
   }
 
@@ -82,7 +82,7 @@ public class EditorManager {
         DialogUtils.newErrorDialog(
             context,
             context.getString(R.string.error),
-            context.getString(R.string.error_opening_recent_files) + "\n\n" + e.toString());
+            context.getString(R.string.error_editor_opening_recent_files) + "\n\n" + e.toString());
       }
     }
   }
@@ -130,16 +130,18 @@ public class EditorManager {
   }
 
   public void closeOthers() {
-    if (viewModel.getCurrentPosition() <= 0) return;
-    File file = viewModel.getCurrentFile();
-    for (int i = 0; i < viewModel.getFiles().getValue().size(); i++) {
-      CodeEditorView editor = getEditorAtIndex(i);
-      if (editor != null) {
-        if (file != editor.getFile()) {
-          closeFile(i);
-        }
-      }
-    }
+    File currentFile = viewModel.getCurrentFile();
+    CodeEditorView currentEditor = getCurrentEditor();
+    
+    viewModel.clear();
+    tabLayout.removeAllTabs();
+    tabLayout.requestLayout();
+    container.removeAllViews();
+
+    container.addView(currentEditor);
+    tabLayout.addTab(tabLayout.newTab().setText(currentFile.getName()));
+
+    viewModel.openFile(currentFile);
   }
 
   public void closeAllFiles() {

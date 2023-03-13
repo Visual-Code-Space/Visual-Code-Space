@@ -2,6 +2,7 @@ package com.raredev.vcspace.ui.editor.textmate;
 
 import androidx.annotation.NonNull;
 import com.raredev.vcspace.ui.editor.formatter.VCSpaceFormatter;
+import com.raredev.vcspace.util.PreferencesUtils;
 import io.github.rosemoe.sora.lang.format.Formatter;
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage;
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;
@@ -24,7 +25,6 @@ public class VCSpaceTextMateLanguage extends TextMateLanguage {
 
     formatter = new VCSpaceFormatter(fileExtension);
     getSymbolPairsFor(fileExtension);
-    useTab(false);
   }
 
   public static VCSpaceTextMateLanguage create(String languageScopeName, String fileExtension) {
@@ -51,6 +51,11 @@ public class VCSpaceTextMateLanguage extends TextMateLanguage {
   @NonNull
   public Formatter getFormatter() {
     return formatter;
+  }
+
+  @Override
+  public boolean useTab() {
+    return !PreferencesUtils.useUseSpaces();
   }
 
   private void getSymbolPairsFor(String fileExtension) {

@@ -23,7 +23,7 @@ public class FileViewHolder extends TreeNode.BaseNodeViewHolder<File> {
   public View createNodeView(TreeNode node, File file) {
     binding = LayoutFileItemBinding.inflate(LayoutInflater.from(context));
 
-    var root = applyPadding(node, binding, Utils.pxToDp(context, 10));
+    var root = applyPadding(node, binding, Utils.pxToDp(context, 15));
     binding.name.setText(file.getName());
 
     if (file.isFile()) {

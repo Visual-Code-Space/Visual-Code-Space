@@ -42,6 +42,10 @@ android {
 
     packagingOptions {
         resources.excludes.add("license/*")
+        exclude 'META-INF/eclipse.inf'
+        exclude 'about_files/LICENSE-2.0.txt'
+        exclude 'plugin.xml'
+        exclude 'plugin.properties'
     }
 
     lint {
@@ -76,6 +80,7 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.15.3'
     
     implementation 'commons-io:commons-io:2.11.0'
+    implementation 'org.eclipse.jdt:org.eclipse.jdt.core:3.32.0'
 
     implementation project(path: ':common')
     implementation project(path: ':git-api')

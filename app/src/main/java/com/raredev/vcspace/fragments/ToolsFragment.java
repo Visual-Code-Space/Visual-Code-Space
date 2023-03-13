@@ -12,6 +12,7 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.widget.TooltipCompat;
 import androidx.documentfile.provider.DocumentFile;
 import com.raredev.common.util.FileUtil;
 import com.raredev.vcspace.R;
@@ -26,7 +27,6 @@ import com.raredev.vcspace.util.PreferencesUtils;
 import java.io.File;
 
 public class ToolsFragment extends Fragment {
-  public static final String KEY_RECENT_FOLDER = "recentFolderPath";
 
   public ActivityResultLauncher<Intent> mStartForResult;
 
@@ -35,7 +35,7 @@ public class ToolsFragment extends Fragment {
   private ToolsPagerAdapter adapter;
   private SharedPreferences toolsPrefs;
 
-  private FileManagerFragment fileManagerFragment;
+  private TreeViewFragment treeViewFragment;
   private GitToolsFragment gitToolsFragment;
 
   @Override
@@ -59,7 +59,10 @@ public class ToolsFragment extends Fragment {
                           DocumentFile pickedDir = DocumentFile.fromTreeUri(requireContext(), uri);
                           File dir = FileUtil.getFileFromUri(requireContext(), pickedDir.getUri());
                           parseRootDirToFileManager(dir);
-                          toolsPrefs.edit().putString(KEY_RECENT_FOLDER, dir.toString()).apply();
+                          toolsPrefs
+                              .edit()
+                              .putString(PreferencesUtils.KEY_RECENT_FOLDER, dir.toString())
+                              .apply();
                         } catch (Exception e) {
                           e.printStackTrace();
                         }
@@ -75,10 +78,10 @@ public class ToolsFragment extends Fragment {
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     binding = FragmentToolsBinding.inflate(inflater, container, false);
 
-    fileManagerFragment = new FileManagerFragment();
+    treeViewFragment = new TreeViewFragment();
     gitToolsFragment = new GitToolsFragment();
     adapter = new ToolsPagerAdapter(getChildFragmentManager(), getLifecycle());
-    adapter.addFragment(fileManagerFragment);
+    adapter.addFragment(treeViewFragment);
     adapter.addFragment(gitToolsFragment);
 
     binding.pager.setUserInputEnabled(false);
@@ -92,6 +95,7 @@ public class ToolsFragment extends Fragment {
               public void onConfigureTab(TabLayout.Tab tab, int position) {
                 switch (position) {
                   case 0:
+                    TooltipCompat.setTooltipText(tab.view, getString(R.string.explorer));
                     tab.setIcon(
                         AppCompatResources.getDrawable(requireContext(), R.drawable.folder_open));
                     break;
@@ -127,15 +131,15 @@ public class ToolsFragment extends Fragment {
   }
 
   public void parseRootDirToFileManager(File dir) {
-    if (fileManagerFragment != null && dir != null) {
+    if (treeViewFragment != null && dir != null) {
       setCurrentFragment(0);
-      fileManagerFragment.loadTreeView(dir);
+      treeViewFragment.loadTreeView(dir);
     }
   }
 
   public void tryOpenRepository() {
-    if (gitToolsFragment != null && fileManagerFragment != null) {
-      gitToolsFragment.openRepository(fileManagerFragment.getRootDir());
+    if (gitToolsFragment != null && treeViewFragment != null) {
+      gitToolsFragment.openRepository(treeViewFragment.getRootDir());
     }
   }
 

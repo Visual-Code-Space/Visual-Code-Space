@@ -11,9 +11,9 @@ import com.unnamed.b.atv.view.AndroidTreeView;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Set;
 
 public class TreeUtils {
-
   public static void addNewChild(Context context, TreeNode parent, File file) {
     TreeNode newNode = new TreeNode(file);
     newNode.setViewHolder(new FileViewHolder(context));

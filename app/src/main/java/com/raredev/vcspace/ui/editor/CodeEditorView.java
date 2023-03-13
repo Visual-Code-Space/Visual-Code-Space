@@ -66,13 +66,13 @@ public class CodeEditorView extends LinearLayout
   @Override
   public void onSharedPreferenceChanged(SharedPreferences pref, String key) {
     switch (key) {
-      case "textsize":
+      case "pref_editortextsize":
         updateTextSize();
         break;
-      case "deletefast":
+      case "pref_deleteemptylinefast":
         updateDeleteEmptyLineFast();
         break;
-      case "editorfont":
+      case "pref_editorfont":
         updateEditorFont();
         break;
     }

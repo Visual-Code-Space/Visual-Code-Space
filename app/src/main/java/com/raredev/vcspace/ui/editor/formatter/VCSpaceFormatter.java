@@ -8,8 +8,17 @@ import io.github.rosemoe.sora.lang.format.AsyncFormatter;
 import io.github.rosemoe.sora.text.Content;
 import io.github.rosemoe.sora.text.TextRange;
 import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.ToolFactory;
+import org.eclipse.jdt.core.formatter.CodeFormatter;
+import org.eclipse.jdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.text.edits.TextEdit;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 
 public class VCSpaceFormatter extends AsyncFormatter {
   private String fileExtension;
@@ -28,6 +37,10 @@ public class VCSpaceFormatter extends AsyncFormatter {
       case "json":
         text.replace(0, code.length(), formatJson(code));
         break;
+      case "java":
+        text.replace(0, code.length(), formatJava(code));
+        break;
+      
     }
     return range;
   }
@@ -39,9 +52,9 @@ public class VCSpaceFormatter extends AsyncFormatter {
 
   private String formatHtml(String code) {
     String html = code;
-    Document doc = Jsoup.parse(html);
+    org.jsoup.nodes.Document doc = Jsoup.parse(html);
 
-    var outputSettings = new Document.OutputSettings();
+    var outputSettings = new org.jsoup.nodes.Document.OutputSettings();
     outputSettings.indentAmount(4);
 
     doc.outputSettings(outputSettings.prettyPrint(true));
@@ -50,7 +63,7 @@ public class VCSpaceFormatter extends AsyncFormatter {
     }
     return doc.html();
   }
-  
+
   private String formatJson(String code) {
     try {
       ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
@@ -65,5 +78,80 @@ public class VCSpaceFormatter extends AsyncFormatter {
     } catch (IOException ioe) {
       return code;
     }
+  }
+
+  @SuppressWarnings("unchecked")
+  private String formatJava(String code) {
+    Map options = DefaultCodeFormatterConstants.getEclipse21Settings();
+
+    options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_8);
+    options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_8);
+    options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
+    
+    options.put(
+        DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ENUM_CONSTANTS,
+        DefaultCodeFormatterConstants.createAlignmentValue(
+            true,
+            DefaultCodeFormatterConstants.WRAP_ONE_PER_LINE,
+            DefaultCodeFormatterConstants.INDENT_ON_COLUMN));
+    options.put(
+        DefaultCodeFormatterConstants.FORMATTER_ALIGN_TYPE_MEMBERS_ON_COLUMNS,
+        DefaultCodeFormatterConstants.createAlignmentValue(
+            true,
+            DefaultCodeFormatterConstants.WRAP_ONE_PER_LINE,
+            DefaultCodeFormatterConstants.INDENT_ON_COLUMN));
+    options.put(
+        DefaultCodeFormatterConstants.FORMATTER_ALIGN_FIELDS_GROUPING_BLANK_LINES,
+        DefaultCodeFormatterConstants.createAlignmentValue(
+            true,
+            DefaultCodeFormatterConstants.WRAP_ONE_PER_LINE,
+            DefaultCodeFormatterConstants.INDENT_ON_COLUMN));
+    options.put(DefaultCodeFormatterConstants.FORMATTER_BLANK_LINES_BEFORE_IMPORTS, "1");
+    options.put(DefaultCodeFormatterConstants.FORMATTER_BLANK_LINES_AFTER_IMPORTS, "1");
+    options.put(
+        DefaultCodeFormatterConstants.FORMATTER_COMMENT_CLEAR_BLANK_LINES_IN_JAVADOC_COMMENT,
+        DefaultCodeFormatterConstants.TRUE);
+    options.put(
+        DefaultCodeFormatterConstants.FORMATTER_COMMENT_CLEAR_BLANK_LINES_IN_BLOCK_COMMENT,
+        DefaultCodeFormatterConstants.TRUE);
+    options.put(
+        DefaultCodeFormatterConstants
+            .FORMATTER_COMMENT_PRESERVE_WHITE_SPACE_BETWEEN_CODE_AND_LINE_COMMENT,
+        DefaultCodeFormatterConstants.TRUE);
+    options.put(
+        DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_AT_END_OF_FILE_IF_MISSING,
+        JavaCore.INSERT);
+    final CodeFormatter formatter = ToolFactory.createCodeFormatter(options);
+    final TextEdit te =
+        formatter.format(
+            CodeFormatter.K_COMPILATION_UNIT | CodeFormatter.F_INCLUDE_COMMENTS,
+            code,
+            0, // starting index
+            code.length(), // length
+            0, // initial indentation
+            System.lineSeparator() // line separator
+            );
+
+    final IDocument document = new Document(code);
+    final CountDownLatch latch = new CountDownLatch(1);
+
+    Executors.newSingleThreadExecutor()
+        .execute(
+            () -> {
+              try {
+                te.apply(document);
+              } catch (Exception e) {
+                throw new IllegalStateException(e);
+              }
+              latch.countDown();
+            });
+
+    try {
+      latch.await();
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+
+    return document.get();
   }
 }

@@ -113,10 +113,11 @@
     </LinearLayout>
 
     <LinearLayout
-      android:id="@+id/file_manager"
+      android:id="@+id/tree_view"
       android:layout_height="match_parent"
       android:layout_width="match_parent"
       android:orientation="vertical"
+      android:padding="5dp"
       android:visibility="gone">
 
       <HorizontalScrollView

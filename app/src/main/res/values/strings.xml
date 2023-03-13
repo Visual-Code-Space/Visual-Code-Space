@@ -24,7 +24,8 @@
   
   <!-- Errors Strings-->
   <string name="error">Error</string>
-  <string name="error_opening_recent_files">Error when trying to open recent files:</string>
+  <string name="error_treeview_opening_recent_files">Error when trying to open recent folder:</string>
+  <string name="error_editor_opening_recent_files">Error when trying to open recent files:</string>
 
   <!-- Buttons And Titles -->
   <string name="saved_files">Saved files</string>
@@ -50,6 +51,8 @@
   <string name="replace">Replace</string>
   <string name="new_file_title">New file</string>
   <string name="new_folder_title">New folder</string>
+  <string name="close_folder_title">Close Folder</string>
+  <string name="close_folder_message">Do you want to close this folder?</string>
 
   <!-- Settings String -->
   <string name="application">Application</string>

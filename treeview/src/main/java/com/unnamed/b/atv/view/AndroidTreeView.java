@@ -26,6 +26,7 @@ import java.util.Set;
 @SuppressWarnings("rawtypes")
 public class AndroidTreeView {
 
+  public static final String NODES_PATH_SEPARATOR = ";";
   private final Context mContext;
   private final int nodeViewBackground;
   protected TreeNode mRoot;
@@ -211,6 +212,24 @@ public class AndroidTreeView {
     collapseNode(node, false);
   }
 
+  public String getSaveState() {
+    final StringBuilder builder = new StringBuilder();
+    getSaveState(mRoot, builder);
+    if (builder.length() > 0) {
+      builder.setLength(builder.length() - 1);
+    }
+    return builder.toString();
+  }
+
+  public void restoreState(String saveState) {
+    if (!TextUtils.isEmpty(saveState)) {
+      collapseAll();
+      final String[] openNodesArray = saveState.split(NODES_PATH_SEPARATOR);
+      final Set<String> openNodes = new HashSet<>(Arrays.asList(openNodesArray));
+      restoreNodeState(mRoot, openNodes);
+    }
+  }
+
   public void toggleNode(TreeNode node) {
     if (node.isExpanded()) {
       collapseNode(node, false);
@@ -357,6 +376,29 @@ public class AndroidTreeView {
     for (int i = 0, childrenSize = children.size(); i < childrenSize; i++) {
       TreeNode n = children.get(i);
       expandLevel(n, level);
+    }
+  }
+
+  private void restoreNodeState(TreeNode node, Set<String> openNodes) {
+    List<TreeNode> children = node.getChildren();
+    for (int i = 0, childrenSize = children.size(); i < childrenSize; i++) {
+      TreeNode n = children.get(i);
+      if (openNodes.contains(n.getPath())) {
+        expandNode(n);
+        restoreNodeState(n, openNodes);
+      }
+    }
+  }
+
+  private void getSaveState(TreeNode root, StringBuilder sBuilder) {
+    List<TreeNode> children = root.getChildren();
+    for (int i = 0, childrenSize = children.size(); i < childrenSize; i++) {
+      TreeNode node = children.get(i);
+      if (node.isExpanded()) {
+        sBuilder.append(node.getPath());
+        sBuilder.append(NODES_PATH_SEPARATOR);
+        getSaveState(node, sBuilder);
+      }
     }
   }
 

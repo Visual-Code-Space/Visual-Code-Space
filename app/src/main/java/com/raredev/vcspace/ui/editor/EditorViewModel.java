@@ -55,7 +55,11 @@ public class EditorViewModel extends ViewModel {
   }
 
   public boolean contains(Object obj) {
-    return getFiles().getValue().contains(obj);
+    List<File> files = getFiles().getValue();
+    if (files.isEmpty()) {
+      return false;
+    }
+    return files.contains(obj);
   }
 
   public int indexOf(Object obj) {

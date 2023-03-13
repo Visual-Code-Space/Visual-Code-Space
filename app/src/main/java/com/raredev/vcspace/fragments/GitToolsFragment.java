@@ -25,13 +25,7 @@ public class GitToolsFragment extends Fragment {
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     binding = FragmentGitToolsBinding.inflate(inflater, container, false);
     ViewUtils.rotateChevron(ViewUtils.isExpanded(binding.expandableLayout), binding.downButton);
-    return binding.getRoot();
-  }
-
-  @Override
-  public void onViewCreated(View view, Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
-
+    
     binding.cloneRepo.setOnClickListener(
         v -> {
           CloneRepository clone = new CloneRepository(requireContext());
@@ -63,6 +57,12 @@ public class GitToolsFragment extends Fragment {
         v -> {
           expandCollapseView();
         });
+    return binding.getRoot();
+  }
+
+  @Override
+  public void onViewCreated(View view, Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
   }
 
   public void openRepository(File dir) {
