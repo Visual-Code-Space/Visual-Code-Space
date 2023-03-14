@@ -36,11 +36,7 @@ public class PreferencesUtils {
    * Returns the user-selected font value
    */
   public static int getEditorTextSize() {
-    try {
-      return Integer.parseInt(getDefaultPrefs().getString("pref_editortextsize", "14"));
-    } catch (Exception e) {
-      return 14;
-    }
+    return getDefaultPrefs().getInt("pref_editortextsize", 14);
   }
 
   /*

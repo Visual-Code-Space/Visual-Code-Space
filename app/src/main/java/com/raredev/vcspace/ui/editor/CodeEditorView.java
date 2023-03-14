@@ -58,7 +58,7 @@ public class CodeEditorView extends LinearLayout
     updateTextSize();
     updateDeleteEmptyLineFast();
   }
-  
+
   public void format() {
     binding.editor.formatCodeAsync();
   }
@@ -132,9 +132,6 @@ public class CodeEditorView extends LinearLayout
 
   private void updateTextSize() {
     int textSize = PreferencesUtils.getEditorTextSize();
-    if (textSize < 14) {
-      textSize = 14;
-    }
     binding.editor.setTextSize(textSize);
   }
 
