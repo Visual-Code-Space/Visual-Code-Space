@@ -40,7 +40,7 @@ public class GitUtils {
    * @throws IOException
    */
   public GitUtils(String repoPath) throws IOException {
-    Repository repo = new FileRepositoryBuilder().setGitDir(new File(repoPath + "/.git")).build();
+    Repository repo = new FileRepositoryBuilder().setGitDir(new File(repoPath + "/.git/")).build();
     git = new Git(repo);
   }
 

@@ -36,15 +36,6 @@ public class FileManagerUtils {
         }
       };
 
-  public static boolean isPermissionGaranted(Context context) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-      return Environment.isExternalStorageManager();
-    } else {
-      return ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)
-          == PackageManager.PERMISSION_GRANTED;
-    }
-  }
-
   public static boolean isValidTextFile(String filename) {
     return !filename.matches(
         ".*\\.(bin|ttf|png|jpe?g|bmp|mp4|mp3|m4a|iso|so|zip|jar|dex|odex|vdex|7z|apk|apks|xapk)$");
@@ -166,6 +157,15 @@ public class FileManagerUtils {
     }
   }
 
+  public static boolean isPermissionGaranted(Context context) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+      return Environment.isExternalStorageManager();
+    } else {
+      return ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)
+          == PackageManager.PERMISSION_GRANTED;
+    }
+  }
+  
   public interface OnFileRenamed {
     void onFileRenamed(File oldFile, File newFile);
   }

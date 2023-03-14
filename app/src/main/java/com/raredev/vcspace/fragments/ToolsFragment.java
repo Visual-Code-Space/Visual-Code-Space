@@ -23,6 +23,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.raredev.vcspace.adapters.ToolsPagerAdapter;
 import com.raredev.vcspace.databinding.FragmentToolsBinding;
+import com.raredev.vcspace.util.FileManagerUtils;
 import com.raredev.vcspace.util.PreferencesUtils;
 import java.io.File;
 
@@ -132,9 +133,9 @@ public class ToolsFragment extends Fragment {
 
   public void parseRootDirToFileManager(File dir) {
     if (treeViewFragment != null && dir != null) {
-      setCurrentFragment(0);
-      treeViewFragment.loadTreeView(dir);
-    }
+        setCurrentFragment(0);
+        treeViewFragment.loadTreeView(dir);
+      }
   }
 
   public void tryOpenRepository() {

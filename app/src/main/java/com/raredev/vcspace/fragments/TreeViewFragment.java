@@ -1,11 +1,5 @@
 package com.raredev.vcspace.fragments;
 
-import static com.raredev.vcspace.util.FileManagerUtils.isValidTextFile;
-import static com.raredev.vcspace.util.FileManagerUtils.createFile;
-import static com.raredev.vcspace.util.FileManagerUtils.createFolder;
-import static com.raredev.vcspace.util.FileManagerUtils.deleteFile;
-import static com.raredev.vcspace.util.FileManagerUtils.renameFile;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -26,6 +20,7 @@ import com.raredev.vcspace.models.DialogListModel;
 import com.raredev.vcspace.ui.tree.TreeUtils;
 import com.raredev.vcspace.ui.tree.holder.FileViewHolder;
 import com.raredev.vcspace.util.ApkInstaller;
+import com.raredev.vcspace.util.FileManagerUtils;
 import com.raredev.vcspace.util.PreferencesUtils;
 import com.raredev.vcspace.util.ViewUtils;
 import com.unnamed.b.atv.model.TreeNode;
@@ -135,7 +130,7 @@ public class TreeViewFragment extends Fragment
               R.drawable.folder_plus_outline, getString(R.string.new_folder_title)));
     }
     if (!node.getValue().equals(mRoot.childAt(0).getValue())) {
-      options.add(new DialogListModel(R.drawable.file_nename, getString(R.string.rename)));
+      options.add(new DialogListModel(R.drawable.file_rename, getString(R.string.rename)));
       options.add(new DialogListModel(R.drawable.delete_outline, getString(R.string.delete)));
     }
     ListDialogAdapter adapter = new ListDialogAdapter(options);
@@ -145,7 +140,7 @@ public class TreeViewFragment extends Fragment
         (v, position) -> {
           String label = options.get(position).label;
           if (label.equals(getString(R.string.new_file_title))) {
-            createFile(
+            FileManagerUtils.createFile(
                 requireActivity(),
                 file,
                 (newFile) -> {
@@ -153,7 +148,7 @@ public class TreeViewFragment extends Fragment
                   requireExpansion(node);
                 });
           } else if (label.equals(getString(R.string.new_folder_title))) {
-            createFolder(
+            FileManagerUtils.createFolder(
                 requireActivity(),
                 file,
                 (newFolder) -> {
@@ -162,14 +157,14 @@ public class TreeViewFragment extends Fragment
                 });
           }
           if (label.equals(getString(R.string.rename))) {
-            renameFile(
+            FileManagerUtils.renameFile(
                 requireContext(),
                 file,
                 (oldFile, newFile) -> {
                   requireExpansion(node.getParent());
                 });
           } else if (label.equals(getString(R.string.delete))) {
-            deleteFile(
+            FileManagerUtils.deleteFile(
                 requireContext(),
                 file,
                 (deletedFile) -> {
@@ -197,7 +192,7 @@ public class TreeViewFragment extends Fragment
         ApkInstaller.installApplication(requireContext(), file);
         return;
       }
-      if (isValidTextFile(file.getName()))
+      if (FileManagerUtils.isValidTextFile(file.getName()))
         ((MainActivity) requireActivity()).getEditorManager().openFile(file);
     } else {
       if (node.isExpanded()) {
@@ -226,6 +221,9 @@ public class TreeViewFragment extends Fragment
   public void loadTreeView(File rootFile) {
     if (getContext() == null) {
       return;
+    }
+    if (!FileManagerUtils.isPermissionGaranted(requireContext())) {
+      FileManagerUtils.takeFilePermissions(requireActivity());
     }
     doCloseFolder(false);
     mRoot = new TreeNode(new File(""));

@@ -15,6 +15,7 @@ import com.raredev.common.util.Utils;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.SimpleExecuter;
 import com.raredev.vcspace.databinding.ActivityMainBinding;
+import com.raredev.vcspace.ui.editor.CodeEditorView;
 import com.raredev.vcspace.ui.editor.EditorViewModel;
 import com.raredev.vcspace.ui.editor.manager.EditorManager;
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry;
@@ -65,13 +66,16 @@ public class MainActivity extends VCSpaceActivity {
 
           @Override
           public void onTabSelected(TabLayout.Tab p1) {
-            viewModel.setCurrentPosition(p1.getPosition());
-            updateTab(p1.getPosition());
+            int position = p1.getPosition();
+            CodeEditorView editor = editorManager.getEditorAtIndex(position);
+            viewModel.setCurrentPosition(position, editor.getFile());
+            binding.searcher.bindEditor(editor.getEditor());
+            binding.symbolInput.bindEditor(editor.getEditor());
+            invalidateOptionsMenu();
           }
         });
 
-    editorManager
-        .getViewModel()
+    viewModel
         .getFiles()
         .observe(
             this,
@@ -87,6 +91,10 @@ public class MainActivity extends VCSpaceActivity {
                 binding.noFileOpened.setVisibility(View.GONE);
               }
             });
+    
+    viewModel.getCurrentPositionPair().observe(this, (pair) -> {
+      binding.container.setDisplayedChild(pair.first);
+    });
     initialize();
   }
 
@@ -114,20 +122,20 @@ public class MainActivity extends VCSpaceActivity {
 
     switch (id) {
       case R.id.menu_undo:
-        editorManager.undo();
+        editorManager.getCurrentEditor().undo();;
         break;
       case R.id.menu_redo:
-        editorManager.redo();
+        editorManager.getCurrentEditor().redo();;
         break;
       case R.id.menu_save:
-        editorManager.saveAll(true);
+        editorManager.saveAllFiles(true);
         break;
       case R.id.menu_compile:
-        editorManager.saveAll(false);
+        editorManager.saveAllFiles(false);
         new SimpleExecuter(this, viewModel.getCurrentFile());
         break;
       case R.id.menu_format:
-        editorManager.getCurrentEditor().format();
+        editorManager.getCurrentEditor().getEditor().formatCodeAsync();
         break;
       case R.id.menu_search:
         binding.searcher.showAndHide();
@@ -142,7 +150,7 @@ public class MainActivity extends VCSpaceActivity {
   @Override
   public void onBackPressed() {
     if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-      binding.drawerLayout.close();
+      binding.drawerLayout.closeDrawer(GravityCompat.START);
       return;
     }
     if (binding.searcher.isShowing) {
@@ -158,8 +166,6 @@ public class MainActivity extends VCSpaceActivity {
   }
 
   private synchronized void initialize() {
-    binding.progress.setVisibility(View.VISIBLE);
-    getSupportActionBar().setSubtitle(R.string.loading);
     TaskExecutor.executeAsyncProvideError(
         () -> {
           loadTextMate();
@@ -169,19 +175,8 @@ public class MainActivity extends VCSpaceActivity {
           if (error != null) {
             DialogUtils.newErrorDialog(this, getString(R.string.error), error.toString());
           }
-          getSupportActionBar().setSubtitle(null);
-          binding.progress.setVisibility(View.GONE);
-          editorManager.tryOpenRecentOpenedFiles();
           editorManager.tryOpenFileFromIntent(getIntent());
         });
-  }
-
-  private void updateTab(int pos) {
-    binding.container.setDisplayedChild(pos);
-    editorManager.getEditorAtIndex(pos).requestFocus();
-    binding.searcher.bindEditor(editorManager.getEditorAtIndex(pos).getEditor());
-    binding.symbolInput.bindEditor(editorManager.getEditorAtIndex(pos).getEditor());
-    invalidateOptionsMenu();
   }
 
   private void showPopupMenu(View v, int pos) {
@@ -197,9 +192,8 @@ public class MainActivity extends VCSpaceActivity {
           } else if (title == getString(R.string.close_others)) {
             editorManager.closeOthers();
           } else if (title == getString(R.string.close_all)) {
-            editorManager.closeAllFiles(false);
+            editorManager.closeAllFiles();
           }
-          editorManager.saveOpenedFiles();
           invalidateOptionsMenu();
           return true;
         });

@@ -58,10 +58,6 @@ public class CodeEditorView extends LinearLayout
     updateTextSize();
     updateDeleteEmptyLineFast();
   }
-  
-  public void format() {
-    binding.editor.formatCodeAsync();
-  }
 
   @Override
   public void onSharedPreferenceChanged(SharedPreferences pref, String key) {

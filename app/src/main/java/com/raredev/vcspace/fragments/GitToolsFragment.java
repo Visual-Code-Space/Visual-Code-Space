@@ -7,17 +7,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import com.blankj.utilcode.util.ToastUtils;
 import com.raredev.common.util.DialogUtils;
 import com.raredev.vcspace.databinding.FragmentGitToolsBinding;
 import com.raredev.vcspace.git.CloneRepository;
-import com.raredev.vcspace.git.LocalRepository;
+import com.raredev.vcspace.git.utils.GitUtils;
 import com.raredev.vcspace.util.ViewUtils;
 import java.io.File;
+import java.io.IOException;
+import org.eclipse.jgit.api.errors.GitAPIException;
 
 public class GitToolsFragment extends Fragment {
   private FragmentGitToolsBinding binding;
 
-  private LocalRepository repository = new LocalRepository();
+  private GitUtils repository;
 
   @Nullable
   @Override
@@ -66,10 +69,16 @@ public class GitToolsFragment extends Fragment {
   }
 
   public void openRepository(File dir) {
-    /*if (repository.openRepository(dir)) {
-      updateViews();
-      binding.repositoryName.setText(repository.getName());
-    }*/
+    try {
+      repository = new GitUtils(dir.getAbsolutePath());
+
+      ToastUtils.showShort(repository.getStatusAsString());
+      //binding.repositoryName.setText(repository.getStatusAsString());
+    } catch (IOException e) {
+      e.printStackTrace();
+    } catch (GitAPIException e) {
+      e.printStackTrace();
+    }
   }
 
   private void expandCollapseView() {
@@ -84,12 +93,12 @@ public class GitToolsFragment extends Fragment {
   }
 
   private void updateViews() {
-    if (repository.getRepositoryDir() != null) {
+    /*if (repository.getRepositoryDir() != null) {
       binding.containerTools.setVisibility(View.GONE);
       binding.containerProject.setVisibility(View.VISIBLE);
     } else {
       binding.containerTools.setVisibility(View.VISIBLE);
       binding.containerProject.setVisibility(View.GONE);
-    }
+    }*/
   }
 }

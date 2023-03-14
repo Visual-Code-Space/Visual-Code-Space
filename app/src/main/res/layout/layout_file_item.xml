@@ -27,8 +27,8 @@
   </ViewFlipper>
 
   <ImageView
-    android:layout_height="26dp"
-    android:layout_width="26dp"
+    android:layout_height="25dp"
+    android:layout_width="25dp"
     android:src="@drawable/ic_folder"
     android:layout_marginLeft="5dp"
     android:layout_marginRight="5dp"

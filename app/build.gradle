@@ -77,10 +77,12 @@ dependencies {
     implementation "io.github.Rosemoe.sora-editor:editor"
     implementation "io.github.Rosemoe.sora-editor:language-textmate"
 
-    implementation 'org.jsoup:jsoup:1.15.3'
-    
-    implementation 'commons-io:commons-io:2.11.0'
     implementation 'org.eclipse.jdt:org.eclipse.jdt.core:3.32.0'
+    implementation 'org.eclipse.jgit:org.eclipse.jgit:6.5.0.202303070854-r'
+    implementation 'org.greenrobot:eventbus:3.2.0'
+    implementation 'org.jsoup:jsoup:1.15.3'
+
+    implementation 'commons-io:commons-io:2.11.0'
 
     implementation project(path: ':common')
     implementation project(path: ':git-api')

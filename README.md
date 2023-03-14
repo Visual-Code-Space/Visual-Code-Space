@@ -42,5 +42,4 @@
 
 - Indents : 2-space
 - Java : `GoogleStyle`. Either use `google-java-format` or import [this](https://raw.githubusercontent.com/google/styleguide/gh-pages/intellij-java-google-style.xml) code style.
-- Kotlin : kotlin will not be used in this project
 - XML : Default Android Studio or AndroidIDE formatter with 2-space indentations.
