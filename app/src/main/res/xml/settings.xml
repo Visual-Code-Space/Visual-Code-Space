@@ -22,7 +22,7 @@
       app:key="pref_dynamiccolors"
       app:title="@string/pref_dynamic_colors"
       app:summary="@string/pref_dynamic_colors_summary" />
-    
+
     <SwitchPreferenceCompat
       app:defaultValue="false"
       app:icon="@drawable/folder_open"
@@ -35,13 +35,15 @@
     app:iconSpaceReserved="false"
     app:title="@string/editor">
 
-    <EditTextPreference
-      app:dialogTitle="@string/pref_editor_textsize"
+    <SeekBarPreference
       app:icon="@drawable/format_size"
       app:key="pref_editortextsize"
       app:title="@string/pref_editor_textsize"
       app:defaultValue="14"
-      app:useSimpleSummaryProvider="true" />
+      app:min="6"
+      app:showSeekBarValue="true"
+      android:max="24"
+    />
 
     <ListPreference
       app:defaultValue="firacode"
