@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.transition.ChangeBounds;
 import androidx.transition.TransitionManager;
+import com.blankj.utilcode.util.FileUtils;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.raredev.common.task.TaskExecutor;
@@ -101,7 +102,7 @@ public class TreeViewFragment extends Fragment
           new MaterialAlertDialogBuilder(requireContext())
               .setTitle(R.string.close_folder_title)
               .setMessage(R.string.close_folder_message)
-              .setPositiveButton(R.string.close, (di, which) -> doCloseFolder(false))
+              .setPositiveButton(R.string.close, (di, which) -> doCloseFolder(true))
               .setNegativeButton(R.string.cancel, (di, which) -> di.dismiss())
               .show();
         });
@@ -209,7 +210,8 @@ public class TreeViewFragment extends Fragment
         ApkInstaller.installApplication(requireContext(), file);
         return;
       }
-      if (FileManagerUtils.isValidTextFile(file.getName()))
+
+      if (FileUtils.isUtf8(file))
         ((MainActivity) requireActivity()).getEditorManager().openFile(file);
     } else {
       if (node.isExpanded()) {
@@ -251,7 +253,7 @@ public class TreeViewFragment extends Fragment
     if (!FileManagerUtils.isPermissionGaranted(requireContext())) {
       FileManagerUtils.takeFilePermissions(requireActivity());
     }
-    doCloseFolder(true);
+    doCloseFolder(false);
     mRoot = TreeNode.root(rootFolder);
     mRoot.setViewHolder(new FileViewHolder(requireContext()));
 

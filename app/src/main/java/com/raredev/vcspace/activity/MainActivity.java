@@ -3,11 +3,14 @@ package com.raredev.vcspace.activity;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.core.view.GravityCompat;
 import androidx.lifecycle.ViewModelProvider;
+import com.blankj.utilcode.util.KeyboardUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.google.android.material.tabs.TabLayout;
 import com.raredev.common.task.TaskExecutor;
 import com.raredev.common.util.DialogUtils;
@@ -30,6 +33,8 @@ public class MainActivity extends VCSpaceActivity {
 
   private EditorViewModel viewModel;
   private EditorManager editorManager;
+  
+  private boolean showMenuRedo = false;
 
   @Override
   public void findBinding() {
@@ -69,8 +74,9 @@ public class MainActivity extends VCSpaceActivity {
             int position = p1.getPosition();
             CodeEditorView editor = editorManager.getEditorAtIndex(position);
             viewModel.setCurrentPosition(position, editor.getFile());
-            binding.searcher.bindEditor(editor.getEditor());
+
             binding.symbolInput.bindEditor(editor.getEditor());
+            binding.searcher.bindEditor(editor.getEditor());
             invalidateOptionsMenu();
           }
         });
@@ -91,10 +97,20 @@ public class MainActivity extends VCSpaceActivity {
                 binding.noFileOpened.setVisibility(View.GONE);
               }
             });
-    
-    viewModel.getCurrentPositionPair().observe(this, (pair) -> {
-      binding.container.setDisplayedChild(pair.first);
-    });
+
+    viewModel
+        .getCurrentPositionPair()
+        .observe(
+            this,
+            (pair) -> {
+              binding.container.setDisplayedChild(pair.first);
+            });
+    KeyboardUtils.registerSoftInputChangedListener(
+        this,
+        (visibility) -> {
+          showMenuRedo = visibility > 0;
+          invalidateOptionsMenu();
+        });
     initialize();
   }
 
@@ -107,10 +123,19 @@ public class MainActivity extends VCSpaceActivity {
   @Override
   public boolean onPrepareOptionsMenu(Menu menu) {
     if (!viewModel.getFiles().getValue().isEmpty()) {
-      menu.findItem(R.id.menu_save).setEnabled(true);
       menu.findItem(R.id.menu_editor).setVisible(true);
+      menu.findItem(R.id.menu_undo).setVisible(true);
+      
+      if (showMenuRedo) {
+        menu.findItem(R.id.menu_redo).setVisible(true);
+        menu.findItem(R.id.menu_editor).setVisible(false);
+      } else {
+        menu.findItem(R.id.menu_redo).setVisible(false);
+        menu.findItem(R.id.menu_editor).setVisible(true);
+      }
     } else {
-      menu.findItem(R.id.menu_save).setEnabled(false);
+      menu.findItem(R.id.menu_undo).setVisible(false);
+      menu.findItem(R.id.menu_redo).setVisible(false);
       menu.findItem(R.id.menu_editor).setVisible(false);
     }
     return super.onPrepareOptionsMenu(menu);
@@ -122,10 +147,10 @@ public class MainActivity extends VCSpaceActivity {
 
     switch (id) {
       case R.id.menu_undo:
-        editorManager.getCurrentEditor().undo();;
+        editorManager.getCurrentEditor().undo();
         break;
       case R.id.menu_redo:
-        editorManager.getCurrentEditor().redo();;
+        editorManager.getCurrentEditor().redo();
         break;
       case R.id.menu_save:
         editorManager.saveAllFiles(true);

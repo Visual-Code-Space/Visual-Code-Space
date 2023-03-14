@@ -20,7 +20,7 @@
   <string name="menu_format">Formatar</string>
   <string name="menu_search">Pesquisar</string>
   <string name="menu_reload">Recarregar</string>
-  <string name="menu_settings">Definições</string>
+  <string name="menu_settings">Configurações</string>
 
   <!-- Errors Strings -->
   <string name="error">Erro</string>
