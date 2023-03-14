@@ -39,9 +39,15 @@ public class GitUtils {
    * @param repoPath The path to the Git repository
    * @throws IOException
    */
-  public GitUtils(String repoPath) throws IOException {
-    Repository repo = new FileRepositoryBuilder().setGitDir(new File(repoPath + "/.git/")).build();
+  public GitUtils(File repoPath) throws  IOException {
+    Repository repo = new FileRepositoryBuilder().setGitDir(repoPath).build();
     git = new Git(repo);
+  }
+  
+  public void init(File repo) throws GitAPIException {
+    Git.init()
+            .setDirectory(repo)
+            .call();
   }
 
   /**

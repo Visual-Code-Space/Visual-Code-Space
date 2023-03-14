@@ -26,6 +26,7 @@
   <string name="error">Error</string>
   <string name="error_treeview_opening_recent_files">Error when trying to open recent folder:</string>
   <string name="error_editor_opening_recent_files">Error when trying to open recent files:</string>
+  <string name="error_this_folder_is_not_a_repository">This folder is not a repository</string>
 
   <!-- Buttons And Titles -->
   <string name="saved_files">Saved files</string>

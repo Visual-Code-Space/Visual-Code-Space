@@ -25,16 +25,21 @@ import java.util.Comparator;
 
 public class FileManagerUtils {
 
-  public static final Comparator<File> COMPARATOR =
-      (file1, file2) -> {
-        if (file1.isFile() && file2.isDirectory()) {
-          return 1;
-        } else if (file2.isFile() && file1.isDirectory()) {
-          return -1;
-        } else {
-          return String.CASE_INSENSITIVE_ORDER.compare(file1.getName(), file2.getName());
-        }
-      };
+  public static class SortFileName implements Comparator<File> {
+    @Override
+    public int compare(File f1, File f2) {
+      return f1.getName().compareTo(f2.getName());
+    }
+  }
+
+  public static class SortFolder implements Comparator<File> {
+    @Override
+    public int compare(File f1, File f2) {
+      if (f1.isDirectory() == f2.isDirectory()) return 0;
+      else if (f1.isDirectory() && !f2.isDirectory()) return -1;
+      else return 1;
+    }
+  }
 
   public static boolean isValidTextFile(String filename) {
     return !filename.matches(
@@ -165,7 +170,7 @@ public class FileManagerUtils {
           == PackageManager.PERMISSION_GRANTED;
     }
   }
-  
+
   public interface OnFileRenamed {
     void onFileRenamed(File oldFile, File newFile);
   }

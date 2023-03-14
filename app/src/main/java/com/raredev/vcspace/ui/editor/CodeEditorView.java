@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import androidx.core.content.res.ResourcesCompat;
 import com.raredev.common.util.FileUtil;
+import com.raredev.common.util.Utils;
 import com.raredev.vcspace.databinding.LayoutCodeEditorBinding;
 import com.raredev.vcspace.ui.editor.textmate.DynamicTextMateColorScheme;
 import com.raredev.vcspace.ui.editor.textmate.VCSpaceTextMateLanguage;
@@ -58,13 +59,6 @@ public class CodeEditorView extends LinearLayout
     updateTextSize();
     updateDeleteEmptyLineFast();
   }
-<<<<<<< HEAD
-=======
-
-  public void format() {
-    binding.editor.formatCodeAsync();
-  }
->>>>>>> 4a1c7a13a36abf8a561b1695dc91390879a67eab
 
   @Override
   public void onSharedPreferenceChanged(SharedPreferences pref, String key) {

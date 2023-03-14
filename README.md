@@ -5,7 +5,7 @@
 [![Test and Build](https://github.com/raredeveloperofc/Visual-Code-Space/actions/workflows/test_and_build.yml/badge.svg)](https://github.com/raredeveloperofc/Visual-Code-Space/actions/workflows/test_and_build.yml)
 </div>
 
-# Screenshots
+## Screenshots
 <div align="center">
     <img width="30%" src="./images/screenshot1.png" alt="Screenshot1" title="Screenshot1">
     <img width="30%" src="./images/screenshot2.png" alt="Screenshot2" title="Screenshot2">
@@ -33,10 +33,6 @@
 - [Akash Yadav](https://github.com/itsaky) for the awesome [AndroidIDE](https://github.com/AndroidIDEOfficial/AndroidIDE) and [TreeView](https://github.com/AndroidIDEOfficial/AndroidIDE/tree/dev/treeview)
 
 ## To contribute to this project:
-
-## Requirements
-
-- JDK 11
 
 ## Source code format
 
