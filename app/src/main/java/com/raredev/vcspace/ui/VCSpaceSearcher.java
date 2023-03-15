@@ -19,16 +19,15 @@ public class VCSpaceSearcher extends LinearLayout {
   public boolean isShowing = false;
 
   public VCSpaceSearcher(Context context) {
-    super(context);
-    init();
+    this(context, null);
   }
 
   public VCSpaceSearcher(Context context, AttributeSet attrs) {
-    super(context, attrs);
-    init();
+    this(context, attrs, 0);
   }
 
-  private void init() {
+  public VCSpaceSearcher(Context context, AttributeSet attrs, int defStyle) {
+    super(context, attrs, defStyle);
     binding = LayoutSearcherBinding.inflate(LayoutInflater.from(getContext()));
     removeAllViews();
     addView(
@@ -40,13 +39,7 @@ public class VCSpaceSearcher extends LinearLayout {
             if (editor == null) {
               return;
             }
-            try {
-              editor
-                  .getSearcher()
-                  .search(editable.toString(), new EditorSearcher.SearchOptions(true, true));
-            } catch (Exception e) {
-              editor.getSearcher().stopSearch();
-            }
+            search(binding.searchText.getText().toString());
           }
 
           @Override
@@ -83,8 +76,7 @@ public class VCSpaceSearcher extends LinearLayout {
 
   public void showAndHide() {
     if (isShowing) {
-      setVisibility(View.GONE);
-      isShowing = false;
+      hide();
     } else {
       setVisibility(View.VISIBLE);
       isShowing = true;
@@ -100,6 +92,17 @@ public class VCSpaceSearcher extends LinearLayout {
   public void hide() {
     setVisibility(View.GONE);
     isShowing = false;
+    editor = null;
+  }
+
+  private void search(String text) {
+    if (!binding.searchText.getText().toString().isEmpty()) {
+      editor
+          .getSearcher()
+          .search(text, new EditorSearcher.SearchOptions(true, true));
+    } else {
+      editor.getSearcher().stopSearch();
+    }
   }
 
   private void gotoLast() {

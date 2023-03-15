@@ -1,5 +1,6 @@
 package com.raredev.vcspace.ui.editor;
 
+import androidx.core.util.Pair;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -8,24 +9,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EditorViewModel extends ViewModel {
-  private final MutableLiveData<Integer> currentPosition = new MutableLiveData<>(-1);
+  private final MutableLiveData<Pair<Integer, File>> currentPosition = new MutableLiveData<>(new Pair(-1, null));
 
   private MutableLiveData<List<File>> mFiles = new MutableLiveData<>(new ArrayList<>());
 
+  public LiveData<Pair<Integer, File>> getCurrentPositionPair() {
+    return currentPosition;
+  }
+  
   public int getCurrentPosition() {
-    return currentPosition.getValue();
+    return currentPosition.getValue().first;
   }
 
-  public void setCurrentPosition(int pos) {
-    currentPosition.setValue(pos);
+  public File getCurrentFile() {
+    return currentPosition.getValue().second;
+  }
+  
+  public void setCurrentPosition(int pos, File file) {
+    currentPosition.setValue(new Pair(pos, file));
   }
 
   public LiveData<List<File>> getFiles() {
     return mFiles;
-  }
-
-  public File getCurrentFile() {
-    return getFiles().getValue().get(currentPosition.getValue());
   }
 
   public void clear() {
@@ -33,10 +38,10 @@ public class EditorViewModel extends ViewModel {
 
     value.clear();
     mFiles.setValue(value);
-    setCurrentPosition(-1);
+    setCurrentPosition(-1, null);
   }
 
-  public void openFile(File file) {
+  public void addFile(File file) {
     List<File> files = getFiles().getValue();
 
     files.add(file);
@@ -49,7 +54,7 @@ public class EditorViewModel extends ViewModel {
     files.remove(index);
     
     if (files.isEmpty()) {
-      currentPosition.setValue(-1);
+      setCurrentPosition(-1, null);
     }
     mFiles.setValue(files);
   }

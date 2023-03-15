@@ -26,6 +26,7 @@
   <string name="error">Erro</string>
   <string name="error_treeview_opening_recent_files">Erro ao tentar abrir pasta recente:</string>
   <string name="error_editor_opening_recent_files">Erro ao tentar abrir arquivos recentes:</string>
+  <string name="error_this_folder_is_not_a_repository">Essa pasta não é um repositório</string>
   
   <!-- Buttons And Titles -->
   <string name="saved_files">Arquivos salvos</string>
@@ -76,8 +77,8 @@
   </string-array>
   <string name="pref_dynamic_colors">Usar tema dinâmico</string>
   <string name="pref_dynamic_colors_summary">Aplica as cores do papel de parede ao aplicativo (Requer reinicialização)</string>
-  <string name="pref_open_recents_automatically">Abrir recentes automaticamente</string>
-  <string name="pref_open_recents_automatically_summary">Abra automaticamente arquivos e pastas usados recentemente</string>
+  <string name="pref_open_recent_automatically">Abrir pasta recente automaticamente</string>
+  <string name="pref_open_recent_automatically_summary">Abra automaticamente a pasta usada recentemente</string>
 
   <!-- Editor -->
   <string name="pref_editor_textsize">Tamanho da fonte</string>

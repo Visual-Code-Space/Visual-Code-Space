@@ -25,23 +25,19 @@ import java.util.Comparator;
 
 public class FileManagerUtils {
 
-  public static final Comparator<File> COMPARATOR =
-      (file1, file2) -> {
-        if (file1.isFile() && file2.isDirectory()) {
-          return 1;
-        } else if (file2.isFile() && file1.isDirectory()) {
-          return -1;
-        } else {
-          return String.CASE_INSENSITIVE_ORDER.compare(file1.getName(), file2.getName());
-        }
-      };
+  public static class SortFileName implements Comparator<File> {
+    @Override
+    public int compare(File f1, File f2) {
+      return f1.getName().compareTo(f2.getName());
+    }
+  }
 
-  public static boolean isPermissionGaranted(Context context) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-      return Environment.isExternalStorageManager();
-    } else {
-      return ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)
-          == PackageManager.PERMISSION_GRANTED;
+  public static class SortFolder implements Comparator<File> {
+    @Override
+    public int compare(File f1, File f2) {
+      if (f1.isDirectory() == f2.isDirectory()) return 0;
+      else if (f1.isDirectory() && !f2.isDirectory()) return -1;
+      else return 1;
     }
   }
 
@@ -163,6 +159,15 @@ public class FileManagerUtils {
             Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.MANAGE_EXTERNAL_STORAGE
           },
           1);
+    }
+  }
+
+  public static boolean isPermissionGaranted(Context context) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+      return Environment.isExternalStorageManager();
+    } else {
+      return ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)
+          == PackageManager.PERMISSION_GRANTED;
     }
   }
 

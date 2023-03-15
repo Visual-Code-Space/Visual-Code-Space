@@ -33,7 +33,6 @@ public class ToolsFragment extends Fragment {
   private FragmentToolsBinding binding;
 
   private ToolsPagerAdapter adapter;
-  private SharedPreferences toolsPrefs;
 
   private TreeViewFragment treeViewFragment;
   private GitToolsFragment gitToolsFragment;
@@ -41,8 +40,6 @@ public class ToolsFragment extends Fragment {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    toolsPrefs = PreferencesUtils.getToolsPrefs();
-
     mStartForResult =
         requireActivity()
             .registerForActivityResult(
@@ -58,8 +55,8 @@ public class ToolsFragment extends Fragment {
                         try {
                           DocumentFile pickedDir = DocumentFile.fromTreeUri(requireContext(), uri);
                           File dir = FileUtil.getFileFromUri(requireContext(), pickedDir.getUri());
-                          parseRootDirToFileManager(dir);
-                          toolsPrefs
+                          parseRootFolderToFileManager(dir);
+                          PreferencesUtils.getToolsPrefs()
                               .edit()
                               .putString(PreferencesUtils.KEY_RECENT_FOLDER, dir.toString())
                               .apply();
@@ -84,6 +81,7 @@ public class ToolsFragment extends Fragment {
     adapter.addFragment(treeViewFragment);
     adapter.addFragment(gitToolsFragment);
 
+    binding.pager.setOffscreenPageLimit(2);
     binding.pager.setUserInputEnabled(false);
     binding.pager.setAdapter(adapter);
 
@@ -106,22 +104,6 @@ public class ToolsFragment extends Fragment {
               }
             })
         .attach();
-
-    binding.tabLayout.addOnTabSelectedListener(
-        new TabLayout.OnTabSelectedListener() {
-          @Override
-          public void onTabUnselected(TabLayout.Tab tab) {}
-
-          @Override
-          public void onTabReselected(TabLayout.Tab tab) {}
-
-          @Override
-          public void onTabSelected(TabLayout.Tab tab) {
-            if (tab.getPosition() == 1) {
-              tryOpenRepository();
-            }
-          }
-        });
     return binding.getRoot();
   }
 
@@ -130,16 +112,10 @@ public class ToolsFragment extends Fragment {
     super.onViewCreated(view, savedInstanceState);
   }
 
-  public void parseRootDirToFileManager(File dir) {
+  public void parseRootFolderToFileManager(File dir) {
     if (treeViewFragment != null && dir != null) {
       setCurrentFragment(0);
       treeViewFragment.loadTreeView(dir);
-    }
-  }
-
-  public void tryOpenRepository() {
-    if (gitToolsFragment != null && treeViewFragment != null) {
-      gitToolsFragment.openRepository(treeViewFragment.getRootDir());
     }
   }
 

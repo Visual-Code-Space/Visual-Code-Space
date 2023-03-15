@@ -74,11 +74,20 @@
         android:paddingBottom="5dp"
         android:text="@string/no_open_repository" />
 
-      <Button
+      <com.google.android.material.button.MaterialButton
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        style="@style/Widget.Material3.Button.TextButton"
         android:text="@string/clone_repo"
         android:id="@+id/clone_repo" />
+
+      <com.google.android.material.button.MaterialButton
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:text="@string/clone_to_path"
+        android:visibility="gone"
+        android:id="@+id/clone_to_path" />
 
     </LinearLayout>
 
@@ -86,8 +95,25 @@
       android:layout_height="wrap_content"
       android:layout_width="match_parent"
       android:layout_below="@id/container_tools"
-      android:padding="8dp"
-      android:id="@+id/container_project">
+      android:id="@+id/container_repository">
+
+      <ScrollView
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
+
+        <HorizontalScrollView
+          android:layout_height="wrap_content"
+          android:layout_width="wrap_content">
+
+          <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:padding="8dp"
+            android:id="@+id/modifications" />
+
+        </HorizontalScrollView>
+
+      </ScrollView>
 
     </RelativeLayout>
 

@@ -4,6 +4,7 @@
   <string name="no_open_repository">Nenhum repositório aberto</string>
   <string name="clone">Clonar</string>
   <string name="clone_repo">Clonar Repositório</string>
+  <string name="clone_to_path">Clone to path</string>
   <string name="clone_url_hint">URL do repositório</string>
   <string name="successfully_cloned">Clonado com sucesso</string>
 

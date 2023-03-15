@@ -25,30 +25,38 @@
     android:layout_width="match_parent"
     android:layout_below="@id/replace_text">
 
-    <Button
+    <com.google.android.material.button.MaterialButton
       android:layout_height="match_parent"
       android:layout_width="match_parent"
+      android:layout_margin="2dp"
+      style="@style/Widget.Material3.Button.TextButton"
       android:layout_weight="1.0"
       android:id="@+id/goto_last"
       android:text="PREV" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
       android:layout_height="match_parent"
       android:layout_width="match_parent"
+      android:layout_margin="2dp"
+      style="@style/Widget.Material3.Button.TextButton"
       android:layout_weight="1.0"
       android:id="@+id/goto_next"
       android:text="NEXT" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
       android:layout_height="match_parent"
       android:layout_width="match_parent"
+      android:layout_margin="2dp"
+      style="@style/Widget.Material3.Button.TextButton"
       android:layout_weight="1.0"
       android:id="@+id/replace"
       android:text="REP" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
       android:layout_height="match_parent"
       android:layout_width="match_parent"
+      android:layout_margin="2dp"
+      style="@style/Widget.Material3.Button.TextButton"
       android:layout_weight="1.0"
       android:id="@+id/replace_all"
       android:text="REP ALL" />

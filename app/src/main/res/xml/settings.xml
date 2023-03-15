@@ -27,8 +27,8 @@
       app:defaultValue="false"
       app:icon="@drawable/folder_open"
       app:key="pref_openrecentsautomatically"
-      app:title="@string/pref_open_recents_automatically"
-      app:summary="@string/pref_open_recents_automatically_summary" />
+      app:title="@string/pref_open_recent_automatically"
+      app:summary="@string/pref_open_recent_automatically_summary" />
   </PreferenceCategory>
 
   <PreferenceCategory
@@ -42,8 +42,7 @@
       app:defaultValue="14"
       app:min="6"
       app:showSeekBarValue="true"
-      android:max="24"
-    />
+      android:max="24" />
 
     <ListPreference
       app:defaultValue="firacode"

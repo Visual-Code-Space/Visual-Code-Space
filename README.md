@@ -5,7 +5,7 @@
 [![Test and Build](https://github.com/raredeveloperofc/Visual-Code-Space/actions/workflows/test_and_build.yml/badge.svg)](https://github.com/raredeveloperofc/Visual-Code-Space/actions/workflows/test_and_build.yml)
 </div>
 
-# Screenshots
+## Screenshots
 <div align="center">
     <img width="30%" src="./images/screenshot1.png" alt="Screenshot1" title="Screenshot1">
     <img width="30%" src="./images/screenshot2.png" alt="Screenshot2" title="Screenshot2">
@@ -34,13 +34,8 @@
 
 ## To contribute to this project:
 
-## Requirements
-
-- JDK 11
-
 ## Source code format
 
 - Indents : 2-space
 - Java : `GoogleStyle`. Either use `google-java-format` or import [this](https://raw.githubusercontent.com/google/styleguide/gh-pages/intellij-java-google-style.xml) code style.
-- Kotlin : kotlin will not be used in this project
 - XML : Default Android Studio or AndroidIDE formatter with 2-space indentations.

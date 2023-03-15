@@ -1,11 +1,5 @@
 package com.raredev.vcspace.fragments;
 
-import static com.raredev.vcspace.util.FileManagerUtils.isValidTextFile;
-import static com.raredev.vcspace.util.FileManagerUtils.createFile;
-import static com.raredev.vcspace.util.FileManagerUtils.createFolder;
-import static com.raredev.vcspace.util.FileManagerUtils.deleteFile;
-import static com.raredev.vcspace.util.FileManagerUtils.renameFile;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,18 +8,22 @@ import android.view.ViewGroup;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.transition.ChangeBounds;
+import androidx.transition.TransitionManager;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.raredev.common.task.TaskExecutor;
 import com.raredev.common.util.DialogUtils;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.activity.MainActivity;
 import com.raredev.vcspace.adapters.ListDialogAdapter;
 import com.raredev.vcspace.databinding.FragmentTreeViewBinding;
 import com.raredev.vcspace.databinding.LayoutListDialogBinding;
+import com.raredev.vcspace.events.FileEvent;
 import com.raredev.vcspace.models.DialogListModel;
-import com.raredev.vcspace.ui.tree.TreeUtils;
 import com.raredev.vcspace.ui.tree.holder.FileViewHolder;
 import com.raredev.vcspace.util.ApkInstaller;
+import com.raredev.vcspace.util.FileManagerUtils;
 import com.raredev.vcspace.util.PreferencesUtils;
 import com.raredev.vcspace.util.ViewUtils;
 import com.unnamed.b.atv.model.TreeNode;
@@ -36,6 +34,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.greenrobot.eventbus.EventBus;
 
 @SuppressWarnings("deprecation")
 public class TreeViewFragment extends Fragment
@@ -46,13 +45,6 @@ public class TreeViewFragment extends Fragment
   private String savedState;
   private AndroidTreeView treeView;
   private TreeNode mRoot;
-
-  public File getRootDir() {
-    if (mRoot == null) {
-      return null;
-    }
-    return mRoot.getValue();
-  }
 
   @Nullable
   @Override
@@ -79,10 +71,31 @@ public class TreeViewFragment extends Fragment
 
     binding.refresh.setOnClickListener(
         v -> {
-          if (treeView != null) savedState = treeView.getSaveState();
-          loadTreeView(mRoot.childAt(0).getValue());
+          if (treeView != null) {
+            savedState = treeView.getSaveState();
+            loadTreeView(mRoot.getValue());
+          }
         });
-
+    binding.newFolder.setOnClickListener(
+        v -> {
+          FileManagerUtils.createFolder(
+              requireActivity(),
+              mRoot.getValue(),
+              (newFolder) -> {
+                addNewChild(mRoot, newFolder);
+                expandNode(mRoot);
+              });
+        });
+    binding.newFile.setOnClickListener(
+        v -> {
+          FileManagerUtils.createFile(
+              requireActivity(),
+              mRoot.getValue(),
+              (newFile) -> {
+                addNewChild(mRoot, newFile);
+                expandNode(mRoot);
+              });
+        });
     binding.close.setOnClickListener(
         v -> {
           new MaterialAlertDialogBuilder(requireContext())
@@ -134,10 +147,9 @@ public class TreeViewFragment extends Fragment
           new DialogListModel(
               R.drawable.folder_plus_outline, getString(R.string.new_folder_title)));
     }
-    if (!node.getValue().equals(mRoot.childAt(0).getValue())) {
-      options.add(new DialogListModel(R.drawable.file_nename, getString(R.string.rename)));
-      options.add(new DialogListModel(R.drawable.delete_outline, getString(R.string.delete)));
-    }
+    options.add(new DialogListModel(R.drawable.file_rename, getString(R.string.rename)));
+    options.add(new DialogListModel(R.drawable.delete_outline, getString(R.string.delete)));
+
     ListDialogAdapter adapter = new ListDialogAdapter(options);
 
     File file = (File) value;
@@ -145,31 +157,31 @@ public class TreeViewFragment extends Fragment
         (v, position) -> {
           String label = options.get(position).label;
           if (label.equals(getString(R.string.new_file_title))) {
-            createFile(
+            FileManagerUtils.createFile(
                 requireActivity(),
                 file,
                 (newFile) -> {
-                  TreeUtils.addNewChild(requireContext(), node, newFile);
-                  requireExpansion(node);
+                  addNewChild(node, newFile);
+                  expandNode(node);
                 });
           } else if (label.equals(getString(R.string.new_folder_title))) {
-            createFolder(
+            FileManagerUtils.createFolder(
                 requireActivity(),
                 file,
                 (newFolder) -> {
-                  TreeUtils.addNewChild(requireContext(), node, newFolder);
-                  requireExpansion(node);
+                  addNewChild(node, newFolder);
+                  expandNode(node);
                 });
           }
           if (label.equals(getString(R.string.rename))) {
-            renameFile(
+            FileManagerUtils.renameFile(
                 requireContext(),
                 file,
                 (oldFile, newFile) -> {
-                  requireExpansion(node.getParent());
+                  expandNode(node.getParent());
                 });
           } else if (label.equals(getString(R.string.delete))) {
-            deleteFile(
+            FileManagerUtils.deleteFile(
                 requireContext(),
                 file,
                 (deletedFile) -> {
@@ -197,46 +209,54 @@ public class TreeViewFragment extends Fragment
         ApkInstaller.installApplication(requireContext(), file);
         return;
       }
-      if (isValidTextFile(file.getName()))
+      if (FileManagerUtils.isValidTextFile(file.getName()))
         ((MainActivity) requireActivity()).getEditorManager().openFile(file);
     } else {
       if (node.isExpanded()) {
-        TreeUtils.collapseNode(treeView, binding.treeView, node);
+        collapseNode(node);
         return;
       }
-      requireExpansion(node);
+      setLoading(node, true);
+      listNode(
+          node,
+          () -> {
+            setLoading(node, false);
+            expandNode(node);
+          });
     }
   }
 
-  public void doCloseFolder(boolean updatePrefs) {
+  public void doCloseFolder(boolean removePrefsAndTreeState) {
     if (mRoot != null) {
       mRoot.getChildren().clear();
       mRoot = null;
       treeView = null;
 
-      if (updatePrefs)
+      if (removePrefsAndTreeState) {
         PreferencesUtils.getToolsPrefs()
             .edit()
             .putString(PreferencesUtils.KEY_RECENT_FOLDER, "")
             .apply();
+        savedState = null;
+      }
+      EventBus.getDefault().post(new FileEvent(null));
       updateViewsVisibility();
     }
   }
 
-  public void loadTreeView(File rootFile) {
+  public void loadTreeView(File rootFolder) {
     if (getContext() == null) {
       return;
     }
-    doCloseFolder(false);
-    mRoot = new TreeNode(new File(""));
+    if (!FileManagerUtils.isPermissionGaranted(requireContext())) {
+      FileManagerUtils.takeFilePermissions(requireActivity());
+    }
+    doCloseFolder(true);
+    mRoot = TreeNode.root(rootFolder);
     mRoot.setViewHolder(new FileViewHolder(requireContext()));
-    TreeNode newRoot = TreeNode.root(rootFile);
-    newRoot.setViewHolder(new FileViewHolder(requireContext()));
-    mRoot.addChild(newRoot);
 
-    TreeUtils.listNode(
-        requireContext(),
-        newRoot,
+    listNode(
+        mRoot,
         () -> {
           treeView = new AndroidTreeView(requireContext(), mRoot, R.drawable.ripple_effect);
           treeView.setUseAutoToggle(false);
@@ -248,43 +268,12 @@ public class TreeViewFragment extends Fragment
 
             binding.horizontalScroll.removeAllViews();
             binding.horizontalScroll.addView(view);
+
+            EventBus.getDefault().post(new FileEvent(rootFolder));
             tryRestoreSavedState();
           }
         });
     updateViewsVisibility();
-  }
-
-  private void tryRestoreSavedState() {
-    if (savedState != null) {
-      String[] openNodes = savedState.split(AndroidTreeView.NODES_PATH_SEPARATOR);
-      treeView.collapseAll();
-      restoreNodeState(mRoot, new HashSet<>(Arrays.asList(openNodes)));
-    }
-  }
-
-  private void restoreNodeState(TreeNode node, Set<String> openNodes) {
-    for (TreeNode child : node.getChildren()) {
-      if (openNodes.contains(child.getPath())) {
-        TreeUtils.listNode(
-            requireContext(),
-            child,
-            () -> {
-              TreeUtils.expandNode(treeView, binding.treeView, child);
-            });
-        restoreNodeState(child, openNodes);
-      }
-    }
-  }
-
-  private void requireExpansion(TreeNode node) {
-    TreeUtils.setLoading(node, true);
-    TreeUtils.listNode(
-        requireContext(),
-        node,
-        () -> {
-          TreeUtils.setLoading(node, false);
-          TreeUtils.expandNode(treeView, binding.treeView, node);
-        });
   }
 
   private void tryOpenRecentFolder() {
@@ -305,6 +294,66 @@ public class TreeViewFragment extends Fragment
     }
   }
 
+  public void addNewChild(TreeNode parent, File file) {
+    TreeNode newNode = new TreeNode(file);
+    newNode.setViewHolder(new FileViewHolder(requireContext()));
+    parent.addChild(newNode);
+  }
+
+  public void listNode(TreeNode node, Runnable post) {
+    node.getChildren().clear();
+    node.setExpanded(false);
+    TaskExecutor.executeAsync(
+        () -> {
+          listFilesForNode(node);
+          var temp = node;
+
+          while (temp.size() == 1) {
+            temp = temp.childAt(0);
+            if (!temp.getValue().isDirectory()) {
+              break;
+            }
+            listFilesForNode(temp);
+            temp.setExpanded(true);
+          }
+          return null;
+        },
+        (result) -> {
+          post.run();
+        });
+  }
+
+  public void listFilesForNode(TreeNode parent) {
+    File[] files = parent.getValue().listFiles();
+    if (files != null) {
+      Arrays.sort(files, new FileManagerUtils.SortFileName());
+      Arrays.sort(files, new FileManagerUtils.SortFolder());
+      for (File file : files) {
+        TreeNode child = new TreeNode(file);
+        child.setViewHolder(new FileViewHolder(requireContext()));
+        parent.addChild(child);
+      }
+    }
+  }
+
+  public void expandNode(TreeNode node) {
+    if (treeView == null) {
+      return;
+    }
+    TransitionManager.beginDelayedTransition(binding.treeView, new ChangeBounds());
+    treeView.expandNode(node);
+    updateToggle(node);
+  }
+
+  public void collapseNode(TreeNode node) {
+    if (treeView == null) {
+      return;
+    }
+    TransitionManager.beginDelayedTransition(binding.treeView, new ChangeBounds());
+    treeView.collapseNode(node);
+    updateToggle(node);
+  }
+
   private void expandCollapseView() {
     if (ViewUtils.isExpanded(binding.expandableLayout)) {
       ViewUtils.collapse(binding.expandableLayout);
@@ -316,19 +365,50 @@ public class TreeViewFragment extends Fragment
     updateViewsVisibility();
   }
 
+  public void setLoading(TreeNode node, boolean loading) {
+    if (node.getViewHolder() instanceof FileViewHolder) {
+      ((FileViewHolder) node.getViewHolder()).setLoading(loading);
+    }
+  }
+
+  private void updateToggle(TreeNode node) {
+    if (node.getViewHolder() instanceof FileViewHolder) {
+      ((FileViewHolder) node.getViewHolder()).rotateChevron(node.isExpanded());
+    }
+  }
+
+  private void tryRestoreSavedState() {
+    if (savedState != null) {
+      treeView.collapseAll();
+      String[] openNodes = savedState.split(AndroidTreeView.NODES_PATH_SEPARATOR);
+      restoreNodeState(mRoot, new HashSet<>(Arrays.asList(openNodes)));
+    }
+  }
+
+  private void restoreNodeState(TreeNode node, Set<String> openNodes) {
+    for (TreeNode child : node.getChildren()) {
+      if (openNodes.contains(child.getPath())) {
+        listNode(
+            child,
+            () -> {
+              expandNode(child);
+              restoreNodeState(child, openNodes);
+            });
+      }
+    }
+  }
+
   private void updateViewsVisibility() {
     if (mRoot == null) {
       binding.folderName.setText(R.string.no_folder_opened);
       binding.containerOpen.setVisibility(View.VISIBLE);
       binding.treeView.setVisibility(View.GONE);
-      binding.refresh.setVisibility(View.INVISIBLE);
-      binding.close.setVisibility(View.INVISIBLE);
+      binding.folderOptions.setVisibility(View.INVISIBLE);
     } else {
-      binding.folderName.setText(mRoot.childAt(0).getValue().getName());
+      binding.folderName.setText(mRoot.getValue().getName());
       binding.containerOpen.setVisibility(View.GONE);
       binding.treeView.setVisibility(View.VISIBLE);
-      binding.refresh.setVisibility(View.VISIBLE);
-      binding.close.setVisibility(View.VISIBLE);
+      binding.folderOptions.setVisibility(View.VISIBLE);
     }
   }
 }

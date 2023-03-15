@@ -1,7 +1,6 @@
 package com.raredev.vcspace.util;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import com.raredev.vcspace.VCSpaceApplication;

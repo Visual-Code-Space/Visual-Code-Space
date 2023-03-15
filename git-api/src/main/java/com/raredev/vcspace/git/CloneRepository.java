@@ -17,6 +17,8 @@ import org.eclipse.jgit.lib.ProgressMonitor;
 public class CloneRepository {
   private CloneListener listener;
   private Context context;
+  
+  private File directory;
 
   public CloneRepository(Context context) {
     this.context = context;
@@ -25,8 +27,12 @@ public class CloneRepository {
   public void setListener(CloneListener listener) {
     this.listener = listener;
   }
+  
+  public void setDirectory(File directory) {
+    this.directory = directory;
+  }
 
-  public void cloneRepository(File root) {
+  public void cloneRepository() {
     MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(context);
     dialog.setTitle(R.string.clone_repo);
 
@@ -36,17 +42,16 @@ public class CloneRepository {
     dialog.setPositiveButton(
         R.string.clone,
         (di, which) -> {
-          doClone(root, bind.textinputUrl.getText().toString());
+          doClone(bind.textinputUrl.getText().toString());
         });
 
     dialog.setNegativeButton(android.R.string.cancel, (di, which) -> {});
-
     dialog.show();
   }
 
   private Git git = null;
 
-  private void doClone(File root, String repoURL) {
+  private void doClone(String repoURL) {
     if (repoURL.isEmpty()) {
       listener.onCloneFailed(context.getString(R.string.clone_error_empty_url));
       return;
@@ -62,7 +67,7 @@ public class CloneRepository {
             .create();
     binding.message.setText("Starting..");
 
-    var output = new File(root, extractRepositoryNameFromURL(repoURL));
+    var output = new File(directory, extractRepositoryNameFromURL(repoURL));
     var monitor = new CloneProgressMonitor(binding.message);
 
     var task =

@@ -26,6 +26,7 @@
   <string name="error">Error</string>
   <string name="error_treeview_opening_recent_files">Error when trying to open recent folder:</string>
   <string name="error_editor_opening_recent_files">Error when trying to open recent files:</string>
+  <string name="error_this_folder_is_not_a_repository">This folder is not a repository</string>
 
   <!-- Buttons And Titles -->
   <string name="saved_files">Saved files</string>
@@ -78,8 +79,8 @@
   </string-array>
   <string name="pref_dynamic_colors">Use Dynamic theme</string>
   <string name="pref_dynamic_colors_summary">Applies your wallpaper colors to the app (Requires reboot)</string>
-  <string name="pref_open_recents_automatically">Automatically open recents</string>
-  <string name="pref_open_recents_automatically_summary">Automatically open recently used files and folders</string>
+  <string name="pref_open_recent_automatically">Open recent folder automatically</string>
+  <string name="pref_open_recent_automatically_summary">Automatically open recently used folder</string>
 
   <!-- Editor -->
   <string name="pref_editor_textsize">Font size</string>
