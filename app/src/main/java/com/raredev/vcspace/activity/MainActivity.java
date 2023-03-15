@@ -1,8 +1,6 @@
 package com.raredev.vcspace.activity;
 
 import android.content.Intent;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -10,6 +8,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.core.view.GravityCompat;
 import androidx.lifecycle.ViewModelProvider;
+import com.blankj.utilcode.util.ToastUtils;
 import com.google.android.material.tabs.TabLayout;
 import com.raredev.common.task.TaskExecutor;
 import com.raredev.common.util.DialogUtils;
@@ -20,12 +19,13 @@ import com.raredev.vcspace.databinding.ActivityMainBinding;
 import com.raredev.vcspace.ui.editor.CodeEditorView;
 import com.raredev.vcspace.ui.editor.EditorViewModel;
 import com.raredev.vcspace.ui.editor.manager.EditorManager;
-import io.github.rosemoe.sora.event.ContentChangeEvent;
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.model.ThemeModel;
 import io.github.rosemoe.sora.langs.textmate.registry.provider.AssetsFileResolver;
+import io.github.rosemoe.sora.widget.CodeEditor;
+import java.io.File;
 import org.eclipse.tm4e.core.registry.IThemeSource;
 
 public class MainActivity extends VCSpaceActivity {
@@ -33,20 +33,15 @@ public class MainActivity extends VCSpaceActivity {
 
   private EditorViewModel viewModel;
   private EditorManager editorManager;
-  
+
   private MenuItem undo;
   private MenuItem redo;
-  private MenuItem execute;
-  
-  public final Runnable updateMenuItem = () -> updateMenuItem();
 
-  @Override
-  public void findBinding() {
-    binding = ActivityMainBinding.inflate(getLayoutInflater());
-  }
+  public final Runnable updateMenuItem = () -> updateUndoAndRedo();
 
   @Override
   public View getLayout() {
+    binding = ActivityMainBinding.inflate(getLayoutInflater());
     return binding.getRoot();
   }
 
@@ -62,9 +57,6 @@ public class MainActivity extends VCSpaceActivity {
 
     viewModel = new ViewModelProvider(this).get(EditorViewModel.class);
     editorManager = new EditorManager(MainActivity.this, binding, viewModel);
-    updateMenuItem();
-
-
     binding.tabLayout.addOnTabSelectedListener(
         new TabLayout.OnTabSelectedListener() {
           @Override
@@ -80,8 +72,9 @@ public class MainActivity extends VCSpaceActivity {
             int position = p1.getPosition();
             CodeEditorView editor = editorManager.getEditorAtIndex(position);
             viewModel.setCurrentPosition(position, editor.getFile());
-            binding.searcher.bindEditor(editor.getEditor());
+
             binding.symbolInput.bindEditor(editor.getEditor());
+            binding.searcher.bindEditor(editor.getEditor());
             invalidateOptionsMenu();
           }
         });
@@ -102,9 +95,22 @@ public class MainActivity extends VCSpaceActivity {
                 binding.noFileOpened.setVisibility(View.GONE);
               }
             });
-    viewModel.getCurrentPositionPair().observe(this, (pair) -> {
-      binding.container.setDisplayedChild(pair.first);
-    });
+    viewModel
+        .getCurrentPositionPair()
+        .observe(
+            this,
+            (pair) -> {
+              binding.container.setDisplayedChild(pair.first);
+            });
+
+    viewModel
+        .getCurrentPositionPair()
+        .observe(
+            this,
+            (pair) -> {
+              binding.container.setDisplayedChild(pair.first);
+            });
+
     initialize();
   }
 
@@ -113,8 +119,6 @@ public class MainActivity extends VCSpaceActivity {
     getMenuInflater().inflate(R.menu.main_menu, menu);
     undo = menu.findItem(R.id.menu_undo);
     redo = menu.findItem(R.id.menu_redo);
-    execute = menu.findItem(R.id.menu_compile);
-    updateMenuItem();
     return super.onCreateOptionsMenu(menu);
   }
 
@@ -124,8 +128,13 @@ public class MainActivity extends VCSpaceActivity {
       menu.findItem(R.id.menu_save).setEnabled(true);
       menu.findItem(R.id.menu_undo).setVisible(true);
       menu.findItem(R.id.menu_redo).setVisible(true);
-      menu.findItem(R.id.menu_compile).setVisible(true);
       menu.findItem(R.id.menu_editor).setVisible(true);
+
+      File file = viewModel.getCurrentFile();
+      if (file != null) {
+        menu.findItem(R.id.menu_compile).setVisible(SimpleExecuter.isExecutable(file));
+      }
+      updateMenuItem.run();
     } else {
       menu.findItem(R.id.menu_save).setEnabled(false);
       menu.findItem(R.id.menu_undo).setVisible(false);
@@ -133,21 +142,19 @@ public class MainActivity extends VCSpaceActivity {
       menu.findItem(R.id.menu_compile).setVisible(false);
       menu.findItem(R.id.menu_editor).setVisible(false);
     }
-    updateMenuItem();
     return super.onPrepareOptionsMenu(menu);
   }
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     int id = item.getItemId();
-    updateMenuItem();
-
+    final CodeEditorView editor = editorManager.getCurrentEditor();
     switch (id) {
       case R.id.menu_undo:
-        editorManager.getCurrentEditor().undo();;
+        editor.undo();
         break;
       case R.id.menu_redo:
-        editorManager.getCurrentEditor().redo();;
+        editor.redo();
         break;
       case R.id.menu_save:
         editorManager.saveAllFiles(true);
@@ -157,13 +164,17 @@ public class MainActivity extends VCSpaceActivity {
         new SimpleExecuter(this, viewModel.getCurrentFile());
         break;
       case R.id.menu_format:
-        editorManager.getCurrentEditor().getEditor().formatCodeAsync();
+        editor.getEditor().formatCodeAsync();
         break;
       case R.id.menu_search:
         binding.searcher.showAndHide();
         break;
       case R.id.menu_settings:
         startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+        break;
+      case R.id.menu_terminal:
+        ToastUtils.showShort("unavailable");
+        // startActivity(new Intent(getApplicationContext(), TerminalActivity.class));
         break;
     }
     return true;
@@ -199,6 +210,14 @@ public class MainActivity extends VCSpaceActivity {
           }
           editorManager.tryOpenFileFromIntent(getIntent());
         });
+  }
+
+  private void updateUndoAndRedo() {
+    CodeEditor editor = editorManager.getCurrentEditor().getEditor();
+    if (editor != null) {
+      undo.setEnabled(editor.canUndo());
+      redo.setEnabled(editor.canRedo());
+    }
   }
 
   private void showPopupMenu(View v, int pos) {
@@ -241,13 +260,4 @@ public class MainActivity extends VCSpaceActivity {
     // Register current theme
     ThemeRegistry.getInstance().setTheme(Utils.isDarkMode(this) ? "darcula" : "quietlight");
   }
-  
-  private void updateMenuItem() {
-		if (undo == null || redo == null || execute == null || editorManager.getCurrentEditor() == null) {
-			return;
-		}
-    undo.setEnabled(editorManager.getCurrentEditor().getEditor().canUndo());
-    redo.setEnabled(editorManager.getCurrentEditor().getEditor().canRedo());
-    execute.setVisible(SimpleExecuter.isExecutable(viewModel.getCurrentFile()));
-	}
 }

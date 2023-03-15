@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import androidx.core.content.res.ResourcesCompat;
 import com.raredev.common.util.FileUtil;
-import com.raredev.common.util.Utils;
 import com.raredev.vcspace.databinding.LayoutCodeEditorBinding;
 import com.raredev.vcspace.ui.editor.textmate.DynamicTextMateColorScheme;
 import com.raredev.vcspace.ui.editor.textmate.VCSpaceTextMateLanguage;

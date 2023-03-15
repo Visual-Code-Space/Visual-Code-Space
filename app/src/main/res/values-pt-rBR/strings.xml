@@ -20,7 +20,7 @@
   <string name="menu_format">Formatar</string>
   <string name="menu_search">Pesquisar</string>
   <string name="menu_reload">Recarregar</string>
-  <string name="menu_settings">Definições</string>
+  <string name="menu_settings">Configurações</string>
 
   <!-- Errors Strings -->
   <string name="error">Erro</string>
@@ -54,6 +54,7 @@
   <string name="new_folder_title">Nova pasta</string>
   <string name="close_folder_title">Fechar pasta</string>
   <string name="close_folder_message">Deseja fechar esta pasta?</string>
+  <string name="edit">Editar</string>
 
   <!-- Settings String -->
   <string name="application">Aplicativo</string>

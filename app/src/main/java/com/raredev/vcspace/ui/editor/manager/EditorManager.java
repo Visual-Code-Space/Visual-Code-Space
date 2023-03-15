@@ -41,14 +41,6 @@ public class EditorManager {
     return viewModel;
   }
 
-  public void undo() {
-    getCurrentEditor().undo();
-  }
-
-  public void redo() {
-    getCurrentEditor().redo();
-  }
-
   public void tryOpenFileFromIntent(Intent it) {
     try {
       Uri uri = it.getData();
@@ -91,10 +83,11 @@ public class EditorManager {
     }
     int position = viewModel.getFiles().getValue().size();
 
-    container.addView(new CodeEditorView(context, file));
-    tabLayout.addTab(tabLayout.newTab().setText(file.getName()));
+    CodeEditorView editor = new CodeEditorView(context, file);
+    editor.subscribeContentChangeEvent(((MainActivity) context).updateMenuItem);
+    container.addView(editor);
 
-    getCurrentEditor().subscribeContentChangeEvent(((MainActivity) context).updateMenuItem);
+    tabLayout.addTab(tabLayout.newTab().setText(file.getName()));
     viewModel.addFile(file);
     return position;
   }
