@@ -211,8 +211,9 @@ public class TreeViewFragment extends Fragment
         return;
       }
 
-      if (FileUtils.isUtf8(file))
+      if (FileManagerUtils.isValidTextFile(file.getName())) {
         ((MainActivity) requireActivity()).getEditorManager().openFile(file);
+      }
     } else {
       if (node.isExpanded()) {
         collapseNode(node);

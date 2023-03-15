@@ -120,7 +120,7 @@ public class FileManagerUtils {
   public static void deleteFile(Context context, File file, Concluded concluded) {
     new MaterialAlertDialogBuilder(context)
         .setTitle(R.string.delete)
-        .setMessage(context.getString(R.string.delete_message).replace("NAME", file.getName()))
+        .setMessage(context.getString(R.string.delete_message, file.getName()))
         .setPositiveButton(
             R.string.delete,
             (dlg, i) -> {

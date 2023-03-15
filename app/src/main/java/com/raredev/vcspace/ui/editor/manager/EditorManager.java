@@ -12,6 +12,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.raredev.common.util.DialogUtils;
 import com.raredev.common.util.FileUtil;
 import com.raredev.vcspace.R;
+import com.raredev.vcspace.activity.MainActivity;
 import com.raredev.vcspace.databinding.ActivityMainBinding;
 import com.raredev.vcspace.ui.editor.CodeEditorView;
 import com.raredev.vcspace.ui.editor.EditorViewModel;
@@ -34,6 +35,10 @@ public class EditorManager {
     this.container = binding.container;
     this.tabLayout = binding.tabLayout;
     this.viewModel = viewModel;
+  }
+
+  public EditorViewModel getViewModel() {
+    return viewModel;
   }
 
   public void tryOpenFileFromIntent(Intent it) {
@@ -78,9 +83,11 @@ public class EditorManager {
     }
     int position = viewModel.getFiles().getValue().size();
 
-    container.addView(new CodeEditorView(context, file));
-    tabLayout.addTab(tabLayout.newTab().setText(file.getName()));
+    CodeEditorView editor = new CodeEditorView(context, file);
+    editor.subscribeContentChangeEvent(((MainActivity) context).updateMenuItem);
+    container.addView(editor);
 
+    tabLayout.addTab(tabLayout.newTab().setText(file.getName()));
     viewModel.addFile(file);
     return position;
   }

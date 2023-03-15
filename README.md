@@ -9,6 +9,13 @@
 <div align="center">
     <img width="30%" src="./images/screenshot1.png" alt="Screenshot1" title="Screenshot1">
     <img width="30%" src="./images/screenshot2.png" alt="Screenshot2" title="Screenshot2">
+    <img width="30%" src="./images/screenshot3.png" alt="Screenshot2" title="Screenshot3">
+    <img width="30%" src="./images/screenshot4.png" alt="Screenshot2" title="Screenshot4">
+    <img width="30%" src="./images/screenshot5.png" alt="Screenshot2" title="Screenshot5">
+    <img width="30%" src="./images/screenshot6.png" alt="Screenshot2" title="Screenshot6">
+    <img width="30%" src="./images/screenshot7.png" alt="Screenshot2" title="Screenshot7">
+    <img width="30%" src="./images/screenshot8.png" alt="Screenshot2" title="Screenshot8">
+    <img width="30%" src="./images/screenshot9.png" alt="Screenshot2" title="Screenshot9">
 </div>
 
 ## TODO
@@ -34,7 +41,7 @@
 
 ## To contribute to this project:
 
-## Source code format
+#### Source code format
 
 - Indents : 2-space
 - Java : `GoogleStyle`. Either use `google-java-format` or import [this](https://raw.githubusercontent.com/google/styleguide/gh-pages/intellij-java-google-style.xml) code style.

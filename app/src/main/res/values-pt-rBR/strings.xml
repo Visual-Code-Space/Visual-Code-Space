@@ -54,6 +54,7 @@
   <string name="new_folder_title">Nova pasta</string>
   <string name="close_folder_title">Fechar pasta</string>
   <string name="close_folder_message">Deseja fechar esta pasta?</string>
+  <string name="edit">Editar</string>
 
   <!-- Settings String -->
   <string name="application">Aplicativo</string>

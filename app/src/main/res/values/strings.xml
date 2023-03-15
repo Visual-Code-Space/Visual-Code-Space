@@ -32,7 +32,7 @@
   <string name="saved_files">Saved files</string>
   <string name="existing_file">A file with this name already exists!</string>
   <string name="delete">Delete</string>
-  <string name="delete_message">Are you sure you want to delete NAME?</string>
+  <string name="delete_message">Are you sure you want to delete %1$s?</string>
   <string name="deleting">Deleting</string>
   <string name="deleting_plase_wait">Deleting please wait.</string>
   <string name="create">Create</string>
@@ -54,6 +54,9 @@
   <string name="new_folder_title">New folder</string>
   <string name="close_folder_title">Close Folder</string>
   <string name="close_folder_message">Do you want to close this folder?</string>
+  <string name="undo">Undo</string>
+  <string name="redo">Redo</string>
+  <string name="edit">Edit</string>
 
   <!-- Settings String -->
   <string name="application">Application</string>
