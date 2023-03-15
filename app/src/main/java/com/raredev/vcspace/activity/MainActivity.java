@@ -213,10 +213,10 @@ public class MainActivity extends VCSpaceActivity {
   }
 
   private void updateUndoAndRedo() {
-    CodeEditor editor = editorManager.getCurrentEditor().getEditor();
+    CodeEditorView editor = editorManager.getCurrentEditor();
     if (editor != null) {
-      undo.setEnabled(editor.canUndo());
-      redo.setEnabled(editor.canRedo());
+      undo.setEnabled(editor.getEditor().canUndo());
+      redo.setEnabled(editor.getEditor().canRedo());
     }
   }
 
