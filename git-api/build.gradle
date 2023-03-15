@@ -22,8 +22,6 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'com.google.android.material:material:1.8.0-alpha03'
     implementation 'org.eclipse.jgit:org.eclipse.jgit:6.5.0.202303070854-r'
