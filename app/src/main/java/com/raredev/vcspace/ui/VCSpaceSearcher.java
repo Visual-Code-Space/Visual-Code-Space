@@ -92,7 +92,6 @@ public class VCSpaceSearcher extends LinearLayout {
   public void hide() {
     setVisibility(View.GONE);
     isShowing = false;
-    editor = null;
   }
 
   private void search(String text) {
