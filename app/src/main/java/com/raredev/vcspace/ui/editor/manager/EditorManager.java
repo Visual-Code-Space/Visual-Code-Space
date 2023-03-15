@@ -27,20 +27,14 @@ public class EditorManager {
   private Context context;
 
   private EditorViewModel viewModel;
-  private MainActivity activity;
 
-  public EditorManager(
-      Context context,
-      ActivityMainBinding binding,
-      EditorViewModel viewModel,
-      MainActivity activity) {
+  public EditorManager(Context context, ActivityMainBinding binding, EditorViewModel viewModel) {
     this.context = context;
 
     this.drawerLayout = binding.drawerLayout;
     this.container = binding.container;
     this.tabLayout = binding.tabLayout;
     this.viewModel = viewModel;
-    this.activity = activity;
   }
 
   public EditorViewModel getViewModel() {
@@ -100,7 +94,7 @@ public class EditorManager {
     container.addView(new CodeEditorView(context, file));
     tabLayout.addTab(tabLayout.newTab().setText(file.getName()));
 
-    getCurrentEditor().subscribeContentChangeEvent(activity.updateMenuItem);
+    getCurrentEditor().subscribeContentChangeEvent(((MainActivity) context).updateMenuItem);
     viewModel.addFile(file);
     return position;
   }

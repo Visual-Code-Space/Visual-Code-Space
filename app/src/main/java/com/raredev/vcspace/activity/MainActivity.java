@@ -61,7 +61,7 @@ public class MainActivity extends VCSpaceActivity {
     toggle.syncState();
 
     viewModel = new ViewModelProvider(this).get(EditorViewModel.class);
-    editorManager = new EditorManager(MainActivity.this, binding, viewModel, this);
+    editorManager = new EditorManager(MainActivity.this, binding, viewModel);
     updateMenuItem();
 
 
