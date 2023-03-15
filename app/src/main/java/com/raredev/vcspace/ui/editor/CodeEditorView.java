@@ -2,6 +2,8 @@ package com.raredev.vcspace.ui.editor;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import androidx.core.content.res.ResourcesCompat;
@@ -10,6 +12,7 @@ import com.raredev.vcspace.databinding.LayoutCodeEditorBinding;
 import com.raredev.vcspace.ui.editor.textmate.DynamicTextMateColorScheme;
 import com.raredev.vcspace.ui.editor.textmate.VCSpaceTextMateLanguage;
 import com.raredev.vcspace.util.PreferencesUtils;
+import io.github.rosemoe.sora.event.ContentChangeEvent;
 import io.github.rosemoe.sora.lang.EmptyLanguage;
 import io.github.rosemoe.sora.lang.Language;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
@@ -76,6 +79,20 @@ public class CodeEditorView extends LinearLayout
         updateEditorFont();
         break;
     }
+  }
+
+  public void subscribeContentChangeEvent(Runnable runnable) {
+    binding.editor.subscribeEvent(
+        ContentChangeEvent.class,
+        (event, subscribe) -> {
+          switch (event.getAction()) {
+            case ContentChangeEvent.ACTION_INSERT:
+            case ContentChangeEvent.ACTION_DELETE:
+            case ContentChangeEvent.ACTION_SET_NEW_TEXT:
+              new Handler(Looper.getMainLooper()).postDelayed(runnable, 10);
+              break;
+          }
+        });
   }
 
   public void release() {

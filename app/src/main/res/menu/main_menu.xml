@@ -2,11 +2,28 @@
 <menu
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto">
+
+  <item
+    android:id="@+id/menu_undo"
+    android:icon="@drawable/ic_undo"
+    android:title="@string/undo"
+    app:showAsAction="always" />
+  <item
+    android:id="@+id/menu_redo"
+    android:icon="@drawable/ic_redo"
+    android:title="@string/redo"
+    app:showAsAction="always" />
+  <item
+    android:id="@+id/menu_compile"
+    android:icon="@drawable/ic_play"
+    android:title="@string/menu_execute"
+    app:showAsAction="always" />
+
   <item
     android:id="@+id/menu_folder"
     android:icon="@drawable/ic_folder"
     android:title="@string/file"
-    app:showAsAction="always">
+    app:showAsAction="ifRoom">
     <menu>
       <item
         android:id="@+id/menu_save"
@@ -17,21 +34,9 @@
   <item
     android:id="@+id/menu_editor"
     android:icon="@drawable/pencil"
-    android:title="Editor"
-    app:showAsAction="always">
+    android:title="@string/edit"
+    app:showAsAction="ifRoom">
     <menu>
-      <item
-        android:id="@+id/menu_undo"
-        android:icon="@drawable/ic_undo"
-        android:title="Undo" />
-      <item
-        android:id="@+id/menu_redo"
-        android:icon="@drawable/ic_redo"
-        android:title="Redo" />
-      <item
-        android:id="@+id/menu_compile"
-        android:icon="@drawable/ic_play"
-        android:title="@string/menu_execute" />
       <item
         android:id="@+id/menu_search"
         android:icon="@drawable/ic_search"

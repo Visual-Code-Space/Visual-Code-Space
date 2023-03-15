@@ -1,6 +1,8 @@
 package com.raredev.vcspace.activity;
 
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +19,7 @@ import com.raredev.vcspace.SimpleExecuter;
 import com.raredev.vcspace.databinding.ActivityMainBinding;
 import com.raredev.vcspace.ui.editor.EditorViewModel;
 import com.raredev.vcspace.ui.editor.manager.EditorManager;
+import io.github.rosemoe.sora.event.ContentChangeEvent;
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
@@ -29,6 +32,12 @@ public class MainActivity extends VCSpaceActivity {
 
   private EditorViewModel viewModel;
   private EditorManager editorManager;
+  
+  private MenuItem undo;
+  private MenuItem redo;
+  private MenuItem execute;
+  
+  public final Runnable updateMenuItem = () -> updateMenuItem();
 
   @Override
   public void findBinding() {
@@ -51,7 +60,9 @@ public class MainActivity extends VCSpaceActivity {
     toggle.syncState();
 
     viewModel = new ViewModelProvider(this).get(EditorViewModel.class);
-    editorManager = new EditorManager(MainActivity.this, binding, viewModel);
+    editorManager = new EditorManager(MainActivity.this, binding, viewModel, this);
+    updateMenuItem();
+
 
     binding.tabLayout.addOnTabSelectedListener(
         new TabLayout.OnTabSelectedListener() {
@@ -87,12 +98,17 @@ public class MainActivity extends VCSpaceActivity {
                 binding.noFileOpened.setVisibility(View.GONE);
               }
             });
+    
     initialize();
   }
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.main_menu, menu);
+    undo = menu.findItem(R.id.menu_undo);
+    redo = menu.findItem(R.id.menu_redo);
+    execute = menu.findItem(R.id.menu_compile);
+    updateMenuItem();
     return super.onCreateOptionsMenu(menu);
   }
 
@@ -100,17 +116,25 @@ public class MainActivity extends VCSpaceActivity {
   public boolean onPrepareOptionsMenu(Menu menu) {
     if (!viewModel.getFiles().getValue().isEmpty()) {
       menu.findItem(R.id.menu_save).setEnabled(true);
+      menu.findItem(R.id.menu_undo).setVisible(true);
+      menu.findItem(R.id.menu_redo).setVisible(true);
+      menu.findItem(R.id.menu_compile).setVisible(true);
       menu.findItem(R.id.menu_editor).setVisible(true);
     } else {
       menu.findItem(R.id.menu_save).setEnabled(false);
+      menu.findItem(R.id.menu_undo).setVisible(false);
+      menu.findItem(R.id.menu_redo).setVisible(false);
+      menu.findItem(R.id.menu_compile).setVisible(false);
       menu.findItem(R.id.menu_editor).setVisible(false);
     }
+    updateMenuItem();
     return super.onPrepareOptionsMenu(menu);
   }
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     int id = item.getItemId();
+    updateMenuItem();
 
     switch (id) {
       case R.id.menu_undo:
@@ -175,7 +199,7 @@ public class MainActivity extends VCSpaceActivity {
           editorManager.tryOpenFileFromIntent(getIntent());
         });
   }
-
+  
   private void updateTab(int pos) {
     binding.container.setDisplayedChild(pos);
     editorManager.getEditorAtIndex(pos).requestFocus();
@@ -225,4 +249,13 @@ public class MainActivity extends VCSpaceActivity {
     // Register current theme
     ThemeRegistry.getInstance().setTheme(Utils.isDarkMode(this) ? "darcula" : "quietlight");
   }
+  
+  private void updateMenuItem() {
+		if (undo == null || redo == null || execute == null || editorManager.getCurrentEditor() == null) {
+			return;
+		}
+    undo.setEnabled(editorManager.getCurrentEditor().getEditor().canUndo());
+    redo.setEnabled(editorManager.getCurrentEditor().getEditor().canRedo());
+    execute.setVisible(SimpleExecuter.isExecutable(viewModel.getCurrentFile()));
+	}
 }

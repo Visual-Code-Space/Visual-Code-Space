@@ -13,6 +13,7 @@ import com.raredev.common.Indexer;
 import com.raredev.common.util.DialogUtils;
 import com.raredev.common.util.FileUtil;
 import com.raredev.vcspace.R;
+import com.raredev.vcspace.activity.MainActivity;
 import com.raredev.vcspace.databinding.ActivityMainBinding;
 import com.raredev.vcspace.ui.editor.CodeEditorView;
 import com.raredev.vcspace.ui.editor.EditorViewModel;
@@ -29,15 +30,17 @@ public class EditorManager {
   private Context context;
 
   private EditorViewModel viewModel;
+  private MainActivity activity;
   private Indexer indexer;
 
-  public EditorManager(Context context, ActivityMainBinding binding, EditorViewModel viewModel) {
+  public EditorManager(Context context, ActivityMainBinding binding, EditorViewModel viewModel, MainActivity activity) {
     this.context = context;
 
     this.drawerLayout = binding.drawerLayout;
     this.container = binding.container;
     this.tabLayout = binding.tabLayout;
     this.viewModel = viewModel;
+    this.activity = activity;
 
     indexer = new Indexer(context.getExternalFilesDir("editor") + "/openedFiles.json");
   }
@@ -113,6 +116,7 @@ public class EditorManager {
     viewModel.openFile(file);
     if (setCurrent) setCurrentPosition(viewModel.indexOf(file));
     saveOpenedFiles();
+    getCurrentEditor().subscribeContentChangeEvent(activity.updateMenuItem);
   }
 
   public void closeFile(int index) {
