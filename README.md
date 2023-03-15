@@ -41,7 +41,7 @@
 
 ## To contribute to this project:
 
-#### Source code format
+#### Source code format:
 
 - Indents : 2-space
 - Java : `GoogleStyle`. Either use `google-java-format` or import [this](https://raw.githubusercontent.com/google/styleguide/gh-pages/intellij-java-google-style.xml) code style.
