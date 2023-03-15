@@ -16,7 +16,6 @@ public class VCSpaceActivity extends AppCompatActivity {
     AppCompatDelegate.setDefaultNightMode(SettingsFragment.getThemeFromPrefs());
     Thread.setDefaultUncaughtExceptionHandler(new CrashHandler(this));
     getWindow().setStatusBarColor(SurfaceColors.SURFACE_0.getColor(this));
-    findBinding();
     setContentView(getLayout());
     onCreate();
   }
@@ -24,8 +23,6 @@ public class VCSpaceActivity extends AppCompatActivity {
   public View getLayout() {
     return null;
   }
-
-  public void findBinding() {}
 
   public void onCreate() {}
 }

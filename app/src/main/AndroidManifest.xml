@@ -39,6 +39,9 @@
       android:name=".activity.SettingsActivity"
       android:exported="true" />
     <activity
+      android:name=".activity.TerminalActivity"
+      android:exported="true" />
+    <activity
       android:name=".activity.WebViewActivity"
       android:exported="true" />
     <activity

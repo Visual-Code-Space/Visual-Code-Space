@@ -3,7 +3,6 @@ package com.raredev.vcspace.activity;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.PopupMenu;
@@ -37,12 +36,8 @@ public class MainActivity extends VCSpaceActivity {
   private boolean showMenuRedo = false;
 
   @Override
-  public void findBinding() {
-    binding = ActivityMainBinding.inflate(getLayoutInflater());
-  }
-
-  @Override
   public View getLayout() {
+    binding = ActivityMainBinding.inflate(getLayoutInflater());
     return binding.getRoot();
   }
 
@@ -167,6 +162,10 @@ public class MainActivity extends VCSpaceActivity {
         break;
       case R.id.menu_settings:
         startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+        break;
+      case R.id.menu_terminal:
+        ToastUtils.showShort("unavailable");
+        //startActivity(new Intent(getApplicationContext(), TerminalActivity.class));
         break;
     }
     return true;

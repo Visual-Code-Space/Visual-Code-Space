@@ -20,12 +20,8 @@ public class CrashActivity extends VCSpaceActivity {
   private ActivityCrashBinding binding;
 
   @Override
-  public void findBinding() {
-    binding = ActivityCrashBinding.inflate(getLayoutInflater());
-  }
-
-  @Override
   public View getLayout() {
+    binding = ActivityCrashBinding.inflate(getLayoutInflater());
     return binding.getRoot();
   }
 

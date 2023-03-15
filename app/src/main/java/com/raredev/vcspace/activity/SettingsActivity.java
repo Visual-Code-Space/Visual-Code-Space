@@ -8,12 +8,8 @@ public class SettingsActivity extends VCSpaceActivity {
   private ActivitySettingsBinding binding;
 
   @Override
-  public void findBinding() {
-    binding = ActivitySettingsBinding.inflate(getLayoutInflater());
-  }
-
-  @Override
   public View getLayout() {
+    binding = ActivitySettingsBinding.inflate(getLayoutInflater());
     return binding.getRoot();
   }
 

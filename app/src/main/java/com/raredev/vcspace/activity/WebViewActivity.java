@@ -11,12 +11,8 @@ public class WebViewActivity extends VCSpaceActivity {
   private ActivityWebviewBinding binding;
 
   @Override
-  public void findBinding() {
-    binding = ActivityWebviewBinding.inflate(getLayoutInflater());
-  }
-
-  @Override
   public View getLayout() {
+    binding = ActivityWebviewBinding.inflate(getLayoutInflater());
     return binding.getRoot();
   }
 
