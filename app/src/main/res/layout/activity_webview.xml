@@ -15,7 +15,8 @@
       android:layout_height="wrap_content"
       android:layout_width="match_parent"
       app:navigationIcon="@drawable/arrow_left"
-      android:id="@+id/toolbar" />
+      android:id="@+id/toolbar"
+      android:background="@drawable/ripple_effect" />
 
     <com.google.android.material.progressindicator.LinearProgressIndicator
       android:layout_width="match_parent"

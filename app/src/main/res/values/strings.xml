@@ -13,6 +13,7 @@
   <string name="empty">Empty</string>
   <string name="yes">Yes</string>
   <string name="no">No</string>
+  <string name="url_copied">Url copied to clipboard.</string>
 
   <!-- Menus Strings -->
   <string name="menu_save">Save</string>

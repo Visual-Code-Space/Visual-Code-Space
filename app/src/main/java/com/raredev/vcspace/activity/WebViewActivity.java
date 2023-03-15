@@ -4,8 +4,10 @@ import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import androidx.webkit.WebSettingsCompat;
+import com.blankj.utilcode.util.ClipboardUtils;
 import com.blankj.utilcode.util.FileUtils;
-import com.raredev.common.util.FileUtil;
+import com.google.android.material.snackbar.Snackbar;
 import com.raredev.vcspace.databinding.ActivityWebviewBinding;
 import com.raredev.vcspace.R;
 
@@ -32,11 +34,18 @@ public class WebViewActivity extends VCSpaceActivity {
     binding.webView.getSettings().setBuiltInZoomControls(true);
     binding.webView.getSettings().setDisplayZoomControls(false);
 
+    WebSettingsCompat.setAlgorithmicDarkeningAllowed(binding.webView.getSettings(), true);
+
     String executableFilePath = getIntent().getStringExtra("executable_file");
     String realFilePath = getIntent().getStringExtra("real_file");
     String executableFileName = FileUtils.getFileName(executableFilePath);
     String realFileName = FileUtils.getFileName(realFilePath);
     binding.webView.loadUrl("file://" + executableFilePath);
+    binding.toolbar.setOnClickListener(
+        v -> {
+          ClipboardUtils.copyText(binding.webView.getUrl());
+          Snackbar.make(binding.getRoot(), R.string.url_copied, Snackbar.LENGTH_SHORT).show();
+        });
 
     binding.webView.setWebChromeClient(
         new WebChromeClient() {
