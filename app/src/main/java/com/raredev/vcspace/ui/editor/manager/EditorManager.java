@@ -17,6 +17,7 @@ import com.raredev.vcspace.databinding.ActivityMainBinding;
 import com.raredev.vcspace.ui.editor.CodeEditorView;
 import com.raredev.vcspace.ui.editor.EditorViewModel;
 import java.io.File;
+import java.util.List;
 
 public class EditorManager {
 
@@ -36,7 +37,7 @@ public class EditorManager {
     this.tabLayout = binding.tabLayout;
     this.viewModel = viewModel;
   }
-
+  
   public void tryOpenFileFromIntent(Intent it) {
     try {
       Uri uri = it.getData();
@@ -65,11 +66,7 @@ public class EditorManager {
       return;
     }
     int index = openFileAndGetIndex(file);
-    final var tab = tabLayout.getTabAt(index);
-    if (tab != null && index >= 0 && !tab.isSelected()) {
-      tab.select();
-    }
-    viewModel.setCurrentPosition(index, file);
+    setCurrent(index);
   }
 
   private int openFileAndGetIndex(File file) {
@@ -117,6 +114,9 @@ public class EditorManager {
         }
       }
     }
+    int size = viewModel.getFiles().getValue().size() -1;
+    viewModel.setCurrentPosition(size, file);
+    setCurrent(size);
   }
 
   public void closeAllFiles() {
@@ -172,5 +172,12 @@ public class EditorManager {
 
   public CodeEditorView getCurrentEditor() {
     return (CodeEditorView) container.getChildAt(viewModel.getCurrentPosition());
+  }
+  
+  private void setCurrent(int index) {
+    final var tab = tabLayout.getTabAt(index);
+    if (tab != null && index >= 0 && !tab.isSelected()) {
+      tab.select();
+    }
   }
 }

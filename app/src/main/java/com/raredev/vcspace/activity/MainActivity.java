@@ -117,6 +117,7 @@ public class MainActivity extends VCSpaceActivity {
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.main_menu, menu);
+    menu.findItem(R.id.menu_terminal).setVisible(false);
     undo = menu.findItem(R.id.menu_undo);
     redo = menu.findItem(R.id.menu_redo);
     return super.onCreateOptionsMenu(menu);
@@ -170,6 +171,7 @@ public class MainActivity extends VCSpaceActivity {
         binding.searcher.showAndHide();
         break;
       case R.id.menu_settings:
+        editorManager.saveAllFiles(false);
         startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
         break;
       case R.id.menu_terminal:
@@ -208,6 +210,7 @@ public class MainActivity extends VCSpaceActivity {
           if (error != null) {
             DialogUtils.newErrorDialog(this, getString(R.string.error), error.toString());
           }
+          viewModel.clear();
           editorManager.tryOpenFileFromIntent(getIntent());
         });
   }
