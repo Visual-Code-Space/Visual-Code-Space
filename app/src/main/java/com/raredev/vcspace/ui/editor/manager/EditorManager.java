@@ -37,10 +37,6 @@ public class EditorManager {
     this.viewModel = viewModel;
   }
 
-  public EditorViewModel getViewModel() {
-    return viewModel;
-  }
-
   public void tryOpenFileFromIntent(Intent it) {
     try {
       Uri uri = it.getData();
