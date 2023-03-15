@@ -4,8 +4,10 @@ import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import com.blankj.utilcode.util.FileUtils;
 import com.raredev.common.util.FileUtil;
 import com.raredev.vcspace.databinding.ActivityWebviewBinding;
+import com.raredev.vcspace.R;
 
 public class WebViewActivity extends VCSpaceActivity {
   private ActivityWebviewBinding binding;
@@ -34,15 +36,26 @@ public class WebViewActivity extends VCSpaceActivity {
     binding.webView.getSettings().setBuiltInZoomControls(true);
     binding.webView.getSettings().setDisplayZoomControls(false);
 
-    String htmlPath = getIntent().getStringExtra("html_file");
-    binding.webView.loadUrl("file://" + htmlPath);
+    String executableFilePath = getIntent().getStringExtra("executable_file");
+    String realFilePath = getIntent().getStringExtra("real_file");
+    String executableFileName = FileUtils.getFileName(executableFilePath);
+    String realFileName = FileUtils.getFileName(realFilePath);
+    binding.webView.loadUrl("file://" + executableFilePath);
 
     binding.webView.setWebChromeClient(
         new WebChromeClient() {
           @Override
           public void onProgressChanged(WebView view, int progress) {
-            getSupportActionBar().setTitle(view.getTitle());
-            getSupportActionBar().setSubtitle(view.getUrl());
+            binding.progressIndicator.setVisibility(progress == 100 ? View.GONE : View.VISIBLE);
+            binding.progressIndicator.setProgressCompat(progress, true);
+            getSupportActionBar()
+                .setTitle(
+                    view.getTitle().equals(executableFileName) ? realFileName : view.getTitle());
+            getSupportActionBar()
+                .setSubtitle(
+                    view.getUrl().equals("file://" + executableFilePath)
+                        ? "file://" + realFilePath
+                        : view.getUrl());
           }
         });
     binding.webView.setWebViewClient(

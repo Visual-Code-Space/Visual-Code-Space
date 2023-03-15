@@ -17,6 +17,11 @@
       app:navigationIcon="@drawable/arrow_left"
       android:id="@+id/toolbar" />
 
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/progressIndicator" />
+
   </com.google.android.material.appbar.AppBarLayout>
 
   <android.webkit.WebView
