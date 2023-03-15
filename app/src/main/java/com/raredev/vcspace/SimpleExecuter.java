@@ -37,7 +37,7 @@ public class SimpleExecuter {
   }
 
   public static boolean isExecutable(File file) {
-    if (file == null) return false;
+    if (file == null || !file.getName().contains(".")) return false;
     String fileName = file.getName();
     switch (fileName.substring(fileName.lastIndexOf("."), fileName.length()).toLowerCase()) {
       case ".html":

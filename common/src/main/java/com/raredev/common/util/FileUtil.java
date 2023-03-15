@@ -322,4 +322,13 @@ public class FileUtil {
 
     return file;
   }
+
+  public static void clearAppCache(Context context) {
+    try {
+      File dir = context.getCacheDir();
+      delete(dir.getAbsolutePath());
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 }

@@ -8,6 +8,7 @@ import androidx.webkit.WebSettingsCompat;
 import com.blankj.utilcode.util.ClipboardUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.google.android.material.snackbar.Snackbar;
+import com.raredev.common.util.FileUtil;
 import com.raredev.vcspace.databinding.ActivityWebviewBinding;
 import com.raredev.vcspace.R;
 
@@ -43,7 +44,7 @@ public class WebViewActivity extends VCSpaceActivity {
     binding.webView.loadUrl("file://" + executableFilePath);
     binding.toolbar.setOnClickListener(
         v -> {
-          ClipboardUtils.copyText(binding.webView.getUrl());
+          ClipboardUtils.copyText(getSupportActionBar().getSubtitle());
           Snackbar.make(binding.getRoot(), R.string.url_copied, Snackbar.LENGTH_SHORT).show();
         });
 
@@ -80,5 +81,12 @@ public class WebViewActivity extends VCSpaceActivity {
       return;
     }
     super.onBackPressed();
+    FileUtil.clearAppCache(getApplicationContext());
+  }
+
+  @Override
+  protected void onDestroy() {
+    FileUtil.clearAppCache(getApplicationContext());
+    super.onDestroy();
   }
 }
