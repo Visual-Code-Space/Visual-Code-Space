@@ -57,7 +57,6 @@ public class MainActivity extends VCSpaceActivity {
 
     viewModel = new ViewModelProvider(this).get(EditorViewModel.class);
     editorManager = new EditorManager(MainActivity.this, binding, viewModel);
-
     binding.tabLayout.addOnTabSelectedListener(
         new TabLayout.OnTabSelectedListener() {
           @Override

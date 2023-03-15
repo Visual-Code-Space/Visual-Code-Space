@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.TooltipCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.transition.ChangeBounds;
@@ -112,6 +113,10 @@ public class TreeViewFragment extends Fragment
   @Override
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
+    TooltipCompat.setTooltipText(binding.refresh, getString(R.string.refresh));
+    TooltipCompat.setTooltipText(binding.close, getString(R.string.close));
+    TooltipCompat.setTooltipText(binding.newFile, getString(R.string.new_file_title));
+    TooltipCompat.setTooltipText(binding.newFolder, getString(R.string.new_folder_title));
     if (savedInstanceState != null) {
       savedState = savedInstanceState.getString(KEY_STORED_TREE_STATE, null);
     }

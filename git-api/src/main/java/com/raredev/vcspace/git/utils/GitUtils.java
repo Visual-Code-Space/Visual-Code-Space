@@ -43,11 +43,9 @@ public class GitUtils {
     Repository repo = new FileRepositoryBuilder().setGitDir(repoPath).build();
     git = new Git(repo);
   }
-  
+
   public void init(File repo) throws GitAPIException {
-    Git.init()
-            .setDirectory(repo)
-            .call();
+    Git.init().setDirectory(repo).call();
   }
 
   /**

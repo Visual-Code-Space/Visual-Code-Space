@@ -39,10 +39,12 @@
 - [Bogdan Melnychuk](https://github.com/bmelnychuk) for [AndroidTreeView](https://github.com/bmelnychuk/AndroidTreeView)
 - [Akash Yadav](https://github.com/itsaky) for the awesome [AndroidIDE](https://github.com/AndroidIDEOfficial/AndroidIDE) and [TreeView](https://github.com/AndroidIDEOfficial/AndroidIDE/tree/dev/treeview)
 
-## To contribute to this project:
+## How to contribute to this project:
 
-#### Source code format
+When you're working on this project, please make sure your code follows these guidelines:
 
-- Indents : 2-space
-- Java : `GoogleStyle`. Either use `google-java-format` or import [this](https://raw.githubusercontent.com/google/styleguide/gh-pages/intellij-java-google-style.xml) code style.
-- XML : Default Android Studio or AndroidIDE formatter with 2-space indentations.
+- Use a 2-space indent for everything.
+- For Java code, follow the `GoogleStyle` formatting guidelines. You can either use the `google-java-format` tool or import the code style from [this link](https://raw.githubusercontent.com/google/styleguide/gh-pages/intellij-java-google-style.xml) to your IDE.
+- For XML code, use the default formatting guidelines for either Android Studio or AndroidIDE, and also use a 2-space indent.
+
+Thank you for your contributions! We're excited to work with you.
