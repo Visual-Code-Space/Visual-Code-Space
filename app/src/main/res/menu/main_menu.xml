@@ -26,10 +26,6 @@
     app:showAsAction="ifRoom">
     <menu>
       <item
-        android:id="@+id/menu_compile"
-        android:icon="@drawable/ic_play"
-        android:title="@string/menu_execute" />
-      <item
         android:id="@+id/menu_search"
         android:icon="@drawable/ic_search"
         android:title="@string/menu_search" />
