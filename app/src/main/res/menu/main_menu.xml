@@ -6,23 +6,70 @@
   <item
     android:id="@+id/menu_undo"
     android:icon="@drawable/ic_undo"
-    android:title="@string/undo"
+    android:title="@string/menu_undo"
     app:showAsAction="always" />
   <item
     android:id="@+id/menu_redo"
     android:icon="@drawable/ic_redo"
-    android:title="@string/redo"
+    android:title="@string/menu_redo"
     app:showAsAction="always" />
   <item
     android:id="@+id/menu_compile"
     android:icon="@drawable/ic_play"
     android:title="@string/menu_execute"
     app:showAsAction="always" />
+  
+  <item
+    android:id="@+id/menu_file"
+    android:icon="@drawable/ic_folder"
+    android:title="@string/file"
+    app:showAsAction="ifRoom">
+    <menu>
+      <group android:id="@+id/group_create">
+        <item
+          android:id="@+id/menu_new_txt_file"
+          android:icon="@drawable/file_document_outline"
+          android:title="@string/menu_new_text_file" />
+        <item
+          android:id="@+id/menu_new_file"
+          android:icon="@drawable/file_plus_outline"
+          android:title="@string/menu_new_file" />
+      </group>
+      <group android:id="@+id/group_open">
+        <item
+          android:id="@+id/menu_open_file"
+          android:icon="@drawable/ic_file"
+          android:title="@string/menu_open_file" />
+        <item
+          android:id="@+id/menu_open_folder"
+          android:icon="@drawable/folder_open"
+          android:title="@string/open_folder" />
+        <item
+          android:id="@+id/menu_open_recent"
+          android:icon="@drawable/history"
+          android:title="@string/open_recent" />
+      </group>
+      <group android:id="@+id/group_save">
+        <item
+          android:id="@+id/menu_save"
+          android:icon="@drawable/ic_save"
+          android:title="@string/menu_save" />
+        <item
+          android:id="@+id/menu_save_as"
+          android:icon="@drawable/ic_save"
+          android:title="@string/menu_save_as" />
+        <item
+          android:id="@+id/menu_save_all"
+          android:icon="@drawable/content_save_all"
+          android:title="@string/menu_save_all" />
+      </group>
+    </menu>
+  </item>
 
   <item
-    android:id="@+id/menu_editor"
+    android:id="@+id/menu_edit"
     android:icon="@drawable/pencil"
-    android:title="@string/edit"
+    android:title="@string/menu_edit"
     app:showAsAction="ifRoom">
     <menu>
       <item
@@ -38,9 +85,6 @@
   <item
     android:id="@+id/menu_settings"
     android:title="@string/menu_settings" />
-  <item
-    android:id="@+id/menu_save"
-    android:title="@string/menu_save" />
   <item
     android:id="@+id/menu_terminal"
     android:title="Terminal" />

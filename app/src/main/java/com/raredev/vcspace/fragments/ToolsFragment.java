@@ -13,6 +13,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.widget.TooltipCompat;
+import androidx.core.view.GravityCompat;
 import androidx.documentfile.provider.DocumentFile;
 import com.raredev.common.util.FileUtil;
 import com.raredev.vcspace.R;
@@ -21,6 +22,7 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.fragment.app.Fragment;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.raredev.vcspace.activity.MainActivity;
 import com.raredev.vcspace.adapters.ToolsPagerAdapter;
 import com.raredev.vcspace.databinding.FragmentToolsBinding;
 import com.raredev.vcspace.util.PreferencesUtils;
@@ -60,6 +62,10 @@ public class ToolsFragment extends Fragment {
                               .edit()
                               .putString(PreferencesUtils.KEY_RECENT_FOLDER, dir.toString())
                               .apply();
+                          ((MainActivity) requireActivity())
+                              .getBinding()
+                              .drawerLayout
+                              .openDrawer(GravityCompat.START);
                         } catch (Exception e) {
                           e.printStackTrace();
                         }
@@ -124,5 +130,9 @@ public class ToolsFragment extends Fragment {
     if (tab != null && !tab.isSelected()) {
       tab.select();
     }
+  }
+
+  public TreeViewFragment getTreeViewFragment() {
+    return this.treeViewFragment;
   }
 }

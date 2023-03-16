@@ -132,7 +132,7 @@ public class FileUtil {
    * @param context The context.
    * @param uri The Uri to query.
    */
-  public static File getFileFromUri(final Context context, final Uri uri) throws Exception {
+  public static File getFileFromUri(final Context context, final Uri uri) throws IOException {
 
     String path = null;
 
@@ -299,7 +299,7 @@ public class FileUtil {
     return result;
   }
 
-  public static File saveFileIntoExternalStorageByUri(Context context, Uri uri) throws Exception {
+  public static File saveFileIntoExternalStorageByUri(Context context, Uri uri) throws IOException {
     InputStream inputStream = context.getContentResolver().openInputStream(uri);
     int originalSize = inputStream.available();
 

@@ -96,6 +96,7 @@
     <androidx.fragment.app.FragmentContainerView
       android:layout_height="match_parent"
       android:layout_width="match_parent"
+      android:tag="tools_fragment"
       android:name="com.raredev.vcspace.fragments.ToolsFragment"
       android:id="@+id/tools_fragment" />
 

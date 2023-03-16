@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.transition.ChangeBounds;
 import androidx.transition.TransitionManager;
+import com.blankj.utilcode.util.ClipboardUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -146,6 +147,7 @@ public class TreeViewFragment extends Fragment
     dialog.setContentView(bind.getRoot());
 
     List<DialogListModel> options = new ArrayList<>();
+    options.add(new DialogListModel(R.drawable.content_copy, getString(R.string.copy_path)));
     if (node.getValue().isDirectory()) {
       options.add(
           new DialogListModel(R.drawable.file_plus_outline, getString(R.string.new_file_title)));
@@ -178,8 +180,7 @@ public class TreeViewFragment extends Fragment
                   addNewChild(node, newFolder);
                   expandNode(node);
                 });
-          }
-          if (label.equals(getString(R.string.rename))) {
+          } else if (label.equals(getString(R.string.rename))) {
             FileManagerUtils.renameFile(
                 requireContext(),
                 file,
@@ -194,8 +195,10 @@ public class TreeViewFragment extends Fragment
                   ((MainActivity) requireActivity()).getEditorManager().onFileDeleted();
                   treeView.removeNode(node);
                 });
+          } else if (label.equals(getString(R.string.copy_path))) {
+            ClipboardUtils.copyText(file.getAbsolutePath());
           }
-          dialog.cancel();
+          dialog.dismiss();
         });
 
     bind.title.setText(file.getName());
@@ -284,7 +287,7 @@ public class TreeViewFragment extends Fragment
     updateViewsVisibility();
   }
 
-  private void tryOpenRecentFolder() {
+  public void tryOpenRecentFolder() {
     try {
       String recentFolderPath =
           PreferencesUtils.getToolsPrefs().getString(PreferencesUtils.KEY_RECENT_FOLDER, "");
