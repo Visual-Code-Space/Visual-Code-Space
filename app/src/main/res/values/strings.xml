@@ -13,10 +13,9 @@
   <string name="empty">Empty</string>
   <string name="yes">Yes</string>
   <string name="no">No</string>
-  <string name="url_copied">Url copied to clipboard.</string>
+  <string name="url_copied">URL copied to clipboard.</string>
 
   <!-- Menus Strings -->
-  <string name="menu_save">Save</string>
   <string name="menu_execute">Execute</string>
   <string name="menu_format">Format</string>
   <string name="menu_search">Search</string>
@@ -25,9 +24,9 @@
   <string name="menu_undo">Undo</string>
   <string name="menu_redo">Redo</string>
   <string name="menu_edit">Edit</string>
-  <string name="menu_new_text_file">New Text File</string>
   <string name="menu_new_file">New File</string>
   <string name="menu_open_file">Open File</string>
+  <string name="menu_save">Save</string>
   <string name="menu_save_as">Save As</string>
   <string name="menu_save_all">Save All</string>
   
@@ -38,6 +37,7 @@
   <string name="error_this_folder_is_not_a_repository">This folder is not a repository</string>
 
   <!-- Buttons And Titles -->
+  <string name="saved">Saved</string>
   <string name="saved_files">Saved files</string>
   <string name="existing_file">A file with this name already exists!</string>
   <string name="delete">Delete</string>
