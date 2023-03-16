@@ -3,91 +3,93 @@ plugins {
 }
 
 android {
-    compileSdk 33
-    buildToolsVersion "33.0.0"
+  compileSdk 33
+  buildToolsVersion "33.0.0"
 
-    defaultConfig {
-        applicationId 'com.raredev.vcspace'
-        minSdk 26
-        targetSdk 33
-        versionCode 4
-        versionName "1.1"
-    }
+  defaultConfig {
+    applicationId 'com.raredev.vcspace'
+    minSdk 26
+    targetSdk 33
+    versionCode 5
+    versionName "1.1.0"
+  }
 
-    signingConfigs {
-        global {
-            storeFile file ("vcspace.keystore")
-            keyAlias "vcspace"
-            keyPassword "raredevKey"
-            storePassword "raredevKey"
-        }
+  signingConfigs {
+    global {
+      storeFile file ("vcspace.keystore")
+      keyAlias "vcspace"
+      keyPassword "raredevKey"
+      storePassword "raredevKey"
     }
+  }
     
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.global
-        }
-
-        debug {
-            signingConfig signingConfigs.global
-        }
+  buildTypes {
+    release {
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+      signingConfig signingConfigs.global
     }
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+    debug {
+      signingConfig signingConfigs.global
     }
+  }
 
-    packagingOptions {
-        resources.excludes.add("license/*")
-        exclude 'META-INF/eclipse.inf'
-        exclude 'about_files/LICENSE-2.0.txt'
-        exclude 'plugin.xml'
-        exclude 'plugin.properties'
-    }
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_11
+    targetCompatibility JavaVersion.VERSION_11
+  }
 
-    lint {
-        abortOnError false
-    }
+  packagingOptions {
+    resources.excludes.add("license/*")
+    exclude 'META-INF/eclipse.inf'
+    exclude 'about_files/LICENSE-2.0.txt'
+    exclude 'plugin.xml'
+    exclude 'plugin.properties'
+  }
 
-    buildFeatures {
-        viewBinding true
-    }
+  lint {
+    abortOnError false
+  }
+
+  buildFeatures {
+    viewBinding true
+  }
 }
 
 dependencies {
-    def lifecycle_version = "2.5.1"
-    def activity_version = "1.6.1"
+  def lifecycle_version = "2.5.1"
+  def activity_version = "1.6.1"
 
-    implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
-    implementation "androidx.activity:activity:$activity_version"
+  implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
+  implementation "androidx.activity:activity:$activity_version"
 
-    implementation 'androidx.appcompat:appcompat:1.5.1'
-    implementation 'androidx.preference:preference:1.2.0'
-    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-    implementation 'androidx.webkit:webkit:1.7.0-alpha03'
-    implementation 'androidx.fragment:fragment:1.6.0-alpha07'
+  implementation 'androidx.appcompat:appcompat:1.5.1'
+  implementation 'androidx.preference:preference:1.2.0'
+  implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+  implementation 'androidx.webkit:webkit:1.7.0-alpha03'
+  implementation 'androidx.fragment:fragment:1.6.0-alpha07'
 
-    implementation 'com.google.android.material:material:1.8.0-alpha03'
-    implementation 'com.google.code.gson:gson:2.8.7'
-    implementation 'com.blankj:utilcodex:1.31.1'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.10.1'
+  implementation 'com.google.android.material:material:1.8.0-alpha03'
+  implementation 'com.google.code.gson:gson:2.8.7'
+  implementation 'com.blankj:utilcodex:1.31.1'
+  implementation 'com.fasterxml.jackson.core:jackson-databind:2.10.1'
 
-    implementation platform("io.github.Rosemoe.sora-editor:bom:0.21.1")
-    implementation "io.github.Rosemoe.sora-editor:editor"
-    implementation "io.github.Rosemoe.sora-editor:language-textmate"
+  implementation platform("io.github.Rosemoe.sora-editor:bom:0.21.1")
+  implementation "io.github.Rosemoe.sora-editor:editor"
+  implementation "io.github.Rosemoe.sora-editor:language-textmate"
 
-    implementation 'org.eclipse.jdt:org.eclipse.jdt.core:3.32.0'
-    implementation 'org.eclipse.jgit:org.eclipse.jgit:6.5.0.202303070854-r'
-    implementation 'org.greenrobot:eventbus:3.3.1'
-    implementation 'org.jsoup:jsoup:1.15.3'
-    implementation 'org.commonmark:commonmark:0.20.0'
+  implementation 'org.eclipse.jdt:org.eclipse.jdt.core:3.32.0'
+  implementation 'org.eclipse.jgit:org.eclipse.jgit:6.5.0.202303070854-r'
+  implementation 'org.greenrobot:eventbus:3.3.1'
+  implementation 'org.jsoup:jsoup:1.15.3'
+  implementation 'org.commonmark:commonmark:0.20.0'
 
-    implementation 'commons-io:commons-io:2.11.0'
+  implementation 'commons-io:commons-io:2.11.0'
 
-    implementation project(path: ':common')
-    implementation project(path: ':git-api')
-    implementation project(path: ':treeview')
+  implementation project(path: ':common')
+  implementation project(path: ':git-api')
+  implementation project(path: ':treeview')
+    
+  debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.10'
 }

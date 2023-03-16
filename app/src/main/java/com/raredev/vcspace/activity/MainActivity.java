@@ -30,7 +30,6 @@ import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.model.ThemeModel;
 import io.github.rosemoe.sora.langs.textmate.registry.provider.AssetsFileResolver;
-import io.github.rosemoe.sora.widget.CodeEditor;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -45,7 +44,14 @@ public class MainActivity extends VCSpaceActivity {
   private MenuItem undo;
   private MenuItem redo;
 
-  public final Runnable updateMenuItem = () -> updateUndoAndRedo();
+  public final Runnable updateMenuItem =
+      () -> {
+        CodeEditorView editor = editorManager.getCurrentEditor();
+        if (editor != null) {
+          undo.setEnabled(editor.getEditor().canUndo());
+          redo.setEnabled(editor.getEditor().canRedo());
+        }
+      };
   private ActivityResultLauncher<Intent> launcher;
   private ActivityResultLauncher<String> createFile;
   private ActivityResultLauncher<String> pickFile;
@@ -198,7 +204,8 @@ public class MainActivity extends VCSpaceActivity {
         editor.redo();
         break;
       case R.id.menu_save:
-        editorManager.getEditorAtIndex(viewModel.getCurrentPosition()).save();
+        editorManager.getCurrentEditor().save();
+        ToastUtils.showShort("Saved");
         break;
       case R.id.menu_save_as:
         saveAs(viewModel.getCurrentFile());
@@ -238,9 +245,6 @@ public class MainActivity extends VCSpaceActivity {
       case R.id.menu_new_file:
         createFile.launch("");
         break;
-      case R.id.menu_new_txt_file:
-        createFile.launch("untitled.txt");
-        break;
       case R.id.menu_open_file:
         pickFile.launch("text/*");
         break;
@@ -279,14 +283,6 @@ public class MainActivity extends VCSpaceActivity {
           viewModel.clear();
           editorManager.tryOpenFileFromIntent(getIntent());
         });
-  }
-
-  private void updateUndoAndRedo() {
-    CodeEditorView editor = editorManager.getCurrentEditor();
-    if (editor != null) {
-      undo.setEnabled(editor.getEditor().canUndo());
-      redo.setEnabled(editor.getEditor().canRedo());
-    }
   }
 
   private void showPopupMenu(View v, int pos) {

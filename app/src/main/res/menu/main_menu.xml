@@ -27,10 +27,6 @@
     <menu>
       <group android:id="@+id/group_create">
         <item
-          android:id="@+id/menu_new_txt_file"
-          android:icon="@drawable/file_document_outline"
-          android:title="@string/menu_new_text_file" />
-        <item
           android:id="@+id/menu_new_file"
           android:icon="@drawable/file_plus_outline"
           android:title="@string/menu_new_file" />

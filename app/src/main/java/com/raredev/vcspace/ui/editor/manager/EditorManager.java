@@ -17,7 +17,6 @@ import com.raredev.vcspace.databinding.ActivityMainBinding;
 import com.raredev.vcspace.ui.editor.CodeEditorView;
 import com.raredev.vcspace.ui.editor.EditorViewModel;
 import java.io.File;
-import java.util.List;
 
 public class EditorManager {
 
