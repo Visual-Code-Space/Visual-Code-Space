@@ -1,6 +1,5 @@
 <resources>
-  <!-- Linguagem Portugues Brasil -->
-  <string name="app_name">Visual Code Space</string>
+  <!-- Linguagem Português Brasil -->
   <string name="open">Abrir</string>
   <string name="remove">Remover</string>
   <string name="close">Fechar</string>
@@ -13,14 +12,19 @@
   <string name="empty">Vazio</string>
   <string name="yes">Sim</string>
   <string name="no">Não</string>
+  <string name="url_copied">URL copiado para a área de transferência.</string>
 
   <!-- Menus Strings -->
-  <string name="menu_save">Salvar</string>
   <string name="menu_execute">Executar</string>
   <string name="menu_format">Formatar</string>
   <string name="menu_search">Pesquisar</string>
   <string name="menu_reload">Recarregar</string>
   <string name="menu_settings">Configurações</string>
+  <string name="menu_new_file">Novo arquivo</string>
+  <string name="menu_open_file">Abrir arquivo</string>
+  <string name="menu_save">Salvar</string>
+  <string name="menu_save_as">Salvar como</string>
+  <string name="menu_save_all">Salvar tudo</string>
 
   <!-- Errors Strings -->
   <string name="error">Erro</string>
@@ -29,6 +33,7 @@
   <string name="error_this_folder_is_not_a_repository">Essa pasta não é um repositório</string>
   
   <!-- Buttons And Titles -->
+  <string name="saved">Salvo</string>
   <string name="saved_files">Arquivos salvos</string>
   <string name="existing_file">Já existe um arquivo com este nome!</string>
   <string name="delete">Deletar</string>
@@ -40,6 +45,7 @@
   <string name="file">Arquivo</string>
   <string name="folder">Pasta</string>
   <string name="rename">Renomear</string>
+  <string name="copy_path">Copiar caminho</string>
   <string name="rename_hint">Digite um novo nome:</string>
   <string name="open_folder">Abrir uma pasta</string>
   <string name="open_recent">Abrir recente</string>

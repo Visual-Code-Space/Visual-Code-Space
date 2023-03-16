@@ -205,7 +205,7 @@ public class MainActivity extends VCSpaceActivity {
         break;
       case R.id.menu_save:
         editorManager.getCurrentEditor().save();
-        ToastUtils.showShort("Saved");
+        ToastUtils.showShort(R.string.saved);
         break;
       case R.id.menu_save_as:
         saveAs(viewModel.getCurrentFile());
