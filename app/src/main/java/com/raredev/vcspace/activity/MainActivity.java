@@ -25,6 +25,7 @@ import com.raredev.vcspace.fragments.ToolsFragment;
 import com.raredev.vcspace.ui.editor.CodeEditorView;
 import com.raredev.vcspace.ui.editor.EditorViewModel;
 import com.raredev.vcspace.ui.editor.manager.EditorManager;
+import com.raredev.vcspace.util.FileManagerUtils;
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
@@ -65,6 +66,9 @@ public class MainActivity extends VCSpaceActivity {
   @Override
   public void onCreate() {
     setSupportActionBar(binding.toolbar);
+    if (!FileManagerUtils.isPermissionGaranted(this)) {
+      FileManagerUtils.takeFilePermissions(this);
+    }
 
     ActionBarDrawerToggle toggle =
         new ActionBarDrawerToggle(
@@ -243,7 +247,7 @@ public class MainActivity extends VCSpaceActivity {
           binding.drawerLayout.openDrawer(GravityCompat.START);
         break;
       case R.id.menu_new_file:
-        createFile.launch("");
+        createFile.launch("untitled.txt");
         break;
       case R.id.menu_open_file:
         pickFile.launch("text/*");
