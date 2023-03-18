@@ -158,7 +158,7 @@ public class EditorManager {
   public int findIndexOfEditorByFile(File file) {
     for (int i = 0; i < viewModel.getFiles().getValue().size(); i++) {
       File openedFile = viewModel.getFiles().getValue().get(i);
-      if (openedFile == file) {
+      if (openedFile.getAbsolutePath().equals(file.getAbsolutePath())) {
         return i;
       }
     }
