@@ -35,13 +35,10 @@ public class WebViewActivity extends VCSpaceActivity {
     binding.webView.getSettings().setBuiltInZoomControls(true);
     binding.webView.getSettings().setDisplayZoomControls(false);
 
-    WebSettingsCompat.setAlgorithmicDarkeningAllowed(binding.webView.getSettings(), true);
-
     String executableFilePath = getIntent().getStringExtra("executable_file");
-    String realFilePath = getIntent().getStringExtra("real_file");
-    String executableFileName = FileUtils.getFileName(executableFilePath);
-    String realFileName = FileUtils.getFileName(realFilePath);
-    binding.webView.loadUrl("file://" + executableFilePath);
+    String htmlContent = getIntent().getStringExtra("html_content");
+    if (executableFilePath != null) binding.webView.loadUrl("file://" + executableFilePath);
+    else binding.webView.loadDataWithBaseURL(null, htmlContent, "text/html", "UTF-8", null);
     binding.toolbar.setOnClickListener(
         v -> {
           ClipboardUtils.copyText(getSupportActionBar().getSubtitle());
@@ -54,14 +51,8 @@ public class WebViewActivity extends VCSpaceActivity {
           public void onProgressChanged(WebView view, int progress) {
             binding.progressIndicator.setVisibility(progress == 100 ? View.GONE : View.VISIBLE);
             binding.progressIndicator.setProgressCompat(progress, true);
-            getSupportActionBar()
-                .setTitle(
-                    view.getTitle().equals(executableFileName) ? realFileName : view.getTitle());
-            getSupportActionBar()
-                .setSubtitle(
-                    view.getUrl().equals("file://" + executableFilePath)
-                        ? "file://" + realFilePath
-                        : view.getUrl());
+            getSupportActionBar().setTitle(view.getTitle() == "about:blank" ? getString(R.string.app_name) : view.getTitle());
+            getSupportActionBar().setSubtitle(view.getUrl() == "about:blank" ? "Preview" : view.getUrl());
           }
         });
     binding.webView.setWebViewClient(
@@ -81,12 +72,5 @@ public class WebViewActivity extends VCSpaceActivity {
       return;
     }
     super.onBackPressed();
-    FileUtil.clearAppCache(getApplicationContext());
-  }
-
-  @Override
-  protected void onDestroy() {
-    FileUtil.clearAppCache(getApplicationContext());
-    super.onDestroy();
   }
 }

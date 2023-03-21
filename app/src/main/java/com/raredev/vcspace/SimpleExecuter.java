@@ -22,12 +22,12 @@ public class SimpleExecuter {
     String fileName = file.getName();
     switch (fileName.substring(fileName.lastIndexOf("."), fileName.length()).toLowerCase()) {
       case ".html":
-        execute(context, file, file);
+        execute(context, file, null);
         break;
       case ".md":
         try {
-          File htmlFile = convertMarkdownToHtml(file.getAbsolutePath());
-          execute(context, htmlFile, file);
+          String html = convertMarkdownToHtml(file.getAbsolutePath());
+          execute(context, null, html);
         } catch (IOException e) {
           DialogUtils.newErrorDialog(context, "Error", e.toString());
           e.printStackTrace();
@@ -48,14 +48,14 @@ public class SimpleExecuter {
     }
   }
 
-  private void execute(Context context, File executableFile, File realFile) {
+  private void execute(Context context, File executableFile, String html) {
     Intent it = new Intent(context, WebViewActivity.class);
-    it.putExtra("executable_file", executableFile.getAbsolutePath());
-    it.putExtra("real_file", realFile.getAbsolutePath());
+    it.putExtra("executable_file", executableFile == null ? null : executableFile.getAbsolutePath());
+    it.putExtra("html_content", html);
     context.startActivity(it);
   }
 
-  private File convertMarkdownToHtml(String markdownFilePath) throws IOException {
+  private String convertMarkdownToHtml(String markdownFilePath) throws IOException {
     // Read the Markdown file contents into a string
     Path path = Paths.get(markdownFilePath);
     byte[] bytes = Files.readAllBytes(path);
@@ -67,12 +67,6 @@ public class SimpleExecuter {
     HtmlRenderer renderer = HtmlRenderer.builder().build();
     String html = renderer.render(document);
 
-    // Write the HTML to a temporary file
-    File tempFile = File.createTempFile("markdown", ".html");
-    BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
-    writer.write(html);
-    writer.close();
-
-    return tempFile;
+    return html;
   }
 }
