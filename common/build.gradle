@@ -10,20 +10,23 @@ android {
     minSdk 26
     targetSdk 33
   }
-
+  buildTypes {
+    release {
+      minifyEnabled false
+    }
+  }
   compileOptions {
     sourceCompatibility JavaVersion.VERSION_11
     targetCompatibility JavaVersion.VERSION_11
   }
-
   buildFeatures {
     viewBinding true
   }
 }
 
 dependencies {
-  implementation 'androidx.appcompat:appcompat:1.5.1'
-  implementation 'com.google.android.material:material:1.8.0-alpha03'
+  implementation 'androidx.appcompat:appcompat:1.6.0'
+  implementation 'com.google.android.material:material:1.8.0'
   implementation 'com.google.code.gson:gson:2.8.7'
   implementation 'com.blankj:utilcodex:1.31.1'
 }

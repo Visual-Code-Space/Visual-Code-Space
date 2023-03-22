@@ -1,6 +1,8 @@
 package com.raredev.vcspace.ui.editor;
 
 import com.raredev.vcspace.util.PreferencesUtils;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Symbol {
   private String label;
@@ -29,5 +31,22 @@ public class Symbol {
 
   public void setInsert(String insert) {
     this.insert = insert;
+  }
+  
+  public static List<Symbol> baseSymbols() {
+    List<Symbol> symbols = new ArrayList<>();
+    symbols.add(new Symbol("→", PreferencesUtils.getTab()));
+    symbols.add(new Symbol("\""));
+    symbols.add(new Symbol(";"));
+    symbols.add(new Symbol("(", "()"));
+    symbols.add(new Symbol(")"));
+    symbols.add(new Symbol("{", "{}"));
+    symbols.add(new Symbol("}"));
+    symbols.add(new Symbol("[", "[]"));
+    symbols.add(new Symbol("]"));
+    symbols.add(new Symbol("<", "<>"));
+    symbols.add(new Symbol(">"));
+
+    return symbols;
   }
 }

@@ -8,7 +8,6 @@ import android.view.View;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.widget.PopupMenu;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.MenuCompat;
 import androidx.lifecycle.ViewModelProvider;
@@ -20,17 +19,21 @@ import com.raredev.common.util.FileUtil;
 import com.raredev.common.util.Utils;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.SimpleExecuter;
+import com.raredev.vcspace.actions.ActionData;
+import com.raredev.vcspace.actions.ActionManager;
+import com.raredev.vcspace.actions.ActionPlaces;
 import com.raredev.vcspace.databinding.ActivityMainBinding;
 import com.raredev.vcspace.fragments.ToolsFragment;
 import com.raredev.vcspace.ui.editor.CodeEditorView;
-import com.raredev.vcspace.ui.editor.EditorViewModel;
+import com.raredev.vcspace.ui.viewmodel.EditorViewModel;
+import com.raredev.vcspace.ui.editor.Symbol;
 import com.raredev.vcspace.ui.editor.manager.EditorManager;
-import com.raredev.vcspace.util.FileManagerUtils;
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.model.ThemeModel;
 import io.github.rosemoe.sora.langs.textmate.registry.provider.AssetsFileResolver;
+import io.github.rosemoe.sora.widget.CodeEditor;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -39,8 +42,8 @@ import org.eclipse.tm4e.core.registry.IThemeSource;
 public class MainActivity extends VCSpaceActivity {
   private ActivityMainBinding binding;
 
-  private EditorViewModel viewModel;
-  private EditorManager editorManager;
+  public EditorViewModel viewModel;
+  public EditorManager editorManager;
 
   private MenuItem undo;
   private MenuItem redo;
@@ -66,10 +69,6 @@ public class MainActivity extends VCSpaceActivity {
   @Override
   public void onCreate() {
     setSupportActionBar(binding.toolbar);
-    if (!FileManagerUtils.isPermissionGaranted(this)) {
-      FileManagerUtils.takeFilePermissions(this);
-    }
-
     ActionBarDrawerToggle toggle =
         new ActionBarDrawerToggle(
             this, binding.drawerLayout, binding.toolbar, R.string.open, R.string.close);
@@ -117,45 +116,42 @@ public class MainActivity extends VCSpaceActivity {
 
           @Override
           public void onTabReselected(TabLayout.Tab p1) {
-            showPopupMenu(p1.view, viewModel.getCurrentPosition());
+            ActionData data = new ActionData();
+            data.put("activity", MainActivity.this);
+
+            ActionManager.getInstance().fillMenu(MainActivity.this, p1.view, data, ActionPlaces.EDITOR);
           }
 
           @Override
           public void onTabSelected(TabLayout.Tab p1) {
             int position = p1.getPosition();
             CodeEditorView editor = editorManager.getEditorAtIndex(position);
-            viewModel.setCurrentPosition(position, editor.getFile());
+            viewModel.setCurrentFile(position, editor.getFile());
 
-            binding.symbolInput.bindEditor(editor.getEditor());
             binding.searcher.bindEditor(editor.getEditor());
+            refreshSymbolInput(editor.getEditor());
             invalidateOptionsMenu();
           }
         });
 
-    viewModel
-        .getFiles()
-        .observe(
-            this,
-            (files) -> {
-              if (files.isEmpty()) {
-                binding.tabLayout.setVisibility(View.GONE);
-                binding.layout.setVisibility(View.GONE);
-                binding.noFileOpened.setVisibility(View.VISIBLE);
-                binding.searcher.hide();
-              } else {
-                binding.tabLayout.setVisibility(View.VISIBLE);
-                binding.layout.setVisibility(View.VISIBLE);
-                binding.noFileOpened.setVisibility(View.GONE);
-              }
-            });
-    viewModel
-        .getCurrentPositionPair()
-        .observe(
-            this,
-            (pair) -> {
-              binding.container.setDisplayedChild(pair.first);
-            });
+    viewModel.observeFiles(
+        this,
+        (files) -> {
+          if (files.isEmpty()) {
+            binding.tabLayout.setVisibility(View.GONE);
+            binding.layout.setVisibility(View.GONE);
+            binding.noFileOpened.setVisibility(View.VISIBLE);
+            binding.searcher.hide();
+          } else {
+            binding.tabLayout.setVisibility(View.VISIBLE);
+            binding.layout.setVisibility(View.VISIBLE);
+            binding.noFileOpened.setVisibility(View.GONE);
+          }
+        });
 
+    viewModel
+        .getDisplayedFile()
+        .observe(this, (index) -> binding.container.setDisplayedChild(index));
     initialize();
   }
 
@@ -171,7 +167,7 @@ public class MainActivity extends VCSpaceActivity {
 
   @Override
   public boolean onPrepareOptionsMenu(Menu menu) {
-    if (!viewModel.getFiles().getValue().isEmpty()) {
+    if (!viewModel.getOpenedFiles().isEmpty()) {
       menu.findItem(R.id.menu_save).setEnabled(true);
       menu.findItem(R.id.menu_save_as).setEnabled(true);
       menu.findItem(R.id.menu_save_all).setEnabled(true);
@@ -247,7 +243,7 @@ public class MainActivity extends VCSpaceActivity {
           binding.drawerLayout.openDrawer(GravityCompat.START);
         break;
       case R.id.menu_new_file:
-        createFile.launch("untitled.txt");
+        createFile.launch("untitled");
         break;
       case R.id.menu_open_file:
         pickFile.launch("text/*");
@@ -269,11 +265,7 @@ public class MainActivity extends VCSpaceActivity {
     editorManager.saveAllFiles(false);
     super.onBackPressed();
   }
-
-  public EditorManager getEditorManager() {
-    return editorManager;
-  }
-
+  
   private synchronized void initialize() {
     TaskExecutor.executeAsyncProvideError(
         () -> {
@@ -284,30 +276,9 @@ public class MainActivity extends VCSpaceActivity {
           if (error != null) {
             DialogUtils.newErrorDialog(this, getString(R.string.error), error.toString());
           }
-          viewModel.clear();
+          viewModel.removeAllFiles();
           editorManager.tryOpenFileFromIntent(getIntent());
         });
-  }
-
-  private void showPopupMenu(View v, int pos) {
-    PopupMenu pm = new PopupMenu(this, v);
-    pm.getMenu().add(R.string.close);
-    pm.getMenu().add(R.string.close_others);
-    pm.getMenu().add(R.string.close_all);
-    pm.setOnMenuItemClickListener(
-        item -> {
-          var title = item.getTitle();
-          if (title == getString(R.string.close)) {
-            editorManager.closeFile(pos);
-          } else if (title == getString(R.string.close_others)) {
-            editorManager.closeOthers();
-          } else if (title == getString(R.string.close_all)) {
-            editorManager.closeAllFiles();
-          }
-          invalidateOptionsMenu();
-          return true;
-        });
-    pm.show();
   }
 
   private void loadTextMate() throws Exception {
@@ -330,6 +301,11 @@ public class MainActivity extends VCSpaceActivity {
     ThemeRegistry.getInstance().setTheme(Utils.isDarkMode(this) ? "darcula" : "quietlight");
   }
 
+  private void refreshSymbolInput(CodeEditor editor) {
+    binding.symbolInput.setSymbols(Symbol.baseSymbols());
+    binding.symbolInput.bindEditor(editor);
+  }
+
   private void saveAs(File fileToSave) {
     Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
     intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -337,10 +313,6 @@ public class MainActivity extends VCSpaceActivity {
     intent.putExtra(Intent.EXTRA_TITLE, fileToSave.getName());
 
     launcher.launch(intent);
-  }
-
-  public ActivityMainBinding getBinding() {
-    return this.binding;
   }
 
   private void onCreateNewFile(Uri uri) {

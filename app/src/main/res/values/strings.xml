@@ -49,7 +49,7 @@
   <string name="file">File</string>
   <string name="folder">Folder</string>
   <string name="rename">Rename</string>
-  <string name="copy_path">Copy Path</string>
+  <string name="copy_path">Copy path</string>
   <string name="rename_hint">Enter a new name:</string>
   <string name="open_folder">Open Folder</string>
   <string name="open_recent">Open Recent</string>
@@ -91,6 +91,13 @@
 
   <!-- Editor -->
   <string name="pref_editor_textsize">Font size</string>
+  <string name="pref_editor_tabsize">TAB size</string>
+  <string-array name="settings_tab_entries">
+    <item>2</item>
+    <item>4</item>
+    <item>6</item>
+    <item>8</item>
+  </string-array>
   <string name="pref_editor_font">Editor font</string>
   <string name="pref_font_firacode">Fira Code Regular</string>
   <string name="pref_font_jetbrains">JetBrains Mono</string>

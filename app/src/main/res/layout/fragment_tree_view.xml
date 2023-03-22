@@ -52,24 +52,6 @@
       <ImageView
         android:layout_height="@dimen/dimen22dp"
         android:layout_width="@dimen/dimen22dp"
-        android:src="@drawable/folder_plus_outline"
-        android:background="@drawable/ripple_effect"
-        android:layout_margin="3dp"
-        android:padding="2dp"
-        android:id="@+id/new_folder" />
-
-      <ImageView
-        android:layout_height="@dimen/dimen22dp"
-        android:layout_width="@dimen/dimen22dp"
-        android:src="@drawable/file_plus_outline"
-        android:background="@drawable/ripple_effect"
-        android:layout_margin="3dp"
-        android:padding="2dp"
-        android:id="@+id/new_file" />
-
-      <ImageView
-        android:layout_height="@dimen/dimen22dp"
-        android:layout_width="@dimen/dimen22dp"
         android:src="@drawable/close"
         android:background="@drawable/ripple_effect"
         android:layout_margin="3dp"

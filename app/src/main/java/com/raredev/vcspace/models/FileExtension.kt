@@ -1,11 +1,14 @@
 package com.raredev.vcspace.models;
 
-import com.raredev.vcspace.R;
+import androidx.annotation.DrawableRes
+import com.raredev.vcspace.R
+import java.io.File
 
-public enum FileExtension {
+enum class FileExtension(val extension: String, @DrawableRes val icon: Int) {
   APK("apk", R.drawable.ic_file_apk),
   CSS("css", R.drawable.language_css3),
   CPP("cpp", R.drawable.language_cpp),
+  CPLUSPLUS("c++", R.drawable.language_cpp),
   C("c", R.drawable.language_c),
   GO("go", R.drawable.language_go),
   H("h", R.drawable.language_cpp),
@@ -24,28 +27,28 @@ public enum FileExtension {
   XML("xml", R.drawable.language_xml),
   ZIP("zip", R.drawable.ic_zip),
   UNKNOWN("", R.drawable.ic_file);
+  
+  class Factory {
+    companion object {
+      @JvmStatic
+      fun forFile(file: File?): FileExtension {
+        return forExtension(file?.extension)
+      }
 
-  public String extension;
-  public int icon;
+      @JvmStatic
+      fun forExtension(extension: String?): FileExtension {
+        if (extension == null) {
+          return UNKNOWN
+        }
+        
+        for (value in values()) {
+          if (value.extension == extension) {
+            return value
+          }
+        }
 
-  FileExtension(String extension, int icon) {
-    this.extension = extension;
-    this.icon = icon;
-  }
-
-  public static FileExtension getIcon(String fileName) {
-    String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
-
-    if (extension == null) {
-      return UNKNOWN;
-    }
-
-    for (FileExtension value : values()) {
-      if (value.extension.equals(extension)) {
-        return value;
+        return UNKNOWN
       }
     }
-
-    return UNKNOWN;
   }
 }

@@ -15,4 +15,9 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Visual Code Space"
 
-include ':app', ':common', ':git-api', ':treeview'
+include ':app'
+
+include ':common'
+include ':git-api'
+
+include ':treeview'

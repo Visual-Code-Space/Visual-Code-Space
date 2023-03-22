@@ -1,5 +1,6 @@
 plugins {
-    id 'com.android.application'
+  id 'com.android.application'
+  id 'org.jetbrains.kotlin.android'
 }
 
 android {
@@ -40,6 +41,10 @@ android {
     targetCompatibility JavaVersion.VERSION_11
   }
 
+  kotlinOptions {
+    jvmTarget = '1.8'
+  }
+
   packagingOptions {
     resources.excludes.add("license/*")
     exclude 'META-INF/eclipse.inf'
@@ -63,14 +68,17 @@ dependencies {
 
   implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
   implementation "androidx.activity:activity:$activity_version"
+  implementation 'androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version'
+  implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version'
 
-  implementation 'androidx.appcompat:appcompat:1.5.1'
+  implementation 'androidx.core:core-ktx:1.7.0'
+  implementation 'androidx.appcompat:appcompat:1.6.0'
   implementation 'androidx.preference:preference:1.2.0'
   implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
   implementation 'androidx.webkit:webkit:1.7.0-alpha03'
   implementation 'androidx.fragment:fragment:1.6.0-alpha07'
 
-  implementation 'com.google.android.material:material:1.8.0-alpha03'
+  implementation 'com.google.android.material:material:1.8.0'
   implementation 'com.google.code.gson:gson:2.8.7'
   implementation 'com.blankj:utilcodex:1.31.1'
   implementation 'com.fasterxml.jackson.core:jackson-databind:2.10.1'

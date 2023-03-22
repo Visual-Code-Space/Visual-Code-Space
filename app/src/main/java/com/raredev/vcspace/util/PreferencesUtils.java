@@ -38,6 +38,10 @@ public class PreferencesUtils {
     return getDefaultPrefs().getInt("pref_editortextsize", 14);
   }
 
+  public static int getEditorTABSize() {
+    return Integer.valueOf(getDefaultPrefs().getString("pref_editortabsize", "4"));
+  }
+
   /*
    * Returns the font the user wants to use in the editor
    */
@@ -58,6 +62,11 @@ public class PreferencesUtils {
    */
   public static boolean useDeleteEmptyLineFast() {
     return getDefaultPrefs().getBoolean("pref_deleteemptylinefast", true);
+  }
+
+  public static String getTab() {
+    String spaces = " ".repeat(getEditorTABSize());
+    return useUseSpaces() ? spaces : "\t";
   }
 
   /*

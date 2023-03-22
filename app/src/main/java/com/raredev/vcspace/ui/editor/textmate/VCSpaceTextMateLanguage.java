@@ -24,7 +24,7 @@ public class VCSpaceTextMateLanguage extends TextMateLanguage {
     super(grammar, languageConfiguration, grammarRegistry, themeRegistry, createIdentifiers);
 
     formatter = new VCSpaceFormatter(fileExtension);
-    getSymbolPairsFor(fileExtension);
+    loadSymbolPairs();
   }
 
   public static VCSpaceTextMateLanguage create(String languageScopeName, String fileExtension) {
@@ -58,20 +58,15 @@ public class VCSpaceTextMateLanguage extends TextMateLanguage {
     return !PreferencesUtils.useUseSpaces();
   }
 
-  private void getSymbolPairsFor(String fileExtension) {
+  private void loadSymbolPairs() {
     SymbolPairMatch symbolPairs = getSymbolPairs();
-    switch (fileExtension) {
-      case "html":
-        symbolPairs.putPair("<", new SymbolPairMatch.SymbolPair("<", ">"));
-      case "kt":
-      case "java":
-      case "json":
-        symbolPairs.putPair("(", new SymbolPairMatch.SymbolPair("(", ")"));
-        symbolPairs.putPair("{", new SymbolPairMatch.SymbolPair("{", "}"));
-        symbolPairs.putPair("[", new SymbolPairMatch.SymbolPair("[", "]"));
-        symbolPairs.putPair("\"", new SymbolPairMatch.SymbolPair("\"", "\""));
-        symbolPairs.putPair("'", new SymbolPairMatch.SymbolPair("'", "'"));
-        break;
-    }
+
+    symbolPairs.putPair("<", new SymbolPairMatch.SymbolPair("<", ">"));
+
+    symbolPairs.putPair("(", new SymbolPairMatch.SymbolPair("(", ")"));
+    symbolPairs.putPair("{", new SymbolPairMatch.SymbolPair("{", "}"));
+    symbolPairs.putPair("[", new SymbolPairMatch.SymbolPair("[", "]"));
+    symbolPairs.putPair("\"", new SymbolPairMatch.SymbolPair("\"", "\""));
+    symbolPairs.putPair("'", new SymbolPairMatch.SymbolPair("'", "'"));
   }
 }

@@ -1,21 +1,20 @@
 package com.raredev.vcspace.adapters;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
-import com.raredev.vcspace.databinding.LayoutListDialogBinding;
+import com.raredev.vcspace.actions.Action;
+import com.raredev.vcspace.actions.Presentation;
 import com.raredev.vcspace.databinding.LayoutListItemBinding;
-import com.raredev.vcspace.models.DialogListModel;
 import java.util.List;
 
-public class ListDialogAdapter extends RecyclerView.Adapter<ListDialogAdapter.VH> {
-  private List<DialogListModel> listItems;
+public class OptionsSheetAdapter extends RecyclerView.Adapter<OptionsSheetAdapter.VH> {
+  private List<Action> listItems;
   private Listener listener;
 
-  public ListDialogAdapter(List<DialogListModel> listItems) {
+  public OptionsSheetAdapter(List<Action> listItems) {
     this.listItems = listItems;
   }
 
@@ -27,11 +26,13 @@ public class ListDialogAdapter extends RecyclerView.Adapter<ListDialogAdapter.VH
 
   @Override
   public void onBindViewHolder(VH holder, int position) {
-    DialogListModel model = listItems.get(position);
-    
-    holder.name.setText(model.label);
-    holder.icon.setImageResource(model.icon);
-    holder.itemView.setOnClickListener(v -> listener.onClickListener(v, position));
+    Action action = listItems.get(position);
+
+    Presentation presentation = action.getPresentation();
+
+    holder.name.setText(presentation.getTitle());
+    holder.icon.setImageResource(presentation.getIcon());
+    holder.itemView.setOnClickListener(v -> listener.onClickListener(action));
   }
 
   @Override
@@ -44,7 +45,7 @@ public class ListDialogAdapter extends RecyclerView.Adapter<ListDialogAdapter.VH
   }
 
   public interface Listener {
-    void onClickListener(View v, int position);
+    void onClickListener(Action action);
   }
 
   public class VH extends RecyclerView.ViewHolder {

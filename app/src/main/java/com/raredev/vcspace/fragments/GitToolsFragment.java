@@ -11,7 +11,6 @@ import com.blankj.utilcode.util.ThreadUtils;
 import com.raredev.common.task.TaskExecutor;
 import com.raredev.common.util.DialogUtils;
 import com.raredev.vcspace.R;
-import com.raredev.vcspace.adapters.ListDialogAdapter;
 import com.raredev.vcspace.databinding.FragmentGitToolsBinding;
 import com.raredev.vcspace.events.FileEvent;
 import com.raredev.vcspace.git.CloneRepository;
@@ -30,8 +29,6 @@ public class GitToolsFragment extends Fragment {
   private CloneRepository cloneRepo;
   private GitUtils repository;
   private File repoPath;
-
-  private ListDialogAdapter adapter;
 
   @Nullable
   @Override

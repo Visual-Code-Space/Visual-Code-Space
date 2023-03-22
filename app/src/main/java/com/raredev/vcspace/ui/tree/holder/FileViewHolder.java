@@ -27,7 +27,7 @@ public class FileViewHolder extends TreeNode.BaseNodeViewHolder<File> {
     binding.name.setText(file.getName());
 
     if (file.isFile()) {
-      binding.icon.setImageResource(FileExtension.getIcon(file.getName()).icon);
+      binding.icon.setImageResource(FileExtension.Factory.forFile(file).getIcon());
     } else {
       binding.icon.setImageResource(R.drawable.ic_folder);
     }

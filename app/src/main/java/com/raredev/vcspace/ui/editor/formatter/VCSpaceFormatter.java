@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.raredev.vcspace.util.PreferencesUtils;
 import io.github.rosemoe.sora.lang.format.AsyncFormatter;
 import io.github.rosemoe.sora.text.Content;
 import io.github.rosemoe.sora.text.TextRange;
@@ -40,7 +41,6 @@ public class VCSpaceFormatter extends AsyncFormatter {
       case "java":
         text.replace(0, code.length(), formatJava(code));
         break;
-      
     }
     return range;
   }
@@ -55,7 +55,7 @@ public class VCSpaceFormatter extends AsyncFormatter {
     org.jsoup.nodes.Document doc = Jsoup.parse(html);
 
     var outputSettings = new org.jsoup.nodes.Document.OutputSettings();
-    outputSettings.indentAmount(4);
+    outputSettings.indentAmount(PreferencesUtils.getEditorTABSize());
 
     doc.outputSettings(outputSettings.prettyPrint(true));
     if (doc.toString().contains("<!doctype html>")) {
@@ -69,7 +69,7 @@ public class VCSpaceFormatter extends AsyncFormatter {
       ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
       DefaultPrettyPrinter prettyPrinter = new DefaultPrettyPrinter();
-      prettyPrinter.indentObjectsWith(new DefaultIndenter("    ", "\n"));
+      prettyPrinter.indentObjectsWith(new DefaultIndenter(PreferencesUtils.getTab(), "\n"));
 
       Object jsonObject = mapper.readValue(code, Object.class);
 
@@ -84,10 +84,12 @@ public class VCSpaceFormatter extends AsyncFormatter {
   private String formatJava(String code) {
     Map options = DefaultCodeFormatterConstants.getEclipse21Settings();
 
-    options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_8);
-    options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_8);
-    options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
-    
+    options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_19);
+    options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_19);
+    options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_19);
+
+    var tabSize = String.valueOf(PreferencesUtils.getEditorTABSize());
+    options.put(DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE, tabSize);
     options.put(
         DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ENUM_CONSTANTS,
         DefaultCodeFormatterConstants.createAlignmentValue(

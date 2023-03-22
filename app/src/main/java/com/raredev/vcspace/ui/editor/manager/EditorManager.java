@@ -15,7 +15,7 @@ import com.raredev.vcspace.R;
 import com.raredev.vcspace.activity.MainActivity;
 import com.raredev.vcspace.databinding.ActivityMainBinding;
 import com.raredev.vcspace.ui.editor.CodeEditorView;
-import com.raredev.vcspace.ui.editor.EditorViewModel;
+import com.raredev.vcspace.ui.viewmodel.EditorViewModel;
 import java.io.File;
 
 public class EditorManager {
@@ -73,7 +73,7 @@ public class EditorManager {
     if (index != -1) {
       return index;
     }
-    int position = viewModel.getFiles().getValue().size();
+    int position = viewModel.getOpenedFileCount();
 
     CodeEditorView editor = new CodeEditorView(context, file);
     editor.subscribeContentChangeEvent(((MainActivity) context).updateMenuItem);
@@ -85,7 +85,7 @@ public class EditorManager {
   }
 
   public void closeFile(int index) {
-    if (index >= 0 && index < viewModel.getFiles().getValue().size()) {
+    if (index >= 0 && index < viewModel.getOpenedFileCount()) {
       CodeEditorView editor = getEditorAtIndex(index);
       if (editor != null) {
         editor.release();
@@ -102,7 +102,7 @@ public class EditorManager {
     File file = viewModel.getCurrentFile();
     int index = 0;
 
-    while (viewModel.getFiles().getValue().size() != 1) {
+    while (viewModel.getOpenedFileCount() != 1) {
       CodeEditorView editor = getEditorAtIndex(index);
 
       if (editor != null) {
@@ -113,30 +113,31 @@ public class EditorManager {
         }
       }
     }
-    int size = viewModel.getFiles().getValue().size() -1;
-    viewModel.setCurrentPosition(size, file);
+    int size = viewModel.getOpenedFileCount() -1;
+    viewModel.setCurrentFile(size, file);
     setCurrent(size);
   }
 
   public void closeAllFiles() {
-    if (!viewModel.getFiles().getValue().isEmpty()) {
-      for (int i = 0; i < viewModel.getFiles().getValue().size(); i++) {
-        CodeEditorView editor = getEditorAtIndex(i);
-        if (editor != null) {
-          editor.release();
-        }
-      }
-
-      viewModel.clear();
-      tabLayout.removeAllTabs();
-      tabLayout.requestLayout();
-      container.removeAllViews();
+    if (viewModel.getOpenedFiles().isEmpty()) {
+      return;
     }
+    for (int i = 0; i < viewModel.getOpenedFileCount(); i++) {
+      CodeEditorView editor = getEditorAtIndex(i);
+      if (editor != null) {
+        editor.release();
+      }
+    }
+
+    viewModel.removeAllFiles();
+    tabLayout.removeAllTabs();
+    tabLayout.requestLayout();
+    container.removeAllViews();
   }
 
   public void saveAllFiles(boolean showMsg) {
-    if (!viewModel.getFiles().getValue().isEmpty()) {
-      for (int i = 0; i < viewModel.getFiles().getValue().size(); i++) {
+    if (!viewModel.getOpenedFiles().isEmpty()) {
+      for (int i = 0; i < viewModel.getOpenedFileCount(); i++) {
         getEditorAtIndex(i).save();
       }
 
@@ -147,8 +148,8 @@ public class EditorManager {
   }
 
   public void onFileDeleted() {
-    for (int i = 0; i < viewModel.getFiles().getValue().size(); i++) {
-      File openedFile = viewModel.getFiles().getValue().get(i);
+    for (int i = 0; i < viewModel.getOpenedFileCount(); i++) {
+      File openedFile = viewModel.getOpenedFiles().get(i);
       if (!openedFile.exists()) {
         closeFile(i);
       }
@@ -156,8 +157,8 @@ public class EditorManager {
   }
 
   public int findIndexOfEditorByFile(File file) {
-    for (int i = 0; i < viewModel.getFiles().getValue().size(); i++) {
-      File openedFile = viewModel.getFiles().getValue().get(i);
+    for (int i = 0; i < viewModel.getOpenedFileCount(); i++) {
+      File openedFile = viewModel.getOpenedFiles().get(i);
       if (openedFile.getAbsolutePath().equals(file.getAbsolutePath())) {
         return i;
       }
@@ -170,7 +171,7 @@ public class EditorManager {
   }
 
   public CodeEditorView getCurrentEditor() {
-    return (CodeEditorView) container.getChildAt(viewModel.getCurrentPosition());
+    return (CodeEditorView) container.getChildAt(viewModel.getCurrentFileIndex());
   }
   
   private void setCurrent(int index) {

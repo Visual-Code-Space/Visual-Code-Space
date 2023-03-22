@@ -1,7 +1,11 @@
 package com.raredev.common.util;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -9,8 +13,9 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.raredev.common.task.TaskExecutor;
+import android.provider.Settings;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -24,8 +29,30 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.util.Comparator;
 
 public class FileUtil {
+
+  public static class SortFileName implements Comparator<File> {
+    @Override
+    public int compare(File f1, File f2) {
+      return f1.getName().compareTo(f2.getName());
+    }
+  }
+
+  public static class SortFolder implements Comparator<File> {
+    @Override
+    public int compare(File f1, File f2) {
+      if (f1.isDirectory() == f2.isDirectory()) return 0;
+      else if (f1.isDirectory() && !f2.isDirectory()) return -1;
+      else return 1;
+    }
+  }
+
+  public static boolean isValidTextFile(String filename) {
+    return !filename.matches(
+        ".*\\.(bin|ttf|png|jpe?g|bmp|mp4|mp3|m4a|iso|so|zip|jar|dex|odex|vdex|7z|apk|apks|xapk)$");
+  }
 
   public static boolean rename(String filePath, String name) {
     File file = new File(filePath);
@@ -329,6 +356,32 @@ public class FileUtil {
       delete(dir.getAbsolutePath());
     } catch (Exception e) {
       e.printStackTrace();
+    }
+  }
+
+  public static void takeFilePermissions(Activity activity) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+      Intent intent = new Intent();
+      intent.setAction(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+      Uri uri = Uri.fromParts("package", activity.getPackageName(), null);
+      intent.setData(uri);
+      activity.startActivity(intent);
+    } else {
+      ActivityCompat.requestPermissions(
+          activity,
+          new String[] {
+            Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.MANAGE_EXTERNAL_STORAGE
+          },
+          1);
+    }
+  }
+
+  public static boolean isPermissionGaranted(Context context) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+      return Environment.isExternalStorageManager();
+    } else {
+      return ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)
+          == PackageManager.PERMISSION_GRANTED;
     }
   }
 }

@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.raredev.vcspace.databinding.LayoutSymbolItemBinding;
 import com.raredev.vcspace.ui.editor.Symbol;
+import com.raredev.vcspace.util.PreferencesUtils;
 import io.github.rosemoe.sora.widget.CodeEditor;
 import java.util.List;
 
@@ -34,10 +35,15 @@ public class SymbolInputAdapter extends RecyclerView.Adapter<SymbolInputAdapter.
     holder.itemView.setOnClickListener(
         v -> {
           if (editor != null && editor.isEditable()) {
-            if ("\t".equals(symbol.getInsert()) && editor.getSnippetController().isInSnippet()) {
-              editor.getSnippetController().shiftToNextTabStop();
-            } else {
+            if (PreferencesUtils.getTab().equals(symbol.getInsert())) {
+              if ("\t".equals(symbol.getInsert()) && editor.getSnippetController().isInSnippet()) {
+                editor.getSnippetController().shiftToNextTabStop();
+                return;
+              }
               editor.commitText(symbol.getInsert());
+
+            } else {
+              editor.insertText(symbol.getInsert(), 1);
             }
           }
         });

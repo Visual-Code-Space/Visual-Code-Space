@@ -89,6 +89,13 @@
 
   <!-- Editor -->
   <string name="pref_editor_textsize">Tamanho da fonte</string>
+  <string name="pref_editor_tabsize">Tamanho da TAB</string>
+  <string-array name="settings_tab_entries">
+    <item>2</item>
+    <item>4</item>
+    <item>6</item>
+    <item>8</item>
+  </string-array>
   <string name="pref_editor_font">Fonte do editor</string>
   <string name="pref_font_firacode">Fira Code Regular</string>
   <string name="pref_font_jetbrains">JetBrains Mono</string>

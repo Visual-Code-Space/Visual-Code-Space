@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import androidx.core.content.res.ResourcesCompat;
 import com.raredev.common.util.FileUtil;
 import com.raredev.vcspace.databinding.LayoutCodeEditorBinding;
+import com.raredev.vcspace.models.LanguageScope;
 import com.raredev.vcspace.ui.editor.textmate.DynamicTextMateColorScheme;
 import com.raredev.vcspace.ui.editor.textmate.VCSpaceTextMateLanguage;
 import com.raredev.vcspace.util.PreferencesUtils;
@@ -21,7 +22,6 @@ import io.github.rosemoe.sora.widget.CodeEditor;
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme;
 import java.io.File;
 import java.util.concurrent.CompletableFuture;
-import org.json.JSONObject;
 
 public class CodeEditorView extends LinearLayout
     implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -59,6 +59,7 @@ public class CodeEditorView extends LinearLayout
   private void configureEditor() {
     updateEditorFont();
     updateTextSize();
+    updateTABSize();
     updateDeleteEmptyLineFast();
   }
 
@@ -67,6 +68,9 @@ public class CodeEditorView extends LinearLayout
     switch (key) {
       case "pref_editortextsize":
         updateTextSize();
+        break;
+      case "pref_editortabsize":
+        updateTABSize();
         break;
       case "pref_deleteemptylinefast":
         updateDeleteEmptyLineFast();
@@ -133,11 +137,8 @@ public class CodeEditorView extends LinearLayout
 
   private Language createLanguage() {
     try {
-      JSONObject jsonObj =
-          new JSONObject(FileUtil.readAssetFile(getContext(), "textmate/language_scopes.json"));
-      String extension = file.getName().substring(file.getName().lastIndexOf(".") + 1);
-
-      return VCSpaceTextMateLanguage.create(jsonObj.getString(extension), extension);
+      final LanguageScope langScope = LanguageScope.Factory.forFile(file);
+      return VCSpaceTextMateLanguage.create(langScope.getScope(), langScope.getExtension());
     } catch (Exception e) {
       return new EmptyLanguage();
     }
@@ -146,6 +147,11 @@ public class CodeEditorView extends LinearLayout
   private void updateTextSize() {
     int textSize = PreferencesUtils.getEditorTextSize();
     binding.editor.setTextSize(textSize);
+  }
+
+  private void updateTABSize() {
+    int tabSize = PreferencesUtils.getEditorTABSize();
+    binding.editor.setTabWidth(tabSize);
   }
 
   private void updateEditorFont() {

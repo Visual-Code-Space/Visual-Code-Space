@@ -8,33 +8,28 @@ import android.view.ViewGroup;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.TooltipCompat;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.transition.ChangeBounds;
 import androidx.transition.TransitionManager;
-import com.blankj.utilcode.util.ClipboardUtils;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.raredev.common.task.TaskExecutor;
 import com.raredev.common.util.DialogUtils;
+import com.raredev.common.util.FileUtil;
 import com.raredev.vcspace.R;
+import com.raredev.vcspace.actions.ActionData;
+import com.raredev.vcspace.actions.ActionManager;
+import com.raredev.vcspace.actions.ActionPlaces;
 import com.raredev.vcspace.activity.MainActivity;
-import com.raredev.vcspace.adapters.ListDialogAdapter;
 import com.raredev.vcspace.databinding.FragmentTreeViewBinding;
-import com.raredev.vcspace.databinding.LayoutListDialogBinding;
 import com.raredev.vcspace.events.FileEvent;
-import com.raredev.vcspace.models.DialogListModel;
 import com.raredev.vcspace.ui.tree.holder.FileViewHolder;
 import com.raredev.vcspace.util.ApkInstaller;
-import com.raredev.vcspace.util.FileManagerUtils;
 import com.raredev.vcspace.util.PreferencesUtils;
 import com.raredev.vcspace.util.ViewUtils;
 import com.unnamed.b.atv.model.TreeNode;
 import com.unnamed.b.atv.view.AndroidTreeView;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import org.greenrobot.eventbus.EventBus;
 
@@ -46,6 +41,11 @@ public class TreeViewFragment extends Fragment
 
   private String savedState;
   private AndroidTreeView treeView;
+
+  public AndroidTreeView getTreeView() {
+    return treeView;
+  }
+
   private TreeNode mRoot;
 
   @Nullable
@@ -54,10 +54,20 @@ public class TreeViewFragment extends Fragment
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     binding = FragmentTreeViewBinding.inflate(inflater, container, false);
     ViewUtils.rotateChevron(ViewUtils.isExpanded(binding.containerOpen), binding.downButton);
+    TooltipCompat.setTooltipText(binding.refresh, getString(R.string.refresh));
+    TooltipCompat.setTooltipText(binding.close, getString(R.string.close));
 
     binding.expandCollapse.setOnClickListener(
         v -> {
           expandCollapseView();
+        });
+
+    binding.expandCollapse.setOnLongClickListener(
+        v -> {
+          if (mRoot != null) {
+            onLongClick(mRoot, mRoot.getValue());
+          }
+          return true;
         });
 
     binding.openFolder.setOnClickListener(
@@ -78,26 +88,6 @@ public class TreeViewFragment extends Fragment
             loadTreeView(mRoot.getValue());
           }
         });
-    binding.newFolder.setOnClickListener(
-        v -> {
-          FileManagerUtils.createFolder(
-              requireActivity(),
-              mRoot.getValue(),
-              (newFolder) -> {
-                addNewChild(mRoot, newFolder);
-                expandNode(mRoot);
-              });
-        });
-    binding.newFile.setOnClickListener(
-        v -> {
-          FileManagerUtils.createFile(
-              requireActivity(),
-              mRoot.getValue(),
-              (newFile) -> {
-                addNewChild(mRoot, newFile);
-                expandNode(mRoot);
-              });
-        });
     binding.close.setOnClickListener(
         v -> {
           new MaterialAlertDialogBuilder(requireContext())
@@ -113,10 +103,6 @@ public class TreeViewFragment extends Fragment
   @Override
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    TooltipCompat.setTooltipText(binding.refresh, getString(R.string.refresh));
-    TooltipCompat.setTooltipText(binding.close, getString(R.string.close));
-    TooltipCompat.setTooltipText(binding.newFile, getString(R.string.new_file_title));
-    TooltipCompat.setTooltipText(binding.newFolder, getString(R.string.new_folder_title));
     if (savedInstanceState != null) {
       savedState = savedInstanceState.getString(KEY_STORED_TREE_STATE, null);
     }
@@ -141,70 +127,12 @@ public class TreeViewFragment extends Fragment
 
   @Override
   public boolean onLongClick(TreeNode node, Object value) {
-    BottomSheetDialog dialog = new BottomSheetDialog(requireContext());
-    LayoutListDialogBinding bind = LayoutListDialogBinding.inflate(getLayoutInflater());
-    dialog.setContentView(bind.getRoot());
+    ActionData data = new ActionData();
+    data.put("fragment", TreeViewFragment.this);
+    data.put("node", node);
 
-    List<DialogListModel> options = new ArrayList<>();
-    options.add(new DialogListModel(R.drawable.content_copy, getString(R.string.copy_path)));
-    if (node.getValue().isDirectory()) {
-      options.add(
-          new DialogListModel(R.drawable.file_plus_outline, getString(R.string.new_file_title)));
-      options.add(
-          new DialogListModel(
-              R.drawable.folder_plus_outline, getString(R.string.new_folder_title)));
-    }
-    options.add(new DialogListModel(R.drawable.file_rename, getString(R.string.rename)));
-    options.add(new DialogListModel(R.drawable.delete_outline, getString(R.string.delete)));
-
-    ListDialogAdapter adapter = new ListDialogAdapter(options);
-
-    File file = (File) value;
-    adapter.setListener(
-        (v, position) -> {
-          String label = options.get(position).label;
-          if (label.equals(getString(R.string.new_file_title))) {
-            FileManagerUtils.createFile(
-                requireActivity(),
-                file,
-                (newFile) -> {
-                  addNewChild(node, newFile);
-                  expandNode(node);
-                });
-          } else if (label.equals(getString(R.string.new_folder_title))) {
-            FileManagerUtils.createFolder(
-                requireActivity(),
-                file,
-                (newFolder) -> {
-                  addNewChild(node, newFolder);
-                  expandNode(node);
-                });
-          } else if (label.equals(getString(R.string.rename))) {
-            FileManagerUtils.renameFile(
-                requireContext(),
-                file,
-                (oldFile, newFile) -> {
-                  expandNode(node.getParent());
-                });
-          } else if (label.equals(getString(R.string.delete))) {
-            FileManagerUtils.deleteFile(
-                requireContext(),
-                file,
-                (deletedFile) -> {
-                  ((MainActivity) requireActivity()).getEditorManager().onFileDeleted();
-                  treeView.removeNode(node);
-                });
-          } else if (label.equals(getString(R.string.copy_path))) {
-            ClipboardUtils.copyText(file.getAbsolutePath());
-          }
-          dialog.dismiss();
-        });
-
-    bind.title.setText(file.getName());
-    bind.subtitle.setText(file.getAbsolutePath());
-    bind.list.setLayoutManager(new LinearLayoutManager(requireContext()));
-    bind.list.setAdapter(adapter);
-    dialog.show();
+    ActionManager.getInstance()
+        .fillDialogMenu(getChildFragmentManager(), data, ActionPlaces.FILE_MANAGER);
     return true;
   }
 
@@ -218,8 +146,8 @@ public class TreeViewFragment extends Fragment
         return;
       }
 
-      if (FileManagerUtils.isValidTextFile(file.getName())) {
-        ((MainActivity) requireActivity()).getEditorManager().openFile(file);
+      if (FileUtil.isValidTextFile(file.getName())) {
+        ((MainActivity) requireActivity()).editorManager.openFile(file);
       }
     } else {
       if (node.isExpanded()) {
@@ -234,6 +162,18 @@ public class TreeViewFragment extends Fragment
             expandNode(node);
           });
     }
+  }
+
+  public void observeRoot() {
+    if (mRoot == null) {
+      return;
+    }
+
+    if (mRoot.getValue() != null && mRoot.getValue().exists()) {
+      return;
+    }
+
+    doCloseFolder(true);
   }
 
   public void doCloseFolder(boolean removePrefsAndTreeState) {
@@ -258,8 +198,8 @@ public class TreeViewFragment extends Fragment
     if (getContext() == null) {
       return;
     }
-    if (!FileManagerUtils.isPermissionGaranted(requireContext())) {
-      FileManagerUtils.takeFilePermissions(requireActivity());
+    if (!FileUtil.isPermissionGaranted(requireContext())) {
+      FileUtil.takeFilePermissions(requireActivity());
     }
     doCloseFolder(false);
     mRoot = TreeNode.root(rootFolder);
@@ -336,8 +276,8 @@ public class TreeViewFragment extends Fragment
   public void listFilesForNode(TreeNode parent) {
     File[] files = parent.getValue().listFiles();
     if (files != null) {
-      Arrays.sort(files, new FileManagerUtils.SortFileName());
-      Arrays.sort(files, new FileManagerUtils.SortFolder());
+      Arrays.sort(files, new FileUtil.SortFileName());
+      Arrays.sort(files, new FileUtil.SortFolder());
       for (File file : files) {
         TreeNode child = new TreeNode(file);
         child.setViewHolder(new FileViewHolder(requireContext()));
@@ -362,17 +302,6 @@ public class TreeViewFragment extends Fragment
     TransitionManager.beginDelayedTransition(binding.treeView, new ChangeBounds());
     treeView.collapseNode(node);
     updateToggle(node);
-  }
-
-  private void expandCollapseView() {
-    if (ViewUtils.isExpanded(binding.expandableLayout)) {
-      ViewUtils.collapse(binding.expandableLayout);
-      ViewUtils.rotateChevron(false, binding.downButton);
-    } else {
-      ViewUtils.expand(binding.expandableLayout);
-      ViewUtils.rotateChevron(true, binding.downButton);
-    }
-    updateViewsVisibility();
   }
 
   public void setLoading(TreeNode node, boolean loading) {
@@ -406,6 +335,17 @@ public class TreeViewFragment extends Fragment
             });
       }
     }
+  }
+
+  private void expandCollapseView() {
+    if (ViewUtils.isExpanded(binding.expandableLayout)) {
+      ViewUtils.collapse(binding.expandableLayout);
+      ViewUtils.rotateChevron(false, binding.downButton);
+    } else {
+      ViewUtils.expand(binding.expandableLayout);
+      ViewUtils.rotateChevron(true, binding.downButton);
+    }
+    updateViewsVisibility();
   }
 
   private void updateViewsVisibility() {
