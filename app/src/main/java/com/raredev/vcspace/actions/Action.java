@@ -16,7 +16,7 @@ public abstract class Action {
     return presentation;
   }
 
-  public ActionEvent getActionEvent() {
+  public final ActionEvent getActionEvent() {
     return event;
   }
 

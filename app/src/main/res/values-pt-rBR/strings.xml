@@ -82,8 +82,6 @@
     <item>dark</item>
     <item>light</item>
   </string-array>
-  <string name="pref_dynamic_colors">Usar tema dinâmico</string>
-  <string name="pref_dynamic_colors_summary">Aplica as cores do papel de parede ao aplicativo (Requer reinicialização)</string>
   <string name="pref_open_recent_automatically">Abrir pasta recente automaticamente</string>
   <string name="pref_open_recent_automatically_summary">Abra automaticamente a pasta usada recentemente</string>
 

@@ -18,13 +18,6 @@ public class PreferencesUtils {
   }
 
   /*
-   * Returns if the user wants to use dynamic theme(Material3)
-   */
-  public static boolean useDynamicColors() {
-    return getDefaultPrefs().getBoolean("pref_dynamiccolors", true);
-  }
-
-  /*
    * Returns whether the user wants the app to open recent files and folders
    */
   public static boolean useOpenRecentsAutomatically() {

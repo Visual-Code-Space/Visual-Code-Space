@@ -17,13 +17,6 @@
       app:useSimpleSummaryProvider="true" />
 
     <SwitchPreferenceCompat
-      app:defaultValue="true"
-      app:icon="@drawable/palette"
-      app:key="pref_dynamiccolors"
-      app:title="@string/pref_dynamic_colors"
-      app:summary="@string/pref_dynamic_colors_summary" />
-
-    <SwitchPreferenceCompat
       app:defaultValue="false"
       app:icon="@drawable/folder_open"
       app:key="pref_openrecentsautomatically"
