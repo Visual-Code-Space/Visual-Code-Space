@@ -43,7 +43,7 @@
       app:entryValues="@array/settings_tab_entries"
       app:icon="@drawable/format_font"
       app:key="pref_editortabsize"
-      app:title="@string/pref_editor_font"
+      app:title="@string/pref_editor_tabsize"
       app:useSimpleSummaryProvider="true" />
 
     <ListPreference

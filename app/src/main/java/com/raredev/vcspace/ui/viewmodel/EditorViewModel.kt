@@ -22,7 +22,7 @@ class EditorViewModel : ViewModel() {
       _displayedFile.value = value
     }
 
-  fun getDisplayedFile(): MutableLiveData<Int> {
+  fun getDisplayedFile(): LiveData<Int> {
     return _displayedFile
   }
 

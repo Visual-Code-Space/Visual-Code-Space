@@ -93,8 +93,6 @@ dependencies {
   implementation 'org.jsoup:jsoup:1.15.3'
   implementation 'org.commonmark:commonmark:0.20.0'
 
-  implementation 'commons-io:commons-io:2.11.0'
-
   implementation project(path: ':common')
   implementation project(path: ':git-api')
   implementation project(path: ':treeview')
