@@ -400,5 +400,34 @@
         "settings" : {
             "foreground" : "#FFC66D"
         }
-    } ]
+    },
+    {
+      "name": "Log Verbose",
+      "scope": "constant.language.log.verbose, constant.language.log.verbose.line",
+      "settings": {
+        "foreground": "#A6ACCD"
+      }
+    },
+    {
+      "name": "Log Info",
+      "scope": "constant.language.log.info, constant.language.log.info.line",
+      "settings": {
+        "foreground": "#C3E88D"
+      }
+    },
+    {
+      "name": "Log Warning",
+      "scope": "constant.language.log.warning, constant.language.log.warning.line",
+      "settings": {
+        "foreground": "#FBC02D"
+      }
+    },
+    {
+      "name": "Log Error",
+      "scope": "constant.language.log.error, constant.language.log.error.line",
+      "settings": {
+        "foreground": "#FF5370"
+      }
+    }
+  ]
 }

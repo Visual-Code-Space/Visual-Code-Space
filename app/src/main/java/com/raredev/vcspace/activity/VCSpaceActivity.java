@@ -11,7 +11,7 @@ public abstract class VCSpaceActivity extends AppCompatActivity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    Thread.setDefaultUncaughtExceptionHandler(new CrashHandler(this));
+    Thread.setDefaultUncaughtExceptionHandler(new CrashHandler());
     getWindow().setStatusBarColor(SurfaceColors.SURFACE_0.getColor(this));
     setContentView(getLayout());
     onCreate();

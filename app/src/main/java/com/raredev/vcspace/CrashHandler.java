@@ -19,16 +19,6 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
   private StringBuilder errorMessage = new StringBuilder();
   private StringBuilder softwareInfo = new StringBuilder();
   private StringBuilder dateInfo = new StringBuilder();
-  private Context myContext;
-
-  /**
-   * Constructor for CrashHandler class
-   *
-   * @param myContext The application context
-   */
-  public CrashHandler(Context myContext) {
-    this.myContext = myContext;
-  }
 
   @Override
   public void uncaughtException(Thread thread, Throwable exception) {
@@ -62,7 +52,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     Log.d("Date", dateInfo.toString());
 
     // Create an intent for the crash activity
-    var intent = new Intent(myContext, CrashActivity.class);
+    var intent = new Intent(VCSpaceApplication.appContext, CrashActivity.class);
 
     // Add the error message, software info, and date info as extras
     intent.putExtra("Error", errorMessage.toString());
@@ -70,7 +60,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     intent.putExtra("Date", dateInfo.toString());
 
     // Start the crash activity
-    myContext.startActivity(intent);
+    VCSpaceApplication.appContext.startActivity(intent);
 
     // Kill the process
     Process.killProcess(Process.myPid());

@@ -6,7 +6,6 @@ enum class LanguageScope(val extension: String, val scope: String) {
   CS("c#", "source.cs"),
   CSS("css", "source.css"),
   CPP("cpp", "source.cpp"),
-  CPLUSPLUS("c++", "source.cpp"),
   C("c", "source.cpp"),
   GO("go", "source.go"),
   H("h", "source.cpp"),

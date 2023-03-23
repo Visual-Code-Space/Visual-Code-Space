@@ -2,6 +2,7 @@ package com.raredev.vcspace.fragments;
 
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import com.raredev.vcspace.databinding.FragmentGitToolsBinding;
 import com.raredev.vcspace.events.FileEvent;
 import com.raredev.vcspace.git.CloneRepository;
 import com.raredev.vcspace.git.utils.GitUtils;
+import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.util.ViewUtils;
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +26,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 public class GitToolsFragment extends Fragment {
+  private final String LOG_TAG = GitToolsFragment.class.getSimpleName();
   private FragmentGitToolsBinding binding;
 
   private CloneRepository cloneRepo;
@@ -52,11 +55,13 @@ public class GitToolsFragment extends Fragment {
                 @Override
                 public void onCloneSuccess(File output) {
                   ((ToolsFragment) getParentFragment()).parseRootFolderToFileManager(output);
+                  ILogger.info(LOG_TAG, "Cloned to: " + output.toString());
                 }
 
                 @Override
                 public void onCloneFailed(String message) {
                   DialogUtils.newErrorDialog(requireContext(), "Clone error", message);
+                  ILogger.error(LOG_TAG, "Clone failed: " + message);
                 }
               });
         });
@@ -115,8 +120,9 @@ public class GitToolsFragment extends Fragment {
       if (!repoPath.exists()) {
         //repository.init(repoPath.getParentFile());
       }
+      ILogger.info(LOG_TAG, "Opened repository");
     } catch (IOException ioe) {
-      ioe.printStackTrace();
+      ILogger.error(LOG_TAG, Log.getStackTraceString(ioe));
     }
   }
 
@@ -126,6 +132,7 @@ public class GitToolsFragment extends Fragment {
     }
     if (!repoPath.exists()) {
       binding.modifications.setText(R.string.error_this_folder_is_not_a_repository);
+      ILogger.error(LOG_TAG, ".git not found");
       return;
     }
     binding.modifications.setText(R.string.loading);
@@ -136,7 +143,7 @@ public class GitToolsFragment extends Fragment {
 
             ThreadUtils.runOnUiThread(() -> binding.modifications.setText(info));
           } catch (GitAPIException gite) {
-            gite.printStackTrace();
+            ILogger.error(LOG_TAG, Log.getStackTraceString(gite));
           }
           return null;
         },

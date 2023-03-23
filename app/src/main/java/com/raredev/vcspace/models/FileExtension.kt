@@ -8,7 +8,6 @@ enum class FileExtension(val extension: String, @DrawableRes val icon: Int) {
   APK("apk", R.drawable.ic_file_apk),
   CSS("css", R.drawable.language_css3),
   CPP("cpp", R.drawable.language_cpp),
-  CPLUSPLUS("c++", R.drawable.language_cpp),
   C("c", R.drawable.language_c),
   GO("go", R.drawable.language_go),
   H("h", R.drawable.language_cpp),
