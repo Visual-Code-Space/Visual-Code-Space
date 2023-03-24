@@ -146,13 +146,18 @@ public class GitToolsFragment extends Fragment {
     }
     binding.initRepo.setVisibility(View.GONE);
     binding.modifications.setText(R.string.loading);
-    
+    updateProgress(binding.modifications.getText().toString());
+
     TaskExecutor.executeAsyncProvideError(
         () -> {
           try {
             String info = repository.getStatusAsString();
 
-            ThreadUtils.runOnUiThread(() -> binding.modifications.setText(info));
+            ThreadUtils.runOnUiThread(
+                () -> {
+                  binding.modifications.setText(info);
+                  updateProgress(binding.modifications.getText().toString());
+                });
           } catch (GitAPIException gite) {
             ILogger.error(LOG_TAG, Log.getStackTraceString(gite));
           }
@@ -161,9 +166,9 @@ public class GitToolsFragment extends Fragment {
         (result, error) -> {
           if (error != null) {
             binding.modifications.setText(error.toString());
+            updateProgress(binding.modifications.getText().toString());
           }
         });
-    
   }
 
   // I'll make this more beautiful in the future, for now it's just a test
@@ -208,8 +213,9 @@ public class GitToolsFragment extends Fragment {
       binding.containerRepository.setVisibility(View.GONE);
     }
   }
-  
-  private void updateProgress() {
-    
+
+  private void updateProgress(String info) {
+    binding.progressIndicator.setVisibility(
+        info.equals(getString(R.string.loading)) ? View.VISIBLE : View.GONE);
   }
 }
