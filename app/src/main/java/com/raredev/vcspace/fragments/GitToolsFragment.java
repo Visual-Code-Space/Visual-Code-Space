@@ -132,7 +132,6 @@ public class GitToolsFragment extends Fragment {
     }
     if (!repoPath.exists()) {
       binding.modifications.setText(R.string.error_this_folder_is_not_a_repository);
-      ILogger.error(LOG_TAG, ".git not found");
       return;
     }
     binding.modifications.setText(R.string.loading);

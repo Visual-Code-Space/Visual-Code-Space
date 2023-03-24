@@ -20,6 +20,12 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
   private StringBuilder softwareInfo = new StringBuilder();
   private StringBuilder dateInfo = new StringBuilder();
 
+  private Context context;
+  
+  public CrashHandler(Context context) {
+    this.context = context;
+  }
+  
   @Override
   public void uncaughtException(Thread thread, Throwable exception) {
     // Create a StringWriter to write stack trace to
@@ -52,7 +58,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     Log.d("Date", dateInfo.toString());
 
     // Create an intent for the crash activity
-    var intent = new Intent(VCSpaceApplication.appContext, CrashActivity.class);
+    var intent = new Intent(context, CrashActivity.class);
 
     // Add the error message, software info, and date info as extras
     intent.putExtra("Error", errorMessage.toString());
@@ -60,7 +66,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     intent.putExtra("Date", dateInfo.toString());
 
     // Start the crash activity
-    VCSpaceApplication.appContext.startActivity(intent);
+    context.startActivity(intent);
 
     // Kill the process
     Process.killProcess(Process.myPid());
