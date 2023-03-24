@@ -65,6 +65,17 @@ public class GitToolsFragment extends Fragment {
         v -> {
           expandCollapseView();
         });
+    binding.initRepo.setOnClickListener(
+        v -> {
+          if (repository != null && repoPath != null) {
+            try {
+              repository.init(repoPath.getParentFile());
+              loadRepositoryInformationsTask();
+            } catch (GitAPIException e) {
+              e.printStackTrace();
+            }
+          }
+        });
     return binding.getRoot();
   }
 
@@ -112,9 +123,6 @@ public class GitToolsFragment extends Fragment {
   private void doOpenRepository() {
     try {
       repository = new GitUtils(repoPath);
-      if (!repoPath.exists()) {
-        //repository.init(repoPath.getParentFile());
-      }
     } catch (IOException ioe) {
       ioe.printStackTrace();
     }
@@ -126,13 +134,16 @@ public class GitToolsFragment extends Fragment {
     }
     if (!repoPath.exists()) {
       binding.modifications.setText(R.string.error_this_folder_is_not_a_repository);
+      binding.initRepo.setVisibility(View.VISIBLE);
       return;
     }
+    binding.initRepo.setVisibility(View.GONE);
     binding.modifications.setText(R.string.loading);
+    
     TaskExecutor.executeAsyncProvideError(
         () -> {
           try {
-            String info = loadRepositoryInformations();
+            String info = repository.getStatusAsString();
 
             ThreadUtils.runOnUiThread(() -> binding.modifications.setText(info));
           } catch (GitAPIException gite) {
@@ -145,6 +156,7 @@ public class GitToolsFragment extends Fragment {
             binding.modifications.setText(error.toString());
           }
         });
+    
   }
 
   // I'll make this more beautiful in the future, for now it's just a test
@@ -188,5 +200,9 @@ public class GitToolsFragment extends Fragment {
       binding.containerTools.setVisibility(View.VISIBLE);
       binding.containerRepository.setVisibility(View.GONE);
     }
+  }
+  
+  private void updateProgress() {
+    
   }
 }

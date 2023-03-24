@@ -2,6 +2,7 @@ package com.raredev.vcspace.git.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -9,6 +10,8 @@ import java.util.Iterator;
 import java.util.List;
 import org.eclipse.jgit.api.DiffCommand;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.MergeCommand;
+import org.eclipse.jgit.api.PushCommand;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
@@ -19,12 +22,15 @@ import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.lib.RefUpdate;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.merge.MergeStrategy;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.RefSpec;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.eclipse.jgit.treewalk.AbstractTreeIterator;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.eclipse.jgit.treewalk.EmptyTreeIterator;
@@ -39,7 +45,7 @@ public class GitUtils {
    * @param repoPath The path to the Git repository
    * @throws IOException
    */
-  public GitUtils(File repoPath) throws  IOException {
+  public GitUtils(File repoPath) throws IOException {
     Repository repo = new FileRepositoryBuilder().setGitDir(repoPath).build();
     git = new Git(repo);
   }
@@ -359,5 +365,68 @@ public class GitUtils {
       outputStream.write(System.lineSeparator().getBytes());
     }
     return outputStream.toString();
+  }
+
+  public void close() {
+    git.close();
+  }
+
+  public String getRemoteURL() {
+    String remoteURL = git.getRepository().getConfig().getString("remote", "origin", "url");
+    return remoteURL;
+  }
+
+  public String getRemoteName() throws IOException {
+    String remoteName = git.getRepository().getFullBranch();
+    if (remoteName != null) {
+      remoteName = remoteName.split("/")[1];
+    }
+    return remoteName;
+  }
+
+  public void createPullRequest(
+      String username,
+      String password,
+      String remoteUrl,
+      String branchName,
+      String title,
+      String description,
+      String targetBranch)
+      throws GitAPIException, IOException {
+
+    // Set up credentials for authentication
+    UsernamePasswordCredentialsProvider credentialsProvider =
+        new UsernamePasswordCredentialsProvider(username, password);
+
+    // Create a new branch from the specified branch
+    git.checkout().setName(branchName).setCreateBranch(true).call();
+
+    // Push the changes to the remote repository
+    PushCommand pushCommand = git.push();
+    pushCommand.setCredentialsProvider(credentialsProvider);
+    pushCommand.setRemote(remoteUrl);
+    pushCommand.setPushAll();
+    pushCommand.call();
+
+    // Merge the branch into the target branch
+    MergeCommand mergeCommand = git.merge();
+    mergeCommand.include(git.getRepository().exactRef(branchName));
+    mergeCommand.setStrategy(MergeStrategy.RECURSIVE);
+    mergeCommand.setMessage(title + "\n\n" + description);
+    mergeCommand.call();
+
+    // Create a new branch for the merge commit
+    Ref head = git.getRepository().exactRef(Constants.HEAD);
+    ObjectId headId = head.getObjectId();
+    RefUpdate updateRef = git.getRepository().updateRef("refs/heads/" + targetBranch);
+    updateRef.setNewObjectId(headId);
+    updateRef.forceUpdate();
+
+    // Push the merge commit to the remote repository
+    pushCommand = git.push();
+    pushCommand.setCredentialsProvider(credentialsProvider);
+    pushCommand.setRemote(remoteUrl);
+    pushCommand.setPushAll();
+    pushCommand.call();
   }
 }

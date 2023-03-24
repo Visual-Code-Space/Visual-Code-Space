@@ -79,13 +79,24 @@
 
   <PreferenceCategory
     app:iconSpaceReserved="false"
+    app:title="@string/git">
+
+    <Preference
+      app:icon="@drawable/key"
+      app:key="pref_credential"
+      app:summary="@string/pref_git_credentials_summary"
+      app:title="@string/pref_git_credentials" />
+  </PreferenceCategory>
+  
+  <PreferenceCategory
+    app:iconSpaceReserved="false"
     app:title="@string/about">
 
     <Preference
       app:icon="@drawable/github"
       app:key="github"
       app:summary="https://github.com/raredeveloperofc/Visual-Code-Space"
-      app:title="Github:" />
+      app:title="GitHub:" />
   </PreferenceCategory>
 
 </PreferenceScreen>

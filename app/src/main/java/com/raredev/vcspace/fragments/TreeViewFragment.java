@@ -21,6 +21,7 @@ import com.raredev.vcspace.actions.ActionPlaces;
 import com.raredev.vcspace.activity.MainActivity;
 import com.raredev.vcspace.databinding.FragmentTreeViewBinding;
 import com.raredev.vcspace.events.FileEvent;
+import com.raredev.vcspace.managers.SettingsManager;
 import com.raredev.vcspace.ui.tree.holder.FileViewHolder;
 import com.raredev.vcspace.util.ApkInstaller;
 import com.raredev.vcspace.util.PreferencesUtils;
@@ -185,7 +186,7 @@ public class TreeViewFragment extends Fragment
       if (removePrefsAndTreeState) {
         PreferencesUtils.getToolsPrefs()
             .edit()
-            .putString(PreferencesUtils.KEY_RECENT_FOLDER, "")
+            .putString(SettingsManager.KEY_RECENT_FOLDER, "")
             .apply();
         savedState = null;
       }
@@ -229,7 +230,7 @@ public class TreeViewFragment extends Fragment
   public void tryOpenRecentFolder() {
     try {
       String recentFolderPath =
-          PreferencesUtils.getToolsPrefs().getString(PreferencesUtils.KEY_RECENT_FOLDER, "");
+          PreferencesUtils.getToolsPrefs().getString(SettingsManager.KEY_RECENT_FOLDER, "");
       if (!recentFolderPath.isEmpty()) {
         File recentFolder = new File(recentFolderPath);
         if (recentFolder.exists() && recentFolder.isDirectory()) {

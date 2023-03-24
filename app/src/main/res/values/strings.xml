@@ -29,7 +29,7 @@
   <string name="menu_save">Save</string>
   <string name="menu_save_as">Save As</string>
   <string name="menu_save_all">Save All</string>
-  
+
   <!-- Errors Strings-->
   <string name="error">Error</string>
   <string name="error_treeview_opening_recent_files">Error when trying to open recent folder:</string>
@@ -51,6 +51,8 @@
   <string name="rename">Rename</string>
   <string name="copy_path">Copy path</string>
   <string name="rename_hint">Enter a new name:</string>
+  <string name="password_hint">Password (Token)</string>
+  <string name="username_hint">Username</string>
   <string name="open_folder">Open Folder</string>
   <string name="open_recent">Open Recent</string>
   <string name="file_name_hint">File name:</string>
@@ -64,11 +66,26 @@
   <string name="new_folder_title">New folder</string>
   <string name="close_folder_title">Close Folder</string>
   <string name="close_folder_message">Do you want to close this folder?</string>
+  <string name="create_token_message">Create a GitHub token.</string>
+  <string name="github_token">GitHub token</string>
+  <string name="initialize_repo">Initialize Repo</string>
+  
+  <string name="branch_name">BRANCH NAME</string>
+	<string name="remote_name">REMOTE NAME</string>
+	<string name="remote">REMOTE</string>
+	<string name="branch">BRANCH</string>
+	<string name="merge_changes_from">MERGE CHANGES FROM</string>
+	<string name="into">INTO</string>
+	<string name="description">DESCRIPTION</string>
+	<string name="title">TITLE</string>
+	<string name="pull_request_description">Pull Request Description</string>
+	<string name="create_as_draft">Create as draft</string>
 
   <!-- Settings String -->
   <string name="application">Application</string>
   <string name="editor">Editor</string>
   <string name="about">About</string>
+  <string name="git">Git</string>
 
   <string name="title_theme">Theme</string>
   <string name="pref_theme_system">System theme</string>
@@ -114,4 +131,6 @@
   <string name="pref_editor_use_spaces_summary">Use spaces instead of tabs(\\t)</string>
   <string name="pref_editor_deleteemptylinefast">Delete empty line fast</string>
   <string name="pref_editor_deleteemptylinefast_summary">If the current line has only spaces it will be deleted quickly.</string>
+  <string name="pref_git_credentials">Credentials</string>
+  <string name="pref_git_credentials_summary">Set up your GitHub credentials</string>
 </resources>
