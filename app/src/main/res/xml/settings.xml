@@ -17,13 +17,6 @@
       app:useSimpleSummaryProvider="true" />
 
     <SwitchPreferenceCompat
-      app:defaultValue="true"
-      app:icon="@drawable/palette"
-      app:key="pref_dynamiccolors"
-      app:title="@string/pref_dynamic_colors"
-      app:summary="@string/pref_dynamic_colors_summary" />
-
-    <SwitchPreferenceCompat
       app:defaultValue="false"
       app:icon="@drawable/folder_open"
       app:key="pref_openrecentsautomatically"
@@ -50,7 +43,7 @@
       app:entryValues="@array/settings_tab_entries"
       app:icon="@drawable/format_font"
       app:key="pref_editortabsize"
-      app:title="@string/pref_editor_font"
+      app:title="@string/pref_editor_tabsize"
       app:useSimpleSummaryProvider="true" />
 
     <ListPreference

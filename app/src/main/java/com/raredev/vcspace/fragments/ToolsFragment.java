@@ -13,7 +13,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
-import androidx.appcompat.widget.TooltipCompat;
 import androidx.core.view.GravityCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
@@ -25,6 +24,7 @@ import com.raredev.vcspace.activity.MainActivity;
 import com.raredev.vcspace.adapters.ToolsPagerAdapter;
 import com.raredev.vcspace.databinding.FragmentToolsBinding;
 import com.raredev.vcspace.managers.SettingsManager;
+import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.util.PreferencesUtils;
 import java.io.File;
 
@@ -36,7 +36,7 @@ public class ToolsFragment extends Fragment {
 
   private ToolsPagerAdapter adapter;
 
-  private TreeViewFragment treeViewFragment;
+  public TreeViewFragment treeViewFragment;
   private GitToolsFragment gitToolsFragment;
 
   @Override
@@ -62,12 +62,10 @@ public class ToolsFragment extends Fragment {
                               .edit()
                               .putString(SettingsManager.KEY_RECENT_FOLDER, dir.toString())
                               .apply();
-                         /* ((MainActivity) requireActivity())
-                              .getBinding()
-                              .drawerLayout
-                              .openDrawer(GravityCompat.START);*/
+                          ((MainActivity) requireActivity())
+                              .binding.drawerLayout.openDrawer(GravityCompat.START);
                         } catch (Exception e) {
-                          e.printStackTrace();
+                          ILogger.error(ToolsFragment.class.getSimpleName(), e.toString());
                         }
                       }
                     }
@@ -81,13 +79,11 @@ public class ToolsFragment extends Fragment {
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     binding = FragmentToolsBinding.inflate(inflater, container, false);
 
-    treeViewFragment = new TreeViewFragment();
-    gitToolsFragment = new GitToolsFragment();
     adapter = new ToolsPagerAdapter(getChildFragmentManager(), getLifecycle());
-    adapter.addFragment(treeViewFragment);
-    adapter.addFragment(gitToolsFragment);
-
-    binding.pager.setOffscreenPageLimit(2);
+    adapter.addFragment(treeViewFragment = new TreeViewFragment());
+    adapter.addFragment(gitToolsFragment = new GitToolsFragment());
+    
+    binding.pager.setOffscreenPageLimit(3);
     binding.pager.setUserInputEnabled(false);
     binding.pager.setAdapter(adapter);
 
@@ -99,7 +95,6 @@ public class ToolsFragment extends Fragment {
               public void onConfigureTab(TabLayout.Tab tab, int position) {
                 switch (position) {
                   case 0:
-                    TooltipCompat.setTooltipText(tab.view, getString(R.string.explorer));
                     tab.setIcon(
                         AppCompatResources.getDrawable(requireContext(), R.drawable.folder_open));
                     break;
@@ -123,10 +118,6 @@ public class ToolsFragment extends Fragment {
       setCurrentFragment(0);
       treeViewFragment.loadTreeView(dir);
     }
-  }
-
-  public TreeViewFragment getTreeViewFragment() {
-    return this.treeViewFragment;
   }
 
   private void setCurrentFragment(int index) {

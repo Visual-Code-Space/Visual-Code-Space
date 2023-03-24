@@ -37,6 +37,9 @@
       </intent-filter>
     </activity>
     <activity
+      android:name=".activity.LogViewActivity"
+      android:exported="true" />
+    <activity
       android:name=".activity.SettingsActivity"
       android:exported="true" />
     <activity

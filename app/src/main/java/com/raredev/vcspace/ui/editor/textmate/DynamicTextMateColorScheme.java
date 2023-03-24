@@ -41,18 +41,18 @@ public class DynamicTextMateColorScheme extends TextMateColorScheme {
 
     ThemeRaw themeRaw;
 
-    if (settings == null) {
+    /*if (settings == null) {
       themeRaw = ((ThemeRaw) ((ThemeRaw) rawTheme).get("colors"));
       applyVSCTheme(themeRaw);
-    } else {
+    } else {*/
       themeRaw = (ThemeRaw) ((List<?>) settings).get(0);
       themeRaw = (ThemeRaw) themeRaw.getSetting();
 
       applyTMTheme(themeRaw);
-    }
+    //}
   }
 
-  private void applyVSCTheme(ThemeRaw themeRaw) {
+  /*private void applyVSCTheme(ThemeRaw themeRaw) {
     setColor(LINE_DIVIDER, Color.TRANSPARENT);
     setColor(WHOLE_BACKGROUND, SurfaceColors.SURFACE_0.getColor(context));
     setColor(LINE_NUMBER_BACKGROUND, SurfaceColors.SURFACE_0.getColor(context));
@@ -62,15 +62,12 @@ public class DynamicTextMateColorScheme extends TextMateColorScheme {
     setColor(BLOCK_LINE, SurfaceColors.SURFACE_3.getColor(context));
     int blockLineColorCur = (getColor(BLOCK_LINE)) | 0xFF000000;
     setColor(BLOCK_LINE_CURRENT, blockLineColorCur);
+    
+    setColor(SELECTED_TEXT_BACKGROUND, blockLineColorCur);
 
     String caret = (String) themeRaw.get("editorCursor.foreground");
     if (caret != null) {
       setColor(SELECTION_INSERT, Color.parseColor(caret));
-    }
-
-    String selection = (String) themeRaw.get("editor.selectionBackground");
-    if (selection != null) {
-      setColor(SELECTED_TEXT_BACKGROUND, Color.parseColor(selection));
     }
 
     String invisibles = (String) themeRaw.get("editorWhitespace.foreground");
@@ -103,7 +100,7 @@ public class DynamicTextMateColorScheme extends TextMateColorScheme {
       setColor(
           HIGHLIGHTED_DELIMITERS_FOREGROUND, Color.parseColor(highlightedDelimetersForeground));
     }
-  }
+  }*/
 
   private void applyTMTheme(ThemeRaw themeRaw) {
     setColor(LINE_DIVIDER, Color.TRANSPARENT);
@@ -116,14 +113,11 @@ public class DynamicTextMateColorScheme extends TextMateColorScheme {
     int blockLineColorCur = (getColor(BLOCK_LINE)) | 0xFF000000;
     setColor(BLOCK_LINE_CURRENT, blockLineColorCur);
     
+    setColor(SELECTED_TEXT_BACKGROUND, blockLineColorCur);
+    
     String caret = (String) themeRaw.get("caret");
     if (caret != null) {
       setColor(SELECTION_INSERT, Color.parseColor(caret));
-    }
-
-    String selection = (String) themeRaw.get("selection");
-    if (selection != null) {
-      setColor(SELECTED_TEXT_BACKGROUND, Color.parseColor(selection));
     }
 
     String lineHighlightBackground = (String) themeRaw.get("lineNumber");

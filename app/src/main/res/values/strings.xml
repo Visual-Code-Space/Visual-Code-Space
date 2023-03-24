@@ -101,8 +101,6 @@
     <item>dark</item>
     <item>light</item>
   </string-array>
-  <string name="pref_dynamic_colors">Use Dynamic theme</string>
-  <string name="pref_dynamic_colors_summary">Applies your wallpaper colors to the app (Requires reboot)</string>
   <string name="pref_open_recent_automatically">Open recent folder automatically</string>
   <string name="pref_open_recent_automatically_summary">Automatically open recently used folder</string>
 

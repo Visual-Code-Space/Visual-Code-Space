@@ -59,6 +59,4 @@
   <color name="dark_surfaceTint">#4FD8EB</color>
   <color name="dark_outlineVariant">#3F484A</color>
   <color name="dark_scrim">#000000</color>
-  
-  <color name="ripple_color">#80FFFFFF</color>
 </resources>

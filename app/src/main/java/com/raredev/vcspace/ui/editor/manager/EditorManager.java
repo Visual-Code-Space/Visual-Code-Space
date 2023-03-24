@@ -14,11 +14,13 @@ import com.raredev.common.util.FileUtil;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.activity.MainActivity;
 import com.raredev.vcspace.databinding.ActivityMainBinding;
+import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.ui.editor.CodeEditorView;
 import com.raredev.vcspace.ui.viewmodel.EditorViewModel;
 import java.io.File;
 
 public class EditorManager {
+  private final String LOG_TAG = EditorManager.class.getSimpleName();
 
   private DrawerLayout drawerLayout;
   private ViewFlipper container;
@@ -36,7 +38,7 @@ public class EditorManager {
     this.tabLayout = binding.tabLayout;
     this.viewModel = viewModel;
   }
-  
+
   public void tryOpenFileFromIntent(Intent it) {
     try {
       Uri uri = it.getData();
@@ -69,11 +71,13 @@ public class EditorManager {
   }
 
   private int openFileAndGetIndex(File file) {
-    int index = findIndexOfEditorByFile(file);
-    if (index != -1) {
-      return index;
+    int openedFileIndex = findIndexOfEditorByFile(file);
+    if (openedFileIndex != -1) {
+      return openedFileIndex;
     }
-    int position = viewModel.getOpenedFileCount();
+    int index = viewModel.getOpenedFileCount();
+
+    ILogger.info(LOG_TAG, "Opening file: " + file.toString() + " index: " + index);
 
     CodeEditorView editor = new CodeEditorView(context, file);
     editor.subscribeContentChangeEvent(((MainActivity) context).updateMenuItem);
@@ -81,11 +85,12 @@ public class EditorManager {
 
     tabLayout.addTab(tabLayout.newTab().setText(file.getName()));
     viewModel.addFile(file);
-    return position;
+    return index;
   }
 
   public void closeFile(int index) {
     if (index >= 0 && index < viewModel.getOpenedFileCount()) {
+      ILogger.info(LOG_TAG, "Closing file: " + viewModel.getOpenedFiles().get(index).toString());
       CodeEditorView editor = getEditorAtIndex(index);
       if (editor != null) {
         editor.release();
@@ -113,7 +118,7 @@ public class EditorManager {
         }
       }
     }
-    int size = viewModel.getOpenedFileCount() -1;
+    int size = viewModel.getOpenedFileCount() - 1;
     viewModel.setCurrentFile(size, file);
     setCurrent(size);
   }
@@ -173,7 +178,7 @@ public class EditorManager {
   public CodeEditorView getCurrentEditor() {
     return (CodeEditorView) container.getChildAt(viewModel.getCurrentFileIndex());
   }
-  
+
   private void setCurrent(int index) {
     final var tab = tabLayout.getTabAt(index);
     if (tab != null && index >= 0 && !tab.isSelected()) {

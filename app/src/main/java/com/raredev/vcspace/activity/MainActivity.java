@@ -2,6 +2,7 @@ package com.raredev.vcspace.activity;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -9,7 +10,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.view.GravityCompat;
-import androidx.core.view.MenuCompat;
 import androidx.lifecycle.ViewModelProvider;
 import com.blankj.utilcode.util.ToastUtils;
 import com.google.android.material.tabs.TabLayout;
@@ -24,6 +24,7 @@ import com.raredev.vcspace.actions.ActionManager;
 import com.raredev.vcspace.actions.ActionPlaces;
 import com.raredev.vcspace.databinding.ActivityMainBinding;
 import com.raredev.vcspace.fragments.ToolsFragment;
+import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.ui.editor.CodeEditorView;
 import com.raredev.vcspace.ui.viewmodel.EditorViewModel;
 import com.raredev.vcspace.ui.editor.Symbol;
@@ -40,7 +41,8 @@ import java.io.OutputStream;
 import org.eclipse.tm4e.core.registry.IThemeSource;
 
 public class MainActivity extends VCSpaceActivity {
-  private ActivityMainBinding binding;
+  private final String LOG_TAG = MainActivity.class.getSimpleName();
+  public ActivityMainBinding binding;
 
   public EditorViewModel viewModel;
   public EditorManager editorManager;
@@ -76,39 +78,9 @@ public class MainActivity extends VCSpaceActivity {
     toggle.syncState();
 
     viewModel = new ViewModelProvider(this).get(EditorViewModel.class);
-    editorManager = new EditorManager(MainActivity.this, binding, viewModel);
-    launcher =
-        registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-              if (result.getResultCode() == RESULT_OK) {
-                Uri uri = result.getData().getData();
-                try {
-                  OutputStream outputStream = getContentResolver().openOutputStream(uri);
-                  outputStream.write(
-                      editorManager.getCurrentEditor().getEditor().getText().toString().getBytes());
-                  outputStream.close();
-                  editorManager.openFile(FileUtil.getFileFromUri(MainActivity.this, uri));
-                } catch (IOException e) {
-                  e.printStackTrace();
-                }
-              }
-            });
-    createFile =
-        registerForActivityResult(
-            new ActivityResultContracts.CreateDocument("text/*"), this::onCreateNewFile);
-    pickFile =
-        registerForActivityResult(
-            new ActivityResultContracts.GetContent(),
-            uri -> {
-              if (uri != null) {
-                try {
-                  editorManager.openFile(FileUtil.getFileFromUri(this, uri));
-                } catch (IOException e) {
-                  e.printStackTrace();
-                }
-              }
-            });
+    editorManager = new EditorManager(this, binding, viewModel);
+    initialize();
+
     binding.tabLayout.addOnTabSelectedListener(
         new TabLayout.OnTabSelectedListener() {
           @Override
@@ -119,7 +91,8 @@ public class MainActivity extends VCSpaceActivity {
             ActionData data = new ActionData();
             data.put("activity", MainActivity.this);
 
-            ActionManager.getInstance().fillMenu(MainActivity.this, p1.view, data, ActionPlaces.EDITOR);
+            ActionManager.getInstance()
+                .fillMenu(MainActivity.this, p1.view, data, ActionPlaces.EDITOR);
           }
 
           @Override
@@ -133,33 +106,13 @@ public class MainActivity extends VCSpaceActivity {
             invalidateOptionsMenu();
           }
         });
-
-    viewModel.observeFiles(
-        this,
-        (files) -> {
-          if (files.isEmpty()) {
-            binding.tabLayout.setVisibility(View.GONE);
-            binding.layout.setVisibility(View.GONE);
-            binding.noFileOpened.setVisibility(View.VISIBLE);
-            binding.searcher.hide();
-          } else {
-            binding.tabLayout.setVisibility(View.VISIBLE);
-            binding.layout.setVisibility(View.VISIBLE);
-            binding.noFileOpened.setVisibility(View.GONE);
-          }
-        });
-
-    viewModel
-        .getDisplayedFile()
-        .observe(this, (index) -> binding.container.setDisplayedChild(index));
-    initialize();
+    registerResultActivity();
+    observeViewModel();
   }
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.main_menu, menu);
-    MenuCompat.setGroupDividerEnabled(menu, true);
-    menu.findItem(R.id.menu_terminal).setVisible(false);
     undo = menu.findItem(R.id.menu_undo);
     redo = menu.findItem(R.id.menu_redo);
     return super.onCreateOptionsMenu(menu);
@@ -223,13 +176,12 @@ public class MainActivity extends VCSpaceActivity {
       case R.id.menu_search:
         binding.searcher.showAndHide();
         break;
+      case R.id.menu_viewlogs:
+        startActivity(new Intent(getApplicationContext(), LogViewActivity.class));
+        break;
       case R.id.menu_settings:
         editorManager.saveAllFiles(false);
         startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
-        break;
-      case R.id.menu_terminal:
-        ToastUtils.showShort("unavailable");
-        // startActivity(new Intent(getApplicationContext(), TerminalActivity.class));
         break;
       case R.id.menu_open_folder:
         ((ToolsFragment) getSupportFragmentManager().findFragmentByTag("tools_fragment"))
@@ -237,8 +189,7 @@ public class MainActivity extends VCSpaceActivity {
         break;
       case R.id.menu_open_recent:
         ((ToolsFragment) getSupportFragmentManager().findFragmentByTag("tools_fragment"))
-            .getTreeViewFragment()
-            .tryOpenRecentFolder();
+            .treeViewFragment.tryOpenRecentFolder();
         if (!binding.drawerLayout.isDrawerOpen(GravityCompat.START))
           binding.drawerLayout.openDrawer(GravityCompat.START);
         break;
@@ -259,13 +210,13 @@ public class MainActivity extends VCSpaceActivity {
       return;
     }
     if (binding.searcher.isShowing) {
-      binding.searcher.hide();
+      binding.searcher.showAndHide();
       return;
     }
     editorManager.saveAllFiles(false);
     super.onBackPressed();
   }
-  
+
   private synchronized void initialize() {
     TaskExecutor.executeAsyncProvideError(
         () -> {
@@ -275,17 +226,76 @@ public class MainActivity extends VCSpaceActivity {
         (result, error) -> {
           if (error != null) {
             DialogUtils.newErrorDialog(this, getString(R.string.error), error.toString());
+            ILogger.info(LOG_TAG, Log.getStackTraceString(error));
+          } else {
+            ILogger.info(LOG_TAG, "Loaded themes");
           }
           viewModel.removeAllFiles();
           editorManager.tryOpenFileFromIntent(getIntent());
         });
   }
 
+  private void registerResultActivity() {
+    launcher =
+        registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+              if (result.getResultCode() == RESULT_OK) {
+                Uri uri = result.getData().getData();
+                try {
+                  OutputStream outputStream = getContentResolver().openOutputStream(uri);
+                  outputStream.write(
+                      editorManager.getCurrentEditor().getEditor().getText().toString().getBytes());
+                  outputStream.close();
+                  editorManager.openFile(FileUtil.getFileFromUri(MainActivity.this, uri));
+                } catch (IOException e) {
+                  ILogger.error(LOG_TAG, Log.getStackTraceString(e));
+                }
+              }
+            });
+    createFile =
+        registerForActivityResult(
+            new ActivityResultContracts.CreateDocument("text/*"), this::onCreateNewFile);
+    pickFile =
+        registerForActivityResult(
+            new ActivityResultContracts.GetContent(),
+            uri -> {
+              if (uri != null) {
+                try {
+                  editorManager.openFile(FileUtil.getFileFromUri(this, uri));
+                } catch (IOException e) {
+                  ILogger.error(LOG_TAG, Log.getStackTraceString(e));
+                }
+              }
+            });
+  }
+
+  private void observeViewModel() {
+    viewModel.observeFiles(
+        this,
+        (files) -> {
+          if (files.isEmpty()) {
+            binding.tabLayout.setVisibility(View.GONE);
+            binding.layout.setVisibility(View.GONE);
+            binding.noFileOpened.setVisibility(View.VISIBLE);
+            binding.searcher.hide();
+          } else {
+            binding.tabLayout.setVisibility(View.VISIBLE);
+            binding.layout.setVisibility(View.VISIBLE);
+            binding.noFileOpened.setVisibility(View.GONE);
+          }
+        });
+
+    viewModel
+        .getDisplayedFile()
+        .observe(this, (index) -> binding.container.setDisplayedChild(index));
+  }
+
   private void loadTextMate() throws Exception {
     // Load editor themes
     FileProviderRegistry.getInstance().addFileProvider(new AssetsFileResolver(getAssets()));
 
-    String[] themes = new String[] {"darcula", "quietlight"};
+    String[] themes = new String[] {"vcspace_dark", "vcspace_light"};
     ThemeRegistry themeRegistry = ThemeRegistry.getInstance();
     for (String name : themes) {
       String path = "textmate/" + name + ".json";
@@ -298,7 +308,7 @@ public class MainActivity extends VCSpaceActivity {
     // Load editor languages
     GrammarRegistry.getInstance().loadGrammars("textmate/languages.json");
     // Register current theme
-    ThemeRegistry.getInstance().setTheme(Utils.isDarkMode(this) ? "darcula" : "quietlight");
+    ThemeRegistry.getInstance().setTheme(Utils.isDarkMode(this) ? "vcspace_dark" : "vcspace_light");
   }
 
   private void refreshSymbolInput(CodeEditor editor) {
@@ -320,7 +330,7 @@ public class MainActivity extends VCSpaceActivity {
       try {
         editorManager.openFile(FileUtil.getFileFromUri(this, uri));
       } catch (IOException e) {
-        e.printStackTrace();
+        ILogger.error(LOG_TAG, Log.getStackTraceString(e));
       }
     }
   }

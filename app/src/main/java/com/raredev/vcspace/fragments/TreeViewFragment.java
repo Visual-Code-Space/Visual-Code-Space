@@ -2,6 +2,7 @@ package com.raredev.vcspace.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import com.raredev.vcspace.activity.MainActivity;
 import com.raredev.vcspace.databinding.FragmentTreeViewBinding;
 import com.raredev.vcspace.events.FileEvent;
 import com.raredev.vcspace.managers.SettingsManager;
+import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.ui.tree.holder.FileViewHolder;
 import com.raredev.vcspace.util.ApkInstaller;
 import com.raredev.vcspace.util.PreferencesUtils;
@@ -37,7 +39,9 @@ import org.greenrobot.eventbus.EventBus;
 @SuppressWarnings("deprecation")
 public class TreeViewFragment extends Fragment
     implements TreeNode.TreeNodeClickListener, TreeNode.TreeNodeLongClickListener {
-  public static final String KEY_STORED_TREE_STATE = "treeState";
+  private final String LOG_TAG = TreeViewFragment.class.getSimpleName();
+  public final String KEY_STORED_TREE_STATE = "treeState";
+  
   private FragmentTreeViewBinding binding;
 
   private String savedState;
@@ -224,6 +228,7 @@ public class TreeViewFragment extends Fragment
             tryRestoreSavedState();
           }
         });
+    ILogger.info(LOG_TAG, "Opened folder: " + rootFolder.toString());
     updateViewsVisibility();
   }
 
@@ -238,6 +243,7 @@ public class TreeViewFragment extends Fragment
         }
       }
     } catch (Throwable e) {
+      ILogger.error(LOG_TAG, Log.getStackTraceString(e));
       DialogUtils.newErrorDialog(
           requireContext(),
           getString(R.string.error),

@@ -1,0 +1,112 @@
+{
+  "name": "Log",
+  "scopeName": "text.log",
+  "patterns": [
+    {
+      "include": "#value"
+    }
+  ],
+  "repository": {
+    "value": {
+      "patterns": [
+        {
+          "match": "\\bVERBOSE\\b",
+          "name": "keyword.control.log.verbose"
+        },
+        {
+          "match": "\\bINFO\\b",
+          "name": "keyword.control.log.info"
+        },
+        {
+          "match": "\\bWARNING\\b",
+          "name": "keyword.control.log.warning"
+        },
+        {
+          "match": "\\bERROR\\b",
+          "name": "keyword.control.log.error"
+        }
+      ]
+    },
+    "line": {
+      "patterns": [
+        {
+          "name": "log.line.warning",
+          "match": "^(.*?\\bWARNING\\b.*?)$",
+          "captures": {
+            "0": {
+              "name": "constant.language.log.warning.line"
+            }
+          }
+        },
+        {
+          "name": "log.line.verbose",
+          "match": "^(.*?\\bVERBOSE\\b.*?)$",
+          "captures": {
+            "0": {
+              "name": "constant.language.log.verbose.line"
+            }
+          }
+        },
+        {
+          "name": "log.line.info",
+          "match": "^(.*?\\bINFO\\b.*?)$",
+          "captures": {
+            "0": {
+              "name": "constant.language.log.info.line"
+            }
+          }
+        },
+        {
+          "name": "log.line.error",
+          "match": "^(.*?\\bERROR\\b.*?)$",
+          "captures": {
+            "0": {
+              "name": "constant.language.log.error.line"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "patterns": [
+    {
+      "include": "#line"
+    },
+    {
+      "name": "keyword.control.log.verbose",
+      "match": "\\bVERBOSE\\b",
+      "captures": {
+        "0": {
+          "name": "constant.language.log.verbose"
+        }
+      }
+    },
+    {
+      "name": "keyword.control.log.info",
+      "match": "\\bINFO\\b",
+      "captures": {
+        "0": {
+          "name": "constant.language.log.info"
+        }
+      }
+    },
+    {
+      "name": "keyword.control.log.warning",
+      "match": "\\bWARNING\\b",
+      "captures": {
+        "0": {
+          "name": "constant.language.log.warning"
+        }
+      }
+    },
+    {
+      "name": "keyword.control.log.error",
+      "match": "\\bERROR\\b",
+      "captures": {
+        "0": {
+          "name": "constant.language.log.error"
+        }
+      }
+    }
+  ]
+}

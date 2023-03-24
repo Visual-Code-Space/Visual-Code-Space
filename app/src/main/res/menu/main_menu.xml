@@ -79,9 +79,9 @@
     android:icon="@drawable/ic_play"
     android:title="@string/menu_execute" />
   <item
+    android:id="@+id/menu_viewlogs"
+    android:title="View logs" />
+  <item
     android:id="@+id/menu_settings"
     android:title="@string/menu_settings" />
-  <item
-    android:id="@+id/menu_terminal"
-    android:title="Terminal" />
 </menu>

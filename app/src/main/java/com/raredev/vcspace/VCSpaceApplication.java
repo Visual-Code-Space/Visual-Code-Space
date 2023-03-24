@@ -24,10 +24,7 @@ public class VCSpaceApplication extends Application {
     super.onCreate();
     appContext = this;
     AppCompatDelegate.setDefaultNightMode(SettingsFragment.getThemeFromPrefs());
-    Thread.setDefaultUncaughtExceptionHandler(new CrashHandler(this));
-    if (PreferencesUtils.useDynamicColors()) {
-      DynamicColors.applyToActivitiesIfAvailable(this);
-    }
+    Thread.setDefaultUncaughtExceptionHandler(new CrashHandler());
     registerActions();
   }
   
