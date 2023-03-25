@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.raredev.vcspace.actions.Action;
 import com.raredev.vcspace.actions.ActionData;
-import com.raredev.vcspace.actions.ActionEvent;
 import com.raredev.vcspace.adapters.OptionsSheetAdapter;
 import com.raredev.vcspace.databinding.LayoutSheetDialogBinding;
 import java.util.ArrayList;
@@ -50,7 +49,7 @@ public class OptionsSheetFragment extends BottomSheetDialogFragment {
 
     adapter.setListener(
         (action) -> {
-          action.performAction();
+          action.performAction(data);
           dismiss();
         });
     binding.list.setLayoutManager(new LinearLayoutManager(getContext()));

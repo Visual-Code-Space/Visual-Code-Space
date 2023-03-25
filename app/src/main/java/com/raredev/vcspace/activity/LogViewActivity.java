@@ -2,10 +2,10 @@ package com.raredev.vcspace.activity;
 
 import android.util.Log;
 import android.view.View;
+import com.raredev.common.util.ILogger;
 import com.raredev.vcspace.R;
 import androidx.core.content.res.ResourcesCompat;
 import com.raredev.vcspace.databinding.ActivityLogViewBinding;
-import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.ui.editor.textmate.DynamicTextMateColorScheme;
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
@@ -43,6 +43,7 @@ public class LogViewActivity extends VCSpaceActivity implements ILogger.Observer
 
   @Override
   protected void onDestroy() {
+    binding.editor.release();
     ILogger.addObserver(null);
     super.onDestroy();
   }

@@ -6,7 +6,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 import com.raredev.vcspace.actions.Action;
-import com.raredev.vcspace.actions.Presentation;
 import com.raredev.vcspace.databinding.LayoutListItemBinding;
 import java.util.List;
 
@@ -28,10 +27,8 @@ public class OptionsSheetAdapter extends RecyclerView.Adapter<OptionsSheetAdapte
   public void onBindViewHolder(VH holder, int position) {
     Action action = listItems.get(position);
 
-    Presentation presentation = action.getPresentation();
-
-    holder.name.setText(presentation.getTitle());
-    holder.icon.setImageResource(presentation.getIcon());
+    holder.name.setText(action.title);
+    holder.icon.setImageResource(action.icon);
     holder.itemView.setOnClickListener(v -> listener.onClickListener(action));
   }
 

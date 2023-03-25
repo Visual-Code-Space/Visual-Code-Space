@@ -23,7 +23,8 @@ import com.raredev.vcspace.R;
 import com.raredev.vcspace.activity.MainActivity;
 import com.raredev.vcspace.adapters.ToolsPagerAdapter;
 import com.raredev.vcspace.databinding.FragmentToolsBinding;
-import com.raredev.vcspace.util.ILogger;
+import com.raredev.vcspace.managers.SettingsManager;
+import com.raredev.common.util.ILogger;
 import com.raredev.vcspace.util.PreferencesUtils;
 import java.io.File;
 
@@ -62,7 +63,7 @@ public class ToolsFragment extends Fragment {
                           parseRootFolderToFileManager(dir);
                           PreferencesUtils.getToolsPrefs()
                               .edit()
-                              .putString(PreferencesUtils.KEY_RECENT_FOLDER, dir.toString())
+                              .putString(SettingsManager.KEY_RECENT_FOLDER, dir.toString())
                               .apply();
                           ((MainActivity) requireActivity())
                               .binding.drawerLayout.openDrawer(GravityCompat.START);

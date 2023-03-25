@@ -415,28 +415,35 @@
       "name": "Log Verbose",
       "scope": "constant.language.log.verbose, constant.language.log.verbose.line",
       "settings": {
-        "foreground": "#A6ACCD"
+        "foreground": "#8E8E93"
       }
     },
     {
       "name": "Log Info",
       "scope": "constant.language.log.info, constant.language.log.info.line",
       "settings": {
-        "foreground": "#C3E88D"
+        "foreground": "#4CD964"
       }
     },
     {
       "name": "Log Warning",
       "scope": "constant.language.log.warning, constant.language.log.warning.line",
       "settings": {
-        "foreground": "#FBC02D"
+        "foreground": "#FF9500"
+      }
+    },
+    {
+      "name": "Log Debug",
+      "scope": "constant.language.log.debug, constant.language.log.debug.line",
+      "settings": {
+        "foreground": "#007AFF"
       }
     },
     {
       "name": "Log Error",
       "scope": "constant.language.log.error, constant.language.log.error.line",
       "settings": {
-        "foreground": "#FF5370"
+        "foreground": "#FF3B30"
       }
     }
   ]

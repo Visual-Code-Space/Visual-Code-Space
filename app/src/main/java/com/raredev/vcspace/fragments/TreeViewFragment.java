@@ -15,14 +15,15 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.raredev.common.task.TaskExecutor;
 import com.raredev.common.util.DialogUtils;
 import com.raredev.common.util.FileUtil;
+import com.raredev.common.util.ILogger;
 import com.raredev.vcspace.R;
+import com.raredev.vcspace.actions.Action;
 import com.raredev.vcspace.actions.ActionData;
 import com.raredev.vcspace.actions.ActionManager;
-import com.raredev.vcspace.actions.ActionPlaces;
 import com.raredev.vcspace.activity.MainActivity;
 import com.raredev.vcspace.databinding.FragmentTreeViewBinding;
 import com.raredev.vcspace.events.FileEvent;
-import com.raredev.vcspace.util.ILogger;
+import com.raredev.vcspace.managers.SettingsManager;
 import com.raredev.vcspace.ui.tree.holder.FileViewHolder;
 import com.raredev.vcspace.util.ApkInstaller;
 import com.raredev.vcspace.util.PreferencesUtils;
@@ -40,7 +41,7 @@ public class TreeViewFragment extends Fragment
     implements TreeNode.TreeNodeClickListener, TreeNode.TreeNodeLongClickListener {
   private final String LOG_TAG = TreeViewFragment.class.getSimpleName();
   public final String KEY_STORED_TREE_STATE = "treeState";
-  
+
   private FragmentTreeViewBinding binding;
 
   private String savedState;
@@ -85,13 +86,8 @@ public class TreeViewFragment extends Fragment
           tryOpenRecentFolder();
         });
 
-    binding.refresh.setOnClickListener(
-        v -> {
-          if (treeView != null) {
-            savedState = treeView.getSaveState();
-            loadTreeView(mRoot.getValue());
-          }
-        });
+    binding.refresh.setOnClickListener(v -> refresh());
+
     binding.close.setOnClickListener(
         v -> {
           new MaterialAlertDialogBuilder(requireContext())
@@ -132,11 +128,11 @@ public class TreeViewFragment extends Fragment
   @Override
   public boolean onLongClick(TreeNode node, Object value) {
     ActionData data = new ActionData();
-    data.put("fragment", TreeViewFragment.this);
-    data.put("node", node);
+    data.put(TreeViewFragment.class, TreeViewFragment.this);
+    data.put(TreeNode.class, node);
 
     ActionManager.getInstance()
-        .fillDialogMenu(getChildFragmentManager(), data, ActionPlaces.FILE_MANAGER);
+        .fillDialogMenu(getChildFragmentManager(), data, Action.Location.FILE_TREE);
     return true;
   }
 
@@ -189,7 +185,7 @@ public class TreeViewFragment extends Fragment
       if (removePrefsAndTreeState) {
         PreferencesUtils.getToolsPrefs()
             .edit()
-            .putString(PreferencesUtils.KEY_RECENT_FOLDER, "")
+            .putString(SettingsManager.KEY_RECENT_FOLDER, "")
             .apply();
         savedState = null;
       }
@@ -231,7 +227,7 @@ public class TreeViewFragment extends Fragment
   public void tryOpenRecentFolder() {
     try {
       String recentFolderPath =
-          PreferencesUtils.getToolsPrefs().getString(PreferencesUtils.KEY_RECENT_FOLDER, "");
+          PreferencesUtils.getToolsPrefs().getString(SettingsManager.KEY_RECENT_FOLDER, "");
       if (!recentFolderPath.isEmpty()) {
         File recentFolder = new File(recentFolderPath);
         if (recentFolder.exists() && recentFolder.isDirectory()) {
@@ -362,6 +358,13 @@ public class TreeViewFragment extends Fragment
       binding.containerOpen.setVisibility(View.GONE);
       binding.treeView.setVisibility(View.VISIBLE);
       binding.folderOptions.setVisibility(View.VISIBLE);
+    }
+  }
+
+  public void refresh() {
+    if (treeView != null) {
+      savedState = treeView.getSaveState();
+      loadTreeView(mRoot.getValue());
     }
   }
 }

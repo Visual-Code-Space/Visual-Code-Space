@@ -70,11 +70,19 @@
 
     </LinearLayout>
 
-    <RelativeLayout
+    <LinearLayout
       android:layout_height="wrap_content"
       android:layout_width="match_parent"
       android:layout_below="@id/container_tools"
-      android:id="@+id/container_repository">
+      android:id="@+id/container_repository"
+      android:orientation="vertical">
+
+      <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressIndicator"
+        android:visibility="gone"
+        android:indeterminate="true" />
 
       <ScrollView
         android:layout_height="wrap_content"
@@ -94,7 +102,15 @@
 
       </ScrollView>
 
-    </RelativeLayout>
+      <Button
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        style="?attr/materialButtonOutlinedStyle"
+        android:text="@string/initialize_repo"
+        android:id="@+id/init_repo"
+        android:visibility="gone" />
+
+    </LinearLayout>
 
   </RelativeLayout>
 

@@ -1,14 +1,23 @@
 package com.raredev.vcspace.git.utils;
 
+import android.util.Log;
+import com.raredev.common.task.TaskExecutor;
+import com.raredev.common.util.ILogger;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import org.eclipse.jgit.api.AddCommand;
 import org.eclipse.jgit.api.DiffCommand;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.MergeCommand;
+import org.eclipse.jgit.api.PushCommand;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
@@ -19,19 +28,31 @@ import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.lib.RefUpdate;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.merge.MergeStrategy;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.RefSpec;
+import org.eclipse.jgit.transport.URIish;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.eclipse.jgit.treewalk.AbstractTreeIterator;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.eclipse.jgit.treewalk.EmptyTreeIterator;
 import org.eclipse.jgit.treewalk.TreeWalk;
 
 public class GitUtils {
+  private final String LOG_TAG = GitUtils.class.getSimpleName();
+
   private Git git;
+  private File repoPath;
+
+  public GitUtils(Git git) {
+    this.git = git;
+    this.repoPath = git.getRepository().getDirectory(); // including ".git" folder
+  }
 
   /**
    * Constructor
@@ -39,13 +60,21 @@ public class GitUtils {
    * @param repoPath The path to the Git repository
    * @throws IOException
    */
-  public GitUtils(File repoPath) throws  IOException {
-    Repository repo = new FileRepositoryBuilder().setGitDir(repoPath).build();
-    git = new Git(repo);
+  public GitUtils(File repoPath) throws IOException {
+    this.repoPath = repoPath;
+    open(repoPath);
   }
 
-  public void init(File repo) throws GitAPIException {
-    Git.init().setDirectory(repo).call();
+  public void init() throws GitAPIException {
+    Git.init().setDirectory(repoPath.getParentFile()).call();
+    ILogger.info(
+        LOG_TAG,
+        "Initialized empty Git repository in " + repoPath.getParentFile().getAbsolutePath());
+  }
+
+  private void open(File repoPath) throws IOException {
+    Repository repo = new FileRepositoryBuilder().setGitDir(repoPath).build();
+    git = new Git(repo);
   }
 
   /**
@@ -228,6 +257,10 @@ public class GitUtils {
    */
   public void add(String fileOrDirPath) throws GitAPIException {
     git.add().addFilepattern(fileOrDirPath).call();
+    Set<String> addedFiles = git.status().call().getAdded();
+    for (String file : addedFiles) {
+      ILogger.debug(LOG_TAG, "Added file: " + file);
+    }
   }
 
   /**
@@ -359,5 +392,145 @@ public class GitUtils {
       outputStream.write(System.lineSeparator().getBytes());
     }
     return outputStream.toString();
+  }
+
+  public void close() {
+    git.close();
+  }
+
+  public String getRemoteURL() {
+    String remoteURL = git.getRepository().getConfig().getString("remote", "origin", "url");
+    return remoteURL;
+  }
+
+  public String getRemoteName() throws IOException {
+    String remoteName = git.getRepository().getFullBranch();
+    if (remoteName != null) {
+      remoteName = remoteName.split("/")[1];
+    }
+    return remoteName;
+  }
+
+  public void addRemoteOrigin(String remoteRepoUrl) throws GitAPIException, URISyntaxException {
+    git.remoteAdd().setName("origin").setUri(new URIish(remoteRepoUrl)).call();
+  }
+
+  public void pushToOrigin(String branchName, String username, String password)
+      throws GitAPIException {
+    PushCommand pushCmd = git.push();
+    pushCmd
+        .setRemote("origin")
+        .setRefSpecs(new RefSpec("refs/heads/" + branchName))
+        .setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, password))
+        .setPushAll();
+    pushCmd.call();
+  }
+
+  public void pushAllToOrigin(String username, String password) throws GitAPIException {
+    PushCommand pushCmd = git.push();
+    pushCmd
+        .setRemote("origin")
+        .setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, password))
+        .setPushAll();
+    pushCmd.call();
+  }
+
+  public void renameBranch(String newBranchName) throws GitAPIException {
+    git.branchRename().setNewName(newBranchName).call();
+  }
+
+  public void renameBranchToMain() throws GitAPIException {
+    git.branchRename().setNewName("main").call();
+  }
+
+  public void addAllFiles() throws GitAPIException {
+    AddCommand addCmd = git.add();
+    addCmd.setUpdate(true);
+    addCmd.addFilepattern(".");
+    addCmd.call();
+    Set<String> addedFiles = git.status().call().getAdded();
+    for (String file : addedFiles) {
+      ILogger.debug(LOG_TAG, "Added file: " + file);
+    }
+  }
+
+  // This method is not tested
+  public void createPullRequest(
+      String username,
+      String password,
+      String remoteUrl,
+      String branchName,
+      String title,
+      String description,
+      String targetBranch)
+      throws GitAPIException, IOException {
+
+    // Set up credentials for authentication
+    UsernamePasswordCredentialsProvider credentialsProvider =
+        new UsernamePasswordCredentialsProvider(username, password);
+
+    // Create a new branch from the specified branch
+    git.checkout().setName(branchName).setCreateBranch(true).call();
+
+    // Push the changes to the remote repository
+    PushCommand pushCommand = git.push();
+    pushCommand.setCredentialsProvider(credentialsProvider);
+    pushCommand.setRemote(remoteUrl);
+    pushCommand.setPushAll();
+    pushCommand.call();
+
+    // Merge the branch into the target branch
+    MergeCommand mergeCommand = git.merge();
+    mergeCommand.include(git.getRepository().exactRef(branchName));
+    mergeCommand.setStrategy(MergeStrategy.RECURSIVE);
+    mergeCommand.setMessage(title + "\n\n" + description);
+    mergeCommand.call();
+
+    // Create a new branch for the merge commit
+    Ref head = git.getRepository().exactRef(Constants.HEAD);
+    ObjectId headId = head.getObjectId();
+    RefUpdate updateRef = git.getRepository().updateRef("refs/heads/" + targetBranch);
+    updateRef.setNewObjectId(headId);
+    updateRef.forceUpdate();
+
+    // Push the merge commit to the remote repository
+    pushCommand = git.push();
+    pushCommand.setCredentialsProvider(credentialsProvider);
+    pushCommand.setRemote(remoteUrl);
+    pushCommand.setPushAll();
+    pushCommand.call();
+  }
+
+  public String getStatusLikeTerminal() throws GitAPIException, IOException {
+    String result = "";
+
+    result += "On branch " + git.getRepository().getBranch() + "\n\n";
+    result += "Changes to be committed:\n";
+    result += "  (use \"git reset HEAD <file>...\" to unstage)\n\n";
+    result += formatFileList(getStatus().getAdded(), "new file");
+    result += formatFileList(getStatus().getChanged(), "modified");
+    result += formatFileList(getStatus().getRemoved(), "deleted");
+
+    result += "\n\nChanges not staged for commit:\n";
+    result += "  (use \"git add <file>...\" to update what will be committed)\n";
+    result += "  (use \"git checkout -- <file>...\" to discard changes in working directory)\n\n";
+    result += formatFileList(getStatus().getModified(), "modified");
+    result += formatFileList(getStatus().getMissing(), "deleted");
+
+    result += "\n\nUntracked files:\n";
+    result += "  (use \"git add <file>...\" to include in what will be committed)\n\n";
+    result += formatFileList(getStatus().getUntracked(), "untracked");
+    return result;
+  }
+
+  private String formatFileList(Set<String> files, String statusType) {
+    String result = "";
+    if (!files.isEmpty()) {
+      result += statusType + ":\n";
+      for (String file : files) {
+        result += "\t" + file + "\n";
+      }
+    }
+    return result;
   }
 }

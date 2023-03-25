@@ -4,21 +4,22 @@ import androidx.annotation.NonNull;
 
 public abstract class Action {
 
-  private Presentation presentation = new Presentation();
+  public int title;
+  public int icon;
 
-  private ActionEvent event;
+  public boolean visible;
+  public boolean enabled = true;
 
-  public void update(@NonNull ActionEvent event) {
-    this.event = event;
+  public Location location;
+
+  public void update(@NonNull ActionData data) {}
+
+  public abstract void performAction(@NonNull ActionData data);
+
+  public enum Location {
+    MAIN_TOOLBAR,
+    
+    EDITOR,
+    FILE_TREE;
   }
-
-  public final Presentation getPresentation() {
-    return presentation;
-  }
-
-  public final ActionEvent getActionEvent() {
-    return event;
-  }
-
-  public abstract void performAction();
 }

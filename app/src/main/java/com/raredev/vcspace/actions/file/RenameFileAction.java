@@ -2,8 +2,10 @@ package com.raredev.vcspace.actions.file;
 
 import android.view.LayoutInflater;
 import android.widget.EditText;
+import androidx.annotation.NonNull;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.raredev.vcspace.R;
+import com.raredev.vcspace.actions.ActionData;
 import com.raredev.vcspace.databinding.LayoutTextinputBinding;
 import com.raredev.vcspace.fragments.TreeViewFragment;
 import com.unnamed.b.atv.model.TreeNode;
@@ -17,9 +19,9 @@ public class RenameFileAction extends FileAction {
   }
 
   @Override
-  public void performAction() {
-    TreeViewFragment fragment = (TreeViewFragment) getActionEvent().getData("fragment");
-    TreeNode node = (TreeNode) getActionEvent().getData("node");
+  public void performAction(@NonNull ActionData data) {
+    TreeViewFragment fragment = (TreeViewFragment) data.get(TreeViewFragment.class);
+    TreeNode node = (TreeNode) data.get(TreeNode.class);
 
     LayoutTextinputBinding binding =
         LayoutTextinputBinding.inflate(LayoutInflater.from(fragment.requireActivity()));
@@ -40,9 +42,11 @@ public class RenameFileAction extends FileAction {
                     new File(node.getValue().getParentFile(), et_filename.getText().toString()))) {
                   TreeNode parent = node.getParent();
                   if (parent != null) {
-                    fragment.listNode(parent, () -> {
-                      fragment.expandNode(parent);
-                    });
+                    fragment.listNode(
+                        parent,
+                        () -> {
+                          fragment.expandNode(parent);
+                        });
                   }
                   fragment.observeRoot();
                 }

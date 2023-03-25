@@ -18,6 +18,10 @@
           "name": "keyword.control.log.info"
         },
         {
+          "match": "\\bDEBUG\\b",
+          "name": "keyword.control.log.debug"
+        },
+        {
           "match": "\\bWARNING\\b",
           "name": "keyword.control.log.warning"
         },
@@ -35,6 +39,15 @@
           "captures": {
             "0": {
               "name": "constant.language.log.warning.line"
+            }
+          }
+        },
+        {
+          "name": "log.line.debug",
+          "match": "^(.*?\\bDEBUG\\b.*?)$",
+          "captures": {
+            "0": {
+              "name": "constant.language.log.debug.line"
             }
           }
         },
@@ -96,6 +109,15 @@
       "captures": {
         "0": {
           "name": "constant.language.log.warning"
+        }
+      }
+    },
+    {
+      "name": "keyword.control.log.debug",
+      "match": "\\bDEBUG\\b",
+      "captures": {
+        "0": {
+          "name": "constant.language.log.debug"
         }
       }
     },

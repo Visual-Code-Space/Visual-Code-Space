@@ -7,8 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import com.blankj.utilcode.util.ThreadUtils;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.raredev.common.task.TaskExecutor;
 import com.raredev.common.util.DialogUtils;
 import com.raredev.vcspace.R;
@@ -16,7 +18,7 @@ import com.raredev.vcspace.databinding.FragmentGitToolsBinding;
 import com.raredev.vcspace.events.FileEvent;
 import com.raredev.vcspace.git.CloneRepository;
 import com.raredev.vcspace.git.utils.GitUtils;
-import com.raredev.vcspace.util.ILogger;
+import com.raredev.common.util.ILogger;
 import com.raredev.vcspace.util.ViewUtils;
 import java.io.File;
 import java.io.IOException;
@@ -70,6 +72,36 @@ public class GitToolsFragment extends Fragment {
         v -> {
           expandCollapseView();
         });
+    binding.initRepo.setOnClickListener(
+        v -> {
+          if (repoPath != null) {
+            AlertDialog progress =
+                DialogUtils.newProgressDialog(
+                        requireContext(),
+                        getString(R.string.initializing),
+                        getString(R.string.initializing_message))
+                    .create();
+            progress.setCancelable(false);
+            progress.show();
+            TaskExecutor.executeAsyncProvideError(
+                () -> {
+                  repository = new GitUtils(repoPath);
+                  repository.init();
+                  // repository.renameBranchToMain();
+                  repository.add(".");
+                  ThreadUtils.runOnUiThread(
+                      () -> {
+                        loadRepositoryInformationsTask();
+                        ((ToolsFragment) getParentFragment()).treeViewFragment.refresh();
+                      });
+                  return null;
+                },
+                (result, error) -> {
+                  progress.cancel();
+                  if (error != null) ILogger.error(LOG_TAG, error.toString());
+                });
+          }
+        });
     return binding.getRoot();
   }
 
@@ -106,7 +138,7 @@ public class GitToolsFragment extends Fragment {
   public void openRepository(FileEvent event) {
     if (event.getFile() != null) {
       repoPath = new File(event.getFile(), ".git");
-      doOpenRepository();
+      if (repoPath.exists()) doOpenRepository();
     } else {
       repoPath = null;
       repository = null;
@@ -117,9 +149,6 @@ public class GitToolsFragment extends Fragment {
   private void doOpenRepository() {
     try {
       repository = new GitUtils(repoPath);
-      if (!repoPath.exists()) {
-        //repository.init(repoPath.getParentFile());
-      }
       ILogger.info(LOG_TAG, "Opened repository");
     } catch (IOException ioe) {
       ILogger.error(LOG_TAG, Log.getStackTraceString(ioe));
@@ -132,23 +161,32 @@ public class GitToolsFragment extends Fragment {
     }
     if (!repoPath.exists()) {
       binding.modifications.setText(R.string.error_this_folder_is_not_a_repository);
+      binding.initRepo.setVisibility(View.VISIBLE);
+      ILogger.warning(LOG_TAG, "Current folder is not a git repository.");
       return;
     }
+    binding.initRepo.setVisibility(View.GONE);
     binding.modifications.setText(R.string.loading);
+    updateProgress(binding.modifications.getText().toString());
+
     TaskExecutor.executeAsyncProvideError(
         () -> {
           try {
-            String info = loadRepositoryInformations();
-
-            ThreadUtils.runOnUiThread(() -> binding.modifications.setText(info));
-          } catch (GitAPIException gite) {
-            ILogger.error(LOG_TAG, Log.getStackTraceString(gite));
+            String info = repository.getStatusLikeTerminal();
+            ThreadUtils.runOnUiThread(
+                () -> {
+                  binding.modifications.setText(info);
+                  updateProgress(binding.modifications.getText().toString());
+                });
+          } catch (GitAPIException | IOException e) {
+            ILogger.error(LOG_TAG, Log.getStackTraceString(e));
           }
           return null;
         },
         (result, error) -> {
           if (error != null) {
             binding.modifications.setText(error.toString());
+            updateProgress(binding.modifications.getText().toString());
           }
         });
   }
@@ -194,5 +232,16 @@ public class GitToolsFragment extends Fragment {
       binding.containerTools.setVisibility(View.VISIBLE);
       binding.containerRepository.setVisibility(View.GONE);
     }
+  }
+
+  private void updateProgress(String info) {
+    binding.progressIndicator.setVisibility(
+        info.equals(getString(R.string.loading)) ? View.VISIBLE : View.GONE);
+  }
+
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+    if (repository != null) repository.close();
   }
 }

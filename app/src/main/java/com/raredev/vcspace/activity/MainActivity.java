@@ -10,24 +10,26 @@ import android.view.View;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.core.view.GravityCompat;
 import androidx.lifecycle.ViewModelProvider;
 import com.blankj.utilcode.util.ToastUtils;
+import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.raredev.common.util.FileUtil;
+import com.raredev.common.util.ILogger;
 import com.raredev.common.util.Utils;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.SimpleExecuter;
+import com.raredev.vcspace.actions.Action;
 import com.raredev.vcspace.actions.ActionData;
 import com.raredev.vcspace.actions.ActionManager;
-import com.raredev.vcspace.actions.ActionPlaces;
 import com.raredev.vcspace.databinding.ActivityMainBinding;
 import com.raredev.vcspace.fragments.ToolsFragment;
 import com.raredev.vcspace.ui.editor.CodeEditorView;
 import com.raredev.vcspace.ui.editor.Symbol;
 import com.raredev.vcspace.ui.editor.manager.EditorManager;
 import com.raredev.vcspace.ui.viewmodel.EditorViewModel;
-import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.util.PreferencesUtils;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import io.github.rosemoe.sora.widget.CodeEditor;
@@ -36,28 +38,18 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class MainActivity extends VCSpaceActivity
-    implements SharedPreferences.OnSharedPreferenceChangeListener {
-  private final String LOG_TAG = MainActivity.class.getSimpleName();
+    implements SharedPreferences.OnSharedPreferenceChangeListener, NavigationView.OnNavigationItemSelectedListener{
+  protected final String LOG_TAG = MainActivity.class.getSimpleName();
   public ActivityMainBinding binding;
 
   public EditorViewModel viewModel;
   public EditorManager editorManager;
 
-  private MenuItem undo;
-  private MenuItem redo;
+  public final Runnable updateMenuItem = () -> invalidateOptionsMenu();
 
-  public final Runnable updateMenuItem =
-      () -> {
-        CodeEditorView editor = editorManager.getCurrentEditor();
-        if (editor != null) {
-          undo.setEnabled(editor.canUndo());
-          redo.setEnabled(editor.canRedo());
-        }
-      };
-
-  private ActivityResultLauncher<Intent> launcher;
-  private ActivityResultLauncher<String> createFile;
-  private ActivityResultLauncher<String> pickFile;
+  public ActivityResultLauncher<Intent> launcher;
+  public ActivityResultLauncher<String> createFile;
+  public ActivityResultLauncher<String> pickFile;
 
   @Override
   public View getLayout() {
@@ -68,6 +60,7 @@ public class MainActivity extends VCSpaceActivity
   @Override
   public void onCreate() {
     setSupportActionBar(binding.toolbar);
+    binding.navEnd.setNavigationItemSelectedListener(this);
     ActionBarDrawerToggle toggle =
         new ActionBarDrawerToggle(
             this, binding.drawerLayout, binding.toolbar, R.string.open, R.string.close);
@@ -86,10 +79,11 @@ public class MainActivity extends VCSpaceActivity
           @Override
           public void onTabReselected(TabLayout.Tab p1) {
             ActionData data = new ActionData();
-            data.put("activity", MainActivity.this);
+            data.put(MainActivity.class, MainActivity.this);
 
-            ActionManager.getInstance()
-                .fillMenu(MainActivity.this, p1.view, data, ActionPlaces.EDITOR);
+            PopupMenu pm = new PopupMenu(MainActivity.this, p1.view);
+            ActionManager.getInstance().fillMenu(pm.getMenu(), data, Action.Location.EDITOR);
+            pm.show();
           }
 
           @Override
@@ -104,8 +98,7 @@ public class MainActivity extends VCSpaceActivity
           }
         });
 
-    ThemeRegistry.getInstance()
-              .setTheme(Utils.isDarkMode(this) ? "vcspace_dark" : "vcspace_light");
+    ThemeRegistry.getInstance().setTheme(Utils.isDarkMode(this) ? "vcspace_dark" : "vcspace_light");
     registerResultActivity();
     observeViewModel();
   }
@@ -117,50 +110,19 @@ public class MainActivity extends VCSpaceActivity
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    getMenuInflater().inflate(R.menu.main_menu, menu);
-    undo = menu.findItem(R.id.menu_undo);
-    redo = menu.findItem(R.id.menu_redo);
+    ActionData data = new ActionData();
+    data.put(MainActivity.class, this);
+    data.put(EditorManager.class, editorManager);
+
+    ActionManager.getInstance().fillMenu(menu, data, Action.Location.MAIN_TOOLBAR);
     return super.onCreateOptionsMenu(menu);
   }
 
   @Override
-  public boolean onPrepareOptionsMenu(Menu menu) {
-    if (!viewModel.getOpenedFiles().isEmpty()) {
-      menu.findItem(R.id.menu_save).setEnabled(true);
-      menu.findItem(R.id.menu_save_as).setEnabled(true);
-      menu.findItem(R.id.menu_save_all).setEnabled(true);
-      menu.findItem(R.id.menu_undo).setVisible(true);
-      menu.findItem(R.id.menu_redo).setVisible(true);
-      menu.findItem(R.id.menu_edit).setVisible(true);
-
-      File file = viewModel.getCurrentFile();
-      if (file != null) {
-        menu.findItem(R.id.menu_compile).setVisible(SimpleExecuter.isExecutable(file));
-      }
-      updateMenuItem.run();
-    } else {
-      menu.findItem(R.id.menu_save).setEnabled(false);
-      menu.findItem(R.id.menu_save_as).setEnabled(false);
-      menu.findItem(R.id.menu_save_all).setEnabled(false);
-      menu.findItem(R.id.menu_undo).setVisible(false);
-      menu.findItem(R.id.menu_redo).setVisible(false);
-      menu.findItem(R.id.menu_compile).setVisible(false);
-      menu.findItem(R.id.menu_edit).setVisible(false);
-    }
-    return super.onPrepareOptionsMenu(menu);
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
+  public boolean onNavigationItemSelected(MenuItem item) {
     int id = item.getItemId();
     final CodeEditorView editor = editorManager.getCurrentEditor();
     switch (id) {
-      case R.id.menu_undo:
-        editor.undo();
-        break;
-      case R.id.menu_redo:
-        editor.redo();
-        break;
       case R.id.menu_save:
         editorManager.getCurrentEditor().save();
         ToastUtils.showShort(R.string.saved);
@@ -176,8 +138,7 @@ public class MainActivity extends VCSpaceActivity
         new SimpleExecuter(this, viewModel.getCurrentFile());
         break;
       case R.id.menu_format:
-        // editor.formatCodeAsync();
-        ToastUtils.showShort("Disabled action");
+        editor.formatCodeAsync();
         break;
       case R.id.menu_search:
         binding.searcher.showAndHide();
@@ -211,8 +172,8 @@ public class MainActivity extends VCSpaceActivity
 
   @Override
   public void onBackPressed() {
-    if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-      binding.drawerLayout.closeDrawer(GravityCompat.START);
+    if (binding.drawerLayout.isOpen()) {
+      binding.drawerLayout.closeDrawers();
       return;
     }
     if (binding.searcher.isShowing) {

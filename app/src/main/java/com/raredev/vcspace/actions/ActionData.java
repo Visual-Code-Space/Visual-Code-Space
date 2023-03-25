@@ -4,13 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ActionData<T> {
-  private Map<String, T> data = new HashMap<>();
+  private Map<Class, T> data = new HashMap<>();
 
-  public void put(String key, T classe) {
+  public void put(Class key, T classe) {
     data.put(key, classe);
   }
 
-  public T get(String key) {
+  public T get(Class key) {
     return data.get(key);
   }
 

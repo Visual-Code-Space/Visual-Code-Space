@@ -46,15 +46,17 @@
       <LinearLayout
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:orientation="vertical"
         android:visibility="gone"
+        android:orientation="vertical"
         android:id="@+id/layout">
 
         <ViewFlipper
           android:layout_height="match_parent"
           android:layout_width="match_parent"
           android:layout_weight="1"
-          android:id="@+id/container"/>
+          android:id="@+id/container">
+
+        </ViewFlipper>
 
         <com.google.android.material.divider.MaterialDivider
           android:layout_height="1px"
@@ -94,10 +96,18 @@
     <androidx.fragment.app.FragmentContainerView
       android:layout_height="match_parent"
       android:layout_width="match_parent"
-      android:tag="tools_fragment"
       android:name="com.raredev.vcspace.fragments.ToolsFragment"
+      android:tag="tools_fragment"
       android:id="@+id/tools_fragment" />
 
   </com.google.android.material.navigation.NavigationView>
+
+  <com.google.android.material.navigation.NavigationView
+    android:id="@+id/navEnd"
+    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    app:headerLayout="@layout/layout_nav_header"
+    app:menu="@menu/menu_main_nav"
+    android:layout_gravity="end" />
 
 </com.raredev.vcspace.ui.CustomDrawerLayout>

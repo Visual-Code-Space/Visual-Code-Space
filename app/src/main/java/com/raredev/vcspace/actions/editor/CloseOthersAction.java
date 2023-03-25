@@ -1,15 +1,15 @@
 package com.raredev.vcspace.actions.editor;
 
+import androidx.annotation.NonNull;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.actions.ActionData;
-import com.raredev.vcspace.actions.ActionEvent;
 import com.raredev.vcspace.activity.MainActivity;
 
 public class CloseOthersAction extends EditorAction {
 
   @Override
-  public void performAction() {
-    var main = (MainActivity) getActionEvent().getData("activity");
+  public void performAction(@NonNull ActionData data) {
+    var main = (MainActivity) data.get(MainActivity.class);
     main.editorManager.closeOthers();
 
     main.invalidateOptionsMenu();

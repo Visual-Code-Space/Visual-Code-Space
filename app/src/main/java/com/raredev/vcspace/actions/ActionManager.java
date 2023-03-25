@@ -3,9 +3,11 @@ package com.raredev.vcspace.actions;
 import android.content.Context;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.FragmentManager;
+import com.blankj.utilcode.util.ToastUtils;
 import com.raredev.vcspace.fragments.OptionsSheetFragment;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,43 +38,59 @@ public class ActionManager {
     actions.clear();
   }
 
-  public void fillMenu(Context context, View v, ActionData data, String place) {
-    PopupMenu popupMenu = new PopupMenu(context, v);
+  public void fillMenu(Menu menu, ActionData data, Action.Location location) {
     for (Action action : actions.values()) {
-      ActionEvent event = new ActionEvent(data, action.getPresentation(), place);
-      action.update(event);
+      action.update(data);
+      if (action.visible && action.location == location) {
+        if (action instanceof ActionGroup) {
+          var actionGroup = (ActionGroup) action;
 
-      if (event.getPresentation().isVisible()) {
-        fillMenu(popupMenu.getMenu(), action, event);
+          MenuItem menuItem = menu.add(actionGroup.title);
+          
+          //SubMenu subMenu = menuItem.getSubMenu().add(actionGroup.title);
+          menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+          menuItem.setIcon(actionGroup.icon);
+          ToastUtils.showShort("teste");
+          Action[] children = actionGroup.getChildren(data);
+          if (children != null) {
+            for (Action child : children) {
+              fillMenu(menuItem.getSubMenu(), child, data);
+            }
+          }
+          return;
+        }
+
+        fillMenu(menu, action, data);
       }
     }
-    popupMenu.show();
   }
 
-  private void fillMenu(Menu menu, Action action, ActionEvent event) {
-    Presentation presentation = event.getPresentation();
+  private void fillMenu(Menu menu, Action action, ActionData data) {
+    MenuItem menuItem = menu.add(action.title);
+    menuItem.setTitle(action.title);
+    menuItem.setIcon(action.icon);
+    menuItem.setEnabled(action.enabled);
 
-    MenuItem menuItem = menu.add(presentation.getTitle());
-
-    if (presentation.getIcon() != -1) {
-      menuItem.setIcon(presentation.getIcon());
+    if (menuItem.getIcon() != null) {
+      menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+    } else {
+      menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
     }
-    menuItem.setTitle(presentation.getTitle());
     menuItem.setOnMenuItemClickListener(
         item -> {
-          action.performAction();
+          action.performAction(data);
           return true;
         });
   }
 
-  public void fillDialogMenu(FragmentManager fragmentManager, ActionData data, String place) {
+  public void fillDialogMenu(
+      FragmentManager fragmentManager, ActionData data, Action.Location location) {
     OptionsSheetFragment options = OptionsSheetFragment.createSheet(data);
 
     for (Action action : actions.values()) {
-      ActionEvent event = new ActionEvent(data, action.getPresentation(), place);
-      action.update(event);
+      action.update(data);
 
-      if (event.getPresentation().isVisible()) {
+      if (action.visible && action.location == location) {
         options.addAction(action);
       }
     }

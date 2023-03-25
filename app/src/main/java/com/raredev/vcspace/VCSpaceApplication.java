@@ -1,9 +1,13 @@
 package com.raredev.vcspace;
 
 import android.app.Application;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.util.Log;
 import androidx.appcompat.app.AppCompatDelegate;
+import com.raredev.common.util.ILogger;
 import com.raredev.vcspace.actions.ActionManager;
 import com.raredev.vcspace.actions.editor.CloseAllAction;
 import com.raredev.vcspace.actions.editor.CloseFileAction;
@@ -13,22 +17,25 @@ import com.raredev.vcspace.actions.file.CreateFileAction;
 import com.raredev.vcspace.actions.file.CreateFolderAction;
 import com.raredev.vcspace.actions.file.DeleteFileAction;
 import com.raredev.vcspace.actions.file.RenameFileAction;
+import com.raredev.vcspace.actions.main.OpenDrawerAction;
+import com.raredev.vcspace.actions.main.text.RedoAction;
+import com.raredev.vcspace.actions.main.text.UndoAction;
 import com.raredev.vcspace.fragments.SettingsFragment;
-import com.raredev.vcspace.util.ILogger;
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.model.ThemeModel;
 import io.github.rosemoe.sora.langs.textmate.registry.provider.AssetsFileResolver;
-import java.util.concurrent.CompletableFuture;
 import org.eclipse.tm4e.core.registry.IThemeSource;
 
 public class VCSpaceApplication extends Application {
   public static Context appContext;
+  private ShutdownReceiver shutdownReceiver;
 
   @Override
   public void onCreate() {
     super.onCreate();
+    registerShutdownReceiver();
     appContext = this;
     AppCompatDelegate.setDefaultNightMode(SettingsFragment.getThemeFromPrefs());
     FileProviderRegistry.getInstance().addFileProvider(new AssetsFileResolver(getAssets()));
@@ -38,9 +45,20 @@ public class VCSpaceApplication extends Application {
     loadTextMate();
   }
 
+  @Override
+  public void onTerminate() {
+    unregisterShutdownReceiver();
+    super.onTerminate();
+  }
+
   private void registerActions() {
     ActionManager manager = ActionManager.getInstance();
     manager.clear();
+    // Main toolbar
+    manager.registerAction(new UndoAction());
+    manager.registerAction(new RedoAction());
+    manager.registerAction(new OpenDrawerAction());
+    
     // Editor
     manager.registerAction(new CloseFileAction());
     manager.registerAction(new CloseOthersAction());
@@ -79,6 +97,23 @@ public class VCSpaceApplication extends Application {
     } catch (Exception e) {
       ILogger.error(
           "LanguageLoader", "Error when trying to load languages: \t" + Log.getStackTraceString(e));
+    }
+  }
+
+  private void registerShutdownReceiver() {
+    shutdownReceiver = new ShutdownReceiver();
+    IntentFilter intentFilter = new IntentFilter(Intent.ACTION_SHUTDOWN);
+    registerReceiver(shutdownReceiver, intentFilter);
+  }
+
+  private void unregisterShutdownReceiver() {
+    unregisterReceiver(shutdownReceiver);
+  }
+
+  private static class ShutdownReceiver extends BroadcastReceiver {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+      ILogger.clear();
     }
   }
 }

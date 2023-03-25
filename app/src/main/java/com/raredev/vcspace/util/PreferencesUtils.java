@@ -1,16 +1,16 @@
 package com.raredev.vcspace.util;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import com.raredev.vcspace.VCSpaceApplication;
 import com.raredev.vcspace.R;
+import com.raredev.vcspace.managers.SettingsManager;
 
 public class PreferencesUtils {
-  public static final String KEY_RECENT_FOLDER = "recentFolderPath";
 
   public static SharedPreferences getToolsPrefs() {
-    return VCSpaceApplication.appContext.getSharedPreferences("tools", Activity.MODE_PRIVATE);
+    return VCSpaceApplication.appContext.getSharedPreferences(SettingsManager.KEY_TOOLS_PREFERENCE, Context.MODE_PRIVATE);
   }
 
   public static SharedPreferences getDefaultPrefs() {
@@ -18,28 +18,35 @@ public class PreferencesUtils {
   }
 
   /*
+   * Returns if the user wants to use dynamic theme(Material3)
+   */
+  public static boolean useDynamicColors() {
+    return getDefaultPrefs().getBoolean(SettingsManager.KEY_DYNAMIC_COLORS, true);
+  }
+
+  /*
    * Returns whether the user wants the app to open recent files and folders
    */
   public static boolean useOpenRecentsAutomatically() {
-    return getDefaultPrefs().getBoolean("pref_openrecentsautomatically", false);
+    return getDefaultPrefs().getBoolean(SettingsManager.KEY_OPEN_RECENT, false);
   }
 
   /*
    * Returns the user-selected font value
    */
   public static int getEditorTextSize() {
-    return getDefaultPrefs().getInt("pref_editortextsize", 14);
+    return getDefaultPrefs().getInt(SettingsManager.KEY_EDITOR_TEXT_SIZE, 14);
   }
 
   public static int getEditorTABSize() {
-    return Integer.valueOf(getDefaultPrefs().getString("pref_editortabsize", "4"));
+    return Integer.valueOf(getDefaultPrefs().getString(SettingsManager.KEY_EDITOR_TAB_SIZE, "4"));
   }
 
   /*
    * Returns the font the user wants to use in the editor
    */
   public static int getSelectedFont() {
-    String selectedFont = getDefaultPrefs().getString("pref_editorfont", "firacode");
+    String selectedFont = getDefaultPrefs().getString(SettingsManager.KEY_EDITOR_FONT, "firacode");
     return getFont(selectedFont);
   }
 
@@ -47,14 +54,14 @@ public class PreferencesUtils {
    * Returns whether the user wants to use spaces instead of tabs(\t)
    */
   public static boolean useUseSpaces() {
-    return getDefaultPrefs().getBoolean("pref_usespaces", true);
+    return getDefaultPrefs().getBoolean(SettingsManager.KEY_USE_SPACES, true);
   }
 
   /*
    * Returns whether the user wants to quickly delete empty lines
    */
   public static boolean useDeleteEmptyLineFast() {
-    return getDefaultPrefs().getBoolean("pref_deleteemptylinefast", true);
+    return getDefaultPrefs().getBoolean(SettingsManager.KEY_DELETE_EMPTY_LINE_FAST, true);
   }
 
   public static String getTab() {

@@ -1,7 +1,9 @@
 package com.raredev.vcspace.actions.file;
 
+import androidx.annotation.NonNull;
 import com.blankj.utilcode.util.ClipboardUtils;
 import com.raredev.vcspace.R;
+import com.raredev.vcspace.actions.ActionData;
 import com.unnamed.b.atv.model.TreeNode;
 import java.io.File;
 
@@ -13,8 +15,8 @@ public class CopyPathAction extends FileAction {
   }
 
   @Override
-  public void performAction() {
-    TreeNode node = (TreeNode) getActionEvent().getData("node");
+  public void performAction(@NonNull ActionData data) {
+    TreeNode node = (TreeNode) data.get(TreeNode.class);
     String path = node.getValue().getAbsolutePath();
     
     ClipboardUtils.copyText(path);

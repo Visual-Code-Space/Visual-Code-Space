@@ -1,36 +1,32 @@
 package com.raredev.vcspace.actions.file;
 
 import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import com.raredev.vcspace.actions.Action;
-import com.raredev.vcspace.actions.ActionEvent;
-import com.raredev.vcspace.actions.ActionPlaces;
-import com.raredev.vcspace.actions.Presentation;
+import com.raredev.vcspace.actions.ActionData;
 import com.unnamed.b.atv.model.TreeNode;
 import java.io.File;
 
 public abstract class FileAction extends Action {
 
+  public FileAction() {
+    location = Action.Location.FILE_TREE;
+  }
+
   @Override
-  public void update(ActionEvent event) {
-    super.update(event);
-    Presentation presentation = event.getPresentation();
-    presentation.setVisible(false);
+  public void update(@NonNull ActionData data) {
+    visible = false;
 
-    if (!event.getPlace().equals(ActionPlaces.FILE_MANAGER)) {
-      return;
-    }
-
-    TreeNode node = (TreeNode) event.getData("node");
+    TreeNode node = (TreeNode) data.get(TreeNode.class);
 
     if (node == null) {
       return;
     }
 
-    presentation.setVisible(isApplicable(node.getValue()));
-
-    presentation.setTitle(getTitle());
-    presentation.setIcon(getIcon());
+    visible = isApplicable(node.getValue());
+    title = getTitle();
+    icon = getIcon();
   }
 
   @DrawableRes

@@ -1,22 +1,17 @@
 package com.raredev.vcspace.ui.editor.manager;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.widget.ViewFlipper;
 import androidx.core.view.GravityCompat;
-import androidx.documentfile.provider.DocumentFile;
 import androidx.drawerlayout.widget.DrawerLayout;
 import com.blankj.utilcode.util.ToastUtils;
 import com.google.android.material.tabs.TabLayout;
-import com.raredev.common.util.DialogUtils;
-import com.raredev.common.util.FileUtil;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.activity.MainActivity;
 import com.raredev.vcspace.databinding.ActivityMainBinding;
+import com.raredev.common.util.ILogger;
 import com.raredev.vcspace.ui.editor.CodeEditorView;
 import com.raredev.vcspace.ui.viewmodel.EditorViewModel;
-import com.raredev.vcspace.util.ILogger;
 import java.io.File;
 
 public class EditorManager {

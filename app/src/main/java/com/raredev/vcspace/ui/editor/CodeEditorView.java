@@ -6,11 +6,11 @@ import android.os.Looper;
 import android.util.Log;
 import androidx.core.content.res.ResourcesCompat;
 import com.raredev.common.util.FileUtil;
+import com.raredev.common.util.ILogger;
 import com.raredev.vcspace.models.LanguageScope;
 import com.raredev.vcspace.ui.editor.textmate.DynamicTextMateColorScheme;
 import com.raredev.vcspace.ui.language.html.HtmlLanguage;
 import com.raredev.vcspace.ui.language.java.JavaLanguage;
-import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.util.PreferencesUtils;
 import io.github.rosemoe.sora.event.ContentChangeEvent;
 import io.github.rosemoe.sora.lang.EmptyLanguage;
@@ -30,6 +30,7 @@ public class CodeEditorView extends CodeEditor {
     super(context);
     this.file = file;
     setHighlightCurrentBlock(true);
+    getProps().autoCompletionOnComposing = true;
     setColorScheme(createScheme());
     setLineSeparator(LineSeparator.LF);
 

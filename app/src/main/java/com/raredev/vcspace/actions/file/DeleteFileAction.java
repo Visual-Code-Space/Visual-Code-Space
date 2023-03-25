@@ -1,11 +1,13 @@
 package com.raredev.vcspace.actions.file;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.raredev.common.task.TaskExecutor;
 import com.raredev.common.util.DialogUtils;
 import com.raredev.common.util.FileUtil;
 import com.raredev.vcspace.R;
+import com.raredev.vcspace.actions.ActionData;
 import com.raredev.vcspace.activity.MainActivity;
 import com.raredev.vcspace.fragments.TreeViewFragment;
 import com.unnamed.b.atv.model.TreeNode;
@@ -19,9 +21,9 @@ public class DeleteFileAction extends FileAction {
   }
 
   @Override
-  public void performAction() {
-    TreeViewFragment fragment = (TreeViewFragment) getActionEvent().getData("fragment");
-    TreeNode node = (TreeNode) getActionEvent().getData("node");
+  public void performAction(@NonNull ActionData data) {
+    TreeViewFragment fragment = (TreeViewFragment) data.get(TreeViewFragment.class);
+    TreeNode node = (TreeNode) data.get(TreeNode.class);
 
     new MaterialAlertDialogBuilder(fragment.requireActivity())
         .setTitle(R.string.delete)
