@@ -29,7 +29,6 @@ import com.raredev.vcspace.ui.editor.CodeEditorView;
 import com.raredev.vcspace.ui.editor.Symbol;
 import com.raredev.vcspace.ui.editor.manager.EditorManager;
 import com.raredev.vcspace.ui.viewmodel.EditorViewModel;
-import com.raredev.vcspace.util.ILogger;
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
