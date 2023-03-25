@@ -14,7 +14,7 @@ import com.raredev.common.util.FileUtil;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.activity.MainActivity;
 import com.raredev.vcspace.databinding.ActivityMainBinding;
-import com.raredev.vcspace.util.ILogger;
+import com.raredev.common.util.ILogger;
 import com.raredev.vcspace.ui.editor.CodeEditorView;
 import com.raredev.vcspace.ui.viewmodel.EditorViewModel;
 import java.io.File;

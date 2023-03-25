@@ -9,7 +9,7 @@
   <string name="close_all">Close all</string>
   <string name="open_a_file">Swipe right for files!</string>
   <string name="refresh">Refresh</string>
-  <string name="loading">Loading..</string>
+  <string name="loading">Loading...</string>
   <string name="empty">Empty</string>
   <string name="yes">Yes</string>
   <string name="no">No</string>
@@ -42,7 +42,7 @@
   <string name="existing_file">A file with this name already exists!</string>
   <string name="delete">Delete</string>
   <string name="delete_message">Are you sure you want to delete %1$s?</string>
-  <string name="deleting">Deleting</string>
+  <string name="deleting">Deleting...</string>
   <string name="deleting_plase_wait">Deleting please wait.</string>
   <string name="create">Create</string>
   <string name="cancel">Cancel</string>
@@ -80,6 +80,8 @@
 	<string name="title">TITLE</string>
 	<string name="pull_request_description">Pull Request Description</string>
 	<string name="create_as_draft">Create as draft</string>
+	<string name="initializing">Initializing...</string>
+	<string name="initializing_message">Initializing git repository please wait.</string>
 
   <!-- Settings String -->
   <string name="application">Application</string>

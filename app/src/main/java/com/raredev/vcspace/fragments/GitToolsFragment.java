@@ -7,8 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import com.blankj.utilcode.util.ThreadUtils;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.raredev.common.task.TaskExecutor;
 import com.raredev.common.util.DialogUtils;
 import com.raredev.vcspace.R;
@@ -16,7 +18,7 @@ import com.raredev.vcspace.databinding.FragmentGitToolsBinding;
 import com.raredev.vcspace.events.FileEvent;
 import com.raredev.vcspace.git.CloneRepository;
 import com.raredev.vcspace.git.utils.GitUtils;
-import com.raredev.vcspace.util.ILogger;
+import com.raredev.common.util.ILogger;
 import com.raredev.vcspace.util.ViewUtils;
 import java.io.File;
 import java.io.IOException;
@@ -72,13 +74,32 @@ public class GitToolsFragment extends Fragment {
         });
     binding.initRepo.setOnClickListener(
         v -> {
-          if (repository != null && repoPath != null) {
-            try {
-              repository.init(repoPath.getParentFile());
-              loadRepositoryInformationsTask();
-            } catch (GitAPIException e) {
-              e.printStackTrace();
-            }
+          if (repoPath != null) {
+            AlertDialog progress =
+                DialogUtils.newProgressDialog(
+                        requireContext(),
+                        getString(R.string.initializing),
+                        getString(R.string.initializing_message))
+                    .create();
+            progress.setCancelable(false);
+            progress.show();
+            TaskExecutor.executeAsyncProvideError(
+                () -> {
+                  repository = new GitUtils(repoPath);
+                  repository.init();
+                  // repository.renameBranchToMain();
+                  repository.add(".");
+                  ThreadUtils.runOnUiThread(
+                      () -> {
+                        loadRepositoryInformationsTask();
+                        ((ToolsFragment) getParentFragment()).treeViewFragment.refresh();
+                      });
+                  return null;
+                },
+                (result, error) -> {
+                  progress.cancel();
+                  if (error != null) ILogger.error(LOG_TAG, error.toString());
+                });
           }
         });
     return binding.getRoot();
@@ -117,7 +138,7 @@ public class GitToolsFragment extends Fragment {
   public void openRepository(FileEvent event) {
     if (event.getFile() != null) {
       repoPath = new File(event.getFile(), ".git");
-      doOpenRepository();
+      if (repoPath.exists()) doOpenRepository();
     } else {
       repoPath = null;
       repository = null;
@@ -151,15 +172,14 @@ public class GitToolsFragment extends Fragment {
     TaskExecutor.executeAsyncProvideError(
         () -> {
           try {
-            String info = repository.getStatusAsString();
-
+            String info = repository.getStatusLikeTerminal();
             ThreadUtils.runOnUiThread(
                 () -> {
                   binding.modifications.setText(info);
                   updateProgress(binding.modifications.getText().toString());
                 });
-          } catch (GitAPIException gite) {
-            ILogger.error(LOG_TAG, Log.getStackTraceString(gite));
+          } catch (GitAPIException | IOException e) {
+            ILogger.error(LOG_TAG, Log.getStackTraceString(e));
           }
           return null;
         },
@@ -217,5 +237,11 @@ public class GitToolsFragment extends Fragment {
   private void updateProgress(String info) {
     binding.progressIndicator.setVisibility(
         info.equals(getString(R.string.loading)) ? View.VISIBLE : View.GONE);
+  }
+
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+    if (repository != null) repository.close();
   }
 }

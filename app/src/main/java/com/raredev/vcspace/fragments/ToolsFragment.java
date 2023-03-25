@@ -24,7 +24,7 @@ import com.raredev.vcspace.activity.MainActivity;
 import com.raredev.vcspace.adapters.ToolsPagerAdapter;
 import com.raredev.vcspace.databinding.FragmentToolsBinding;
 import com.raredev.vcspace.managers.SettingsManager;
-import com.raredev.vcspace.util.ILogger;
+import com.raredev.common.util.ILogger;
 import com.raredev.vcspace.util.PreferencesUtils;
 import java.io.File;
 

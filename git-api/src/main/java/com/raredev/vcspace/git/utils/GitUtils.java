@@ -1,13 +1,19 @@
 package com.raredev.vcspace.git.utils;
 
+import android.util.Log;
+import com.raredev.common.task.TaskExecutor;
+import com.raredev.common.util.ILogger;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import org.eclipse.jgit.api.AddCommand;
 import org.eclipse.jgit.api.DiffCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.MergeCommand;
@@ -30,6 +36,7 @@ import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.RefSpec;
+import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.eclipse.jgit.treewalk.AbstractTreeIterator;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
@@ -37,7 +44,15 @@ import org.eclipse.jgit.treewalk.EmptyTreeIterator;
 import org.eclipse.jgit.treewalk.TreeWalk;
 
 public class GitUtils {
+  private final String LOG_TAG = GitUtils.class.getSimpleName();
+
   private Git git;
+  private File repoPath;
+
+  public GitUtils(Git git) {
+    this.git = git;
+    this.repoPath = git.getRepository().getDirectory(); // including ".git" folder
+  }
 
   /**
    * Constructor
@@ -46,12 +61,20 @@ public class GitUtils {
    * @throws IOException
    */
   public GitUtils(File repoPath) throws IOException {
-    Repository repo = new FileRepositoryBuilder().setGitDir(repoPath).build();
-    git = new Git(repo);
+    this.repoPath = repoPath;
+    open(repoPath);
   }
 
-  public void init(File repo) throws GitAPIException {
-    Git.init().setDirectory(repo).call();
+  public void init() throws GitAPIException {
+    Git.init().setDirectory(repoPath.getParentFile()).call();
+    ILogger.info(
+        LOG_TAG,
+        "Initialized empty Git repository in " + repoPath.getParentFile().getAbsolutePath());
+  }
+
+  private void open(File repoPath) throws IOException {
+    Repository repo = new FileRepositoryBuilder().setGitDir(repoPath).build();
+    git = new Git(repo);
   }
 
   /**
@@ -234,6 +257,10 @@ public class GitUtils {
    */
   public void add(String fileOrDirPath) throws GitAPIException {
     git.add().addFilepattern(fileOrDirPath).call();
+    Set<String> addedFiles = git.status().call().getAdded();
+    for (String file : addedFiles) {
+      ILogger.debug(LOG_TAG, "Added file: " + file);
+    }
   }
 
   /**
@@ -384,6 +411,50 @@ public class GitUtils {
     return remoteName;
   }
 
+  public void addRemoteOrigin(String remoteRepoUrl) throws GitAPIException, URISyntaxException {
+    git.remoteAdd().setName("origin").setUri(new URIish(remoteRepoUrl)).call();
+  }
+
+  public void pushToOrigin(String branchName, String username, String password)
+      throws GitAPIException {
+    PushCommand pushCmd = git.push();
+    pushCmd
+        .setRemote("origin")
+        .setRefSpecs(new RefSpec("refs/heads/" + branchName))
+        .setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, password))
+        .setPushAll();
+    pushCmd.call();
+  }
+
+  public void pushAllToOrigin(String username, String password) throws GitAPIException {
+    PushCommand pushCmd = git.push();
+    pushCmd
+        .setRemote("origin")
+        .setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, password))
+        .setPushAll();
+    pushCmd.call();
+  }
+
+  public void renameBranch(String newBranchName) throws GitAPIException {
+    git.branchRename().setNewName(newBranchName).call();
+  }
+
+  public void renameBranchToMain() throws GitAPIException {
+    git.branchRename().setNewName("main").call();
+  }
+
+  public void addAllFiles() throws GitAPIException {
+    AddCommand addCmd = git.add();
+    addCmd.setUpdate(true);
+    addCmd.addFilepattern(".");
+    addCmd.call();
+    Set<String> addedFiles = git.status().call().getAdded();
+    for (String file : addedFiles) {
+      ILogger.debug(LOG_TAG, "Added file: " + file);
+    }
+  }
+
+  // This method is not tested
   public void createPullRequest(
       String username,
       String password,
@@ -428,5 +499,38 @@ public class GitUtils {
     pushCommand.setRemote(remoteUrl);
     pushCommand.setPushAll();
     pushCommand.call();
+  }
+
+  public String getStatusLikeTerminal() throws GitAPIException, IOException {
+    String result = "";
+
+    result += "On branch " + git.getRepository().getBranch() + "\n\n";
+    result += "Changes to be committed:\n";
+    result += "  (use \"git reset HEAD <file>...\" to unstage)\n\n";
+    result += formatFileList(getStatus().getAdded(), "new file");
+    result += formatFileList(getStatus().getChanged(), "modified");
+    result += formatFileList(getStatus().getRemoved(), "deleted");
+
+    result += "\n\nChanges not staged for commit:\n";
+    result += "  (use \"git add <file>...\" to update what will be committed)\n";
+    result += "  (use \"git checkout -- <file>...\" to discard changes in working directory)\n\n";
+    result += formatFileList(getStatus().getModified(), "modified");
+    result += formatFileList(getStatus().getMissing(), "deleted");
+
+    result += "\n\nUntracked files:\n";
+    result += "  (use \"git add <file>...\" to include in what will be committed)\n\n";
+    result += formatFileList(getStatus().getUntracked(), "untracked");
+    return result;
+  }
+
+  private String formatFileList(Set<String> files, String statusType) {
+    String result = "";
+    if (!files.isEmpty()) {
+      result += statusType + ":\n";
+      for (String file : files) {
+        result += "\t" + file + "\n";
+      }
+    }
+    return result;
   }
 }

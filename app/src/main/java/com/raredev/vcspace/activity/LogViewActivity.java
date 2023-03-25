@@ -5,7 +5,7 @@ import android.view.View;
 import com.raredev.vcspace.R;
 import androidx.core.content.res.ResourcesCompat;
 import com.raredev.vcspace.databinding.ActivityLogViewBinding;
-import com.raredev.vcspace.util.ILogger;
+import com.raredev.common.util.ILogger;
 import com.raredev.vcspace.ui.editor.textmate.DynamicTextMateColorScheme;
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;

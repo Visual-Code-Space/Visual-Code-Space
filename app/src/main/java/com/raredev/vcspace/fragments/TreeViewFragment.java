@@ -23,7 +23,7 @@ import com.raredev.vcspace.activity.MainActivity;
 import com.raredev.vcspace.databinding.FragmentTreeViewBinding;
 import com.raredev.vcspace.events.FileEvent;
 import com.raredev.vcspace.managers.SettingsManager;
-import com.raredev.vcspace.util.ILogger;
+import com.raredev.common.util.ILogger;
 import com.raredev.vcspace.ui.tree.holder.FileViewHolder;
 import com.raredev.vcspace.util.ApkInstaller;
 import com.raredev.vcspace.util.PreferencesUtils;
@@ -41,7 +41,7 @@ public class TreeViewFragment extends Fragment
     implements TreeNode.TreeNodeClickListener, TreeNode.TreeNodeLongClickListener {
   private final String LOG_TAG = TreeViewFragment.class.getSimpleName();
   public final String KEY_STORED_TREE_STATE = "treeState";
-  
+
   private FragmentTreeViewBinding binding;
 
   private String savedState;
@@ -86,13 +86,8 @@ public class TreeViewFragment extends Fragment
           tryOpenRecentFolder();
         });
 
-    binding.refresh.setOnClickListener(
-        v -> {
-          if (treeView != null) {
-            savedState = treeView.getSaveState();
-            loadTreeView(mRoot.getValue());
-          }
-        });
+    binding.refresh.setOnClickListener(v -> refresh());
+
     binding.close.setOnClickListener(
         v -> {
           new MaterialAlertDialogBuilder(requireContext())
@@ -366,6 +361,13 @@ public class TreeViewFragment extends Fragment
       binding.containerOpen.setVisibility(View.GONE);
       binding.treeView.setVisibility(View.VISIBLE);
       binding.folderOptions.setVisibility(View.VISIBLE);
+    }
+  }
+
+  public void refresh() {
+    if (treeView != null) {
+      savedState = treeView.getSaveState();
+      loadTreeView(mRoot.getValue());
     }
   }
 }
