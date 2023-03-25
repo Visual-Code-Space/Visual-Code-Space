@@ -69,6 +69,7 @@
   <string name="create_token_message">Create a GitHub token.</string>
   <string name="github_token">GitHub token</string>
   <string name="initialize_repo">Initialize Repo</string>
+  <string name="loading_log_file">Loading log file...</string>
   
   <string name="branch_name">BRANCH NAME</string>
 	<string name="remote_name">REMOTE NAME</string>
