@@ -25,6 +25,8 @@
   <string name="menu_save">Salvar</string>
   <string name="menu_save_as">Salvar como</string>
   <string name="menu_save_all">Salvar tudo</string>
+  <string name="menu_open_drawer">Abrir drawer</string>
+  <string name="menu_view_logs">Visualizar registros</string>
 
   <!-- Errors Strings -->
   <string name="error">Erro</string>

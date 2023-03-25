@@ -1,9 +1,9 @@
 package com.raredev.vcspace.actions.main.text;
 
 import androidx.annotation.NonNull;
+import com.raredev.vcspace.R;
 import com.raredev.vcspace.actions.ActionData;
 import com.raredev.vcspace.actions.main.MainBaseAction;
-import com.raredev.vcspace.R;
 import com.raredev.vcspace.ui.editor.manager.EditorManager;
 
 public class RedoAction extends MainBaseAction {
@@ -12,23 +12,23 @@ public class RedoAction extends MainBaseAction {
   public void update(@NonNull ActionData data) {
     super.update(data);
     visible = false;
-    var editor = (EditorManager) data.get(EditorManager.class);
+    var editorManager = (EditorManager) data.get(EditorManager.class);
 
-    if (editor == null) {
+    if (editorManager == null) {
       return;
     }
-    if (editor.getCurrentEditor() == null) {
+    if (editorManager.getCurrentEditor() == null) {
       return;
     }
     visible = true;
-    enabled = editor.getCurrentEditor().canRedo();
+    enabled = editorManager.getCurrentEditor().canRedo();
   }
 
   @Override
   public void performAction(ActionData data) {
-    var editor = (EditorManager) data.get(EditorManager.class);
-    if (editor.getCurrentEditor() != null) {
-      editor.getCurrentEditor().redo();
+    var editorManager = (EditorManager) data.get(EditorManager.class);
+    if (editorManager.getCurrentEditor() != null) {
+      editorManager.getCurrentEditor().redo();
     }
   }
 

@@ -87,6 +87,7 @@ public class GitToolsFragment extends Fragment {
                 () -> {
                   repository = new GitUtils(repoPath);
                   repository.init();
+                  GitUtils.createGitIgnore(repoPath.getParentFile());
                   // repository.renameBranchToMain();
                   repository.add(".");
                   ThreadUtils.runOnUiThread(

@@ -8,12 +8,12 @@
   android:background="?attr/colorSurface"
   tools:ignore="Overdraw">
 
-  <com.google.android.material.imageview.ShapeableImageView
-    android:layout_height="50dp"
-    android:layout_width="50dp"
+  <ImageView
+    android:layout_height="120dp"
+    android:layout_width="120dp"
+    android:layout_centerInParent="true"
     android:layout_marginEnd="16dp"
     android:src="@mipmap/ic_launcher_adaptive_monochrome"
-    android:layout_centerVertical="true"
     app:tint="?attr/colorOnSurface"
     android:layout_marginStart="16dp"
     android:id="@+id/icon" />
@@ -23,6 +23,7 @@
     android:layout_width="wrap_content"
     android:layout_below="@id/icon"
     android:elevation="8dp"
+    android:layout_centerHorizontal="true"
     android:textSize="20sp"
     android:textColor="?attr/colorOnSurface"
     android:layout_marginStart="16dp"

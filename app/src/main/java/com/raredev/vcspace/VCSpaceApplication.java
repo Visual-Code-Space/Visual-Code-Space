@@ -8,18 +8,6 @@ import android.content.IntentFilter;
 import android.util.Log;
 import androidx.appcompat.app.AppCompatDelegate;
 import com.raredev.common.util.ILogger;
-import com.raredev.vcspace.actions.ActionManager;
-import com.raredev.vcspace.actions.editor.CloseAllAction;
-import com.raredev.vcspace.actions.editor.CloseFileAction;
-import com.raredev.vcspace.actions.editor.CloseOthersAction;
-import com.raredev.vcspace.actions.file.CopyPathAction;
-import com.raredev.vcspace.actions.file.CreateFileAction;
-import com.raredev.vcspace.actions.file.CreateFolderAction;
-import com.raredev.vcspace.actions.file.DeleteFileAction;
-import com.raredev.vcspace.actions.file.RenameFileAction;
-import com.raredev.vcspace.actions.main.OpenDrawerAction;
-import com.raredev.vcspace.actions.main.text.RedoAction;
-import com.raredev.vcspace.actions.main.text.UndoAction;
 import com.raredev.vcspace.fragments.SettingsFragment;
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;
@@ -40,7 +28,6 @@ public class VCSpaceApplication extends Application {
     AppCompatDelegate.setDefaultNightMode(SettingsFragment.getThemeFromPrefs());
     FileProviderRegistry.getInstance().addFileProvider(new AssetsFileResolver(getAssets()));
     Thread.setDefaultUncaughtExceptionHandler(new CrashHandler(this));
-    registerActions();
 
     loadTextMate();
   }
@@ -49,27 +36,6 @@ public class VCSpaceApplication extends Application {
   public void onTerminate() {
     unregisterShutdownReceiver();
     super.onTerminate();
-  }
-
-  private void registerActions() {
-    ActionManager manager = ActionManager.getInstance();
-    manager.clear();
-    // Main toolbar
-    manager.registerAction(new UndoAction());
-    manager.registerAction(new RedoAction());
-    manager.registerAction(new OpenDrawerAction());
-    
-    // Editor
-    manager.registerAction(new CloseFileAction());
-    manager.registerAction(new CloseOthersAction());
-    manager.registerAction(new CloseAllAction());
-
-    // File tree
-    manager.registerAction(new CopyPathAction());
-    manager.registerAction(new CreateFileAction());
-    manager.registerAction(new CreateFolderAction());
-    manager.registerAction(new RenameFileAction());
-    manager.registerAction(new DeleteFileAction());
   }
 
   private void loadTextMate() {

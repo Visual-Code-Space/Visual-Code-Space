@@ -89,18 +89,7 @@ public class ILogger {
 
   private static void notifyObserver() {
     if (observer != null) {
-      try {
-        BufferedReader reader = new BufferedReader(new FileReader(logFile));
-        List<String> logs = new ArrayList<>();
-        String line;
-        while ((line = reader.readLine()) != null) {
-          logs.add(line);
-        }
-        reader.close();
-        observer.onLogUpdated(logs);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+      observer.onLogUpdated(logFile);
     }
   }
 
@@ -113,6 +102,6 @@ public class ILogger {
   }
 
   public interface Observer {
-    void onLogUpdated(List<String> logs);
+    void onLogUpdated(File logFile);
   }
 }

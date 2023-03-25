@@ -10,22 +10,19 @@ import android.view.View;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.PopupMenu;
-import androidx.core.view.GravityCompat;
 import androidx.lifecycle.ViewModelProvider;
-import com.blankj.utilcode.util.ToastUtils;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.raredev.common.util.FileUtil;
 import com.raredev.common.util.ILogger;
 import com.raredev.common.util.Utils;
 import com.raredev.vcspace.R;
-import com.raredev.vcspace.SimpleExecuter;
 import com.raredev.vcspace.actions.Action;
 import com.raredev.vcspace.actions.ActionData;
 import com.raredev.vcspace.actions.ActionManager;
 import com.raredev.vcspace.databinding.ActivityMainBinding;
-import com.raredev.vcspace.fragments.ToolsFragment;
 import com.raredev.vcspace.ui.editor.CodeEditorView;
 import com.raredev.vcspace.ui.editor.Symbol;
 import com.raredev.vcspace.ui.editor.manager.EditorManager;
@@ -44,8 +41,6 @@ public class MainActivity extends VCSpaceActivity
 
   public EditorViewModel viewModel;
   public EditorManager editorManager;
-
-  public final Runnable updateMenuItem = () -> invalidateOptionsMenu();
 
   public ActivityResultLauncher<Intent> launcher;
   public ActivityResultLauncher<String> createFile;
@@ -98,9 +93,16 @@ public class MainActivity extends VCSpaceActivity
           }
         });
 
+    getLifecycle().addObserver(new LifecyclerObserver());
     ThemeRegistry.getInstance().setTheme(Utils.isDarkMode(this) ? "vcspace_dark" : "vcspace_light");
     registerResultActivity();
     observeViewModel();
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    invalidateOptionsMenu();
   }
 
   @Override
@@ -109,64 +111,38 @@ public class MainActivity extends VCSpaceActivity
   }
 
   @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
+  public boolean onPrepareOptionsMenu(Menu menu) {
+    menu.clear();
     ActionData data = new ActionData();
     data.put(MainActivity.class, this);
     data.put(EditorManager.class, editorManager);
 
     ActionManager.getInstance().fillMenu(menu, data, Action.Location.MAIN_TOOLBAR);
-    return super.onCreateOptionsMenu(menu);
+    return true;
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    if (menu instanceof MenuBuilder) {
+      ((MenuBuilder) menu).setOptionalIconsVisible(true);
+    }
+    return true;
   }
 
   @Override
   public boolean onNavigationItemSelected(MenuItem item) {
     int id = item.getItemId();
-    final CodeEditorView editor = editorManager.getCurrentEditor();
     switch (id) {
-      case R.id.menu_save:
-        editorManager.getCurrentEditor().save();
-        ToastUtils.showShort(R.string.saved);
-        break;
-      case R.id.menu_save_as:
-        saveAs(viewModel.getCurrentFile());
-        break;
-      case R.id.menu_save_all:
-        editorManager.saveAllFiles(true);
-        break;
-      case R.id.menu_compile:
-        editorManager.saveAllFiles(false);
-        new SimpleExecuter(this, viewModel.getCurrentFile());
-        break;
-      case R.id.menu_format:
-        editor.formatCodeAsync();
-        break;
-      case R.id.menu_search:
-        binding.searcher.showAndHide();
-        break;
       case R.id.menu_viewlogs:
+        editorManager.saveAllFiles(false);
         startActivity(new Intent(getApplicationContext(), LogViewActivity.class));
         break;
       case R.id.menu_settings:
         editorManager.saveAllFiles(false);
         startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
         break;
-      case R.id.menu_open_folder:
-        ((ToolsFragment) getSupportFragmentManager().findFragmentByTag("tools_fragment"))
-            .mStartForResult.launch(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE));
-        break;
-      case R.id.menu_open_recent:
-        ((ToolsFragment) getSupportFragmentManager().findFragmentByTag("tools_fragment"))
-            .treeViewFragment.tryOpenRecentFolder();
-        if (!binding.drawerLayout.isDrawerOpen(GravityCompat.START))
-          binding.drawerLayout.openDrawer(GravityCompat.START);
-        break;
-      case R.id.menu_new_file:
-        createFile.launch("untitled");
-        break;
-      case R.id.menu_open_file:
-        pickFile.launch("text/*");
-        break;
     }
+    binding.drawerLayout.closeDrawers();
     return true;
   }
 

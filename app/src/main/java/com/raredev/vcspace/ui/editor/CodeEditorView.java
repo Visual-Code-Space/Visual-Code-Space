@@ -37,7 +37,6 @@ public class CodeEditorView extends CodeEditor {
     CompletableFuture.runAsync(
         () -> {
           var content = FileUtil.readFile(file.getAbsolutePath());
-
           post(
               () -> {
                 setText(content);

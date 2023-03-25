@@ -1,13 +1,9 @@
 package com.raredev.vcspace.actions;
 
-import android.content.Context;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
-import android.view.View;
-import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.FragmentManager;
-import com.blankj.utilcode.util.ToastUtils;
 import com.raredev.vcspace.fragments.OptionsSheetFragment;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,33 +38,32 @@ public class ActionManager {
     for (Action action : actions.values()) {
       action.update(data);
       if (action.visible && action.location == location) {
-        if (action instanceof ActionGroup) {
-          var actionGroup = (ActionGroup) action;
-
-          MenuItem menuItem = menu.add(actionGroup.title);
-          
-          //SubMenu subMenu = menuItem.getSubMenu().add(actionGroup.title);
-          menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-          menuItem.setIcon(actionGroup.icon);
-          ToastUtils.showShort("teste");
-          Action[] children = actionGroup.getChildren(data);
-          if (children != null) {
-            for (Action child : children) {
-              fillMenu(menuItem.getSubMenu(), child, data);
-            }
-          }
-          return;
-        }
-
         fillMenu(menu, action, data);
       }
     }
   }
 
   private void fillMenu(Menu menu, Action action, ActionData data) {
-    MenuItem menuItem = menu.add(action.title);
-    menuItem.setTitle(action.title);
-    menuItem.setIcon(action.icon);
+    MenuItem menuItem;
+    if (action instanceof ActionGroup) {
+      SubMenu subMenu = menu.addSubMenu(action.title);
+      subMenu.setIcon(action.icon);
+
+      Action[] children = ((ActionGroup)action).getChildren(data);
+      if (children != null) {
+        for (Action child : children) {
+          child.update(data);
+          fillMenu(subMenu, child, data);
+        }
+      }
+      menuItem = subMenu.getItem();
+    } else {
+      menuItem = menu.add(action.title);
+    }
+    
+    if (action.icon != -1) {
+      menuItem.setIcon(action.icon);
+    }
     menuItem.setEnabled(action.enabled);
 
     if (menuItem.getIcon() != null) {

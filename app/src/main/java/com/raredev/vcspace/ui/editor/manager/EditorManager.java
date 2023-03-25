@@ -67,7 +67,7 @@ public class EditorManager {
     ILogger.info(LOG_TAG, "Opening file: " + file.toString() + " index: " + index);
 
     CodeEditorView editor = new CodeEditorView(context, file);
-    editor.subscribeContentChangeEvent(((MainActivity) context).updateMenuItem);
+    editor.subscribeContentChangeEvent(() -> ((MainActivity) context).invalidateOptionsMenu());
     container.addView(editor);
 
     tabLayout.addTab(tabLayout.newTab().setText(file.getName()));

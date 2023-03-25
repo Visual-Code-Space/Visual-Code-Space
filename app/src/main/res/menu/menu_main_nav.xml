@@ -1,42 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
-  <group android:id="@+id/group_file">
-    <item
-      android:id="@+id/menu_new_file"
-      android:icon="@drawable/ic_add"
-      android:title="@string/menu_new_file" />
-    <item
-      android:id="@+id/menu_open_file"
-      android:icon="@drawable/ic_file"
-      android:title="@string/menu_open_file" />
-    <item
-      android:id="@+id/menu_open_folder"
-      android:icon="@drawable/folder_open"
-      android:title="@string/open_folder" />
-    <item
-      android:id="@+id/menu_open_recent"
-      android:icon="@drawable/history"
-      android:title="@string/open_recent" />
-  </group>
-
-  <group android:id="@+id/group_edit">
-    <item
-      android:id="@+id/menu_search"
-      android:icon="@drawable/ic_search"
-      android:title="@string/menu_search" />
-    <item
-      android:id="@+id/menu_format"
-      android:icon="@drawable/format_align_left"
-      android:title="@string/menu_format" />
-  </group>
-
-  <group android:id="@+id/group_others">
-    <item
-      android:id="@+id/menu_viewlogs"
-      android:title="View logs" />
-    <item
-      android:id="@+id/menu_settings"
-      android:title="@string/menu_settings" />
-  </group>
+  <item
+    android:id="@+id/menu_viewlogs"
+    android:icon="@drawable/language_txt"
+    android:title="@string/menu_view_logs" />
+  <item
+    android:id="@+id/menu_settings"
+    android:icon="@drawable/ic_settings"
+    android:title="@string/menu_settings" />
 </menu>

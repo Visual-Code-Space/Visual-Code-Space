@@ -1,12 +1,14 @@
-package com.raredev.vcspace.actions.main.text;
+package com.raredev.vcspace.actions.main.other;
 
 import androidx.annotation.NonNull;
 import com.raredev.vcspace.R;
+import com.raredev.vcspace.SimpleExecuter;
 import com.raredev.vcspace.actions.ActionData;
 import com.raredev.vcspace.actions.main.MainBaseAction;
+import com.raredev.vcspace.activity.MainActivity;
 import com.raredev.vcspace.ui.editor.manager.EditorManager;
 
-public class UndoAction extends MainBaseAction {
+public class ExecuteAction extends MainBaseAction {
 
   @Override
   public void update(@NonNull ActionData data) {
@@ -20,25 +22,24 @@ public class UndoAction extends MainBaseAction {
     if (editorManager.getCurrentEditor() == null) {
       return;
     }
-    visible = true;
-    enabled = editorManager.getCurrentEditor().canUndo();
+    visible = SimpleExecuter.isExecutable(editorManager.getCurrentEditor().getFile());
   }
 
   @Override
   public void performAction(ActionData data) {
-    var editorManager = (EditorManager) data.get(EditorManager.class);
-    if (editorManager.getCurrentEditor() != null) {
-      editorManager.getCurrentEditor().undo();
-    }
-  }
-
-  @Override
-  public int getIcon() {
-    return R.drawable.ic_undo;
+    EditorManager editorManager = (EditorManager) data.get(EditorManager.class);
+    editorManager.saveAllFiles(false);
+    new SimpleExecuter(
+        (MainActivity) data.get(MainActivity.class), editorManager.getCurrentEditor().getFile());
   }
 
   @Override
   public int getTitle() {
-    return R.string.menu_undo;
+    return R.string.menu_execute;
+  }
+
+  @Override
+  public int getIcon() {
+    return R.drawable.ic_play;
   }
 }
