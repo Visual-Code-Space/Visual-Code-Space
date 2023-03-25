@@ -41,6 +41,9 @@ public class ToolsFragment extends Fragment {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    if (!FileUtil.isPermissionGaranted(requireContext())) {
+      FileUtil.takeFilePermissions(requireActivity());
+    }
     mStartForResult =
         requireActivity()
             .registerForActivityResult(

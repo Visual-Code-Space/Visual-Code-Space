@@ -28,7 +28,7 @@ public class LogViewActivity extends VCSpaceActivity implements ILogger.Observer
     binding.toolbar.setNavigationOnClickListener((v) -> onBackPressed());
     binding.editor.getProps().autoIndent = false;
     binding.editor.setEditable(false);
-    binding.editor.setTextSize(12f);
+    binding.editor.setTextSize(14f);
     binding.editor.setTypefaceText(ResourcesCompat.getFont(this, R.font.jetbrains_mono));
     binding.editor.setTypefaceLineNumber(ResourcesCompat.getFont(this, R.font.jetbrains_mono));
     updateThemes();
@@ -64,7 +64,7 @@ public class LogViewActivity extends VCSpaceActivity implements ILogger.Observer
       ILogger.error(LOG_TAG, Log.getStackTraceString(e));
     }
   }
-  
+
   private int appendText(String text) {
     final var content = binding.editor.getText();
     if (binding.editor.getLineCount() <= 0) {

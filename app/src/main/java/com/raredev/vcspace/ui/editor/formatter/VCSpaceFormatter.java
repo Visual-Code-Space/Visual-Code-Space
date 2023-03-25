@@ -1,25 +1,8 @@
 package com.raredev.vcspace.ui.editor.formatter;
 
-import com.fasterxml.jackson.core.util.DefaultIndenter;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.raredev.vcspace.util.PreferencesUtils;
 import io.github.rosemoe.sora.lang.format.AsyncFormatter;
 import io.github.rosemoe.sora.text.Content;
 import io.github.rosemoe.sora.text.TextRange;
-import java.io.IOException;
-import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executors;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.ToolFactory;
-import org.eclipse.jdt.core.formatter.CodeFormatter;
-import org.eclipse.jdt.core.formatter.DefaultCodeFormatterConstants;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.text.edits.TextEdit;
-import org.jsoup.Jsoup;
 
 public class VCSpaceFormatter extends AsyncFormatter {
   private String fileExtension;
@@ -30,7 +13,7 @@ public class VCSpaceFormatter extends AsyncFormatter {
 
   @Override
   public TextRange formatAsync(Content text, TextRange range) {
-    String code = text.toString();
+    /*String code = text.toString();
     switch (fileExtension) {
       case "html":
         text.replace(0, code.length(), formatHtml(code));
@@ -41,7 +24,7 @@ public class VCSpaceFormatter extends AsyncFormatter {
       case "java":
         text.replace(0, code.length(), formatJava(code));
         break;
-    }
+    }*/
     return range;
   }
 
@@ -50,7 +33,7 @@ public class VCSpaceFormatter extends AsyncFormatter {
     return range2;
   }
 
-  private String formatHtml(String code) {
+  /*private String formatHtml(String code) {
     String html = code;
     org.jsoup.nodes.Document doc = Jsoup.parse(html);
 
@@ -155,5 +138,5 @@ public class VCSpaceFormatter extends AsyncFormatter {
     }
 
     return document.get();
-  }
+  }*/
 }

@@ -1,21 +1,21 @@
 package com.raredev.vcspace.ui.editor;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.LayoutInflater;
-import android.widget.LinearLayout;
+import android.util.Log;
 import androidx.core.content.res.ResourcesCompat;
 import com.raredev.common.util.FileUtil;
-import com.raredev.vcspace.databinding.LayoutCodeEditorBinding;
 import com.raredev.vcspace.models.LanguageScope;
 import com.raredev.vcspace.ui.editor.textmate.DynamicTextMateColorScheme;
-import com.raredev.vcspace.ui.editor.textmate.VCSpaceTextMateLanguage;
+import com.raredev.vcspace.ui.language.html.HtmlLanguage;
+import com.raredev.vcspace.ui.language.java.JavaLanguage;
+import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.util.PreferencesUtils;
 import io.github.rosemoe.sora.event.ContentChangeEvent;
 import io.github.rosemoe.sora.lang.EmptyLanguage;
 import io.github.rosemoe.sora.lang.Language;
+import io.github.rosemoe.sora.langs.textmate.TextMateLanguage;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import io.github.rosemoe.sora.text.LineSeparator;
 import io.github.rosemoe.sora.widget.CodeEditor;
@@ -23,37 +23,27 @@ import io.github.rosemoe.sora.widget.schemes.EditorColorScheme;
 import java.io.File;
 import java.util.concurrent.CompletableFuture;
 
-public class CodeEditorView extends LinearLayout
-    implements SharedPreferences.OnSharedPreferenceChangeListener {
-  private LayoutCodeEditorBinding binding;
-
+public class CodeEditorView extends CodeEditor {
   private File file;
 
   public CodeEditorView(Context context, File file) {
     super(context);
     this.file = file;
-    binding = LayoutCodeEditorBinding.inflate(LayoutInflater.from(context));
-    binding.editor.setHighlightCurrentBlock(true);
-    binding.editor.setColorScheme(createScheme());
-    binding.editor.setLineSeparator(LineSeparator.LF);
-
-    removeAllViews();
-    addView(
-        binding.getRoot(), new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+    setHighlightCurrentBlock(true);
+    setColorScheme(createScheme());
+    setLineSeparator(LineSeparator.LF);
 
     CompletableFuture.runAsync(
         () -> {
           var content = FileUtil.readFile(file.getAbsolutePath());
-          var editor = binding.editor;
 
-          editor.post(
+          post(
               () -> {
-                editor.setText(content);
-                editor.setEditorLanguage(createLanguage());
+                setText(content);
+                setEditorLanguage(createLanguage());
               });
         });
     configureEditor();
-    PreferencesUtils.getDefaultPrefs().registerOnSharedPreferenceChangeListener(this);
   }
 
   private void configureEditor() {
@@ -63,8 +53,7 @@ public class CodeEditorView extends LinearLayout
     updateDeleteEmptyLineFast();
   }
 
-  @Override
-  public void onSharedPreferenceChanged(SharedPreferences pref, String key) {
+  public void onSharedPreferenceChanged(String key) {
     switch (key) {
       case "pref_editortextsize":
         updateTextSize();
@@ -82,7 +71,7 @@ public class CodeEditorView extends LinearLayout
   }
 
   public void subscribeContentChangeEvent(Runnable runnable) {
-    binding.editor.subscribeEvent(
+    subscribeEvent(
         ContentChangeEvent.class,
         (event, subscribe) -> {
           switch (event.getAction()) {
@@ -95,74 +84,75 @@ public class CodeEditorView extends LinearLayout
         });
   }
 
-  public void release() {
-    PreferencesUtils.getDefaultPrefs().unregisterOnSharedPreferenceChangeListener(this);
-    binding.editor.release();
-  }
-
   public File getFile() {
     return file;
-  }
-
-  public CodeEditor getEditor() {
-    return binding.editor;
   }
 
   public void save() {
     if (file != null && file.exists()) {
       String oldContent = FileUtil.readFile(file.getAbsolutePath());
-      String newContent = binding.editor.getText().toString();
+      String newContent = getText().toString();
 
       if (oldContent == newContent) return;
 
-      FileUtil.writeFile(file.getAbsolutePath(), binding.editor.getText().toString());
+      FileUtil.writeFile(file.getAbsolutePath(), getText().toString());
     }
   }
 
+  @Override
   public void undo() {
-    if (binding.editor.canUndo()) binding.editor.undo();
+    if (canUndo()) super.undo();
   }
 
+  @Override
   public void redo() {
-    if (binding.editor.canRedo()) binding.editor.redo();
+    if (canRedo()) super.redo();
   }
 
   private EditorColorScheme createScheme() {
     try {
       return DynamicTextMateColorScheme.create(getContext(), ThemeRegistry.getInstance());
     } catch (Exception e) {
-      return new EditorColorScheme();
+      return null;
     }
   }
 
   private Language createLanguage() {
     try {
       final LanguageScope langScope = LanguageScope.Factory.forFile(file);
-      return VCSpaceTextMateLanguage.create(langScope.getScope(), langScope.getExtension());
+
+      switch (langScope) {
+        case JAVA:
+          return new JavaLanguage();
+        case HTML:
+          return new HtmlLanguage();
+      }
+
+      return TextMateLanguage.create(langScope.getScope(), true);
     } catch (Exception e) {
+      ILogger.error("LoadEditorLanguage", Log.getStackTraceString(e));
       return new EmptyLanguage();
     }
   }
 
   private void updateTextSize() {
     int textSize = PreferencesUtils.getEditorTextSize();
-    binding.editor.setTextSize(textSize);
+    setTextSize(textSize);
   }
 
   private void updateTABSize() {
     int tabSize = PreferencesUtils.getEditorTABSize();
-    binding.editor.setTabWidth(tabSize);
+    setTabWidth(tabSize);
   }
 
   private void updateEditorFont() {
-    binding.editor.setTypefaceText(
-        ResourcesCompat.getFont(getContext(), PreferencesUtils.getSelectedFont()));
-    binding.editor.setTypefaceLineNumber(
+    setTypefaceText(ResourcesCompat.getFont(getContext(), PreferencesUtils.getSelectedFont()));
+    setTypefaceLineNumber(
         ResourcesCompat.getFont(getContext(), PreferencesUtils.getSelectedFont()));
   }
 
   private void updateDeleteEmptyLineFast() {
-    binding.editor.getProps().deleteEmptyLineFast = PreferencesUtils.useDeleteEmptyLineFast();
+    getProps().deleteEmptyLineFast = PreferencesUtils.useDeleteEmptyLineFast();
   }
 
   private void updateNonPrintablePaintingFlags() {

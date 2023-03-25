@@ -38,7 +38,10 @@ public class ILogger {
   }
 
   private static void log(Priority priority, String tag, String message) {
-    cachedLogs.add("[" + priority + "] [" + tag + "] " + message);
+    String[] lines = message.split("\\r?\\n");
+    for (String line : lines) {
+      cachedLogs.add("[" + priority + "] [" + tag + "] " + line);
+    }
     notifyObserver();
   }
 

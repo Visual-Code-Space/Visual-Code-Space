@@ -81,21 +81,18 @@ dependencies {
   implementation 'com.google.android.material:material:1.8.0'
   implementation 'com.google.code.gson:gson:2.8.7'
   implementation 'com.blankj:utilcodex:1.31.1'
-  implementation 'com.fasterxml.jackson.core:jackson-databind:2.10.1'
 
   implementation platform("io.github.Rosemoe.sora-editor:bom:0.21.1")
   implementation "io.github.Rosemoe.sora-editor:editor"
   implementation "io.github.Rosemoe.sora-editor:language-textmate"
 
-  implementation 'org.eclipse.jdt:org.eclipse.jdt.core:3.32.0'
   implementation 'org.eclipse.jgit:org.eclipse.jgit:6.5.0.202303070854-r'
   implementation 'org.greenrobot:eventbus:3.3.1'
-  implementation 'org.jsoup:jsoup:1.15.3'
   implementation 'org.commonmark:commonmark:0.20.0'
 
   implementation project(path: ':common')
   implementation project(path: ':git-api')
   implementation project(path: ':treeview')
-    
+  
   debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.10'
 }

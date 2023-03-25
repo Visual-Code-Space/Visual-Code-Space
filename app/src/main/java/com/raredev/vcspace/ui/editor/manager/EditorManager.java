@@ -14,9 +14,9 @@ import com.raredev.common.util.FileUtil;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.activity.MainActivity;
 import com.raredev.vcspace.databinding.ActivityMainBinding;
-import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.ui.editor.CodeEditorView;
 import com.raredev.vcspace.ui.viewmodel.EditorViewModel;
+import com.raredev.vcspace.util.ILogger;
 import java.io.File;
 
 public class EditorManager {
@@ -39,20 +39,12 @@ public class EditorManager {
     this.viewModel = viewModel;
   }
 
-  public void tryOpenFileFromIntent(Intent it) {
-    try {
-      Uri uri = it.getData();
-      if (uri != null) {
-        DocumentFile receivedFile = DocumentFile.fromSingleUri(context, uri);
-        File file = FileUtil.getFileFromUri(context, receivedFile.getUri());
-
-        openFile(file);
+  public void onSharedPreferenceChanged(String key) {
+    for (int i = 0; i < viewModel.getOpenedFileCount(); i++) {
+      CodeEditorView editor = getEditorAtIndex(i);
+      if (editor != null) {
+        editor.onSharedPreferenceChanged(key);
       }
-    } catch (Exception e) {
-      DialogUtils.newErrorDialog(
-          context,
-          context.getString(R.string.error),
-          context.getString(R.string.error_editor_opening_recent_files) + "\n\n" + e.toString());
     }
   }
 

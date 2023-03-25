@@ -1,6 +1,7 @@
 package com.raredev.vcspace.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.util.Log;
 import android.view.Menu;
@@ -13,8 +14,6 @@ import androidx.core.view.GravityCompat;
 import androidx.lifecycle.ViewModelProvider;
 import com.blankj.utilcode.util.ToastUtils;
 import com.google.android.material.tabs.TabLayout;
-import com.raredev.common.task.TaskExecutor;
-import com.raredev.common.util.DialogUtils;
 import com.raredev.common.util.FileUtil;
 import com.raredev.common.util.Utils;
 import com.raredev.vcspace.R;
@@ -29,18 +28,15 @@ import com.raredev.vcspace.ui.editor.Symbol;
 import com.raredev.vcspace.ui.editor.manager.EditorManager;
 import com.raredev.vcspace.ui.viewmodel.EditorViewModel;
 import com.raredev.vcspace.util.ILogger;
-import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry;
-import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;
+import com.raredev.vcspace.util.PreferencesUtils;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
-import io.github.rosemoe.sora.langs.textmate.registry.model.ThemeModel;
-import io.github.rosemoe.sora.langs.textmate.registry.provider.AssetsFileResolver;
 import io.github.rosemoe.sora.widget.CodeEditor;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import org.eclipse.tm4e.core.registry.IThemeSource;
 
-public class MainActivity extends VCSpaceActivity {
+public class MainActivity extends VCSpaceActivity
+    implements SharedPreferences.OnSharedPreferenceChangeListener {
   private final String LOG_TAG = MainActivity.class.getSimpleName();
   public ActivityMainBinding binding;
 
@@ -54,10 +50,11 @@ public class MainActivity extends VCSpaceActivity {
       () -> {
         CodeEditorView editor = editorManager.getCurrentEditor();
         if (editor != null) {
-          undo.setEnabled(editor.getEditor().canUndo());
-          redo.setEnabled(editor.getEditor().canRedo());
+          undo.setEnabled(editor.canUndo());
+          redo.setEnabled(editor.canRedo());
         }
       };
+
   private ActivityResultLauncher<Intent> launcher;
   private ActivityResultLauncher<String> createFile;
   private ActivityResultLauncher<String> pickFile;
@@ -79,7 +76,7 @@ public class MainActivity extends VCSpaceActivity {
 
     viewModel = new ViewModelProvider(this).get(EditorViewModel.class);
     editorManager = new EditorManager(this, binding, viewModel);
-    initialize();
+    viewModel.removeAllFiles();
 
     binding.tabLayout.addOnTabSelectedListener(
         new TabLayout.OnTabSelectedListener() {
@@ -101,13 +98,21 @@ public class MainActivity extends VCSpaceActivity {
             CodeEditorView editor = editorManager.getEditorAtIndex(position);
             viewModel.setCurrentFile(position, editor.getFile());
 
-            binding.searcher.bindEditor(editor.getEditor());
-            refreshSymbolInput(editor.getEditor());
+            binding.searcher.bindEditor(editor);
+            refreshSymbolInput(editor);
             invalidateOptionsMenu();
           }
         });
+
+    ThemeRegistry.getInstance()
+              .setTheme(Utils.isDarkMode(this) ? "vcspace_dark" : "vcspace_light");
     registerResultActivity();
     observeViewModel();
+  }
+
+  @Override
+  public void onSharedPreferenceChanged(SharedPreferences pref, String key) {
+    editorManager.onSharedPreferenceChanged(key);
   }
 
   @Override
@@ -171,7 +176,8 @@ public class MainActivity extends VCSpaceActivity {
         new SimpleExecuter(this, viewModel.getCurrentFile());
         break;
       case R.id.menu_format:
-        editor.getEditor().formatCodeAsync();
+        // editor.formatCodeAsync();
+        ToastUtils.showShort("Disabled action");
         break;
       case R.id.menu_search:
         binding.searcher.showAndHide();
@@ -217,24 +223,6 @@ public class MainActivity extends VCSpaceActivity {
     super.onBackPressed();
   }
 
-  private synchronized void initialize() {
-    TaskExecutor.executeAsyncProvideError(
-        () -> {
-          loadTextMate();
-          return null;
-        },
-        (result, error) -> {
-          if (error != null) {
-            DialogUtils.newErrorDialog(this, getString(R.string.error), error.toString());
-            ILogger.info(LOG_TAG, Log.getStackTraceString(error));
-          } else {
-            ILogger.info(LOG_TAG, "Loaded themes");
-          }
-          viewModel.removeAllFiles();
-          editorManager.tryOpenFileFromIntent(getIntent());
-        });
-  }
-
   private void registerResultActivity() {
     launcher =
         registerForActivityResult(
@@ -245,7 +233,7 @@ public class MainActivity extends VCSpaceActivity {
                 try {
                   OutputStream outputStream = getContentResolver().openOutputStream(uri);
                   outputStream.write(
-                      editorManager.getCurrentEditor().getEditor().getText().toString().getBytes());
+                      editorManager.getCurrentEditor().getText().toString().getBytes());
                   outputStream.close();
                   editorManager.openFile(FileUtil.getFileFromUri(MainActivity.this, uri));
                 } catch (IOException e) {
@@ -255,7 +243,16 @@ public class MainActivity extends VCSpaceActivity {
             });
     createFile =
         registerForActivityResult(
-            new ActivityResultContracts.CreateDocument("text/*"), this::onCreateNewFile);
+            new ActivityResultContracts.CreateDocument("text/*"),
+            uri -> {
+              if (uri != null) {
+                try {
+                  editorManager.openFile(FileUtil.getFileFromUri(this, uri));
+                } catch (IOException e) {
+                  ILogger.error(LOG_TAG, Log.getStackTraceString(e));
+                }
+              }
+            });
     pickFile =
         registerForActivityResult(
             new ActivityResultContracts.GetContent(),
@@ -273,42 +270,22 @@ public class MainActivity extends VCSpaceActivity {
   private void observeViewModel() {
     viewModel.observeFiles(
         this,
-        (files) -> {
+        files -> {
           if (files.isEmpty()) {
+            PreferencesUtils.getDefaultPrefs().unregisterOnSharedPreferenceChangeListener(this);
             binding.tabLayout.setVisibility(View.GONE);
             binding.layout.setVisibility(View.GONE);
             binding.noFileOpened.setVisibility(View.VISIBLE);
             binding.searcher.hide();
           } else {
+            PreferencesUtils.getDefaultPrefs().registerOnSharedPreferenceChangeListener(this);
             binding.tabLayout.setVisibility(View.VISIBLE);
             binding.layout.setVisibility(View.VISIBLE);
             binding.noFileOpened.setVisibility(View.GONE);
           }
         });
 
-    viewModel
-        .getDisplayedFile()
-        .observe(this, (index) -> binding.container.setDisplayedChild(index));
-  }
-
-  private void loadTextMate() throws Exception {
-    // Load editor themes
-    FileProviderRegistry.getInstance().addFileProvider(new AssetsFileResolver(getAssets()));
-
-    String[] themes = new String[] {"vcspace_dark", "vcspace_light"};
-    ThemeRegistry themeRegistry = ThemeRegistry.getInstance();
-    for (String name : themes) {
-      String path = "textmate/" + name + ".json";
-      themeRegistry.loadTheme(
-          new ThemeModel(
-              IThemeSource.fromInputStream(
-                  FileProviderRegistry.getInstance().tryGetInputStream(path), path, null),
-              name));
-    }
-    // Load editor languages
-    GrammarRegistry.getInstance().loadGrammars("textmate/languages.json");
-    // Register current theme
-    ThemeRegistry.getInstance().setTheme(Utils.isDarkMode(this) ? "vcspace_dark" : "vcspace_light");
+    viewModel.getDisplayedFile().observe(this, index -> binding.container.setDisplayedChild(index));
   }
 
   private void refreshSymbolInput(CodeEditor editor) {
@@ -323,15 +300,5 @@ public class MainActivity extends VCSpaceActivity {
     intent.putExtra(Intent.EXTRA_TITLE, fileToSave.getName());
 
     launcher.launch(intent);
-  }
-
-  private void onCreateNewFile(Uri uri) {
-    if (uri != null) {
-      try {
-        editorManager.openFile(FileUtil.getFileFromUri(this, uri));
-      } catch (IOException e) {
-        ILogger.error(LOG_TAG, Log.getStackTraceString(e));
-      }
-    }
   }
 }

@@ -11,7 +11,7 @@
 
   <application
     android:name=".VCSpaceApplication"
-    android:allowBackup="true"
+    android:allowBackup="false"
     android:largeHeap="true"
     android:icon="@mipmap/ic_launcher"
     android:label="@string/app_name"
@@ -29,28 +29,14 @@
 
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
-      <intent-filter>
-        <category android:name="android.intent.category.DEFAULT" />
-        <action android:name="android.intent.action.VIEW" />
-        <action android:name="android.intent.action.EDIT" />
-        <data android:mimeType="text/*" />
-      </intent-filter>
     </activity>
-    <activity
-      android:name=".activity.LogViewActivity"
-      android:exported="true" />
-    <activity
-      android:name=".activity.SettingsActivity"
-      android:exported="true" />
-    <activity
-      android:name=".activity.TerminalActivity"
-      android:exported="true" />
-    <activity
-      android:name=".activity.WebViewActivity"
-      android:exported="true" />
+    <activity android:name=".activity.LogViewActivity" />
+    <activity android:name=".activity.SettingsActivity" />
+    <activity android:name=".activity.TerminalActivity" />
+    <activity android:name=".activity.WebViewActivity" />
     <activity
       android:name=".activity.CrashActivity"
-      android:exported="true" />
+      android:exported="true"/>
 
     <provider
       android:name="androidx.core.content.FileProvider"

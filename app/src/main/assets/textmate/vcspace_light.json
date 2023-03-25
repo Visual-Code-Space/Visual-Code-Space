@@ -79,6 +79,16 @@
             "foreground" : "#006874"
         }
     },  {
+        "name": "coloring of the Java import and package identifiers",
+        "scope": [
+          "storage.modifier.import.java",
+          "variable.language.wildcard.java",
+          "storage.modifier.package.java"
+        ],
+        "settings": {
+          "foreground": "#001F24"
+        }
+    },  {
         "name" : "Class constructor",
         "scope" : "class.instance.constructor,new.expr entity.name.type",
         "settings" : {

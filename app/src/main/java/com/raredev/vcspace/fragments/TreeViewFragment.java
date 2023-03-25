@@ -202,9 +202,6 @@ public class TreeViewFragment extends Fragment
     if (getContext() == null) {
       return;
     }
-    if (!FileUtil.isPermissionGaranted(requireContext())) {
-      FileUtil.takeFilePermissions(requireActivity());
-    }
     doCloseFolder(false);
     mRoot = TreeNode.root(rootFolder);
     mRoot.setViewHolder(new FileViewHolder(requireContext()));
