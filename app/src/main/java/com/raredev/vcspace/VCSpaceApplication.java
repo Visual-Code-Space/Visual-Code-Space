@@ -30,7 +30,7 @@ public class VCSpaceApplication extends Application {
     registerShutdownReceiver();
     appContext = this;
     AppCompatDelegate.setDefaultNightMode(SettingsFragment.getThemeFromPrefs());
-    Thread.setDefaultUncaughtExceptionHandler(new CrashHandler());
+    Thread.setDefaultUncaughtExceptionHandler(new CrashHandler(this));
     registerActions();
   }
 

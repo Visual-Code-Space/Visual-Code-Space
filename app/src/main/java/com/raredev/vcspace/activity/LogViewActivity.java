@@ -26,37 +26,32 @@ public class LogViewActivity extends VCSpaceActivity implements ILogger.Observer
   public void onCreate() {
     setSupportActionBar(binding.toolbar);
     binding.toolbar.setNavigationOnClickListener((v) -> onBackPressed());
-    ILogger.addObserver(this);
     binding.editor.getProps().autoIndent = false;
     binding.editor.setEditable(false);
     binding.editor.setTextSize(12f);
     binding.editor.setTypefaceText(ResourcesCompat.getFont(this, R.font.jetbrains_mono));
     binding.editor.setTypefaceLineNumber(ResourcesCompat.getFont(this, R.font.jetbrains_mono));
+    updateThemes();
 
     binding.fab.setOnClickListener(
         v -> {
           binding.editor.setText("");
           ILogger.clear();
         });
-    updateThemes();
+    ILogger.addObserver(this);
   }
 
   @Override
   protected void onDestroy() {
-    binding.editor.setText("");
-    lineIndex = 0;
+    ILogger.addObserver(null);
     super.onDestroy();
   }
-
-  private int lineIndex = 0;
 
   @Override
   public void onLogUpdated(List<String> logs) {
     CodeEditor editor = binding.editor;
-
     for (String log : logs) {
-      editor.getText().insert(lineIndex, 0, log + "\n");
-      lineIndex++;
+      appendText(log + "\n");
     }
   }
 
@@ -68,5 +63,19 @@ public class LogViewActivity extends VCSpaceActivity implements ILogger.Observer
     } catch (Exception e) {
       ILogger.error(LOG_TAG, Log.getStackTraceString(e));
     }
+  }
+  
+  private int appendText(String text) {
+    final var content = binding.editor.getText();
+    if (binding.editor.getLineCount() <= 0) {
+      return 0;
+    }
+    final int line = binding.editor.getLineCount() - 1;
+    int col = content.getColumnCount(line);
+    if (col < 0) {
+      col = 0;
+    }
+    content.insert(line, col, text);
+    return line;
   }
 }
