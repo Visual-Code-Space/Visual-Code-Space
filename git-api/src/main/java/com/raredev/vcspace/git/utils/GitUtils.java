@@ -448,10 +448,7 @@ public class GitUtils {
     addCmd.setUpdate(true);
     addCmd.addFilepattern(".");
     addCmd.call();
-    Set<String> addedFiles = git.status().call().getAdded();
-    for (String file : addedFiles) {
-      ILogger.debug(LOG_TAG, "Added file: " + file);
-    }
+    ILogger.a(LOG_TAG, "Added all files to git.");
   }
 
   // This method is not tested
@@ -579,10 +576,13 @@ public class GitUtils {
           writer.write(line + System.lineSeparator());
         }
         writer.close();
+        ILogger.a("GitIgnoreCreator", ".gitignore file created successfully.");
       } catch (IOException e) {
         e.printStackTrace();
-        ILogger.error("GitIgnoreCreator", e.toString());
+        ILogger.error("GitIgnoreCreator", Log.getStackTraceString(e));
       }
-    } else return;
+    } else {
+      ILogger.a("GitIgnoreCreator", ".gitignore file already exists.");
+    }
   }
 }

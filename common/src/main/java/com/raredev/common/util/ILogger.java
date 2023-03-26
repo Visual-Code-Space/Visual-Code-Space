@@ -58,6 +58,10 @@ public class ILogger {
   public static void verbose(String tag, String message) {
     log(Priority.VERBOSE, tag, message);
   }
+  
+  public static void a(String tag, String message) {
+    log(Priority.ASSERT, tag, message);
+  }
 
   public static void clear() {
     try {
@@ -98,7 +102,8 @@ public class ILogger {
     WARNING,
     ERROR,
     INFO,
-    VERBOSE;
+    VERBOSE,
+    ASSERT;
   }
 
   public interface Observer {
