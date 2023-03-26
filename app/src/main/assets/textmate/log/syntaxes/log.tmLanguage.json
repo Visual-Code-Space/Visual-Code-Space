@@ -10,8 +10,8 @@
     "value": {
       "patterns": [
         {
-          "match": "\\bVERBOSE\\b",
-          "name": "keyword.control.log.verbose"
+          "match": "\\bASSERT\\b",
+          "name": "keyword.control.log.assert"
         },
         {
           "match": "\\bINFO\\b",
@@ -52,11 +52,11 @@
           }
         },
         {
-          "name": "log.line.verbose",
-          "match": "^(.*?\\bVERBOSE\\b.*?)$",
+          "name": "log.line.assert",
+          "match": "^(.*?\\bASSERT\\b.*?)$",
           "captures": {
             "0": {
-              "name": "constant.language.log.verbose.line"
+              "name": "constant.language.log.assert.line"
             }
           }
         },
@@ -86,11 +86,11 @@
       "include": "#line"
     },
     {
-      "name": "keyword.control.log.verbose",
-      "match": "\\bVERBOSE\\b",
+      "name": "keyword.control.log.assert",
+      "match": "\\bASSERT\\b",
       "captures": {
         "0": {
-          "name": "constant.language.log.verbose"
+          "name": "constant.language.log.assert"
         }
       }
     },

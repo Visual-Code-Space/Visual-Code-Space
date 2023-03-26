@@ -412,38 +412,38 @@
         }
     },
     {
-      "name": "Log Verbose",
-      "scope": "constant.language.log.verbose, constant.language.log.verbose.line",
+      "name": "Log Assert",
+      "scope": "constant.language.log.assert, constant.language.log.assert.line",
       "settings": {
-        "foreground": "#8E8E93"
+        "foreground": "#9C27B0"
       }
     },
     {
       "name": "Log Info",
       "scope": "constant.language.log.info, constant.language.log.info.line",
       "settings": {
-        "foreground": "#4CD964"
+        "foreground": "#4CAF50"
       }
     },
     {
       "name": "Log Warning",
       "scope": "constant.language.log.warning, constant.language.log.warning.line",
       "settings": {
-        "foreground": "#FF9500"
+        "foreground": "#FFC107"
       }
     },
     {
       "name": "Log Debug",
       "scope": "constant.language.log.debug, constant.language.log.debug.line",
       "settings": {
-        "foreground": "#007AFF"
+        "foreground": "#2196F3"
       }
     },
     {
       "name": "Log Error",
       "scope": "constant.language.log.error, constant.language.log.error.line",
       "settings": {
-        "foreground": "#FF3B30"
+        "foreground": "#F44336"
       }
     }
   ]
