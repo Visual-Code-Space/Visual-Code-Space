@@ -20,6 +20,7 @@
   <string name="menu_search">Pesquisar</string>
   <string name="menu_reload">Recarregar</string>
   <string name="menu_settings">Configurações</string>
+  <string name="menu_edit">Editor</string>
   <string name="menu_new_file">Novo arquivo</string>
   <string name="menu_open_file">Abrir arquivo</string>
   <string name="menu_save">Salvar</string>
@@ -62,7 +63,6 @@
   <string name="new_folder_title">Nova pasta</string>
   <string name="close_folder_title">Fechar pasta</string>
   <string name="close_folder_message">Deseja fechar esta pasta?</string>
-  <string name="edit">Editar</string>
 
   <!-- Settings String -->
   <string name="application">Aplicativo</string>

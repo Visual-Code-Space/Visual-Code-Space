@@ -1,0 +1,31 @@
+name: Release Build
+
+on:
+  push:
+    branches: [ "main" ]
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    branches: [ "main" ]
+    paths-ignore:
+      - '**.md'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Generate Release APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Give permission to executable
+        run: chmod +x gradlew
+
+      - name: Generate Release APK
+        run: ./gradlew --warning-mode all assembleRelease
+
+      - uses: actions/upload-artifact@master
+        with:
+          name: app-release
+          path: app/build/outputs/apk/release/app-release.apk

@@ -30,7 +30,6 @@ public class HtmlLanguage extends TextMateLanguage {
         ThemeRegistry.getInstance(),
         true);
 
-    // setCompleterKeywords(javaKeywords);
     loadSymbolPairs();
   }
 

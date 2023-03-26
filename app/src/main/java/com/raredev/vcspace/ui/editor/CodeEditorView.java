@@ -19,12 +19,16 @@ import io.github.rosemoe.sora.langs.textmate.TextMateLanguage;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import io.github.rosemoe.sora.text.LineSeparator;
 import io.github.rosemoe.sora.widget.CodeEditor;
+import io.github.rosemoe.sora.widget.component.EditorAutoCompletion;
+import io.github.rosemoe.sora.widget.component.EditorTextActionWindow;
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme;
 import java.io.File;
 import java.util.concurrent.CompletableFuture;
 
 public class CodeEditorView extends CodeEditor {
   private File file;
+  
+  private EditorTextActions textActions;
 
   public CodeEditorView(Context context, File file) {
     super(context);
@@ -43,7 +47,19 @@ public class CodeEditorView extends CodeEditor {
                 setEditorLanguage(createLanguage());
               });
         });
+
+    textActions = new EditorTextActions(this);
+    
+    getComponent(EditorAutoCompletion.class).setAdapter(new CompletionItemAdapter());
+    replaceComponent(EditorTextActionWindow.class, textActions);
+
     configureEditor();
+  }
+
+  @Override
+  public void release() {
+    super.release();
+    file = null;
   }
 
   private void configureEditor() {
