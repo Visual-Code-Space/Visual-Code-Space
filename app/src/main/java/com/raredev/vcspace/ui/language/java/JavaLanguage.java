@@ -25,92 +25,92 @@ public class JavaLanguage extends TextMateLanguage {
       CodeSnippetParser.parse(
           "private final static ${1:type} ${2/(.*)/${1:/upcase}/} = ${3:value};");
   /// Class
-  private static CodeSnippet CLASS_SNIPPET = CodeSnippetParser.parse("class ${1:Name} {\n	$0\n}");
-  private static CodeSnippet CLASS_INHERITANCE_SNIPPET =
+  private static final CodeSnippet CLASS_SNIPPET = CodeSnippetParser.parse("class ${1:Name} {\n	$0\n}");
+  private static final CodeSnippet CLASS_INHERITANCE_SNIPPET =
       CodeSnippetParser.parse("public class ${1:Name} extends ${2:Parent} {\n	$0\n}");
-  private static CodeSnippet INTERFACE_SNIPPET =
+  private static final CodeSnippet INTERFACE_SNIPPET =
       CodeSnippetParser.parse("interface ${1:Name} {\n	$0\n}");
-  private static CodeSnippet INTERFACE_INHERITANCE_SNIPPET =
+  private static final CodeSnippet INTERFACE_INHERITANCE_SNIPPET =
       CodeSnippetParser.parse("interface ${1:Name} extends ${2:Parent} {\n	$0\n}");
 
   /// Comments
-  private static CodeSnippet MULTILINE_COMMENT_SNIPPET = CodeSnippetParser.parse("/*\n*$0\n*/");
+  private static final CodeSnippet MULTILINE_COMMENT_SNIPPET = CodeSnippetParser.parse("/*\n*$0\n*/");
 
   /// Constants
-  private static CodeSnippet CONSTANT_SNIPPET =
+  private static final CodeSnippet CONSTANT_SNIPPET =
       CodeSnippetParser.parse("static public final ${1:String} ${2:var} = ${3:value};$0");
-  private static CodeSnippet STRING_CONSTANT_SNIPPET =
+  private static final CodeSnippet STRING_CONSTANT_SNIPPET =
       CodeSnippetParser.parse("static public final String ${1:var} = \"${2:value}\";$0");
 
   /// Control Statements
-  private static CodeSnippet CASE_SNIPPET = CodeSnippetParser.parse("case ${1}:\n	$0");
-  private static CodeSnippet DEFAULT_SNIPPET = CodeSnippetParser.parse("default:\n	$0");
-  private static CodeSnippet ELSE_SNIPPET = CodeSnippetParser.parse("else {\n	$0\n}");
-  private static CodeSnippet ELSE_IF_SNIPPET = CodeSnippetParser.parse("else if (${1}) {\n	$0\n}");
-  private static CodeSnippet IF_SNIPPET = CodeSnippetParser.parse("if (${1}) {\n	$0\n}");
-  private static CodeSnippet SWITCH_SNIPPET = CodeSnippetParser.parse("switch (${1}) {\n	$0\n}");
+  private static final CodeSnippet CASE_SNIPPET = CodeSnippetParser.parse("case ${1}:\n	$0");
+  private static final CodeSnippet DEFAULT_SNIPPET = CodeSnippetParser.parse("default:\n	$0");
+  private static final CodeSnippet ELSE_SNIPPET = CodeSnippetParser.parse("else {\n	$0\n}");
+  private static final CodeSnippet ELSE_IF_SNIPPET = CodeSnippetParser.parse("else if (${1}) {\n	$0\n}");
+  private static final CodeSnippet IF_SNIPPET = CodeSnippetParser.parse("if (${1}) {\n	$0\n}");
+  private static final CodeSnippet SWITCH_SNIPPET = CodeSnippetParser.parse("switch (${1}) {\n	$0\n}");
 
   /// Create a Method
-  private static CodeSnippet METHOD_SNIPPET =
+  private static final CodeSnippet METHOD_SNIPPET =
       CodeSnippetParser.parse("${1:void} ${2:method}(${3}) ${4:throws} {\n	$0\n}");
 
   /// Create a Variable
-  private static CodeSnippet VARIABLE_SNIPPET =
+  private static final CodeSnippet VARIABLE_SNIPPET =
       CodeSnippetParser.parse("${1:String} ${2:varName}${3: = null}${4};$0");
 
   /// Annotations
-  private static CodeSnippet Before_ANNOTATION_SNIPPET =
+  private static final CodeSnippet Before_ANNOTATION_SNIPPET =
       CodeSnippetParser.parse("@Before\nstatic void ${1:intercept}(${2:args}) {\n	$0\n}");
-  private static CodeSnippet ManyToMany_ANNOTATION_SNIPPET =
+  private static final CodeSnippet ManyToMany_ANNOTATION_SNIPPET =
       CodeSnippetParser.parse("@ManyToMany\n$0");
-  private static CodeSnippet ManyToOne_ANNOTATION_SNIPPET =
+  private static final CodeSnippet ManyToOne_ANNOTATION_SNIPPET =
       CodeSnippetParser.parse("@ManyToOne\n$0");
-  public static CodeSnippet OneToMany_ANNOTATION_SNIPPET =
+  public static final CodeSnippet OneToMany_ANNOTATION_SNIPPET =
       CodeSnippetParser.parse("@OneToMany${1:(cascade=CascadeType.ALL)}\n$0");
-  private static CodeSnippet OneToOne_ANNOTATION_SNIPPET = CodeSnippetParser.parse("@OneToOne\n$0");
-  private static CodeSnippet Override_ANNOTATION_SNIPPET = CodeSnippetParser.parse("@Override\n$0");
+  private static final CodeSnippet OneToOne_ANNOTATION_SNIPPET = CodeSnippetParser.parse("@OneToOne\n$0");
+  private static final CodeSnippet Override_ANNOTATION_SNIPPET = CodeSnippetParser.parse("@Override\n$0");
 
   /// Basic Java packages and import
-  private static CodeSnippet JAVA_BEANS_SNIPPET = CodeSnippetParser.parse("java.beans.");
-  private static CodeSnippet JAVA_IO_SNIPPET = CodeSnippetParser.parse("java.io.");
-  private static CodeSnippet JAVA_MATH_SNIPPET = CodeSnippetParser.parse("java.math.");
-  private static CodeSnippet JAVA_NET_SNIPPET = CodeSnippetParser.parse("java.net.");
-  private static CodeSnippet JAVA_UTIL_SNIPPET = CodeSnippetParser.parse("java.util.");
+  private static final CodeSnippet JAVA_BEANS_SNIPPET = CodeSnippetParser.parse("java.beans.");
+  private static final CodeSnippet JAVA_IO_SNIPPET = CodeSnippetParser.parse("java.io.");
+  private static final CodeSnippet JAVA_MATH_SNIPPET = CodeSnippetParser.parse("java.math.");
+  private static final CodeSnippet JAVA_NET_SNIPPET = CodeSnippetParser.parse("java.net.");
+  private static final CodeSnippet JAVA_UTIL_SNIPPET = CodeSnippetParser.parse("java.util.");
 
   /// Error Methods
-  private static CodeSnippet ERROR_SNIPPET =
+  private static final CodeSnippet ERROR_SNIPPET =
       CodeSnippetParser.parse("System.err.print(\"${1:Message}\");");
-  private static CodeSnippet ERROR_F_SNIPPET =
+  private static final CodeSnippet ERROR_F_SNIPPET =
       CodeSnippetParser.parse("System.err.printf(\"${1:Message}\", ${2:exception});");
-  private static CodeSnippet ERROR_LN_SNIPPET =
+  private static final CodeSnippet ERROR_LN_SNIPPET =
       CodeSnippetParser.parse("System.err.println(\"${1:Message}\");");
 
   /// Exception Handling
-  private static CodeSnippet ASSERT_SNIPPET =
+  private static final CodeSnippet ASSERT_SNIPPET =
       CodeSnippetParser.parse("assert ${1:test} : \"${2:Failure message}\";$0");
-  private static CodeSnippet CATCH_SNIPPET =
+  private static final CodeSnippet CATCH_SNIPPET =
       CodeSnippetParser.parse("catch(${1:Exception} ${2:e}) $0");
-  private static CodeSnippet TRY_SNIPPET =
+  private static final CodeSnippet TRY_SNIPPET =
       CodeSnippetParser.parse("try {\n	${3}\n} catch(${1:Exception} ${2:e}) {\n	$0\n}");
-  private static CodeSnippet TRY_F_SNIPPET =
+  private static final CodeSnippet TRY_F_SNIPPET =
       CodeSnippetParser.parse(
           "try {\n	${3}\n} catch(${1:Exception} ${2:e}) {\n	${4}\n} finally {\n	$0\n}");
 
   /// Main method
-  private static CodeSnippet MAIN_METHOD_SNIPPET =
+  private static final CodeSnippet MAIN_METHOD_SNIPPET =
       CodeSnippetParser.parse("public static void main (String[] args) {\n	${1:/* code */}$0\n}");
 
   /// Print Methods
-  private static CodeSnippet PRINT_SNIPPET =
+  private static final CodeSnippet PRINT_SNIPPET =
       CodeSnippetParser.parse("System.out.print(\"${1:Message}\");$0");
-  private static CodeSnippet PRINT_F_SNIPPET =
+  private static final CodeSnippet PRINT_F_SNIPPET =
       CodeSnippetParser.parse("System.out.printf(\"${1:Message}\", ${2:args});$0");
-  private static CodeSnippet PRINT_LN_SNIPPET =
+  private static final CodeSnippet PRINT_LN_SNIPPET =
       CodeSnippetParser.parse("System.out.println(${1});$0");
-  private static CodeSnippet SOUT_SNIPPET = CodeSnippetParser.parse("System.out.println(${1});$0");
+  private static final CodeSnippet SOUT_SNIPPET = CodeSnippetParser.parse("System.out.println(${1});$0");
 
-  String prefix;
-  CompletionPublisher publisher;
+  private String prefix;
+  private CompletionPublisher publisher;
 
   public JavaLanguage() {
     super(

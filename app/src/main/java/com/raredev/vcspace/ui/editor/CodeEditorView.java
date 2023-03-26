@@ -11,6 +11,7 @@ import com.raredev.vcspace.models.LanguageScope;
 import com.raredev.vcspace.ui.editor.textmate.DynamicTextMateColorScheme;
 import com.raredev.vcspace.ui.language.html.HtmlLanguage;
 import com.raredev.vcspace.ui.language.java.JavaLanguage;
+import com.raredev.vcspace.ui.language.lua.LuaLanguage;
 import com.raredev.vcspace.util.PreferencesUtils;
 import io.github.rosemoe.sora.event.ContentChangeEvent;
 import io.github.rosemoe.sora.lang.EmptyLanguage;
@@ -28,8 +29,6 @@ import java.util.concurrent.CompletableFuture;
 public class CodeEditorView extends CodeEditor {
   private File file;
   
-  private EditorTextActions textActions;
-
   public CodeEditorView(Context context, File file) {
     super(context);
     this.file = file;
@@ -44,12 +43,14 @@ public class CodeEditorView extends CodeEditor {
           post(
               () -> {
                 setText(content);
-                setEditorLanguage(createLanguage());
+                Language lang = createLanguage();
+                if (lang != null) {
+                  setEditorLanguage(lang);
+                }
               });
         });
 
-    textActions = new EditorTextActions(this);
-    
+    final EditorTextActions textActions = new EditorTextActions(this);
     getComponent(EditorAutoCompletion.class).setAdapter(new CompletionItemAdapter());
     replaceComponent(EditorTextActionWindow.class, textActions);
 
@@ -142,6 +143,8 @@ public class CodeEditorView extends CodeEditor {
           return new JavaLanguage();
         case HTML:
           return new HtmlLanguage();
+        case LUA:
+          return new LuaLanguage();
       }
 
       return TextMateLanguage.create(langScope.getScope(), true);

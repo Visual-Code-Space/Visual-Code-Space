@@ -3,8 +3,8 @@ package com.raredev.vcspace.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;
-import com.raredev.vcspace.VCSpaceApplication;
 import com.raredev.vcspace.R;
+import com.raredev.vcspace.VCSpaceApplication;
 import com.raredev.vcspace.managers.SettingsManager;
 
 public class PreferencesUtils {
