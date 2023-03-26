@@ -8,9 +8,5 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
+      # Check for updates to GitHub Actions every weekday
       interval: "daily"
-    ignore:
-      - dependency-name: "androidx.test:core"
-        update-type: "minor"
-    labels:
-      - "dependencies"
