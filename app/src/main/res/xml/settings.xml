@@ -28,14 +28,11 @@
     app:iconSpaceReserved="false"
     app:title="@string/editor">
 
-    <SeekBarPreference
+    <Preference
       app:icon="@drawable/format_size"
-      app:key="pref_editortextsize"
-      app:title="@string/pref_editor_textsize"
-      app:defaultValue="14"
-      app:min="6"
-      app:showSeekBarValue="true"
-      android:max="24" />
+      app:key="font_size"
+      app:summary="@string/pref_editor_textsize_summary"
+      app:title="@string/pref_editor_textsize" />
 
     <ListPreference
       app:defaultValue="4"

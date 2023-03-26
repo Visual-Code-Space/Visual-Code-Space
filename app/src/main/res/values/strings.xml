@@ -63,6 +63,7 @@
   <string name="no_folder_opened">NO FOLDER OPENED</string>
   <string name="explorer">EXPLORER</string>
   <string name="search">Search</string>
+  <string name="reset">Reset</string>
   <string name="replace">Replace</string>
   <string name="new_file_title">New file</string>
   <string name="new_folder_title">New folder</string>
@@ -85,6 +86,7 @@
 	<string name="create_as_draft">Create as draft</string>
 	<string name="initializing">Initializing...</string>
 	<string name="initializing_message">Initializing git repository please wait.</string>
+	<string name="choose_default_font">Choose default font of the editor:</string>
 
   <!-- Settings String -->
   <string name="application">Application</string>
@@ -110,8 +112,9 @@
   <string name="pref_open_recent_automatically_summary">Automatically open recently used folder</string>
 
   <!-- Editor -->
-  <string name="pref_editor_textsize">Font size</string>
-  <string name="pref_editor_tabsize">TAB size</string>
+  <string name="pref_editor_textsize">Font Size</string>
+  <string name="pref_editor_textsize_summary">Font size of the editor.</string>
+  <string name="pref_editor_tabsize">TAB Size</string>
   <string-array name="settings_tab_entries">
     <item>2</item>
     <item>4</item>

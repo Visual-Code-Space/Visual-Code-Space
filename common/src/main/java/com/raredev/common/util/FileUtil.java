@@ -363,6 +363,7 @@ public class FileUtil {
 
   public static void takeFilePermissions(Activity activity) {
     new MaterialAlertDialogBuilder((Context) activity)
+        .setCancelable(false)
         .setTitle(R.string.file_access_title)
         .setMessage(R.string.file_access_message)
         .setPositiveButton(

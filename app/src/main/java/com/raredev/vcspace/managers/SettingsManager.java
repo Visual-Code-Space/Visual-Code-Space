@@ -15,4 +15,5 @@ public class SettingsManager {
   public static final String KEY_GITHUB = "github";
   public static final String KEY_RECENT_FOLDER = "recentFolderPath";
   public static final String KEY_TOOLS_PREFERENCE = "tools";
+  public static final String KEY_FONT_SIZE_PREFERENCE = "font_size";
 }
