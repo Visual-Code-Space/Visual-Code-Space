@@ -16,6 +16,8 @@ import android.provider.OpenableColumns;
 import android.provider.Settings;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.raredev.common.R;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -360,20 +362,35 @@ public class FileUtil {
   }
 
   public static void takeFilePermissions(Activity activity) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-      Intent intent = new Intent();
-      intent.setAction(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-      Uri uri = Uri.fromParts("package", activity.getPackageName(), null);
-      intent.setData(uri);
-      activity.startActivity(intent);
-    } else {
-      ActivityCompat.requestPermissions(
-          activity,
-          new String[] {
-            Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.MANAGE_EXTERNAL_STORAGE
-          },
-          1);
-    }
+    new MaterialAlertDialogBuilder((Context) activity)
+        .setTitle(R.string.file_access_title)
+        .setMessage(R.string.file_access_message)
+        .setPositiveButton(
+            R.string.grant_permission,
+            (d, w) -> {
+              if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                Uri uri = Uri.fromParts("package", activity.getPackageName(), null);
+                intent.setData(uri);
+                activity.startActivity(intent);
+              } else {
+                ActivityCompat.requestPermissions(
+                    activity,
+                    new String[] {
+                      Manifest.permission.READ_EXTERNAL_STORAGE,
+                      Manifest.permission.MANAGE_EXTERNAL_STORAGE
+                    },
+                    1);
+              }
+            })
+        .setNegativeButton(
+            R.string.exit,
+            (d, w) -> {
+              activity.finish();
+              System.exit(0);
+            })
+        .show();
   }
 
   public static boolean isPermissionGaranted(Context context) {
