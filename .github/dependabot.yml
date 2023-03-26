@@ -5,7 +5,7 @@
 
 version: 2
 updates:
-  - package-ecosystem: "android"
+  - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "daily"
