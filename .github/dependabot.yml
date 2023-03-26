@@ -5,7 +5,12 @@
 
 version: 2
 updates:
-  - package-ecosystem: "" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  - package-ecosystem: "android"
+    directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "daily"
+    ignore:
+      - dependency-name: "androidx.test:core"
+        update-type: "minor"
+    labels:
+      - "dependencies"
