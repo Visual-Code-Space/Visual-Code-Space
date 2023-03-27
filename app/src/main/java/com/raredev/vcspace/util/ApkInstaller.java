@@ -7,7 +7,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 import androidx.core.content.FileProvider;
-import com.raredev.common.util.ILogger;
+import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.BuildConfig;
 import java.io.File;
 

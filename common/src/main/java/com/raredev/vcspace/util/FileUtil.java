@@ -1,4 +1,4 @@
-package com.raredev.common.util;
+package com.raredev.vcspace.util;
 
 import android.Manifest;
 import android.app.Activity;
@@ -17,7 +17,7 @@ import android.provider.Settings;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.raredev.common.R;
+import com.raredev.vcspace.common.R;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;

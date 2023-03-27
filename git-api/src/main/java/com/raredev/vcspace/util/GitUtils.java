@@ -1,8 +1,8 @@
-package com.raredev.vcspace.git.utils;
+package com.raredev.vcspace.util;
 
 import android.util.Log;
-import com.raredev.common.task.TaskExecutor;
-import com.raredev.common.util.ILogger;
+import com.raredev.vcspace.task.TaskExecutor;
+import com.raredev.vcspace.util.ILogger;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;

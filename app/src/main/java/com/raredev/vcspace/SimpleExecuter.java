@@ -2,11 +2,9 @@ package com.raredev.vcspace;
 
 import android.content.Context;
 import android.content.Intent;
-import com.raredev.common.util.DialogUtils;
+import com.raredev.vcspace.util.DialogUtils;
 import com.raredev.vcspace.activity.WebViewActivity;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;

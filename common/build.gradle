@@ -3,6 +3,7 @@ plugins {
 }
 
 android {
+  namespace 'com.raredev.vcspace.common'
   compileSdk 33
   buildToolsVersion "33.0.0"
 

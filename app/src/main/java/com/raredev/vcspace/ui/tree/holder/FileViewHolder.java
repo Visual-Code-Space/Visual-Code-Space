@@ -4,7 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
-import com.raredev.common.util.Utils;
+import com.raredev.vcspace.util.Utils;
 import com.raredev.vcspace.databinding.LayoutFileItemBinding;
 import com.raredev.vcspace.models.FileExtension;
 import com.raredev.vcspace.util.ViewUtils;

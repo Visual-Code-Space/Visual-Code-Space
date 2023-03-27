@@ -1,4 +1,4 @@
-package com.raredev.common.util;
+package com.raredev.vcspace.util;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

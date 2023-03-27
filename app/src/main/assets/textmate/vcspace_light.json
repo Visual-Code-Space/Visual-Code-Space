@@ -7,7 +7,7 @@
             "selection" : "#214283",
             "lineNumber" : "#b3b4b5",
             "currentLineNumber" : "#001F24",
-            "highlightedDelimetersForeground" : "#ffffff",
+            "highlightedDelimetersForeground" : "#001F24",
             "caret": "#001F24"
         }
     }, {

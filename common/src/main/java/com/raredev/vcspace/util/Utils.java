@@ -1,4 +1,4 @@
-package com.raredev.common.util;
+package com.raredev.vcspace.util;
 
 import android.content.Context;
 import android.content.res.Configuration;

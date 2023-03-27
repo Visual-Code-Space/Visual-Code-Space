@@ -3,12 +3,11 @@ package com.raredev.vcspace.ui.editor;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import androidx.core.content.res.ResourcesCompat;
-import com.raredev.common.util.FileUtil;
-import com.raredev.common.util.ILogger;
+import com.raredev.vcspace.util.FileUtil;
 import com.raredev.vcspace.models.LanguageScope;
-import com.raredev.vcspace.ui.editor.textmate.DynamicTextMateColorScheme;
+import com.raredev.vcspace.ui.editor.completion.CompletionItemAdapter;
+import com.raredev.vcspace.ui.editor.completion.CustomCompletionLayout;
 import com.raredev.vcspace.ui.language.html.HtmlLanguage;
 import com.raredev.vcspace.ui.language.java.JavaLanguage;
 import com.raredev.vcspace.ui.language.lua.LuaLanguage;
@@ -17,7 +16,7 @@ import io.github.rosemoe.sora.event.ContentChangeEvent;
 import io.github.rosemoe.sora.lang.EmptyLanguage;
 import io.github.rosemoe.sora.lang.Language;
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage;
-import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
+import io.github.rosemoe.sora.langs.textmate.VCSpaceTextMateColorScheme;
 import io.github.rosemoe.sora.text.LineSeparator;
 import io.github.rosemoe.sora.widget.CodeEditor;
 import io.github.rosemoe.sora.widget.component.EditorAutoCompletion;
@@ -51,6 +50,7 @@ public class CodeEditorView extends CodeEditor {
         });
 
     final EditorTextActions textActions = new EditorTextActions(this);
+    getComponent(EditorAutoCompletion.class).setLayout(new CustomCompletionLayout());
     getComponent(EditorAutoCompletion.class).setAdapter(new CompletionItemAdapter());
     replaceComponent(EditorTextActionWindow.class, textActions);
 
@@ -107,11 +107,6 @@ public class CodeEditorView extends CodeEditor {
 
   public void save() {
     if (file != null && file.exists()) {
-      String oldContent = FileUtil.readFile(file.getAbsolutePath());
-      String newContent = getText().toString();
-
-      if (oldContent == newContent) return;
-
       FileUtil.writeFile(file.getAbsolutePath(), getText().toString());
     }
   }
@@ -128,7 +123,7 @@ public class CodeEditorView extends CodeEditor {
 
   private EditorColorScheme createScheme() {
     try {
-      return DynamicTextMateColorScheme.create(getContext(), ThemeRegistry.getInstance());
+      return VCSpaceTextMateColorScheme.create(getContext());
     } catch (Exception e) {
       return null;
     }
@@ -149,7 +144,6 @@ public class CodeEditorView extends CodeEditor {
 
       return TextMateLanguage.create(langScope.getScope(), true);
     } catch (Exception e) {
-      ILogger.error("LoadEditorLanguage", Log.getStackTraceString(e));
       return new EmptyLanguage();
     }
   }

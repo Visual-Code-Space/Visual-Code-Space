@@ -1,11 +1,11 @@
-package com.raredev.vcspace.ui.editor;
+package com.raredev.vcspace.ui.editor.completion;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.raredev.common.util.Utils;
+import com.raredev.vcspace.util.Utils;
 import com.raredev.vcspace.databinding.LayoutCompletionItemBinding;
 import io.github.rosemoe.sora.widget.component.EditorCompletionAdapter;
 
@@ -14,7 +14,7 @@ public class CompletionItemAdapter extends EditorCompletionAdapter {
 
   @Override
   public int getItemHeight() {
-    return Utils.pxToDp(getContext(), 45);
+    return Utils.pxToDp(getContext(), 50);
   }
 
   @Override

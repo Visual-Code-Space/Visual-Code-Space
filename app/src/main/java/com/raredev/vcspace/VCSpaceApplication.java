@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
 import androidx.appcompat.app.AppCompatDelegate;
-import com.raredev.common.util.ILogger;
+import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.fragments.SettingsFragment;
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;

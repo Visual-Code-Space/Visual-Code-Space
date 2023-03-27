@@ -1,9 +1,9 @@
-package com.raredev.common.util;
+package com.raredev.vcspace.util;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.raredev.common.databinding.LayoutProgressDialogBinding;
+import com.raredev.vcspace.common.databinding.LayoutProgressDialogBinding;
 
 public class DialogUtils {
 

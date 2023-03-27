@@ -4,7 +4,6 @@
   android:layout_height="wrap_content"
   android:layout_width="fill_parent"
   android:gravity="center_vertical"
-  android:background="?attr/colorSurface"
   android:padding="5dp"
   android:orientation="horizontal"
   android:foreground="@drawable/ripple_effect">
@@ -26,7 +25,7 @@
       android:layout_height="wrap_content"
       android:layout_width="wrap_content"
       android:textSize="15sp"
-      android:text="Medium Text"
+      android:textColor="?attr/colorPrimary"
       android:id="@+id/item_label" />
 
     <TextView
@@ -34,7 +33,6 @@
       android:layout_width="wrap_content"
       android:textSize="11sp"
       android:layout_marginTop="4dp"
-      android:text="Small Text"
       android:id="@+id/item_desc" />
 
   </LinearLayout>

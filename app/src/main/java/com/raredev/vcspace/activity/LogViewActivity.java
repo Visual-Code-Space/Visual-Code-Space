@@ -2,16 +2,15 @@ package com.raredev.vcspace.activity;
 
 import android.util.Log;
 import android.view.View;
-import com.raredev.common.util.ILogger;
 import androidx.appcompat.app.AlertDialog;
-import com.raredev.common.task.TaskExecutor;
-import com.raredev.common.util.DialogUtils;
-import com.raredev.vcspace.R;
 import androidx.core.content.res.ResourcesCompat;
+import com.raredev.vcspace.task.TaskExecutor;
+import com.raredev.vcspace.util.DialogUtils;
+import com.raredev.vcspace.util.ILogger;
+import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.ActivityLogViewBinding;
-import com.raredev.vcspace.ui.editor.textmate.DynamicTextMateColorScheme;
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage;
-import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
+import io.github.rosemoe.sora.langs.textmate.VCSpaceTextMateColorScheme;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -83,8 +82,7 @@ public class LogViewActivity extends VCSpaceActivity implements ILogger.Observer
 
   public void updateThemes() {
     try {
-      binding.editor.setColorScheme(
-          DynamicTextMateColorScheme.create(this, ThemeRegistry.getInstance()));
+      binding.editor.setColorScheme(VCSpaceTextMateColorScheme.create(this));
       binding.editor.setEditorLanguage(TextMateLanguage.create("text.log", false));
     } catch (Exception e) {
       ILogger.error(LOG_TAG, Log.getStackTraceString(e));

@@ -8,7 +8,7 @@ import androidx.webkit.WebSettingsCompat;
 import com.blankj.utilcode.util.ClipboardUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.google.android.material.snackbar.Snackbar;
-import com.raredev.common.util.FileUtil;
+import com.raredev.vcspace.util.FileUtil;
 import com.raredev.vcspace.databinding.ActivityWebviewBinding;
 import com.raredev.vcspace.R;
 
