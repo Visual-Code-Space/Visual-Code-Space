@@ -1,19 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_height="wrap_content"
-  android:layout_width="fill_parent"
+  android:layout_height="48dp"
+  android:layout_width="match_parent"
+  android:background="@drawable/ripple_effect"
   android:gravity="center_vertical"
-  android:padding="5dp"
-  android:orientation="horizontal"
-  android:foreground="@drawable/ripple_effect">
+  android:padding="4dp"
+  android:orientation="horizontal">
 
-  <ImageView
-    android:layout_height="24dp"
-    android:layout_width="24dp"
-    android:layout_marginLeft="5dp"
-    android:layout_marginRight="5dp"
-    android:id="@+id/item_image" />
+  <TextView
+    android:layout_height="match_parent"
+    android:layout_width="30dp"
+    android:gravity="center"
+    android:layout_marginHorizontal="4dp"
+    android:fontFamily="@font/jetbrains_mono"
+    android:paddingHorizontal="8dp"
+    android:text="V"
+    android:textStyle="bold"
+    android:textColor="?attr/colorPrimary"
+    android:id="@+id/item_icon" />
 
   <LinearLayout
     android:layout_height="wrap_content"
@@ -25,14 +30,19 @@
       android:layout_height="wrap_content"
       android:layout_width="wrap_content"
       android:textSize="15sp"
+      android:singleLine="true"
       android:textColor="?attr/colorPrimary"
+      android:layout_marginStart="4dp"
       android:id="@+id/item_label" />
 
     <TextView
       android:layout_height="wrap_content"
       android:layout_width="wrap_content"
+      android:layout_marginEnd="8dp"
       android:textSize="11sp"
+      android:singleLine="true"
       android:layout_marginTop="4dp"
+      android:layout_marginStart="4dp"
       android:id="@+id/item_desc" />
 
   </LinearLayout>

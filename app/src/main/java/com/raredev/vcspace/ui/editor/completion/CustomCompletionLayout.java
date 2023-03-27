@@ -5,12 +5,16 @@ import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.drawable.GradientDrawable;
 import android.os.SystemClock;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import com.raredev.vcspace.util.ILogger;
+import com.raredev.vcspace.util.Utils;
 import io.github.rosemoe.sora.widget.component.CompletionLayout;
 import io.github.rosemoe.sora.widget.component.EditorAutoCompletion;
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme;
@@ -19,6 +23,8 @@ public class CustomCompletionLayout implements CompletionLayout {
 
   private EditorAutoCompletion mEditorAutoCompletion;
   private ListView mListView;
+  private ProgressBar mProgressBar;
+  private RelativeLayout mRelativeLayout;
 
   @Override
   public void setEditorCompletion(EditorAutoCompletion completion) {
@@ -28,22 +34,42 @@ public class CustomCompletionLayout implements CompletionLayout {
   @Override
   public View inflate(Context context) {
     RelativeLayout layout = new RelativeLayout(context);
-
-    layout.setBackground(applyBackground(context));
-
     mListView = new ListView(context);
-    mListView.setDividerHeight(0);
     layout.addView(mListView, new LinearLayout.LayoutParams(-1, -1));
+    mProgressBar = new ProgressBar(context);
+    layout.addView(mProgressBar);
+    var params = ((RelativeLayout.LayoutParams) mProgressBar.getLayoutParams());
+    params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+    params.width = params.height = Utils.pxToDp(context, 30);
+    layout.setBackground(applyBackground(context));
+    mRelativeLayout = layout;
+    mListView.setDividerHeight(0);
+    setLoading(true);
     mListView.setOnItemClickListener(
-        (adapterView, view, position, l) -> mEditorAutoCompletion.select(position));
+        (parent, view, position, id) -> {
+          try {
+            mEditorAutoCompletion.select(position);
+          } catch (Exception e) {
+            ILogger.error("EditorAutoCompletion", Log.getStackTraceString(e));
+          }
+        });
+
     return layout;
   }
 
   @Override
-  public void onApplyColorScheme(EditorColorScheme colorScheme) {}
+  public void onApplyColorScheme(EditorColorScheme colorScheme) {
+    GradientDrawable gd = new GradientDrawable();
+    gd.setCornerRadius(Utils.pxToDp(mEditorAutoCompletion.getContext(), 10));
+    gd.setStroke(2, colorScheme.getColor(EditorColorScheme.COMPLETION_WND_CORNER));
+    gd.setColor(colorScheme.getColor(EditorColorScheme.COMPLETION_WND_BACKGROUND));
+    mRelativeLayout.setBackground(gd);
+  }
 
   @Override
-  public void setLoading(boolean state) {}
+  public void setLoading(boolean state) {
+    mProgressBar.setVisibility(state ? View.VISIBLE : View.INVISIBLE);
+  }
 
   @Override
   public ListView getCompletionList() {
@@ -84,7 +110,7 @@ public class CustomCompletionLayout implements CompletionLayout {
   private GradientDrawable applyBackground(Context context) {
     GradientDrawable drawable = new GradientDrawable();
     drawable.setShape(GradientDrawable.RECTANGLE);
-    drawable.setCornerRadius(15f);
+    drawable.setCornerRadius(Utils.pxToDp(mEditorAutoCompletion.getContext(), 10));
     drawable.setColor(
         ColorStateList.valueOf(
             getResolvedColor(context, com.google.android.material.R.attr.colorSurface)));

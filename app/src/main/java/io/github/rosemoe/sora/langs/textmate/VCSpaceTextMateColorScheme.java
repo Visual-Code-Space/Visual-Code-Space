@@ -2,7 +2,9 @@ package io.github.rosemoe.sora.langs.textmate;
 
 import android.content.Context;
 import android.graphics.Color;
+import com.google.android.material.color.MaterialColors;
 import com.google.android.material.elevation.SurfaceColors;
+import com.google.android.material.R;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.model.ThemeModel;
 import io.github.rosemoe.sora.widget.CodeEditor;
@@ -81,6 +83,8 @@ public class VCSpaceTextMateColorScheme extends EditorColorScheme
     setColor(CURRENT_LINE, SurfaceColors.SURFACE_1.getColor(context));
 
     setColor(BLOCK_LINE, SurfaceColors.SURFACE_3.getColor(context));
+    setColor(COMPLETION_WND_CORNER, MaterialColors.getColor(context, R.attr.colorOnSurface, 0));
+    setColor(COMPLETION_WND_BACKGROUND, SurfaceColors.SURFACE_0.getColor(context));
 
     String caret = (String) themeRaw.get("caret");
     if (caret != null) {

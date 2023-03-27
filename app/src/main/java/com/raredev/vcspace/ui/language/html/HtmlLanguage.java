@@ -46,7 +46,7 @@ public class HtmlLanguage extends TextMateLanguage {
 
     for (String tag : htmlTags) {
       if (tag.startsWith(prefix) && prefix.length() > 0) {
-        publisher.addItem(new HtmlCompletionItem(tag, "keyword", prefix.length(), tag));
+        publisher.addItem(new HtmlCompletionItem(tag, "Tag", prefix.length(), tag));
       }
     }
 
@@ -54,7 +54,7 @@ public class HtmlLanguage extends TextMateLanguage {
       publisher.addItem(
           new SimpleSnippetCompletionItem(
               "html",
-              "Snippet - Html",
+              "Snippet - HTML5",
               new SnippetDescription(prefix.length(), HTML_SNIPPET, true)));
     }
   }
