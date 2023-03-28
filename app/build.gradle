@@ -85,11 +85,13 @@ dependencies {
 
   implementation platform("io.github.Rosemoe.sora-editor:bom:0.21.1")
   implementation "io.github.Rosemoe.sora-editor:editor"
+  implementation "io.github.Rosemoe.sora-editor:editor-lsp"
   implementation "io.github.Rosemoe.sora-editor:language-textmate"
 
   implementation 'org.eclipse.jgit:org.eclipse.jgit:6.5.0.202303070854-r'
   implementation 'org.greenrobot:eventbus:3.3.1'
   implementation 'org.commonmark:commonmark:0.20.0'
+  implementation 'org.eclipse.lsp4j:org.eclipse.lsp4j:0.20.1'
   
   implementation project(path: ':common')
   implementation project(path: ':git-api')

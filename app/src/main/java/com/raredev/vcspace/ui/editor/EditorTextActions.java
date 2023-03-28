@@ -10,6 +10,8 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.util.TypedValue;
 import android.widget.ImageButton;
+import androidx.appcompat.content.res.AppCompatResources;
+import com.raredev.vcspace.util.Utils;
 import io.github.rosemoe.sora.R;
 import io.github.rosemoe.sora.widget.CodeEditor;
 import io.github.rosemoe.sora.widget.component.EditorTextActionWindow;
@@ -30,6 +32,11 @@ public class EditorTextActions extends EditorTextActionWindow {
     updateImageTint(cut, editor.getContext());
     updateImageTint(copy, editor.getContext());
     updateImageTint(pasteBtn, editor.getContext());
+    
+    selectAll.setBackground(getRippleEffectDrawable());
+    cut.setBackground(getRippleEffectDrawable());
+    copy.setBackground(getRippleEffectDrawable());
+    pasteBtn.setBackground(getRippleEffectDrawable());
   }
 
   private void updateImageTint(ImageButton imageButton, Context context) {
@@ -46,7 +53,7 @@ public class EditorTextActions extends EditorTextActionWindow {
   protected void applyBackground() {
     GradientDrawable drawable = new GradientDrawable();
     drawable.setShape(GradientDrawable.RECTANGLE);
-    drawable.setCornerRadius(28f);
+    drawable.setCornerRadius(Utils.pxToDp(getEditor().getContext(), 10));
     drawable.setColor(
         ColorStateList.valueOf(getResolvedColor(com.google.android.material.R.attr.colorSurface)));
     drawable.setStroke(2, getResolvedColor(com.google.android.material.R.attr.colorOutline));
@@ -58,5 +65,10 @@ public class EditorTextActions extends EditorTextActionWindow {
     Resources.Theme theme = getEditor().getContext().getTheme();
     theme.resolveAttribute(attr, typedValue, true);
     return typedValue.data;
+  }
+
+  private Drawable getRippleEffectDrawable() {
+    return AppCompatResources.getDrawable(
+        getEditor().getContext(), com.raredev.vcspace.R.drawable.ripple_effect);
   }
 }

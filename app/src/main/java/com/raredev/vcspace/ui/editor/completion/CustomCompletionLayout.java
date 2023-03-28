@@ -115,7 +115,7 @@ public class CustomCompletionLayout implements CompletionLayout {
         ColorStateList.valueOf(
             getResolvedColor(context, com.google.android.material.R.attr.colorSurface)));
     drawable.setStroke(
-        2, getResolvedColor(context, com.google.android.material.R.attr.colorOutline));
+        2, getResolvedColor(context, com.google.android.material.R.attr.colorOnSurface));
     return drawable;
   }
 

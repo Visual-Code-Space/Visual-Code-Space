@@ -64,7 +64,7 @@ public class EditorManager {
     }
     int index = viewModel.getOpenedFileCount();
 
-    ILogger.info(LOG_TAG, "Opening file: " + file.toString() + " index: " + index);
+    ILogger.info(LOG_TAG, "Opening file: " + file.toString() + " at index: " + index);
 
     CodeEditorView editor = new CodeEditorView(context, file);
     editor.subscribeContentChangeEvent(() -> ((MainActivity) context).invalidateOptionsMenu());
