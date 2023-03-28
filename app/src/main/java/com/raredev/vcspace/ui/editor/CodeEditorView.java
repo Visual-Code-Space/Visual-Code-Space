@@ -7,9 +7,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import androidx.core.content.res.ResourcesCompat;
+import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.raredev.vcspace.services.JavaLanguageServerService;
-import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.util.FileUtil;
 import com.raredev.vcspace.models.LanguageScope;
 import com.raredev.vcspace.ui.editor.completion.CompletionItemAdapter;
@@ -25,7 +25,6 @@ import io.github.rosemoe.sora.lang.EmptyLanguage;
 import io.github.rosemoe.sora.lang.Language;
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage;
 import io.github.rosemoe.sora.langs.textmate.VCSpaceTextMateColorScheme;
-import io.github.rosemoe.sora.lsp.client.connection.CustomConnectProvider;
 import io.github.rosemoe.sora.lsp.client.connection.SocketStreamConnectionProvider;
 import io.github.rosemoe.sora.lsp.client.connection.StreamConnectionProvider;
 import io.github.rosemoe.sora.lsp.client.languageserver.serverdefinition.CustomLanguageServerDefinition;
@@ -41,9 +40,8 @@ import io.github.rosemoe.sora.widget.schemes.EditorColorScheme;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Supplier;
+import java.util.concurrent.Executors;
 import org.eclipse.lsp4j.DidChangeWorkspaceFoldersParams;
 import org.eclipse.lsp4j.InitializeResult;
 import org.eclipse.lsp4j.WorkspaceFolder;
@@ -67,7 +65,7 @@ public class CodeEditorView extends CodeEditor {
           var content = FileUtil.readFile(file.getAbsolutePath());
           post(
               () -> {
-                setText(content);
+                setText(content, null);
                 Language lang = createLanguage();
                 if (lang != null) {
                   setEditorLanguage(lang);
@@ -76,14 +74,11 @@ public class CodeEditorView extends CodeEditor {
         });
 
     if (file.getAbsolutePath().endsWith(".java")) {
-      TaskExecutor.executeAsyncProvideError(
-          () -> {
-            connectToLanguageServer();
-            return null;
-          },
-          (result, error) -> {
-            if (error != null) ILogger.error("CodeEditorView", Log.getStackTraceString(error));
-          });
+      try {
+        connectToLanguageServer();
+      } catch (IOException e) {
+        ILogger.error("CodeEditorView", Log.getStackTraceString(e));
+      }
     }
 
     final EditorTextActions textActions = new EditorTextActions(this);
@@ -212,88 +207,79 @@ public class CodeEditorView extends CodeEditor {
         | CodeEditor.FLAG_DRAW_WHITESPACE_FOR_EMPTY_LINE);*/
   }
 
-  private void connectToLanguageServer() {
-    new Thread(
+  private void connectToLanguageServer() throws IOException {
+    int port = Utils.randomPort();
+    Executors.newSingleThreadExecutor()
+        .execute(
             () -> {
-              new Handler(Looper.getMainLooper())
-                  .post(
+              ThreadUtils.runOnUiThread(
+                  () -> {
+                    ToastUtils.showShort("Starting Language Server...");
+                    setEditable(false);
+                  });
+
+              Intent intent = new Intent(getContext(), JavaLanguageServerService.class);
+              intent.putExtra("port", port);
+              getContext().startService(intent);
+
+              CustomLanguageServerDefinition serverDefinition =
+                  new CustomLanguageServerDefinition(
+                      ".java",
+                      new CustomLanguageServerDefinition.ConnectProvider() {
+                        @Override
+                        public StreamConnectionProvider createConnectionProvider(
+                            String workingDir) {
+                          return new SocketStreamConnectionProvider(() -> port);
+                        }
+                      }) {
+
+                    @Override
+                    public EventHandler.EventListener getEventListener() {
+                      return new EventListener();
+                    }
+                  };
+
+              ThreadUtils.runOnUiThread(
+                  () -> {
+                    lspEditor =
+                        LspEditorManager.getOrCreateEditorManager(file.getAbsolutePath())
+                            .createEditor(URIUtils.fileToURI(file).toString(), serverDefinition);
+                    Language wrapperLanguage = createLanguage();
+                    lspEditor.setWrapperLanguage(wrapperLanguage);
+                    lspEditor.setEditor(this);
+                  });
+
+              new Thread(
                       () -> {
-                        ToastUtils.showShort("Starting Language Server...");
-                        setEditable(false);
-                      });
-              try {
-                int port = Utils.randomPort();
-
-                getContext()
-                    .startService(
-                        new Intent(getContext(), JavaLanguageServerService.class)
-                            .putExtra("port", port));
-
-                CustomLanguageServerDefinition serverDefinition =
-                    new CustomLanguageServerDefinition(
-                        ".java",
-                        new CustomLanguageServerDefinition.ConnectProvider() {
-                          @Override
-                          public StreamConnectionProvider createConnectionProvider(
-                              String workingDir) {
-                            return new SocketStreamConnectionProvider(() -> port);
-                          }
-                        }) {
-
-                      /*@Override
-                      public Object getInitializationOptions(URI uri) {
-                          return new InitializationOption(
-                              "file:/" + projectPath + "/std/Lua53"
-                          );
-                      }*/
-
-                      @Override
-                      public EventHandler.EventListener getEventListener() {
-                        return new EventListener();
-                      }
-                    };
-
-                new Handler(Looper.getMainLooper())
-                    .post(
-                        () -> {
-                          lspEditor =
-                              LspEditorManager.getOrCreateEditorManager(file.getAbsolutePath())
-                                  .createEditor(
-                                      URIUtils.fileToURI(file).toString(), serverDefinition);
-                          Language wrapperLanguage = createLanguage();
-                          lspEditor.setWrapperLanguage(wrapperLanguage);
-                          lspEditor.setEditor(this);
-                        });
-              } catch (IOException e) {
-                ILogger.error("CodeEditorView", Log.getStackTraceString(e));
-              }
-
-              new Handler(Looper.getMainLooper())
-                  .post(
-                      () -> {
-                        WorkspaceFoldersChangeEvent mWorkspaceFoldersChangeEvent =
-                            new WorkspaceFoldersChangeEvent();
-                        DidChangeWorkspaceFoldersParams mDidChangeWorkspaceFoldersParams =
-                            new DidChangeWorkspaceFoldersParams();
-                        mWorkspaceFoldersChangeEvent.setAdded(
-                            Arrays.asList(new WorkspaceFolder(Uri.fromFile(file).toString())));
-                        mDidChangeWorkspaceFoldersParams.setEvent(mWorkspaceFoldersChangeEvent);
                         try {
+                          WorkspaceFoldersChangeEvent mWorkspaceFoldersChangeEvent =
+                              new WorkspaceFoldersChangeEvent();
+                          DidChangeWorkspaceFoldersParams mDidChangeWorkspaceFoldersParams =
+                              new DidChangeWorkspaceFoldersParams();
+                          mWorkspaceFoldersChangeEvent.setAdded(
+                              Arrays.asList(new WorkspaceFolder(Uri.fromFile(file).toString())));
+                          mDidChangeWorkspaceFoldersParams.setEvent(mWorkspaceFoldersChangeEvent);
+
                           lspEditor.connectWithTimeout();
                           lspEditor
                               .getRequestManager()
                               .didChangeWorkspaceFolders(mDidChangeWorkspaceFoldersParams);
-
-                          setEditable(true);
-                          ToastUtils.showShort("Initialized Language server");
+                          ThreadUtils.runOnUiThread(
+                              () -> {
+                                setEditable(true);
+                                ToastUtils.showShort("Initialized Language server");
+                              });
                         } catch (Exception e) {
-                          ToastUtils.showShort("Unable to connect language server");
-                          setEditable(true);
+                          ThreadUtils.runOnUiThread(
+                              () -> {
+                                ToastUtils.showShort("Unable to connect language server");
+                                setEditable(true);
+                              });
                           ILogger.error("CodeEditorView", Log.getStackTraceString(e));
                         }
-                      });
-            })
-        .start();
+                      })
+                  .start();
+            });
   }
 
   class EventListener implements EventHandler.EventListener {
