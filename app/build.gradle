@@ -63,8 +63,8 @@ android {
 }
 
 dependencies {
-  def lifecycle_version = "2.5.1"
-  def activity_version = "1.6.1"
+  def lifecycle_version = "2.6.1"
+  def activity_version = "1.7.0"
 
   implementation fileTree(dir: 'libs', include: ['*.jar'])
   implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
@@ -72,12 +72,12 @@ dependencies {
   implementation 'androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version'
   implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version'
 
-  implementation 'androidx.core:core-ktx:1.7.0'
+  implementation 'androidx.core:core-ktx:1.9.0'
   implementation 'androidx.appcompat:appcompat:1.6.1'
   implementation 'androidx.preference:preference:1.2.0'
   implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
   implementation 'androidx.webkit:webkit:1.7.0-alpha03'
-  implementation 'androidx.fragment:fragment:1.6.0-alpha07'
+  implementation 'androidx.fragment:fragment:1.6.0-alpha08'
 
   implementation 'com.google.android.material:material:1.8.0'
   implementation 'com.google.code.gson:gson:2.8.7'
