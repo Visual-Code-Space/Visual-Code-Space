@@ -7,18 +7,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.PopupMenu;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.view.menu.MenuBuilder;
-import androidx.appcompat.widget.PopupMenu;
 import androidx.lifecycle.ViewModelProvider;
 import com.blankj.utilcode.util.ToastUtils;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
-import com.raredev.vcspace.util.FileUtil;
-import com.raredev.vcspace.util.ILogger;
-import com.raredev.vcspace.util.Utils;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.actions.Action;
 import com.raredev.vcspace.actions.ActionData;
@@ -27,7 +24,10 @@ import com.raredev.vcspace.databinding.ActivityMainBinding;
 import com.raredev.vcspace.ui.editor.CodeEditorView;
 import com.raredev.vcspace.ui.editor.Symbol;
 import com.raredev.vcspace.ui.viewmodel.EditorViewModel;
+import com.raredev.vcspace.util.FileUtil;
+import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.util.PreferencesUtils;
+import com.raredev.vcspace.util.Utils;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import io.github.rosemoe.sora.widget.CodeEditor;
 import java.io.File;
@@ -77,6 +77,8 @@ public class MainActivity extends VCSpaceActivity
 
             PopupMenu pm = new PopupMenu(MainActivity.this, p1.view);
             ActionManager.getInstance().fillMenu(pm.getMenu(), data, Action.Location.EDITOR);
+
+            p1.view.setOnTouchListener(pm.getDragToOpenListener());
             pm.show();
           }
 
