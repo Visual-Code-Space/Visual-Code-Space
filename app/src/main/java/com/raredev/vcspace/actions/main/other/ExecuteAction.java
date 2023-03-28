@@ -6,7 +6,6 @@ import com.raredev.vcspace.SimpleExecuter;
 import com.raredev.vcspace.actions.ActionData;
 import com.raredev.vcspace.actions.main.MainBaseAction;
 import com.raredev.vcspace.activity.MainActivity;
-import com.raredev.vcspace.ui.editor.manager.EditorManager;
 
 public class ExecuteAction extends MainBaseAction {
 
@@ -14,23 +13,22 @@ public class ExecuteAction extends MainBaseAction {
   public void update(@NonNull ActionData data) {
     super.update(data);
     visible = false;
-    var editorManager = (EditorManager) data.get(EditorManager.class);
+    var main = (MainActivity) data.get(MainActivity.class);
 
-    if (editorManager == null) {
+    if (main == null) {
       return;
     }
-    if (editorManager.getCurrentEditor() == null) {
+    if (main.getCurrentEditor() == null) {
       return;
     }
-    visible = SimpleExecuter.isExecutable(editorManager.getCurrentEditor().getFile());
+    visible = SimpleExecuter.isExecutable(main.getCurrentEditor().getFile());
   }
 
   @Override
   public void performAction(ActionData data) {
-    EditorManager editorManager = (EditorManager) data.get(EditorManager.class);
-    editorManager.saveAllFiles(false);
-    new SimpleExecuter(
-        (MainActivity) data.get(MainActivity.class), editorManager.getCurrentEditor().getFile());
+    var main = (MainActivity) data.get(MainActivity.class);
+    main.saveAllFiles(false);
+    new SimpleExecuter(main, main.getCurrentEditor().getFile());
   }
 
   @Override

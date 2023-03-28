@@ -8,7 +8,7 @@ import com.raredev.vcspace.actions.ActionData;
 import com.raredev.vcspace.actions.ActionGroup;
 import com.raredev.vcspace.actions.main.edit.FindTextAction;
 import com.raredev.vcspace.actions.main.edit.FormatAction;
-import com.raredev.vcspace.ui.editor.manager.EditorManager;
+import com.raredev.vcspace.activity.MainActivity;
 
 public class EditActionGroup extends ActionGroup {
 
@@ -19,12 +19,12 @@ public class EditActionGroup extends ActionGroup {
   @Override
   public void update(@NonNull ActionData data) {
     visible = false;
-    var editorManager = (EditorManager) data.get(EditorManager.class);
+    var main = (MainActivity) data.get(MainActivity.class);
 
-    if (editorManager == null) {
+    if (main == null) {
       return;
     }
-    if (editorManager.getCurrentEditor() == null) {
+    if (main.getCurrentEditor() == null) {
       return;
     }
     visible = true;

@@ -17,7 +17,6 @@ import com.raredev.vcspace.databinding.ActivityCrashBinding;
 import com.raredev.vcspace.databinding.ActivityMainBinding;
 
 public class CrashActivity extends VCSpaceActivity {
-
   private ActivityCrashBinding binding;
 
   @Override

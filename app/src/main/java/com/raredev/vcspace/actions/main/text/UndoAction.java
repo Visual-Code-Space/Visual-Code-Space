@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.actions.ActionData;
 import com.raredev.vcspace.actions.main.MainBaseAction;
-import com.raredev.vcspace.ui.editor.manager.EditorManager;
+import com.raredev.vcspace.activity.MainActivity;
 
 public class UndoAction extends MainBaseAction {
 
@@ -12,23 +12,23 @@ public class UndoAction extends MainBaseAction {
   public void update(@NonNull ActionData data) {
     super.update(data);
     visible = false;
-    var editorManager = (EditorManager) data.get(EditorManager.class);
+    var main = (MainActivity) data.get(MainActivity.class);
 
-    if (editorManager == null) {
+    if (main == null) {
       return;
     }
-    if (editorManager.getCurrentEditor() == null) {
+    if (main.getCurrentEditor() == null) {
       return;
     }
     visible = true;
-    enabled = editorManager.getCurrentEditor().canUndo();
+    enabled = main.getCurrentEditor().canUndo();
   }
 
   @Override
   public void performAction(ActionData data) {
-    var editorManager = (EditorManager) data.get(EditorManager.class);
-    if (editorManager.getCurrentEditor() != null) {
-      editorManager.getCurrentEditor().undo();
+    var main = (MainActivity) data.get(MainActivity.class);
+    if (main.getCurrentEditor() != null) {
+      main.getCurrentEditor().undo();
     }
   }
 

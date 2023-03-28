@@ -12,10 +12,6 @@ import androidx.fragment.app.Fragment;
 import androidx.transition.ChangeBounds;
 import androidx.transition.TransitionManager;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.raredev.vcspace.task.TaskExecutor;
-import com.raredev.vcspace.util.DialogUtils;
-import com.raredev.vcspace.util.FileUtil;
-import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.actions.Action;
 import com.raredev.vcspace.actions.ActionData;
@@ -24,8 +20,12 @@ import com.raredev.vcspace.activity.MainActivity;
 import com.raredev.vcspace.databinding.FragmentTreeViewBinding;
 import com.raredev.vcspace.events.FileEvent;
 import com.raredev.vcspace.managers.SettingsManager;
+import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.ui.tree.holder.FileViewHolder;
 import com.raredev.vcspace.util.ApkInstaller;
+import com.raredev.vcspace.util.DialogUtils;
+import com.raredev.vcspace.util.FileUtil;
+import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.util.PreferencesUtils;
 import com.raredev.vcspace.util.ViewUtils;
 import com.unnamed.b.atv.model.TreeNode;
@@ -147,7 +147,7 @@ public class TreeViewFragment extends Fragment
       }
 
       if (FileUtil.isValidTextFile(file.getName())) {
-        ((MainActivity) requireActivity()).editorManager.openFile(file);
+        ((MainActivity) requireActivity()).openFile(file);
       }
     } else {
       if (node.isExpanded()) {

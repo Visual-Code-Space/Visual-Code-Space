@@ -13,6 +13,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.lifecycle.ViewModelProvider;
+import com.blankj.utilcode.util.ToastUtils;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.raredev.vcspace.util.FileUtil;
@@ -25,7 +26,6 @@ import com.raredev.vcspace.actions.ActionManager;
 import com.raredev.vcspace.databinding.ActivityMainBinding;
 import com.raredev.vcspace.ui.editor.CodeEditorView;
 import com.raredev.vcspace.ui.editor.Symbol;
-import com.raredev.vcspace.ui.editor.manager.EditorManager;
 import com.raredev.vcspace.ui.viewmodel.EditorViewModel;
 import com.raredev.vcspace.util.PreferencesUtils;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
@@ -41,7 +41,6 @@ public class MainActivity extends VCSpaceActivity
   public ActivityMainBinding binding;
 
   public EditorViewModel viewModel;
-  public EditorManager editorManager;
 
   public ActivityResultLauncher<Intent> launcher;
   public ActivityResultLauncher<String> createFile;
@@ -64,7 +63,6 @@ public class MainActivity extends VCSpaceActivity
     toggle.syncState();
 
     viewModel = new ViewModelProvider(this).get(EditorViewModel.class);
-    editorManager = new EditorManager(this, binding, viewModel);
     viewModel.removeAllFiles();
 
     binding.tabLayout.addOnTabSelectedListener(
@@ -85,7 +83,7 @@ public class MainActivity extends VCSpaceActivity
           @Override
           public void onTabSelected(TabLayout.Tab p1) {
             int position = p1.getPosition();
-            CodeEditorView editor = editorManager.getEditorAtIndex(position);
+            CodeEditorView editor = getEditorAtIndex(position);
             viewModel.setCurrentFile(position, editor.getFile());
 
             binding.searcher.bindEditor(editor);
@@ -108,7 +106,12 @@ public class MainActivity extends VCSpaceActivity
 
   @Override
   public void onSharedPreferenceChanged(SharedPreferences pref, String key) {
-    editorManager.onSharedPreferenceChanged(key);
+    for (int i = 0; i < viewModel.getOpenedFileCount(); i++) {
+      CodeEditorView editor = getEditorAtIndex(i);
+      if (editor != null) {
+        editor.onSharedPreferenceChanged(key);
+      }
+    }
   }
 
   @Override
@@ -116,7 +119,6 @@ public class MainActivity extends VCSpaceActivity
     menu.clear();
     ActionData data = new ActionData();
     data.put(MainActivity.class, this);
-    data.put(EditorManager.class, editorManager);
 
     ActionManager.getInstance().fillMenu(menu, data, Action.Location.MAIN_TOOLBAR);
     return true;
@@ -135,11 +137,11 @@ public class MainActivity extends VCSpaceActivity
     int id = item.getItemId();
     switch (id) {
       case R.id.menu_viewlogs:
-        editorManager.saveAllFiles(false);
+        saveAllFiles(false);
         startActivity(new Intent(getApplicationContext(), LogViewActivity.class));
         break;
       case R.id.menu_settings:
-        editorManager.saveAllFiles(false);
+        saveAllFiles(false);
         startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
         break;
     }
@@ -157,7 +159,7 @@ public class MainActivity extends VCSpaceActivity
       binding.searcher.showAndHide();
       return;
     }
-    editorManager.saveAllFiles(false);
+    saveAllFiles(false);
     super.onBackPressed();
   }
 
@@ -171,9 +173,9 @@ public class MainActivity extends VCSpaceActivity
                 try {
                   OutputStream outputStream = getContentResolver().openOutputStream(uri);
                   outputStream.write(
-                      editorManager.getCurrentEditor().getText().toString().getBytes());
+                      getCurrentEditor().getText().toString().getBytes());
                   outputStream.close();
-                  editorManager.openFile(FileUtil.getFileFromUri(MainActivity.this, uri));
+                  openFile(FileUtil.getFileFromUri(MainActivity.this, uri));
                 } catch (IOException e) {
                   ILogger.error(LOG_TAG, Log.getStackTraceString(e));
                 }
@@ -185,7 +187,7 @@ public class MainActivity extends VCSpaceActivity
             uri -> {
               if (uri != null) {
                 try {
-                  editorManager.openFile(FileUtil.getFileFromUri(this, uri));
+                  openFile(FileUtil.getFileFromUri(this, uri));
                 } catch (IOException e) {
                   ILogger.error(LOG_TAG, Log.getStackTraceString(e));
                 }
@@ -197,7 +199,7 @@ public class MainActivity extends VCSpaceActivity
             uri -> {
               if (uri != null) {
                 try {
-                  editorManager.openFile(FileUtil.getFileFromUri(this, uri));
+                  openFile(FileUtil.getFileFromUri(this, uri));
                 } catch (IOException e) {
                   ILogger.error(LOG_TAG, Log.getStackTraceString(e));
                 }
@@ -230,13 +232,132 @@ public class MainActivity extends VCSpaceActivity
     binding.symbolInput.setSymbols(Symbol.baseSymbols());
     binding.symbolInput.bindEditor(editor);
   }
+  
+  public void openFile(File file) {
+    binding.drawerLayout.closeDrawers();
+    if (file == null) {
+      return;
+    }
+    if (!file.isFile() && !file.exists()) {
+      return;
+    }
+    int index = openFileAndGetIndex(file);
+    setCurrent(index);
+  }
 
-  private void saveAs(File fileToSave) {
-    Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-    intent.addCategory(Intent.CATEGORY_OPENABLE);
-    intent.setType("text/*");
-    intent.putExtra(Intent.EXTRA_TITLE, fileToSave.getName());
+  private int openFileAndGetIndex(File file) {
+    int openedFileIndex = findIndexOfEditorByFile(file);
+    if (openedFileIndex != -1) {
+      return openedFileIndex;
+    }
+    int index = viewModel.getOpenedFileCount();
 
-    launcher.launch(intent);
+    ILogger.info(LOG_TAG, "Opening file: " + file.toString() + " at index: " + index);
+
+    CodeEditorView editor = new CodeEditorView(this, file);
+    editor.subscribeContentChangeEvent(() -> invalidateOptionsMenu());
+    binding.container.addView(editor);
+
+    binding.tabLayout.addTab(binding.tabLayout.newTab().setText(file.getName()));
+    viewModel.addFile(file);
+    return index;
+  }
+
+  public void closeFile(int index) {
+    if (index >= 0 && index < viewModel.getOpenedFileCount()) {
+      ILogger.info(LOG_TAG, "Closing file: " + viewModel.getOpenedFiles().get(index).toString());
+      CodeEditorView editor = getEditorAtIndex(index);
+      if (editor != null) {
+        editor.release();
+      }
+
+      viewModel.removeFile(index);
+      binding.tabLayout.removeTabAt(index);
+      binding.container.removeViewAt(index);
+    }
+    binding.tabLayout.requestLayout();
+  }
+
+  public void closeOthers() {
+    File file = viewModel.getCurrentFile();
+    int index = 0;
+
+    while (viewModel.getOpenedFileCount() != 1) {
+      CodeEditorView editor = getEditorAtIndex(index);
+
+      if (editor != null) {
+        if (file != editor.getFile()) {
+          closeFile(index);
+        } else {
+          index = 1;
+        }
+      }
+    }
+    int size = viewModel.getOpenedFileCount() - 1;
+    viewModel.setCurrentFile(size, file);
+    setCurrent(size);
+  }
+
+  public void closeAllFiles() {
+    if (viewModel.getOpenedFiles().isEmpty()) {
+      return;
+    }
+    for (int i = 0; i < viewModel.getOpenedFileCount(); i++) {
+      CodeEditorView editor = getEditorAtIndex(i);
+      if (editor != null) {
+        editor.release();
+      }
+    }
+
+    viewModel.removeAllFiles();
+    binding.tabLayout.removeAllTabs();
+    binding.tabLayout.requestLayout();
+    binding.container.removeAllViews();
+  }
+
+  public void saveAllFiles(boolean showMsg) {
+    if (!viewModel.getOpenedFiles().isEmpty()) {
+      for (int i = 0; i < viewModel.getOpenedFileCount(); i++) {
+        getEditorAtIndex(i).save();
+      }
+
+      if (showMsg) {
+        ToastUtils.showShort(R.string.saved_files);
+      }
+    }
+  }
+
+  public void onFileDeleted() {
+    for (int i = 0; i < viewModel.getOpenedFileCount(); i++) {
+      File openedFile = viewModel.getOpenedFiles().get(i);
+      if (!openedFile.exists()) {
+        closeFile(i);
+      }
+    }
+  }
+
+  public int findIndexOfEditorByFile(File file) {
+    for (int i = 0; i < viewModel.getOpenedFileCount(); i++) {
+      File openedFile = viewModel.getOpenedFiles().get(i);
+      if (openedFile.getAbsolutePath().equals(file.getAbsolutePath())) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  public CodeEditorView getEditorAtIndex(int index) {
+    return (CodeEditorView) binding.container.getChildAt(index);
+  }
+
+  public CodeEditorView getCurrentEditor() {
+    return (CodeEditorView) binding.container.getChildAt(viewModel.getCurrentFileIndex());
+  }
+
+  private void setCurrent(int index) {
+    final var tab = binding.tabLayout.getTabAt(index);
+    if (tab != null && index >= 0 && !tab.isSelected()) {
+      tab.select();
+    }
   }
 }

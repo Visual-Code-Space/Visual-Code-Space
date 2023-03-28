@@ -10,7 +10,7 @@ public class CloseFileAction extends EditorAction {
   @Override
   public void performAction(@NonNull ActionData data) {
     var main = (MainActivity) data.get(MainActivity.class);
-    main.editorManager.closeFile(main.viewModel.getCurrentFileIndex());
+    main.closeFile(main.viewModel.getCurrentFileIndex());
 
     main.invalidateOptionsMenu();
   }

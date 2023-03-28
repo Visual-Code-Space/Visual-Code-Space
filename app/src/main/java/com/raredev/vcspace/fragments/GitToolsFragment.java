@@ -10,7 +10,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import com.blankj.utilcode.util.ThreadUtils;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.FragmentGitToolsBinding;
 import com.raredev.vcspace.events.FileEvent;
@@ -31,7 +30,6 @@ public class GitToolsFragment extends Fragment {
   private final String LOG_TAG = GitToolsFragment.class.getSimpleName();
   private FragmentGitToolsBinding binding;
 
-  private CloneRepository cloneRepo;
   private GitUtils repository;
   private File repoPath;
 
@@ -40,16 +38,16 @@ public class GitToolsFragment extends Fragment {
   public View onCreateView(
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     binding = FragmentGitToolsBinding.inflate(inflater, container, false);
-    cloneRepo = new CloneRepository(requireContext());
     ViewUtils.rotateChevron(ViewUtils.isExpanded(binding.expandableLayout), binding.downButton);
 
     File idePath = new File(Environment.getExternalStorageDirectory(), "/VCSpace/");
     if (!idePath.exists()) {
       idePath.mkdirs();
     }
-    cloneRepo.setDirectory(idePath);
     binding.cloneRepo.setOnClickListener(
         v -> {
+          CloneRepository cloneRepo = new CloneRepository(requireContext());
+          cloneRepo.setDirectory(idePath);
           cloneRepo.cloneRepository();
           cloneRepo.setListener(
               new CloneRepository.CloneListener() {

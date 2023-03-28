@@ -3,15 +3,15 @@ package com.raredev.vcspace.actions.file;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.raredev.vcspace.task.TaskExecutor;
-import com.raredev.vcspace.util.DialogUtils;
-import com.raredev.vcspace.util.FileUtil;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.actions.ActionData;
 import com.raredev.vcspace.activity.MainActivity;
 import com.raredev.vcspace.fragments.TreeViewFragment;
+import com.raredev.vcspace.task.TaskExecutor;
+import com.raredev.vcspace.util.DialogUtils;
+import com.raredev.vcspace.util.FileUtil;
 import com.unnamed.b.atv.model.TreeNode;
-import java.io.File; 
+import java.io.File;
 
 public class DeleteFileAction extends FileAction {
 
@@ -44,7 +44,7 @@ public class DeleteFileAction extends FileAction {
                     return FileUtil.delete(node.getValue().getAbsolutePath());
                   },
                   (result, error) -> {
-                    ((MainActivity) fragment.requireActivity()).editorManager.onFileDeleted();
+                    ((MainActivity) fragment.requireActivity()).onFileDeleted();
                     if (node != null) {
                       fragment.getTreeView().removeNode(node);
                     }

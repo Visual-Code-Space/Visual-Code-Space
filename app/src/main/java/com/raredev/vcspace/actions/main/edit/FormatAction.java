@@ -9,8 +9,6 @@ public class FormatAction extends MainBaseAction {
 
   @Override
   public void performAction(ActionData data) {
-    // EditorManager manager = (EditorManager) data.get(EditorManager.class);
-    // manager.getCurrentEditor().formatCodeAsync();
     ToastUtils.showShort("Unable to perform action");
   }
 

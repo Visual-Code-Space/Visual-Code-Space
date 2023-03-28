@@ -10,7 +10,7 @@ public class CloseAllAction extends EditorAction {
   @Override
   public void performAction(@NonNull ActionData data) {
     var main = (MainActivity) data.get(MainActivity.class);
-    main.editorManager.closeAllFiles();
+    main.closeAllFiles();
 
     main.invalidateOptionsMenu();
   }
