@@ -3,8 +3,6 @@ package com.raredev.vcspace.activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,7 +15,6 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
-import com.raredev.vcspace.services.JavaLanguageServerService;
 import com.raredev.vcspace.util.FileUtil;
 import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.util.Utils;
@@ -31,21 +28,11 @@ import com.raredev.vcspace.ui.editor.Symbol;
 import com.raredev.vcspace.ui.editor.manager.EditorManager;
 import com.raredev.vcspace.ui.viewmodel.EditorViewModel;
 import com.raredev.vcspace.util.PreferencesUtils;
-import io.github.rosemoe.sora.langs.textmate.TextMateLanguage;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
-import io.github.rosemoe.sora.lsp.client.connection.SocketStreamConnectionProvider;
-import io.github.rosemoe.sora.lsp.client.languageserver.serverdefinition.CustomLanguageServerDefinition;
-import io.github.rosemoe.sora.lsp.client.languageserver.wrapper.EventHandler;
-import io.github.rosemoe.sora.lsp.editor.LspEditorManager;
-import io.github.rosemoe.sora.lsp.utils.URIUtils;
 import io.github.rosemoe.sora.widget.CodeEditor;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Collections;
-import org.eclipse.lsp4j.DidChangeWorkspaceFoldersParams;
-import org.eclipse.lsp4j.WorkspaceFolder;
-import org.eclipse.lsp4j.WorkspaceFoldersChangeEvent;
 
 public class MainActivity extends VCSpaceActivity
     implements SharedPreferences.OnSharedPreferenceChangeListener,
