@@ -27,7 +27,7 @@ android {
 }
 
 dependencies {
-  implementation 'androidx.appcompat:appcompat:1.6.0'
+  implementation 'androidx.appcompat:appcompat:1.6.1'
   implementation 'com.google.android.material:material:1.8.0'
   implementation 'org.eclipse.jgit:org.eclipse.jgit:6.5.0.202303070854-r'
     
