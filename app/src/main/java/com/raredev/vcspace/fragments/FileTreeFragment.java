@@ -135,10 +135,6 @@ public class FileTreeFragment extends Fragment
     if (mRoot == null) {
       return;
     }
-    if (newFile == null) {
-      doCloseFolder(true);
-      return;
-    }
     loadTreeView(newFile);
   }
 
