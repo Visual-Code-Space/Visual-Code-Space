@@ -73,13 +73,13 @@ public class CodeEditorView extends CodeEditor {
               });
         });
 
-    if (file.getAbsolutePath().endsWith(".java")) {
-      try {
-        connectToLanguageServer();
-      } catch (IOException e) {
-        ILogger.error("CodeEditorView", Log.getStackTraceString(e));
-      }
-    }
+    // if (file.getAbsolutePath().endsWith(".java")) {
+    //   try {
+    //     connectToLanguageServer();
+    //   } catch (IOException e) {
+    //     ILogger.error("CodeEditorView", Log.getStackTraceString(e));
+    //   }
+    // }
 
     final EditorTextActions textActions = new EditorTextActions(this);
     getComponent(EditorAutoCompletion.class).setLayout(new CustomCompletionLayout());
@@ -239,12 +239,13 @@ public class CodeEditorView extends CodeEditor {
                     }
                   };
 
+              lspEditor =
+                  LspEditorManager.getOrCreateEditorManager(file.getAbsolutePath())
+                      .createEditor(URIUtils.fileToURI(file).toString(), serverDefinition);
+              Language wrapperLanguage = createLanguage();
+
               ThreadUtils.runOnUiThread(
                   () -> {
-                    lspEditor =
-                        LspEditorManager.getOrCreateEditorManager(file.getAbsolutePath())
-                            .createEditor(URIUtils.fileToURI(file).toString(), serverDefinition);
-                    Language wrapperLanguage = createLanguage();
                     lspEditor.setWrapperLanguage(wrapperLanguage);
                     lspEditor.setEditor(this);
                   });

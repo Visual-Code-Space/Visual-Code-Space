@@ -1,6 +1,11 @@
 package com.raredev.vcspace.ui.language.java.lsp;
 
 import com.raredev.vcspace.util.ILogger;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Optional;
 import org.eclipse.lsp4j.CompletionItem;
 import org.eclipse.lsp4j.CompletionItemKind;
 import org.eclipse.lsp4j.CompletionList;
@@ -9,6 +14,9 @@ import org.eclipse.lsp4j.DidChangeTextDocumentParams;
 import org.eclipse.lsp4j.DidCloseTextDocumentParams;
 import org.eclipse.lsp4j.DidOpenTextDocumentParams;
 import org.eclipse.lsp4j.DidSaveTextDocumentParams;
+import org.eclipse.lsp4j.SignatureHelp;
+import org.eclipse.lsp4j.SignatureHelpParams;
+import org.eclipse.lsp4j.jsonrpc.CompletableFutures;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.services.TextDocumentService;
 
@@ -82,5 +90,47 @@ public class JavaTextDocumentService implements TextDocumentService {
           completionItem.setKind(CompletionItemKind.Snippet);
           return Either.forLeft(Arrays.asList(completionItem));
         });
+  }
+
+  @Override
+  public CompletableFuture<SignatureHelp> signatureHelp(SignatureHelpParams params) {
+    return CompletableFutures.computeAsync(
+        (cancelChecker) -> {
+          String uri = params.getTextDocument().getUri();
+          Optional<Path> sigFilePath = getPathFromURI(uri);
+
+          // Note: If the path does not exist, then return early and ignore
+          if (sigFilePath.isEmpty()) {
+            return new SignatureHelp();
+          }
+
+          return null;
+        });
+  }
+
+  /**
+   * Get the path from given string URI. Even if the given URI's scheme is expr or bala, we convert
+   * it to file scheme and provide a valid Path.
+   *
+   * @param fileUri file uri
+   * @return {@link Optional} Path from the URI
+   */
+  public static Optional<Path> getPathFromURI(String fileUri) {
+    URI uri = URI.create(fileUri);
+    String scheme = uri.getScheme();
+    try {
+      URI converted =
+          new URI(
+              scheme,
+              uri.getUserInfo(),
+              uri.getHost(),
+              uri.getPort(),
+              uri.getPath(),
+              uri.getQuery(),
+              uri.getFragment());
+      return Optional.of(Paths.get(converted));
+    } catch (URISyntaxException e) {
+      return Optional.empty();
+    }
   }
 }
