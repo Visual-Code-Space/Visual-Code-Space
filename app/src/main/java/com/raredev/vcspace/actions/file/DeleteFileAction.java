@@ -6,7 +6,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.actions.ActionData;
 import com.raredev.vcspace.activity.MainActivity;
-import com.raredev.vcspace.fragments.TreeViewFragment;
+import com.raredev.vcspace.fragments.FileTreeFragment;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.util.DialogUtils;
 import com.raredev.vcspace.util.FileUtil;
@@ -22,7 +22,7 @@ public class DeleteFileAction extends FileAction {
 
   @Override
   public void performAction(@NonNull ActionData data) {
-    TreeViewFragment fragment = (TreeViewFragment) data.get(TreeViewFragment.class);
+    FileTreeFragment fragment = (FileTreeFragment) data.get(FileTreeFragment.class);
     TreeNode node = (TreeNode) data.get(TreeNode.class);
 
     new MaterialAlertDialogBuilder(fragment.requireActivity())
@@ -49,7 +49,7 @@ public class DeleteFileAction extends FileAction {
                       fragment.getTreeView().removeNode(node);
                     }
                     progress.cancel();
-                    fragment.observeRoot();
+                    fragment.updateRootNode(null);
                   });
             })
         .setNegativeButton(R.string.cancel, null)

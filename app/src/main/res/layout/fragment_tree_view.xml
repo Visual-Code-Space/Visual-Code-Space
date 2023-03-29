@@ -62,7 +62,7 @@
 
   </RelativeLayout>
 
-  <RelativeLayout
+  <ViewFlipper
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
     android:id="@+id/expandable_layout">
@@ -97,31 +97,12 @@
         style="?attr/materialButtonOutlinedStyle"
         android:text="@string/open_recent"
         android:id="@+id/open_recent" />
-
     </LinearLayout>
 
-    <LinearLayout
+    <HorizontalScrollView
       android:layout_height="match_parent"
       android:layout_width="match_parent"
-      android:visibility="gone"
-      android:padding="5dp"
-      android:id="@+id/tree_view">
-
-      <HorizontalScrollView
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:fillViewport="true"
-        android:id="@+id/horizontal_scroll">
-
-      </HorizontalScrollView>
-
-    </LinearLayout>
-
-  </RelativeLayout>
-
-  <com.google.android.material.divider.MaterialDivider
-    android:layout_height="1px"
-    android:layout_width="match_parent"
-    android:alpha="0.5" />
-
+      android:fillViewport="true"
+      android:id="@+id/horizontal_scroll" />
+  </ViewFlipper>
 </LinearLayout>

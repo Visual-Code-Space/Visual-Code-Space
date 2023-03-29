@@ -33,7 +33,7 @@
 
   </RelativeLayout>
 
-  <RelativeLayout
+  <ViewFlipper
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
     android:id="@+id/expandable_layout">
@@ -112,6 +112,6 @@
 
     </LinearLayout>
 
-  </RelativeLayout>
+  </ViewFlipper>
 
 </LinearLayout>

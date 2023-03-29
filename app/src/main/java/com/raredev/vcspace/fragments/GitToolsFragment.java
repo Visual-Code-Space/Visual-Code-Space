@@ -91,7 +91,7 @@ public class GitToolsFragment extends Fragment {
                   ThreadUtils.runOnUiThread(
                       () -> {
                         loadRepositoryInformationsTask();
-                        ((ToolsFragment) getParentFragment()).treeViewFragment.refresh();
+                        ((ToolsFragment) getParentFragment()).fileTreeFragment.refresh();
                       });
                   return null;
                 },
@@ -222,14 +222,12 @@ public class GitToolsFragment extends Fragment {
   }
 
   private void updateViews() {
-    if (repoPath != null) {
-      binding.repositoryName.setText(repoPath.getParentFile().getName());
-      binding.containerTools.setVisibility(View.GONE);
-      binding.containerRepository.setVisibility(View.VISIBLE);
-    } else {
+    if (repoPath == null) {
       binding.repositoryName.setText(com.raredev.vcspace.git.R.string.git_tools);
-      binding.containerTools.setVisibility(View.VISIBLE);
-      binding.containerRepository.setVisibility(View.GONE);
+      binding.expandableLayout.setDisplayedChild(0);
+    } else {
+      binding.repositoryName.setText(repoPath.getParentFile().getName());
+      binding.expandableLayout.setDisplayedChild(1);
     }
   }
 

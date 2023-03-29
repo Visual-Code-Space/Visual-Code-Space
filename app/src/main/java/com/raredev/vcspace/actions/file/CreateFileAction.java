@@ -7,7 +7,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.actions.ActionData;
 import com.raredev.vcspace.databinding.LayoutTextinputBinding;
-import com.raredev.vcspace.fragments.TreeViewFragment;
+import com.raredev.vcspace.fragments.FileTreeFragment;
 import com.unnamed.b.atv.model.TreeNode;
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +21,7 @@ public class CreateFileAction extends FileAction {
 
   @Override
   public void performAction(@NonNull ActionData data) {
-    TreeViewFragment fragment = (TreeViewFragment) data.get(TreeViewFragment.class);
+    FileTreeFragment fragment = (FileTreeFragment) data.get(FileTreeFragment.class);
     TreeNode node = (TreeNode) data.get(TreeNode.class);
 
     LayoutTextinputBinding binding =
@@ -35,7 +35,7 @@ public class CreateFileAction extends FileAction {
             R.string.create,
             (dlg, i) -> {
               try {
-                File newFile = new File(node.getValue(), "/" + et_filename.getText().toString());
+                File newFile = new File(node.getValue(), "/" + et_filename.getText().toString().trim());
                 if (!newFile.exists()) {
                   if (newFile.createNewFile()) {
                     fragment.addNewChild(node, newFile);

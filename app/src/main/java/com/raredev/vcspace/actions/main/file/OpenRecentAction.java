@@ -15,7 +15,7 @@ public class OpenRecentAction extends MainBaseAction {
     MainActivity main = (MainActivity) data.get(MainActivity.class);
 
     ((ToolsFragment) main.getSupportFragmentManager().findFragmentByTag("tools_fragment"))
-        .treeViewFragment.tryOpenRecentFolder();
+        .fileTreeFragment.tryOpenRecentFolder();
     main.binding.drawerLayout.closeDrawer(GravityCompat.END);
     if (!main.binding.drawerLayout.isDrawerOpen(GravityCompat.START))
       main.binding.drawerLayout.openDrawer(GravityCompat.START);

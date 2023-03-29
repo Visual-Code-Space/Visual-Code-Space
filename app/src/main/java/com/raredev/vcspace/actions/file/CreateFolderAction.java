@@ -7,7 +7,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.actions.ActionData;
 import com.raredev.vcspace.databinding.LayoutTextinputBinding;
-import com.raredev.vcspace.fragments.TreeViewFragment;
+import com.raredev.vcspace.fragments.FileTreeFragment;
 import com.unnamed.b.atv.model.TreeNode;
 import java.io.File;
 
@@ -20,11 +20,11 @@ public class CreateFolderAction extends FileAction {
 
   @Override
   public void performAction(@NonNull ActionData data) {
-    TreeViewFragment fragment = (TreeViewFragment) data.get(TreeViewFragment.class);
+    FileTreeFragment fragment = (FileTreeFragment) data.get(FileTreeFragment.class);
     TreeNode node = (TreeNode) data.get(TreeNode.class);
 
     LayoutTextinputBinding binding =
-        LayoutTextinputBinding.inflate(LayoutInflater.from(fragment.requireActivity()));
+       LayoutTextinputBinding.inflate(LayoutInflater.from(fragment.requireActivity()));
     EditText et_filename = binding.etInput;
     binding.tvInputLayout.setHint(fragment.getString(R.string.folder_name_hint));
 
@@ -33,7 +33,7 @@ public class CreateFolderAction extends FileAction {
         .setPositiveButton(
             R.string.create,
             (dlg, i) -> {
-              File newFolder = new File(node.getValue(), "/" + et_filename.getText().toString());
+              File newFolder = new File(node.getValue(), "/" + et_filename.getText().toString().trim());
               if (!newFolder.exists()) {
                 if (newFolder.mkdirs()) {
                   fragment.addNewChild(node, newFolder);

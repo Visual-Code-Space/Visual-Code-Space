@@ -51,18 +51,12 @@ public class CodeEditorView extends CodeEditor {
               });
         });
 
-    final EditorTextActions textActions = new EditorTextActions(this);
     getComponent(EditorAutoCompletion.class).setLayout(new CustomCompletionLayout());
     getComponent(EditorAutoCompletion.class).setAdapter(new CompletionItemAdapter());
-    replaceComponent(EditorTextActionWindow.class, textActions);
+
+    replaceComponent(EditorTextActionWindow.class, new EditorTextActions(this));
 
     configureEditor();
-  }
-
-  @Override
-  public void release() {
-    super.release();
-    file = null;
   }
 
   private void configureEditor() {

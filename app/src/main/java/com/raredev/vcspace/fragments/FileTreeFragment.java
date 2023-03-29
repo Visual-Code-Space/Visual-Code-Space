@@ -36,20 +36,13 @@ import java.util.HashSet;
 import java.util.Set;
 import org.greenrobot.eventbus.EventBus;
 
-@SuppressWarnings("deprecation")
-public class TreeViewFragment extends Fragment
+public class FileTreeFragment extends Fragment
     implements TreeNode.TreeNodeClickListener, TreeNode.TreeNodeLongClickListener {
-  private final String LOG_TAG = TreeViewFragment.class.getSimpleName();
-  public final String KEY_STORED_TREE_STATE = "treeState";
-
+  private final String LOG_TAG = FileTreeFragment.class.getSimpleName();
+  private static final String KEY_STORED_TREE_STATE = "treeState";
   private FragmentTreeViewBinding binding;
-
-  private String savedState;
-  private AndroidTreeView treeView;
-
-  public AndroidTreeView getTreeView() {
-    return treeView;
-  }
+  private AndroidTreeView mTreeView;
+  private String mTreeState;
 
   private TreeNode mRoot;
 
@@ -58,34 +51,15 @@ public class TreeViewFragment extends Fragment
   public View onCreateView(
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     binding = FragmentTreeViewBinding.inflate(inflater, container, false);
-    ViewUtils.rotateChevron(ViewUtils.isExpanded(binding.containerOpen), binding.downButton);
-    TooltipCompat.setTooltipText(binding.refresh, getString(R.string.refresh));
-    TooltipCompat.setTooltipText(binding.close, getString(R.string.close));
 
-    binding.expandCollapse.setOnClickListener(
-        v -> {
-          expandCollapseView();
-        });
-
-    binding.expandCollapse.setOnLongClickListener(
-        v -> {
-          if (mRoot != null) {
-            onLongClick(mRoot, mRoot.getValue());
-          }
-          return true;
-        });
-
+    binding.expandCollapse.setOnClickListener(v -> expandCollapseView());
+    binding.expandCollapse.setOnLongClickListener(v -> onLongClick(mRoot, null));
     binding.openFolder.setOnClickListener(
         v -> {
           ((ToolsFragment) getParentFragment())
               .mStartForResult.launch(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE));
         });
-
-    binding.openRecent.setOnClickListener(
-        v -> {
-          tryOpenRecentFolder();
-        });
-
+    binding.openRecent.setOnClickListener(v -> tryOpenRecentFolder());
     binding.refresh.setOnClickListener(v -> refresh());
 
     binding.close.setOnClickListener(
@@ -97,38 +71,31 @@ public class TreeViewFragment extends Fragment
               .setNegativeButton(R.string.cancel, (di, which) -> di.dismiss())
               .show();
         });
+
+    TooltipCompat.setTooltipText(binding.refresh, getString(R.string.refresh));
+    TooltipCompat.setTooltipText(binding.close, getString(R.string.close));
     return binding.getRoot();
   }
 
   @Override
-  public void onViewCreated(View view, Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
+  public void onViewCreated(View v, Bundle savedInstanceState) {
+    super.onViewCreated(v, savedInstanceState);
     if (savedInstanceState != null) {
-      savedState = savedInstanceState.getString(KEY_STORED_TREE_STATE, null);
+      mTreeState = savedInstanceState.getString(KEY_STORED_TREE_STATE, null);
     }
+
     if (PreferencesUtils.useOpenRecentsAutomatically()) {
       tryOpenRecentFolder();
     }
   }
 
   @Override
-  public void onSaveInstanceState(Bundle outState) {
-    super.onSaveInstanceState(outState);
-    if (treeView != null) savedState = treeView.getSaveState();
-    outState.putString(KEY_STORED_TREE_STATE, savedState);
-  }
-
-  @Override
-  public void onDestroyView() {
-    super.onDestroyView();
-    binding = null;
-    treeView = null;
-  }
-
-  @Override
   public boolean onLongClick(TreeNode node, Object value) {
+    if (node == null) {
+      return false;
+    }
     ActionData data = new ActionData();
-    data.put(TreeViewFragment.class, TreeViewFragment.this);
+    data.put(FileTreeFragment.class, FileTreeFragment.this);
     data.put(TreeNode.class, node);
 
     ActionManager.getInstance()
@@ -164,33 +131,33 @@ public class TreeViewFragment extends Fragment
     }
   }
 
-  public void observeRoot() {
+  public void updateRootNode(File newFile) {
     if (mRoot == null) {
       return;
     }
-
-    if (mRoot.getValue() != null && mRoot.getValue().exists()) {
+    if (newFile == null) {
+      doCloseFolder(true);
       return;
     }
-
-    doCloseFolder(true);
+    loadTreeView(newFile);
   }
 
-  public void doCloseFolder(boolean removePrefsAndTreeState) {
-    if (mRoot != null) {
-      mRoot.getChildren().clear();
-      mRoot = null;
-      treeView = null;
-
-      if (removePrefsAndTreeState) {
-        PreferencesUtils.getToolsPrefs()
-            .edit()
-            .putString(SettingsManager.KEY_RECENT_FOLDER, "")
-            .apply();
-        savedState = null;
+  public void tryOpenRecentFolder() {
+    try {
+      String recentFolderPath =
+          PreferencesUtils.getToolsPrefs().getString(SettingsManager.KEY_RECENT_FOLDER, null);
+      if (recentFolderPath != null) {
+        File recentFolder = new File(recentFolderPath);
+        if (recentFolder.exists() && recentFolder.isDirectory()) {
+          loadTreeView(new File(recentFolderPath));
+        }
       }
-      EventBus.getDefault().post(new FileEvent(null));
-      updateViewsVisibility();
+    } catch (Throwable e) {
+      ILogger.error(LOG_TAG, Log.getStackTraceString(e));
+      DialogUtils.newErrorDialog(
+          requireContext(),
+          getString(R.string.error),
+          getString(R.string.error_treeview_opening_recent_files) + "\n\n" + e.toString());
     }
   }
 
@@ -205,15 +172,14 @@ public class TreeViewFragment extends Fragment
     listNode(
         mRoot,
         () -> {
-          treeView = new AndroidTreeView(requireContext(), mRoot, R.drawable.ripple_effect);
-          treeView.setUseAutoToggle(false);
-          treeView.setDefaultNodeClickListener(this);
-          treeView.setDefaultNodeLongClickListener(this);
+          mTreeView = new AndroidTreeView(requireContext(), mRoot, R.drawable.ripple_effect);
+          mTreeView.setUseAutoToggle(false);
+          mTreeView.setDefaultNodeClickListener(this);
+          mTreeView.setDefaultNodeLongClickListener(this);
 
-          if (treeView != null) {
-            var view = treeView.getView();
+          if (mTreeView != null) {
+            var view = mTreeView.getView();
 
-            binding.horizontalScroll.removeAllViews();
             binding.horizontalScroll.addView(view);
 
             EventBus.getDefault().post(new FileEvent(rootFolder));
@@ -224,22 +190,21 @@ public class TreeViewFragment extends Fragment
     updateViewsVisibility();
   }
 
-  public void tryOpenRecentFolder() {
-    try {
-      String recentFolderPath =
-          PreferencesUtils.getToolsPrefs().getString(SettingsManager.KEY_RECENT_FOLDER, "");
-      if (!recentFolderPath.isEmpty()) {
-        File recentFolder = new File(recentFolderPath);
-        if (recentFolder.exists() && recentFolder.isDirectory()) {
-          loadTreeView(new File(recentFolderPath));
-        }
+  public void doCloseFolder(boolean removePrefsAndTreeState) {
+    if (mRoot != null) {
+      binding.horizontalScroll.removeAllViews();
+      mRoot = null;
+      mTreeView = null;
+
+      if (removePrefsAndTreeState) {
+        PreferencesUtils.getToolsPrefs()
+            .edit()
+            .putString(SettingsManager.KEY_RECENT_FOLDER, null)
+            .apply();
+        mTreeState = null;
       }
-    } catch (Throwable e) {
-      ILogger.error(LOG_TAG, Log.getStackTraceString(e));
-      DialogUtils.newErrorDialog(
-          requireContext(),
-          getString(R.string.error),
-          getString(R.string.error_treeview_opening_recent_files) + "\n\n" + e.toString());
+      EventBus.getDefault().post(new FileEvent(null));
+      updateViewsVisibility();
     }
   }
 
@@ -286,24 +251,25 @@ public class TreeViewFragment extends Fragment
   }
 
   public void expandNode(TreeNode node) {
-    if (treeView == null) {
+    if (mTreeView == null) {
       return;
     }
-    TransitionManager.beginDelayedTransition(binding.treeView, new ChangeBounds());
-    treeView.expandNode(node);
+    TransitionManager.beginDelayedTransition(binding.expandableLayout, new ChangeBounds());
+    mTreeView.expandNode(node);
     updateToggle(node);
   }
 
   public void collapseNode(TreeNode node) {
-    if (treeView == null) {
+    if (mTreeView == null) {
       return;
     }
-    TransitionManager.beginDelayedTransition(binding.treeView, new ChangeBounds());
-    treeView.collapseNode(node);
+    TransitionManager.beginDelayedTransition(binding.expandableLayout, new ChangeBounds());
+    node.getChildren().clear();
+    mTreeView.collapseNode(node);
     updateToggle(node);
   }
 
-  public void setLoading(TreeNode node, boolean loading) {
+  private void setLoading(TreeNode node, boolean loading) {
     if (node.getViewHolder() instanceof FileViewHolder) {
       ((FileViewHolder) node.getViewHolder()).setLoading(loading);
     }
@@ -316,9 +282,9 @@ public class TreeViewFragment extends Fragment
   }
 
   private void tryRestoreSavedState() {
-    if (savedState != null) {
-      treeView.collapseAll();
-      String[] openNodes = savedState.split(AndroidTreeView.NODES_PATH_SEPARATOR);
+    if (mTreeState != null) {
+      mTreeView.collapseAll();
+      String[] openNodes = mTreeState.split(AndroidTreeView.NODES_PATH_SEPARATOR);
       restoreNodeState(mRoot, new HashSet<>(Arrays.asList(openNodes)));
     }
   }
@@ -336,6 +302,13 @@ public class TreeViewFragment extends Fragment
     }
   }
 
+  public void refresh() {
+    if (mTreeView != null) {
+      mTreeState = mTreeView.getSaveState();
+      loadTreeView(mRoot.getValue());
+    }
+  }
+
   private void expandCollapseView() {
     if (ViewUtils.isExpanded(binding.expandableLayout)) {
       ViewUtils.collapse(binding.expandableLayout);
@@ -350,21 +323,15 @@ public class TreeViewFragment extends Fragment
   private void updateViewsVisibility() {
     if (mRoot == null) {
       binding.folderName.setText(R.string.no_folder_opened);
-      binding.containerOpen.setVisibility(View.VISIBLE);
-      binding.treeView.setVisibility(View.GONE);
-      binding.folderOptions.setVisibility(View.INVISIBLE);
+      binding.expandableLayout.setDisplayedChild(0);
     } else {
       binding.folderName.setText(mRoot.getValue().getName());
-      binding.containerOpen.setVisibility(View.GONE);
-      binding.treeView.setVisibility(View.VISIBLE);
-      binding.folderOptions.setVisibility(View.VISIBLE);
+      binding.expandableLayout.setDisplayedChild(1);
     }
+    binding.folderOptions.setVisibility(mRoot == null ? View.GONE : View.VISIBLE);
   }
 
-  public void refresh() {
-    if (treeView != null) {
-      savedState = treeView.getSaveState();
-      loadTreeView(mRoot.getValue());
-    }
+  public AndroidTreeView getTreeView() {
+    return mTreeView;
   }
 }

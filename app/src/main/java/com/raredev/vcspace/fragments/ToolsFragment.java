@@ -36,7 +36,7 @@ public class ToolsFragment extends Fragment {
 
   private ToolsPagerAdapter adapter;
 
-  public TreeViewFragment treeViewFragment;
+  public FileTreeFragment fileTreeFragment;
   private GitToolsFragment gitToolsFragment;
 
   @Override
@@ -83,7 +83,7 @@ public class ToolsFragment extends Fragment {
     binding = FragmentToolsBinding.inflate(inflater, container, false);
 
     adapter = new ToolsPagerAdapter(getChildFragmentManager(), getLifecycle());
-    adapter.addFragment(treeViewFragment = new TreeViewFragment());
+    adapter.addFragment(fileTreeFragment = new FileTreeFragment());
     adapter.addFragment(gitToolsFragment = new GitToolsFragment());
     
     binding.pager.setOffscreenPageLimit(3);
@@ -117,9 +117,9 @@ public class ToolsFragment extends Fragment {
   }
 
   public void parseRootFolderToFileManager(File dir) {
-    if (treeViewFragment != null && dir != null) {
+    if (fileTreeFragment != null && dir != null) {
       setCurrentFragment(0);
-      treeViewFragment.loadTreeView(dir);
+      fileTreeFragment.loadTreeView(dir);
     }
   }
 
