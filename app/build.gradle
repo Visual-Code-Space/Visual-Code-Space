@@ -96,6 +96,7 @@ dependencies {
   implementation project(path: ':common')
   implementation project(path: ':git-api')
   implementation project(path: ':treeview')
+  implementation project(path: ':lsp:java')
   
   //debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.10'
 }

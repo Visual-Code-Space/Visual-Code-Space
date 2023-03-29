@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.raredev.vcspace.ui.language.java.lsp.JavaLanguageServer;
+import com.raredev.vcspace.lsp.java.JavaLanguageServer;
 import com.raredev.vcspace.util.ILogger;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,7 +20,7 @@ import org.eclipse.lsp4j.services.LanguageClient;
 
 public class JavaLanguageServerService extends Service {
 
-  private static final String TAG = "LanguageServer";
+  private static final String TAG = "JavaLanguageServerService";
 
   @Override
   public IBinder onBind(Intent intent) {

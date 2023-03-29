@@ -1,0 +1,35 @@
+plugins {
+  id 'com.android.library'
+}
+
+android {
+  namespace 'com.raredev.vcspace.lsp.java'
+  compileSdk 33
+  buildToolsVersion "33.0.0"
+
+  defaultConfig {
+    minSdk 26
+    targetSdk 33
+  }
+  buildTypes {
+    release {
+      minifyEnabled false
+    }
+  }
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_11
+    targetCompatibility JavaVersion.VERSION_11
+  }
+  buildFeatures {
+    viewBinding true
+  }
+}
+
+dependencies {
+  implementation 'androidx.appcompat:appcompat:1.6.1'
+  implementation 'com.google.android.material:material:1.8.0'
+  implementation 'org.eclipse.lsp4j:org.eclipse.lsp4j:0.20.1'
+  implementation 'com.blankj:utilcodex:1.31.1'
+  
+  implementation project(path: ':common')
+}

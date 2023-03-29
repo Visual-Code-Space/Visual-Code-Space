@@ -1,4 +1,4 @@
-package com.raredev.vcspace.ui.language.java.lsp;
+package com.raredev.vcspace.lsp.java;
 
 import com.raredev.vcspace.util.ILogger;
 import java.net.URI;
@@ -103,7 +103,6 @@ public class JavaTextDocumentService implements TextDocumentService {
           if (sigFilePath.isEmpty()) {
             return new SignatureHelp();
           }
-
           return null;
         });
   }

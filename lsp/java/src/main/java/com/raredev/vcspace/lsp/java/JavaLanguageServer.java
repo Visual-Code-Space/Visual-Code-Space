@@ -1,4 +1,4 @@
-package com.raredev.vcspace.ui.language.java.lsp;
+package com.raredev.vcspace.lsp.java;
 
 import org.eclipse.lsp4j.ClientCapabilities;
 import org.eclipse.lsp4j.CompletionOptions;

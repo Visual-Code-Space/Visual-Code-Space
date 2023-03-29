@@ -21,11 +21,13 @@ import com.raredev.vcspace.actions.Action;
 import com.raredev.vcspace.actions.ActionData;
 import com.raredev.vcspace.actions.ActionManager;
 import com.raredev.vcspace.databinding.ActivityMainBinding;
+import com.raredev.vcspace.services.JavaLanguageServerService;
 import com.raredev.vcspace.ui.editor.CodeEditorView;
 import com.raredev.vcspace.ui.editor.Symbol;
 import com.raredev.vcspace.ui.viewmodel.EditorViewModel;
 import com.raredev.vcspace.util.FileUtil;
 import com.raredev.vcspace.util.ILogger;
+import com.raredev.vcspace.util.LspConnector;
 import com.raredev.vcspace.util.PreferencesUtils;
 import com.raredev.vcspace.util.Utils;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
@@ -174,8 +176,7 @@ public class MainActivity extends VCSpaceActivity
                 Uri uri = result.getData().getData();
                 try {
                   OutputStream outputStream = getContentResolver().openOutputStream(uri);
-                  outputStream.write(
-                      getCurrentEditor().getText().toString().getBytes());
+                  outputStream.write(getCurrentEditor().getText().toString().getBytes());
                   outputStream.close();
                   openFile(FileUtil.getFileFromUri(MainActivity.this, uri));
                 } catch (IOException e) {
@@ -234,7 +235,7 @@ public class MainActivity extends VCSpaceActivity
     binding.symbolInput.setSymbols(Symbol.baseSymbols());
     binding.symbolInput.bindEditor(editor);
   }
-  
+
   public void openFile(File file) {
     binding.drawerLayout.closeDrawers();
     if (file == null) {
@@ -245,6 +246,18 @@ public class MainActivity extends VCSpaceActivity
     }
     int index = openFileAndGetIndex(file);
     setCurrent(index);
+    /*if (file.getAbsolutePath().endsWith(".java")) {
+      try {
+        new LspConnector(file)
+            .connectToLanguageServer(
+                getCurrentEditor(),
+                getCurrentEditor().createLanguage(),
+                ".java",
+                JavaLanguageServerService.class);
+      } catch (IOException e) {
+        ILogger.error(LOG_TAG, Log.getStackTraceString(e));
+      }
+    }*/
   }
 
   private int openFileAndGetIndex(File file) {
@@ -269,9 +282,8 @@ public class MainActivity extends VCSpaceActivity
     if (index >= 0 && index < viewModel.getOpenedFileCount()) {
       ILogger.info(LOG_TAG, "Closing file: " + viewModel.getOpenedFiles().get(index).toString());
       CodeEditorView editor = getEditorAtIndex(index);
-      if (editor != null) {
-        editor.release();
-      }
+      if (editor != null) editor.release();
+      // LspConnector.shutdown(editor, viewModel.getCurrentFile());
 
       viewModel.removeFile(index);
       binding.tabLayout.removeTabAt(index);
@@ -361,5 +373,11 @@ public class MainActivity extends VCSpaceActivity
     if (tab != null && index >= 0 && !tab.isSelected()) {
       tab.select();
     }
+  }
+
+  @Override
+  protected void onDestroy() {
+    // LspConnector.shutdown();
+    super.onDestroy();
   }
 }
