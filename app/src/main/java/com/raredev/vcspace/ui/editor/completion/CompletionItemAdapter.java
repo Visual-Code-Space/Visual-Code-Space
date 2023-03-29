@@ -9,6 +9,7 @@ import com.raredev.vcspace.util.Utils;
 import com.raredev.vcspace.databinding.LayoutCompletionItemBinding;
 import com.raredev.vcspace.R;
 import io.github.rosemoe.sora.widget.component.EditorCompletionAdapter;
+import io.github.rosemoe.sora.widget.schemes.EditorColorScheme;
 
 public class CompletionItemAdapter extends EditorCompletionAdapter {
   private LayoutCompletionItemBinding binding;
@@ -25,16 +26,14 @@ public class CompletionItemAdapter extends EditorCompletionAdapter {
     if (isCurrentCursorPosition) {
       binding
           .getRoot()
-          .setBackgroundColor(
-              MaterialColors.getColor(
-                  getContext(), com.google.android.material.R.attr.colorControlHighlight, 0));
-    } else {
-      binding
-          .getRoot()
-          .setBackground(AppCompatResources.getDrawable(getContext(), R.drawable.ripple_effect));
+          .setBackgroundColor(getThemeColor(EditorColorScheme.COMPLETION_WND_ITEM_CURRENT));
     }
 
     var item = getItem(pos);
+
+    binding.itemLabel.setTextColor(getThemeColor(EditorColorScheme.COMPLETION_WND_TEXT_PRIMARY));
+    binding.itemIcon.setTextColor(getThemeColor(EditorColorScheme.COMPLETION_WND_TEXT_PRIMARY));
+    binding.itemDesc.setTextColor(getThemeColor(EditorColorScheme.COMPLETION_WND_TEXT_SECONDARY));
 
     binding.itemLabel.setText(item.label);
     binding.itemDesc.setText(item.desc);

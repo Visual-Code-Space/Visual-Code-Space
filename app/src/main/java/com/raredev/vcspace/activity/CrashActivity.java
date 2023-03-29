@@ -60,6 +60,8 @@ public class CrashActivity extends VCSpaceActivity {
   public boolean onCreateOptionsMenu(Menu menu) {
     var close = menu.add(getString(R.string.close));
     close.setContentDescription("Close App");
+    close.setIcon(R.drawable.close);
+    close.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
     return super.onCreateOptionsMenu(menu);
   }
@@ -67,7 +69,7 @@ public class CrashActivity extends VCSpaceActivity {
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     if (item.getTitle().equals(getString(R.string.close))) {
-      finishAffinity();
+      finish();
       return true;
     }
     return false;
@@ -77,5 +79,11 @@ public class CrashActivity extends VCSpaceActivity {
   protected void onDestroy() {
     super.onDestroy();
     binding = null;
+  }
+
+  @Override
+  public void finish() {
+    super.finish();
+    System.exit(0);
   }
 }

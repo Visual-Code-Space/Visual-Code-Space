@@ -84,6 +84,9 @@ public class VCSpaceTextMateColorScheme extends EditorColorScheme
 
     setColor(BLOCK_LINE, SurfaceColors.SURFACE_3.getColor(context));
     setColor(COMPLETION_WND_CORNER, MaterialColors.getColor(context, R.attr.colorOnSurface, 0));
+    setColor(COMPLETION_WND_TEXT_PRIMARY, MaterialColors.getColor(context, R.attr.colorPrimary, 0));
+    setColor(COMPLETION_WND_TEXT_SECONDARY, MaterialColors.getColor(context, R.attr.colorSecondary, 0));
+    setColor(COMPLETION_WND_ITEM_CURRENT, MaterialColors.getColor(context, R.attr.colorControlHighlight, 0));
     setColor(COMPLETION_WND_BACKGROUND, SurfaceColors.SURFACE_0.getColor(context));
 
     String caret = (String) themeRaw.get("caret");
