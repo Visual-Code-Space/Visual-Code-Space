@@ -32,21 +32,47 @@ public class Symbol {
   public void setInsert(String insert) {
     this.insert = insert;
   }
-  
+
   public static List<Symbol> baseSymbols() {
+    String[] baseSymbols = {
+      "(", ")", "{", "}", ";", "\"", "'", ":", "[", "]", "=", "+", "-", "*", "/", "%", "&", "|",
+      "^", "!", "?", "<", ">"
+    };
     List<Symbol> symbols = new ArrayList<>();
     symbols.add(new Symbol("→", PreferencesUtils.getTab()));
-    symbols.add(new Symbol("\""));
-    symbols.add(new Symbol(";"));
-    symbols.add(new Symbol("(", "()"));
-    symbols.add(new Symbol(")"));
-    symbols.add(new Symbol("{", "{}"));
-    symbols.add(new Symbol("}"));
-    symbols.add(new Symbol("[", "[]"));
-    symbols.add(new Symbol("]"));
-    symbols.add(new Symbol("<", "<>"));
-    symbols.add(new Symbol(">"));
+
+    for (String symbol : baseSymbols) {
+      if (symbol.equals("(")
+          || symbol.equals("{")
+          || symbol.equals("[")
+          || symbol.equals("<")
+          || symbol.equals("\"")
+          || symbol.equals("'")) {
+        symbols.add(new Symbol(symbol, getClosingPair(symbol)));
+      } else {
+        symbols.add(new Symbol(symbol));
+      }
+    }
 
     return symbols;
+  }
+
+  private static String getClosingPair(String openingSymbol) {
+    switch (openingSymbol) {
+      case "(":
+        return "()";
+      case "{":
+        return "{}";
+      case "[":
+        return "[]";
+      case "<":
+        return "<>";
+      case "\"":
+        return "\"\"";
+      case "'":
+        return "''";
+      default:
+        return "";
+    }
   }
 }

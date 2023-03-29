@@ -76,6 +76,8 @@ public class VCSpaceTextMateColorScheme extends EditorColorScheme
   }
 
   private void applyTMTheme(ThemeRaw themeRaw) {
+    int colorPrimary = MaterialColors.getColor(context, R.attr.colorPrimary, 0);
+    int colorControlHighlight = MaterialColors.getColor(context, R.attr.colorControlHighlight, 0);
     setColor(LINE_DIVIDER, Color.TRANSPARENT);
     setColor(WHOLE_BACKGROUND, SurfaceColors.SURFACE_0.getColor(context));
     setColor(LINE_NUMBER_BACKGROUND, SurfaceColors.SURFACE_0.getColor(context));
@@ -84,19 +86,19 @@ public class VCSpaceTextMateColorScheme extends EditorColorScheme
 
     setColor(BLOCK_LINE, SurfaceColors.SURFACE_3.getColor(context));
     setColor(COMPLETION_WND_CORNER, MaterialColors.getColor(context, R.attr.colorOnSurface, 0));
-    setColor(COMPLETION_WND_TEXT_PRIMARY, MaterialColors.getColor(context, R.attr.colorPrimary, 0));
+    setColor(COMPLETION_WND_TEXT_PRIMARY, colorPrimary);
     setColor(COMPLETION_WND_TEXT_SECONDARY, MaterialColors.getColor(context, R.attr.colorSecondary, 0));
-    setColor(COMPLETION_WND_ITEM_CURRENT, MaterialColors.getColor(context, R.attr.colorControlHighlight, 0));
+    setColor(COMPLETION_WND_ITEM_CURRENT, colorControlHighlight);
     setColor(COMPLETION_WND_BACKGROUND, SurfaceColors.SURFACE_0.getColor(context));
 
     String caret = (String) themeRaw.get("caret");
     if (caret != null) {
-      setColor(SELECTION_INSERT, Color.parseColor(caret));
-      setColor(SELECTION_HANDLE, Color.parseColor(caret));
+      setColor(SELECTION_INSERT, colorPrimary);
+      setColor(SELECTION_HANDLE, colorPrimary);
 
       int blockLineColorCur = (getColor(BLOCK_LINE)) | Color.parseColor(caret);
       setColor(BLOCK_LINE_CURRENT, blockLineColorCur);
-      setColor(SELECTED_TEXT_BACKGROUND, blockLineColorCur);
+      setColor(SELECTED_TEXT_BACKGROUND, colorControlHighlight);
 
       setColor(HIGHLIGHTED_DELIMITERS_FOREGROUND, blockLineColorCur);
     }

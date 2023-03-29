@@ -5,8 +5,10 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.raredev.vcspace.databinding.LayoutSymbolItemBinding;
+import com.raredev.vcspace.R;
 import com.raredev.vcspace.ui.editor.Symbol;
 import com.raredev.vcspace.util.PreferencesUtils;
 import io.github.rosemoe.sora.widget.CodeEditor;
@@ -32,11 +34,13 @@ public class SymbolInputAdapter extends RecyclerView.Adapter<SymbolInputAdapter.
         AnimationUtils.loadAnimation(holder.itemView.getContext(), android.R.anim.fade_in));
 
     holder.label.setText(symbol.getLabel());
+    holder.label.setTypeface(
+        ResourcesCompat.getFont(holder.itemView.getContext(), R.font.jetbrains_mono));
     holder.itemView.setOnClickListener(
         v -> {
           if (editor != null && editor.isEditable()) {
             if (PreferencesUtils.getTab().equals(symbol.getInsert())) {
-              if ("\t".equals(symbol.getInsert()) && editor.getSnippetController().isInSnippet()) {
+              if (editor.getSnippetController().isInSnippet()) {
                 editor.getSnippetController().shiftToNextTabStop();
                 return;
               }
