@@ -45,7 +45,7 @@
   <string name="delete">Delete</string>
   <string name="delete_message">Are you sure you want to delete %1$s?</string>
   <string name="deleting">Deleting...</string>
-  <string name="deleting_plase_wait">Deleting please wait.</string>
+  <string name="deleting_please_wait">Deleting please wait.</string>
   <string name="create">Create</string>
   <string name="cancel">Cancel</string>
   <string name="file">File</string>

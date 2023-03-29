@@ -44,7 +44,7 @@ public class FileTreeFragment extends Fragment
   private AndroidTreeView mTreeView;
   private String mTreeState;
 
-  private TreeNode mRoot;
+  public TreeNode mRoot;
 
   @Nullable
   @Override
@@ -135,6 +135,12 @@ public class FileTreeFragment extends Fragment
     if (mRoot == null) {
       return;
     }
+    if (newFile == null) {
+      return;
+    }
+    if (!newFile.toString().equals(mRoot.getValue().toString())) {
+      return;
+    }
     loadTreeView(newFile);
   }
 
@@ -184,6 +190,12 @@ public class FileTreeFragment extends Fragment
         });
     ILogger.info(LOG_TAG, "Opened folder: " + rootFolder.toString());
     updateViewsVisibility();
+  }
+  
+  public void closeDeletedFolder() {
+    if (mRoot != null && !mRoot.getValue().exists()) {
+      doCloseFolder(true);
+    }
   }
 
   public void doCloseFolder(boolean removePrefsAndTreeState) {

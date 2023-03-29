@@ -38,8 +38,6 @@ public class GitToolsFragment extends Fragment {
   public View onCreateView(
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     binding = FragmentGitToolsBinding.inflate(inflater, container, false);
-    ViewUtils.rotateChevron(ViewUtils.isExpanded(binding.expandableLayout), binding.downButton);
-
     File idePath = new File(Environment.getExternalStorageDirectory(), "/VCSpace/");
     if (!idePath.exists()) {
       idePath.mkdirs();

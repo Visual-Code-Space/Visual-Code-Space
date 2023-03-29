@@ -42,7 +42,7 @@
   <string name="delete">Deletar</string>
   <string name="delete_message">Tem certeza que deseja deletar %1$s?</string>
   <string name="deleting">Apagando</string>
-  <string name="deleting_plase_wait">Apagando por favor aguarde.</string>
+  <string name="deleting_please_wait">Apagando por favor aguarde.</string>
   <string name="create">Criar</string>
   <string name="cancel">Cancelar</string>
   <string name="file">Arquivo</string>

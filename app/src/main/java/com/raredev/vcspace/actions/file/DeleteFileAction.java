@@ -35,7 +35,7 @@ public class DeleteFileAction extends FileAction {
                   DialogUtils.newProgressDialog(
                           fragment.requireContext(),
                           fragment.getString(R.string.deleting),
-                          fragment.getString(R.string.deleting_plase_wait))
+                          fragment.getString(R.string.deleting_please_wait))
                       .create();
               progress.setCancelable(false);
               progress.show();
@@ -48,8 +48,8 @@ public class DeleteFileAction extends FileAction {
                     if (node != null) {
                       fragment.getTreeView().removeNode(node);
                     }
+                    fragment.closeDeletedFolder();
                     progress.cancel();
-                    fragment.updateRootNode(null);
                   });
             })
         .setNegativeButton(R.string.cancel, null)
