@@ -7,6 +7,7 @@ import com.raredev.vcspace.R;
 import com.raredev.vcspace.actions.ActionData;
 import com.raredev.vcspace.activity.MainActivity;
 import com.raredev.vcspace.fragments.FileTreeFragment;
+import com.raredev.vcspace.progressdialog.ProgressDialog;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.util.DialogUtils;
 import com.raredev.vcspace.util.FileUtil;

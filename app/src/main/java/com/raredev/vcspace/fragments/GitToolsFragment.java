@@ -14,6 +14,7 @@ import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.FragmentGitToolsBinding;
 import com.raredev.vcspace.events.FileEvent;
 import com.raredev.vcspace.git.CloneRepository;
+import com.raredev.vcspace.progressdialog.ProgressDialog;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.util.DialogUtils;
 import com.raredev.vcspace.util.GitUtils;
@@ -71,14 +72,14 @@ public class GitToolsFragment extends Fragment {
     binding.initRepo.setOnClickListener(
         v -> {
           if (repoPath != null) {
-            AlertDialog progress =
+            ProgressDialog progress =
                 DialogUtils.newProgressDialog(
-                        requireContext(),
-                        getString(R.string.initializing),
-                        getString(R.string.initializing_message))
-                    .create();
+                    requireContext(),
+                    getString(R.string.initializing),
+                    getString(R.string.initializing_message));
             progress.setCancelable(false);
-            progress.show();
+            AlertDialog dialog = progress.create();
+            dialog.show();
             TaskExecutor.executeAsyncProvideError(
                 () -> {
                   repository = new GitUtils(repoPath);
@@ -94,7 +95,7 @@ public class GitToolsFragment extends Fragment {
                   return null;
                 },
                 (result, error) -> {
-                  progress.cancel();
+                  dialog.cancel();
                   if (error != null) ILogger.error(LOG_TAG, error.toString());
                 });
           }

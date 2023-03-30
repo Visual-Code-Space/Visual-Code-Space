@@ -4,6 +4,7 @@ import android.util.Log;
 import android.view.View;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.res.ResourcesCompat;
+import com.raredev.vcspace.progressdialog.ProgressDialog;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.util.DialogUtils;
 import com.raredev.vcspace.util.ILogger;
@@ -54,12 +55,12 @@ public class LogViewActivity extends VCSpaceActivity implements ILogger.Observer
 
   @Override
   public void onLogUpdated(File logFile) {
-    AlertDialog progress =
+    ProgressDialog progress =
         DialogUtils.newProgressDialog(
-                this, getString(R.string.loading), getString(R.string.loading_log_file))
-            .create();
+            this, getString(R.string.loading), getString(R.string.loading_log_file));
     progress.setCancelable(false);
-    progress.show();
+    AlertDialog dialog = progress.create();
+    dialog.show();
     TaskExecutor.executeAsyncProvideError(
         () -> {
           try {
@@ -75,7 +76,7 @@ public class LogViewActivity extends VCSpaceActivity implements ILogger.Observer
           return null;
         },
         (result, error) -> {
-          progress.cancel();
+          dialog.cancel();
           if (error != null) ILogger.error(LOG_TAG, error.toString());
         });
   }
