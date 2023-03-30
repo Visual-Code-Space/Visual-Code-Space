@@ -10,7 +10,7 @@ import io.github.rosemoe.sora.lang.completion.SimpleSnippetCompletionItem;
 import io.github.rosemoe.sora.lang.completion.SnippetDescription;
 import io.github.rosemoe.sora.lang.completion.snippet.CodeSnippet;
 import io.github.rosemoe.sora.lang.completion.snippet.parser.CodeSnippetParser;
-import io.github.rosemoe.sora.langs.textmate.TextMateLanguage;
+import io.github.rosemoe.sora.langs.textmate.VCSpaceTMLanguage;
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import io.github.rosemoe.sora.text.CharPosition;
@@ -18,7 +18,7 @@ import io.github.rosemoe.sora.text.ContentReference;
 import io.github.rosemoe.sora.util.MyCharacter;
 import io.github.rosemoe.sora.widget.SymbolPairMatch;
 
-public class HtmlLanguage extends TextMateLanguage {
+public class HtmlLanguage extends VCSpaceTMLanguage {
 
   private static final CodeSnippet HTML_SNIPPET =
       CodeSnippetParser.parse(
@@ -28,10 +28,8 @@ public class HtmlLanguage extends TextMateLanguage {
     super(
         GrammarRegistry.getInstance().findGrammar("text.html.basic"),
         GrammarRegistry.getInstance().findLanguageConfiguration("text.html.basic"),
-        null,
         ThemeRegistry.getInstance(),
         true);
-
     loadSymbolPairs();
   }
 
@@ -59,19 +57,8 @@ public class HtmlLanguage extends TextMateLanguage {
     }
   }
 
-  @Override
-  public boolean useTab() {
-    return !PreferencesUtils.useUseSpaces();
-  }
-
   private void loadSymbolPairs() {
-    SymbolPairMatch symbolPairs = getSymbolPairs();
-    symbolPairs.putPair("<", new SymbolPairMatch.SymbolPair("<", ">"));
-    symbolPairs.putPair("(", new SymbolPairMatch.SymbolPair("(", ")"));
-    symbolPairs.putPair("{", new SymbolPairMatch.SymbolPair("{", "}"));
-    symbolPairs.putPair("[", new SymbolPairMatch.SymbolPair("[", "]"));
-    symbolPairs.putPair("\"", new SymbolPairMatch.SymbolPair("\"", "\""));
-    symbolPairs.putPair("'", new SymbolPairMatch.SymbolPair("'", "'"));
+    getSymbolPairs().putPair("<", new SymbolPairMatch.SymbolPair("<", ">"));
   }
 
   private void htmlAutoComplete() {}

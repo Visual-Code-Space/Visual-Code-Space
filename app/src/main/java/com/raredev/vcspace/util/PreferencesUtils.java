@@ -53,7 +53,7 @@ public class PreferencesUtils {
   /*
    * Returns whether the user wants to use spaces instead of tabs(\t)
    */
-  public static boolean useUseSpaces() {
+  public static boolean useSpaces() {
     return getDefaultPrefs().getBoolean(SettingsManager.KEY_USE_SPACES, true);
   }
 
@@ -66,7 +66,7 @@ public class PreferencesUtils {
 
   public static String getTab() {
     String spaces = " ".repeat(getEditorTABSize());
-    return useUseSpaces() ? spaces : "\t";
+    return useSpaces() ? spaces : "\t";
   }
 
   /*

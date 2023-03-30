@@ -42,7 +42,9 @@ public class VCSpaceTextMateColorScheme extends EditorColorScheme
   }
 
   @Override
-  public void onChangeTheme(ThemeModel newTheme) {}
+  public void onChangeTheme(ThemeModel newTheme) {
+    setTheme(newTheme);
+  }
 
   @Override
   public void applyDefault() {

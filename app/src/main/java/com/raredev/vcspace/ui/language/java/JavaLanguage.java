@@ -2,14 +2,13 @@ package com.raredev.vcspace.ui.language.java;
 
 import android.os.Bundle;
 import androidx.annotation.NonNull;
-import com.raredev.vcspace.util.PreferencesUtils;
 import io.github.rosemoe.sora.lang.completion.CompletionHelper;
 import io.github.rosemoe.sora.lang.completion.CompletionPublisher;
 import io.github.rosemoe.sora.lang.completion.SimpleSnippetCompletionItem;
 import io.github.rosemoe.sora.lang.completion.SnippetDescription;
 import io.github.rosemoe.sora.lang.completion.snippet.CodeSnippet;
 import io.github.rosemoe.sora.lang.completion.snippet.parser.CodeSnippetParser;
-import io.github.rosemoe.sora.langs.textmate.TextMateLanguage;
+import io.github.rosemoe.sora.langs.textmate.VCSpaceTMLanguage;
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import io.github.rosemoe.sora.text.CharPosition;
@@ -17,7 +16,7 @@ import io.github.rosemoe.sora.text.ContentReference;
 import io.github.rosemoe.sora.util.MyCharacter;
 import io.github.rosemoe.sora.widget.SymbolPairMatch;
 
-public class JavaLanguage extends TextMateLanguage {
+public class JavaLanguage extends VCSpaceTMLanguage {
 
   private static final CodeSnippet FOR_SNIPPET =
       CodeSnippetParser.parse("for(int ${1:i} = 0;$1 < ${2:count};$1++) {\n    $0\n}");
@@ -25,7 +24,8 @@ public class JavaLanguage extends TextMateLanguage {
       CodeSnippetParser.parse(
           "private final static ${1:type} ${2/(.*)/${1:/upcase}/} = ${3:value};");
   /// Class
-  private static final CodeSnippet CLASS_SNIPPET = CodeSnippetParser.parse("class ${1:Name} {\n	$0\n}");
+  private static final CodeSnippet CLASS_SNIPPET =
+      CodeSnippetParser.parse("class ${1:Name} {\n	$0\n}");
   private static final CodeSnippet CLASS_INHERITANCE_SNIPPET =
       CodeSnippetParser.parse("public class ${1:Name} extends ${2:Parent} {\n	$0\n}");
   private static final CodeSnippet INTERFACE_SNIPPET =
@@ -34,7 +34,8 @@ public class JavaLanguage extends TextMateLanguage {
       CodeSnippetParser.parse("interface ${1:Name} extends ${2:Parent} {\n	$0\n}");
 
   /// Comments
-  private static final CodeSnippet MULTILINE_COMMENT_SNIPPET = CodeSnippetParser.parse("/*\n*$0\n*/");
+  private static final CodeSnippet MULTILINE_COMMENT_SNIPPET =
+      CodeSnippetParser.parse("/*\n*$0\n*/");
 
   /// Constants
   private static final CodeSnippet CONSTANT_SNIPPET =
@@ -46,9 +47,11 @@ public class JavaLanguage extends TextMateLanguage {
   private static final CodeSnippet CASE_SNIPPET = CodeSnippetParser.parse("case ${1}:\n	$0");
   private static final CodeSnippet DEFAULT_SNIPPET = CodeSnippetParser.parse("default:\n	$0");
   private static final CodeSnippet ELSE_SNIPPET = CodeSnippetParser.parse("else {\n	$0\n}");
-  private static final CodeSnippet ELSE_IF_SNIPPET = CodeSnippetParser.parse("else if (${1}) {\n	$0\n}");
+  private static final CodeSnippet ELSE_IF_SNIPPET =
+      CodeSnippetParser.parse("else if (${1}) {\n	$0\n}");
   private static final CodeSnippet IF_SNIPPET = CodeSnippetParser.parse("if (${1}) {\n	$0\n}");
-  private static final CodeSnippet SWITCH_SNIPPET = CodeSnippetParser.parse("switch (${1}) {\n	$0\n}");
+  private static final CodeSnippet SWITCH_SNIPPET =
+      CodeSnippetParser.parse("switch (${1}) {\n	$0\n}");
 
   /// Create a Method
   private static final CodeSnippet METHOD_SNIPPET =
@@ -67,8 +70,10 @@ public class JavaLanguage extends TextMateLanguage {
       CodeSnippetParser.parse("@ManyToOne\n$0");
   public static final CodeSnippet OneToMany_ANNOTATION_SNIPPET =
       CodeSnippetParser.parse("@OneToMany${1:(cascade=CascadeType.ALL)}\n$0");
-  private static final CodeSnippet OneToOne_ANNOTATION_SNIPPET = CodeSnippetParser.parse("@OneToOne\n$0");
-  private static final CodeSnippet Override_ANNOTATION_SNIPPET = CodeSnippetParser.parse("@Override\n$0");
+  private static final CodeSnippet OneToOne_ANNOTATION_SNIPPET =
+      CodeSnippetParser.parse("@OneToOne\n$0");
+  private static final CodeSnippet Override_ANNOTATION_SNIPPET =
+      CodeSnippetParser.parse("@Override\n$0");
 
   /// Basic Java packages and import
   private static final CodeSnippet JAVA_BEANS_SNIPPET = CodeSnippetParser.parse("java.beans.");
@@ -107,7 +112,8 @@ public class JavaLanguage extends TextMateLanguage {
       CodeSnippetParser.parse("System.out.printf(\"${1:Message}\", ${2:args});$0");
   private static final CodeSnippet PRINT_LN_SNIPPET =
       CodeSnippetParser.parse("System.out.println(${1});$0");
-  private static final CodeSnippet SOUT_SNIPPET = CodeSnippetParser.parse("System.out.println(${1});$0");
+  private static final CodeSnippet SOUT_SNIPPET =
+      CodeSnippetParser.parse("System.out.println(${1});$0");
 
   private String prefix;
   private CompletionPublisher publisher;
@@ -116,12 +122,10 @@ public class JavaLanguage extends TextMateLanguage {
     super(
         GrammarRegistry.getInstance().findGrammar("source.java"),
         GrammarRegistry.getInstance().findLanguageConfiguration("source.java"),
-        null,
         ThemeRegistry.getInstance(),
         true);
 
     setCompleterKeywords(javaKeywords);
-    loadSymbolPairs();
   }
 
   @Override
@@ -208,20 +212,6 @@ public class JavaLanguage extends TextMateLanguage {
           new SimpleSnippetCompletionItem(
               name, "Snippet - " + desc, new SnippetDescription(prefix.length(), code, true)));
     }
-  }
-
-  @Override
-  public boolean useTab() {
-    return !PreferencesUtils.useUseSpaces();
-  }
-
-  private void loadSymbolPairs() {
-    SymbolPairMatch symbolPairs = getSymbolPairs();
-    symbolPairs.putPair("(", new SymbolPairMatch.SymbolPair("(", ")"));
-    symbolPairs.putPair("{", new SymbolPairMatch.SymbolPair("{", "}"));
-    symbolPairs.putPair("[", new SymbolPairMatch.SymbolPair("[", "]"));
-    symbolPairs.putPair("\"", new SymbolPairMatch.SymbolPair("\"", "\""));
-    symbolPairs.putPair("'", new SymbolPairMatch.SymbolPair("'", "'"));
   }
 
   private static final String[] javaKeywords = {

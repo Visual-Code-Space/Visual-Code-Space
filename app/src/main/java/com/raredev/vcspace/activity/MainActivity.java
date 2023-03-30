@@ -21,13 +21,12 @@ import com.raredev.vcspace.actions.Action;
 import com.raredev.vcspace.actions.ActionData;
 import com.raredev.vcspace.actions.ActionManager;
 import com.raredev.vcspace.databinding.ActivityMainBinding;
-import com.raredev.vcspace.services.JavaLanguageServerService;
+import com.raredev.vcspace.managers.SettingsManager;
 import com.raredev.vcspace.ui.editor.CodeEditorView;
 import com.raredev.vcspace.ui.editor.Symbol;
 import com.raredev.vcspace.ui.viewmodel.EditorViewModel;
 import com.raredev.vcspace.util.FileUtil;
 import com.raredev.vcspace.util.ILogger;
-import com.raredev.vcspace.util.LspConnector;
 import com.raredev.vcspace.util.PreferencesUtils;
 import com.raredev.vcspace.util.Utils;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
@@ -110,6 +109,9 @@ public class MainActivity extends VCSpaceActivity
 
   @Override
   public void onSharedPreferenceChanged(SharedPreferences pref, String key) {
+    if (key.equals(SettingsManager.KEY_EDITOR_TAB_SIZE)) {
+      refreshSymbolInput(getCurrentEditor());
+    }
     for (int i = 0; i < viewModel.getOpenedFileCount(); i++) {
       CodeEditorView editor = getEditorAtIndex(i);
       if (editor != null) {
