@@ -18,12 +18,12 @@ import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
-import com.raredev.vcspace.util.FileUtil;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.activity.MainActivity;
-import com.raredev.vcspace.adapters.ToolsPagerAdapter;
+import com.raredev.vcspace.adapters.PageAdapter;
 import com.raredev.vcspace.databinding.FragmentToolsBinding;
 import com.raredev.vcspace.managers.SettingsManager;
+import com.raredev.vcspace.util.FileUtil;
 import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.util.PreferencesUtils;
 import java.io.File;
@@ -34,7 +34,7 @@ public class ToolsFragment extends Fragment {
 
   private FragmentToolsBinding binding;
 
-  private ToolsPagerAdapter adapter;
+  private PageAdapter adapter;
 
   public FileTreeFragment fileTreeFragment;
   private GitToolsFragment gitToolsFragment;
@@ -59,11 +59,13 @@ public class ToolsFragment extends Fragment {
                       if (uri != null) {
                         try {
                           DocumentFile pickedDir = DocumentFile.fromTreeUri(requireContext(), uri);
-                          File dir = FileUtil.getFileFromUri(requireContext(), pickedDir.getUri());
-                          parseRootFolderToFileManager(dir);
+                          File rootFolder =
+                              FileUtil.getFileFromUri(requireContext(), pickedDir.getUri());
+
+                          parseRootFolderToFileManager(rootFolder);
                           PreferencesUtils.getToolsPrefs()
                               .edit()
-                              .putString(SettingsManager.KEY_RECENT_FOLDER, dir.toString())
+                              .putString(SettingsManager.KEY_RECENT_FOLDER, rootFolder.toString())
                               .apply();
                           ((MainActivity) requireActivity())
                               .binding.drawerLayout.openDrawer(GravityCompat.START);
@@ -82,11 +84,11 @@ public class ToolsFragment extends Fragment {
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     binding = FragmentToolsBinding.inflate(inflater, container, false);
 
-    adapter = new ToolsPagerAdapter(getChildFragmentManager(), getLifecycle());
+    adapter = new PageAdapter(getChildFragmentManager(), getLifecycle());
     adapter.addFragment(fileTreeFragment = new FileTreeFragment());
     adapter.addFragment(gitToolsFragment = new GitToolsFragment());
-    
-    binding.pager.setOffscreenPageLimit(3);
+
+    binding.pager.setOffscreenPageLimit(2);
     binding.pager.setUserInputEnabled(false);
     binding.pager.setAdapter(adapter);
 
@@ -123,10 +125,10 @@ public class ToolsFragment extends Fragment {
     }
   }
 
-  private void setCurrentFragment(int index) {
+  public void setCurrentFragment(int index) {
     final var tab = binding.tabLayout.getTabAt(index);
     if (tab != null && !tab.isSelected()) {
-      tab.select();
+      binding.tabLayout.selectTab(tab, true);
     }
   }
 }

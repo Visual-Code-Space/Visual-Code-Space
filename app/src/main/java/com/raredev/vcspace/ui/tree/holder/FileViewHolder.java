@@ -4,12 +4,12 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
-import com.raredev.vcspace.util.Utils;
+import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.LayoutFileItemBinding;
 import com.raredev.vcspace.models.FileExtension;
+import com.raredev.vcspace.util.Utils;
 import com.raredev.vcspace.util.ViewUtils;
 import com.unnamed.b.atv.model.TreeNode;
-import com.raredev.vcspace.R;
 import java.io.File;
 
 public class FileViewHolder extends TreeNode.BaseNodeViewHolder<File> {

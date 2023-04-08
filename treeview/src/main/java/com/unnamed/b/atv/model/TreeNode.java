@@ -3,11 +3,9 @@ package com.unnamed.b.atv.model;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.unnamed.b.atv.R;
 import com.unnamed.b.atv.view.AndroidTreeView;
 import com.unnamed.b.atv.view.TreeNodeWrapperView;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,28 +15,19 @@ import java.util.List;
 
 /** Created by Bogdan Melnychuk on 2/10/15. */
 public class TreeNode {
-
   public static final String NODES_ID_SEPARATOR = ":";
-  private final List<TreeNode> children;
+
   private int mId;
   private int mLastId;
   private TreeNode mParent;
   private boolean mSelected;
   private boolean mSelectable = true;
+  private final List<TreeNode> children;
   private BaseNodeViewHolder mViewHolder;
   private TreeNodeClickListener mClickListener;
   private TreeNodeLongClickListener mLongClickListener;
   private File mValue;
   private boolean mExpanded;
-
-  public TreeNode(File value) {
-    children = Collections.synchronizedList(new ArrayList<TreeNode>());
-    mValue = value;
-  }
-
-  public static TreeNode root() {
-    return root(null);
-  }
 
   public static TreeNode root(File value) {
     TreeNode root = new TreeNode(value);
@@ -46,24 +35,23 @@ public class TreeNode {
     return root;
   }
 
-  public TreeNode addChildren(TreeNode... nodes) {
-    for (TreeNode n : nodes) {
-      addChild(n);
-    }
-    return this;
+  private int generateId() {
+    return ++mLastId;
+  }
+
+  public TreeNode(File value) {
+    children = new ArrayList<>();
+    mValue = value;
   }
 
   public TreeNode addChild(TreeNode childNode) {
     childNode.mParent = this;
     childNode.mId = generateId();
     children.add(childNode);
+
     Collections.sort(children, new SortFileName());
     Collections.sort(children, new SortFolder());
     return this;
-  }
-
-  private int generateId() {
-    return ++mLastId;
   }
 
   public TreeNode addChildren(Collection<TreeNode> nodes) {
@@ -71,14 +59,6 @@ public class TreeNode {
       addChild(n);
     }
     return this;
-  }
-
-  public TreeNode childAt(int index) {
-    return children == null ? null : children.get(index);
-  }
-
-  public void deleteAllChildren() {
-    children.clear();
   }
 
   public int deleteChild(TreeNode child) {
@@ -95,29 +75,32 @@ public class TreeNode {
     return children == null ? Collections.synchronizedList(new ArrayList<TreeNode>()) : children;
   }
 
+  public int size() {
+    return children.size();
+  }
+
   public TreeNode getParent() {
     return mParent;
+  }
+
+  public int getId() {
+    return mId;
   }
 
   public boolean isLeaf() {
     return size() == 0;
   }
 
-  public int size() {
-    return children == null ? 0 : children.size();
-  }
-
   public File getValue() {
     return mValue;
   }
 
-  public TreeNode setValue(File file) {
-    this.mValue = file;
-    return this;
-  }
-
   public boolean isExpanded() {
     return mExpanded;
+  }
+
+  public TreeNode childAt(int index) {
+    return children == null ? null : children.get(index);
   }
 
   public TreeNode setExpanded(boolean expanded) {
@@ -125,20 +108,20 @@ public class TreeNode {
     return this;
   }
 
-  public boolean isSelected() {
-    return mSelectable && mSelected;
-  }
-
   public void setSelected(boolean selected) {
     mSelected = selected;
   }
 
-  public boolean isSelectable() {
-    return mSelectable;
+  public boolean isSelected() {
+    return mSelectable && mSelected;
   }
 
   public void setSelectable(boolean selectable) {
     mSelectable = selectable;
+  }
+
+  public boolean isSelectable() {
+    return mSelectable;
   }
 
   public String getPath() {
@@ -152,10 +135,6 @@ public class TreeNode {
       }
     }
     return path.toString();
-  }
-
-  public int getId() {
-    return mId;
   }
 
   public int getLevel() {
@@ -179,12 +158,12 @@ public class TreeNode {
     return false;
   }
 
-  public boolean isRoot() {
-    return mParent == null;
-  }
-
-  public TreeNodeClickListener getClickListener() {
-    return this.mClickListener;
+  public TreeNode setViewHolder(BaseNodeViewHolder viewHolder) {
+    mViewHolder = viewHolder;
+    if (viewHolder != null) {
+      viewHolder.mNode = this;
+    }
+    return this;
   }
 
   public TreeNode setClickListener(TreeNodeClickListener listener) {
@@ -192,8 +171,8 @@ public class TreeNode {
     return this;
   }
 
-  public TreeNodeLongClickListener getLongClickListener() {
-    return mLongClickListener;
+  public TreeNodeClickListener getClickListener() {
+    return this.mClickListener;
   }
 
   public TreeNode setLongClickListener(TreeNodeLongClickListener listener) {
@@ -201,16 +180,12 @@ public class TreeNode {
     return this;
   }
 
-  public BaseNodeViewHolder getViewHolder() {
-    return mViewHolder;
+  public TreeNodeLongClickListener getLongClickListener() {
+    return mLongClickListener;
   }
 
-  public TreeNode setViewHolder(BaseNodeViewHolder viewHolder) {
-    mViewHolder = viewHolder;
-    if (viewHolder != null) {
-      viewHolder.mNode = this;
-    }
-    return this;
+  public BaseNodeViewHolder getViewHolder() {
+    return mViewHolder;
   }
 
   public boolean isFirstChild() {
@@ -221,6 +196,10 @@ public class TreeNode {
     return false;
   }
 
+  public boolean isRoot() {
+    return mParent == null;
+  }
+
   public TreeNode getRoot() {
     TreeNode root = this;
     while (root.mParent != null) {
@@ -229,27 +208,23 @@ public class TreeNode {
     return root;
   }
 
+  public interface TreeNodeClickListener {
+    void onClick(TreeNode node, Object value);
+  }
+
+  public interface TreeNodeLongClickListener {
+    boolean onLongClick(TreeNode node, Object value);
+  }
+
   public abstract static class BaseNodeViewHolder<E> {
     protected AndroidTreeView tView;
     protected TreeNode mNode;
+    private View mView;
     protected int containerStyle;
     protected Context context;
-    private View mView;
 
     public BaseNodeViewHolder(Context context) {
       this.context = context;
-    }
-
-    public void setTreeViev(AndroidTreeView treeViev) {
-      this.tView = treeViev;
-    }
-
-    public AndroidTreeView getTreeView() {
-      return tView;
-    }
-
-    public ViewGroup getNodeItemsView() {
-      return (ViewGroup) getView().findViewById(R.id.node_items);
     }
 
     public View getView() {
@@ -265,23 +240,35 @@ public class TreeNode {
       return mView;
     }
 
-    public View getNodeView() {
-      return createNodeView(mNode, (E) mNode.getValue());
+    public void setTreeViev(AndroidTreeView treeViev) {
+      this.tView = treeViev;
     }
 
-    public abstract View createNodeView(TreeNode node, E value);
-
-    public int getContainerStyle() {
-      return containerStyle;
+    public AndroidTreeView getTreeView() {
+      return tView;
     }
 
     public void setContainerStyle(int style) {
       containerStyle = style;
     }
 
+    public View getNodeView() {
+      return createNodeView(mNode, (E) mNode.getValue());
+    }
+
+    public ViewGroup getNodeItemsView() {
+      return (ViewGroup) getView().findViewById(R.id.node_items);
+    }
+
     public boolean isInitialized() {
       return mView != null;
     }
+
+    public int getContainerStyle() {
+      return containerStyle;
+    }
+
+    public abstract View createNodeView(TreeNode node, E value);
 
     public void toggle(boolean active) {
       // empty
@@ -308,13 +295,5 @@ public class TreeNode {
       else if (f1.isDirectory() && !f2.isDirectory()) return -1;
       else return 1;
     }
-  }
-
-  public interface TreeNodeClickListener {
-    void onClick(TreeNode node, Object value);
-  }
-
-  public interface TreeNodeLongClickListener {
-    boolean onLongClick(TreeNode node, Object value);
   }
 }

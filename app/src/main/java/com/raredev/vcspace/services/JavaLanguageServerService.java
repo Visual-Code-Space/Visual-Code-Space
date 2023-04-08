@@ -40,6 +40,7 @@ public class JavaLanguageServerService extends Service {
                 ILogger.debug(
                     TAG, "connected to the client on port " + socketClient.getLocalPort());
                 try {
+                  JavaLanguageServer.PORT = port;
                   JavaLanguageServer server = new JavaLanguageServer();
                   InputStream inputStream = socketClient.getInputStream();
                   OutputStream outputStream = socketClient.getOutputStream();

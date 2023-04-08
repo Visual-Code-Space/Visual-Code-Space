@@ -17,6 +17,7 @@ rootProject.name = "Visual Code Space"
 
 include ':app'
 include ':common'
+include ':actions-api'
 include ':git-api'
 include ':treeview'
 include ':lsp:java'

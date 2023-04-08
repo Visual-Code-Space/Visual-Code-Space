@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.Observer
 import java.io.File
 import java.util.ArrayList
-import java.util.List
 
 class EditorViewModel : ViewModel() {
   internal val _displayedFile = MutableLiveData(-1)
@@ -27,8 +26,8 @@ class EditorViewModel : ViewModel() {
   }
 
   fun setCurrentFile(index: Int, file: File?) {
-    mCurrentFile.value = index to file
     displayedFileIndex = index
+    mCurrentFile.value = index to file
   }
 
   fun addFile(file: File) {

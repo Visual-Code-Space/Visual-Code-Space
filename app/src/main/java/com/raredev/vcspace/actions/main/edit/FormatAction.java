@@ -2,8 +2,8 @@ package com.raredev.vcspace.actions.main.edit;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.raredev.vcspace.R;
-import com.raredev.vcspace.actions.ActionData;
 import com.raredev.vcspace.actions.main.MainBaseAction;
+import com.vcspace.actions.ActionData;
 
 public class FormatAction extends MainBaseAction {
 

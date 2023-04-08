@@ -20,9 +20,6 @@ android {
     sourceCompatibility JavaVersion.VERSION_11
     targetCompatibility JavaVersion.VERSION_11
   }
-  buildFeatures {
-    viewBinding true
-  }
 }
 
 dependencies {
@@ -30,6 +27,6 @@ dependencies {
   implementation 'com.google.android.material:material:1.8.0'
   implementation 'org.eclipse.lsp4j:org.eclipse.lsp4j:0.20.1'
   implementation 'com.blankj:utilcodex:1.31.1'
-  
+
   implementation project(path: ':common')
 }

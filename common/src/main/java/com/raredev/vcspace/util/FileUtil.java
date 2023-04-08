@@ -93,19 +93,21 @@ public class FileUtil {
     File file = new File(path);
 
     if (!file.exists()) return false;
+
     if (file.isFile()) {
       return file.delete();
     }
 
-    File[] listFiles = file.listFiles();
+    File[] fileArr = file.listFiles();
 
-    if (listFiles != null) {
-      for (File file2 : listFiles) {
-        if (file2.isDirectory()) {
-          delete(file2.getAbsolutePath());
+    if (fileArr != null) {
+      for (File subFile : fileArr) {
+        if (subFile.isDirectory()) {
+          delete(subFile.getAbsolutePath());
         }
-        if (file2.isFile()) {
-          file2.delete();
+
+        if (subFile.isFile()) {
+          subFile.delete();
         }
       }
     }

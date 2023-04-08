@@ -13,12 +13,10 @@ import androidx.transition.ChangeBounds;
 import androidx.transition.TransitionManager;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.raredev.vcspace.R;
-import com.raredev.vcspace.actions.Action;
-import com.raredev.vcspace.actions.ActionData;
-import com.raredev.vcspace.actions.ActionManager;
 import com.raredev.vcspace.activity.MainActivity;
 import com.raredev.vcspace.databinding.FragmentTreeViewBinding;
 import com.raredev.vcspace.events.FileEvent;
+import com.raredev.vcspace.fragments.sheet.ActionsSheetDialog;
 import com.raredev.vcspace.managers.SettingsManager;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.ui.tree.holder.FileViewHolder;
@@ -30,6 +28,8 @@ import com.raredev.vcspace.util.PreferencesUtils;
 import com.raredev.vcspace.util.ViewUtils;
 import com.unnamed.b.atv.model.TreeNode;
 import com.unnamed.b.atv.view.AndroidTreeView;
+import com.vcspace.actions.ActionData;
+import com.vcspace.actions.location.DefaultLocations;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -98,8 +98,8 @@ public class FileTreeFragment extends Fragment
     data.put(FileTreeFragment.class, FileTreeFragment.this);
     data.put(TreeNode.class, node);
 
-    ActionManager.getInstance()
-        .fillDialogMenu(getChildFragmentManager(), data, Action.Location.FILE_TREE);
+    ActionsSheetDialog.createSheet(data, DefaultLocations.FILE_TREE)
+        .show(getChildFragmentManager(), "");
     return true;
   }
 
@@ -151,7 +151,7 @@ public class FileTreeFragment extends Fragment
       if (recentFolderPath != null) {
         File recentFolder = new File(recentFolderPath);
         if (recentFolder.exists() && recentFolder.isDirectory()) {
-          loadTreeView(new File(recentFolderPath));
+          loadTreeView(recentFolder);
         }
       }
     } catch (Throwable e) {
@@ -164,9 +164,6 @@ public class FileTreeFragment extends Fragment
   }
 
   public void loadTreeView(File rootFolder) {
-    if (getContext() == null) {
-      return;
-    }
     doCloseFolder(false);
     mRoot = TreeNode.root(rootFolder);
     mRoot.setViewHolder(new FileViewHolder(requireContext()));
@@ -174,24 +171,24 @@ public class FileTreeFragment extends Fragment
     listNode(
         mRoot,
         () -> {
-          mTreeView = new AndroidTreeView(requireContext(), mRoot, R.drawable.ripple_effect);
+          mTreeView = new AndroidTreeView(requireContext(), mRoot);
           mTreeView.setUseAutoToggle(false);
           mTreeView.setDefaultNodeClickListener(this);
           mTreeView.setDefaultNodeLongClickListener(this);
 
           if (mTreeView != null) {
+            EventBus.getDefault().post(new FileEvent(rootFolder));
             var view = mTreeView.getView();
 
             binding.horizontalScroll.addView(view);
 
-            EventBus.getDefault().post(new FileEvent(rootFolder));
             tryRestoreSavedState();
           }
         });
     ILogger.info(LOG_TAG, "Opened folder: " + rootFolder.toString());
     updateViewsVisibility();
   }
-  
+
   public void closeDeletedFolder() {
     if (mRoot != null && !mRoot.getValue().exists()) {
       doCloseFolder(true);
@@ -207,8 +204,7 @@ public class FileTreeFragment extends Fragment
       if (removePrefsAndTreeState) {
         PreferencesUtils.getToolsPrefs()
             .edit()
-            .putString(SettingsManager.KEY_RECENT_FOLDER, null)
-            .apply();
+            .putString(SettingsManager.KEY_RECENT_FOLDER, null).commit();
         mTreeState = null;
       }
       EventBus.getDefault().post(new FileEvent(null));
@@ -262,7 +258,7 @@ public class FileTreeFragment extends Fragment
     if (mTreeView == null) {
       return;
     }
-    TransitionManager.beginDelayedTransition(binding.expandableLayout, new ChangeBounds());
+    TransitionManager.beginDelayedTransition(binding.horizontalScroll, new ChangeBounds());
     mTreeView.expandNode(node);
     updateToggle(node);
   }
@@ -271,8 +267,7 @@ public class FileTreeFragment extends Fragment
     if (mTreeView == null) {
       return;
     }
-    TransitionManager.beginDelayedTransition(binding.expandableLayout, new ChangeBounds());
-    node.getChildren().clear();
+    TransitionManager.beginDelayedTransition(binding.horizontalScroll, new ChangeBounds());
     mTreeView.collapseNode(node);
     updateToggle(node);
   }

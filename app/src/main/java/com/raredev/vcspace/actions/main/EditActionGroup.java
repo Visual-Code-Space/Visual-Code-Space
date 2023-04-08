@@ -1,19 +1,21 @@
 package com.raredev.vcspace.actions.main;
 
+import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.raredev.vcspace.R;
-import com.raredev.vcspace.actions.Action;
-import com.raredev.vcspace.actions.ActionData;
-import com.raredev.vcspace.actions.ActionGroup;
 import com.raredev.vcspace.actions.main.edit.FindTextAction;
 import com.raredev.vcspace.actions.main.edit.FormatAction;
 import com.raredev.vcspace.activity.MainActivity;
+import com.vcspace.actions.Action;
+import com.vcspace.actions.ActionData;
+import com.vcspace.actions.ActionGroup;
+import com.vcspace.actions.location.DefaultLocations;
 
 public class EditActionGroup extends ActionGroup {
 
   public EditActionGroup() {
-    location = Action.Location.MAIN_TOOLBAR;
+    location = DefaultLocations.MAIN_TOOLBAR;
   }
 
   @Override
@@ -28,12 +30,17 @@ public class EditActionGroup extends ActionGroup {
       return;
     }
     visible = true;
-    title = R.string.menu_edit;
+    title = ((MainActivity) data.get(MainActivity.class)).getString(R.string.menu_edit);
     icon = R.drawable.pencil;
   }
 
   @Override
   public Action[] getChildren(@Nullable ActionData data) {
     return new Action[] {new FindTextAction(), new FormatAction()};
+  }
+
+  @Override
+  public int getShowAsAction() {
+    return MenuItem.SHOW_AS_ACTION_IF_ROOM;
   }
 }

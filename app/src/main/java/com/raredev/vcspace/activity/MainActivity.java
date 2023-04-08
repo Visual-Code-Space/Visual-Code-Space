@@ -17,9 +17,6 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.raredev.vcspace.R;
-import com.raredev.vcspace.actions.Action;
-import com.raredev.vcspace.actions.ActionData;
-import com.raredev.vcspace.actions.ActionManager;
 import com.raredev.vcspace.databinding.ActivityMainBinding;
 import com.raredev.vcspace.managers.SettingsManager;
 import com.raredev.vcspace.ui.editor.CodeEditorView;
@@ -29,6 +26,9 @@ import com.raredev.vcspace.util.FileUtil;
 import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.util.PreferencesUtils;
 import com.raredev.vcspace.util.Utils;
+import com.vcspace.actions.ActionData;
+import com.vcspace.actions.ActionManager;
+import com.vcspace.actions.location.DefaultLocations;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import io.github.rosemoe.sora.widget.CodeEditor;
 import java.io.File;
@@ -77,7 +77,7 @@ public class MainActivity extends VCSpaceActivity
             data.put(MainActivity.class, MainActivity.this);
 
             PopupMenu pm = new PopupMenu(MainActivity.this, p1.view);
-            ActionManager.getInstance().fillMenu(pm.getMenu(), data, Action.Location.EDITOR);
+            ActionManager.getInstance().fillMenu(pm.getMenu(), data, DefaultLocations.FILE_TAB);
 
             p1.view.setOnTouchListener(pm.getDragToOpenListener());
             pm.show();
@@ -85,8 +85,8 @@ public class MainActivity extends VCSpaceActivity
 
           @Override
           public void onTabSelected(TabLayout.Tab p1) {
-            int position = p1.getPosition();
-            CodeEditorView editor = getEditorAtIndex(position);
+            var position = p1.getPosition();
+            var editor = getEditorAtIndex(position);
             viewModel.setCurrentFile(position, editor.getFile());
 
             binding.searcher.bindEditor(editor);
@@ -99,6 +99,32 @@ public class MainActivity extends VCSpaceActivity
     ThemeRegistry.getInstance().setTheme(Utils.isDarkMode(this) ? "vcspace_dark" : "vcspace_light");
     registerResultActivity();
     observeViewModel();
+  }
+
+  @Override
+  public void onBackPressed() {
+    if (binding.drawerLayout.isOpen()) {
+      binding.drawerLayout.closeDrawers();
+      return;
+    }
+    if (binding.searcher.isShowing) {
+      binding.searcher.showAndHide();
+      return;
+    }
+    saveAllFiles(false);
+    super.onBackPressed();
+  }
+
+  @Override
+  protected void onStart() {
+    super.onStart();
+    PreferencesUtils.getDefaultPrefs().registerOnSharedPreferenceChangeListener(this);
+  }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    PreferencesUtils.getDefaultPrefs().unregisterOnSharedPreferenceChangeListener(this);
   }
 
   @Override
@@ -126,7 +152,7 @@ public class MainActivity extends VCSpaceActivity
     ActionData data = new ActionData();
     data.put(MainActivity.class, this);
 
-    ActionManager.getInstance().fillMenu(menu, data, Action.Location.MAIN_TOOLBAR);
+    ActionManager.getInstance().fillMenu(menu, data, DefaultLocations.MAIN_TOOLBAR);
     return true;
   }
 
@@ -153,20 +179,6 @@ public class MainActivity extends VCSpaceActivity
     }
     binding.drawerLayout.closeDrawers();
     return true;
-  }
-
-  @Override
-  public void onBackPressed() {
-    if (binding.drawerLayout.isOpen()) {
-      binding.drawerLayout.closeDrawers();
-      return;
-    }
-    if (binding.searcher.isShowing) {
-      binding.searcher.showAndHide();
-      return;
-    }
-    saveAllFiles(false);
-    super.onBackPressed();
   }
 
   private void registerResultActivity() {
@@ -217,15 +229,11 @@ public class MainActivity extends VCSpaceActivity
         this,
         files -> {
           if (files.isEmpty()) {
-            PreferencesUtils.getDefaultPrefs().unregisterOnSharedPreferenceChangeListener(this);
-            binding.tabLayout.setVisibility(View.GONE);
-            binding.layout.setVisibility(View.GONE);
+            binding.editorContainer.setVisibility(View.GONE);
             binding.noFileOpened.setVisibility(View.VISIBLE);
             binding.searcher.hide();
           } else {
-            PreferencesUtils.getDefaultPrefs().registerOnSharedPreferenceChangeListener(this);
-            binding.tabLayout.setVisibility(View.VISIBLE);
-            binding.layout.setVisibility(View.VISIBLE);
+            binding.editorContainer.setVisibility(View.VISIBLE);
             binding.noFileOpened.setVisibility(View.GONE);
           }
         });
@@ -275,7 +283,10 @@ public class MainActivity extends VCSpaceActivity
     editor.subscribeContentChangeEvent(() -> invalidateOptionsMenu());
     binding.container.addView(editor);
 
-    binding.tabLayout.addTab(binding.tabLayout.newTab().setText(file.getName()));
+    TabLayout.Tab tabItem = binding.tabLayout.newTab();
+    tabItem.setText(file.getName());
+
+    binding.tabLayout.addTab(tabItem, index, false);
     viewModel.addFile(file);
     return index;
   }
@@ -296,6 +307,9 @@ public class MainActivity extends VCSpaceActivity
 
   public void closeOthers() {
     File file = viewModel.getCurrentFile();
+    if (file == null) {
+      return;
+    }
     int index = 0;
 
     while (viewModel.getOpenedFileCount() != 1) {
@@ -373,13 +387,7 @@ public class MainActivity extends VCSpaceActivity
   private void setCurrent(int index) {
     final var tab = binding.tabLayout.getTabAt(index);
     if (tab != null && index >= 0 && !tab.isSelected()) {
-      tab.select();
+      binding.tabLayout.selectTab(tab, true);
     }
-  }
-
-  @Override
-  protected void onDestroy() {
-    // LspConnector.shutdown();
-    super.onDestroy();
   }
 }

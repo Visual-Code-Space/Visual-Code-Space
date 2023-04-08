@@ -94,6 +94,7 @@ dependencies {
   implementation 'org.eclipse.lsp4j:org.eclipse.lsp4j:0.20.1'
   
   implementation project(path: ':common')
+  implementation project(path: ':actions-api')
   implementation project(path: ':git-api')
   implementation project(path: ':treeview')
   implementation project(path: ':lsp:java')

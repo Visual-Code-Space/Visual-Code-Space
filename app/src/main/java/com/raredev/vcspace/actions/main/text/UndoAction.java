@@ -1,8 +1,9 @@
 package com.raredev.vcspace.actions.main.text;
 
+import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import com.raredev.vcspace.R;
-import com.raredev.vcspace.actions.ActionData;
+import com.vcspace.actions.ActionData;
 import com.raredev.vcspace.actions.main.MainBaseAction;
 import com.raredev.vcspace.activity.MainActivity;
 
@@ -12,7 +13,7 @@ public class UndoAction extends MainBaseAction {
   public void update(@NonNull ActionData data) {
     super.update(data);
     visible = false;
-    var main = (MainActivity) data.get(MainActivity.class);
+    var main = getActivity(data);
 
     if (main == null) {
       return;
@@ -26,10 +27,15 @@ public class UndoAction extends MainBaseAction {
 
   @Override
   public void performAction(ActionData data) {
-    var main = (MainActivity) data.get(MainActivity.class);
+    var main = getActivity(data);
     if (main.getCurrentEditor() != null) {
       main.getCurrentEditor().undo();
     }
+  }
+
+  @Override
+  public int getShowAsAction() {
+    return MenuItem.SHOW_AS_ACTION_ALWAYS;
   }
 
   @Override

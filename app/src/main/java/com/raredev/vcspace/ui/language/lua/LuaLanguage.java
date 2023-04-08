@@ -10,7 +10,6 @@ import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import io.github.rosemoe.sora.text.CharPosition;
 import io.github.rosemoe.sora.text.ContentReference;
 import io.github.rosemoe.sora.util.MyCharacter;
-import io.github.rosemoe.sora.widget.SymbolPairMatch;
 
 public class LuaLanguage extends VCSpaceTMLanguage {
 

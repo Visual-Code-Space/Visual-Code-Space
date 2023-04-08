@@ -7,8 +7,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
 import androidx.appcompat.app.AppCompatDelegate;
-import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.fragments.SettingsFragment;
+import com.raredev.vcspace.util.ILogger;
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
@@ -25,10 +25,7 @@ public class VCSpaceApplication extends Application {
     super.onCreate();
     registerShutdownReceiver();
     appContext = this;
-    AppCompatDelegate.setDefaultNightMode(SettingsFragment.getThemeFromPrefs());
-    FileProviderRegistry.getInstance().addFileProvider(new AssetsFileResolver(getAssets()));
     Thread.setDefaultUncaughtExceptionHandler(new CrashHandler(this));
-
     loadTextMate();
   }
 
@@ -41,6 +38,7 @@ public class VCSpaceApplication extends Application {
   private void loadTextMate() {
     // Load editor themes
     try {
+      FileProviderRegistry.getInstance().addFileProvider(new AssetsFileResolver(getAssets()));
       String[] themes = new String[] {"vcspace_dark", "vcspace_light"};
       ThemeRegistry themeRegistry = ThemeRegistry.getInstance();
       for (String name : themes) {

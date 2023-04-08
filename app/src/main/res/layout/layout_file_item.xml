@@ -23,7 +23,6 @@
     <ProgressBar
       android:layout_height="@dimen/dimen22dp"
       android:layout_width="@dimen/dimen22dp"
-      android:visibility="gone"
       android:indeterminate="true" />
 
   </ViewFlipper>

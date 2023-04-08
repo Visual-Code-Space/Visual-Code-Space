@@ -5,8 +5,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
-import com.raredev.vcspace.actions.Action;
 import com.raredev.vcspace.databinding.LayoutListItemBinding;
+import com.vcspace.actions.Action;
 import java.util.List;
 
 public class OptionsSheetAdapter extends RecyclerView.Adapter<OptionsSheetAdapter.VH> {

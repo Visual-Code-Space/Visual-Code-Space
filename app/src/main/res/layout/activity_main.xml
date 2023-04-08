@@ -28,14 +28,6 @@
         android:indeterminate="true"
         android:id="@+id/progress" />
 
-      <com.google.android.material.tabs.TabLayout
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        app:tabMode="scrollable"
-        app:tabGravity="start"
-        app:tabTextAppearance="@style/TabLayout.TextStyle"
-        android:id="@+id/tab_layout" />
-
     </com.google.android.material.appbar.AppBarLayout>
 
     <RelativeLayout
@@ -48,7 +40,15 @@
         android:layout_width="match_parent"
         android:visibility="gone"
         android:orientation="vertical"
-        android:id="@+id/layout">
+        android:id="@+id/editor_container">
+
+        <com.google.android.material.tabs.TabLayout
+          android:layout_height="wrap_content"
+          android:layout_width="match_parent"
+          app:tabMode="scrollable"
+          app:tabGravity="start"
+          app:tabTextAppearance="@style/TabLayout.TextStyle"
+          android:id="@+id/tab_layout" />
 
         <ViewFlipper
           android:layout_height="match_parent"

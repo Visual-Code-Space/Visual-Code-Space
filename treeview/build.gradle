@@ -4,6 +4,7 @@ plugins {
 
 android {
   compileSdk 33
+  buildToolsVersion "33.0.0"
 
   defaultConfig {
     minSdk 26
@@ -21,5 +22,5 @@ android {
 }
 
 dependencies {
- implementation 'androidx.appcompat:appcompat:1.6.1'
+  
 }

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import androidx.core.content.res.ResourcesCompat;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.raredev.vcspace.models.LanguageScope;
 import com.raredev.vcspace.ui.editor.completion.CompletionItemAdapter;
 import com.raredev.vcspace.ui.editor.completion.CustomCompletionLayout;
@@ -16,7 +15,6 @@ import com.raredev.vcspace.util.PreferencesUtils;
 import io.github.rosemoe.sora.event.ContentChangeEvent;
 import io.github.rosemoe.sora.lang.EmptyLanguage;
 import io.github.rosemoe.sora.lang.Language;
-import io.github.rosemoe.sora.langs.textmate.TextMateLanguage;
 import io.github.rosemoe.sora.langs.textmate.VCSpaceTMLanguage;
 import io.github.rosemoe.sora.langs.textmate.VCSpaceTextMateColorScheme;
 import io.github.rosemoe.sora.lsp.editor.LspEditor;
@@ -29,8 +27,8 @@ import java.io.File;
 import java.util.concurrent.CompletableFuture;
 
 public class CodeEditorView extends CodeEditor {
-  private File file;
   private LspEditor lspEditor;
+  private File file;
 
   public CodeEditorView(Context context, File file) {
     super(context);

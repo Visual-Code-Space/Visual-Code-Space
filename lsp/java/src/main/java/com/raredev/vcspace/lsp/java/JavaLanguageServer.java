@@ -22,6 +22,9 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class JavaLanguageServer implements LanguageServer, LanguageClientAware {
+  
+  public static int PORT = 0;
+  
   private TextDocumentService textDocumentService;
   private WorkspaceService workspaceService;
   private ClientCapabilities clientCapabilities;

@@ -1,16 +1,15 @@
 package com.raredev.vcspace.actions.main.edit;
 
 import androidx.annotation.NonNull;
-import com.raredev.vcspace.actions.ActionData;
-import com.raredev.vcspace.actions.main.MainBaseAction;
-import com.raredev.vcspace.activity.MainActivity;
 import com.raredev.vcspace.R;
+import com.raredev.vcspace.actions.main.MainBaseAction;
+import com.vcspace.actions.ActionData;
 
 public class FindTextAction extends MainBaseAction {
 
   @Override
   public void performAction(@NonNull ActionData data) {
-    var main = (MainActivity) data.get(MainActivity.class);
+    var main = getActivity(data);
     main.binding.searcher.showAndHide();
   }
 

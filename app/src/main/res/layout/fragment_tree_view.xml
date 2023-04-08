@@ -57,9 +57,7 @@
         android:layout_margin="3dp"
         android:padding="2dp"
         android:id="@+id/close" />
-
     </LinearLayout>
-
   </RelativeLayout>
 
   <ViewFlipper
@@ -97,12 +95,15 @@
         style="?attr/materialButtonOutlinedStyle"
         android:text="@string/open_recent"
         android:id="@+id/open_recent" />
+
     </LinearLayout>
 
     <HorizontalScrollView
       android:layout_height="match_parent"
       android:layout_width="match_parent"
       android:fillViewport="true"
-      android:id="@+id/horizontal_scroll" />
+      android:id="@+id/horizontal_scroll">
+
+    </HorizontalScrollView>
   </ViewFlipper>
 </LinearLayout>

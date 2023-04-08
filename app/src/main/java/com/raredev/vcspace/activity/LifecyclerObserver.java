@@ -2,21 +2,13 @@ package com.raredev.vcspace.activity;
 
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
-import com.raredev.vcspace.actions.ActionManager;
-import com.raredev.vcspace.actions.editor.CloseAllAction;
-import com.raredev.vcspace.actions.editor.CloseFileAction;
-import com.raredev.vcspace.actions.editor.CloseOthersAction;
-import com.raredev.vcspace.actions.file.CopyPathAction;
-import com.raredev.vcspace.actions.file.CreateFileAction;
-import com.raredev.vcspace.actions.file.CreateFolderAction;
-import com.raredev.vcspace.actions.file.DeleteFileAction;
-import com.raredev.vcspace.actions.file.RenameFileAction;
 import com.raredev.vcspace.actions.main.EditActionGroup;
 import com.raredev.vcspace.actions.main.FileActionGroup;
-import com.raredev.vcspace.actions.main.other.ExecuteAction;
-import com.raredev.vcspace.actions.main.other.OpenDrawerAction;
-import com.raredev.vcspace.actions.main.text.RedoAction;
-import com.raredev.vcspace.actions.main.text.UndoAction;
+import com.raredev.vcspace.actions.main.filetab.*;
+import com.raredev.vcspace.actions.main.filetree.*;
+import com.raredev.vcspace.actions.main.other.*;
+import com.raredev.vcspace.actions.main.text.*;
+import com.vcspace.actions.ActionManager;
 
 public class LifecyclerObserver implements DefaultLifecycleObserver {
 
@@ -50,7 +42,7 @@ public class LifecyclerObserver implements DefaultLifecycleObserver {
     manager.registerAction(new EditActionGroup());
     manager.registerAction(new FileActionGroup());
 
-    // Editor
+    // File Tab
     manager.registerAction(new CloseFileAction());
     manager.registerAction(new CloseOthersAction());
     manager.registerAction(new CloseAllAction());
