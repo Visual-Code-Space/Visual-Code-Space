@@ -1,20 +1,15 @@
 package com.raredev.vcspace.activity;
 
-import android.content.Context;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import android.view.View;
-import androidx.appcompat.content.res.AppCompatResources;
 
-import androidx.viewbinding.BuildConfig;
 import com.blankj.utilcode.util.ClipboardUtils;
 import com.blankj.utilcode.util.DeviceUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.google.android.material.snackbar.Snackbar;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.ActivityCrashBinding;
-import com.raredev.vcspace.databinding.ActivityMainBinding;
 
 public class CrashActivity extends VCSpaceActivity {
   private ActivityCrashBinding binding;
