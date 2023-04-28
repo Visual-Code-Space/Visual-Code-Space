@@ -47,11 +47,5 @@
         android:name="android.support.FILE_PROVIDER_PATHS"
         android:resource="@xml/provider_paths" />
     </provider>
-
-    <service
-      android:name=".services.JavaLanguageServerService"
-      android:enabled="true"
-      android:exported="false"
-      android:process=":languageServerService" />
   </application>
 </manifest>
