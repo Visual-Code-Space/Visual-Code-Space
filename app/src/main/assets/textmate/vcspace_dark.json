@@ -2,6 +2,7 @@
     "name" : "vcspace_dark",
     "settings" : [ {
         "settings" : {
+            "background": "#191C1D",
             "foreground" : "#d4d9d6",
             "lineHighlight" : "#2B2B2B",
             "selection" : "#214283",

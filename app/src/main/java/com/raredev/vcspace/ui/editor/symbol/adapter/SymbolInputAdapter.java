@@ -7,16 +7,17 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
-import com.raredev.vcspace.databinding.LayoutSymbolItemBinding;
 import com.raredev.vcspace.R;
+import com.raredev.vcspace.databinding.LayoutSymbolItemBinding;
 import com.raredev.vcspace.ui.editor.Symbol;
 import com.raredev.vcspace.util.PreferencesUtils;
 import io.github.rosemoe.sora.widget.CodeEditor;
+import java.util.Collections;
 import java.util.List;
 
 public class SymbolInputAdapter extends RecyclerView.Adapter<SymbolInputAdapter.VH> {
 
-  private List<Symbol> symbolList;
+  private List<Symbol> symbolList = Collections.emptyList();
 
   private CodeEditor editor;
 
@@ -39,13 +40,14 @@ public class SymbolInputAdapter extends RecyclerView.Adapter<SymbolInputAdapter.
     holder.itemView.setOnClickListener(
         v -> {
           if (editor != null && editor.isEditable()) {
-            if (PreferencesUtils.getTab().equals(symbol.getInsert())) {
-              if (editor.getSnippetController().isInSnippet()) {
-                editor.getSnippetController().shiftToNextTabStop();
+            if (position == 0) {
+              if (PreferencesUtils.useSpaces()) {
+                editor.commitText(PreferencesUtils.getTab());
                 return;
               }
-              editor.commitText(symbol.getInsert());
-
+              if (editor.getSnippetController().isInSnippet()) {
+                editor.getSnippetController().shiftToNextTabStop();
+              }
             } else {
               editor.insertText(symbol.getInsert(), 1);
             }

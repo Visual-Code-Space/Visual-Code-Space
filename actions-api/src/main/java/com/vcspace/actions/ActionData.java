@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class ActionData<T> {
+public class ActionData {
   private final Map<Class<?>, Object> data = new HashMap<>();
 
   public <T> void put(@NonNull Class<T> type, @Nullable T object) {

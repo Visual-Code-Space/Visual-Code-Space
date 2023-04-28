@@ -2,16 +2,14 @@ package com.raredev.vcspace.git;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import com.blankj.utilcode.util.ThreadUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.raredev.vcspace.common.databinding.LayoutProgressDialogBinding;
+import com.raredev.vcspace.git.databinding.LayoutCloneDialogBinding;
 import com.raredev.vcspace.progressdialog.ProgressDialog;
 import com.raredev.vcspace.progressdialog.ProgressStyle;
 import com.raredev.vcspace.task.TaskExecutor;
-import com.raredev.vcspace.git.databinding.LayoutCloneDialogBinding;
+import com.raredev.vcspace.util.ToastUtils;
 import java.io.File;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.ProgressMonitor;
@@ -65,7 +63,7 @@ public class CloneRepository {
             .setPositiveButton(android.R.string.cancel, null)
             .setLoadingMessage("Starting...")
             .setProgressStyle(ProgressStyle.LINEAR);
-            //.setShowPercentage(true);
+    // .setShowPercentage(true);
     AlertDialog dialog = progressDialog.create();
 
     var output = new File(directory, extractRepositoryNameFromURL(repoURL));
@@ -108,7 +106,9 @@ public class CloneRepository {
                 dialog.cancel();
                 if (result != null && error == null) {
                   result.close();
-                  ToastUtils.showShort(context.getString(R.string.successfully_cloned));
+
+                  ToastUtils.showShort(
+                      context.getString(R.string.successfully_cloned), ToastUtils.TYPE_ERROR);
                   listener.onCloneSuccess(output);
                   return;
                 }
@@ -151,10 +151,11 @@ public class CloneRepository {
 
     @Override
     public void beginTask(String title, int totalWork) {
-      ThreadUtils.runOnUiThread(() -> {
-        progressDialog.setLoadingMessage(title);
-        // progressDialog.setProgress((totalWork / progressDialog.getMax()) * 100);
-      });
+      ThreadUtils.runOnUiThread(
+          () -> {
+            progressDialog.setLoadingMessage(title);
+            // progressDialog.setProgress((totalWork / progressDialog.getMax()) * 100);
+          });
     }
 
     @Override

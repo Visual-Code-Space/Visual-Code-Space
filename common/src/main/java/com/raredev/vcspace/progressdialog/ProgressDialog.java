@@ -40,7 +40,7 @@ public class ProgressDialog {
     binding.linearProgressIndicator.setVisibility(
         progressStyle.equals(ProgressStyle.LINEAR) ? View.VISIBLE : View.GONE);
     binding.loadingMessage.setPadding(
-        progressStyle.equals(ProgressStyle.CIRCULAR) ? Utils.pxToDp(context, 10) : 0, 0, 0, 0);
+        progressStyle.equals(ProgressStyle.CIRCULAR) ? Utils.pxToDp(10) : 0, 0, 0, 0);
   }
 
   private void invalidatePercentText() {

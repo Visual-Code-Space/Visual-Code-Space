@@ -19,12 +19,9 @@
 </div>
 
 ## TODO
-- [ ] IntelliSense: Provides intelligent code completion suggestions as you type, based on the language you're working with.
-- [ ] Debugging: Built-in debugging tools allow you to debug your code directly in the editor.
 - [ ] Git integration: Manage your source code with Git integration, including support for branching, merging, and committing changes.
 - [ ] Extensions: A vast library of extensions allows you to customize your development environment to your needs.
 - [x] Code highlighting: Syntax highlighting makes it easier to read and write code.
-- [ ] Code formatting: Automatically formats code to adhere to established conventions, making it easier to read and maintain.
 - [ ] Code navigation: Quickly jump to functions, classes, or other symbols in your codebase.
 - [ ] Integrated terminal: Run terminal commands directly in the editor.
 - [ ] Multi-language support: Support for multiple languages, including JavaScript, TypeScript, Python, Java, and many more.

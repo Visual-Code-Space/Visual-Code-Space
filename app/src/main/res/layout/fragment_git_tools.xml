@@ -63,9 +63,9 @@
       <Button
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:visibility="gone"
         style="?attr/materialButtonOutlinedStyle"
         android:text="@string/clone_to_path"
-        android:visibility="gone"
         android:id="@+id/clone_to_path" />
 
     </LinearLayout>
@@ -74,23 +74,25 @@
       android:layout_height="wrap_content"
       android:layout_width="match_parent"
       android:layout_below="@id/container_tools"
-      android:id="@+id/container_repository"
-      android:orientation="vertical">
+      android:orientation="vertical"
+      android:id="@+id/container_repository">
 
       <com.google.android.material.progressindicator.LinearProgressIndicator
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/progressIndicator"
+        android:layout_width="match_parent"
         android:visibility="gone"
-        android:indeterminate="true" />
+        android:indeterminate="true"
+        android:id="@+id/progressIndicator" />
 
       <ScrollView
         android:layout_height="wrap_content"
-        android:layout_width="match_parent">
+        android:layout_width="match_parent"
+        android:fillViewport="true">
 
         <HorizontalScrollView
           android:layout_height="wrap_content"
-          android:layout_width="wrap_content">
+          android:layout_width="wrap_content"
+          android:fillViewport="true">
 
           <TextView
             android:layout_height="wrap_content"
@@ -105,10 +107,10 @@
       <Button
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:visibility="gone"
         style="?attr/materialButtonOutlinedStyle"
         android:text="@string/initialize_repo"
-        android:id="@+id/init_repo"
-        android:visibility="gone" />
+        android:id="@+id/init_repo" />
 
     </LinearLayout>
 

@@ -5,10 +5,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.util.Log;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.preference.PreferenceManager;
 import com.raredev.vcspace.fragments.SettingsFragment;
 import com.raredev.vcspace.util.ILogger;
+import com.raredev.vcspace.util.Utils;
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
@@ -17,15 +20,25 @@ import io.github.rosemoe.sora.langs.textmate.registry.provider.AssetsFileResolve
 import org.eclipse.tm4e.core.registry.IThemeSource;
 
 public class VCSpaceApplication extends Application {
-  public static Context appContext;
+
+  private static VCSpaceApplication instance;
+
   private ShutdownReceiver shutdownReceiver;
+
+  private SharedPreferences defaultPref;
+
+  public static VCSpaceApplication getInstance() {
+    return instance;
+  }
 
   @Override
   public void onCreate() {
+    instance = this;
     super.onCreate();
-    registerShutdownReceiver();
-    appContext = this;
+    defaultPref = PreferenceManager.getDefaultSharedPreferences(this);
+    AppCompatDelegate.setDefaultNightMode(SettingsFragment.getThemeFromPrefs());
     Thread.setDefaultUncaughtExceptionHandler(new CrashHandler(this));
+    registerShutdownReceiver();
     loadTextMate();
   }
 
@@ -39,7 +52,7 @@ public class VCSpaceApplication extends Application {
     // Load editor themes
     try {
       FileProviderRegistry.getInstance().addFileProvider(new AssetsFileResolver(getAssets()));
-      String[] themes = new String[] {"vcspace_dark", "vcspace_light"};
+      String[] themes = new String[] {"vcspace_dark", "quietlight"};
       ThemeRegistry themeRegistry = ThemeRegistry.getInstance();
       for (String name : themes) {
         String path = "textmate/" + name + ".json";
@@ -49,7 +62,6 @@ public class VCSpaceApplication extends Application {
                     FileProviderRegistry.getInstance().tryGetInputStream(path), path, null),
                 name));
       }
-      ILogger.info("ThemeLoader", "Themes loaded successfully");
     } catch (Exception e) {
       ILogger.error(
           "ThemeLoader", "Error when trying to load themes: \t" + Log.getStackTraceString(e));
@@ -57,11 +69,14 @@ public class VCSpaceApplication extends Application {
     // Load editor languages
     try {
       GrammarRegistry.getInstance().loadGrammars("textmate/languages.json");
-      ILogger.info("LanguageLoader", "Languages loaded successfully");
     } catch (Exception e) {
       ILogger.error(
           "LanguageLoader", "Error when trying to load languages: \t" + Log.getStackTraceString(e));
     }
+  }
+
+  public SharedPreferences getDefaultPref() {
+    return defaultPref;
   }
 
   private void registerShutdownReceiver() {

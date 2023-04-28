@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_height="match_parent"
+  android:layout_width="match_parent">
+
+  <com.google.android.material.appbar.AppBarLayout
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    app:layout_behavior="com.google.android.material.appbar.AppBarLayout$Behavior">
+
+    <RelativeLayout
+      android:layout_height="wrap_content"
+      android:layout_width="match_parent"
+      android:padding="8dp">
+
+      <ImageView
+        android:layout_height="@dimen/dimen22dp"
+        android:layout_width="@dimen/dimen22dp"
+        android:src="@drawable/folder_open"
+        android:layout_centerVertical="true"
+        android:id="@+id/icon" />
+
+      <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_margin="5dp"
+        android:padding="2dp"
+        android:layout_toRightOf="@id/icon"
+        android:textSize="14sp"
+        android:singleLine="true"
+        android:text="File Manager"
+        android:id="@+id/folder_name" />
+
+      <ImageView
+        android:layout_height="@dimen/dimen22dp"
+        android:layout_width="@dimen/dimen22dp"
+        android:src="@drawable/ic_menu"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:layout_centerVertical="true"
+        android:padding="2dp"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/topbar_menu" />
+
+      <ImageView
+        android:layout_height="@dimen/dimen22dp"
+        android:layout_width="@dimen/dimen22dp"
+        android:src="@drawable/git"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:layout_centerVertical="true"
+        android:layout_margin="3dp"
+        android:padding="2dp"
+        android:layout_toLeftOf="@id/topbar_menu"
+        android:id="@+id/git_tools" />
+
+    </RelativeLayout>
+
+    <com.google.android.material.divider.MaterialDivider
+      android:layout_height="1px"
+      android:layout_width="match_parent"
+      android:alpha="0.5" />
+
+  </com.google.android.material.appbar.AppBarLayout>
+
+  <androidx.recyclerview.widget.RecyclerView
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:scrollbars="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:fadeScrollbars="true"
+    android:id="@+id/rv_files" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

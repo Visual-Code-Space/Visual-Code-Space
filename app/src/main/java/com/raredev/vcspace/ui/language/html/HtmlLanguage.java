@@ -3,9 +3,9 @@ package com.raredev.vcspace.ui.language.html;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import com.raredev.vcspace.ui.language.html.completion.HtmlCompletionItem;
-import com.raredev.vcspace.util.PreferencesUtils;
 import io.github.rosemoe.sora.lang.completion.CompletionHelper;
 import io.github.rosemoe.sora.lang.completion.CompletionPublisher;
+import io.github.rosemoe.sora.lang.completion.SimpleCompletionItem;
 import io.github.rosemoe.sora.lang.completion.SimpleSnippetCompletionItem;
 import io.github.rosemoe.sora.lang.completion.SnippetDescription;
 import io.github.rosemoe.sora.lang.completion.snippet.CodeSnippet;
@@ -30,7 +30,7 @@ public class HtmlLanguage extends VCSpaceTMLanguage {
         GrammarRegistry.getInstance().findLanguageConfiguration("text.html.basic"),
         ThemeRegistry.getInstance(),
         true);
-    loadSymbolPairs();
+    getSymbolPairs().putPair("<", new SymbolPairMatch.SymbolPair("<", ">"));
   }
 
   @Override
@@ -39,37 +39,40 @@ public class HtmlLanguage extends VCSpaceTMLanguage {
       @NonNull CharPosition position,
       @NonNull CompletionPublisher publisher,
       @NonNull Bundle extraArguments) {
-    var prefix =
-        CompletionHelper.computePrefix(content, position, MyCharacter::isJavaIdentifierPart);
-
-    for (String tag : htmlTags) {
-      if (tag.startsWith(prefix) && prefix.length() > 0) {
-        publisher.addItem(new HtmlCompletionItem(tag, "Tag", prefix.length(), tag));
-      }
-    }
+    var prefix = CompletionHelper.computePrefix(content, position, this::checkIsCompletionChar);
 
     if ("html".startsWith(prefix) && prefix.length() > 0) {
       publisher.addItem(
           new SimpleSnippetCompletionItem(
               "html",
-              "Snippet - HTML5",
+              "Snippet - HTML",
               new SnippetDescription(prefix.length(), HTML_SNIPPET, true)));
+    }
+    for (String tag : noCloseTags) {
+      if (tag.startsWith(prefix) && prefix.length() > 0) {
+        publisher.addItem(new SimpleCompletionItem(tag, "No Close Tag", prefix.length(), tag));
+      }
+    }
+
+    for (String tag : htmlTags) {
+      String tagOpen = "<" + tag;
+      if (tagOpen.startsWith(prefix) && prefix.length() > 0) {
+        publisher.addItem(new HtmlCompletionItem(tag, "Tag", prefix.length(), tag));
+      }
     }
   }
 
-  private void loadSymbolPairs() {
-    getSymbolPairs().putPair("<", new SymbolPairMatch.SymbolPair("<", ">"));
+  private boolean checkIsCompletionChar(char c) {
+    return MyCharacter.isJavaIdentifierPart(c) || c == '<' || c == '/';
   }
 
-  private void htmlAutoComplete() {}
+  private static final String[] noCloseTags = {"<br>", "<hr>", "<img>", "<input>", "<link>", "<meta>"};
 
-  public static final String[] htmlTags = {
+  private static final String[] htmlTags = {
     "html",
     "head",
     "title",
     "base",
-    "link",
-    "meta",
     "style",
     "script",
     "noscript",
@@ -90,7 +93,6 @@ public class HtmlLanguage extends VCSpaceTMLanguage {
     "address",
     "main",
     "p",
-    "hr",
     "pre",
     "blockquote",
     "ol",
@@ -129,13 +131,11 @@ public class HtmlLanguage extends VCSpaceTMLanguage {
     "bdi",
     "bdo",
     "span",
-    "br",
     "wbr",
     "ins",
     "del",
     "picture",
     "source",
-    "img",
     "iframe",
     "embed",
     "object",
@@ -159,7 +159,6 @@ public class HtmlLanguage extends VCSpaceTMLanguage {
     "fieldset",
     "legend",
     "label",
-    "input",
     "button",
     "select",
     "datalist",

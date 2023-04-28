@@ -1,4 +1,5 @@
 package com.raredev.vcspace.managers;
+import com.google.gson.internal.JavaVersion;
 
 public class SettingsManager {
   public static final String KEY_THEME = "pref_theme";

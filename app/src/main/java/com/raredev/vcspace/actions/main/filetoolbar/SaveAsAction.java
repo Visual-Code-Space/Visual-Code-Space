@@ -1,27 +1,30 @@
 package com.raredev.vcspace.actions.main.filetoolbar;
 
+import android.content.Context;
 import android.content.Intent;
 import androidx.annotation.NonNull;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.actions.main.MainBaseAction;
-import com.raredev.vcspace.activity.MainActivity;
 import com.vcspace.actions.ActionData;
+import com.vcspace.actions.Presentation;
 
 public class SaveAsAction extends MainBaseAction {
 
   @Override
   public void update(@NonNull ActionData data) {
     super.update(data);
-    enabled = false;
-    var main = getActivity(data);
+    Presentation presentation = getPresentation();
+    presentation.setEnabled(false);
 
+    var main = getActivity(data);
     if (main == null) {
       return;
     }
     if (main.getCurrentEditor() == null) {
       return;
     }
-    enabled = main.getCurrentEditor() != null;
+
+    presentation.setEnabled(true);
   }
 
   @Override
@@ -37,8 +40,13 @@ public class SaveAsAction extends MainBaseAction {
   }
 
   @Override
-  public int getTitle() {
-    return R.string.menu_save_as;
+  public String getActionId() {
+    return "save.as.action";
+  }
+
+  @Override
+  public String getTitle(Context context) {
+    return context.getString(R.string.menu_save_as);
   }
 
   @Override

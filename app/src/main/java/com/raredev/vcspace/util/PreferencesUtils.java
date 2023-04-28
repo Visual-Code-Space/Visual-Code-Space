@@ -9,12 +9,8 @@ import com.raredev.vcspace.managers.SettingsManager;
 
 public class PreferencesUtils {
 
-  public static SharedPreferences getToolsPrefs() {
-    return VCSpaceApplication.appContext.getSharedPreferences(SettingsManager.KEY_TOOLS_PREFERENCE, Context.MODE_PRIVATE);
-  }
-
   public static SharedPreferences getDefaultPrefs() {
-    return PreferenceManager.getDefaultSharedPreferences(VCSpaceApplication.appContext);
+    return VCSpaceApplication.getInstance().getDefaultPref();
   }
 
   /*

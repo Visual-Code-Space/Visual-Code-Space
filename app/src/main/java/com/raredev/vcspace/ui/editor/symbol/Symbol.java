@@ -1,6 +1,5 @@
 package com.raredev.vcspace.ui.editor;
 
-import com.raredev.vcspace.util.PreferencesUtils;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +38,7 @@ public class Symbol {
       "^", "!", "?", "<", ">"
     };
     List<Symbol> symbols = new ArrayList<>();
-    symbols.add(new Symbol("→", PreferencesUtils.getTab()));
+    symbols.add(new Symbol("→"));
 
     for (String symbol : baseSymbols) {
       if (symbol.equals("(")

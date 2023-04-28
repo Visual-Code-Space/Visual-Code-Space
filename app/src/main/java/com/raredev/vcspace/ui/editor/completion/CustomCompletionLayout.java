@@ -40,7 +40,7 @@ public class CustomCompletionLayout implements CompletionLayout {
     layout.addView(mProgressBar);
     var params = ((RelativeLayout.LayoutParams) mProgressBar.getLayoutParams());
     params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-    params.width = params.height = Utils.pxToDp(context, 30);
+    params.width = params.height = Utils.pxToDp(30);
     layout.setBackground(applyBackground(context));
     mRelativeLayout = layout;
     mListView.setDividerHeight(0);
@@ -60,7 +60,7 @@ public class CustomCompletionLayout implements CompletionLayout {
   @Override
   public void onApplyColorScheme(EditorColorScheme colorScheme) {
     GradientDrawable gd = new GradientDrawable();
-    gd.setCornerRadius(Utils.pxToDp(mEditorAutoCompletion.getContext(), 10));
+    gd.setCornerRadius(Utils.pxToDp(10));
     gd.setStroke(2, colorScheme.getColor(EditorColorScheme.COMPLETION_WND_CORNER));
     gd.setColor(colorScheme.getColor(EditorColorScheme.COMPLETION_WND_BACKGROUND));
     mRelativeLayout.setBackground(gd);
@@ -110,7 +110,7 @@ public class CustomCompletionLayout implements CompletionLayout {
   private GradientDrawable applyBackground(Context context) {
     GradientDrawable drawable = new GradientDrawable();
     drawable.setShape(GradientDrawable.RECTANGLE);
-    drawable.setCornerRadius(Utils.pxToDp(mEditorAutoCompletion.getContext(), 10));
+    drawable.setCornerRadius(Utils.pxToDp(10));
     drawable.setColor(
         ColorStateList.valueOf(
             getResolvedColor(context, com.google.android.material.R.attr.colorSurface)));
