@@ -6,6 +6,7 @@ plugins {
 android {
   compileSdk 33
   buildToolsVersion "33.0.0"
+  namespace 'com.raredev.vcspace'
 
   defaultConfig {
     applicationId 'com.raredev.vcspace'
@@ -59,6 +60,7 @@ android {
 
   buildFeatures {
     viewBinding true
+    buildConfig true
   }
 }
 

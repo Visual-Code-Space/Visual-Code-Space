@@ -167,15 +167,12 @@ public class MainActivity extends VCSpaceActivity
   @Override
   public boolean onNavigationItemSelected(MenuItem item) {
     int id = item.getItemId();
-    switch (id) {
-      case R.id.menu_viewlogs:
-        saveAllFiles(false);
-        startActivity(new Intent(getApplicationContext(), LogViewActivity.class));
-        break;
-      case R.id.menu_settings:
-        saveAllFiles(false);
-        startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
-        break;
+    if (id == R.id.menu_viewlogs) {
+      saveAllFiles(false);
+      startActivity(new Intent(getApplicationContext(), LogViewActivity.class));
+    } else if (id == R.id.menu_settings) {
+      saveAllFiles(false);
+      startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
     }
     binding.drawerLayout.closeDrawers();
     return true;
