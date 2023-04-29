@@ -1,5 +1,6 @@
 package com.raredev.vcspace.activity;
 
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -11,7 +12,7 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.ActivityCrashBinding;
 
-public class CrashActivity extends VCSpaceActivity {
+public class CrashActivity extends BaseActivity {
   private ActivityCrashBinding binding;
 
   @Override
@@ -21,7 +22,8 @@ public class CrashActivity extends VCSpaceActivity {
   }
 
   @Override
-  public void onCreate() {
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
     binding = ActivityCrashBinding.inflate(getLayoutInflater());
 
     setContentView(binding.getRoot());

@@ -1,10 +1,14 @@
 package com.raredev.vcspace.git;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
+import android.view.WindowManager;
+import android.widget.Button;
 import androidx.appcompat.app.AlertDialog;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputEditText;
 import com.raredev.vcspace.git.databinding.LayoutCloneDialogBinding;
 import com.raredev.vcspace.progressdialog.ProgressDialog;
 import com.raredev.vcspace.progressdialog.ProgressStyle;
@@ -33,19 +37,28 @@ public class CloneRepository {
   }
 
   public void cloneRepository() {
-    MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(context);
-    dialog.setTitle(R.string.clone_repo);
-
     LayoutCloneDialogBinding bind = LayoutCloneDialogBinding.inflate(LayoutInflater.from(context));
-    dialog.setView(bind.getRoot());
+    AlertDialog dialog =
+        new MaterialAlertDialogBuilder(context)
+            .setView(bind.getRoot())
+            .setTitle(R.string.clone_repo)
+            .setPositiveButton(R.string.clone, null)
+            .setNegativeButton(android.R.string.cancel, null)
+            .create();
 
-    dialog.setPositiveButton(
-        R.string.clone,
-        (di, which) -> {
-          doClone(bind.textinputUrl.getText().toString());
+    dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+    dialog.setOnShowListener(
+        (p1) -> {
+          TextInputEditText repoUrl = bind.textinputUrl;
+          Button positive = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+
+          repoUrl.requestFocus();
+          positive.setOnClickListener(
+              v -> {
+                doClone(repoUrl.getText().toString());
+                dialog.dismiss();
+              });
         });
-
-    dialog.setNegativeButton(android.R.string.cancel, (di, which) -> {});
     dialog.show();
   }
 
@@ -91,7 +104,9 @@ public class CloneRepository {
           .setOnClickListener(
               v -> {
                 monitor.cancel();
-                if (git != null) git.close();
+                if (git != null) {
+                  git.close();
+                }
                 task.cancel(true);
               });
     }

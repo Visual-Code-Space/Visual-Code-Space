@@ -13,11 +13,11 @@
     <RelativeLayout
       android:layout_height="wrap_content"
       android:layout_width="match_parent"
-      android:padding="8dp">
+      android:padding="10dp">
 
       <ImageView
-        android:layout_height="@dimen/dimen22dp"
-        android:layout_width="@dimen/dimen22dp"
+        android:layout_height="25dp"
+        android:layout_width="25dp"
         android:src="@drawable/folder_open"
         android:layout_centerVertical="true"
         android:id="@+id/icon" />
@@ -26,17 +26,17 @@
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_margin="5dp"
         android:padding="2dp"
         android:layout_toRightOf="@id/icon"
         android:textSize="14sp"
         android:singleLine="true"
+        android:layout_marginStart="10dp"
         android:text="File Manager"
         android:id="@+id/folder_name" />
 
       <ImageView
-        android:layout_height="@dimen/dimen22dp"
-        android:layout_width="@dimen/dimen22dp"
+        android:layout_height="25dp"
+        android:layout_width="25dp"
         android:src="@drawable/ic_menu"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:layout_centerVertical="true"
@@ -45,8 +45,8 @@
         android:id="@+id/topbar_menu" />
 
       <ImageView
-        android:layout_height="@dimen/dimen22dp"
-        android:layout_width="@dimen/dimen22dp"
+        android:layout_height="25dp"
+        android:layout_width="25dp"
         android:src="@drawable/git"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:layout_centerVertical="true"
@@ -56,11 +56,6 @@
         android:id="@+id/git_tools" />
 
     </RelativeLayout>
-
-    <com.google.android.material.divider.MaterialDivider
-      android:layout_height="1px"
-      android:layout_width="match_parent"
-      android:alpha="0.5" />
 
   </com.google.android.material.appbar.AppBarLayout>
 

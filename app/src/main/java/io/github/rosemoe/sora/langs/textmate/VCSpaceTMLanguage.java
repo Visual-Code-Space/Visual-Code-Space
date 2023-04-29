@@ -31,6 +31,10 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
     return new VCSpaceTMLanguage(grammar, languageConfiguration, ThemeRegistry.getInstance(), true);
   }
 
+  public LanguageConfiguration getLanguageConfiguration() {
+    return this.languageConfiguration;
+  }
+
   @Override
   public int getTabSize() {
     return PreferencesUtils.getEditorTABSize();

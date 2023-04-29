@@ -1,5 +1,6 @@
 package com.raredev.vcspace.activity;
 
+import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -7,7 +8,7 @@ import android.webkit.WebViewClient;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.ActivityWebviewBinding;
 
-public class WebViewActivity extends VCSpaceActivity {
+public class WebViewActivity extends BaseActivity {
   private ActivityWebviewBinding binding;
 
   @Override
@@ -17,7 +18,8 @@ public class WebViewActivity extends VCSpaceActivity {
   }
 
   @Override
-  public void onCreate() {
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
     setSupportActionBar(binding.toolbar);
 
     binding.toolbar.setNavigationOnClickListener((v) -> onBackPressed());

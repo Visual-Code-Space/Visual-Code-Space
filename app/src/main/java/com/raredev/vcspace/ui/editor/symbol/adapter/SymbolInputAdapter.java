@@ -40,6 +40,8 @@ public class SymbolInputAdapter extends RecyclerView.Adapter<SymbolInputAdapter.
     holder.itemView.setOnClickListener(
         v -> {
           if (editor != null && editor.isEditable()) {
+            String insertText = symbol.getInsert();
+
             if (position == 0) {
               if (PreferencesUtils.useSpaces()) {
                 editor.commitText(PreferencesUtils.getTab());
@@ -48,8 +50,12 @@ public class SymbolInputAdapter extends RecyclerView.Adapter<SymbolInputAdapter.
               if (editor.getSnippetController().isInSnippet()) {
                 editor.getSnippetController().shiftToNextTabStop();
               }
+              return;
+            }
+            if (insertText.length() == 2) {
+              editor.insertText(insertText, 1);
             } else {
-              editor.insertText(symbol.getInsert(), 1);
+              editor.commitText(insertText, false);
             }
           }
         });

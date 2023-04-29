@@ -1,9 +1,10 @@
 package com.raredev.vcspace.activity;
 
+import android.os.Bundle;
 import android.view.View;
 import com.raredev.vcspace.databinding.ActivityTerminalBinding;
 
-public class TerminalActivity extends VCSpaceActivity
+public class TerminalActivity extends BaseActivity
     /*implements TerminalViewClient, TerminalSessionClient */{
   private ActivityTerminalBinding binding;
 
@@ -16,7 +17,8 @@ public class TerminalActivity extends VCSpaceActivity
   }
 
   @Override
-  public void onCreate() {
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
     /*TerminalView terminal = binding.terminal;
     terminal.setTerminalViewClient(this);
 
@@ -34,15 +36,6 @@ public class TerminalActivity extends VCSpaceActivity
             new String[] {"HOME=/data/data/com.raredev.vcspace/files/", "SYSROOT=" + getDataDir().getAbsolutePath(), "TERMUX_APP_PACKAGE_MANAGER=apt", "TERMUX_PKG_NO_MIRROR_SELECT=true"},
             TerminalEmulator.DEFAULT_TERMINAL_TRANSCRIPT_ROWS,
             this);
-    try {
-      final var file = new File(getDataDir(), "etc/apt/sources.list");
-      final var out = new FileOutputStream(file);
-      out.write(SOURCES_LIST_CONTENT);
-      out.flush();
-      out.close();
-    } catch (Throwable th) {
-      ILogger.error("", "Unable to update sources.list");
-    }
     return session;
   }
 

@@ -45,7 +45,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.VH> {
     if (!viewModel.getSelectedFiles().contains(file)) {
       holder.itemView.setBackgroundColor(Color.TRANSPARENT);
     } else {
-      holder.itemView.setBackgroundColor(Color.parseColor("#87B7E5FF"));
+      holder.itemView.setBackgroundColor(Color.parseColor("#2A00D4FF"));
     }
 
     holder.tv_name.setText(file.getName());
@@ -57,13 +57,13 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.VH> {
 
     if (position == 0) {
       holder.img_icon.setImageResource(R.drawable.ic_folder);
+      holder.img_menu.setVisibility(View.GONE);
     }
 
     holder.itemView.setOnClickListener(
         (v) -> {
-          if (viewModel.getSelectedFiles().contains(file)) {
-            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
-            viewModel.removeSelectFile(file);
+          if (isFilesSelected()) {
+            selectFile(holder.itemView, file);
             return;
           }
           if (fileListener != null) {
@@ -73,6 +73,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.VH> {
 
     holder.itemView.setOnLongClickListener(
         (v) -> {
+          selectFile(holder.itemView, file);
           if (fileListener != null) {
             fileListener.onFileLongClick(file, v);
           }
@@ -81,15 +82,13 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.VH> {
 
     holder.img_icon.setOnClickListener(
         v -> {
-          if (position == 0) {
-            return;
-          }
-          if (viewModel.getSelectedFiles().contains(file)) {
-            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
-            viewModel.removeSelectFile(file);
-          } else {
-            holder.itemView.setBackgroundColor(Color.parseColor("#87B7E5FF"));
-            viewModel.selectFile(file);
+          selectFile(holder.itemView, file);
+        });
+
+    holder.img_menu.setOnClickListener(
+        v -> {
+          if (fileListener != null) {
+            fileListener.onFileMenuClick(file, v);
           }
         });
   }
@@ -102,6 +101,19 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.VH> {
   public void refreshFiles() {
     viewModel.getSelectedFiles().clear();
     notifyDataSetChanged();
+  }
+
+  public void selectFile(View v, File file) {
+    if (file == viewModel.getFiles().get(0)) {
+      return;
+    }
+    if (viewModel.getSelectedFiles().contains(file)) {
+      v.setBackgroundColor(Color.TRANSPARENT);
+      viewModel.removeSelectFile(file);
+    } else {
+      v.setBackgroundColor(Color.parseColor("#2A00D4FF"));
+      viewModel.selectFile(file);
+    }
   }
 
   public boolean isFilesSelected() {
@@ -120,16 +132,19 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.VH> {
     void onFileClick(File file, View v);
 
     void onFileLongClick(File file, View v);
+    
+    void onFileMenuClick(File file, View v);
   }
 
   public class VH extends RecyclerView.ViewHolder {
-    ShapeableImageView img_icon;
+    ShapeableImageView img_icon, img_menu;
     MaterialTextView tv_name;
 
     public VH(LayoutFileItemBinding binding) {
       super(binding.getRoot());
       img_icon = binding.imgIcon;
       tv_name = binding.fileName;
+      img_menu = binding.imgMenu;
     }
   }
 }

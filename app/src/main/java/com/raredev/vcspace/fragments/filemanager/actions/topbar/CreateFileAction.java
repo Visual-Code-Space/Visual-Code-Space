@@ -1,15 +1,21 @@
 package com.raredev.vcspace.fragments.filemanager.actions.topbar;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.WindowManager;
+import android.widget.Button;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.raredev.vcspace.R;
-import com.raredev.vcspace.activity.MainActivity;
 import com.raredev.vcspace.databinding.LayoutTextinputBinding;
 import com.raredev.vcspace.fragments.filemanager.FileManagerFragment;
 import com.raredev.vcspace.fragments.filemanager.actions.TopbarBaseAction;
+import com.raredev.vcspace.util.ILogger;
+import com.raredev.vcspace.util.ToastUtils;
 import com.vcspace.actions.ActionData;
 import java.io.File;
 import java.io.IOException;
@@ -23,28 +29,42 @@ public class CreateFileAction extends TopbarBaseAction {
 
     LayoutTextinputBinding binding =
         LayoutTextinputBinding.inflate(LayoutInflater.from(fragment.requireActivity()));
-    TextInputEditText et_filename = binding.etInput;
-    binding.tvInputLayout.setHint(fragment.getString(R.string.file_name_hint));
 
-    new MaterialAlertDialogBuilder(fragment.requireActivity())
-        .setTitle(R.string.new_file_title)
-        .setPositiveButton(
-            R.string.create,
-            (di, witch) -> {
-              try {
-                File newFile = new File(file, et_filename.getText().toString().trim());
-                if (!newFile.exists()) {
-                  if (newFile.createNewFile()) {
-                    ((MainActivity) fragment.requireActivity()).openFile(newFile);
-                    fragment.refreshFiles();
+    AlertDialog dialog =
+        new MaterialAlertDialogBuilder(fragment.requireActivity())
+            .setView(binding.getRoot())
+            .setTitle(R.string.new_file_title)
+            .setPositiveButton(R.string.create, null)
+            .setNegativeButton(R.string.cancel, null)
+            .create();
+
+    dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+    dialog.setOnShowListener(
+        (p1) -> {
+          TextInputEditText et_filename = binding.etInput;
+          binding.tvInputLayout.setHint(fragment.getString(R.string.file_name_hint));
+          Button positive = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+
+          et_filename.requestFocus();
+          positive.setOnClickListener(
+              v -> {
+                try {
+                  File newFile = new File(file, et_filename.getText().toString());
+                  if (!newFile.exists()) {
+                    if (newFile.createNewFile()) {
+                      fragment.refreshFiles();
+                    }
+                  } else {
+                    ToastUtils.showShort(
+                        fragment.getString(R.string.existing_file), ToastUtils.TYPE_ERROR);
                   }
+                } catch (IOException ioe) {
+                  ILogger.error(getActionId(), Log.getStackTraceString(ioe));
                 }
-              } catch (IOException ioe) {
-              }
-            })
-        .setNegativeButton(R.string.cancel, (di, witch) -> di.dismiss())
-        .setView(binding.getRoot())
-        .show();
+                dialog.dismiss();
+              });
+        });
+    dialog.show();
   }
 
   @Override

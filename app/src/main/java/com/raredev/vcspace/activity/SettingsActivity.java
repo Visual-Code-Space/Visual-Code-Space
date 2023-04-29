@@ -1,10 +1,11 @@
 package com.raredev.vcspace.activity;
 
+import android.os.Bundle;
 import android.view.View;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.ActivitySettingsBinding;
 
-public class SettingsActivity extends VCSpaceActivity {
+public class SettingsActivity extends BaseActivity {
   private ActivitySettingsBinding binding;
 
   @Override
@@ -14,7 +15,8 @@ public class SettingsActivity extends VCSpaceActivity {
   }
 
   @Override
-  public void onCreate() {
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
     setSupportActionBar(binding.toolbar);
     getSupportActionBar().setTitle(R.string.menu_settings);
     binding.toolbar.setNavigationOnClickListener((v) -> onBackPressed());

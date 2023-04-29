@@ -1,10 +1,15 @@
 package com.raredev.vcspace.fragments.filemanager.actions.file;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
-import android.widget.EditText;
+import android.view.WindowManager;
+import android.widget.Button;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import com.blankj.utilcode.util.KeyboardUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputEditText;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.adapters.FileListAdapter;
 import com.raredev.vcspace.databinding.LayoutTextinputBinding;
@@ -29,32 +34,49 @@ public class RenameFileAction extends FileBaseAction {
 
     LayoutTextinputBinding binding =
         LayoutTextinputBinding.inflate(LayoutInflater.from(fragment.requireActivity()));
-    EditText et_filename = binding.etInput;
-    binding.tvInputLayout.setHint(R.string.rename_hint);
 
-    et_filename.setText(file.getName());
-
-    new MaterialAlertDialogBuilder(fragment.requireActivity())
-        .setTitle(R.string.rename)
-        .setPositiveButton(
-            R.string.rename,
-            (di, witch) -> {
-              File newFile =
-                  new File(file.getParentFile(), et_filename.getText().toString().trim());
-
-              if (!et_filename.getText().toString().equals(file.getName())) {
-                if (file.renameTo(newFile)) {
-                  ToastUtils.showShort(
-                      fragment.getString(
-                          R.string.renamed_message, file.getName(), newFile.getName()),
-                      ToastUtils.TYPE_SUCCESS);
-                  fragment.refreshFiles();
-                }
-              }
-            })
-        .setNegativeButton(R.string.cancel, (di, witch) -> di.dismiss())
+    AlertDialog dialog =
+        new MaterialAlertDialogBuilder(fragment.requireActivity())
         .setView(binding.getRoot())
-        .show();
+            .setTitle(R.string.rename)
+            .setPositiveButton(R.string.rename, null)
+            .setNegativeButton(R.string.cancel, null)
+            .create();
+    dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+    dialog.setOnShowListener(
+        (p1) -> {
+          TextInputEditText et_filename = binding.etInput;
+          Button positive = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+
+          binding.tvInputLayout.setHint(R.string.rename_hint);
+
+          String oldFileName = file.getName();
+
+          et_filename.setText(oldFileName);
+          int lastIndex = oldFileName.lastIndexOf(".");
+          if (lastIndex >= 0) {
+            et_filename.setSelection(0, lastIndex);
+          }
+          et_filename.requestFocus();
+
+          positive.setOnClickListener(
+              v -> {
+                String newFileName = et_filename.getText().toString().trim();
+                File newFile = new File(file.getParentFile(), newFileName);
+
+                if (!newFileName.equals(oldFileName)) {
+                  if (file.renameTo(newFile)) {
+                    ToastUtils.showShort(
+                        fragment.getString(
+                            R.string.renamed_message, file.getName(), newFile.getName()),
+                        ToastUtils.TYPE_SUCCESS);
+                    fragment.refreshFiles();
+                  }
+                }
+                dialog.dismiss();
+              });
+        });
+    dialog.show();
   }
 
   @Override

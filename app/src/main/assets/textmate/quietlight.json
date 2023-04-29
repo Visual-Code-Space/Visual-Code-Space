@@ -478,6 +478,41 @@
       "settings": {
         "foreground": "#333333ff"
       }
+    },
+    {
+      "name": "Log Assert",
+      "scope": "constant.language.log.assert, constant.language.log.assert.line",
+      "settings": {
+        "foreground": "#9C27B0"
+      }
+    },
+    {
+      "name": "Log Info",
+      "scope": "constant.language.log.info, constant.language.log.info.line",
+      "settings": {
+        "foreground": "#4CAF50"
+      }
+    },
+    {
+      "name": "Log Warning",
+      "scope": "constant.language.log.warning, constant.language.log.warning.line",
+      "settings": {
+        "foreground": "#FFC107"
+      }
+    },
+    {
+      "name": "Log Debug",
+      "scope": "constant.language.log.debug, constant.language.log.debug.line",
+      "settings": {
+        "foreground": "#2196F3"
+      }
+    },
+    {
+      "name": "Log Error",
+      "scope": "constant.language.log.error, constant.language.log.error.line",
+      "settings": {
+        "foreground": "#F44336"
+      }
     }
   ],
   "colors": {

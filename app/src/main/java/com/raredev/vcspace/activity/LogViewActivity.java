@@ -1,23 +1,25 @@
 package com.raredev.vcspace.activity;
 
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.res.ResourcesCompat;
+import com.raredev.vcspace.R;
+import com.raredev.vcspace.databinding.ActivityLogViewBinding;
 import com.raredev.vcspace.progressdialog.ProgressDialog;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.util.DialogUtils;
 import com.raredev.vcspace.util.ILogger;
-import com.raredev.vcspace.R;
-import com.raredev.vcspace.databinding.ActivityLogViewBinding;
+import io.github.rosemoe.sora.langs.textmate.TextMateColorScheme;
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage;
-import io.github.rosemoe.sora.langs.textmate.VCSpaceTextMateColorScheme;
+import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class LogViewActivity extends VCSpaceActivity implements ILogger.Observer {
+public class LogViewActivity extends BaseActivity implements ILogger.Observer {
   private final String LOG_TAG = LogViewActivity.class.getSimpleName();
   private ActivityLogViewBinding binding;
 
@@ -28,15 +30,16 @@ public class LogViewActivity extends VCSpaceActivity implements ILogger.Observer
   }
 
   @Override
-  public void onCreate() {
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
     setSupportActionBar(binding.toolbar);
     binding.toolbar.setNavigationOnClickListener((v) -> onBackPressed());
+    binding.editor.setEditorLanguage(TextMateLanguage.create("text.log", false));
     binding.editor.getProps().autoIndent = false;
     binding.editor.setEditable(false);
     binding.editor.setTextSize(14f);
     binding.editor.setTypefaceText(ResourcesCompat.getFont(this, R.font.jetbrains_mono));
     binding.editor.setTypefaceLineNumber(ResourcesCompat.getFont(this, R.font.jetbrains_mono));
-    updateThemes();
 
     binding.fab.setOnClickListener(
         v -> {
@@ -79,15 +82,6 @@ public class LogViewActivity extends VCSpaceActivity implements ILogger.Observer
           dialog.cancel();
           if (error != null) ILogger.error(LOG_TAG, error.toString());
         });
-  }
-
-  public void updateThemes() {
-    try {
-      binding.editor.setColorScheme(VCSpaceTextMateColorScheme.create(this));
-      binding.editor.setEditorLanguage(TextMateLanguage.create("text.log", false));
-    } catch (Exception e) {
-      ILogger.error(LOG_TAG, Log.getStackTraceString(e));
-    }
   }
 
   private int appendText(String text) {

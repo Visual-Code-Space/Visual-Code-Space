@@ -2,10 +2,14 @@
   <!-- Linguagem Português Brasil -->
   <string name="open">Abrir</string>
   <string name="remove">Remover</string>
-  <string name="close">Fechar</string>
   <string name="info">Informações</string>
+  <string name="close">Fechar</string>
   <string name="close_others">Fechar outros</string>
   <string name="close_all">Fechar tudo</string>
+  <string name="select_all">Selecionar tudo</string>
+  <string name="copy">Copiar</string>
+  <string name="cut">Cortar</string>
+  <string name="paste">Colar</string>
   <string name="open_a_file">Deslize à direita para arquivos!</string>
   <string name="refresh">Atualizar</string>
   <string name="loading">Carregando..</string>
@@ -13,6 +17,7 @@
   <string name="yes">Sim</string>
   <string name="no">Não</string>
   <string name="url_copied">URL copiado para a área de transferência.</string>
+  <string name="exit">Sair</string>
 
   <!-- Menus Strings -->
   <string name="menu_execute">Executar</string>
@@ -38,9 +43,9 @@
   <!-- Buttons And Titles -->
   <string name="saved">Salvo</string>
   <string name="saved_files">Arquivos salvos</string>
-  <string name="existing_file">Já existe um arquivo com este nome!</string>
+  <string name="existing_file">Arquivo já existente!</string>
   <string name="delete">Deletar</string>
-  <string name="delete_message">Tem certeza que deseja deletar %1$s?</string>
+  <string name="delete_message">Tem certeza que deseja deletar \"%1$s\"?</string>
   <string name="deleted_message">Deletado</string>
   <string name="deleting">Apagando</string>
   <string name="deleting_please_wait">Apagando por favor aguarde.</string>
@@ -49,7 +54,7 @@
   <string name="file">Arquivo</string>
   <string name="folder">Pasta</string>
   <string name="rename">Renomear</string>
-  <string name="renamed_message">(%1$s) renomeado para (%2$s)</string>
+  <string name="renamed_message">\"%1$s\" renomeado para \"%2$s\"</string>
   <string name="copy_path">Copiar caminho</string>
   <string name="rename_hint">Digite um novo nome:</string>
   <string name="open_folder">Abrir uma pasta</string>
@@ -68,6 +73,10 @@
   <string name="new_folder_title">Nova pasta</string>
   <string name="close_folder_title">Fechar pasta</string>
   <string name="close_folder_message">Deseja fechar esta pasta?</string>
+  <string name="file_access_title">Permissão de acesso aos arquivos</string>
+  <string name="file_access_message">Este aplicativo precisa de permissão para acessar arquivos no armazenamento do seu dispositivo para funcionar corretamente. Conceda permissão para continuar.</string>
+  <string name="grant_permission">Garantir permissão</string>
+  
   <string name="create_token_message">Create a GitHub token.</string>
   <string name="github_token">GitHub token</string>
   <string name="initialize_repo">Iniciar repo</string>

@@ -5,7 +5,7 @@
 	},
 	"brackets": [
 		["{", "}"],
-		["[", "]"]
+		["[", "]"],
 	],
 	"autoClosingPairs": [
 		{ "open": "{", "close": "}", "notIn": ["string"] },

@@ -27,7 +27,7 @@ public class RedoAction extends MainBaseAction {
 
     presentation.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
     presentation.setVisible(KeyboardUtils.isSoftInputVisible(getActivity(data)));
-    presentation.setEnabled(main.getCurrentEditor().canRedo());
+    presentation.setEnabled(main.getCurrentEditor().getEditor().canRedo());
   }
 
   @Override

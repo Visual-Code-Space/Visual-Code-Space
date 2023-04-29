@@ -27,16 +27,17 @@ import com.vcspace.actions.location.DefaultLocations;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 public class FileManagerFragment extends Fragment implements FileListAdapter.FileListener {
-
-  private FragmentFileManagerBinding binding;
 
   private FileListViewModel viewModel;
   private FileListAdapter mAdapter;
 
   private File currentFolder = new File(Environment.getExternalStorageDirectory().toString());
   private File backFile = new File("..");
+
+  private FragmentFileManagerBinding binding;
 
   @Nullable
   @Override
@@ -106,6 +107,10 @@ public class FileManagerFragment extends Fragment implements FileListAdapter.Fil
     if (file == backFile) {
       return;
     }
+  }
+
+  @Override
+  public void onFileMenuClick(File file, View v) {
     PopupMenu pm = new PopupMenu(requireContext(), v);
 
     ActionData data = new ActionData();
@@ -123,11 +128,18 @@ public class FileManagerFragment extends Fragment implements FileListAdapter.Fil
 
     pm.show();
   }
+  
 
   @Override
   public void onResume() {
     super.onResume();
     refreshFiles();
+  }
+
+  @Override
+  public void onDestroyView() {
+    super.onDestroyView();
+    binding = null;
   }
 
   public void refreshFiles() {
@@ -138,14 +150,17 @@ public class FileManagerFragment extends Fragment implements FileListAdapter.Fil
     currentFolder = path;
     viewModel.getFiles().clear();
 
-    viewModel.getFiles().add(backFile);
+    List<File> mFiles = viewModel.getFiles();
+
+    mFiles.add(backFile);
     File[] files = path.listFiles();
     if (files != null) {
       Arrays.sort(files, FILE_FIRST_ORDER);
       for (File file : files) {
-        viewModel.getFiles().add(file);
+        mFiles.add(file);
       }
     }
+    viewModel.setFiles(mFiles);
     mAdapter.refreshFiles();
   }
 

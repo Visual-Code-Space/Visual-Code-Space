@@ -27,7 +27,7 @@ public class UndoAction extends MainBaseAction {
 
     presentation.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
     presentation.setVisible(KeyboardUtils.isSoftInputVisible(getActivity(data)));
-    presentation.setEnabled(main.getCurrentEditor().canUndo());
+    presentation.setEnabled(main.getCurrentEditor().getEditor().canUndo());
   }
 
   @Override

@@ -3,6 +3,7 @@ package com.raredev.vcspace.activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -40,7 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MainActivity extends VCSpaceActivity
+public class MainActivity extends BaseActivity
     implements SharedPreferences.OnSharedPreferenceChangeListener {
   protected final String LOG_TAG = MainActivity.class.getSimpleName();
   public ActivityMainBinding binding;
@@ -58,7 +59,8 @@ public class MainActivity extends VCSpaceActivity
   }
 
   @Override
-  public void onCreate() {
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
     setSupportActionBar(binding.toolbar);
 
     ActionBarDrawerToggle toggle =
@@ -89,7 +91,7 @@ public class MainActivity extends VCSpaceActivity
           @Override
           public void onTabSelected(TabLayout.Tab p1) {
             var position = p1.getPosition();
-            var editor = getEditorAtIndex(position);
+            var editor = getEditorAtIndex(position).getEditor();
             viewModel.setCurrentFile(position, editor.getFile());
 
             binding.searcher.bindEditor(editor);
@@ -106,7 +108,7 @@ public class MainActivity extends VCSpaceActivity
           public void onSoftInputChanged(int i) {
             if (i > 1 && getCurrentEditor() != null) {
               binding.symbolInput.setVisibility(View.VISIBLE);
-              refreshSymbolInput(getCurrentEditor());
+              refreshSymbolInput(getCurrentEditor().getEditor());
             } else {
               binding.symbolInput.setVisibility(View.GONE);
               binding.symbolInput.clear();
@@ -165,7 +167,7 @@ public class MainActivity extends VCSpaceActivity
     for (int i = 0; i < viewModel.getOpenedFileCount(); i++) {
       CodeEditorView editor = getEditorAtIndex(i);
       if (editor != null) {
-        editor.onSharedPreferenceChanged(key);
+        editor.getEditor().onSharedPreferenceChanged(key);
       }
     }
   }
@@ -197,7 +199,7 @@ public class MainActivity extends VCSpaceActivity
                 Uri uri = result.getData().getData();
                 try {
                   OutputStream outputStream = getContentResolver().openOutputStream(uri);
-                  outputStream.write(getCurrentEditor().getText().toString().getBytes());
+                  outputStream.write(getCurrentEditor().getEditor().getText().toString().getBytes());
                   outputStream.close();
                   openFile(FileUtil.getFileFromUri(this, uri));
                 } catch (IOException e) {
@@ -276,7 +278,7 @@ public class MainActivity extends VCSpaceActivity
     int index = viewModel.getOpenedFileCount();
 
     CodeEditorView editor = new CodeEditorView(this, file);
-    editor.subscribeContentChangeEvent(() -> onEditorContentChanged(file));
+    editor.getEditor().subscribeContentChangeEvent(() -> onEditorContentChanged(file));
     binding.container.addView(editor);
 
     TabLayout.Tab tabItem = binding.tabLayout.newTab();
@@ -291,7 +293,9 @@ public class MainActivity extends VCSpaceActivity
   public void closeFile(int index) {
     if (index >= 0 && index < viewModel.getOpenedFileCount()) {
       CodeEditorView editor = getEditorAtIndex(index);
-      if (editor != null) editor.release();
+      if (editor != null) {
+        editor.release();
+      }
 
       viewModel.removeFile(index);
       binding.tabLayout.removeTabAt(index);
@@ -343,7 +347,7 @@ public class MainActivity extends VCSpaceActivity
 
   public void saveFile() {
     if (!viewModel.getOpenedFiles().isEmpty()) {
-      getCurrentEditor().save();
+      getCurrentEditor().saveFile();
 
       ToastUtils.showShort(getString(R.string.saved), ToastUtils.TYPE_SUCCESS);
 
@@ -355,7 +359,7 @@ public class MainActivity extends VCSpaceActivity
   public void saveAllFiles(boolean showMsg) {
     if (!viewModel.getOpenedFiles().isEmpty()) {
       for (int i = 0; i < viewModel.getOpenedFileCount(); i++) {
-        getEditorAtIndex(i).save();
+        getEditorAtIndex(i).saveFile();
       }
 
       if (showMsg) {
@@ -495,7 +499,7 @@ public class MainActivity extends VCSpaceActivity
     for (int i = 0; i < binding.tabLayout.getTabCount(); i++) {
       File file = files.get(i);
       int count = dupliCount.getOrDefault(file.getName(), 0);
-      boolean isModified = getEditorAtIndex(i).isModified();
+      boolean isModified = getEditorAtIndex(i).getEditor().isModified();
       String name = (count > 1) ? nameBuilder.getShortPath(file) : file.getName();
       if (isModified) {
         name = "• " + name;
