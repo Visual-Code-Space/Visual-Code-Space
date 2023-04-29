@@ -10,7 +10,7 @@
 
   <application
     android:name=".VCSpaceApplication"
-    android:allowBackup="false"
+    android:allowBackup="true"
     android:largeHeap="true"
     android:icon="@mipmap/ic_launcher"
     android:label="@string/app_name"
@@ -21,7 +21,6 @@
       android:name=".activity.MainActivity"
       android:configChanges="orientation|screenSize"
       android:windowSoftInputMode="adjustResize"
-      android:label="VCSpace"
       android:exported="true">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />

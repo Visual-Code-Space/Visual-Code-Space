@@ -1,5 +1,5 @@
 <resources>
-  <style name="AppTheme" parent="Theme.Material3.Light.NoActionBar">
+  <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
     <item name="colorPrimary">@color/light_primary</item>
     <item name="colorOnPrimary">@color/light_onPrimary</item>
     <item name="colorPrimaryContainer">@color/light_primaryContainer</item>

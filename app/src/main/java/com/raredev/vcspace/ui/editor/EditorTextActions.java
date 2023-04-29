@@ -56,7 +56,7 @@ public class EditorTextActions extends EditorTextActionWindow {
 
     GradientDrawable drawable = new GradientDrawable();
     drawable.setShape(GradientDrawable.RECTANGLE);
-    drawable.setCornerRadius(Utils.pxToDp(getEditor().getContext(), 10));
+    drawable.setCornerRadius(Utils.pxToDp(10));
     drawable.setColor(ColorStateList.valueOf(colorSurface));
     drawable.setStroke(2, colorOutline);
     getView().setBackground(drawable);

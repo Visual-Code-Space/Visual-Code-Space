@@ -31,24 +31,23 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.util.Comparator;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class FileUtil {
-
-  public static class SortFileName implements Comparator<File> {
-    @Override
-    public int compare(File f1, File f2) {
-      return f1.getName().compareTo(f2.getName());
+  
+  private static File idePath;
+  
+  public static File getIdePath() {
+  	if (idePath == null) {
+      idePath = new File(Environment.getExternalStorageDirectory(), "/VCSpace/");
     }
-  }
-
-  public static class SortFolder implements Comparator<File> {
-    @Override
-    public int compare(File f1, File f2) {
-      if (f1.isDirectory() == f2.isDirectory()) return 0;
-      else if (f1.isDirectory() && !f2.isDirectory()) return -1;
-      else return 1;
+    if (!idePath.exists()) {
+      idePath.mkdirs();
     }
+    return idePath;
   }
 
   public static boolean isValidTextFile(String filename) {
@@ -89,9 +88,17 @@ public class FileUtil {
     }
   }
 
-  public static boolean delete(String path) {
-    File file = new File(path);
+  public static boolean deleteFiles(List<File> files) {
+    List<File> deletedFiles = new ArrayList<>();
+    for (File file : files) {
+      if (delete(file)) {
+        deletedFiles.add(file);
+      }
+    }
+    return deletedFiles.size() == files.size();
+  }
 
+  public static boolean delete(File file) {
     if (!file.exists()) return false;
 
     if (file.isFile()) {
@@ -103,7 +110,7 @@ public class FileUtil {
     if (fileArr != null) {
       for (File subFile : fileArr) {
         if (subFile.isDirectory()) {
-          delete(subFile.getAbsolutePath());
+          delete(subFile);
         }
 
         if (subFile.isFile()) {
@@ -357,14 +364,14 @@ public class FileUtil {
   public static void clearAppCache(Context context) {
     try {
       File dir = context.getCacheDir();
-      delete(dir.getAbsolutePath());
+      delete(dir);
     } catch (Exception e) {
       e.printStackTrace();
     }
   }
 
   public static void takeFilePermissions(Activity activity) {
-    new MaterialAlertDialogBuilder((Context) activity)
+    new MaterialAlertDialogBuilder(activity)
         .setCancelable(false)
         .setTitle(R.string.file_access_title)
         .setMessage(R.string.file_access_message)

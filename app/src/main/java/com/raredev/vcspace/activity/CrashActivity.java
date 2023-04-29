@@ -26,6 +26,7 @@ public class CrashActivity extends VCSpaceActivity {
 
     setContentView(binding.getRoot());
     setSupportActionBar(binding.topAppBar);
+    getSupportActionBar().setTitle("VCSpace Crash");
 
     var error = new StringBuilder();
 
@@ -42,7 +43,6 @@ public class CrashActivity extends VCSpaceActivity {
     binding.fab.setOnClickListener(
         v -> {
           ClipboardUtils.copyText(binding.result.getText());
-          ToastUtils.showShort("Copied");
         });
   }
 

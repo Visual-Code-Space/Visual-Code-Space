@@ -16,7 +16,7 @@ public class CompletionItemAdapter extends EditorCompletionAdapter {
 
   @Override
   public int getItemHeight() {
-    return Utils.pxToDp(getContext(), 48);
+    return Utils.pxToDp(48);
   }
 
   @Override

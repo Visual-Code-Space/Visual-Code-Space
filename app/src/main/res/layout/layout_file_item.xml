@@ -1,46 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
   android:layout_height="wrap_content"
   android:layout_width="match_parent"
-  android:gravity="center_vertical"
+  android:foreground="?attr/selectableItemBackground"
   android:padding="8dp">
 
-  <ViewFlipper
+  <com.google.android.material.imageview.ShapeableImageView
+    android:layout_height="26dp"
+    android:layout_width="26dp"
+    android:layout_centerVertical="true"
+    android:id="@+id/img_icon" />
+
+  <com.google.android.material.textview.MaterialTextView
     android:layout_height="wrap_content"
     android:layout_width="wrap_content"
-    android:visibility="invisible"
-    android:id="@+id/toggle_root">
-
-    <ImageView
-      android:layout_height="@dimen/dimen22dp"
-      android:layout_width="@dimen/dimen22dp"
-      android:src="@drawable/chevron_down"
-      app:tint="?attr/colorPrimary"
-      android:id="@+id/toggle" />
-
-    <ProgressBar
-      android:layout_height="@dimen/dimen22dp"
-      android:layout_width="@dimen/dimen22dp"
-      android:indeterminate="true" />
-
-  </ViewFlipper>
-
-  <ImageView
-    android:layout_height="25dp"
-    android:layout_width="25dp"
-    android:src="@drawable/ic_folder"
-    app:tint="?attr/colorPrimary"
-    android:layout_marginLeft="5dp"
-    android:layout_marginRight="5dp"
-    android:id="@+id/icon" />
-
-  <TextView
-    android:layout_height="wrap_content"
-    android:layout_width="wrap_content"
+    android:layout_centerVertical="true"
     android:textSize="14sp"
-    android:text="TextView"
-    android:id="@+id/name" />
+    android:layout_toRightOf="@id/img_icon"
+    android:singleLine="true"
+    android:layout_marginStart="10dp"
+    android:id="@+id/file_name" />
 
-</LinearLayout>
+</RelativeLayout>

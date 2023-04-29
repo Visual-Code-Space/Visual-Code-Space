@@ -2,8 +2,8 @@ package com.raredev.vcspace;
 
 import android.content.Context;
 import android.content.Intent;
-import com.raredev.vcspace.util.DialogUtils;
 import com.raredev.vcspace.activity.WebViewActivity;
+import com.raredev.vcspace.util.DialogUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

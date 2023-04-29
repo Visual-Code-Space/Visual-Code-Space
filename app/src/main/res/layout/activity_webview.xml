@@ -15,8 +15,7 @@
       android:layout_height="wrap_content"
       android:layout_width="match_parent"
       app:navigationIcon="@drawable/arrow_left"
-      android:id="@+id/toolbar"
-      android:background="@drawable/ripple_effect" />
+      android:id="@+id/toolbar" />
 
     <com.google.android.material.progressindicator.LinearProgressIndicator
       android:layout_width="match_parent"
@@ -25,7 +24,7 @@
 
   </com.google.android.material.appbar.AppBarLayout>
 
-  <android.webkit.WebView
+  <WebView
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"

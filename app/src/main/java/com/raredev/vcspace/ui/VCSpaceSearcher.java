@@ -14,6 +14,8 @@ import io.github.rosemoe.sora.widget.EditorSearcher;
 
 public class VCSpaceSearcher extends LinearLayout {
   private LayoutSearcherBinding binding;
+
+  private EditorSearcher searcher;
   private CodeEditor editor;
 
   public boolean isShowing = false;
@@ -72,6 +74,7 @@ public class VCSpaceSearcher extends LinearLayout {
 
   public void bindEditor(@Nullable CodeEditor editor) {
     this.editor = editor;
+    searcher = editor.getSearcher();
   }
 
   public void showAndHide() {
@@ -81,10 +84,10 @@ public class VCSpaceSearcher extends LinearLayout {
       setVisibility(View.VISIBLE);
       isShowing = true;
     }
-    if (editor == null) {
+    if (searcher == null) {
       return;
     }
-    editor.getSearcher().stopSearch();
+    searcher.stopSearch();
     binding.replaceText.setText("");
     binding.searchText.setText("");
   }
@@ -96,17 +99,15 @@ public class VCSpaceSearcher extends LinearLayout {
 
   private void search(String text) {
     if (!binding.searchText.getText().toString().isEmpty()) {
-      editor
-          .getSearcher()
-          .search(text, new EditorSearcher.SearchOptions(true, true));
+      searcher.search(text, new EditorSearcher.SearchOptions(true, true));
     } else {
-      editor.getSearcher().stopSearch();
+      searcher.stopSearch();
     }
   }
 
   private void gotoLast() {
     try {
-      editor.getSearcher().gotoPrevious();
+      searcher.gotoPrevious();
     } catch (IllegalStateException e) {
       e.printStackTrace();
     }
@@ -114,7 +115,7 @@ public class VCSpaceSearcher extends LinearLayout {
 
   private void gotoNext() {
     try {
-      editor.getSearcher().gotoNext();
+      searcher.gotoNext();
     } catch (IllegalStateException e) {
       e.printStackTrace();
     }
@@ -122,7 +123,7 @@ public class VCSpaceSearcher extends LinearLayout {
 
   private void replace() {
     try {
-      editor.getSearcher().replaceThis(binding.replaceText.getText().toString());
+      searcher.replaceThis(binding.replaceText.getText().toString());
     } catch (IllegalStateException e) {
       e.printStackTrace();
     }
@@ -130,7 +131,7 @@ public class VCSpaceSearcher extends LinearLayout {
 
   private void replaceAll() {
     try {
-      editor.getSearcher().replaceAll(binding.replaceText.getText().toString());
+      searcher.replaceAll(binding.replaceText.getText().toString());
     } catch (IllegalStateException e) {
       e.printStackTrace();
     }

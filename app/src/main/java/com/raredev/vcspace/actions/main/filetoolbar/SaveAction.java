@@ -1,38 +1,47 @@
 package com.raredev.vcspace.actions.main.filetoolbar;
 
+import android.content.Context;
 import androidx.annotation.NonNull;
-import com.blankj.utilcode.util.ToastUtils;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.actions.main.MainBaseAction;
 import com.raredev.vcspace.activity.MainActivity;
+import com.raredev.vcspace.util.ToastUtils;
 import com.vcspace.actions.ActionData;
+import com.vcspace.actions.Presentation;
 
 public class SaveAction extends MainBaseAction {
 
   @Override
   public void update(@NonNull ActionData data) {
     super.update(data);
-    enabled = false;
-    var main = getActivity(data);
+    Presentation presentation = getPresentation();
+    presentation.setEnabled(false);
 
+    var main = getActivity(data);
     if (main == null) {
       return;
     }
     if (main.getCurrentEditor() == null) {
       return;
     }
-    enabled = main.getCurrentEditor() != null;
+
+    presentation.setEnabled(main.getCurrentEditor().isModified());
   }
 
   @Override
   public void performAction(@NonNull ActionData data) {
-    getActivity(data).getCurrentEditor().save();
-    ToastUtils.showShort(R.string.saved);
+    MainActivity activity = getActivity(data);
+    activity.saveFile();
   }
 
   @Override
-  public int getTitle() {
-    return R.string.menu_save;
+  public String getActionId() {
+    return "save.action";
+  }
+
+  @Override
+  public String getTitle(Context context) {
+    return context.getString(R.string.menu_save);
   }
 
   @Override

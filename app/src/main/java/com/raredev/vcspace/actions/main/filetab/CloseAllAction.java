@@ -1,23 +1,25 @@
 package com.raredev.vcspace.actions.main.filetab;
 
+import android.content.Context;
 import androidx.annotation.NonNull;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.actions.main.FileTabBaseAction;
-import com.raredev.vcspace.activity.MainActivity;
 import com.vcspace.actions.ActionData;
 
 public class CloseAllAction extends FileTabBaseAction {
 
   @Override
   public void performAction(@NonNull ActionData data) {
-    var main = getActivity(data);
-    main.closeAllFiles();
-
-    main.invalidateOptionsMenu();
+    getActivity(data).closeAllFiles();
   }
 
   @Override
-  public int getTitle() {
-    return R.string.close_all;
+  public String getActionId() {
+    return "close.all.action";
+  }
+
+  @Override
+  public String getTitle(Context context) {
+    return context.getString(R.string.close_all);
   }
 }

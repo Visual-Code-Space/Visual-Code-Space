@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.raredev.vcspace.R;
@@ -53,7 +54,7 @@ public class GitToolsFragment extends Fragment {
 
                 @Override
                 public void onCloneSuccess(File output) {
-                  ((ToolsFragment) getParentFragment()).parseRootFolderToFileManager(output);
+                  //((ToolsFragment) getParentFragment()).parseRootFolderToFileManager(output);
                   ILogger.info(LOG_TAG, "Cloned to: " + output.toString());
                 }
 
@@ -90,7 +91,7 @@ public class GitToolsFragment extends Fragment {
                   ThreadUtils.runOnUiThread(
                       () -> {
                         loadRepositoryInformationsTask();
-                        ((ToolsFragment) getParentFragment()).fileTreeFragment.refresh();
+                        //((ToolsFragment) getParentFragment()).fileTreeFragment.refresh();
                       });
                   return null;
                 },

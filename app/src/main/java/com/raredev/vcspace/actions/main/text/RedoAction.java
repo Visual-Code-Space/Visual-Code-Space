@@ -1,28 +1,33 @@
 package com.raredev.vcspace.actions.main.text;
 
+import android.content.Context;
 import android.view.MenuItem;
 import androidx.annotation.NonNull;
+import com.blankj.utilcode.util.KeyboardUtils;
 import com.raredev.vcspace.R;
-import com.vcspace.actions.ActionData;
 import com.raredev.vcspace.actions.main.MainBaseAction;
-import com.raredev.vcspace.activity.MainActivity;
+import com.vcspace.actions.ActionData;
+import com.vcspace.actions.Presentation;
 
 public class RedoAction extends MainBaseAction {
 
   @Override
   public void update(@NonNull ActionData data) {
     super.update(data);
-    visible = false;
-    var main = getActivity(data);
+    Presentation presentation = getPresentation();
+    presentation.setVisible(false);
 
+    var main = getActivity(data);
     if (main == null) {
       return;
     }
     if (main.getCurrentEditor() == null) {
       return;
     }
-    visible = true;
-    enabled = main.getCurrentEditor().canRedo();
+
+    presentation.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+    presentation.setVisible(KeyboardUtils.isSoftInputVisible(getActivity(data)));
+    presentation.setEnabled(main.getCurrentEditor().canRedo());
   }
 
   @Override
@@ -34,17 +39,17 @@ public class RedoAction extends MainBaseAction {
   }
 
   @Override
-  public int getShowAsAction() {
-    return MenuItem.SHOW_AS_ACTION_ALWAYS;
+  public String getActionId() {
+    return "redo.action";
+  }
+
+  @Override
+  public String getTitle(Context context) {
+    return context.getString(R.string.menu_redo);
   }
 
   @Override
   public int getIcon() {
     return R.drawable.ic_redo;
-  }
-
-  @Override
-  public int getTitle() {
-    return R.string.menu_redo;
   }
 }

@@ -1,5 +1,6 @@
 package com.raredev.vcspace.actions.main.edit;
 
+import android.content.Context;
 import androidx.annotation.NonNull;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.actions.main.MainBaseAction;
@@ -14,8 +15,13 @@ public class FindTextAction extends MainBaseAction {
   }
 
   @Override
-  public int getTitle() {
-    return R.string.menu_search;
+  public String getActionId() {
+    return "find.text.action";
+  }
+
+  @Override
+  public String getTitle(Context context) {
+    return context.getString(R.string.menu_search);
   }
 
   @Override
