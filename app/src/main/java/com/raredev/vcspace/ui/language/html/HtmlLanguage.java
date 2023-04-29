@@ -2,6 +2,7 @@ package com.raredev.vcspace.ui.language.html;
 
 import android.os.Bundle;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.raredev.vcspace.ui.language.html.completion.HtmlCompletionItem;
 import io.github.rosemoe.sora.lang.completion.CompletionHelper;
 import io.github.rosemoe.sora.lang.completion.CompletionPublisher;
@@ -10,11 +11,17 @@ import io.github.rosemoe.sora.lang.completion.SimpleSnippetCompletionItem;
 import io.github.rosemoe.sora.lang.completion.SnippetDescription;
 import io.github.rosemoe.sora.lang.completion.snippet.CodeSnippet;
 import io.github.rosemoe.sora.lang.completion.snippet.parser.CodeSnippetParser;
+import io.github.rosemoe.sora.lang.smartEnter.NewlineHandleResult;
+import io.github.rosemoe.sora.lang.smartEnter.NewlineHandler;
+import io.github.rosemoe.sora.lang.styling.Styles;
+import io.github.rosemoe.sora.lang.styling.StylesUtils;
 import io.github.rosemoe.sora.langs.textmate.VCSpaceTMLanguage;
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import io.github.rosemoe.sora.text.CharPosition;
+import io.github.rosemoe.sora.text.Content;
 import io.github.rosemoe.sora.text.ContentReference;
+import io.github.rosemoe.sora.text.TextUtils;
 import io.github.rosemoe.sora.util.MyCharacter;
 import io.github.rosemoe.sora.widget.SymbolPairMatch;
 
@@ -30,7 +37,6 @@ public class HtmlLanguage extends VCSpaceTMLanguage {
         GrammarRegistry.getInstance().findLanguageConfiguration("text.html.basic"),
         ThemeRegistry.getInstance(),
         true);
-    getSymbolPairs().putPair("<", new SymbolPairMatch.SymbolPair("<", ">"));
   }
 
   @Override
@@ -61,12 +67,129 @@ public class HtmlLanguage extends VCSpaceTMLanguage {
       }
     }
   }
+  
+  @Override
+  public SymbolPairMatch getSymbolPairs() {
+    SymbolPairMatch pairMarch = super.getSymbolPairs();
+    pairMarch.putPair("<", new SymbolPairMatch.SymbolPair("<", ">"));
+    return pairMarch;
+  }
+  
+
+  @Override
+  public NewlineHandler[] getNewlineHandlers() {
+    return new NewlineHandler[] {new EndTagNewlineHandler(), new StartTagNewlineHandler()};
+  }
 
   private boolean checkIsCompletionChar(char c) {
     return MyCharacter.isJavaIdentifierPart(c) || c == '<' || c == '/';
   }
 
-  private static final String[] noCloseTags = {"<br>", "<hr>", "<img>", "<input>", "<link>", "<meta>"};
+  class EndTagNewlineHandler implements NewlineHandler {
+
+    @Override
+    public boolean matchesRequirement(
+        @NonNull Content text, @NonNull CharPosition position, @Nullable Styles style) {
+      var line = text.getLine(position.line);
+      int index = position.column;
+      var beforeText = line.subSequence(0, index).toString();
+      var afterText = line.subSequence(index, line.length()).toString();
+
+      if (StylesUtils.checkNoCompletion(style, position)) {
+        return false;
+      }
+
+      if (beforeText.startsWith("<!")) {
+        return false;
+      }
+
+      return beforeText.trim().endsWith(">") && afterText.trim().startsWith("</");
+    }
+
+    @NonNull
+    @Override
+    public NewlineHandleResult handleNewline(
+        @NonNull Content text,
+        @NonNull CharPosition position,
+        @Nullable Styles style,
+        int tabSize) {
+      var line = text.getLine(position.line);
+      int index = position.column;
+      var beforeText = line.subSequence(0, index).toString();
+      var afterText = line.subSequence(index, line.length()).toString();
+      return handleNewline(beforeText, afterText, tabSize);
+    }
+
+    @NonNull
+    public NewlineHandleResult handleNewline(String beforeText, String afterText, int tabSize) {
+      int count = TextUtils.countLeadingSpaceCount(beforeText, tabSize);
+      String text;
+      StringBuilder sb =
+          new StringBuilder("\n")
+              .append(TextUtils.createIndent(count + tabSize, tabSize, useTab()))
+              .append('\n')
+              .append(text = TextUtils.createIndent(count, tabSize, useTab()));
+      int shiftLeft = text.length() + 1;
+      return new NewlineHandleResult(sb, shiftLeft);
+    }
+  }
+
+  class StartTagNewlineHandler implements NewlineHandler {
+
+    @Override
+    public boolean matchesRequirement(
+        @NonNull Content text, @NonNull CharPosition position, @Nullable Styles style) {
+      var line = text.getLine(position.line);
+      int index = position.column;
+      var beforeText = line.subSequence(0, index).toString();
+      var afterText = line.subSequence(index, line.length()).toString();
+
+      if (StylesUtils.checkNoCompletion(style, position)) {
+        return false;
+      }
+
+      if (beforeText.startsWith("<!")) {
+        return false;
+      }
+
+      if (beforeText.trim().endsWith(">")) {
+        int openTagIndex = beforeText.lastIndexOf('<');
+        int closeTagIndex = beforeText.lastIndexOf('>');
+        return beforeText.charAt(openTagIndex + 1) != '/';
+      }
+
+      return false;
+    }
+
+    @NonNull
+    @Override
+    public NewlineHandleResult handleNewline(
+        @NonNull Content text,
+        @NonNull CharPosition position,
+        @Nullable Styles style,
+        int tabSize) {
+      var line = text.getLine(position.line);
+      int index = position.column;
+      var beforeText = line.subSequence(0, index).toString();
+      var afterText = line.subSequence(index, line.length()).toString();
+      return handleNewline(beforeText, afterText, tabSize);
+    }
+
+    @NonNull
+    public NewlineHandleResult handleNewline(String beforeText, String afterText, int tabSize) {
+      int count = TextUtils.countLeadingSpaceCount(beforeText, tabSize);
+      String text;
+      StringBuilder sb =
+          new StringBuilder()
+              .append("\n")
+              .append(TextUtils.createIndent(count + tabSize, tabSize, useTab()));
+      return new NewlineHandleResult(sb, 0);
+    }
+  }
+
+  private static final String[] noCloseTags = {
+    "<br>", "<hr>", "<img>", "<input>", "<link>", "<meta>"
+  };
 
   private static final String[] htmlTags = {
     "html",

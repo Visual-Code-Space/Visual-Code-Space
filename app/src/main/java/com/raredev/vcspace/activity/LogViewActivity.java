@@ -1,19 +1,15 @@
 package com.raredev.vcspace.activity;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.res.ResourcesCompat;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.ActivityLogViewBinding;
 import com.raredev.vcspace.progressdialog.ProgressDialog;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.util.DialogUtils;
 import com.raredev.vcspace.util.ILogger;
-import io.github.rosemoe.sora.langs.textmate.TextMateColorScheme;
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage;
-import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -37,9 +33,7 @@ public class LogViewActivity extends BaseActivity implements ILogger.Observer {
     binding.editor.setEditorLanguage(TextMateLanguage.create("text.log", false));
     binding.editor.getProps().autoIndent = false;
     binding.editor.setEditable(false);
-    binding.editor.setTextSize(14f);
-    binding.editor.setTypefaceText(ResourcesCompat.getFont(this, R.font.jetbrains_mono));
-    binding.editor.setTypefaceLineNumber(ResourcesCompat.getFont(this, R.font.jetbrains_mono));
+    binding.editor.configureEditor();
 
     binding.fab.setOnClickListener(
         v -> {

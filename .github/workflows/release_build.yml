@@ -15,7 +15,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Generate Release APK
-        run: ./gradlew --warning-mode all assembleRelease
+        run: ./gradlew assembleRelease
 
       - uses: actions/upload-artifact@master
         with:

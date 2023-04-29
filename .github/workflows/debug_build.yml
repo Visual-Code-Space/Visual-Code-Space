@@ -1,4 +1,4 @@
-name: Test and Build
+name: Debug Build
 
 on:
   push:
@@ -28,7 +28,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Generate Debug APK
-        run: ./gradlew --warning-mode all assembleDebug
+        run: ./gradlew assembleDebug
 
       - uses: actions/upload-artifact@master
         with:
