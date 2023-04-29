@@ -32,7 +32,10 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
   }
 
   public LanguageConfiguration getLanguageConfiguration() {
-    return this.languageConfiguration;
+    if (languageConfiguration != null) {
+      return this.languageConfiguration;
+    }
+    return null;
   }
 
   @Override

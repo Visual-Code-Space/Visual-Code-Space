@@ -6,11 +6,12 @@
   <string name="close">Fechar</string>
   <string name="close_others">Fechar outros</string>
   <string name="close_all">Fechar tudo</string>
+  <string name="comment_line">Linha de comentário</string>
   <string name="select_all">Selecionar tudo</string>
   <string name="copy">Copiar</string>
   <string name="cut">Cortar</string>
   <string name="paste">Colar</string>
-  <string name="open_a_file">Deslize à direita para arquivos!</string>
+  <string name="no_file_opened">Nenhum arquivo aberto</string>
   <string name="refresh">Atualizar</string>
   <string name="loading">Carregando..</string>
   <string name="empty">Vazio</string>
@@ -36,10 +37,7 @@
 
   <!-- Errors Strings -->
   <string name="error">Erro</string>
-  <string name="error_treeview_opening_recent_files">Erro ao tentar abrir pasta recente:</string>
-  <string name="error_editor_opening_recent_files">Erro ao tentar abrir arquivos recentes:</string>
-  <string name="error_this_folder_is_not_a_repository">Essa pasta não é um repositório</string>
-  
+
   <!-- Buttons And Titles -->
   <string name="saved">Salvo</string>
   <string name="saved_files">Arquivos salvos</string>
@@ -63,16 +61,11 @@
   <string name="password_hint">Senha (Token)</string>
   <string name="username_hint">Nome de usuário</string>
   <string name="folder_name_hint">Nome da pasta:</string>
-  <string name="folder_not_yet_opened">Você ainda não abriu uma pasta.</string>
-  <string name="no_folder_opened">NENHUMA PASTA ABERTA</string>
-  <string name="explorer">EXPLORADOR</string>
   <string name="search">Pesquisar</string>
   <string name="reset">Resetar</string>
   <string name="replace">Substituir</string>
   <string name="new_file_title">Novo arquivo</string>
   <string name="new_folder_title">Nova pasta</string>
-  <string name="close_folder_title">Fechar pasta</string>
-  <string name="close_folder_message">Deseja fechar esta pasta?</string>
   <string name="file_access_title">Permissão de acesso aos arquivos</string>
   <string name="file_access_message">Este aplicativo precisa de permissão para acessar arquivos no armazenamento do seu dispositivo para funcionar corretamente. Conceda permissão para continuar.</string>
   <string name="grant_permission">Garantir permissão</string>

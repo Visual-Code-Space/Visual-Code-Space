@@ -76,7 +76,7 @@ public class CodeEditorView extends LinearLayout {
     binding.circularProgressIndicator.setVisibility(loading ? View.VISIBLE : View.GONE);
   }
 
-  public Language createLanguage() {
+  public VCSpaceTMLanguage createLanguage() {
     try {
       final LanguageScope langScope = LanguageScope.Factory.forFile(getFile());
 

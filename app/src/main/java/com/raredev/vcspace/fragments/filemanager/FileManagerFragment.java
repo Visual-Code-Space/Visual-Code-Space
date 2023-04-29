@@ -95,7 +95,6 @@ public class FileManagerFragment extends Fragment implements FileListAdapter.Fil
     } else {
       if (FileUtil.isValidTextFile(file.getName())) {
         ((MainActivity) requireActivity()).openFile(file);
-
       } else if (file.getName().endsWith(".apk")) {
         ApkInstaller.installApplication(getContext(), file);
       }
@@ -128,7 +127,6 @@ public class FileManagerFragment extends Fragment implements FileListAdapter.Fil
 
     pm.show();
   }
-  
 
   @Override
   public void onResume() {

@@ -6,7 +6,6 @@ import android.util.AttributeSet;
 import android.view.inputmethod.EditorInfo;
 import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
-import com.blankj.utilcode.util.FileUtils;
 import com.google.common.collect.ImmutableSet;
 import com.raredev.vcspace.ui.editor.EditorTextActions;
 import com.raredev.vcspace.ui.editor.completion.CompletionItemAdapter;
@@ -15,7 +14,9 @@ import com.raredev.vcspace.util.FileUtil;
 import com.raredev.vcspace.util.PreferencesUtils;
 import com.raredev.vcspace.util.Utils;
 import io.github.rosemoe.sora.event.ContentChangeEvent;
+import io.github.rosemoe.sora.lang.Language;
 import io.github.rosemoe.sora.langs.textmate.TextMateColorScheme;
+import io.github.rosemoe.sora.langs.textmate.VCSpaceTMLanguage;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import io.github.rosemoe.sora.widget.CodeEditor;
 import io.github.rosemoe.sora.widget.component.EditorAutoCompletion;
@@ -23,6 +24,7 @@ import io.github.rosemoe.sora.widget.component.EditorTextActionWindow;
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme;
 import java.io.File;
 import java.util.Set;
+import org.eclipse.tm4e.languageconfiguration.model.LanguageConfiguration;
 
 public class IDECodeEditor extends CodeEditor {
 
@@ -42,6 +44,8 @@ public class IDECodeEditor extends CodeEditor {
   private boolean isModified;
 
   private File file;
+
+  public String lineComment;
 
   public IDECodeEditor(Context context) {
     this(context, null);
@@ -96,6 +100,17 @@ public class IDECodeEditor extends CodeEditor {
     if (!gainFocus && textActions != null && textActions.isShowing()) {
       textActions.dismiss();
     }
+  }
+
+  @Override
+  public void setEditorLanguage(Language lang) {
+    if (lang instanceof VCSpaceTMLanguage) {
+      LanguageConfiguration langConfig = ((VCSpaceTMLanguage)lang).getLanguageConfiguration();
+      if (langConfig != null) {
+        this.lineComment = langConfig.getComments().lineComment;
+      }
+    }
+    super.setEditorLanguage(lang);
   }
 
   @Override
@@ -162,6 +177,20 @@ public class IDECodeEditor extends CodeEditor {
 
   public boolean isModified() {
     return isModified;
+  }
+
+  public int appendText(String text) {
+    final var content = getText();
+    if (getLineCount() <= 0) {
+      return 0;
+    }
+    final int line = getLineCount() - 1;
+    int col = content.getColumnCount(line);
+    if (col < 0) {
+      col = 0;
+    }
+    content.insert(line, col, text);
+    return line;
   }
 
   private EditorColorScheme createScheme() {

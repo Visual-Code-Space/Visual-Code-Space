@@ -267,7 +267,7 @@ public class MainActivity extends BaseActivity
       return;
     }
     int index = openFileAndGetIndex(file);
-    setCurrent(index);
+    setCurrentFile(index);
   }
 
   private int openFileAndGetIndex(File file) {
@@ -325,7 +325,7 @@ public class MainActivity extends BaseActivity
     }
     int size = viewModel.getOpenedFileCount() - 1;
     viewModel.setCurrentFile(size, file);
-    setCurrent(size);
+    setCurrentFile(size);
   }
 
   public void closeAllFiles() {
@@ -431,13 +431,13 @@ public class MainActivity extends BaseActivity
         }
         openFileAndGetIndex(file);
       }
-      setCurrent(pref.getInt("selectedFile", -1));
+      setCurrentFile(pref.getInt("selectedFile", -1));
     } catch (Throwable e) {
       ILogger.error(LOG_TAG, Log.getStackTraceString(e));
     }
   }
 
-  private void setCurrent(int index) {
+  public void setCurrentFile(int index) {
     final var tab = binding.tabLayout.getTabAt(index);
     if (tab != null && index >= 0 && !tab.isSelected()) {
       binding.tabLayout.selectTab(tab, true);

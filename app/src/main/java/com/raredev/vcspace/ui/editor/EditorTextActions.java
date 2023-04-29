@@ -20,14 +20,16 @@ import io.github.rosemoe.sora.event.LongPressEvent;
 import io.github.rosemoe.sora.event.ScrollEvent;
 import io.github.rosemoe.sora.event.SelectionChangeEvent;
 import io.github.rosemoe.sora.event.Unsubscribe;
+import io.github.rosemoe.sora.text.Content;
+import io.github.rosemoe.sora.text.Cursor;
 import io.github.rosemoe.sora.widget.EditorTouchEventHandler;
 import io.github.rosemoe.sora.widget.base.EditorPopupWindow;
 
-public class EditorTextActions extends EditorPopupWindow implements View.OnClickListener{
+public class EditorTextActions extends EditorPopupWindow implements View.OnClickListener {
   private static final long DELAY = 200;
 
   private LayoutTextActionsBinding binding;
-  
+
   private final EditorTouchEventHandler handler;
   private final IDECodeEditor editor;
 
@@ -39,18 +41,20 @@ public class EditorTextActions extends EditorPopupWindow implements View.OnClick
     super(editor, FEATURE_SHOW_OUTSIDE_VIEW_ALLOWED);
     this.editor = editor;
     handler = editor.getEventHandler();
-    
+
     Context tempContext = editor.getContext();
-    
+
     binding = LayoutTextActionsBinding.inflate(LayoutInflater.from(tempContext));
 
     applyBackground();
-    
+
+    binding.comment.setOnClickListener(this);
     binding.selectAll.setOnClickListener(this);
     binding.cut.setOnClickListener(this);
     binding.copy.setOnClickListener(this);
     binding.paste.setOnClickListener(this);
-    
+
+    TooltipCompat.setTooltipText(binding.comment, tempContext.getString(R.string.comment_line));
     TooltipCompat.setTooltipText(binding.selectAll, tempContext.getString(R.string.select_all));
     TooltipCompat.setTooltipText(binding.cut, tempContext.getString(R.string.cut));
     TooltipCompat.setTooltipText(binding.copy, tempContext.getString(R.string.copy));
@@ -200,21 +204,27 @@ public class EditorTextActions extends EditorPopupWindow implements View.OnClick
         editor.getOffset(editor.getCursor().getLeftLine(), editor.getCursor().getLeftColumn());
     float handleRightX =
         editor.getOffset(editor.getCursor().getRightLine(), editor.getCursor().getRightColumn());
-    int panelX = (int) ((handleLeftX + handleRightX) / 2f - binding.getRoot().getMeasuredWidth() / 2f);
+    int panelX =
+        (int) ((handleLeftX + handleRightX) / 2f - binding.getRoot().getMeasuredWidth() / 2f);
     setLocationAbsolutely(panelX, top);
     show();
   }
 
   private void updateBtnState() {
     binding.paste.setEnabled(editor.hasClip());
+    binding.comment.setVisibility(editor.lineComment != null ? View.VISIBLE : View.GONE);
     binding.copy.setVisibility(editor.getCursor().isSelected() ? View.VISIBLE : View.GONE);
     binding.paste.setVisibility(editor.isEditable() ? View.VISIBLE : View.GONE);
     binding.cut.setVisibility(
         (editor.getCursor().isSelected() && editor.isEditable()) ? View.VISIBLE : View.GONE);
-    binding.getRoot().measure(
-        View.MeasureSpec.makeMeasureSpec(1000000, View.MeasureSpec.AT_MOST),
-        View.MeasureSpec.makeMeasureSpec(100000, View.MeasureSpec.AT_MOST));
-    setSize(Math.min(binding.getRoot().getMeasuredWidth(), (int) (editor.getDpUnit() * 230)), getHeight());
+    binding
+        .getRoot()
+        .measure(
+            View.MeasureSpec.makeMeasureSpec(1000000, View.MeasureSpec.AT_MOST),
+            View.MeasureSpec.makeMeasureSpec(100000, View.MeasureSpec.AT_MOST));
+    setSize(
+        Math.min(binding.getRoot().getMeasuredWidth(), (int) (editor.getDpUnit() * 230)),
+        getHeight());
   }
 
   @Override
@@ -228,7 +238,17 @@ public class EditorTextActions extends EditorPopupWindow implements View.OnClick
   @Override
   public void onClick(View view) {
     int id = view.getId();
-    if (id == R.id.select_all) {
+    if (id == R.id.comment) {
+      String lineComment = editor.lineComment;
+      if (lineComment != null) {
+        Cursor cursor = editor.getCursor();
+        Content text = editor.getText();
+
+        for (int line = cursor.getLeftLine(); line <= cursor.getRightLine(); line++) {
+          text.insert(line, 0, lineComment);
+        }
+      }
+    } else if (id == R.id.select_all) {
       editor.selectAll();
       return;
     } else if (id == R.id.cut) {
@@ -244,7 +264,7 @@ public class EditorTextActions extends EditorPopupWindow implements View.OnClick
     }
     dismiss();
   }
-  
+
   protected void applyBackground() {
     final var colorSurface =
         MaterialColors.getColor(

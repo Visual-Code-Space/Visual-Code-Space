@@ -161,7 +161,6 @@ public class GitToolsFragment extends Fragment {
       return;
     }
     if (!repoPath.exists()) {
-      binding.modifications.setText(R.string.error_this_folder_is_not_a_repository);
       binding.initRepo.setVisibility(View.VISIBLE);
       ILogger.warning(LOG_TAG, "Current folder is not a git repository.");
       return;

@@ -8,17 +8,18 @@
   <com.raredev.vcspace.ui.IDECodeEditor
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
     android:id="@+id/editor" />
 
   <com.google.android.material.progressindicator.CircularProgressIndicator
     android:layout_height="@dimen/dimen22dp"
     android:layout_width="@dimen/dimen22dp"
     android:visibility="gone"
+    app:indicatorSize="14dp"
     android:indeterminate="true"
     android:clickable="false"
-    android:layout_margin="10dp"
+    android:layout_margin="5dp"
     android:layout_alignParentEnd="true"
+    app:trackThickness="2.5dp"
     android:id="@+id/circularProgressIndicator" />
 
 </RelativeLayout>

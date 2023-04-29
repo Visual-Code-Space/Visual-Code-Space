@@ -67,14 +67,6 @@ public class HtmlLanguage extends VCSpaceTMLanguage {
       }
     }
   }
-  
-  @Override
-  public SymbolPairMatch getSymbolPairs() {
-    SymbolPairMatch pairMarch = super.getSymbolPairs();
-    pairMarch.putPair("<", new SymbolPairMatch.SymbolPair("<", ">"));
-    return pairMarch;
-  }
-  
 
   @Override
   public NewlineHandler[] getNewlineHandlers() {

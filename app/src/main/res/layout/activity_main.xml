@@ -79,7 +79,7 @@
         android:layout_centerInParent="true"
         android:textSize="15sp"
         android:id="@+id/no_file_opened"
-        android:text="@string/open_a_file" />
+        android:text="@string/no_file_opened" />
 
     </RelativeLayout>
 

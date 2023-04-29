@@ -16,14 +16,13 @@ import io.github.rosemoe.sora.widget.SymbolPairMatch;
 
 public class JavaLanguage extends VCSpaceTMLanguage {
 
-  
   public JavaLanguage(CodeEditorView editor) {
     super(
         GrammarRegistry.getInstance().findGrammar("source.java"),
         GrammarRegistry.getInstance().findLanguageConfiguration("source.java"),
         ThemeRegistry.getInstance(),
         false);
-    getSymbolPairs().putPair("<", new SymbolPairMatch.SymbolPair("<", ">"));
+
     setCompleterKeywords(javaKeywords);
   }
 
@@ -36,6 +35,13 @@ public class JavaLanguage extends VCSpaceTMLanguage {
     super.requireAutoComplete(content, position, publisher, extraArguments);
     var prefix =
         CompletionHelper.computePrefix(content, position, MyCharacter::isJavaIdentifierPart);
+  }
+
+  @Override
+  public SymbolPairMatch getSymbolPairs() {
+    SymbolPairMatch pairMarch = super.getSymbolPairs();
+    pairMarch.putPair("<", new SymbolPairMatch.SymbolPair("<", ">"));
+    return pairMarch;
   }
 
   private static final String[] javaKeywords = {

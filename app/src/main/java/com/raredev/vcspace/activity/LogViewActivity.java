@@ -48,6 +48,7 @@ public class LogViewActivity extends BaseActivity implements ILogger.Observer {
     binding.editor.release();
     ILogger.addObserver(null);
     super.onDestroy();
+    binding = null;
   }
 
   @Override
@@ -64,7 +65,7 @@ public class LogViewActivity extends BaseActivity implements ILogger.Observer {
             BufferedReader reader = new BufferedReader(new FileReader(logFile));
             String line;
             while ((line = reader.readLine()) != null) {
-              appendText(line + "\n");
+              binding.editor.appendText(line + "\n");
             }
             reader.close();
           } catch (IOException e) {
@@ -76,19 +77,5 @@ public class LogViewActivity extends BaseActivity implements ILogger.Observer {
           dialog.cancel();
           if (error != null) ILogger.error(LOG_TAG, error.toString());
         });
-  }
-
-  private int appendText(String text) {
-    final var content = binding.editor.getText();
-    if (binding.editor.getLineCount() <= 0) {
-      return 0;
-    }
-    final int line = binding.editor.getLineCount() - 1;
-    int col = content.getColumnCount(line);
-    if (col < 0) {
-      col = 0;
-    }
-    content.insert(line, col, text);
-    return line;
   }
 }
