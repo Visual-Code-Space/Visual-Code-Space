@@ -35,6 +35,7 @@ public class RedoAction extends MainBaseAction {
     var main = getActivity(data);
     if (main.getCurrentEditor() != null) {
       main.getCurrentEditor().redo();
+      main.invalidateOptionsMenu();
     }
   }
 

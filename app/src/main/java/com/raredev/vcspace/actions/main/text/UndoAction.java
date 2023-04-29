@@ -35,6 +35,7 @@ public class UndoAction extends MainBaseAction {
     var main = getActivity(data);
     if (main.getCurrentEditor() != null) {
       main.getCurrentEditor().undo();
+      main.invalidateOptionsMenu();
     }
   }
 
