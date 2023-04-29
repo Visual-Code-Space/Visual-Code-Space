@@ -6,6 +6,7 @@ plugins {
 android {
   compileSdk 33
   buildToolsVersion "33.0.0"
+  namespace 'com.raredev.vcspace'
 
   defaultConfig {
     applicationId 'com.raredev.vcspace'
@@ -37,12 +38,12 @@ android {
   }
 
   compileOptions {
-    sourceCompatibility JavaVersion.VERSION_11
-    targetCompatibility JavaVersion.VERSION_11
+    sourceCompatibility JavaVersion.VERSION_17
+    targetCompatibility JavaVersion.VERSION_17
   }
 
   kotlinOptions {
-    jvmTarget = "11"
+    jvmTarget = "17"
   }
 
   packagingOptions {
@@ -59,6 +60,7 @@ android {
 
   buildFeatures {
     viewBinding true
+    buildConfig true
   }
 }
 
