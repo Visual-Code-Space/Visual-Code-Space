@@ -3,6 +3,7 @@ package com.raredev.vcspace.ui.language.html;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.raredev.vcspace.ui.editor.CodeEditorView;
 import com.raredev.vcspace.ui.language.html.completion.HtmlCompletionItem;
 import io.github.rosemoe.sora.lang.completion.CompletionHelper;
 import io.github.rosemoe.sora.lang.completion.CompletionPublisher;
@@ -24,6 +25,10 @@ import io.github.rosemoe.sora.text.ContentReference;
 import io.github.rosemoe.sora.text.TextUtils;
 import io.github.rosemoe.sora.util.MyCharacter;
 import io.github.rosemoe.sora.widget.SymbolPairMatch;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 public class HtmlLanguage extends VCSpaceTMLanguage {
 
@@ -54,6 +59,7 @@ public class HtmlLanguage extends VCSpaceTMLanguage {
               "Snippet - HTML",
               new SnippetDescription(prefix.length(), HTML_SNIPPET, true)));
     }
+    
     for (String tag : noCloseTags) {
       if (tag.startsWith(prefix) && prefix.length() > 0) {
         publisher.addItem(new SimpleCompletionItem(tag, "No Close Tag", prefix.length(), tag));
@@ -77,7 +83,7 @@ public class HtmlLanguage extends VCSpaceTMLanguage {
     return MyCharacter.isJavaIdentifierPart(c) || c == '<' || c == '/';
   }
 
-  class EndTagNewlineHandler implements NewlineHandler {
+  public class EndTagNewlineHandler implements NewlineHandler {
 
     @Override
     public boolean matchesRequirement(
@@ -126,7 +132,7 @@ public class HtmlLanguage extends VCSpaceTMLanguage {
     }
   }
 
-  class StartTagNewlineHandler implements NewlineHandler {
+  public class StartTagNewlineHandler implements NewlineHandler {
 
     @Override
     public boolean matchesRequirement(

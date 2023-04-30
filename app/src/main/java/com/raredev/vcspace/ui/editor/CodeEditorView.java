@@ -11,7 +11,6 @@ import com.raredev.vcspace.ui.language.html.HtmlLanguage;
 import com.raredev.vcspace.ui.language.java.JavaLanguage;
 import com.raredev.vcspace.ui.language.lua.LuaLanguage;
 import com.raredev.vcspace.util.FileUtil;
-import io.github.rosemoe.sora.lang.Language;
 import io.github.rosemoe.sora.langs.textmate.VCSpaceTMLanguage;
 import java.io.File;
 import java.util.concurrent.CompletableFuture;
@@ -43,7 +42,7 @@ public class CodeEditorView extends LinearLayout {
 
     binding.editor.configureEditor();
   }
-  
+
   public void release() {
     binding.editor.release();
   }
@@ -63,7 +62,7 @@ public class CodeEditorView extends LinearLayout {
   public void saveFile() {
     binding.editor.saveFile();
   }
-  
+
   public File getFile() {
     return binding.editor.getFile();
   }

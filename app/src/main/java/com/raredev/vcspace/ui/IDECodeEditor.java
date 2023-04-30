@@ -12,6 +12,7 @@ import com.raredev.vcspace.ui.editor.completion.CompletionItemAdapter;
 import com.raredev.vcspace.ui.editor.completion.CustomCompletionLayout;
 import com.raredev.vcspace.util.FileUtil;
 import com.raredev.vcspace.util.PreferencesUtils;
+import com.raredev.vcspace.util.ToastUtils;
 import com.raredev.vcspace.util.Utils;
 import io.github.rosemoe.sora.event.ContentChangeEvent;
 import io.github.rosemoe.sora.lang.Language;
@@ -25,6 +26,10 @@ import io.github.rosemoe.sora.widget.schemes.EditorColorScheme;
 import java.io.File;
 import java.util.Set;
 import org.eclipse.tm4e.languageconfiguration.model.LanguageConfiguration;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.parser.ParseError;
+import org.jsoup.parser.Parser;
 
 public class IDECodeEditor extends CodeEditor {
 
@@ -107,7 +112,7 @@ public class IDECodeEditor extends CodeEditor {
   @Override
   public void setEditorLanguage(Language lang) {
     if (lang instanceof VCSpaceTMLanguage) {
-      LanguageConfiguration langConfig = ((VCSpaceTMLanguage)lang).getLanguageConfiguration();
+      LanguageConfiguration langConfig = ((VCSpaceTMLanguage) lang).getLanguageConfiguration();
       if (langConfig != null) {
         this.commentPrefix = langConfig.getComments().lineComment;
         this.blockCommentOpenPrefix = langConfig.getComments().blockComment.open;
@@ -158,6 +163,14 @@ public class IDECodeEditor extends CodeEditor {
             case ContentChangeEvent.ACTION_INSERT:
             case ContentChangeEvent.ACTION_DELETE:
               isModified = true;
+              Document doc = Jsoup.parseBodyFragment(getText().toString());
+
+              Parser parser = doc.parser();
+
+              for (ParseError error : parser.getErrors()) {
+                ToastUtils.showShort(error.getErrorMessage(), ToastUtils.TYPE_ERROR);
+              }
+
               runnable.run();
               break;
           }

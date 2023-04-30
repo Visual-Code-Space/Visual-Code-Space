@@ -4,7 +4,9 @@ import com.raredev.vcspace.util.PreferencesUtils;
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import io.github.rosemoe.sora.widget.SymbolPairMatch;
+import java.util.List;
 import org.eclipse.tm4e.core.grammar.IGrammar;
+import org.eclipse.tm4e.languageconfiguration.model.AutoClosingPairConditional;
 import org.eclipse.tm4e.languageconfiguration.model.LanguageConfiguration;
 
 public class VCSpaceTMLanguage extends TextMateLanguage {
@@ -50,6 +52,19 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
 
   @Override
   public SymbolPairMatch getSymbolPairs() {
-    return new BaseSymbolPair();
+    SymbolPairMatch symbolPair = new SymbolPairMatch();
+
+    List<AutoClosingPairConditional> autoClosingPairs = languageConfiguration.getAutoClosingPairs();
+
+    for (AutoClosingPairConditional autoClosingPair : autoClosingPairs) {
+      symbolPair.putPair(
+          autoClosingPair.open,
+          new SymbolPairMatch.SymbolPair(
+              autoClosingPair.open,
+              autoClosingPair.close,
+              new TextMateSymbolPairMatch.SymbolPairEx(autoClosingPair)));
+    }
+
+    return symbolPair;
   }
 }

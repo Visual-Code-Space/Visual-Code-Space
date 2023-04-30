@@ -37,13 +37,6 @@ public class JavaLanguage extends VCSpaceTMLanguage {
         CompletionHelper.computePrefix(content, position, MyCharacter::isJavaIdentifierPart);
   }
 
-  @Override
-  public SymbolPairMatch getSymbolPairs() {
-    SymbolPairMatch pairMarch = super.getSymbolPairs();
-    pairMarch.putPair("<", new SymbolPairMatch.SymbolPair("<", ">"));
-    return pairMarch;
-  }
-
   private static final String[] javaKeywords = {
     "assert",
     "abstract",
