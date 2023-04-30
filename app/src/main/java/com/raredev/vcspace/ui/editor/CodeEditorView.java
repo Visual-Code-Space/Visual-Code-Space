@@ -7,6 +7,7 @@ import android.widget.LinearLayout;
 import com.raredev.vcspace.databinding.LayoutCodeEditorBinding;
 import com.raredev.vcspace.models.LanguageScope;
 import com.raredev.vcspace.ui.IDECodeEditor;
+import com.raredev.vcspace.ui.VCSpaceSearcherLayout;
 import com.raredev.vcspace.ui.language.html.HtmlLanguage;
 import com.raredev.vcspace.ui.language.java.JavaLanguage;
 import com.raredev.vcspace.ui.language.lua.LuaLanguage;
@@ -19,28 +20,47 @@ public class CodeEditorView extends LinearLayout {
 
   private LayoutCodeEditorBinding binding;
 
+  private VCSpaceSearcherLayout searcherLayout;
+
   public CodeEditorView(Context context, File file) {
     super(context);
     binding = LayoutCodeEditorBinding.inflate(LayoutInflater.from(context));
     binding.editor.setFile(file);
 
+    setOrientation(VERTICAL);
     removeAllViews();
+
+    searcherLayout = new VCSpaceSearcherLayout(context, binding.editor);
+
     addView(
-        binding.getRoot(), new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        binding.getRoot(),
+        new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, 1f));
+    addView(searcherLayout, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 
     setLoading(true);
     CompletableFuture.runAsync(
         () -> {
+          var editor = binding.editor;
           var content = FileUtil.readFile(file.getAbsolutePath());
-          binding.editor.post(
+          editor.post(
               () -> {
-                binding.editor.setText(content, null);
-                binding.editor.setEditorLanguage(createLanguage());
+                editor.setText(content, null);
+                editor.markUnmodified();
+
+                editor.setEditorLanguage(createLanguage());
                 setLoading(false);
               });
         });
 
     binding.editor.configureEditor();
+  }
+
+  public void showAndHideSearcher() {
+    searcherLayout.showAndHide();
+  }
+
+  public boolean searcherIsShowing() {
+    return searcherLayout.isShowing;
   }
 
   public void release() {

@@ -1,12 +1,12 @@
 package com.raredev.vcspace.util;
 
-import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
-import com.google.android.material.color.MaterialColors;
 import com.google.android.material.R;
+import com.google.android.material.color.MaterialColors;
+import com.raredev.vcspace.common.databinding.LayoutToastBinding;
 
 public class ToastUtils {
   public static final int TYPE_ERROR = 0;
@@ -27,32 +27,27 @@ public class ToastUtils {
   }
 
   private static View createToastView(CharSequence message, int type) {
-    TextView tv = new TextView(Utils.getContext());
-    int padding = Utils.pxToDp(12);
-    tv.setPadding(padding * 1, padding, padding * 1, padding);
-    tv.setTextColor(
-        MaterialColors.getColor(
-            Utils.getContext(), R.attr.colorOnSurface, 0));
-    tv.setText(message);
+    LayoutToastBinding binding =
+        LayoutToastBinding.inflate(LayoutInflater.from(Utils.getContext()));
+    binding.icon.setImageResource(getIconForType(type));
+    binding.message.setText(message);
 
     GradientDrawable drawable = new GradientDrawable();
     drawable.setShape(GradientDrawable.RECTANGLE);
     drawable.setCornerRadius(Utils.pxToDp(15));
-    drawable.setColor(
-        MaterialColors.getColor(
-            Utils.getContext(), R.attr.colorSurface, 0));
-    drawable.setStroke(1, getColorForType(type));
+    drawable.setColor(MaterialColors.getColor(Utils.getContext(), R.attr.colorSurface, 0));
+    drawable.setStroke(1, MaterialColors.getColor(Utils.getContext(), R.attr.colorOutline, 0));
 
-    tv.setBackground(drawable);
-    return tv;
+    binding.getRoot().setBackground(drawable);
+    return binding.getRoot();
   }
 
-  private static int getColorForType(int type) {
+  private static int getIconForType(int type) {
     switch (type) {
       case TYPE_ERROR:
-        return Color.parseColor("#64FF0B0B");
+        return com.raredev.vcspace.common.R.drawable.ic_alert_circle_outline;
       case TYPE_SUCCESS:
-        return Color.parseColor("#640BFF0B");
+        return com.raredev.vcspace.common.R.drawable.ic_check;
       default:
         return 0;
     }

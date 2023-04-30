@@ -20,6 +20,8 @@ import io.github.rosemoe.sora.langs.textmate.TextMateColorScheme;
 import io.github.rosemoe.sora.langs.textmate.VCSpaceTMLanguage;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import io.github.rosemoe.sora.widget.CodeEditor;
+import io.github.rosemoe.sora.widget.EditorSearcher;
+import io.github.rosemoe.sora.widget.VCSpaceSearcher;
 import io.github.rosemoe.sora.widget.component.EditorAutoCompletion;
 import io.github.rosemoe.sora.widget.component.EditorTextActionWindow;
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme;
@@ -44,6 +46,7 @@ public class IDECodeEditor extends CodeEditor {
           .add(';')
           .build();
 
+  private VCSpaceSearcher searcher;
   private EditorTextActions textActions;
 
   private boolean isModified;
@@ -71,6 +74,7 @@ public class IDECodeEditor extends CodeEditor {
 
     this.isModified = false;
 
+    searcher = new VCSpaceSearcher(this);
     textActions = new EditorTextActions(this);
 
     getComponent(EditorTextActionWindow.class).setEnabled(false);
@@ -123,6 +127,11 @@ public class IDECodeEditor extends CodeEditor {
   }
 
   @Override
+  public EditorSearcher getSearcher() {
+    return searcher;
+  }
+
+  @Override
   public void release() {
     super.release();
     textActions = null;
@@ -162,6 +171,7 @@ public class IDECodeEditor extends CodeEditor {
           switch (event.getAction()) {
             case ContentChangeEvent.ACTION_INSERT:
             case ContentChangeEvent.ACTION_DELETE:
+            case ContentChangeEvent.ACTION_SET_NEW_TEXT:
               isModified = true;
               Document doc = Jsoup.parseBodyFragment(getText().toString());
 
@@ -193,7 +203,11 @@ public class IDECodeEditor extends CodeEditor {
   }
 
   public boolean isModified() {
-    return isModified;
+    return this.isModified;
+  }
+
+  public void markUnmodified() {
+    this.isModified = false;
   }
 
   public int appendText(String text) {

@@ -4,6 +4,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.actions.main.MainBaseAction;
+import com.raredev.vcspace.ui.editor.CodeEditorView;
 import com.vcspace.actions.ActionData;
 
 public class FindTextAction extends MainBaseAction {
@@ -11,7 +12,11 @@ public class FindTextAction extends MainBaseAction {
   @Override
   public void performAction(@NonNull ActionData data) {
     var main = getActivity(data);
-    main.binding.searcher.showAndHide();
+    
+    CodeEditorView editor = main.getCurrentEditor();
+    if (editor != null) {
+      editor.showAndHideSearcher();
+    }
   }
 
   @Override

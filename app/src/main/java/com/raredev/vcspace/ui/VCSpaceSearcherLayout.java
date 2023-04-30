@@ -11,26 +11,25 @@ import androidx.annotation.Nullable;
 import com.raredev.vcspace.databinding.LayoutSearcherBinding;
 import io.github.rosemoe.sora.widget.CodeEditor;
 import io.github.rosemoe.sora.widget.EditorSearcher;
+import io.github.rosemoe.sora.widget.VCSpaceSearcher;
 
-public class VCSpaceSearcher extends LinearLayout {
+public class VCSpaceSearcherLayout extends LinearLayout implements View.OnClickListener {
   private LayoutSearcherBinding binding;
 
-  private EditorSearcher searcher;
+  private EditorSearcher.SearchOptions searchOptions =
+      new EditorSearcher.SearchOptions(true, false);
+  private VCSpaceSearcher searcher;
   private CodeEditor editor;
 
   public boolean isShowing = false;
 
-  public VCSpaceSearcher(Context context) {
-    this(context, null);
-  }
+  public VCSpaceSearcherLayout(Context context, IDECodeEditor editor) {
+    super(context);
+    this.editor = editor;
+    searcher = (VCSpaceSearcher) editor.getSearcher();
 
-  public VCSpaceSearcher(Context context, AttributeSet attrs) {
-    this(context, attrs, 0);
-  }
-
-  public VCSpaceSearcher(Context context, AttributeSet attrs, int defStyle) {
-    super(context, attrs, defStyle);
     binding = LayoutSearcherBinding.inflate(LayoutInflater.from(getContext()));
+    binding.getRoot().setVisibility(View.GONE);
     removeAllViews();
     addView(
         binding.getRoot(), new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
@@ -51,37 +50,32 @@ public class VCSpaceSearcher extends LinearLayout {
           public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {}
         });
 
-    binding.gotoLast.setOnClickListener(
-        (v) -> {
-          gotoLast();
-        });
-
-    binding.gotoNext.setOnClickListener(
-        (v) -> {
-          gotoNext();
-        });
-
-    binding.replace.setOnClickListener(
-        (v) -> {
-          replace();
-        });
-
-    binding.replaceAll.setOnClickListener(
-        (v) -> {
-          replaceAll();
-        });
+    binding.gotoLast.setOnClickListener(this);
+    binding.gotoNext.setOnClickListener(this);
+    binding.replace.setOnClickListener(this);
+    binding.replaceAll.setOnClickListener(this);
   }
 
-  public void bindEditor(@Nullable CodeEditor editor) {
-    this.editor = editor;
-    searcher = editor.getSearcher();
+  @Override
+  public void onClick(View v) {
+    int id = v.getId();
+    if (id == binding.gotoLast.getId()) {
+      gotoLast();
+    } else if (id == binding.gotoNext.getId()) {
+      gotoNext();
+    } else if (id == binding.replace.getId()) {
+      replace();
+    } else if (id == binding.replaceAll.getId()) {
+      replaceAll();
+    }
   }
 
   public void showAndHide() {
     if (isShowing) {
-      hide();
+      binding.getRoot().setVisibility(View.GONE);
+      isShowing = false;
     } else {
-      setVisibility(View.VISIBLE);
+      binding.getRoot().setVisibility(View.VISIBLE);
       isShowing = true;
     }
     if (searcher == null) {
@@ -92,14 +86,9 @@ public class VCSpaceSearcher extends LinearLayout {
     binding.searchText.setText("");
   }
 
-  public void hide() {
-    setVisibility(View.GONE);
-    isShowing = false;
-  }
-
   private void search(String text) {
-    if (!binding.searchText.getText().toString().isEmpty()) {
-      searcher.search(text, new EditorSearcher.SearchOptions(true, true));
+    if (!text.isEmpty()) {
+      searcher.search(text, searchOptions);
     } else {
       searcher.stopSearch();
     }

@@ -94,8 +94,6 @@ public class MainActivity extends BaseActivity
             var editor = getEditorAtIndex(position).getEditor();
             viewModel.setCurrentFile(position, editor.getFile());
 
-            binding.searcher.bindEditor(editor);
-
             saveRecentlyOpenedFiles();
             invalidateOptionsMenu();
           }
@@ -130,8 +128,9 @@ public class MainActivity extends BaseActivity
       binding.drawerLayout.closeDrawer(GravityCompat.START);
       return;
     }
-    if (binding.searcher.isShowing) {
-      binding.searcher.showAndHide();
+    CodeEditorView editor = getCurrentEditor();
+    if (editor != null && editor.searcherIsShowing()) {
+      editor.showAndHideSearcher();
       return;
     }
     TabLayout.Tab tab = binding.tabLayout.getTabAt(0);
@@ -240,8 +239,6 @@ public class MainActivity extends BaseActivity
           if (files.isEmpty()) {
             binding.editorContainer.setVisibility(View.GONE);
             binding.noFileOpened.setVisibility(View.VISIBLE);
-            binding.searcher.hide();
-
             invalidateOptionsMenu();
           } else {
             binding.editorContainer.setVisibility(View.VISIBLE);

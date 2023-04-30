@@ -68,6 +68,8 @@
   <string name="search">Search</string>
   <string name="reset">Reset</string>
   <string name="replace">Replace</string>
+  <string name="replace_all">Replace all</string>
+  <string name="replacing_texts">Replacing texts…</string>
   <string name="new_file_title">New file</string>
   <string name="new_folder_title">New folder</string>
   <string name="file_access_title">File Access Permission</string>

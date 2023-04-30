@@ -60,12 +60,6 @@
 
         </ViewFlipper>
 
-        <com.raredev.vcspace.ui.VCSpaceSearcher
-          android:layout_height="wrap_content"
-          android:layout_width="wrap_content"
-          android:visibility="gone"
-          android:id="@+id/searcher" />
-
         <com.raredev.vcspace.ui.editor.symbol.SymbolInputView
           android:layout_height="wrap_content"
           android:layout_width="wrap_content"

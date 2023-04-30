@@ -64,6 +64,8 @@
   <string name="search">Pesquisar</string>
   <string name="reset">Resetar</string>
   <string name="replace">Substituir</string>
+  <string name="replace_all">Substituir tudo</string>
+  <string name="replacing_texts">Substituindo textos…</string>
   <string name="new_file_title">Novo arquivo</string>
   <string name="new_folder_title">Nova pasta</string>
   <string name="file_access_title">Permissão de acesso aos arquivos</string>
