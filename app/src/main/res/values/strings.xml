@@ -8,6 +8,7 @@
   <string name="close_others">Close others</string>
   <string name="close_all">Close all</string>
   <string name="comment_line">Comment line</string>
+  <string name="uncomment_line">Uncomment line</string>
   <string name="select_all">Select all</string>
   <string name="copy">Copy</string>
   <string name="cut">Cut</string>

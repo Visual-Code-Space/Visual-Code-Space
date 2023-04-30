@@ -10,6 +10,9 @@ import android.util.Log;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.PreferenceManager;
 import com.google.android.material.color.DynamicColors;
+import com.raredev.vcspace.extension.ExtensionAPI;
+import com.raredev.vcspace.extension.ExtensionAPIImpl;
+import com.raredev.vcspace.extension.completion.JavaCodeCompletionProvider;
 import com.raredev.vcspace.fragments.SettingsFragment;
 import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.util.Utils;
@@ -42,6 +45,9 @@ public class VCSpaceApplication extends Application {
     Thread.setDefaultUncaughtExceptionHandler(new CrashHandler(this));
     registerShutdownReceiver();
     loadTextMate();
+
+    ExtensionAPI extensionAPI = ExtensionAPIImpl.getInstance();
+    extensionAPI.registerExtension("javaCodeCompletion", new JavaCodeCompletionProvider());
   }
 
   @Override

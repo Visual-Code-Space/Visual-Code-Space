@@ -8,6 +8,7 @@ import android.webkit.WebViewClient;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.ActivityWebviewBinding;
 
+@SuppressWarnings("deprecation")
 public class WebViewActivity extends BaseActivity {
   private ActivityWebviewBinding binding;
 

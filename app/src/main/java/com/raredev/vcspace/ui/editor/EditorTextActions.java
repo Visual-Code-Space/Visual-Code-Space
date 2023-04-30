@@ -39,7 +39,7 @@ public class EditorTextActions extends EditorPopupWindow implements View.OnClick
   private int lastCause;
 
   public EditorTextActions(IDECodeEditor editor) {
-    super(editor, FEATURE_SHOW_OUTSIDE_VIEW_ALLOWED);
+    super(editor, FEATURE_HIDE_WHEN_FAST_SCROLL);
     this.editor = editor;
     handler = editor.getEventHandler();
 
@@ -56,6 +56,7 @@ public class EditorTextActions extends EditorPopupWindow implements View.OnClick
     binding.paste.setOnClickListener(this);
 
     TooltipCompat.setTooltipText(binding.comment, tempContext.getString(R.string.comment_line));
+    TooltipCompat.setTooltipText(binding.uncomment, tempContext.getString(R.string.uncomment_line));
     TooltipCompat.setTooltipText(binding.selectAll, tempContext.getString(R.string.select_all));
     TooltipCompat.setTooltipText(binding.cut, tempContext.getString(R.string.cut));
     TooltipCompat.setTooltipText(binding.copy, tempContext.getString(R.string.copy));
@@ -214,6 +215,7 @@ public class EditorTextActions extends EditorPopupWindow implements View.OnClick
   private void updateBtnState() {
     binding.paste.setEnabled(editor.hasClip());
     binding.comment.setVisibility(editor.commentPrefix != null ? View.VISIBLE : View.GONE);
+    binding.uncomment.setVisibility(View.GONE);
     binding.copy.setVisibility(editor.getCursor().isSelected() ? View.VISIBLE : View.GONE);
     binding.paste.setVisibility(editor.isEditable() ? View.VISIBLE : View.GONE);
     binding.cut.setVisibility(
@@ -258,7 +260,14 @@ public class EditorTextActions extends EditorPopupWindow implements View.OnClick
               cursor.getRightLine());
         }
       }
-    } else if (id == R.id.select_all) {
+    } /* else if (id == R.id.uncomment) {
+      String commentPrefix = editor.commentPrefix;
+      if (commentPrefix != null) {
+        Cursor cursor = editor.getCursor();
+        Content text = editor.getText();
+        text.replace(cursor.getLeftLine(), cursor.getRightLine(), CommentSystem.uncomment(text));
+      }
+    }*/ else if (id == R.id.select_all) {
       editor.selectAll();
       return;
     } else if (id == R.id.cut) {
