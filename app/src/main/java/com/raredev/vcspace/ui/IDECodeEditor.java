@@ -45,7 +45,9 @@ public class IDECodeEditor extends CodeEditor {
 
   private File file;
 
-  public String lineComment;
+  public String commentPrefix;
+  public String blockCommentOpenPrefix;
+  public String blockCommentClosePrefix;
 
   public IDECodeEditor(Context context) {
     this(context, null);
@@ -107,7 +109,9 @@ public class IDECodeEditor extends CodeEditor {
     if (lang instanceof VCSpaceTMLanguage) {
       LanguageConfiguration langConfig = ((VCSpaceTMLanguage)lang).getLanguageConfiguration();
       if (langConfig != null) {
-        this.lineComment = langConfig.getComments().lineComment;
+        this.commentPrefix = langConfig.getComments().lineComment;
+        this.blockCommentOpenPrefix = langConfig.getComments().blockComment.open;
+        this.blockCommentClosePrefix = langConfig.getComments().blockComment.close;
       }
     }
     super.setEditorLanguage(lang);

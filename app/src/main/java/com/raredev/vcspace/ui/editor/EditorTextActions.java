@@ -213,7 +213,7 @@ public class EditorTextActions extends EditorPopupWindow implements View.OnClick
 
   private void updateBtnState() {
     binding.paste.setEnabled(editor.hasClip());
-    binding.comment.setVisibility(editor.lineComment != null ? View.VISIBLE : View.GONE);
+    binding.comment.setVisibility(editor.commentPrefix != null ? View.VISIBLE : View.GONE);
     binding.copy.setVisibility(editor.getCursor().isSelected() ? View.VISIBLE : View.GONE);
     binding.paste.setVisibility(editor.isEditable() ? View.VISIBLE : View.GONE);
     binding.cut.setVisibility(
@@ -240,14 +240,23 @@ public class EditorTextActions extends EditorPopupWindow implements View.OnClick
   public void onClick(View view) {
     int id = view.getId();
     if (id == R.id.comment) {
-      String lineComment = editor.lineComment;
-      if (lineComment != null) {
+      String commentPrefix = editor.commentPrefix;
+      String blockCommentOpenPrefix = editor.blockCommentOpenPrefix;
+      String blockCommentClosePrefix = editor.blockCommentClosePrefix;
+      if (commentPrefix != null) {
         Cursor cursor = editor.getCursor();
         Content text = editor.getText();
 
-        if (cursor.getLeftLine() == cursor.getRightLine())
-          CommentSystem.addSingleComment("", text, cursor.getLeftLine());
-        else CommentSystem.addMultiComment("", text, cursor.getLeftLine(), cursor.getRightLine());
+        if (cursor.getLeftLine() == cursor.getRightLine()) {
+          CommentSystem.addSingleComment(commentPrefix, text, cursor.getLeftLine());
+        } else {
+          CommentSystem.addBlockComment(
+              blockCommentOpenPrefix,
+              blockCommentClosePrefix,
+              text,
+              cursor.getLeftLine(),
+              cursor.getRightLine());
+        }
       }
     } else if (id == R.id.select_all) {
       editor.selectAll();
