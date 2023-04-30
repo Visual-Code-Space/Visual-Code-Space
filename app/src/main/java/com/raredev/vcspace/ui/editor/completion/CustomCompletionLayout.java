@@ -1,18 +1,18 @@
 package com.raredev.vcspace.ui.editor.completion;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
-import android.content.res.Resources;
 import android.graphics.drawable.GradientDrawable;
 import android.os.SystemClock;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import com.google.android.material.R;
+import com.google.android.material.color.MaterialColors;
+import com.google.android.material.elevation.SurfaceColors;
 import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.util.Utils;
 import io.github.rosemoe.sora.widget.component.CompletionLayout;
@@ -111,18 +111,8 @@ public class CustomCompletionLayout implements CompletionLayout {
     GradientDrawable drawable = new GradientDrawable();
     drawable.setShape(GradientDrawable.RECTANGLE);
     drawable.setCornerRadius(Utils.pxToDp(10));
-    drawable.setColor(
-        ColorStateList.valueOf(
-            getResolvedColor(context, com.google.android.material.R.attr.colorSurface)));
-    drawable.setStroke(
-        2, getResolvedColor(context, com.google.android.material.R.attr.colorOnSurface));
+    drawable.setColor(SurfaceColors.SURFACE_0.getColor(context));
+    drawable.setStroke(2, MaterialColors.getColor(context, R.attr.colorOnSurface, 0));
     return drawable;
-  }
-
-  private int getResolvedColor(Context context, int attr) {
-    TypedValue typedValue = new TypedValue();
-    Resources.Theme theme = context.getTheme();
-    theme.resolveAttribute(attr, typedValue, true);
-    return typedValue.data;
   }
 }

@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.material.color.MaterialColors;
+import com.google.android.material.R;
 
 public class ToastUtils {
   public static final int TYPE_ERROR = 0;
@@ -31,7 +32,7 @@ public class ToastUtils {
     tv.setPadding(padding * 1, padding, padding * 1, padding);
     tv.setTextColor(
         MaterialColors.getColor(
-            Utils.getContext(), com.google.android.material.R.attr.colorOnSurface, 0));
+            Utils.getContext(), R.attr.colorOnSurface, 0));
     tv.setText(message);
 
     GradientDrawable drawable = new GradientDrawable();
@@ -39,7 +40,7 @@ public class ToastUtils {
     drawable.setCornerRadius(Utils.pxToDp(15));
     drawable.setColor(
         MaterialColors.getColor(
-            Utils.getContext(), com.google.android.material.R.attr.colorSurface, 0));
+            Utils.getContext(), R.attr.colorSurface, 0));
     drawable.setStroke(1, getColorForType(type));
 
     tv.setBackground(drawable);

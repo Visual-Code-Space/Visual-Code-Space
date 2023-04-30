@@ -13,6 +13,7 @@ import com.google.android.material.color.MaterialColors;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.LayoutTextActionsBinding;
 import com.raredev.vcspace.ui.IDECodeEditor;
+import com.raredev.vcspace.util.CommentSystem;
 import com.raredev.vcspace.util.Utils;
 import io.github.rosemoe.sora.event.HandleStateChangeEvent;
 import io.github.rosemoe.sora.event.InterceptTarget;
@@ -244,9 +245,9 @@ public class EditorTextActions extends EditorPopupWindow implements View.OnClick
         Cursor cursor = editor.getCursor();
         Content text = editor.getText();
 
-        for (int line = cursor.getLeftLine(); line <= cursor.getRightLine(); line++) {
-          text.insert(line, 0, lineComment);
-        }
+        if (cursor.getLeftLine() == cursor.getRightLine())
+          CommentSystem.addSingleComment("", text, cursor.getLeftLine());
+        else CommentSystem.addMultiComment("", text, cursor.getLeftLine(), cursor.getRightLine());
       }
     } else if (id == R.id.select_all) {
       editor.selectAll();
