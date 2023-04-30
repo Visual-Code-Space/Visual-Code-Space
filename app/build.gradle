@@ -78,7 +78,6 @@ dependencies {
   implementation 'androidx.appcompat:appcompat:1.6.1'
   implementation 'androidx.preference:preference:1.2.0'
   implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-  implementation 'androidx.webkit:webkit:1.7.0-alpha03'
   implementation 'androidx.fragment:fragment:1.6.0-beta01'
 
   implementation 'com.google.android.material:material:1.8.0'
@@ -98,6 +97,7 @@ dependencies {
   implementation project(path: ':common')
   implementation project(path: ':actions-api')
   implementation project(path: ':git-api')
+  implementation project(path: ':extensions-api')
   
   debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.10'
 }
