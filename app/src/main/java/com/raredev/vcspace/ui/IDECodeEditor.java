@@ -12,7 +12,6 @@ import com.raredev.vcspace.ui.editor.completion.CompletionItemAdapter;
 import com.raredev.vcspace.ui.editor.completion.CustomCompletionLayout;
 import com.raredev.vcspace.util.FileUtil;
 import com.raredev.vcspace.util.PreferencesUtils;
-import com.raredev.vcspace.util.ToastUtils;
 import com.raredev.vcspace.util.Utils;
 import io.github.rosemoe.sora.event.ContentChangeEvent;
 import io.github.rosemoe.sora.lang.Language;
@@ -28,10 +27,6 @@ import io.github.rosemoe.sora.widget.schemes.EditorColorScheme;
 import java.io.File;
 import java.util.Set;
 import org.eclipse.tm4e.languageconfiguration.model.LanguageConfiguration;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.parser.ParseError;
-import org.jsoup.parser.Parser;
 
 public class IDECodeEditor extends CodeEditor {
 
@@ -173,14 +168,6 @@ public class IDECodeEditor extends CodeEditor {
             case ContentChangeEvent.ACTION_DELETE:
             case ContentChangeEvent.ACTION_SET_NEW_TEXT:
               isModified = true;
-              Document doc = Jsoup.parseBodyFragment(getText().toString());
-
-              Parser parser = doc.parser();
-
-              for (ParseError error : parser.getErrors()) {
-                ToastUtils.showShort(error.getErrorMessage(), ToastUtils.TYPE_ERROR);
-              }
-
               runnable.run();
               break;
           }
@@ -260,7 +247,7 @@ public class IDECodeEditor extends CodeEditor {
         | CodeEditor.FLAG_DRAW_WHITESPACE_FOR_EMPTY_LINE);*/
   }
 
-  public static int createInputFlags() {
+  private int createInputFlags() {
     return EditorInfo.TYPE_CLASS_TEXT
         | EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE
         | EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS

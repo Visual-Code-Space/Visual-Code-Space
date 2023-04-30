@@ -12,6 +12,7 @@
   <ImageView
     android:layout_height="15dp"
     android:layout_width="15dp"
+    android:tint="?attr/colorPrimary"
     android:id="@+id/icon" />
 
   <TextView

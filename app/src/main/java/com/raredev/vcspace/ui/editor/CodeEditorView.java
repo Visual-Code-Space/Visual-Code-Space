@@ -30,12 +30,12 @@ public class CodeEditorView extends LinearLayout {
     setOrientation(VERTICAL);
     removeAllViews();
 
-    searcherLayout = new VCSpaceSearcherLayout(context, binding.editor);
+    searcherLayout = new VCSpaceSearcherLayout(context, binding.editor.getSearcher());
 
     addView(
         binding.getRoot(),
         new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, 1f));
-    addView(searcherLayout, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+    addView(searcherLayout, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 
     setLoading(true);
     CompletableFuture.runAsync(

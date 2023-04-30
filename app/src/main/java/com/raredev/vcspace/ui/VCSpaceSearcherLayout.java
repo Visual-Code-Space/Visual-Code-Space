@@ -3,43 +3,32 @@ package com.raredev.vcspace.ui;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
-import androidx.annotation.Nullable;
 import com.raredev.vcspace.databinding.LayoutSearcherBinding;
-import io.github.rosemoe.sora.widget.CodeEditor;
 import io.github.rosemoe.sora.widget.EditorSearcher;
-import io.github.rosemoe.sora.widget.VCSpaceSearcher;
 
 public class VCSpaceSearcherLayout extends LinearLayout implements View.OnClickListener {
   private LayoutSearcherBinding binding;
 
   private EditorSearcher.SearchOptions searchOptions =
       new EditorSearcher.SearchOptions(true, false);
-  private VCSpaceSearcher searcher;
-  private CodeEditor editor;
+  private EditorSearcher searcher;
 
   public boolean isShowing = false;
 
-  public VCSpaceSearcherLayout(Context context, IDECodeEditor editor) {
+  public VCSpaceSearcherLayout(Context context, EditorSearcher searcher) {
     super(context);
-    this.editor = editor;
-    searcher = (VCSpaceSearcher) editor.getSearcher();
+    this.searcher = searcher;
 
     binding = LayoutSearcherBinding.inflate(LayoutInflater.from(getContext()));
-    binding.getRoot().setVisibility(View.GONE);
     removeAllViews();
-    addView(
-        binding.getRoot(), new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+    
     binding.searchText.addTextChangedListener(
         new TextWatcher() {
           @Override
           public void afterTextChanged(Editable editable) {
-            if (editor == null) {
-              return;
-            }
             search(binding.searchText.getText().toString());
           }
 
@@ -54,6 +43,10 @@ public class VCSpaceSearcherLayout extends LinearLayout implements View.OnClickL
     binding.gotoNext.setOnClickListener(this);
     binding.replace.setOnClickListener(this);
     binding.replaceAll.setOnClickListener(this);
+    
+    binding.getRoot().setVisibility(View.GONE);
+    addView(
+        binding.getRoot(), new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
   }
 
   @Override
@@ -77,9 +70,6 @@ public class VCSpaceSearcherLayout extends LinearLayout implements View.OnClickL
     } else {
       binding.getRoot().setVisibility(View.VISIBLE);
       isShowing = true;
-    }
-    if (searcher == null) {
-      return;
     }
     searcher.stopSearch();
     binding.replaceText.setText("");
