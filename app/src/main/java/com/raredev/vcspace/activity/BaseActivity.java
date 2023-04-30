@@ -1,7 +1,6 @@
 package com.raredev.vcspace.activity;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -25,6 +24,7 @@ public abstract class BaseActivity extends AppCompatActivity {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     getWindow().setStatusBarColor(SurfaceColors.SURFACE_0.getColor(this));
+    getWindow().setNavigationBarColor(SurfaceColors.SURFACE_0.getColor(this));
     Thread.setDefaultUncaughtExceptionHandler(new CrashHandler(this));
     setContentView(getLayout());
     Utils.init(this);
