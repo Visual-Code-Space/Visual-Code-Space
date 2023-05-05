@@ -3,14 +3,17 @@ package com.raredev.vcspace.actions.main.edit;
 import android.content.Context;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.actions.main.MainBaseAction;
-import com.raredev.vcspace.util.ToastUtils;
+import com.raredev.vcspace.ui.editor.CodeEditorView;
 import com.vcspace.actions.ActionData;
 
 public class FormatAction extends MainBaseAction {
 
   @Override
   public void performAction(ActionData data) {
-    ToastUtils.showShort("Unable to perform action", ToastUtils.TYPE_ERROR);
+    CodeEditorView editor = getActivity(data).getCurrentEditor();
+    if (editor != null) {
+      editor.getEditor().formatCodeAsync();
+    }
   }
 
   @Override

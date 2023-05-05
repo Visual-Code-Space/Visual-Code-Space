@@ -4,10 +4,13 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import com.raredev.vcspace.util.PreferencesUtils;
 import io.github.rosemoe.sora.lang.completion.CompletionPublisher;
+import io.github.rosemoe.sora.lang.format.Formatter;
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import io.github.rosemoe.sora.text.CharPosition;
+import io.github.rosemoe.sora.text.Content;
 import io.github.rosemoe.sora.text.ContentReference;
+import io.github.rosemoe.sora.text.TextRange;
 import io.github.rosemoe.sora.util.MyCharacter;
 import io.github.rosemoe.sora.widget.SymbolPairMatch;
 import java.util.List;
@@ -16,6 +19,8 @@ import org.eclipse.tm4e.languageconfiguration.model.AutoClosingPairConditional;
 import org.eclipse.tm4e.languageconfiguration.model.LanguageConfiguration;
 
 public class VCSpaceTMLanguage extends TextMateLanguage {
+
+  private TMFormatter formatter;
 
   protected VCSpaceTMLanguage(
       IGrammar grammar,
@@ -45,6 +50,15 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
       @NonNull CharPosition position,
       @NonNull CompletionPublisher publisher,
       @NonNull Bundle extraArguments) {}
+
+  @NonNull
+  @Override
+  public Formatter getFormatter() {
+    if (formatter == null) {
+      formatter = new TMFormatter(this);
+    }
+    return formatter;
+  }
 
   @Override
   public int getTabSize() {
@@ -78,15 +92,17 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
     return symbolPair;
   }
 
+  public String formatCode(Content text, TextRange range) {
+    return text.toString();
+  }
+
   public LanguageConfiguration getLanguageConfiguration() {
     return this.languageConfiguration;
   }
 
-  public void editorCommitText(CharSequence text) {
-    //
-  }
+  public void editorCommitText(CharSequence text) {}
 
-  private boolean checkIsCompletionChar(char c) {
+  public boolean checkIsCompletionChar(char c) {
     return MyCharacter.isJavaIdentifierPart(c);
   }
 }

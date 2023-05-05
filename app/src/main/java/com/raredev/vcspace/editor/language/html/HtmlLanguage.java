@@ -21,12 +21,16 @@ import io.github.rosemoe.sora.text.CharPosition;
 import io.github.rosemoe.sora.text.Content;
 import io.github.rosemoe.sora.text.ContentReference;
 import io.github.rosemoe.sora.text.Cursor;
+import io.github.rosemoe.sora.text.TextRange;
 import io.github.rosemoe.sora.text.TextUtils;
 import io.github.rosemoe.sora.util.MyCharacter;
 import java.util.List;
 import org.eclipse.lemminx.dom.DOMDocument;
 import org.eclipse.lemminx.dom.DOMNode;
 import org.eclipse.lemminx.dom.DOMParser;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.parser.Parser;
 import org.jsoup.parser.Tag;
 
 public class HtmlLanguage extends VCSpaceTMLanguage {
@@ -72,7 +76,43 @@ public class HtmlLanguage extends VCSpaceTMLanguage {
     return new NewlineHandler[] {new EndTagNewlineHandler(), new StartTagNewlineHandler()};
   }
 
-  private boolean checkIsCompletionChar(char c) {
+  @Override
+  public String formatCode(Content text, TextRange range) {
+    String html = text.toString();
+
+    Document doc = Jsoup.parse(html, Parser.htmlParser());
+    var outputSettings = new Document.OutputSettings();
+    outputSettings.indentAmount(getTabSize());
+    doc.outputSettings(outputSettings.prettyPrint(true));
+    return doc.html();
+  }
+
+  @Override
+  public void editorCommitText(CharSequence text) {
+    super.editorCommitText(text);
+    try {
+      if (text.length() == 1) {
+        char c = text.charAt(0);
+        if (c != '/') {
+          return;
+        }
+        Cursor cursor = editor.getCursor();
+
+        DOMDocument document = DOMParser.getInstance().parse(editor.getText().toString(), "", null);
+        DOMNode nodeAt = document.findNodeAt(cursor.getLeft());
+        if (!HtmlUtils.isClosed(nodeAt)
+            && nodeAt.getNodeName() != null
+            && !Tag.valueOf(nodeAt.getNodeName()).isEmpty()) {
+          String insertText = nodeAt.getNodeName() + ">";
+          editor.commitText(insertText);
+        }
+      }
+    } catch (Exception e) {
+    }
+  }
+
+  @Override
+  public boolean checkIsCompletionChar(char c) {
     return MyCharacter.isJavaIdentifierPart(c) || c == '\"' || c == '<' || c == '/';
   }
 
@@ -122,30 +162,6 @@ public class HtmlLanguage extends VCSpaceTMLanguage {
               .append(text = TextUtils.createIndent(count, tabSize, useTab()));
       int shiftLeft = text.length() + 1;
       return new NewlineHandleResult(sb, shiftLeft);
-    }
-  }
-
-  @Override
-  public void editorCommitText(CharSequence text) {
-    super.editorCommitText(text);
-    try {
-      if (text.length() == 1) {
-        char c = text.charAt(0);
-        if (c != '/') {
-          return;
-        }
-        Cursor cursor = editor.getCursor();
-
-        DOMDocument document = DOMParser.getInstance().parse(editor.getText().toString(), "", null);
-        DOMNode nodeAt = document.findNodeAt(cursor.getLeft());
-        if (!HtmlUtils.isClosed(nodeAt)
-            && nodeAt.getNodeName() != null
-            && !Tag.valueOf(nodeAt.getNodeName()).isEmpty()) {
-          String insertText = nodeAt.getNodeName() + ">";
-          editor.commitText(insertText);
-        }
-      }
-    } catch (Exception e) {
     }
   }
 
