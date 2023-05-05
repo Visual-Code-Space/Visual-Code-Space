@@ -3,8 +3,8 @@ package com.raredev.vcspace.fragments.filemanager.actions;
 import android.content.Context;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
-import com.raredev.vcspace.adapters.FileListAdapter;
 import com.raredev.vcspace.fragments.filemanager.FileManagerFragment;
+import com.raredev.vcspace.fragments.filemanager.adapters.FileAdapter;
 import com.vcspace.actions.Action;
 import com.vcspace.actions.ActionData;
 import com.vcspace.actions.Presentation;
@@ -49,8 +49,8 @@ public abstract class FileBaseAction extends Action {
     return data.get(FileManagerFragment.class);
   }
   
-  public FileListAdapter getAdapter(ActionData data) {
-    return data.get(FileListAdapter.class);
+  public FileAdapter getAdapter(ActionData data) {
+    return data.get(FileAdapter.class);
   }
 
   public File getFile(ActionData data) {

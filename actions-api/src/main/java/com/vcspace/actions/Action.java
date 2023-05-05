@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 
 public abstract class Action {
 
-  private Presentation presentation = getDefaultPresentation();
+  private Presentation presentation = createDefaultPresentation();
 
   public abstract void update(@NonNull ActionData data);
 
@@ -19,7 +19,7 @@ public abstract class Action {
     return presentation;
   }
 
-  private Presentation getDefaultPresentation() {
+  private Presentation createDefaultPresentation() {
     Presentation presentation = new Presentation();
     presentation.setTitle("");
     presentation.setVisible(true);

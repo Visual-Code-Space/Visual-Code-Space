@@ -5,15 +5,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import com.raredev.vcspace.databinding.LayoutCodeEditorBinding;
-import com.raredev.vcspace.models.LanguageScope;
-import com.raredev.vcspace.ui.IDECodeEditor;
+import com.raredev.vcspace.models.DocumentModel;
+import com.raredev.vcspace.editor.IDECodeEditor;
 import com.raredev.vcspace.ui.VCSpaceSearcherLayout;
-import com.raredev.vcspace.ui.language.html.HtmlLanguage;
-import com.raredev.vcspace.ui.language.java.JavaLanguage;
-import com.raredev.vcspace.ui.language.lua.LuaLanguage;
 import com.raredev.vcspace.util.FileUtil;
 import io.github.rosemoe.sora.langs.textmate.VCSpaceTMLanguage;
-import java.io.File;
+import io.github.rosemoe.sora.langs.textmate.provider.TextMateProvider;
 import java.util.concurrent.CompletableFuture;
 
 public class CodeEditorView extends LinearLayout {
@@ -22,10 +19,12 @@ public class CodeEditorView extends LinearLayout {
 
   private VCSpaceSearcherLayout searcherLayout;
 
-  public CodeEditorView(Context context, File file) {
+  private DocumentModel document;
+
+  public CodeEditorView(Context context, DocumentModel document) {
     super(context);
+    this.document = document;
     binding = LayoutCodeEditorBinding.inflate(LayoutInflater.from(context));
-    binding.editor.setFile(file);
 
     setOrientation(VERTICAL);
     removeAllViews();
@@ -38,21 +37,52 @@ public class CodeEditorView extends LinearLayout {
     addView(searcherLayout, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 
     setLoading(true);
+    if (document.getContent() == null) {
+      readDocument();
+    } else {
+      binding.editor.setText(document.getContent(), null);
+      postRead();
+    }
+
+    binding.editor.configureEditor();
+  }
+
+  private void readDocument() {
     CompletableFuture.runAsync(
         () -> {
           var editor = binding.editor;
-          var content = FileUtil.readFile(file.getAbsolutePath());
+          var content = FileUtil.readFile(document.getPath());
           editor.post(
               () -> {
                 editor.setText(content, null);
-                editor.markUnmodified();
-
-                editor.setEditorLanguage(createLanguage());
-                setLoading(false);
+                document.markUnmodified();
+                postRead();
               });
         });
+  }
 
-    binding.editor.configureEditor();
+  private void postRead() {
+    binding.editor.setEditorLanguage(createLanguage());
+
+    binding.editor.setCursorPosition(document.getPositionLine(), document.getPositionLine());
+    binding.editor.setDocument(document);
+    setLoading(false);
+  }
+
+  public void reloadEditor() {
+    getEditor().setColorScheme(TextMateProvider.getColorScheme());
+    getEditor().setEditorLanguage(createLanguage());
+  }
+
+  public void saveDocument() {
+    if (document.isModified()) {
+      FileUtil.writeFile(document.getPath(), getCode());
+      document.markUnmodified();
+    }
+  }
+
+  public String getCode() {
+    return binding.editor.getText().toString();
   }
 
   public void showAndHideSearcher() {
@@ -79,12 +109,8 @@ public class CodeEditorView extends LinearLayout {
     }
   }
 
-  public void saveFile() {
-    binding.editor.saveFile();
-  }
-
-  public File getFile() {
-    return binding.editor.getFile();
+  public DocumentModel getDocument() {
+    return document;
   }
 
   public IDECodeEditor getEditor() {
@@ -97,18 +123,7 @@ public class CodeEditorView extends LinearLayout {
 
   public VCSpaceTMLanguage createLanguage() {
     try {
-      final LanguageScope langScope = LanguageScope.Factory.forFile(getFile());
-
-      switch (langScope) {
-        case JAVA:
-          return new JavaLanguage(this);
-        case HTML:
-          return new HtmlLanguage();
-        case LUA:
-          return new LuaLanguage();
-      }
-
-      return VCSpaceTMLanguage.create(langScope.getScope());
+      return TextMateProvider.createLanguage(getEditor(), document.getName());
     } catch (Exception e) {
       return null;
     }

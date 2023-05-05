@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_height="wrap_content"
+  android:layout_width="wrap_content">
+
+  <ListView
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:divider="@null"
+    android:dividerHeight="0dp"
+    android:id="@+id/listView">
+
+  </ListView>
+
+  <com.google.android.material.progressindicator.CircularProgressIndicator
+    android:layout_height="@dimen/dimen22dp"
+    android:layout_width="@dimen/dimen22dp"
+    android:indeterminate="true"
+    android:clickable="false"
+    app:indicatorSize="14dp"
+    android:layout_margin="5dp"
+    app:trackThickness="2.5dp"
+    android:layout_gravity="top|right"
+    android:id="@+id/progress" />
+
+</FrameLayout>

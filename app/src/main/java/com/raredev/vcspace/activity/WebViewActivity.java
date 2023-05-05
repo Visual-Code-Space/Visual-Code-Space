@@ -2,11 +2,20 @@ package com.raredev.vcspace.activity;
 
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
+import android.webkit.JsPromptResult;
+import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
+import androidx.appcompat.app.AlertDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputEditText;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.ActivityWebviewBinding;
+import com.raredev.vcspace.databinding.LayoutTextinputBinding;
 
 @SuppressWarnings("deprecation")
 public class WebViewActivity extends BaseActivity {
@@ -24,14 +33,16 @@ public class WebViewActivity extends BaseActivity {
     setSupportActionBar(binding.toolbar);
 
     binding.toolbar.setNavigationOnClickListener((v) -> onBackPressed());
-    binding.webView.getSettings().setAllowContentAccess(true);
-    binding.webView.getSettings().setAllowFileAccess(true);
-    binding.webView.getSettings().setAllowFileAccessFromFileURLs(true);
-    binding.webView.getSettings().setJavaScriptEnabled(true);
-    binding.webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
-    binding.webView.getSettings().setSupportZoom(true);
-    binding.webView.getSettings().setBuiltInZoomControls(true);
-    binding.webView.getSettings().setDisplayZoomControls(false);
+
+    WebSettings webSettings = binding.webView.getSettings();
+    webSettings.setAllowContentAccess(true);
+    webSettings.setAllowFileAccess(true);
+    webSettings.setAllowFileAccessFromFileURLs(true);
+    webSettings.setJavaScriptEnabled(true);
+    webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
+    webSettings.setSupportZoom(true);
+    webSettings.setBuiltInZoomControls(true);
+    webSettings.setDisplayZoomControls(false);
 
     String executableFilePath = getIntent().getStringExtra("executable_file");
     String htmlContent = getIntent().getStringExtra("html_content");
@@ -43,6 +54,24 @@ public class WebViewActivity extends BaseActivity {
 
     binding.webView.setWebChromeClient(
         new WebChromeClient() {
+
+          @Override
+          public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
+            showAlertDialog(url, message, result);
+            return true;
+          }
+
+          @Override
+          public boolean onJsPrompt(
+              WebView view,
+              String url,
+              String message,
+              String defaultValue,
+              JsPromptResult result) {
+            showPromptDialog(url, message, defaultValue, result);
+            return true;
+          }
+
           @Override
           public void onProgressChanged(WebView view, int progress) {
             binding.progressIndicator.setVisibility(progress == 100 ? View.GONE : View.VISIBLE);
@@ -73,5 +102,58 @@ public class WebViewActivity extends BaseActivity {
       return;
     }
     super.onBackPressed();
+  }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    binding = null;
+  }
+
+  private void showAlertDialog(String url, String message, JsResult result) {
+    new MaterialAlertDialogBuilder(WebViewActivity.this)
+        .setTitle(url)
+        .setMessage(message)
+        .setCancelable(false)
+        .setPositiveButton(android.R.string.ok, (witch, di) -> result.confirm())
+        .setNegativeButton(android.R.string.cancel, (witch, di) -> result.cancel())
+        .show();
+  }
+
+  private void showPromptDialog(
+      String url, String message, String defaultValue, JsPromptResult result) {
+    LayoutTextinputBinding bind = LayoutTextinputBinding.inflate(getLayoutInflater());
+
+    AlertDialog dialog =
+        new MaterialAlertDialogBuilder(this)
+            .setView(bind.getRoot())
+            .setTitle(url)
+            .setCancelable(false)
+            .setPositiveButton(android.R.string.ok, null)
+            .setNegativeButton(android.R.string.cancel, null)
+            .create();
+
+    dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+    dialog.setOnShowListener(
+        (p1) -> {
+          TextInputEditText editText = bind.etInput;
+          bind.tvInputLayout.setHint(message);
+          editText.setText(defaultValue);
+          Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+          Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+          editText.requestFocus();
+          positive.setOnClickListener(
+              v -> {
+                result.confirm(editText.getText().toString());
+                dialog.dismiss();
+              });
+          negative.setOnClickListener(
+              v -> {
+                result.cancel();
+                dialog.dismiss();
+              });
+        });
+    dialog.show();
   }
 }

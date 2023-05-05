@@ -2,7 +2,6 @@ package com.raredev.vcspace.fragments.filemanager.actions.topbar;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -59,7 +58,7 @@ public class CreateFileAction extends TopbarBaseAction {
                         fragment.getString(R.string.existing_file), ToastUtils.TYPE_ERROR);
                   }
                 } catch (IOException ioe) {
-                  ILogger.error(getActionId(), Log.getStackTraceString(ioe));
+                  ILogger.error(getActionId(), ioe);
                 }
                 dialog.dismiss();
               });

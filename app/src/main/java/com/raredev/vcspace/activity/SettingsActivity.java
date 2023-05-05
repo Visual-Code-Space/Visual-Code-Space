@@ -21,4 +21,10 @@ public class SettingsActivity extends BaseActivity {
     getSupportActionBar().setTitle(R.string.menu_settings);
     binding.toolbar.setNavigationOnClickListener((v) -> onBackPressed());
   }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    binding = null;
+  }
 }

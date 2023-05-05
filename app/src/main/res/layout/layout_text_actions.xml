@@ -16,9 +16,10 @@
       android:gravity="center_vertical"
       android:orientation="horizontal">
 
-      <Button
+      <com.google.android.material.button.MaterialButton
         android:layout_height="48dp"
         android:layout_width="48dp"
+        android:visibility="gone"
         android:drawablePadding="16dp"
         android:paddingStart="16dp"
         app:iconPadding="0dp"
@@ -31,7 +32,7 @@
         android:id="@+id/comment"
         android:paddingTop="4dp" />
 
-      <Button
+      <com.google.android.material.button.MaterialButton
         android:layout_height="48dp"
         android:layout_width="48dp"
         android:drawablePadding="16dp"
@@ -46,7 +47,7 @@
         android:id="@+id/uncomment"
         android:paddingTop="4dp" />
 
-      <Button
+      <com.google.android.material.button.MaterialButton
         android:layout_height="48dp"
         android:layout_width="48dp"
         android:drawablePadding="16dp"
@@ -61,7 +62,7 @@
         android:id="@+id/select_all"
         android:paddingTop="4dp" />
 
-      <Button
+      <com.google.android.material.button.MaterialButton
         android:layout_height="48dp"
         android:layout_width="48dp"
         android:drawablePadding="16dp"
@@ -76,7 +77,7 @@
         android:id="@+id/copy"
         android:paddingTop="4dp" />
 
-      <Button
+      <com.google.android.material.button.MaterialButton
         android:layout_height="48dp"
         android:layout_width="48dp"
         android:drawablePadding="16dp"
@@ -91,7 +92,7 @@
         android:id="@+id/paste"
         android:paddingTop="4dp" />
 
-      <Button
+      <com.google.android.material.button.MaterialButton
         android:layout_height="48dp"
         android:layout_width="48dp"
         android:drawablePadding="16dp"

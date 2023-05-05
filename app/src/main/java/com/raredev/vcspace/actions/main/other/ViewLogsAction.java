@@ -28,6 +28,6 @@ public class ViewLogsAction extends MainBaseAction {
 
   @Override
   public int getIcon() {
-    return R.drawable.language_txt;
+    return R.drawable.file_document_outline;
   }
 }

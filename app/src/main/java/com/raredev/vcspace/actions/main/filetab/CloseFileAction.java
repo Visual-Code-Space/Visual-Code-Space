@@ -11,7 +11,7 @@ public class CloseFileAction extends FileTabBaseAction {
   @Override
   public void performAction(@NonNull ActionData data) {
     var main = getActivity(data);
-    main.closeFile(main.viewModel.getCurrentFileIndex());
+    main.closeFile(main.viewModel.getCurrentPosition());
   }
 
   @Override

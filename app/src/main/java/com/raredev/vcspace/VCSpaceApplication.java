@@ -6,22 +6,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.util.Log;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.PreferenceManager;
 import com.google.android.material.color.DynamicColors;
-import com.raredev.vcspace.extension.ExtensionAPI;
-import com.raredev.vcspace.extension.ExtensionAPIImpl;
-import com.raredev.vcspace.extension.completion.JavaCodeCompletionProvider;
+import com.raredev.vcspace.actions.main.EditActionGroup;
+import com.raredev.vcspace.actions.main.FileActionGroup;
+import com.raredev.vcspace.actions.main.filetab.*;
+import com.raredev.vcspace.actions.main.other.*;
+import com.raredev.vcspace.actions.main.text.*;
 import com.raredev.vcspace.fragments.SettingsFragment;
+import com.raredev.vcspace.fragments.filemanager.actions.file.*;
+import com.raredev.vcspace.fragments.filemanager.actions.git.*;
+import com.raredev.vcspace.fragments.filemanager.actions.topbar.*;
 import com.raredev.vcspace.util.ILogger;
-import com.raredev.vcspace.util.Utils;
+import com.vcspace.actions.ActionManager;
+import io.github.rosemoe.sora.langs.textmate.provider.TextMateProvider;
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry;
-import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;
-import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
-import io.github.rosemoe.sora.langs.textmate.registry.model.ThemeModel;
 import io.github.rosemoe.sora.langs.textmate.registry.provider.AssetsFileResolver;
-import org.eclipse.tm4e.core.registry.IThemeSource;
 
 public class VCSpaceApplication extends Application {
 
@@ -44,10 +45,8 @@ public class VCSpaceApplication extends Application {
     AppCompatDelegate.setDefaultNightMode(SettingsFragment.getThemeFromPrefs());
     Thread.setDefaultUncaughtExceptionHandler(new CrashHandler(this));
     registerShutdownReceiver();
+    registerActions();
     loadTextMate();
-
-    ExtensionAPI extensionAPI = ExtensionAPIImpl.getInstance();
-    extensionAPI.registerExtension("javaCodeCompletion", new JavaCodeCompletionProvider());
   }
 
   @Override
@@ -57,30 +56,44 @@ public class VCSpaceApplication extends Application {
   }
 
   private void loadTextMate() {
-    // Load editor themes
-    try {
-      FileProviderRegistry.getInstance().addFileProvider(new AssetsFileResolver(getAssets()));
-      String[] themes = new String[] {"vcspace_dark", "quietlight"};
-      ThemeRegistry themeRegistry = ThemeRegistry.getInstance();
-      for (String name : themes) {
-        String path = "textmate/" + name + ".json";
-        themeRegistry.loadTheme(
-            new ThemeModel(
-                IThemeSource.fromInputStream(
-                    FileProviderRegistry.getInstance().tryGetInputStream(path), path, null),
-                name));
-      }
-    } catch (Exception e) {
-      ILogger.error(
-          "ThemeLoader", "Error when trying to load themes: \t" + Log.getStackTraceString(e));
-    }
+    FileProviderRegistry.getInstance().addFileProvider(new AssetsFileResolver(getAssets()));
     // Load editor languages
     try {
-      GrammarRegistry.getInstance().loadGrammars("textmate/languages.json");
+      TextMateProvider.registerLanguages();
     } catch (Exception e) {
-      ILogger.error(
-          "LanguageLoader", "Error when trying to load languages: \t" + Log.getStackTraceString(e));
+      ILogger.error("LanguageLoader", "Error when trying to load languages:", e);
     }
+  }
+
+  private void registerActions() {
+    ActionManager manager = ActionManager.getInstance();
+    manager.clear();
+    // Main toolbar
+    manager.registerAction(new ExecuteAction());
+    manager.registerAction(new UndoAction());
+    manager.registerAction(new RedoAction());
+    manager.registerAction(new EditActionGroup());
+    manager.registerAction(new FileActionGroup());
+    manager.registerAction(new ViewLogsAction());
+    manager.registerAction(new SettingsAction());
+
+    // File Tab
+    manager.registerAction(new CloseFileAction());
+    manager.registerAction(new CloseOthersAction());
+    manager.registerAction(new CloseAllAction());
+
+    // Git
+    manager.registerAction(new CloneRepositoryAction());
+
+    // File manager topbar
+    manager.registerAction(new RefreshFilesAction());
+    manager.registerAction(new CreateFileAction());
+    manager.registerAction(new CreateFolderAction());
+
+    // File manager
+    manager.registerAction(new CopyPathAction());
+    manager.registerAction(new RenameFileAction());
+    manager.registerAction(new DeleteFileAction());
   }
 
   public SharedPreferences getDefaultPref() {

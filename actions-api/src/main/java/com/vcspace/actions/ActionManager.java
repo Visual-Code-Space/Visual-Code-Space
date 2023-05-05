@@ -22,6 +22,8 @@ public abstract class ActionManager {
 
   public abstract void registerAction(@NonNull Action action);
 
+  public abstract void performAction(@NonNull String id, @NonNull ActionData data);
+
   public abstract void unregisterAction(@NonNull Action action);
 
   public abstract void unregisterAction(@NonNull String actionId);

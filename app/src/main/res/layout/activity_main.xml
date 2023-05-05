@@ -28,13 +28,14 @@
   <androidx.drawerlayout.widget.DrawerLayout
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:animateLayoutChanges="true"
     app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
     android:id="@+id/drawerLayout">
 
     <RelativeLayout
       android:layout_height="match_parent"
-      android:layout_width="match_parent">
+      android:layout_width="match_parent"
+      android:elevation="5dp"
+      android:id="@+id/main">
 
       <LinearLayout
         android:layout_height="match_parent"
@@ -82,6 +83,7 @@
       android:layout_width="300dp"
       android:background="?attr/colorSurface"
       android:name="com.raredev.vcspace.fragments.filemanager.FileManagerFragment"
+      android:tag="filemanager"
       android:layout_gravity="start"
       android:id="@+id/filemanager_fragment" />
 

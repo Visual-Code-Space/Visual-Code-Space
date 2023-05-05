@@ -7,14 +7,13 @@ import android.view.WindowManager;
 import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import com.blankj.utilcode.util.KeyboardUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.raredev.vcspace.R;
-import com.raredev.vcspace.adapters.FileListAdapter;
 import com.raredev.vcspace.databinding.LayoutTextinputBinding;
 import com.raredev.vcspace.fragments.filemanager.FileManagerFragment;
 import com.raredev.vcspace.fragments.filemanager.actions.FileBaseAction;
+import com.raredev.vcspace.fragments.filemanager.adapters.FileAdapter;
 import com.raredev.vcspace.util.ToastUtils;
 import com.vcspace.actions.ActionData;
 import java.io.File;
@@ -23,8 +22,7 @@ public class RenameFileAction extends FileBaseAction {
 
   @Override
   public boolean isApplicable(File file, ActionData data) {
-    FileListAdapter adapter = getAdapter(data);
-    return !adapter.isFilesSelected();
+    return true;
   }
 
   @Override

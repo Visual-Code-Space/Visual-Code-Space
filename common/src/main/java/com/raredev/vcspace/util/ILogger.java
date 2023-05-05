@@ -1,5 +1,6 @@
 package com.raredev.vcspace.util;
 
+import android.util.Log;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,7 +17,7 @@ public class ILogger {
   private static File logFile;
   private static BufferedWriter writer;
   private static Observer observer;
-  
+
   static {
     initialize();
   }
@@ -47,6 +48,14 @@ public class ILogger {
     log(Priority.WARNING, tag, message);
   }
 
+  public static void error(String tag, String message, Throwable e) {
+    log(Priority.ERROR, tag, message + "\n" + Log.getStackTraceString(e));
+  }
+
+  public static void error(String tag, Throwable e) {
+    log(Priority.ERROR, tag, Log.getStackTraceString(e));
+  }
+
   public static void error(String tag, String message) {
     log(Priority.ERROR, tag, message);
   }
@@ -58,7 +67,7 @@ public class ILogger {
   public static void verbose(String tag, String message) {
     log(Priority.VERBOSE, tag, message);
   }
-  
+
   public static void a(String tag, String message) {
     log(Priority.ASSERT, tag, message);
   }

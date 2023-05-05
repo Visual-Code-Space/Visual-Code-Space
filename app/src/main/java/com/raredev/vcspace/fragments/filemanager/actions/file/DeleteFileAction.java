@@ -5,9 +5,9 @@ import androidx.annotation.NonNull;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.activity.MainActivity;
-import com.raredev.vcspace.adapters.FileListAdapter;
 import com.raredev.vcspace.fragments.filemanager.FileManagerFragment;
 import com.raredev.vcspace.fragments.filemanager.actions.FileBaseAction;
+import com.raredev.vcspace.fragments.filemanager.adapters.FileAdapter;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.util.DialogUtils;
 import com.raredev.vcspace.util.FileUtil;
@@ -25,7 +25,7 @@ public class DeleteFileAction extends FileBaseAction {
   @Override
   public void performAction(@NonNull ActionData data) {
     FileManagerFragment fragment = getFragment(data);
-    FileListAdapter adapter = getAdapter(data);
+    FileAdapter adapter = getAdapter(data);
     File file = getFile(data);
 
     new MaterialAlertDialogBuilder(fragment.requireActivity())
@@ -44,13 +44,7 @@ public class DeleteFileAction extends FileBaseAction {
               progress.show();
               TaskExecutor.executeAsyncProvideError(
                   () -> {
-                    boolean deleted = false;
-                    if (adapter.isFilesSelected()) {
-                      deleted = FileUtil.deleteFiles(adapter.getSelectedFiles());
-                    } else {
-                      deleted = FileUtil.delete(file);
-                    }
-                    return deleted;
+                    return FileUtil.delete(file);
                   },
                   (result, error) -> {
                     progress.cancel();

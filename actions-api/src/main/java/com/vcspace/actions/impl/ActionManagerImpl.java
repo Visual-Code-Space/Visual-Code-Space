@@ -4,6 +4,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import androidx.annotation.NonNull;
+import com.raredev.vcspace.util.ILogger;
+import com.raredev.vcspace.util.ToastUtils;
 import com.vcspace.actions.Action;
 import com.vcspace.actions.ActionData;
 import com.vcspace.actions.ActionGroup;
@@ -13,6 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ActionManagerImpl extends ActionManager {
+  private static final String LOG = "ActionManagerImpl";
 
   private Map<String, Action> actions = new LinkedHashMap<>();
 
@@ -55,11 +58,7 @@ public class ActionManagerImpl extends ActionManager {
     menuItem.setEnabled(presentation.isEnabled());
     menuItem.setShowAsAction(presentation.getShowAsAction());
 
-    menuItem.setOnMenuItemClickListener(
-        item -> {
-          action.performAction(data);
-          return true;
-        });
+    menuItem.setOnMenuItemClickListener(item -> performAction(action, data));
   }
 
   @Override
@@ -70,6 +69,23 @@ public class ActionManagerImpl extends ActionManager {
   @Override
   public void registerAction(@NonNull Action action) {
     actions.put(action.getActionId(), action);
+  }
+
+  @Override
+  public void performAction(@NonNull String id, @NonNull ActionData data) {
+    Action action = actions.get(id);
+    performAction(action, data);
+  }
+
+  private boolean performAction(@NonNull Action action, @NonNull ActionData data) {
+    try {
+      action.performAction(data);
+      return true;
+    } catch (Throwable e) {
+      ToastUtils.showShort("Unable to perform action", ToastUtils.TYPE_ERROR);
+      ILogger.error(LOG, "Unable to perform action", e);
+      return false;
+    }
   }
 
   @Override

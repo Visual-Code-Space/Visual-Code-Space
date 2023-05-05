@@ -22,21 +22,19 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FileUtil {
-  
-  private static File idePath;
-  
-  public static File getIdePath() {
-  	if (idePath == null) {
-      idePath = new File(Environment.getExternalStorageDirectory(), "/VCSpace/");
+
+  private static File deviceDirectory;
+
+  public static File getDeviceDirectory() {
+    if (deviceDirectory == null) {
+      deviceDirectory = new File(Environment.getExternalStorageDirectory().getAbsolutePath());
     }
-    if (!idePath.exists()) {
-      idePath.mkdirs();
-    }
-    return idePath;
+    return deviceDirectory;
   }
 
   public static boolean isValidTextFile(String filename) {
@@ -77,14 +75,8 @@ public class FileUtil {
     }
   }
 
-  public static boolean deleteFiles(List<File> files) {
-    List<File> deletedFiles = new ArrayList<>();
-    for (File file : files) {
-      if (delete(file)) {
-        deletedFiles.add(file);
-      }
-    }
-    return deletedFiles.size() == files.size();
+  public static boolean delete(String path) {
+    return delete(new File(path));
   }
 
   public static boolean delete(File file) {
@@ -112,10 +104,14 @@ public class FileUtil {
   }
 
   public static String readFile(String path) {
+    return readFile(new File(path));
+  }
+
+  public static String readFile(File file) {
     StringBuilder sb = new StringBuilder();
     FileReader fr = null;
     try {
-      fr = new FileReader(new File(path));
+      fr = new FileReader(file);
 
       char[] buff = new char[1024];
       int length = 0;
@@ -134,6 +130,7 @@ public class FileUtil {
         }
       }
     }
+
     return sb.toString();
   }
 

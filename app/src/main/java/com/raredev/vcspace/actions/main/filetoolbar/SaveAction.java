@@ -25,7 +25,7 @@ public class SaveAction extends MainBaseAction {
       return;
     }
 
-    presentation.setEnabled(main.getCurrentEditor().getEditor().isModified());
+    presentation.setEnabled(main.getCurrentEditor().getDocument().isModified());
   }
 
   @Override

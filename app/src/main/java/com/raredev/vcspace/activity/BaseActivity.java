@@ -28,7 +28,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     Thread.setDefaultUncaughtExceptionHandler(new CrashHandler(this));
     setContentView(getLayout());
     Utils.init(this);
-    
+
     if (!isPermissionGaranted()) {
       takeFilePermissions();
     }

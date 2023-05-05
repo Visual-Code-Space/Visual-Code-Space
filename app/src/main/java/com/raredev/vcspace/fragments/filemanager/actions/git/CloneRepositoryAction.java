@@ -3,6 +3,7 @@ package com.raredev.vcspace.fragments.filemanager.actions.git;
 import android.content.Context;
 import com.raredev.vcspace.fragments.filemanager.FileManagerFragment;
 import com.raredev.vcspace.fragments.filemanager.actions.GitBaseAction;
+import com.raredev.vcspace.fragments.filemanager.models.FileModel;
 import com.raredev.vcspace.git.CloneRepository;
 import com.raredev.vcspace.util.DialogUtils;
 import com.raredev.vcspace.util.ILogger;
@@ -25,7 +26,7 @@ public class CloneRepositoryAction extends GitBaseAction {
 
           @Override
           public void onCloneSuccess(File output) {
-            fragment.listArchives(output);
+            fragment.getViewModel().setCurrentDir(FileModel.fileToFileModel(output));
             ILogger.info(LOG_TAG, "Cloned to: " + output.toString());
           }
 

@@ -20,7 +20,7 @@
 
   </com.google.android.material.appbar.AppBarLayout>
 
-  <com.raredev.vcspace.ui.IDECodeEditor
+  <com.raredev.vcspace.editor.IDECodeEditor
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"

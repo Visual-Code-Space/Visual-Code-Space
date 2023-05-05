@@ -1,51 +1,58 @@
 package com.raredev.vcspace.fragments.filemanager;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.TooltipCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.activity.MainActivity;
-import com.raredev.vcspace.adapters.FileListAdapter;
 import com.raredev.vcspace.databinding.FragmentFileManagerBinding;
-import com.raredev.vcspace.ui.viewmodel.FileListViewModel;
+import com.raredev.vcspace.fragments.filemanager.adapters.DirectoryAdapter;
+import com.raredev.vcspace.fragments.filemanager.adapters.FileAdapter;
+import com.raredev.vcspace.fragments.filemanager.models.FileModel;
+import com.raredev.vcspace.fragments.filemanager.viewmodel.FileListViewModel;
+import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.util.ApkInstaller;
 import com.raredev.vcspace.util.FileUtil;
 import com.vcspace.actions.ActionData;
 import com.vcspace.actions.ActionManager;
 import com.vcspace.actions.location.DefaultLocations;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-public class FileManagerFragment extends Fragment implements FileListAdapter.FileListener {
-
-  private FileListViewModel viewModel;
-  private FileListAdapter mAdapter;
-
-  private File currentFolder = new File(Environment.getExternalStorageDirectory().toString());
-  private File backFile = new File("..");
+public class FileManagerFragment extends Fragment implements FileAdapter.FileListener {
 
   private FragmentFileManagerBinding binding;
+
+  private FileListViewModel viewModel;
+
+  private DirectoryAdapter mDirectoriesAdapter;
+  private FileAdapter mFilesAdapter;
+
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    viewModel = new ViewModelProvider((ViewModelStoreOwner) this).get(FileListViewModel.class);
+  }
 
   @Nullable
   @Override
   public View onCreateView(
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     binding = FragmentFileManagerBinding.inflate(inflater, container, false);
-
-    viewModel = new ViewModelProvider(requireActivity()).get(FileListViewModel.class);
 
     TooltipCompat.setTooltipText(binding.gitTools, getString(R.string.git));
     TooltipCompat.setTooltipText(binding.topbarMenu, getString(R.string.folder));
@@ -54,7 +61,7 @@ public class FileManagerFragment extends Fragment implements FileListAdapter.Fil
           PopupMenu pm = new PopupMenu(requireContext(), v);
           ActionData data = new ActionData();
           data.put(FileManagerFragment.class, this);
-          data.put(File.class, currentFolder);
+          data.put(File.class, viewModel.getCurrentDirFile());
           ActionManager.getInstance().fillMenu(pm.getMenu(), data, DefaultLocations.GIT);
           pm.show();
         });
@@ -64,7 +71,7 @@ public class FileManagerFragment extends Fragment implements FileListAdapter.Fil
           PopupMenu pm = new PopupMenu(requireContext(), v);
           ActionData data = new ActionData();
           data.put(FileManagerFragment.class, this);
-          data.put(File.class, currentFolder);
+          data.put(File.class, viewModel.getCurrentDirFile());
           Menu menu = pm.getMenu();
           if (menu instanceof MenuBuilder) {
             ((MenuBuilder) menu).setOptionalIconsVisible(true);
@@ -73,50 +80,61 @@ public class FileManagerFragment extends Fragment implements FileListAdapter.Fil
           pm.show();
         });
 
-    mAdapter = new FileListAdapter(viewModel);
-    mAdapter.setFileListener(this);
+    setupRecyclerView();
 
-    binding.rvFiles.setLayoutManager(new LinearLayoutManager(requireContext()));
-    binding.rvFiles.setAdapter(mAdapter);
     return binding.getRoot();
   }
 
   @Override
-  public void onFileClick(File file, View v) {
-    if (file == backFile) {
-      if (currentFolder.getPath().equals(Environment.getExternalStorageDirectory().getPath())) {
-        return;
-      }
-      listArchives(currentFolder.getParentFile());
-      return;
-    }
-    if (file.isDirectory()) {
-      listArchives(file);
+  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    viewModel
+        .getCurrentDirLiveData()
+        .observe(
+            getViewLifecycleOwner(),
+            (dir) -> {
+              listArchives(dir.toFile());
+              viewModel.openDirectory(dir);
+              mDirectoriesAdapter.notifyDataSetChanged();
+              binding.rvDir.scrollToPosition(mDirectoriesAdapter.getItemCount() - 1);
+            });
+    
+    /*if (savedInstanceState != null) {
+      DirectoryModel dir = savedInstanceState.getParcelable("currentDir");
+      viewModel.setCurrentDir(dir);
+    }*/
+  }
+
+  @Override
+  public void onSaveInstanceState(Bundle outstate) {
+    super.onSaveInstanceState(outstate);
+    //outstate.putParcelable("currentDir", viewModel.getCurrentDir());
+  }
+
+  @Override
+  public void onFileClick(FileModel file, View v) {
+    if (!file.isFile()) {
+      viewModel.setCurrentDir(file);
     } else {
       if (FileUtil.isValidTextFile(file.getName())) {
         ((MainActivity) requireActivity()).openFile(file);
       } else if (file.getName().endsWith(".apk")) {
-        ApkInstaller.installApplication(getContext(), file);
+        ApkInstaller.installApplication(getContext(), file.toFile());
       }
     }
   }
 
   @Override
-  public void onFileLongClick(File file, View v) {
-    if (file == backFile) {
-      return;
-    }
-  }
+  public void onFileLongClick(FileModel file, View v) {}
 
   @Override
-  public void onFileMenuClick(File file, View v) {
+  public void onFileMenuClick(FileModel file, View v) {
     PopupMenu pm = new PopupMenu(requireContext(), v);
 
     ActionData data = new ActionData();
     data.put(FileManagerFragment.class, this);
-    data.put(FileListAdapter.class, mAdapter);
-    data.put(Context.class, requireContext());
-    data.put(File.class, file);
+    data.put(FileAdapter.class, mFilesAdapter);
+    data.put(File.class, file.toFile());
 
     Menu menu = pm.getMenu();
     if (menu instanceof MenuBuilder) {
@@ -140,26 +158,50 @@ public class FileManagerFragment extends Fragment implements FileListAdapter.Fil
     binding = null;
   }
 
+  private void setupRecyclerView() {
+    mDirectoriesAdapter = new DirectoryAdapter(viewModel);
+    mFilesAdapter = new FileAdapter(viewModel);
+
+    mFilesAdapter.setFileListener(this);
+
+    binding.rvDir.setLayoutManager(
+        new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+    binding.rvDir.setAdapter(mDirectoriesAdapter);
+
+    binding.rvFiles.setLayoutManager(new LinearLayoutManager(requireContext()));
+    binding.rvFiles.setAdapter(mFilesAdapter);
+  }
+
   public void refreshFiles() {
-    listArchives(currentFolder);
+    listArchives(viewModel.getCurrentDirFile());
   }
 
   public void listArchives(File path) {
-    currentFolder = path;
-    viewModel.getFiles().clear();
-
-    List<File> mFiles = viewModel.getFiles();
-
-    mFiles.add(backFile);
-    File[] files = path.listFiles();
-    if (files != null) {
-      Arrays.sort(files, FILE_FIRST_ORDER);
-      for (File file : files) {
-        mFiles.add(file);
-      }
-    }
-    viewModel.setFiles(mFiles);
-    mAdapter.refreshFiles();
+    binding.container.setDisplayedChild(1);
+    TaskExecutor.executeAsyncProvideError(
+        () -> {
+          List<FileModel> mFiles = new ArrayList<>();
+          File[] files = path.listFiles();
+          if (files != null) {
+            Arrays.sort(files, FILE_FIRST_ORDER);
+            for (File file : files) {
+              mFiles.add(FileModel.fileToFileModel(file));
+            }
+          }
+          return mFiles;
+        },
+        (result, error) -> {
+          binding.container.setDisplayedChild(0);
+          if (result == null || error != null) {
+            return;
+          }
+          viewModel.setFiles(result);
+          mFilesAdapter.refreshFiles();
+        });
+  }
+  
+  public FileListViewModel getViewModel() {
+    return viewModel;
   }
 
   private static final Comparator<File> FILE_FIRST_ORDER =

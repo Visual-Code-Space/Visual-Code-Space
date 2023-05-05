@@ -34,7 +34,7 @@ public class SaveAsAction extends MainBaseAction {
     Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
     intent.addCategory(Intent.CATEGORY_OPENABLE);
     intent.setType("text/*");
-    intent.putExtra(Intent.EXTRA_TITLE, main.viewModel.getCurrentFile().getName());
+    intent.putExtra(Intent.EXTRA_TITLE, main.viewModel.getCurrentDocument().getName());
 
     main.launcher.launch(intent);
   }

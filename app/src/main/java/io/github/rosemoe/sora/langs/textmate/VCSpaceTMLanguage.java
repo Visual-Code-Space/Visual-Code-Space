@@ -1,8 +1,14 @@
 package io.github.rosemoe.sora.langs.textmate;
 
+import android.os.Bundle;
+import androidx.annotation.NonNull;
 import com.raredev.vcspace.util.PreferencesUtils;
+import io.github.rosemoe.sora.lang.completion.CompletionPublisher;
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
+import io.github.rosemoe.sora.text.CharPosition;
+import io.github.rosemoe.sora.text.ContentReference;
+import io.github.rosemoe.sora.util.MyCharacter;
 import io.github.rosemoe.sora.widget.SymbolPairMatch;
 import java.util.List;
 import org.eclipse.tm4e.core.grammar.IGrammar;
@@ -16,7 +22,7 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
       LanguageConfiguration languageConfiguration,
       ThemeRegistry themeRegistry,
       boolean createIdentifiers) {
-    super(grammar, languageConfiguration, null, themeRegistry, createIdentifiers);
+    super(grammar, languageConfiguration, null, themeRegistry, false);
   }
 
   public static VCSpaceTMLanguage create(String languageScopeName) {
@@ -33,12 +39,12 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
     return new VCSpaceTMLanguage(grammar, languageConfiguration, ThemeRegistry.getInstance(), true);
   }
 
-  public LanguageConfiguration getLanguageConfiguration() {
-    if (languageConfiguration != null) {
-      return this.languageConfiguration;
-    }
-    return null;
-  }
+  @Override
+  public void requireAutoComplete(
+      @NonNull ContentReference content,
+      @NonNull CharPosition position,
+      @NonNull CompletionPublisher publisher,
+      @NonNull Bundle extraArguments) {}
 
   @Override
   public int getTabSize() {
@@ -53,9 +59,14 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
   @Override
   public SymbolPairMatch getSymbolPairs() {
     SymbolPairMatch symbolPair = new SymbolPairMatch();
+    if (languageConfiguration == null) {
+      return symbolPair;
+    }
 
     List<AutoClosingPairConditional> autoClosingPairs = languageConfiguration.getAutoClosingPairs();
-
+    if (autoClosingPairs == null) {
+      return symbolPair;
+    }
     for (AutoClosingPairConditional autoClosingPair : autoClosingPairs) {
       symbolPair.putPair(
           autoClosingPair.open,
@@ -64,7 +75,18 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
               autoClosingPair.close,
               new TextMateSymbolPairMatch.SymbolPairEx(autoClosingPair)));
     }
-
     return symbolPair;
+  }
+
+  public LanguageConfiguration getLanguageConfiguration() {
+    return this.languageConfiguration;
+  }
+
+  public void editorCommitText(CharSequence text) {
+    //
+  }
+
+  private boolean checkIsCompletionChar(char c) {
+    return MyCharacter.isJavaIdentifierPart(c);
   }
 }

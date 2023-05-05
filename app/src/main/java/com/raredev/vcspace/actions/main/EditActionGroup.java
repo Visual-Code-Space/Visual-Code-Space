@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.actions.main.edit.FindTextAction;
 import com.raredev.vcspace.actions.main.edit.FormatAction;
+import com.raredev.vcspace.actions.main.edit.ReloadEditorAction;
 import com.raredev.vcspace.activity.MainActivity;
 import com.vcspace.actions.Action;
 import com.vcspace.actions.ActionData;
@@ -14,6 +15,10 @@ import com.vcspace.actions.Presentation;
 import com.vcspace.actions.location.DefaultLocations;
 
 public class EditActionGroup extends ActionGroup {
+
+  private Action[] subActions = {
+    new FindTextAction(), new FormatAction(), new ReloadEditorAction()
+  };
 
   @Override
   public void update(@NonNull ActionData data) {
@@ -46,6 +51,6 @@ public class EditActionGroup extends ActionGroup {
 
   @Override
   public Action[] getChildren(@Nullable ActionData data) {
-    return new Action[] {new FindTextAction(), new FormatAction()};
+    return subActions;
   }
 }

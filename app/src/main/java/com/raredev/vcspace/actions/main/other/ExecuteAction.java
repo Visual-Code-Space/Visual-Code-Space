@@ -24,23 +24,23 @@ public class ExecuteAction extends MainBaseAction {
     if (main.getCurrentEditor() == null) {
       return;
     }
-    
+
     presentation.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-    presentation.setVisible(SimpleExecuter.isExecutable(main.getCurrentEditor().getFile()));
+    presentation.setVisible(
+        SimpleExecuter.isExecutable(main.getCurrentEditor().getDocument().toFile()));
   }
 
   @Override
   public void performAction(ActionData data) {
     var main = getActivity(data);
     main.saveAllFiles(false);
-    new SimpleExecuter(main, main.getCurrentEditor().getFile());
+    new SimpleExecuter(main, main.getCurrentEditor().getDocument().toFile());
   }
-  
+
   @Override
   public String getActionId() {
     return "execute.action";
   }
-  
 
   @Override
   public String getTitle(Context context) {

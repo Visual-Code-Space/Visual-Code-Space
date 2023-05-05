@@ -14,6 +14,14 @@ import com.vcspace.actions.location.DefaultLocations;
 
 public class FileActionGroup extends ActionGroup {
 
+  private final Action[] subActions = {
+    new NewFileAction(),
+    new OpenFileAction(),
+    new SaveAction(),
+    new SaveAsAction(),
+    new SaveAllAction()
+  };
+
   @Override
   public void update(@NonNull ActionData data) {
     Presentation presentation = getPresentation();
@@ -42,12 +50,6 @@ public class FileActionGroup extends ActionGroup {
 
   @Override
   public Action[] getChildren(@Nullable ActionData data) {
-    return new Action[] {
-      new NewFileAction(),
-      new OpenFileAction(),
-      new SaveAction(),
-      new SaveAsAction(),
-      new SaveAllAction()
-    };
+    return subActions;
   }
 }

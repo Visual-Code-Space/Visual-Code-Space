@@ -4,8 +4,8 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import com.blankj.utilcode.util.ClipboardUtils;
 import com.raredev.vcspace.R;
-import com.raredev.vcspace.adapters.FileListAdapter;
 import com.raredev.vcspace.fragments.filemanager.actions.FileBaseAction;
+import com.raredev.vcspace.fragments.filemanager.adapters.FileAdapter;
 import com.vcspace.actions.ActionData;
 import java.io.File;
 
@@ -13,8 +13,7 @@ public class CopyPathAction extends FileBaseAction {
 
   @Override
   public boolean isApplicable(File file, ActionData data) {
-    FileListAdapter adapter = getAdapter(data);
-    return !adapter.isFilesSelected();
+    return true;
   }
 
   @Override

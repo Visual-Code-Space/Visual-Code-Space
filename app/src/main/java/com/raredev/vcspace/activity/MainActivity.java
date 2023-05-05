@@ -2,6 +2,7 @@ package com.raredev.vcspace.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,17 +10,22 @@ import android.view.Menu;
 import android.view.View;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.google.android.material.tabs.TabLayout;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.ActivityMainBinding;
+import com.raredev.vcspace.editor.completion.CompletionProvider;
+import com.raredev.vcspace.events.EditorContentChangedEvent;
+import com.raredev.vcspace.events.PreferenceChangedEvent;
+import com.raredev.vcspace.fragments.filemanager.models.FileModel;
+import com.raredev.vcspace.models.DocumentModel;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.ui.editor.CodeEditorView;
 import com.raredev.vcspace.ui.editor.Symbol;
@@ -29,28 +35,32 @@ import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.util.PreferencesUtils;
 import com.raredev.vcspace.util.ToastUtils;
 import com.raredev.vcspace.util.UniqueNameBuilder;
+import com.raredev.vcspace.util.Utils;
 import com.vcspace.actions.ActionData;
 import com.vcspace.actions.ActionManager;
 import com.vcspace.actions.location.DefaultLocations;
-import io.github.rosemoe.sora.widget.CodeEditor;
+import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 public class MainActivity extends BaseActivity
-    implements SharedPreferences.OnSharedPreferenceChangeListener {
-  protected final String LOG_TAG = MainActivity.class.getSimpleName();
-  public ActivityMainBinding binding;
-
-  public EditorViewModel viewModel;
+    implements TabLayout.OnTabSelectedListener, SharedPreferences.OnSharedPreferenceChangeListener {
+  private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
   public ActivityResultLauncher<Intent> launcher;
   public ActivityResultLauncher<String> createFile;
   public ActivityResultLauncher<String> pickFile;
+
+  public ActivityMainBinding binding;
+
+  public EditorViewModel viewModel;
 
   @Override
   public View getLayout() {
@@ -63,41 +73,11 @@ public class MainActivity extends BaseActivity
     super.onCreate(savedInstanceState);
     setSupportActionBar(binding.toolbar);
 
-    ActionBarDrawerToggle toggle =
-        new ActionBarDrawerToggle(
-            this, binding.drawerLayout, binding.toolbar, R.string.open, R.string.close);
-    binding.drawerLayout.addDrawerListener(toggle);
-    toggle.syncState();
+    setupDrawer();
 
     viewModel = new ViewModelProvider(this).get(EditorViewModel.class);
-    viewModel.removeAllFiles();
 
-    binding.tabLayout.addOnTabSelectedListener(
-        new TabLayout.OnTabSelectedListener() {
-          @Override
-          public void onTabUnselected(TabLayout.Tab p1) {}
-
-          @Override
-          public void onTabReselected(TabLayout.Tab p1) {
-            PopupMenu pm = new PopupMenu(MainActivity.this, p1.view);
-
-            ActionData data = new ActionData();
-            data.put(MainActivity.class, MainActivity.this);
-            ActionManager.getInstance().fillMenu(pm.getMenu(), data, DefaultLocations.FILE_TAB);
-
-            pm.show();
-          }
-
-          @Override
-          public void onTabSelected(TabLayout.Tab p1) {
-            var position = p1.getPosition();
-            var editor = getEditorAtIndex(position).getEditor();
-            viewModel.setCurrentFile(position, editor.getFile());
-
-            saveRecentlyOpenedFiles();
-            invalidateOptionsMenu();
-          }
-        });
+    binding.tabLayout.addOnTabSelectedListener(this);
 
     KeyboardUtils.registerSoftInputChangedListener(
         this,
@@ -106,26 +86,45 @@ public class MainActivity extends BaseActivity
           public void onSoftInputChanged(int i) {
             if (i > 1 && getCurrentEditor() != null) {
               binding.symbolInput.setVisibility(View.VISIBLE);
-              refreshSymbolInput(getCurrentEditor().getEditor());
+              binding.symbolInput.bindEditor(getCurrentEditor().getEditor());
             } else {
               binding.symbolInput.setVisibility(View.GONE);
-              binding.symbolInput.clear();
             }
             invalidateOptionsMenu();
           }
         });
 
-    getLifecycle().addObserver(new LifecyclerObserver());
+    CompletionProvider.registerCompletionProviders();
+
+    binding.symbolInput.setSymbols(Symbol.baseSymbols());
+    ThemeRegistry.getInstance().setTheme(Utils.isDarkMode() ? "darcula" : "quietlight");
     registerResultActivity();
     observeViewModel();
+  }
 
-    //openRecentlyOpenedFiles();
+  @Override
+  public void onTabUnselected(TabLayout.Tab p1) {}
+
+  @Override
+  public void onTabReselected(TabLayout.Tab p1) {
+    PopupMenu pm = new PopupMenu(MainActivity.this, p1.view);
+
+    ActionData data = new ActionData();
+    data.put(MainActivity.class, MainActivity.this);
+    ActionManager.getInstance().fillMenu(pm.getMenu(), data, DefaultLocations.FILE_TAB);
+
+    pm.show();
+  }
+
+  @Override
+  public void onTabSelected(TabLayout.Tab p1) {
+    viewModel.setCurrentPosition(p1.getPosition());
   }
 
   @Override
   public void onBackPressed() {
-    if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-      binding.drawerLayout.closeDrawer(GravityCompat.START);
+    if (viewModel.getDrawerState()) {
+      viewModel.setDrawerState(false);
       return;
     }
     CodeEditorView editor = getCurrentEditor();
@@ -133,13 +132,6 @@ public class MainActivity extends BaseActivity
       editor.showAndHideSearcher();
       return;
     }
-    TabLayout.Tab tab = binding.tabLayout.getTabAt(0);
-    if (tab != null && !tab.isSelected()) {
-      binding.tabLayout.selectTab(tab, true);
-      return;
-    }
-    saveRecentlyOpenedFiles();
-    saveAllFiles(false);
     super.onBackPressed();
   }
 
@@ -147,12 +139,25 @@ public class MainActivity extends BaseActivity
   protected void onStart() {
     super.onStart();
     PreferencesUtils.getDefaultPrefs().registerOnSharedPreferenceChangeListener(this);
+    if (!EventBus.getDefault().isRegistered(this)) {
+      EventBus.getDefault().register(this);
+    }
+  }
+
+  @Override
+  protected void onStop() {
+    if (EventBus.getDefault().isRegistered(this)) {
+      EventBus.getDefault().unregister(this);
+    }
+    super.onStop();
   }
 
   @Override
   protected void onDestroy() {
-    super.onDestroy();
     PreferencesUtils.getDefaultPrefs().unregisterOnSharedPreferenceChangeListener(this);
+    viewModel.clearDocuments();
+    super.onDestroy();
+    binding = null;
   }
 
   @Override
@@ -163,12 +168,7 @@ public class MainActivity extends BaseActivity
 
   @Override
   public void onSharedPreferenceChanged(SharedPreferences pref, String key) {
-    for (int i = 0; i < viewModel.getOpenedFileCount(); i++) {
-      CodeEditorView editor = getEditorAtIndex(i);
-      if (editor != null) {
-        editor.getEditor().onSharedPreferenceChanged(key);
-      }
-    }
+    EventBus.getDefault().post(new PreferenceChangedEvent(key));
   }
 
   @Override
@@ -189,6 +189,40 @@ public class MainActivity extends BaseActivity
     return true;
   }
 
+  private void setupDrawer() {
+    DrawerLayout drawerLayout = binding.drawerLayout;
+
+    ActionBarDrawerToggle toggle =
+        new ActionBarDrawerToggle(
+            this, drawerLayout, binding.toolbar, R.string.open, R.string.close);
+    drawerLayout.addDrawerListener(toggle);
+    toggle.syncState();
+
+    drawerLayout.setScrimColor(Color.TRANSPARENT);
+    drawerLayout.setDrawerElevation(0);
+    drawerLayout.addDrawerListener(
+        new DrawerLayout.DrawerListener() {
+          @Override
+          public void onDrawerSlide(@NonNull View view, float v) {
+            float slideX = view.getWidth() * v;
+            binding.main.setTranslationX(slideX);
+          }
+
+          @Override
+          public void onDrawerOpened(@NonNull View view) {
+            viewModel.setDrawerState(true);
+          }
+
+          @Override
+          public void onDrawerClosed(@NonNull View view) {
+            viewModel.setDrawerState(false);
+          }
+
+          @Override
+          public void onDrawerStateChanged(int i) {}
+        });
+  }
+
   private void registerResultActivity() {
     launcher =
         registerForActivityResult(
@@ -198,9 +232,9 @@ public class MainActivity extends BaseActivity
                 Uri uri = result.getData().getData();
                 try {
                   OutputStream outputStream = getContentResolver().openOutputStream(uri);
-                  outputStream.write(getCurrentEditor().getEditor().getText().toString().getBytes());
+                  outputStream.write(getCurrentEditor().getCode().getBytes());
                   outputStream.close();
-                  openFile(FileUtil.getFileFromUri(this, uri));
+                  openFile(FileModel.fileToFileModel(FileUtil.getFileFromUri(this, uri)));
                 } catch (IOException e) {
                   ILogger.error(LOG_TAG, Log.getStackTraceString(e));
                 }
@@ -212,7 +246,7 @@ public class MainActivity extends BaseActivity
             uri -> {
               if (uri != null) {
                 try {
-                  openFile(FileUtil.getFileFromUri(this, uri));
+                  openFile(FileModel.fileToFileModel(FileUtil.getFileFromUri(this, uri)));
                 } catch (IOException e) {
                   ILogger.error(LOG_TAG, Log.getStackTraceString(e));
                 }
@@ -224,7 +258,7 @@ public class MainActivity extends BaseActivity
             uri -> {
               if (uri != null) {
                 try {
-                  openFile(FileUtil.getFileFromUri(this, uri));
+                  openFile(FileModel.fileToFileModel(FileUtil.getFileFromUri(this, uri)));
                 } catch (IOException e) {
                   ILogger.error(LOG_TAG, Log.getStackTraceString(e));
                 }
@@ -233,10 +267,10 @@ public class MainActivity extends BaseActivity
   }
 
   private void observeViewModel() {
-    viewModel.observeFiles(
+    viewModel.observeDocuments(
         this,
-        files -> {
-          if (files.isEmpty()) {
+        documents -> {
+          if (documents.isEmpty()) {
             binding.editorContainer.setVisibility(View.GONE);
             binding.noFileOpened.setVisibility(View.VISIBLE);
             invalidateOptionsMenu();
@@ -244,209 +278,162 @@ public class MainActivity extends BaseActivity
             binding.editorContainer.setVisibility(View.VISIBLE);
             binding.noFileOpened.setVisibility(View.GONE);
           }
-          saveRecentlyOpenedFiles();
         });
-
-    viewModel.getDisplayedFile().observe(this, index -> binding.container.setDisplayedChild(index));
+    viewModel.observeDrawerState(
+        this,
+        (state) -> {
+          if (state) {
+            binding.drawerLayout.openDrawer(GravityCompat.START);
+          } else {
+            binding.drawerLayout.closeDrawer(GravityCompat.START);
+          }
+        });
+    viewModel.observeCurrentPosition(
+        this,
+        index -> {
+          binding.container.setDisplayedChild(index);
+          final var tab = binding.tabLayout.getTabAt(index);
+          if (tab != null && index >= 0 && !tab.isSelected()) {
+            tab.select();
+          }
+          invalidateOptionsMenu();
+        });
   }
 
-  private void refreshSymbolInput(CodeEditor editor) {
-    binding.symbolInput.setSymbols(Symbol.baseSymbols());
-    binding.symbolInput.bindEditor(editor);
-  }
-
-  public void openFile(File file) {
-    binding.drawerLayout.closeDrawers();
-    if (file == null) {
+  public void openFile(@NonNull FileModel file) {
+    if (!file.isFile()) {
       return;
     }
-    if (!file.isFile() || !file.exists()) {
-      return;
-    }
+    viewModel.setDrawerState(false);
     int index = openFileAndGetIndex(file);
-    setCurrentFile(index);
+    viewModel.setCurrentPosition(index);
   }
 
-  private int openFileAndGetIndex(File file) {
-    int openedFileIndex = findIndexOfEditorByFile(file);
+  private int openFileAndGetIndex(@NonNull FileModel file) {
+    int openedFileIndex = viewModel.indexOf(file.getPath());
     if (openedFileIndex != -1) {
       return openedFileIndex;
     }
-    int index = viewModel.getOpenedFileCount();
+    DocumentModel document = DocumentModel.fileModelToDocument(file);
+    int index = viewModel.getOpenedDocumentCount();
 
-    CodeEditorView editor = new CodeEditorView(this, file);
-    editor.getEditor().subscribeContentChangeEvent(() -> onEditorContentChanged(file));
+    CodeEditorView editor = new CodeEditorView(this, document);
     binding.container.addView(editor);
 
-    TabLayout.Tab tabItem = binding.tabLayout.newTab();
-    tabItem.setText(file.getName());
-
-    binding.tabLayout.addTab(tabItem, index, false);
-    viewModel.addFile(file);
+    binding.tabLayout.addTab(binding.tabLayout.newTab());
+    viewModel.addDocument(document);
     updateTabs();
     return index;
   }
 
   public void closeFile(int index) {
-    if (index >= 0 && index < viewModel.getOpenedFileCount()) {
+    if (index >= 0 && index < viewModel.getOpenedDocumentCount()) {
       CodeEditorView editor = getEditorAtIndex(index);
       if (editor != null) {
         editor.release();
       }
 
-      viewModel.removeFile(index);
+      viewModel.removeDocument(index);
       binding.tabLayout.removeTabAt(index);
       binding.container.removeViewAt(index);
       updateTabs();
     }
-    binding.tabLayout.requestLayout();
   }
 
   public void closeOthers() {
-    File file = viewModel.getCurrentFile();
-    if (file == null) {
-      return;
-    }
+    DocumentModel document = viewModel.getCurrentDocument();
     int index = 0;
 
-    while (viewModel.getOpenedFileCount() != 1) {
+    while (viewModel.getOpenedDocumentCount() != 1) {
       CodeEditorView editor = getEditorAtIndex(index);
 
       if (editor != null) {
-        if (file != editor.getFile()) {
+        if (document != editor.getDocument()) {
           closeFile(index);
         } else {
           index = 1;
         }
       }
     }
-    int size = viewModel.getOpenedFileCount() - 1;
-    viewModel.setCurrentFile(size, file);
-    setCurrentFile(size);
+    viewModel.setCurrentPosition(viewModel.indexOf(document));
   }
 
   public void closeAllFiles() {
-    if (viewModel.getOpenedFiles().isEmpty()) {
+    if (viewModel.getDocuments().isEmpty()) {
       return;
     }
-    for (int i = 0; i < viewModel.getOpenedFileCount(); i++) {
+    for (int i = 0; i < viewModel.getOpenedDocumentCount(); i++) {
       CodeEditorView editor = getEditorAtIndex(i);
       if (editor != null) {
         editor.release();
       }
     }
 
-    viewModel.removeAllFiles();
+    viewModel.clearDocuments();
     binding.tabLayout.removeAllTabs();
     binding.tabLayout.requestLayout();
     binding.container.removeAllViews();
   }
 
   public void saveFile() {
-    if (!viewModel.getOpenedFiles().isEmpty()) {
-      getCurrentEditor().saveFile();
-
-      ToastUtils.showShort(getString(R.string.saved), ToastUtils.TYPE_SUCCESS);
-
-      invalidateOptionsMenu();
-      updateTabs();
+    if (!viewModel.getDocuments().isEmpty()) {
+      TaskExecutor.executeAsync(
+          () -> {
+            saveDocumentAtIndex(viewModel.getCurrentPosition());
+            return null;
+          },
+          (result) -> {
+            ToastUtils.showShort(getString(R.string.saved), ToastUtils.TYPE_SUCCESS);
+            invalidateOptionsMenu();
+          });
     }
   }
 
   public void saveAllFiles(boolean showMsg) {
-    if (!viewModel.getOpenedFiles().isEmpty()) {
-      for (int i = 0; i < viewModel.getOpenedFileCount(); i++) {
-        getEditorAtIndex(i).saveFile();
-      }
-
-      if (showMsg) {
-        ToastUtils.showShort(getString(R.string.saved_files), ToastUtils.TYPE_SUCCESS);
-      }
-      updateTabs();
+    if (!viewModel.getDocuments().isEmpty()) {
+      TaskExecutor.executeAsync(
+          () -> {
+            for (int i = 0; i < viewModel.getOpenedDocumentCount(); i++) {
+              saveDocumentAtIndex(i);
+            }
+            return null;
+          },
+          (result) -> {
+            if (showMsg) {
+              ToastUtils.showShort(getString(R.string.saved_files), ToastUtils.TYPE_SUCCESS);
+            }
+          });
     }
   }
 
-  public void onFileDeleted() {
-    List<File> deletedFiles = new ArrayList<>();
-    for (int i = 0; i < viewModel.getOpenedFileCount(); i++) {
-      File openedFile = viewModel.getOpenedFiles().get(i);
-      if (!openedFile.exists()) {
-        deletedFiles.add(openedFile);
-      }
-    }
-    removeDeletedFiles(deletedFiles);
-  }
-
-  private void removeDeletedFiles(List<File> deletedFiles) {
-    for (File deletedFile : deletedFiles) {
-      closeFile(viewModel.getOpenedFiles().indexOf(deletedFile));
+  private void saveDocumentAtIndex(int index) {
+    CodeEditorView editorView = getEditorAtIndex(index);
+    TabLayout.Tab tab = binding.tabLayout.getTabAt(index);
+    if (editorView != null && tab != null) {
+      editorView.saveDocument();
+      runOnUiThread(() -> tab.setText(editorView.getDocument().getName()));
     }
   }
 
-  public int findIndexOfEditorByFile(File file) {
-    for (int i = 0; i < viewModel.getOpenedFileCount(); i++) {
-      File openedFile = viewModel.getOpenedFiles().get(i);
-      if (openedFile.getAbsolutePath().equals(file.getAbsolutePath())) {
-        return i;
-      }
-    }
-    return -1;
-  }
+  public void onFileDeleted() {}
 
   public CodeEditorView getEditorAtIndex(int index) {
     return (CodeEditorView) binding.container.getChildAt(index);
   }
 
   public CodeEditorView getCurrentEditor() {
-    return (CodeEditorView) binding.container.getChildAt(viewModel.getCurrentFileIndex());
+    return (CodeEditorView) binding.container.getChildAt(viewModel.getCurrentPosition());
   }
 
-  private void saveRecentlyOpenedFiles() {
-    List<File> openedFiles = viewModel.getOpenedFiles();
-
-    String json = new Gson().toJson(openedFiles);
-
-    SharedPreferences.Editor editor = PreferencesUtils.getDefaultPrefs().edit();
-    editor.putString("openedFiles", json);
-    editor.putInt("selectedFile", viewModel.getCurrentFileIndex());
-    editor.apply();
-  }
-
-  private void openRecentlyOpenedFiles() {
-    try {
-      SharedPreferences pref = PreferencesUtils.getDefaultPrefs();
-      String json = pref.getString("openedFiles", "");
-      List<File> recentlyOpenedFiles =
-          new Gson().fromJson(json, new TypeToken<List<File>>() {}.getType());
-
-      for (File file : recentlyOpenedFiles) {
-        if (file == null) {
-          return;
-        }
-        if (!file.isFile() || !file.exists()) {
-          return;
-        }
-        openFileAndGetIndex(file);
-      }
-      setCurrentFile(pref.getInt("selectedFile", -1));
-    } catch (Throwable e) {
-      ILogger.error(LOG_TAG, Log.getStackTraceString(e));
-    }
-  }
-
-  public void setCurrentFile(int index) {
-    final var tab = binding.tabLayout.getTabAt(index);
-    if (tab != null && index >= 0 && !tab.isSelected()) {
-      binding.tabLayout.selectTab(tab, true);
-    }
-  }
-  
-  private void onEditorContentChanged(File file) {
-    int index = findIndexOfEditorByFile(file);
+  @Subscribe(threadMode = ThreadMode.MAIN)
+  public void onEditorContentChanged(EditorContentChangedEvent event) {
+    DocumentModel document = event.getDocument();
+    document.markModified();
+    invalidateOptionsMenu();
+    int index = viewModel.indexOf(document);
     if (index == -1) {
       return;
     }
-
     TabLayout.Tab tab = binding.tabLayout.getTabAt(index);
     if (tab == null) {
       return;
@@ -457,7 +444,6 @@ public class MainActivity extends BaseActivity
       return;
     }
     tab.setText("• " + name);
-    invalidateOptionsMenu();
   }
 
   private void updateTabs() {
@@ -482,22 +468,22 @@ public class MainActivity extends BaseActivity
   }
 
   private Map<Integer, String> getUniqueNames() {
-    List<File> files = viewModel.getOpenedFiles();
+    List<DocumentModel> documents = viewModel.getDocuments();
     Map<String, Integer> dupliCount = new HashMap<>();
     Map<Integer, String> names = new HashMap<>();
-    UniqueNameBuilder<File> nameBuilder = new UniqueNameBuilder<>("", File.separator);
+    UniqueNameBuilder<DocumentModel> nameBuilder = new UniqueNameBuilder<>("", File.separator);
 
-    for (File file : files) {
-      int count = dupliCount.getOrDefault(file.getName(), 0);
-      dupliCount.put(file.getName(), ++count);
-      nameBuilder.addPath(file, file.getPath());
+    for (DocumentModel document : documents) {
+      int count = dupliCount.getOrDefault(document.getName(), 0);
+      dupliCount.put(document.getName(), ++count);
+      nameBuilder.addPath(document, document.getPath());
     }
 
     for (int i = 0; i < binding.tabLayout.getTabCount(); i++) {
-      File file = files.get(i);
-      int count = dupliCount.getOrDefault(file.getName(), 0);
-      boolean isModified = getEditorAtIndex(i).getEditor().isModified();
-      String name = (count > 1) ? nameBuilder.getShortPath(file) : file.getName();
+      DocumentModel document = documents.get(i);
+      int count = dupliCount.getOrDefault(document.getName(), 0);
+      boolean isModified = document.isModified();
+      String name = (count > 1) ? nameBuilder.getShortPath(document) : document.getName();
       if (isModified) {
         name = "• " + name;
       }

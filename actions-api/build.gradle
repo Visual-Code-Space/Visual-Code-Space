@@ -1,14 +1,29 @@
 plugins {
-  id 'java-library'
+  id 'com.android.library'
 }
 
-java {
-  sourceCompatibility JavaVersion.VERSION_17
-  targetCompatibility JavaVersion.VERSION_17
+android {
+  namespace 'com.vcspace.actions'
+  compileSdk 33
+  buildToolsVersion "33.0.0"
+
+  defaultConfig {
+    minSdk 26
+    targetSdk 33
+  }
+  buildTypes {
+    release {
+      minifyEnabled false
+    }
+  }
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_17
+    targetCompatibility JavaVersion.VERSION_17
+  }
 }
 
 dependencies {
   implementation 'androidx.annotation:annotation:1.6.0'
- 
-  compileOnlyApi files('libs/android.jar')
+
+  implementation project(path: ':common')
 }
