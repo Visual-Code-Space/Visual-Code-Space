@@ -14,6 +14,7 @@ public class SettingsManager {
   public static final String KEY_CREDENTIAL_USERNAME = "credential_username";
   public static final String KEY_CREDENTIAL_PASSWORD = "credential_password";
   public static final String KEY_GITHUB = "github";
+  public static final String KEY_LICENSES = "licenses";
   public static final String KEY_RECENT_FOLDER = "recentFolderPath";
   public static final String KEY_TOOLS_PREFERENCE = "tools";
   public static final String KEY_FONT_SIZE_PREFERENCE = "font_size";

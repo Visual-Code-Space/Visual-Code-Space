@@ -4,12 +4,12 @@ plugins {
 
 android {
   namespace 'com.vcspace.actions'
-  compileSdk 33
-  buildToolsVersion "33.0.0"
+  compileSdk rootProject.ext.compileSdk
+  buildToolsVersion rootProject.ext.buildToolsVersion
 
   defaultConfig {
-    minSdk 26
-    targetSdk 33
+    minSdk rootProject.ext.minSdk
+    targetSdk rootProject.ext.targetSdk
   }
   buildTypes {
     release {
@@ -23,7 +23,7 @@ android {
 }
 
 dependencies {
-  implementation 'androidx.annotation:annotation:1.6.0'
+  implementation androidx.annotation
 
   implementation project(path: ':common')
 }

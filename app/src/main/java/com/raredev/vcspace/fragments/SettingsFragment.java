@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import com.blankj.utilcode.util.ToastUtils;
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.LayoutCredentialBinding;
@@ -34,6 +35,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
           String url = "https://github.com/raredeveloperofc/Visual-Code-Space";
           Intent i = new Intent(Intent.ACTION_VIEW);
           i.setData(Uri.parse(url));
+          startActivity(i);
+          return true;
+        });
+    Preference licenses = findPreference(SettingsManager.KEY_LICENSES);
+    licenses.setOnPreferenceClickListener(
+        (pref) -> {
+          Intent i = new Intent(requireContext(), OssLicensesMenuActivity.class);
           startActivity(i);
           return true;
         });

@@ -183,8 +183,8 @@ public class MainActivity extends BaseActivity
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    if (menu instanceof MenuBuilder) {
-      ((MenuBuilder) menu).setOptionalIconsVisible(true);
+    if (menu instanceof MenuBuilder menuBuilder) {
+      menuBuilder.setOptionalIconsVisible(true);
     }
     return true;
   }

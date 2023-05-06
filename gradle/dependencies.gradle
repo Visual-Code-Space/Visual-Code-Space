@@ -1,0 +1,24 @@
+ext {
+  androidx = [
+    annotation: 'androidx.annotation:annotation:1.6.0',
+    core_ktx: 'androidx.core:core-ktx:1.10.0',
+    appcompat: 'androidx.appcompat:appcompat:1.6.1',
+    preference: 'androidx.preference:preference:1.2.0',
+    swiperefreshlayout: 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0',
+    fragment: 'androidx.fragment:fragment:1.6.0-beta01'
+  ]
+  google = [
+    material: 'com.google.android.material:material:1.9.0',
+    oss_licenses: 'com.google.android.gms:play-services-oss-licenses:17.0.0',
+    guava: 'com.google.guava:guava:31.1-jre',
+    gson: 'com.google.code.gson:gson:2.10.1'
+  ]
+  common = [
+    utilcode: 'com.blankj:utilcodex:1.31.1',
+    jgit: 'org.eclipse.jgit:org.eclipse.jgit:6.5.0.202303070854-r',
+    eventbus: 'org.greenrobot:eventbus:3.3.1',
+    commonmark: 'org.commonmark:commonmark:0.20.0',
+    jsoup: 'org.jsoup:jsoup:1.16.1',
+    leakcanary: 'com.squareup.leakcanary:leakcanary-android:2.10'
+  ]
+}

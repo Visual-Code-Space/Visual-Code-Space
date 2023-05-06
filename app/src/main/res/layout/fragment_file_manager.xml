@@ -9,9 +9,9 @@
   <com.google.android.material.appbar.AppBarLayout
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
+    app:layout_behavior="com.google.android.material.appbar.AppBarLayout$Behavior"
     app:liftOnScroll="true"
-    android:fitsSystemWindows="true"
-    app:liftOnScrollTargetViewId="@id/rv_files">
+    android:fitsSystemWindows="true">
 
     <RelativeLayout
       android:layout_height="wrap_content"

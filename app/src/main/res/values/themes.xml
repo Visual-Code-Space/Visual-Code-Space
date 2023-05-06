@@ -35,12 +35,11 @@
     <item name="dialogCornerRadius">28dp</item>
   </style>
 
-  <style name="TabLayout.TextStyle" parent="@android:style/TextAppearance.Widget.TabWidget">
-    <item name="android:fontFamily">@font/josefin_sans</item>
-  </style>
-
   <style name="AppTheme.SwitchPreference" parent="Preference.SwitchPreference.Material">
     <item name="android:widgetLayout">@layout/layout_material_switch_style</item>
   </style>
 
+  <style name="TabLayout.TextStyle" parent="@android:style/TextAppearance.Widget.TabWidget">
+    <item name="android:fontFamily">@font/josefin_sans</item>
+  </style>
 </resources>

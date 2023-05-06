@@ -80,6 +80,11 @@
       app:key="github"
       app:summary="https://github.com/raredeveloperofc/Visual-Code-Space"
       app:title="GitHub:" />
+    
+    <Preference
+      app:icon="@drawable/ic_license"
+      app:key="licenses"
+      app:title="Licenses" />
   </PreferenceCategory>
 
 </PreferenceScreen>

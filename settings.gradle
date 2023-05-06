@@ -17,6 +17,6 @@ rootProject.name = "Visual Code Space"
 
 include ':app'
 include ':common'
-include ':actions-api'
+include ':actions'
 include ':git-api'
 include ':extensions-api'

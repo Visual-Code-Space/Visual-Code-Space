@@ -4,12 +4,12 @@ plugins {
 
 android {
   namespace 'com.raredev.vcspace.common'
-  compileSdk 33
-  buildToolsVersion "33.0.0"
+  compileSdk rootProject.ext.compileSdk
+  buildToolsVersion rootProject.ext.buildToolsVersion
 
   defaultConfig {
-    minSdk 26
-    targetSdk 33
+    minSdk rootProject.ext.minSdk
+    targetSdk rootProject.ext.targetSdk
   }
   buildTypes {
     release {
@@ -26,8 +26,8 @@ android {
 }
 
 dependencies {
-  implementation 'androidx.appcompat:appcompat:1.6.1'
-  implementation 'com.google.android.material:material:1.9.0'
-  implementation 'com.google.code.gson:gson:2.10.1'
-  implementation 'com.blankj:utilcodex:1.31.1'
+  implementation androidx.appcompat
+  implementation google.material
+  implementation google.gson
+  implementation common.utilcode
 }

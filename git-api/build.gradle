@@ -4,12 +4,12 @@ plugins {
 
 android {
   namespace 'com.raredev.vcspace.git'
-  compileSdk 33
-  buildToolsVersion "33.0.0"
+  compileSdk rootProject.ext.compileSdk
+  buildToolsVersion rootProject.ext.buildToolsVersion
 
   defaultConfig {
-    minSdk 26
-    targetSdk 33
+    minSdk rootProject.ext.minSdk
+    targetSdk rootProject.ext.targetSdk
   }
   buildTypes {
     release {
@@ -27,11 +27,10 @@ android {
 }
 
 dependencies {
-  implementation 'androidx.appcompat:appcompat:1.6.1'
-  implementation 'com.google.android.material:material:1.9.0'
-  implementation 'org.eclipse.jgit:org.eclipse.jgit:6.5.0.202303070854-r'
-    
-  implementation 'com.blankj:utilcodex:1.31.1'
+  implementation androidx.appcompat
+  implementation google.material
+  implementation common.jgit
+  implementation common.utilcode
     
   implementation project(path: ':common')
 }
