@@ -3,7 +3,6 @@ package com.raredev.vcspace.editor.completion;
 import android.graphics.drawable.Drawable;
 import androidx.annotation.NonNull;
 import io.github.rosemoe.sora.lang.completion.CompletionItemKind;
-import io.github.rosemoe.sora.lang.completion.SimpleCompletionIconDrawer;
 import io.github.rosemoe.sora.text.Content;
 import io.github.rosemoe.sora.widget.CodeEditor;
 
@@ -43,6 +42,9 @@ public class SimpleCompletionItem extends VCSpaceCompletionItem {
     super(label, desc, type, icon);
     this.commitText = commitText;
     this.prefixLength = prefixLength;
+    if (this.icon == null) {
+      icon = SimpleCompletionIconDrawer.draw(type.subSequence(0, 1).toString());
+    }
   }
 
   @Override
@@ -66,9 +68,6 @@ public class SimpleCompletionItem extends VCSpaceCompletionItem {
   @Override
   public SimpleCompletionItem kind(CompletionItemKind kind) {
     super.kind(kind);
-    if (this.icon == null) {
-      icon = SimpleCompletionIconDrawer.draw(kind);
-    }
     return this;
   }
 

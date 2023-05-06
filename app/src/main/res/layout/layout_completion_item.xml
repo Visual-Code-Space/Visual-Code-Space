@@ -6,17 +6,16 @@
   android:background="@drawable/ripple_effect"
   android:padding="4dp"
   android:orientation="horizontal">
-
-  <TextView
-    android:layout_height="30dp"
-    android:layout_width="30dp"
+    
+  <ImageView
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content"
     android:gravity="center"
     android:layout_marginHorizontal="4dp"
-    android:fontFamily="@font/jetbrains_mono"
+    android:layout_centerVertical="true"
     android:paddingHorizontal="8dp"
-    android:text="V"
-    android:textStyle="bold"
-    android:id="@+id/item_icon" />
+    android:id="@+id/item_icon"
+    android:src="@drawable/cube" />
 
   <TextView
     android:layout_height="wrap_content"

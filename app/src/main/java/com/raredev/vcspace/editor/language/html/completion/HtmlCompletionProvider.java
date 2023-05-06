@@ -5,7 +5,9 @@ import com.raredev.vcspace.VCSpaceApplication;
 import com.raredev.vcspace.editor.IDECodeEditor;
 import com.raredev.vcspace.editor.completion.CompletionParams;
 import com.raredev.vcspace.editor.completion.CompletionProvider;
+import com.raredev.vcspace.editor.completion.SimpleCompletionIconDrawer;
 import com.raredev.vcspace.editor.completion.SimpleCompletionItem;
+import com.raredev.vcspace.editor.completion.SimpleCompletionItemKind;
 import com.raredev.vcspace.editor.completion.SimpleSnippetCompletionItem;
 import com.raredev.vcspace.editor.completion.VCSpaceCompletionItem;
 import com.raredev.vcspace.util.FileUtil;
@@ -68,7 +70,13 @@ public class HtmlCompletionProvider extends CompletionProvider {
       }
       if (tagString.startsWith(prefix) && completions.size() <= 20) {
         completions.add(
-            new SimpleCompletionItem(key, tag.getDescription(), "Tag", prefix.length(), tagString));
+            new SimpleCompletionItem(
+                key,
+                tag.getDescription(),
+                "Tag",
+                SimpleCompletionIconDrawer.draw(SimpleCompletionItemKind.Tag),
+                prefix.length(),
+                tagString));
       }
     }
   }
@@ -99,6 +107,7 @@ public class HtmlCompletionProvider extends CompletionProvider {
                     attr,
                     htmlTag.getDescription(),
                     "Attribute",
+                    SimpleCompletionIconDrawer.draw(SimpleCompletionItemKind.Attribute),
                     new SnippetDescription(
                         prefix.length(), CodeSnippetParser.parse(attr + "=\"$0\""), true)));
           }
@@ -135,7 +144,12 @@ public class HtmlCompletionProvider extends CompletionProvider {
             }
             completions.add(
                 new SimpleCompletionItem(
-                    value, attribute.getDescription(), type, prefix.length(), valueInsert));
+                    value,
+                    attribute.getDescription(),
+                    type,
+                    SimpleCompletionIconDrawer.draw(SimpleCompletionItemKind.Value),
+                    prefix.length(),
+                    valueInsert));
           }
         }
       }

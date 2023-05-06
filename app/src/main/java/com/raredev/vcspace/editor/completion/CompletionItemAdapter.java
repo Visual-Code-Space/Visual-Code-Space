@@ -41,10 +41,10 @@ public class CompletionItemAdapter extends EditorCompletionAdapter {
     }
 
     if (!TextUtils.isEmpty(item.type)) {
-      binding.itemIcon.setText(item.type.subSequence(0, 1).toString().toUpperCase());
+      binding.itemIcon.setImageDrawable(item.icon);
       binding.itemType.setText(item.type);
     } else if (!TextUtils.isEmpty(item.desc)) {
-      binding.itemIcon.setText(item.desc.subSequence(0, 1).toString().toUpperCase());
+      binding.itemIcon.setImageDrawable(item.icon);
     }
 
     if (!TextUtils.isEmpty(item.desc)) {
