@@ -1,18 +1,22 @@
 package com.raredev.vcspace.editor.completion;
 
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import androidx.annotation.DrawableRes;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.graphics.drawable.DrawableCompat;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.VCSpaceApplication;
+import com.raredev.vcspace.util.Utils;
 
 public class SimpleCompletionIconDrawer {
   public static Drawable draw(SimpleCompletionItemKind kind) {
     Drawable icon = draw(kind.getDisplayChar());
-    if (kind.getDefaultDisplayBackgroundColor() != 0)
-      DrawableCompat.setTint(
-          DrawableCompat.wrap(icon), (int) kind.getDefaultDisplayBackgroundColor());
+    DrawableCompat.setTint(
+        DrawableCompat.wrap(icon),
+        kind.getDefaultDisplayBackgroundColor() != 0
+            ? (int) kind.getDefaultDisplayBackgroundColor()
+            : Utils.isDarkMode() ? Color.WHITE : Color.DKGRAY);
     return icon;
   }
 
