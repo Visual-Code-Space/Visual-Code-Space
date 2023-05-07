@@ -65,6 +65,12 @@
       "languageConfiguration": "textmate/json/language-configuration.json"
     },
     {
+      "grammar": "textmate/julia/syntaxes/julia.tmLanguage.json",
+      "name": "julia",
+      "scopeName": "source.julia", 
+      "languageConfiguration": "textmate/julia/language-configuration.json"
+    },
+    {
       "grammar": "textmate/kotlin/syntaxes/Kotlin.tmLanguage",
       "name": "kotlin",
       "scopeName": "source.kotlin",
@@ -112,6 +118,12 @@
       "name": "ShellScript",
       "scopeName": "source.shell",
       "languageConfiguration": "textmate/shellscript/language-configuration.json"
+    },
+    {
+      "grammar": "textmate/typescript/syntaxes/TypeScript.tmLanguage.json",
+      "name": "typescript",
+      "scopeName": "source.ts", 
+      "languageConfiguration": "textmate/typescript/language-configuration.json"
     },
     {
       "grammar": "textmate/yaml/syntaxes/yaml.tmLanguage.json",

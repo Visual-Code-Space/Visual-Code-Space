@@ -63,7 +63,7 @@ public class FileModel {
   }
 
   private static String[] TEXT_FILE = {
-    ".txt", ".js", ".json", ".java", ".kt", ".kts", ".md", ".lua", ".cs", ".css", ".c", ".cpp", ".h",
+    ".txt", ".js", ".ji", ".json", ".java", ".kt", ".kts", ".md", ".lua", ".cs", ".css", ".c", ".cpp", ".h",
     ".hpp", ".py", ".htm", ".html", ".xhtml", ".xht", ".xaml", ".xdf", ".xmpp", ".xml", ".sh",
     ".ksh", ".bsh", ".csh", ".tcsh", ".zsh", ".bash", ".groovy", ".gvy", ".gy", ".gsh", ".php",
     ".php3", ".php4", ".php5", ".phps", ".phtml", ".ts", ".log", ".yaml", ".yml", ".toml",

@@ -32,13 +32,10 @@
     <item name="switchPreferenceCompatStyle">@style/AppTheme.SwitchPreference</item>
     <item name="materialAlertDialogTheme">@style/MaterialAlertDialog.Monet</item>
     <item name="alertDialogTheme">@style/MaterialAlertDialog.Monet</item>
-    <!--<item name="materialAlertDialogTheme">@style/ThemeOverlay.Material3.MaterialAlertDialog</item>-->
-    <!--<item name="alertDialogTheme">@style/ThemeOverlay.Material3.MaterialAlertDialog</item>-->
     <item name="dialogCornerRadius">28dp</item>
   </style>
   
   <style name="MaterialAlertDialog.Monet" parent="ThemeOverlay.Material3.MaterialAlertDialog">
-   <!-- <item name="alertDialogStyle">@style/ThemeOverlay.Material3.MaterialAlertDialog</item>-->
     <item name="dialogCornerRadius">@dimen/dimen28dp</item>
     <item name="android:background">@drawable/dialog_shape</item>
   </style>
