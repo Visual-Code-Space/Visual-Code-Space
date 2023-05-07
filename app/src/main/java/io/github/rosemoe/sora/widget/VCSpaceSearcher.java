@@ -4,6 +4,7 @@ import com.raredev.vcspace.R;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.util.DialogUtils;
 import com.raredev.vcspace.util.ToastUtils;
+import io.github.rosemoe.sora.event.SelectionChangeEvent;
 import io.github.rosemoe.sora.util.IntPair;
 
 public class VCSpaceSearcher extends EditorSearcher {
@@ -13,6 +14,67 @@ public class VCSpaceSearcher extends EditorSearcher {
   public VCSpaceSearcher(CodeEditor editor) {
     super(editor);
     this.editor = editor;
+  }
+
+  @Override
+  public boolean gotoPrevious() {
+    if (!hasQuery()) {
+      throw new IllegalStateException("pattern not set");
+    }
+    if (isResultValid()) {
+      var res = lastResults;
+      if (res == null || res.size() == 0) {
+        return false;
+      }
+      var left = editor.getCursor().getLeft();
+      var index = res.lowerBoundByFirst(left);
+      if (index == res.size() || IntPair.getFirst(res.get(index)) >= index) {
+        index--;
+      }
+      if (index < 0) {
+        index = res.size() - 1;
+      }
+      if (index >= 0 && index < res.size()) {
+        var data = res.get(index);
+        var end = IntPair.getSecond(data);
+        var pos1 = editor.getText().getIndexer().getCharPosition(IntPair.getFirst(data));
+        var pos2 = editor.getText().getIndexer().getCharPosition(end);
+        editor.setSelectionRegion(
+            pos1.line, pos1.column, pos2.line, pos2.column, SelectionChangeEvent.CAUSE_SEARCH);
+        return true;
+      }
+    }
+    ToastUtils.showShort("Text not found", ToastUtils.TYPE_ERROR);
+    return false;
+  }
+
+  @Override
+  public boolean gotoNext() {
+    if (!hasQuery()) {
+      throw new IllegalStateException("pattern not set");
+    }
+    if (isResultValid()) {
+      var res = lastResults;
+      if (res == null) {
+        return false;
+      }
+      var right = editor.getCursor().getRight();
+      var index = res.lowerBoundByFirst(right);
+      if (index == res.size()) {
+        index = 0;
+      }
+      if (index < res.size()) {
+        var data = res.get(index);
+        var start = IntPair.getFirst(data);
+        var pos1 = editor.getText().getIndexer().getCharPosition(start);
+        var pos2 = editor.getText().getIndexer().getCharPosition(IntPair.getSecond(data));
+        editor.setSelectionRegion(
+            pos1.line, pos1.column, pos2.line, pos2.column, SelectionChangeEvent.CAUSE_SEARCH);
+        return true;
+      }
+    }
+    ToastUtils.showShort("Text not found", ToastUtils.TYPE_ERROR);
+    return false;
   }
 
   @Override
