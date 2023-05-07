@@ -30,7 +30,7 @@ public class KotlinCompletionProvider extends CompletionProvider {
     return completions;
   }
 
-  private static final String[] kotlinKeywords = {
+  public static final String[] kotlinKeywords = {
     "as",
     "as?",
     "break",

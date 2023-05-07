@@ -27,6 +27,7 @@ public class KotlinLanguage extends VCSpaceTMLanguage {
         ThemeRegistry.getInstance(),
         false);
     this.editor = editor;
+    setCompleterKeywords(KotlinCompletionProvider.kotlinKeywords);
   }
 
   @Override

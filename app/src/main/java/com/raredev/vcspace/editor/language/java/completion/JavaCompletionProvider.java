@@ -30,7 +30,7 @@ public class JavaCompletionProvider extends CompletionProvider {
     return completions;
   }
 
-  private static final String[] javaKeywords = {
+  public static final String[] javaKeywords = {
     "assert",
     "abstract",
     "boolean",
