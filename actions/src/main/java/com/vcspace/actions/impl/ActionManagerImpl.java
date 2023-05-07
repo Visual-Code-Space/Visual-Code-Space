@@ -58,7 +58,9 @@ public class ActionManagerImpl extends ActionManager {
     menuItem.setEnabled(presentation.isEnabled());
     menuItem.setShowAsAction(presentation.getShowAsAction());
 
-    menuItem.setOnMenuItemClickListener(item -> performAction(action, data));
+    if (!(action instanceof ActionGroup)) {
+      menuItem.setOnMenuItemClickListener(item -> performAction(action, data));
+    }
   }
 
   @Override

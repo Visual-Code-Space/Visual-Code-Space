@@ -16,7 +16,7 @@ public class KotlinCompletionProvider extends CompletionProvider {
     String prefix = params.getPrefix();
     List<VCSpaceCompletionItem> completions = new ArrayList<>();
     for (String keyword : kotlinKeywords) {
-      if (keyword.startsWith(prefix) && completions.size() <= 20) {
+      if (keyword.startsWith(prefix) && prefix.length() > 0 && completions.size() <= 20) {
         completions.add(
             new SimpleCompletionItem(
                 keyword,

@@ -1,6 +1,6 @@
 package com.raredev.vcspace.editor.language.html.completion;
 
-import com.google.gson.Gson;
+import com.blankj.utilcode.util.GsonUtils;
 import com.raredev.vcspace.VCSpaceApplication;
 import com.raredev.vcspace.editor.IDECodeEditor;
 import com.raredev.vcspace.editor.completion.CompletionParams;
@@ -26,9 +26,15 @@ public class HtmlCompletionProvider extends CompletionProvider {
   private HtmlCompletion completion;
 
   public HtmlCompletionProvider() {
-    Gson gson = new Gson();
+    /*Gson gson = new Gson();
     completion =
         gson.fromJson(
+            FileUtil.readAssetFile(
+                VCSpaceApplication.getInstance(), "textmate/html/completions.json"),
+            HtmlCompletion.class);*/
+    
+    completion =
+        GsonUtils.fromJson(
             FileUtil.readAssetFile(
                 VCSpaceApplication.getInstance(), "textmate/html/completions.json"),
             HtmlCompletion.class);

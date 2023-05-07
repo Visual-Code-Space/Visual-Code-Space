@@ -49,7 +49,9 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
       @NonNull ContentReference content,
       @NonNull CharPosition position,
       @NonNull CompletionPublisher publisher,
-      @NonNull Bundle extraArguments) {}
+      @NonNull Bundle extraArguments) {
+        
+      }
 
   @NonNull
   @Override
