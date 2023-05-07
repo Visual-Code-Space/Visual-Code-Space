@@ -82,7 +82,7 @@ dependencies {
   implementation androidx.appcompat
   implementation androidx.preference
   implementation androidx.fragment
-  
+
   implementation google.material
   implementation google.oss_licenses
   implementation google.guava
