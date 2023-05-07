@@ -24,7 +24,7 @@
 - [x] Code highlighting: Syntax highlighting makes it easier to read and write code.
 - [ ] Code navigation: Quickly jump to functions, classes, or other symbols in your codebase.
 - [ ] Integrated terminal: Run terminal commands directly in the editor.
-- [ ] Multi-language support: Support for multiple languages, including JavaScript, TypeScript, Python, Java, and many more.
+- [X] Multi-language support: Support for multiple languages, including JavaScript, TypeScript, Python, Java, and many more.
 - [ ] Theme customization: Change the look and feel of the editor with a wide range of themes.
 - [ ] Code snippets: Insert code snippets for commonly used patterns or functions.
 - [ ] Task automation: Automate repetitive tasks with customizable task runners and build tools.
@@ -34,6 +34,7 @@
 ## Thanks to
 - [Rosemoe](https://github.com/Rosemoe) for [sora-editor](https://github.com/Rosemoe/sora-editor)
 - [Akash Yadav](https://github.com/itsaky) for the awesome [AndroidIDE](https://github.com/AndroidIDEOfficial/AndroidIDE)
+- [Visual Studio Code](https://github.com/microsoft/vscode) for [textmate files](https://github.com/microsoft/vscode/tree/main/extensions)
 
 ## How to contribute to this project:
 

@@ -2,6 +2,7 @@
   "js": "source.js",
   "json": "source.json",
   "java": "source.java",
+  "ji": "source.julia",
   "kt": "source.kotlin",
   "kts": "source.kotlin",
   "md": "text.html.markdown",
@@ -39,6 +40,7 @@
   "php5": "source.php",
   "phps": "source.php",
   "phtml": "source.php",
+  "ts": "source.ts",
   "gradle": "source.groovy",
   "smali": "source.smali"
 }
