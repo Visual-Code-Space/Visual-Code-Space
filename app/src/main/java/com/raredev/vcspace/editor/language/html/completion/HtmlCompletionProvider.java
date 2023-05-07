@@ -74,7 +74,7 @@ public class HtmlCompletionProvider extends CompletionProvider {
                 key,
                 tag.getDescription(),
                 "Tag",
-                SimpleCompletionIconDrawer.draw(SimpleCompletionItemKind.Tag),
+                SimpleCompletionIconDrawer.draw(SimpleCompletionItemKind.TAG),
                 prefix.length(),
                 tagString));
       }
@@ -107,7 +107,7 @@ public class HtmlCompletionProvider extends CompletionProvider {
                     attr,
                     htmlTag.getDescription(),
                     "Attribute",
-                    SimpleCompletionIconDrawer.draw(SimpleCompletionItemKind.Attribute),
+                    SimpleCompletionIconDrawer.draw(SimpleCompletionItemKind.ATTRIBUTE),
                     new SnippetDescription(
                         prefix.length(), CodeSnippetParser.parse(attr + "=\"$0\""), true)));
           }
@@ -147,7 +147,7 @@ public class HtmlCompletionProvider extends CompletionProvider {
                     value,
                     attribute.getDescription(),
                     type,
-                    SimpleCompletionIconDrawer.draw(SimpleCompletionItemKind.Value),
+                    SimpleCompletionIconDrawer.draw(SimpleCompletionItemKind.VALUE),
                     prefix.length(),
                     valueInsert));
           }

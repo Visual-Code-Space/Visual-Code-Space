@@ -4,6 +4,7 @@ import com.raredev.vcspace.editor.IDECodeEditor;
 import com.raredev.vcspace.editor.language.LanguageScopeProvider;
 import com.raredev.vcspace.editor.language.html.HtmlLanguage;
 import com.raredev.vcspace.editor.language.java.JavaLanguage;
+import com.raredev.vcspace.editor.language.kotlin.KotlinLanguage;
 import com.raredev.vcspace.editor.language.lua.LuaLanguage;
 import com.raredev.vcspace.util.Utils;
 import io.github.rosemoe.sora.langs.textmate.VCSpaceTMLanguage;
@@ -30,6 +31,8 @@ public class TextMateProvider {
       switch (scope) {
         case "source.java":
           return new JavaLanguage(editor);
+        case "source.kotlin":
+          return new KotlinLanguage(editor);
         case "text.html.basic":
           return new HtmlLanguage(editor);
         case "source.lua":

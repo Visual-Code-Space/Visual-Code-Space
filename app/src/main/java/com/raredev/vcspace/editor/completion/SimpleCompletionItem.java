@@ -39,12 +39,13 @@ public class SimpleCompletionItem extends VCSpaceCompletionItem {
       Drawable icon,
       int prefixLength,
       String commitText) {
-    super(label, desc, type, icon);
+    super(
+        label,
+        desc,
+        type,
+        icon == null ? SimpleCompletionIconDrawer.draw(SimpleCompletionItemKind.UNKNOWN) : icon);
     this.commitText = commitText;
     this.prefixLength = prefixLength;
-    if (this.icon == null) {
-      icon = SimpleCompletionIconDrawer.draw(type.subSequence(0, 1).toString());
-    }
   }
 
   @Override

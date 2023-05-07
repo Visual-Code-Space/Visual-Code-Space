@@ -11,7 +11,10 @@ import com.raredev.vcspace.util.Utils;
 
 public class SimpleCompletionIconDrawer {
   public static Drawable draw(SimpleCompletionItemKind kind) {
-    Drawable icon = draw(kind.getDisplayChar());
+    Drawable icon =
+        kind.equals(SimpleCompletionItemKind.UNKNOWN)
+            ? getDrawable(R.drawable.cube)
+            : draw(kind.getDisplayChar());
     DrawableCompat.setTint(
         DrawableCompat.wrap(icon),
         kind.getDefaultDisplayBackgroundColor() != 0
@@ -22,7 +25,7 @@ public class SimpleCompletionIconDrawer {
 
   public static Drawable draw(String kind) {
     Drawable icon = getDrawable(R.drawable.cube);
-    switch (kind) {
+    switch (kind.toUpperCase()) {
       case "I":
         icon = getDrawable(R.drawable.alpha_i_circle);
         break;
@@ -65,6 +68,7 @@ public class SimpleCompletionIconDrawer {
       case "A":
         icon = getDrawable(R.drawable.alpha_a_circle);
         break;
+      case "UNKNOWN":
       default:
         return icon = getDrawable(R.drawable.cube);
     }
