@@ -13,7 +13,7 @@
     style="@style/Widget.Material3.Button.TextButton"
     android:id="@+id/directory" />
 
-  <ImageView
+  <com.google.android.material.imageview.ShapeableImageView
     android:layout_height="@dimen/dimen22dp"
     android:layout_width="@dimen/dimen22dp"
     android:layout_toEndOf="@id/directory"

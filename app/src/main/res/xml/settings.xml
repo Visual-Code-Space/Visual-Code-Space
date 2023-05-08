@@ -78,7 +78,7 @@
     <Preference
       app:icon="@drawable/github"
       app:key="github"
-      app:summary="https://github.com/raredeveloperofc/Visual-Code-Space"
+      app:summary="https://github.com/Visual-Code-Space/Visual-Code-Space"
       app:title="GitHub:" />
 
     <Preference

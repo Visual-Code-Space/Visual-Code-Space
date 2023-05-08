@@ -31,7 +31,7 @@
     app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
     android:id="@+id/drawerLayout">
 
-    <RelativeLayout
+    <ViewFlipper
       android:layout_height="match_parent"
       android:layout_width="match_parent"
       android:elevation="5dp"
@@ -68,15 +68,30 @@
 
       </LinearLayout>
 
-      <com.google.android.material.textview.MaterialTextView
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_centerInParent="true"
-        android:textSize="15sp"
-        android:id="@+id/no_file_opened"
-        android:text="@string/no_file_opened" />
+      <LinearLayout
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
 
-    </RelativeLayout>
+        <com.google.android.material.imageview.ShapeableImageView
+          android:layout_height="@dimen/dimen28dp"
+          android:layout_width="@dimen/dimen28dp"
+          android:layout_toEndOf="@id/directory"
+          android:src="@drawable/file_document_outline"
+          android:layout_centerVertical="true" />
+
+        <com.google.android.material.textview.MaterialTextView
+          android:layout_height="wrap_content"
+          android:layout_width="wrap_content"
+          android:layout_centerInParent="true"
+          android:textSize="15sp"
+          android:id="@+id/no_file_opened"
+          android:text="@string/no_file_opened" />
+
+      </LinearLayout>
+
+    </ViewFlipper>
 
     <androidx.fragment.app.FragmentContainerView
       android:layout_height="match_parent"

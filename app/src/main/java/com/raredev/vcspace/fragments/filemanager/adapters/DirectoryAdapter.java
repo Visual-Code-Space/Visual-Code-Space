@@ -10,6 +10,7 @@ import com.google.android.material.R;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.color.MaterialColors;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.raredev.vcspace.databinding.LayoutDirectoryItemBinding;
 import com.raredev.vcspace.fragments.filemanager.models.DirectoryModel;
 import com.raredev.vcspace.fragments.filemanager.viewmodel.FileListViewModel;
@@ -64,7 +65,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.VH> 
 
   public class VH extends RecyclerView.ViewHolder {
     MaterialButton directory;
-    ImageView separator;
+    ShapeableImageView separator;
 
     public VH(LayoutDirectoryItemBinding binding) {
       super(binding.getRoot());

@@ -33,6 +33,7 @@
 
 ## Thanks to
 - [Rosemoe](https://github.com/Rosemoe) for [sora-editor](https://github.com/Rosemoe/sora-editor)
+- [Rosemoe](https://github.com/Rosemoe) for the [language-textmate](https://github.com/Rosemoe/sora-editor/tree/main/language-textmate) for [sora-editor](https://github.com/Rosemoe/sora-editor)
 - [Akash Yadav](https://github.com/itsaky) for the awesome [AndroidIDE](https://github.com/AndroidIDEOfficial/AndroidIDE)
 - [Visual Studio Code](https://github.com/microsoft/vscode) for [textmate files](https://github.com/microsoft/vscode/tree/main/extensions)
 

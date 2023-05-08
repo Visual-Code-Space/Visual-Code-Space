@@ -35,20 +35,14 @@ public class EditorViewModel extends ViewModel {
     return getDocuments().get(index);
   }
 
+  public int indexOf(DocumentModel doc) {
+    return indexOf(doc.getPath());
+  }
+
   public int indexOf(String path) {
     for (int i = 0; i < getOpenedDocumentCount(); i++) {
       DocumentModel temp = getDocument(i);
       if (path.equals(temp.getPath())) {
-        return i;
-      }
-    }
-    return -1;
-  }
-
-  public int indexOf(DocumentModel doc) {
-    for (int i = 0; i < getOpenedDocumentCount(); i++) {
-      DocumentModel temp = getDocument(i);
-      if (doc.getPath().equals(temp.getPath())) {
         return i;
       }
     }

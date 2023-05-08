@@ -9,17 +9,8 @@ import android.content.SharedPreferences;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.PreferenceManager;
 import com.google.android.material.color.DynamicColors;
-import com.raredev.vcspace.actions.main.EditActionGroup;
-import com.raredev.vcspace.actions.main.FileActionGroup;
-import com.raredev.vcspace.actions.main.filetab.*;
-import com.raredev.vcspace.actions.main.other.*;
-import com.raredev.vcspace.actions.main.text.*;
 import com.raredev.vcspace.fragments.SettingsFragment;
-import com.raredev.vcspace.fragments.filemanager.actions.file.*;
-import com.raredev.vcspace.fragments.filemanager.actions.git.*;
-import com.raredev.vcspace.fragments.filemanager.actions.topbar.*;
 import com.raredev.vcspace.util.ILogger;
-import com.vcspace.actions.ActionManager;
 import io.github.rosemoe.sora.langs.textmate.provider.TextMateProvider;
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.provider.AssetsFileResolver;
@@ -45,7 +36,6 @@ public class VCSpaceApplication extends Application {
     AppCompatDelegate.setDefaultNightMode(SettingsFragment.getThemeFromPrefs());
     Thread.setDefaultUncaughtExceptionHandler(new CrashHandler(this));
     registerShutdownReceiver();
-    registerActions();
     loadTextMate();
   }
 
@@ -63,37 +53,6 @@ public class VCSpaceApplication extends Application {
     } catch (Exception e) {
       ILogger.error("LanguageLoader", "Error when trying to load languages:", e);
     }
-  }
-
-  private void registerActions() {
-    ActionManager manager = ActionManager.getInstance();
-    manager.clear();
-    // Main toolbar
-    manager.registerAction(new ExecuteAction());
-    manager.registerAction(new UndoAction());
-    manager.registerAction(new RedoAction());
-    manager.registerAction(new EditActionGroup());
-    manager.registerAction(new FileActionGroup());
-    manager.registerAction(new ViewLogsAction());
-    manager.registerAction(new SettingsAction());
-
-    // File Tab
-    manager.registerAction(new CloseFileAction());
-    manager.registerAction(new CloseOthersAction());
-    manager.registerAction(new CloseAllAction());
-
-    // Git
-    manager.registerAction(new CloneRepositoryAction());
-
-    // File manager topbar
-    manager.registerAction(new RefreshFilesAction());
-    manager.registerAction(new CreateFileAction());
-    manager.registerAction(new CreateFolderAction());
-
-    // File manager
-    manager.registerAction(new CopyPathAction());
-    manager.registerAction(new RenameFileAction());
-    manager.registerAction(new DeleteFileAction());
   }
 
   public SharedPreferences getDefaultPref() {

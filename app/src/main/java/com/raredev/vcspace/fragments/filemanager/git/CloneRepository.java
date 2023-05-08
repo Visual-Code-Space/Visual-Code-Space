@@ -1,7 +1,8 @@
-package com.raredev.vcspace.git;
+package com.raredev.vcspace.fragments.filemanager.git;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -9,7 +10,8 @@ import androidx.appcompat.app.AlertDialog;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
-import com.raredev.vcspace.git.databinding.LayoutCloneDialogBinding;
+import com.raredev.vcspace.R;
+import com.raredev.vcspace.databinding.LayoutCloneDialogBinding;
 import com.raredev.vcspace.progressdialog.ProgressDialog;
 import com.raredev.vcspace.progressdialog.ProgressStyle;
 import com.raredev.vcspace.task.TaskExecutor;
@@ -127,7 +129,7 @@ public class CloneRepository {
                   listener.onCloneSuccess(output);
                   return;
                 }
-                listener.onCloneFailed(error.toString());
+                listener.onCloneFailed(Log.getStackTraceString(error));
               });
         });
   }

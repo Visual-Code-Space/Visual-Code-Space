@@ -5,12 +5,9 @@ import java.io.File;
 
 public class DocumentModel {
 
-  private String path;
-  private String name;
-  private String content;
+  private String path, name, content;
   private boolean modified;
-  private int positionLine;
-  private int positionColumn;
+  private int positionLine, positionColumn;
 
   public DocumentModel(String path, String name) {
     this(path, name, null, false, 0, 0);

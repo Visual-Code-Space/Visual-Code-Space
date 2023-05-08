@@ -98,10 +98,10 @@ dependencies {
   implementation "io.github.Rosemoe.sora-editor:editor"
   implementation "io.github.Rosemoe.sora-editor:language-textmate"
   
-  implementation project(path: ':common')
-  implementation project(path: ':actions')
-  implementation project(path: ':git-api')
-  implementation project(path: ':extensions-api')
+  implementation 'androidx.core:core-splashscreen:1.0.1'
   
+  implementation project(path: ':common')
+  implementation project(path: ':extensions-api')
+
   //debugImplementation common.leakcanary
 }

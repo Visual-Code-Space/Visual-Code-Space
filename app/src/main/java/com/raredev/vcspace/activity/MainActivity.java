@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -14,12 +15,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.core.splashscreen.SplashScreen;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.google.android.material.tabs.TabLayout;
 import com.raredev.vcspace.R;
+import com.raredev.vcspace.SimpleExecuter;
 import com.raredev.vcspace.databinding.ActivityMainBinding;
 import com.raredev.vcspace.editor.completion.CompletionProvider;
 import com.raredev.vcspace.events.EditorContentChangedEvent;
@@ -36,9 +39,6 @@ import com.raredev.vcspace.util.PreferencesUtils;
 import com.raredev.vcspace.util.ToastUtils;
 import com.raredev.vcspace.util.UniqueNameBuilder;
 import com.raredev.vcspace.util.Utils;
-import com.vcspace.actions.ActionData;
-import com.vcspace.actions.ActionManager;
-import com.vcspace.actions.location.DefaultLocations;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import java.io.File;
 import java.io.IOException;
@@ -72,12 +72,13 @@ public class MainActivity extends BaseActivity
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setSupportActionBar(binding.toolbar);
-
     setupDrawer();
 
     viewModel = new ViewModelProvider(this).get(EditorViewModel.class);
 
     binding.tabLayout.addOnTabSelectedListener(this);
+    binding.noFileOpened.setOnClickListener(v -> viewModel.setDrawerState(true));
+    binding.symbolInput.setSymbols(Symbol.baseSymbols());
 
     KeyboardUtils.registerSoftInputChangedListener(
         this,
@@ -96,7 +97,6 @@ public class MainActivity extends BaseActivity
 
     CompletionProvider.registerCompletionProviders();
 
-    binding.symbolInput.setSymbols(Symbol.baseSymbols());
     ThemeRegistry.getInstance().setTheme(Utils.isDarkMode() ? "darcula" : "quietlight");
     registerResultActivity();
     observeViewModel();
@@ -107,12 +107,21 @@ public class MainActivity extends BaseActivity
 
   @Override
   public void onTabReselected(TabLayout.Tab p1) {
-    PopupMenu pm = new PopupMenu(MainActivity.this, p1.view);
-
-    ActionData data = new ActionData();
-    data.put(MainActivity.class, MainActivity.this);
-    ActionManager.getInstance().fillMenu(pm.getMenu(), data, DefaultLocations.FILE_TAB);
-
+    PopupMenu pm = new PopupMenu(this, p1.view);
+    pm.getMenu().add(R.string.close);
+    pm.getMenu().add(R.string.close_others);
+    pm.getMenu().add(R.string.close_all);
+    pm.setOnMenuItemClickListener(
+        item -> {
+          if (item.getTitle() == getString(R.string.close)) {
+            closeFile(viewModel.getCurrentPosition());
+          } else if (item.getTitle() == getString(R.string.close_others)) {
+            closeOthers();
+          } else if (item.getTitle() == getString(R.string.close_all)) {
+            closeAllFiles();
+          }
+          return true;
+        });
     pm.show();
   }
 
@@ -170,21 +179,75 @@ public class MainActivity extends BaseActivity
   public void onSharedPreferenceChanged(SharedPreferences pref, String key) {
     EventBus.getDefault().post(new PreferenceChangedEvent(key));
   }
-
+  
   @Override
   public boolean onPrepareOptionsMenu(Menu menu) {
-    menu.clear();
-    ActionData data = new ActionData();
-    data.put(MainActivity.class, this);
-
-    ActionManager.getInstance().fillMenu(menu, data, DefaultLocations.MAIN_TOOLBAR);
-    return true;
+    var editorView = getCurrentEditor();
+    if (editorView != null) {
+      var document = editorView.getDocument();
+      menu.findItem(R.id.menu_execute).setVisible(SimpleExecuter.isExecutable(document.getName()));
+      menu.findItem(R.id.menu_undo).setVisible(KeyboardUtils.isSoftInputVisible(this));
+      menu.findItem(R.id.menu_redo).setVisible(KeyboardUtils.isSoftInputVisible(this));
+      menu.findItem(R.id.menu_undo).setEnabled(editorView.getEditor().canUndo());
+      menu.findItem(R.id.menu_redo).setEnabled(editorView.getEditor().canRedo());
+      menu.findItem(R.id.menu_save).setEnabled(true);
+      menu.findItem(R.id.menu_save_as).setEnabled(true);
+      menu.findItem(R.id.menu_save_all).setEnabled(true);
+      menu.findItem(R.id.menu_editor).setVisible(true);
+    } else {
+      menu.findItem(R.id.menu_execute).setVisible(false);
+      menu.findItem(R.id.menu_undo).setVisible(false);
+      menu.findItem(R.id.menu_redo).setVisible(false);
+      menu.findItem(R.id.menu_save).setEnabled(false);
+      menu.findItem(R.id.menu_save_as).setEnabled(false);
+      menu.findItem(R.id.menu_save_all).setEnabled(false);
+      menu.findItem(R.id.menu_editor).setVisible(false);
+    }
+    return super.onPrepareOptionsMenu(menu);
   }
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.activity_main_menu, menu);
     if (menu instanceof MenuBuilder menuBuilder) {
       menuBuilder.setOptionalIconsVisible(true);
+    }
+    return super.onCreateOptionsMenu(menu);
+  }
+  
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    var id = item.getItemId();
+    var editorView = getCurrentEditor();
+
+    if (id == R.id.menu_execute) {
+      new SimpleExecuter(this, editorView.getDocument().toFile());
+    } else if (id == R.id.menu_undo) {
+      editorView.undo();
+    } else if (id == R.id.menu_redo) {
+      editorView.redo();
+    } else if (id == R.id.menu_search)  {
+      editorView.showAndHideSearcher();
+    } else if (id == R.id.menu_search)  {
+      editorView.getEditor().formatCodeAsync();
+    } else if (id == R.id.menu_new_file)  {
+      createFile.launch("untitled");
+    } else if (id == R.id.menu_open_file)  {
+      pickFile.launch("text/*");
+    } else if (id == R.id.menu_save) {
+      saveFile();
+    } else if (id == R.id.menu_save_as) {
+      Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+      intent.addCategory(Intent.CATEGORY_OPENABLE);
+      intent.setType("text/*");
+      intent.putExtra(Intent.EXTRA_TITLE, viewModel.getCurrentDocument().getName());
+      launcher.launch(intent);
+    } else if (id == R.id.menu_save_all) {
+      saveAllFiles(true);
+    } else if (id == R.id.menu_logview) {
+      startActivity(new Intent(this, LogViewActivity.class));
+    } else if (id == R.id.menu_settings) {
+      startActivity(new Intent(this, SettingsActivity.class));
     }
     return true;
   }
@@ -199,7 +262,7 @@ public class MainActivity extends BaseActivity
     toggle.syncState();
 
     drawerLayout.setScrimColor(Color.TRANSPARENT);
-    drawerLayout.setDrawerElevation(0);
+    drawerLayout.setDrawerElevation(2);
     drawerLayout.addDrawerListener(
         new DrawerLayout.DrawerListener() {
           @Override
@@ -271,12 +334,10 @@ public class MainActivity extends BaseActivity
         this,
         documents -> {
           if (documents.isEmpty()) {
-            binding.editorContainer.setVisibility(View.GONE);
-            binding.noFileOpened.setVisibility(View.VISIBLE);
+            binding.main.setDisplayedChild(1);
             invalidateOptionsMenu();
           } else {
-            binding.editorContainer.setVisibility(View.VISIBLE);
-            binding.noFileOpened.setVisibility(View.GONE);
+            binding.main.setDisplayedChild(0);
           }
         });
     viewModel.observeDrawerState(
