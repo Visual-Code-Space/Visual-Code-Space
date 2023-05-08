@@ -26,17 +26,10 @@ public class HtmlCompletionProvider extends CompletionProvider {
   private HtmlCompletion completion;
 
   public HtmlCompletionProvider() {
-    /*Gson gson = new Gson();
-    completion =
-        gson.fromJson(
-            FileUtil.readAssetFile(
-                VCSpaceApplication.getInstance(), "textmate/html/completions.json"),
-            HtmlCompletion.class);*/
-    
     completion =
         GsonUtils.fromJson(
             FileUtil.readAssetFile(
-                VCSpaceApplication.getInstance(), "textmate/html/completions.json"),
+                VCSpaceApplication.getInstance(), "textmate/html/completions/completions.json"),
             HtmlCompletion.class);
   }
 
