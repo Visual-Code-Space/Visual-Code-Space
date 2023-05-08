@@ -1,6 +1,10 @@
 package com.raredev.vcspace.activity;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.JsPromptResult;
@@ -11,15 +15,18 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.FileProvider;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.ActivityWebviewBinding;
 import com.raredev.vcspace.databinding.LayoutTextinputBinding;
+import com.raredev.vcspace.util.ToastUtils;
+import java.io.File;
 
 @SuppressWarnings("deprecation")
 public class WebViewActivity extends BaseActivity {
-  private ActivityWebviewBinding binding;
+  public ActivityWebviewBinding binding;
 
   @Override
   public View getLayout() {
@@ -155,5 +162,78 @@ public class WebViewActivity extends BaseActivity {
               });
         });
     dialog.show();
+  }
+
+  public void setDesktopMode(boolean enabled) {
+    WebSettings webSettings = binding.webView.getSettings();
+
+    // Check if the desktop mode is enabled or not
+    if (enabled) {
+      // Enable desktop mode by changing the user agent string
+      webSettings.setUserAgentString(
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3");
+      webSettings.setUseWideViewPort(true);
+      webSettings.setLoadWithOverviewMode(true);
+    } else {
+      // Disable desktop mode by resetting the user agent string to default
+      webSettings.setUserAgentString(null);
+      webSettings.setUseWideViewPort(false);
+      webSettings.setLoadWithOverviewMode(false);
+    }
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.webview_menu, menu);
+    return super.onCreateOptionsMenu(menu);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    var id = item.getItemId();
+    var webView = binding.webView;
+
+    if (id == R.id.back) {
+      if (webView.canGoBack()) webView.goBack();
+      else ToastUtils.showShort("Can't go back...", ToastUtils.TYPE_ERROR);
+    } else if (id == R.id.forward) {
+      if (webView.canGoForward()) webView.goForward();
+      else ToastUtils.showShort("Can't go forward...", ToastUtils.TYPE_ERROR);
+    } else if (id == R.id.zooming) {
+      webView.getSettings().setSupportZoom(!item.isChecked());
+      item.setChecked(!item.isChecked());
+    } else if (id == R.id.desktop_mode) {
+      setDesktopMode(!item.isChecked());
+      item.setChecked(!item.isChecked());
+    } else if (id == R.id.refresh) {
+      webView.reload();
+    } else if (id == R.id.open_in_browser) {
+      openInBrowser(webView);
+    } else if (id == R.id.exit) {
+      super.onBackPressed();
+    }
+    return true;
+  }
+
+  private void openInBrowser(WebView webView) {
+    String currentUrl = webView.getUrl();
+    boolean isFilePath = isFilePath(currentUrl);
+
+    Intent browserIntent = new Intent(Intent.ACTION_VIEW);
+    browserIntent.setData(Uri.parse(currentUrl));
+
+    if (isFilePath) {
+      File file = new File(currentUrl);
+      Uri contentUri = FileProvider.getUriForFile(this, getPackageName() + ".provider", file);
+      browserIntent.setData(contentUri);
+      browserIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+    }
+
+    startActivity(browserIntent);
+  }
+
+  private boolean isFilePath(String url) {
+    Uri uri = Uri.parse(url);
+    return uri.getScheme() != null && uri.getScheme().equals("file");
   }
 }

@@ -1,6 +1,7 @@
 package com.raredev.vcspace.actions.main.filetoolbar;
 
 import android.content.Context;
+import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.actions.main.MainBaseAction;
@@ -27,7 +28,7 @@ public class SaveAllAction extends MainBaseAction {
   }
 
   @Override
-  public void performAction(@NonNull ActionData data) {
+  public void performAction(@NonNull ActionData data, MenuItem item) {
     var activity = getActivity(data);
     activity.saveAllFiles(true);
   }

@@ -10,7 +10,9 @@ public class Presentation {
   private int icon;
 
   private boolean visible;
+  private boolean checked;
   private boolean enabled = true;
+  private boolean checkable = false;
 
   private int showAsAction;
 
@@ -66,5 +68,21 @@ public class Presentation {
 
   public void setEnabled(boolean enabled) {
     this.enabled = enabled;
+  }
+
+  public boolean isCheckable() {
+    return this.checkable;
+  }
+
+  public void setCheckable(boolean checkable) {
+    this.checkable = checkable;
+  }
+
+  public boolean isChecked() {
+    return this.checked;
+  }
+
+  public void setChecked(boolean checked) {
+    this.checked = checked;
   }
 }

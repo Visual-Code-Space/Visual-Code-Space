@@ -1,6 +1,7 @@
 package com.raredev.vcspace.actions.main.filetab;
 
 import android.content.Context;
+import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.actions.main.FileTabBaseAction;
@@ -9,7 +10,7 @@ import com.vcspace.actions.ActionData;
 public class CloseOthersAction extends FileTabBaseAction {
 
   @Override
-  public void performAction(@NonNull ActionData data) {
+  public void performAction(@NonNull ActionData data, MenuItem item) {
     getActivity(data).closeOthers();
   }
 

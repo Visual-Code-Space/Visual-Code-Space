@@ -3,6 +3,7 @@ package com.raredev.vcspace.fragments.filemanager.actions.topbar;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.Button;
 import androidx.annotation.NonNull;
@@ -22,7 +23,7 @@ import java.io.IOException;
 public class CreateFileAction extends TopbarBaseAction {
 
   @Override
-  public void performAction(@NonNull ActionData data) {
+  public void performAction(@NonNull ActionData data, MenuItem item) {
     FileManagerFragment fragment = getFragment(data);
     File file = getFile(data);
 

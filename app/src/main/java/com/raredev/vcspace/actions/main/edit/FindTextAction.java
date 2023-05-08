@@ -1,6 +1,7 @@
 package com.raredev.vcspace.actions.main.edit;
 
 import android.content.Context;
+import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.actions.main.MainBaseAction;
@@ -10,7 +11,7 @@ import com.vcspace.actions.ActionData;
 public class FindTextAction extends MainBaseAction {
 
   @Override
-  public void performAction(@NonNull ActionData data) {
+  public void performAction(@NonNull ActionData data, MenuItem item) {
     var main = getActivity(data);
     
     CodeEditorView editor = main.getCurrentEditor();

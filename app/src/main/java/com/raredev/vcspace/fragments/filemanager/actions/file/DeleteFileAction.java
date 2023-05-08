@@ -1,6 +1,7 @@
 package com.raredev.vcspace.fragments.filemanager.actions.file;
 
 import android.content.Context;
+import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import com.blankj.utilcode.util.ThreadUtils;
@@ -25,7 +26,7 @@ public class DeleteFileAction extends FileBaseAction {
   }
 
   @Override
-  public void performAction(@NonNull ActionData data) {
+  public void performAction(@NonNull ActionData data, MenuItem item) {
     FileManagerFragment fragment = getFragment(data);
     FileAdapter adapter = getAdapter(data);
     File file = getFile(data);

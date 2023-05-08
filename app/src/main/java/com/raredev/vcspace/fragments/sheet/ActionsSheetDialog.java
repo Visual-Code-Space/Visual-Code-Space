@@ -74,7 +74,7 @@ public class ActionsSheetDialog extends BottomSheetDialogFragment {
         new OnActionClickListener() {
           @Override
           public void onClickListener(Action action) {
-            action.performAction(data);
+            action.performAction(data, null);
             dismiss();
           }
         };

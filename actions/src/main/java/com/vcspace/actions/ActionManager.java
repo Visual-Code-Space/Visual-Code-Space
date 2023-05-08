@@ -1,6 +1,7 @@
 package com.vcspace.actions;
 
 import android.view.Menu;
+import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import com.vcspace.actions.impl.ActionManagerImpl;
 import java.util.Map;
@@ -22,7 +23,7 @@ public abstract class ActionManager {
 
   public abstract void registerAction(@NonNull Action action);
 
-  public abstract void performAction(@NonNull String id, @NonNull ActionData data);
+  public abstract void performAction(@NonNull String id, @NonNull ActionData data, MenuItem item);
 
   public abstract void unregisterAction(@NonNull Action action);
 

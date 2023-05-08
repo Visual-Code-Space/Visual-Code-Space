@@ -1,6 +1,7 @@
 package com.raredev.vcspace.fragments.filemanager.actions.git;
 
 import android.content.Context;
+import android.view.MenuItem;
 import com.raredev.vcspace.fragments.filemanager.FileManagerFragment;
 import com.raredev.vcspace.fragments.filemanager.actions.GitBaseAction;
 import com.raredev.vcspace.fragments.filemanager.models.FileModel;
@@ -15,7 +16,7 @@ public class CloneRepositoryAction extends GitBaseAction {
   private static final String LOG_TAG = CloneRepositoryAction.class.getSimpleName();
 
   @Override
-  public void performAction(ActionData data) {
+  public void performAction(ActionData data, MenuItem item) {
     FileManagerFragment fragment = getFragment(data);
 
     CloneRepository cloneRepo = new CloneRepository(fragment.requireActivity());

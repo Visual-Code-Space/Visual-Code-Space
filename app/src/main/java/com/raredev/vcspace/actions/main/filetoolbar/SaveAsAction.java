@@ -2,6 +2,7 @@ package com.raredev.vcspace.actions.main.filetoolbar;
 
 import android.content.Context;
 import android.content.Intent;
+import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.actions.main.MainBaseAction;
@@ -28,7 +29,7 @@ public class SaveAsAction extends MainBaseAction {
   }
 
   @Override
-  public void performAction(@NonNull ActionData data) {
+  public void performAction(@NonNull ActionData data, MenuItem item) {
     var main = getActivity(data);
 
     Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);

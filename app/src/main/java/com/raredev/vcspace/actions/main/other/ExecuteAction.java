@@ -31,7 +31,7 @@ public class ExecuteAction extends MainBaseAction {
   }
 
   @Override
-  public void performAction(ActionData data) {
+  public void performAction(ActionData data, MenuItem item) {
     var main = getActivity(data);
     main.saveAllFiles(false);
     new SimpleExecuter(main, main.getCurrentEditor().getDocument().toFile());

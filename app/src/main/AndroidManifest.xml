@@ -33,7 +33,9 @@
     <activity android:name=".activity.LogViewActivity" />
     <activity android:name=".activity.SettingsActivity" />
     <activity android:name=".activity.TerminalActivity" />
-    <activity android:name=".activity.WebViewActivity" />
+    <activity
+      android:name=".activity.WebViewActivity"
+      android:parentActivityName=".activity.MainActivity" />
     <activity
       android:name=".activity.CrashActivity"
       android:exported="true" />

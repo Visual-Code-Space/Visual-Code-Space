@@ -9,7 +9,7 @@ public abstract class Action {
 
   public abstract void update(@NonNull ActionData data);
 
-  public abstract void performAction(@NonNull ActionData data);
+  public abstract void performAction(@NonNull ActionData data, MenuItem item);
 
   public abstract String getActionId();
   

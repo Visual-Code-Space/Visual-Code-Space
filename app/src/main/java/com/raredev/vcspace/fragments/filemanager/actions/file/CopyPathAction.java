@@ -1,6 +1,7 @@
 package com.raredev.vcspace.fragments.filemanager.actions.file;
 
 import android.content.Context;
+import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import com.blankj.utilcode.util.ClipboardUtils;
 import com.raredev.vcspace.R;
@@ -17,7 +18,7 @@ public class CopyPathAction extends FileBaseAction {
   }
 
   @Override
-  public void performAction(@NonNull ActionData data) {
+  public void performAction(@NonNull ActionData data, MenuItem item) {
     File file = getFile(data);
     String path = file.getAbsolutePath();
     

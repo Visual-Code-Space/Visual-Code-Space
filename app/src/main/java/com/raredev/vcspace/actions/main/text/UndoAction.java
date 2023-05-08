@@ -31,7 +31,7 @@ public class UndoAction extends MainBaseAction {
   }
 
   @Override
-  public void performAction(ActionData data) {
+  public void performAction(ActionData data, MenuItem item) {
     var main = getActivity(data);
     if (main.getCurrentEditor() != null) {
       main.getCurrentEditor().undo();

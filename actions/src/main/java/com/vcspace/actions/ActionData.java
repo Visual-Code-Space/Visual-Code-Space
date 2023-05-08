@@ -10,8 +10,7 @@ public class ActionData {
   private final Map<Class<?>, Object> data = new HashMap<>();
 
   public <T> void put(@NonNull Class<T> type, @Nullable T object) {
-    Objects.requireNonNull(type);
-    data.put(type, object);
+    data.put(Objects.requireNonNull(type), object);
   }
 
   @Nullable

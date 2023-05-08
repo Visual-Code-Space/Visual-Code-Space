@@ -3,6 +3,7 @@ package com.raredev.vcspace.fragments.filemanager.actions.file;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.Button;
 import androidx.annotation.NonNull;
@@ -26,7 +27,7 @@ public class RenameFileAction extends FileBaseAction {
   }
 
   @Override
-  public void performAction(@NonNull ActionData data) {
+  public void performAction(@NonNull ActionData data, MenuItem item) {
     FileManagerFragment fragment = getFragment(data);
     File file = getFile(data);
 

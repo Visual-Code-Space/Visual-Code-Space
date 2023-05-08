@@ -21,6 +21,11 @@
   <string name="no">No</string>
   <string name="url_copied">URL copied to clipboard.</string>
   <string name="exit">Exit</string>
+  <string name="back">Back</string>
+  <string name="forward">Forward</string>
+  <string name="zooming">Zooming</string>
+  <string name="desktop_mode">Desktop Mode</string>
+  <string name="open_in_browser">Open in Browser...</string>
 
   <!-- Menus Strings -->
   <string name="menu_execute">Execute</string>

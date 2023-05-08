@@ -56,10 +56,12 @@ public class ActionManagerImpl extends ActionManager {
       menuItem.setIcon(presentation.getIcon());
     }
     menuItem.setEnabled(presentation.isEnabled());
+    menuItem.setCheckable(presentation.isCheckable());
+    menuItem.setChecked(presentation.isChecked());
     menuItem.setShowAsAction(presentation.getShowAsAction());
 
     if (!(action instanceof ActionGroup)) {
-      menuItem.setOnMenuItemClickListener(item -> performAction(action, data));
+      menuItem.setOnMenuItemClickListener(item -> performAction(action, data, item));
     }
   }
 
@@ -74,14 +76,14 @@ public class ActionManagerImpl extends ActionManager {
   }
 
   @Override
-  public void performAction(@NonNull String id, @NonNull ActionData data) {
+  public void performAction(@NonNull String id, @NonNull ActionData data, MenuItem item) {
     Action action = actions.get(id);
-    performAction(action, data);
+    performAction(action, data, item);
   }
 
-  private boolean performAction(@NonNull Action action, @NonNull ActionData data) {
+  private boolean performAction(@NonNull Action action, @NonNull ActionData data, MenuItem item) {
     try {
-      action.performAction(data);
+      action.performAction(data, item);
       return true;
     } catch (Throwable e) {
       ToastUtils.showShort("Unable to perform action", ToastUtils.TYPE_ERROR);
