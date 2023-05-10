@@ -220,35 +220,23 @@ public class MainActivity extends BaseActivity
     var id = item.getItemId();
     var editorView = getCurrentEditor();
 
-    if (id == R.id.menu_execute) {
-      new SimpleExecuter(this, editorView.getDocument().toFile());
-    } else if (id == R.id.menu_undo) {
-      editorView.undo();
-    } else if (id == R.id.menu_redo) {
-      editorView.redo();
-    } else if (id == R.id.menu_search)  {
-      editorView.showAndHideSearcher();
-    } else if (id == R.id.menu_search)  {
-      editorView.getEditor().formatCodeAsync();
-    } else if (id == R.id.menu_new_file)  {
-      createFile.launch("untitled");
-    } else if (id == R.id.menu_open_file)  {
-      pickFile.launch("text/*");
-    } else if (id == R.id.menu_save) {
-      saveFile();
-    } else if (id == R.id.menu_save_as) {
+    if (id == R.id.menu_execute) new SimpleExecuter(this, editorView.getDocument().toFile());
+    else if (id == R.id.menu_undo) editorView.undo();
+    else if (id == R.id.menu_redo) editorView.redo();
+    else if (id == R.id.menu_search) editorView.showAndHideSearcher();
+    else if (id == R.id.menu_search) editorView.getEditor().formatCodeAsync();
+    else if (id == R.id.menu_new_file) createFile.launch("untitled");
+    else if (id == R.id.menu_open_file) pickFile.launch("text/*");
+    else if (id == R.id.menu_save) saveFile(true);
+    else if (id == R.id.menu_save_as) {
       Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
       intent.addCategory(Intent.CATEGORY_OPENABLE);
       intent.setType("text/*");
       intent.putExtra(Intent.EXTRA_TITLE, viewModel.getCurrentDocument().getName());
       launcher.launch(intent);
-    } else if (id == R.id.menu_save_all) {
-      saveAllFiles(true);
-    } else if (id == R.id.menu_logview) {
-      startActivity(new Intent(this, LogViewActivity.class));
-    } else if (id == R.id.menu_settings) {
-      startActivity(new Intent(this, SettingsActivity.class));
-    }
+    } else if (id == R.id.menu_save_all) saveAllFiles(true);
+    else if (id == R.id.menu_logview) startActivity(new Intent(this, LogViewActivity.class));
+    else if (id == R.id.menu_settings) startActivity(new Intent(this, SettingsActivity.class));
     return true;
   }
 
@@ -436,7 +424,7 @@ public class MainActivity extends BaseActivity
     binding.container.removeAllViews();
   }
 
-  public void saveFile() {
+  public void saveFile(boolean showMsg) {
     if (!viewModel.getDocuments().isEmpty()) {
       TaskExecutor.executeAsync(
           () -> {
@@ -444,7 +432,7 @@ public class MainActivity extends BaseActivity
             return null;
           },
           (result) -> {
-            ToastUtils.showShort(getString(R.string.saved), ToastUtils.TYPE_SUCCESS);
+            if (showMsg) ToastUtils.showShort(getString(R.string.saved), ToastUtils.TYPE_SUCCESS);
             invalidateOptionsMenu();
           });
     }
@@ -505,6 +493,7 @@ public class MainActivity extends BaseActivity
       return;
     }
     tab.setText("• " + name);
+    if (PreferencesUtils.autoSave()) saveFile(false);
   }
 
   private void updateTabs() {

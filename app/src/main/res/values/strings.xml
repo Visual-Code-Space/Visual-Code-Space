@@ -153,6 +153,8 @@
     <item>jetbrains</item>
   </string-array>
 
+  <string name="pref_editor_auto_save">Auto save</string>
+  <string name="pref_editor_auto_save_summary">Automatically saves your work, preventing data loss and saving time.</string>
   <string name="pref_editor_use_spaces">Use spaces</string>
   <string name="pref_editor_use_spaces_summary">Use spaces instead of tabs(\\t)</string>
   <string name="pref_editor_deleteemptylinefast">Delete empty line fast</string>

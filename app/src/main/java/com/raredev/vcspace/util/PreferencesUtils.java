@@ -64,6 +64,10 @@ public class PreferencesUtils {
     String spaces = " ".repeat(getEditorTABSize());
     return useSpaces() ? spaces : "\t";
   }
+  
+  public static boolean autoSave() {
+    return getDefaultPrefs().getBoolean(SettingsManager.KEY_AUTO_SAVE, false);
+  }
 
   /*
    * Returns the font selected by the user

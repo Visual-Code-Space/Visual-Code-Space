@@ -9,6 +9,7 @@ public class SettingsManager {
   public static final String KEY_EDITOR_TAB_SIZE = "pref_editortabsize";
   public static final String KEY_EDITOR_FONT = "pref_editorfont";
   public static final String KEY_USE_SPACES = "pref_usespaces";
+  public static final String KEY_AUTO_SAVE = "pref_auto_save";
   public static final String KEY_DELETE_EMPTY_LINE_FAST = "pref_deleteemptylinefast";
   public static final String KEY_CREDENTIAL = "pref_credential";
   public static final String KEY_CREDENTIAL_USERNAME = "credential_username";

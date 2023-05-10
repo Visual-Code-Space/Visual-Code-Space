@@ -58,6 +58,13 @@
       app:key="pref_deleteemptylinefast"
       app:title="@string/pref_editor_deleteemptylinefast"
       app:summary="@string/pref_editor_deleteemptylinefast_summary" />
+      
+    <SwitchPreferenceCompat
+      app:defaultValue="false"
+      app:icon="@drawable/ic_save"
+      app:key="pref_auto_save"
+      app:title="@string/pref_editor_auto_save"
+      app:summary="@string/pref_editor_auto_save_summary" />
   </PreferenceCategory>
 
   <PreferenceCategory
