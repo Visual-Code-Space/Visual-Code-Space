@@ -122,12 +122,12 @@ public class MainActivity extends BaseActivity
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.activity_main_menu, menu);
-    if (menu instanceof MenuBuilder menuBuilder) {
-      menuBuilder.setOptionalIconsVisible(true);
+    if (menu instanceof MenuBuilder) {
+      ((MenuBuilder) menu).setOptionalIconsVisible(true);
     }
     return super.onCreateOptionsMenu(menu);
   }
-  
+
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     var id = item.getItemId();
@@ -139,13 +139,13 @@ public class MainActivity extends BaseActivity
       editorView.undo();
     } else if (id == R.id.menu_redo) {
       editorView.redo();
-    } else if (id == R.id.menu_search)  {
+    } else if (id == R.id.menu_search) {
       editorView.showAndHideSearcher();
-    } else if (id == R.id.menu_format)  {
+    } else if (id == R.id.menu_format) {
       editorView.getEditor().formatCodeAsync();
-    } else if (id == R.id.menu_new_file)  {
+    } else if (id == R.id.menu_new_file) {
       createFile.launch("untitled");
-    } else if (id == R.id.menu_open_file)  {
+    } else if (id == R.id.menu_open_file) {
       pickFile.launch("text/*");
     } else if (id == R.id.menu_save) {
       saveFile(true);
@@ -235,7 +235,7 @@ public class MainActivity extends BaseActivity
   public void onSharedPreferenceChanged(SharedPreferences pref, String key) {
     EventBus.getDefault().post(new PreferenceChangedEvent(key));
   }
-  
+
   private void setupDrawer() {
     DrawerLayout drawerLayout = binding.drawerLayout;
 
@@ -480,17 +480,20 @@ public class MainActivity extends BaseActivity
     if (index == -1) {
       return;
     }
-    TabLayout.Tab tab = binding.tabLayout.getTabAt(index);
-    if (tab == null) {
-      return;
-    }
+    if (!PreferencesUtils.autoSave()) {
+      TabLayout.Tab tab = binding.tabLayout.getTabAt(index);
+      if (tab == null) {
+        return;
+      }
 
-    String name = tab.getText().toString();
-    if (name.startsWith("• ")) {
-      return;
+      String name = tab.getText().toString();
+      if (name.startsWith("• ")) {
+        return;
+      }
+      tab.setText("• " + name);
+    } else {
+      saveFile(false);
     }
-    tab.setText("• " + name);
-    if (PreferencesUtils.autoSave()) saveFile(false);
   }
 
   private void updateTabs() {

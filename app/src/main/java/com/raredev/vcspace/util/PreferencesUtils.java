@@ -1,8 +1,6 @@
 package com.raredev.vcspace.util;
 
-import android.content.Context;
 import android.content.SharedPreferences;
-import androidx.preference.PreferenceManager;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.VCSpaceApplication;
 import com.raredev.vcspace.managers.SettingsManager;
@@ -64,7 +62,9 @@ public class PreferencesUtils {
     String spaces = " ".repeat(getEditorTABSize());
     return useSpaces() ? spaces : "\t";
   }
-  
+  /*
+   * Returns whether the user wants to automatically save the file 
+   */
   public static boolean autoSave() {
     return getDefaultPrefs().getBoolean(SettingsManager.KEY_AUTO_SAVE, false);
   }
