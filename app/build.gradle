@@ -78,6 +78,7 @@ dependencies {
   implementation 'androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version'
   implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version'
   
+  implementation androidx.core
   implementation androidx.core_ktx
   implementation androidx.appcompat
   implementation androidx.preference
@@ -97,8 +98,6 @@ dependencies {
   implementation platform("io.github.Rosemoe.sora-editor:bom:0.21.1")
   implementation "io.github.Rosemoe.sora-editor:editor"
   implementation "io.github.Rosemoe.sora-editor:language-textmate"
-  
-  implementation 'androidx.core:core-splashscreen:1.0.1'
   
   implementation project(path: ':common')
   implementation project(path: ':extensions-api')

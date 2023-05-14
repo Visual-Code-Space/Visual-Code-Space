@@ -15,7 +15,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.PopupMenu;
-import androidx.core.splashscreen.SplashScreen;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
@@ -149,7 +148,7 @@ public class MainActivity extends BaseActivity
     } else if (id == R.id.menu_open_file)  {
       pickFile.launch("text/*");
     } else if (id == R.id.menu_save) {
-      saveFile();
+      saveFile(true);
     } else if (id == R.id.menu_save_as) {
       Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
       intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -236,7 +235,7 @@ public class MainActivity extends BaseActivity
   public void onSharedPreferenceChanged(SharedPreferences pref, String key) {
     EventBus.getDefault().post(new PreferenceChangedEvent(key));
   }
-
+  
   private void setupDrawer() {
     DrawerLayout drawerLayout = binding.drawerLayout;
 
@@ -422,7 +421,7 @@ public class MainActivity extends BaseActivity
     binding.container.removeAllViews();
   }
 
-  public void saveFile() {
+  public void saveFile(boolean showMsg) {
     if (!viewModel.getDocuments().isEmpty()) {
       TaskExecutor.executeAsync(
           () -> {
@@ -430,7 +429,7 @@ public class MainActivity extends BaseActivity
             return null;
           },
           (result) -> {
-            ToastUtils.showShort(getString(R.string.saved), ToastUtils.TYPE_SUCCESS);
+            if (showMsg) ToastUtils.showShort(getString(R.string.saved), ToastUtils.TYPE_SUCCESS);
             invalidateOptionsMenu();
           });
     }
@@ -491,6 +490,7 @@ public class MainActivity extends BaseActivity
       return;
     }
     tab.setText("• " + name);
+    if (PreferencesUtils.autoSave()) saveFile(false);
   }
 
   private void updateTabs() {
