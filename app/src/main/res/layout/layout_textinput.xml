@@ -6,7 +6,6 @@
   android:layout_width="match_parent"
   android:hint="@string/file_name_hint"
   android:padding="20dp"
-  style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
   app:hintAnimationEnabled="true"
   android:id="@+id/tvInputLayout">
 

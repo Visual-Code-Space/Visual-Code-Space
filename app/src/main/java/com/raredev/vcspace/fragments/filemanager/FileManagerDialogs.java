@@ -49,8 +49,8 @@ public class FileManagerDialogs {
               isFolder
                   ? context.getString(R.string.folder_name_hint)
                   : context.getString(R.string.file_name_hint));
+          et_filename.requestFocus();
           Button positive = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-
           positive.setOnClickListener(
               v -> {
                 if (isFolder) {
@@ -68,6 +68,7 @@ public class FileManagerDialogs {
                     }
                   }
                 }
+                dialog.dismiss();
               });
         });
 
@@ -116,6 +117,7 @@ public class FileManagerDialogs {
                 dialog.dismiss();
               });
         });
+    dialog.show();
   }
 
   public static void deleteFile(Context context, File file, Concluded concluded) {

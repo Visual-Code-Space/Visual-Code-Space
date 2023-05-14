@@ -67,7 +67,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                           .putInt(
                               SettingsManager.KEY_EDITOR_TEXT_SIZE, (int) binding.slider.getValue())
                           .apply())
-              .setNegativeButton(R.string.cancel, (d, w) -> d.dismiss())
+              .setNegativeButton(android.R.string.cancel, (d, w) -> d.dismiss())
               .setNeutralButton(
                   R.string.reset,
                   (d, w) -> prefs.edit().putInt(SettingsManager.KEY_EDITOR_TEXT_SIZE, 14).apply())
@@ -112,9 +112,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
               prefs.getString(SettingsManager.KEY_CREDENTIAL_PASSWORD, ""));
 
           new MaterialAlertDialogBuilder(requireContext())
-              .setTitle(getString(R.string.pref_git_credentials))
+              .setTitle(R.string.pref_git_credentials)
               .setPositiveButton(
-                  getString(android.R.string.ok),
+                  android.R.string.ok,
                   (d, w) -> {
                     prefs
                         .edit()

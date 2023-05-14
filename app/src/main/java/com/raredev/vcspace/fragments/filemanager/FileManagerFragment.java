@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.TooltipCompat;
 import androidx.fragment.app.Fragment;
@@ -61,7 +62,7 @@ public class FileManagerFragment extends Fragment implements FileAdapter.FileLis
           pm.getMenu().add(R.string.clone_repo);
           pm.setOnMenuItemClickListener(
               item -> {
-                if (item.getTitle() == getString(R.string.clone_repo)) {
+                if (item.getTitle().equals(getString(R.string.clone_repo))) {
                   CloneRepository cloneRepo = new CloneRepository(requireActivity());
                   cloneRepo.setDirectory(viewModel.getCurrentDir().toFile());
                   cloneRepo.cloneRepository();
@@ -89,23 +90,26 @@ public class FileManagerFragment extends Fragment implements FileAdapter.FileLis
     binding.topbarMenu.setOnClickListener(
         v -> {
           PopupMenu pm = new PopupMenu(requireContext(), v);
-          pm.getMenu().add(R.string.new_file_title);
-          pm.getMenu().add(R.string.new_folder_title);
-          pm.getMenu().add(R.string.refresh);
+          if (pm.getMenu() instanceof MenuBuilder menuBuilder) {
+            menuBuilder.setOptionalIconsVisible(true);
+          }
+          pm.getMenu().add(R.string.refresh).setIcon(R.drawable.ic_refresh);
+          pm.getMenu().add(R.string.new_folder_title).setIcon(R.drawable.folder_plus_outline);
+          pm.getMenu().add(R.string.new_file_title).setIcon(R.drawable.file_plus_outline);
           pm.setOnMenuItemClickListener(
               item -> {
-                if (item.getTitle() == getString(R.string.new_file_title)) {
-                  FileManagerDialogs.createFile(
-                      requireContext(),
-                      viewModel.getCurrentDir().toFile(),
-                      (newFile) -> refreshFiles());
-                } else if (item.getTitle() == getString(R.string.new_folder_title)) {
+                if (item.getTitle().equals(getString(R.string.refresh))) {
+                  refreshFiles();
+                } else if (item.getTitle().equals(getString(R.string.new_folder_title))) {
                   FileManagerDialogs.createFolder(
                       requireContext(),
                       viewModel.getCurrentDir().toFile(),
                       (newFolder) -> refreshFiles());
-                } else if (item.getTitle() == getString(R.string.refresh)) {
-                  refreshFiles();
+                } else if (item.getTitle().equals(getString(R.string.new_file_title))) {
+                  FileManagerDialogs.createFile(
+                      requireContext(),
+                      viewModel.getCurrentDir().toFile(),
+                      (newFile) -> refreshFiles());
                 }
                 return true;
               });
@@ -162,9 +166,12 @@ public class FileManagerFragment extends Fragment implements FileAdapter.FileLis
   @Override
   public void onFileMenuClick(FileModel file, View v) {
     PopupMenu pm = new PopupMenu(requireActivity(), v);
-    pm.getMenu().add(R.string.copy_path);
-    pm.getMenu().add(R.string.rename);
-    pm.getMenu().add(R.string.delete);
+    if (pm.getMenu() instanceof MenuBuilder menuBuilder) {
+      menuBuilder.setOptionalIconsVisible(true);
+    }
+    pm.getMenu().add(R.string.copy_path).setIcon(R.drawable.content_copy);
+    pm.getMenu().add(R.string.rename).setIcon(R.drawable.file_rename);
+    pm.getMenu().add(R.string.delete).setIcon(R.drawable.delete_outline);
     pm.setOnMenuItemClickListener(
         item -> {
           if (item.getTitle() == getString(R.string.copy_path)) {

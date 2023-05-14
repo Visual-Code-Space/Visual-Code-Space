@@ -38,6 +38,10 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.VH> {
     holder.tv_name.setText(file.getName());
 
     holder.img_icon.setImageResource(file.getIcon());
+    
+    if (file.getName().endsWith(".html")) {
+      
+    }
 
     holder.itemView.setOnClickListener(
         (v) -> {

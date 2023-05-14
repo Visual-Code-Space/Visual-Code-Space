@@ -7,21 +7,25 @@
     android:id="@+id/menu_execute"
     android:icon="@drawable/ic_play"
     android:title="@string/menu_execute"
+    android:visible="false"
     app:showAsAction="always" />
   <item
     android:id="@+id/menu_undo"
     android:icon="@drawable/ic_undo"
     android:title="@string/menu_undo"
+    android:visible="false"
     app:showAsAction="always" />
   <item
     android:id="@+id/menu_redo"
     android:icon="@drawable/ic_redo"
     android:title="@string/menu_redo"
+    android:visible="false"
     app:showAsAction="always" />
   <item
     android:id="@+id/menu_editor"
     android:icon="@drawable/pencil"
     android:title="@string/editor"
+    android:visible="false"
     app:showAsAction="ifRoom">
     <menu>
       <item
@@ -51,15 +55,18 @@
       <item
         android:id="@+id/menu_save"
         android:icon="@drawable/ic_save"
-        android:title="@string/menu_save" />
+        android:title="@string/menu_save"
+        android:enabled="false" />
       <item
         android:id="@+id/menu_save_as"
         android:icon="@drawable/ic_save"
-        android:title="@string/menu_save_as" />
+        android:title="@string/menu_save_as"
+        android:enabled="false" />
       <item
         android:id="@+id/menu_save_all"
         android:icon="@drawable/ic_save"
-        android:title="@string/menu_save_all" />
+        android:title="@string/menu_save_all"
+        android:enabled="false" />
     </menu>
   </item>
   <item

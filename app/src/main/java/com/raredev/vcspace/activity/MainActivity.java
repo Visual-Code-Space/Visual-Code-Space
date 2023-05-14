@@ -96,10 +96,74 @@ public class MainActivity extends BaseActivity
         });
 
     CompletionProvider.registerCompletionProviders();
-
+    PreferencesUtils.getDefaultPrefs().registerOnSharedPreferenceChangeListener(this);
     ThemeRegistry.getInstance().setTheme(Utils.isDarkMode() ? "darcula" : "quietlight");
     registerResultActivity();
     observeViewModel();
+  }
+
+  @Override
+  public boolean onPrepareOptionsMenu(Menu menu) {
+    var editorView = getCurrentEditor();
+    if (editorView != null) {
+      var document = editorView.getDocument();
+      menu.findItem(R.id.menu_execute).setVisible(SimpleExecuter.isExecutable(document.getName()));
+      menu.findItem(R.id.menu_undo).setVisible(KeyboardUtils.isSoftInputVisible(this));
+      menu.findItem(R.id.menu_redo).setVisible(KeyboardUtils.isSoftInputVisible(this));
+      menu.findItem(R.id.menu_undo).setEnabled(editorView.getEditor().canUndo());
+      menu.findItem(R.id.menu_redo).setEnabled(editorView.getEditor().canRedo());
+      menu.findItem(R.id.menu_save).setEnabled(document.isModified());
+      menu.findItem(R.id.menu_save_as).setEnabled(true);
+      menu.findItem(R.id.menu_save_all).setEnabled(true);
+      menu.findItem(R.id.menu_editor).setVisible(true);
+    }
+    return super.onPrepareOptionsMenu(menu);
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.activity_main_menu, menu);
+    if (menu instanceof MenuBuilder menuBuilder) {
+      menuBuilder.setOptionalIconsVisible(true);
+    }
+    return super.onCreateOptionsMenu(menu);
+  }
+  
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    var id = item.getItemId();
+    var editorView = getCurrentEditor();
+
+    if (id == R.id.menu_execute) {
+      new SimpleExecuter(this, editorView.getDocument().toFile());
+    } else if (id == R.id.menu_undo) {
+      editorView.undo();
+    } else if (id == R.id.menu_redo) {
+      editorView.redo();
+    } else if (id == R.id.menu_search)  {
+      editorView.showAndHideSearcher();
+    } else if (id == R.id.menu_format)  {
+      editorView.getEditor().formatCodeAsync();
+    } else if (id == R.id.menu_new_file)  {
+      createFile.launch("untitled");
+    } else if (id == R.id.menu_open_file)  {
+      pickFile.launch("text/*");
+    } else if (id == R.id.menu_save) {
+      saveFile();
+    } else if (id == R.id.menu_save_as) {
+      Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+      intent.addCategory(Intent.CATEGORY_OPENABLE);
+      intent.setType("text/*");
+      intent.putExtra(Intent.EXTRA_TITLE, viewModel.getCurrentDocument().getName());
+      launcher.launch(intent);
+    } else if (id == R.id.menu_save_all) {
+      saveAllFiles(true);
+    } else if (id == R.id.menu_logview) {
+      startActivity(new Intent(this, LogViewActivity.class));
+    } else if (id == R.id.menu_settings) {
+      startActivity(new Intent(this, SettingsActivity.class));
+    }
+    return true;
   }
 
   @Override
@@ -115,9 +179,9 @@ public class MainActivity extends BaseActivity
         item -> {
           if (item.getTitle() == getString(R.string.close)) {
             closeFile(viewModel.getCurrentPosition());
-          } else if (item.getTitle() == getString(R.string.close_others)) {
+          } else if (item.getTitle().equals(getString(R.string.close_others))) {
             closeOthers();
-          } else if (item.getTitle() == getString(R.string.close_all)) {
+          } else if (item.getTitle().equals(getString(R.string.close_all))) {
             closeAllFiles();
           }
           return true;
@@ -147,7 +211,6 @@ public class MainActivity extends BaseActivity
   @Override
   protected void onStart() {
     super.onStart();
-    PreferencesUtils.getDefaultPrefs().registerOnSharedPreferenceChangeListener(this);
     if (!EventBus.getDefault().isRegistered(this)) {
       EventBus.getDefault().register(this);
     }
@@ -170,86 +233,8 @@ public class MainActivity extends BaseActivity
   }
 
   @Override
-  protected void onResume() {
-    super.onResume();
-    invalidateOptionsMenu();
-  }
-
-  @Override
   public void onSharedPreferenceChanged(SharedPreferences pref, String key) {
     EventBus.getDefault().post(new PreferenceChangedEvent(key));
-  }
-  
-  @Override
-  public boolean onPrepareOptionsMenu(Menu menu) {
-    var editorView = getCurrentEditor();
-    if (editorView != null) {
-      var document = editorView.getDocument();
-      menu.findItem(R.id.menu_execute).setVisible(SimpleExecuter.isExecutable(document.getName()));
-      menu.findItem(R.id.menu_undo).setVisible(KeyboardUtils.isSoftInputVisible(this));
-      menu.findItem(R.id.menu_redo).setVisible(KeyboardUtils.isSoftInputVisible(this));
-      menu.findItem(R.id.menu_undo).setEnabled(editorView.getEditor().canUndo());
-      menu.findItem(R.id.menu_redo).setEnabled(editorView.getEditor().canRedo());
-      menu.findItem(R.id.menu_save).setEnabled(true);
-      menu.findItem(R.id.menu_save_as).setEnabled(true);
-      menu.findItem(R.id.menu_save_all).setEnabled(true);
-      menu.findItem(R.id.menu_editor).setVisible(true);
-    } else {
-      menu.findItem(R.id.menu_execute).setVisible(false);
-      menu.findItem(R.id.menu_undo).setVisible(false);
-      menu.findItem(R.id.menu_redo).setVisible(false);
-      menu.findItem(R.id.menu_save).setEnabled(false);
-      menu.findItem(R.id.menu_save_as).setEnabled(false);
-      menu.findItem(R.id.menu_save_all).setEnabled(false);
-      menu.findItem(R.id.menu_editor).setVisible(false);
-    }
-    return super.onPrepareOptionsMenu(menu);
-  }
-
-  @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
-    getMenuInflater().inflate(R.menu.activity_main_menu, menu);
-    if (menu instanceof MenuBuilder menuBuilder) {
-      menuBuilder.setOptionalIconsVisible(true);
-    }
-    return super.onCreateOptionsMenu(menu);
-  }
-  
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    var id = item.getItemId();
-    var editorView = getCurrentEditor();
-
-    if (id == R.id.menu_execute) {
-      new SimpleExecuter(this, editorView.getDocument().toFile());
-    } else if (id == R.id.menu_undo) {
-      editorView.undo();
-    } else if (id == R.id.menu_redo) {
-      editorView.redo();
-    } else if (id == R.id.menu_search)  {
-      editorView.showAndHideSearcher();
-    } else if (id == R.id.menu_search)  {
-      editorView.getEditor().formatCodeAsync();
-    } else if (id == R.id.menu_new_file)  {
-      createFile.launch("untitled");
-    } else if (id == R.id.menu_open_file)  {
-      pickFile.launch("text/*");
-    } else if (id == R.id.menu_save) {
-      saveFile();
-    } else if (id == R.id.menu_save_as) {
-      Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-      intent.addCategory(Intent.CATEGORY_OPENABLE);
-      intent.setType("text/*");
-      intent.putExtra(Intent.EXTRA_TITLE, viewModel.getCurrentDocument().getName());
-      launcher.launch(intent);
-    } else if (id == R.id.menu_save_all) {
-      saveAllFiles(true);
-    } else if (id == R.id.menu_logview) {
-      startActivity(new Intent(this, LogViewActivity.class));
-    } else if (id == R.id.menu_settings) {
-      startActivity(new Intent(this, SettingsActivity.class));
-    }
-    return true;
   }
 
   private void setupDrawer() {
@@ -403,8 +388,9 @@ public class MainActivity extends BaseActivity
 
   public void closeOthers() {
     DocumentModel document = viewModel.getCurrentDocument();
-    int index = 0;
+    if (document == null) return;
 
+    int index = 0;
     while (viewModel.getOpenedDocumentCount() != 1) {
       CodeEditorView editor = getEditorAtIndex(index);
 

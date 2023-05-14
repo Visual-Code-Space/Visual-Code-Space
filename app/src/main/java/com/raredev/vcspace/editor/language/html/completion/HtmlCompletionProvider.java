@@ -16,6 +16,7 @@ import io.github.rosemoe.sora.lang.completion.snippet.parser.CodeSnippetParser;
 import io.github.rosemoe.sora.text.Cursor;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import org.eclipse.lemminx.dom.DOMDocument;
 import org.eclipse.lemminx.dom.DOMNode;
@@ -67,16 +68,17 @@ public class HtmlCompletionProvider extends CompletionProvider {
       if (prefix.startsWith("</")) {
         tagString = "</" + key;
       }
-      if (tagString.startsWith(prefix) && completions.size() <= 20) {
-        completions.add(
-            new SimpleCompletionItem(
-                key,
-                tag.getDescription(),
-                "Tag",
-                SimpleCompletionIconDrawer.draw(SimpleCompletionItemKind.TAG),
-                prefix.length(),
-                tagString));
+      if (!tagString.toLowerCase(Locale.ROOT).startsWith(prefix.toLowerCase(Locale.ROOT))) {
+        continue;
       }
+      completions.add(
+          new SimpleCompletionItem(
+              key,
+              tag.getDescription(),
+              "Tag",
+              SimpleCompletionIconDrawer.draw(SimpleCompletionItemKind.TAG),
+              prefix.length(),
+              tagString));
     }
   }
 
@@ -100,16 +102,17 @@ public class HtmlCompletionProvider extends CompletionProvider {
 
       if (atrributes != null && atrributes.length > 0) {
         for (String attr : atrributes) {
-          if (attr.startsWith(prefix) && completions.size() <= 20) {
-            completions.add(
-                new SimpleSnippetCompletionItem(
-                    attr,
-                    htmlTag.getDescription(),
-                    "Attribute",
-                    SimpleCompletionIconDrawer.draw(SimpleCompletionItemKind.ATTRIBUTE),
-                    new SnippetDescription(
-                        prefix.length(), CodeSnippetParser.parse(attr + "=\"$0\""), true)));
+          if (!attr.toLowerCase(Locale.ROOT).startsWith(prefix.toLowerCase(Locale.ROOT))) {
+            continue;
           }
+          completions.add(
+              new SimpleSnippetCompletionItem(
+                  attr,
+                  htmlTag.getDescription(),
+                  "Attribute",
+                  SimpleCompletionIconDrawer.draw(SimpleCompletionItemKind.ATTRIBUTE),
+                  new SnippetDescription(
+                      prefix.length(), CodeSnippetParser.parse(attr + "=\"$0\""), true)));
         }
       }
     }
@@ -135,21 +138,22 @@ public class HtmlCompletionProvider extends CompletionProvider {
       if (values != null) {
         for (String value : values) {
           String valueInsert = "\"" + value;
-
-          if (valueInsert.startsWith(prefix) && completions.size() <= 20) {
-            String type = attribute.getType();
-            if (type == null) {
-              type = "Value";
-            }
-            completions.add(
-                new SimpleCompletionItem(
-                    value,
-                    attribute.getDescription(),
-                    type,
-                    SimpleCompletionIconDrawer.draw(SimpleCompletionItemKind.VALUE),
-                    prefix.length(),
-                    valueInsert));
+          if (!valueInsert.toLowerCase(Locale.ROOT).startsWith(prefix.toLowerCase(Locale.ROOT))) {
+            continue;
           }
+
+          String type = attribute.getType();
+          if (type == null) {
+            type = "Value";
+          }
+          completions.add(
+              new SimpleCompletionItem(
+                  value,
+                  attribute.getDescription(),
+                  type,
+                  SimpleCompletionIconDrawer.draw(SimpleCompletionItemKind.VALUE),
+                  prefix.length(),
+                  valueInsert));
         }
       }
     }

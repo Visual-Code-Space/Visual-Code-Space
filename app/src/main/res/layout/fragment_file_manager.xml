@@ -6,61 +6,52 @@
   android:layout_width="match_parent"
   android:orientation="vertical">
 
-  <com.google.android.material.appbar.AppBarLayout
+  <RelativeLayout
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    app:layout_behavior="com.google.android.material.appbar.AppBarLayout$Behavior"
-    app:liftOnScroll="true"
-    android:fitsSystemWindows="true">
+    android:padding="10dp">
 
-    <RelativeLayout
+    <ImageView
+      android:layout_height="25dp"
+      android:layout_width="25dp"
+      android:src="@drawable/folder_open"
+      android:layout_centerVertical="true"
+      android:id="@+id/icon" />
+
+    <TextView
       android:layout_height="wrap_content"
-      android:layout_width="match_parent"
-      android:padding="10dp">
+      android:layout_width="wrap_content"
+      android:layout_centerVertical="true"
+      android:padding="2dp"
+      android:layout_toRightOf="@id/icon"
+      android:textSize="14sp"
+      android:singleLine="true"
+      android:layout_marginStart="10dp"
+      android:text="File Manager"
+      android:id="@+id/folder_name" />
 
-      <ImageView
-        android:layout_height="25dp"
-        android:layout_width="25dp"
-        android:src="@drawable/folder_open"
-        android:layout_centerVertical="true"
-        android:id="@+id/icon" />
+    <ImageView
+      android:layout_height="25dp"
+      android:layout_width="25dp"
+      android:src="@drawable/ic_menu"
+      android:background="?attr/selectableItemBackgroundBorderless"
+      android:layout_centerVertical="true"
+      android:padding="2dp"
+      android:layout_alignParentEnd="true"
+      android:id="@+id/topbar_menu" />
 
-      <TextView
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_centerVertical="true"
-        android:padding="2dp"
-        android:layout_toRightOf="@id/icon"
-        android:textSize="14sp"
-        android:singleLine="true"
-        android:layout_marginStart="10dp"
-        android:text="File Manager"
-        android:id="@+id/folder_name" />
+    <ImageView
+      android:layout_height="25dp"
+      android:layout_width="25dp"
+      android:src="@drawable/git"
+      android:background="?attr/selectableItemBackgroundBorderless"
+      android:layout_centerVertical="true"
+      android:layout_margin="3dp"
+      android:padding="2dp"
+      android:layout_toLeftOf="@id/topbar_menu"
+      android:id="@+id/git_tools" />
 
-      <ImageView
-        android:layout_height="25dp"
-        android:layout_width="25dp"
-        android:src="@drawable/ic_menu"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:layout_centerVertical="true"
-        android:padding="2dp"
-        android:layout_alignParentEnd="true"
-        android:id="@+id/topbar_menu" />
-
-      <ImageView
-        android:layout_height="25dp"
-        android:layout_width="25dp"
-        android:src="@drawable/git"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:layout_centerVertical="true"
-        android:layout_margin="3dp"
-        android:padding="2dp"
-        android:layout_toLeftOf="@id/topbar_menu"
-        android:id="@+id/git_tools" />
-
-    </RelativeLayout>
-
-  </com.google.android.material.appbar.AppBarLayout>
+  </RelativeLayout>
 
   <androidx.recyclerview.widget.RecyclerView
     android:layout_height="45dp"
@@ -71,13 +62,11 @@
   <ViewFlipper
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
     android:id="@+id/container">
 
     <androidx.recyclerview.widget.RecyclerView
       android:layout_height="match_parent"
       android:layout_width="match_parent"
-      app:layout_behavior="@string/appbar_scrolling_view_behavior"
       android:clipToPadding="false"
       android:id="@+id/rv_files" />
 

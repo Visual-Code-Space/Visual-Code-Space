@@ -16,7 +16,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class LogViewActivity extends BaseActivity implements ILogger.Observer {
-  private final String LOG_TAG = LogViewActivity.class.getSimpleName();
+  private static final String LOG_TAG = LogViewActivity.class.getSimpleName();
   private ActivityLogViewBinding binding;
 
   @Override
@@ -30,7 +30,7 @@ public class LogViewActivity extends BaseActivity implements ILogger.Observer {
     super.onCreate(savedInstanceState);
     setSupportActionBar(binding.toolbar);
     binding.toolbar.setNavigationOnClickListener((v) -> onBackPressed());
-    //binding.editor.setEditorLanguage(VCSpaceTMLanguage.create("text.log"));
+    binding.editor.setEditorLanguage(VCSpaceTMLanguage.create("text.log"));
     binding.editor.getProps().autoIndent = false;
     binding.editor.setEditable(false);
     binding.editor.configureEditor();
