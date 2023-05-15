@@ -1,7 +1,6 @@
+![Banner](./images/banner.png "app_banner")
+
 <div align="center">
-    <img width="125" height="125" src="./images/ic_launcher.png" alt="Visual Code Space" title="Visual Code Space">
-    <h1>Visual Code Space</h1>
-    
 [![Debug Build](https://github.com/raredeveloperofc/Visual-Code-Space/actions/workflows/debug_build.yml/badge.svg)](https://github.com/raredeveloperofc/Visual-Code-Space/actions/workflows/debug_build.yml)
 </div>
 
