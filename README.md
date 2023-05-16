@@ -1,7 +1,8 @@
 ![Banner](./images/banner.png "app_banner")
 
 <div align="center">
-![Debug Build](https://github.com/raredeveloperofc/Visual-Code-Space/actions/workflows/debug_build.yml/badge.svg)](https://github.com/raredeveloperofc/Visual-Code-Space/actions/workflows/debug_build.yml)
+    
+[![Debug Build](https://github.com/raredeveloperofc/Visual-Code-Space/actions/workflows/debug_build.yml/badge.svg)](https://github.com/raredeveloperofc/Visual-Code-Space/actions/workflows/debug_build.yml)
 </div>
 
 ## Screenshots
