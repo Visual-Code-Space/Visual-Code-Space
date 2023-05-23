@@ -36,6 +36,9 @@
       android:name=".activity.WebViewActivity"
       android:parentActivityName=".activity.MainActivity" />
     <activity
+      android:name=".activity.MarkdownViewActivity"
+      android:parentActivityName=".activity.MainActivity" />
+    <activity
       android:name=".activity.CrashActivity"
       android:exported="true" />
 

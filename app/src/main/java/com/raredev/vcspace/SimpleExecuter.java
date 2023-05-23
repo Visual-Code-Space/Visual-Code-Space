@@ -2,17 +2,10 @@ package com.raredev.vcspace;
 
 import android.content.Context;
 import android.content.Intent;
+import com.blankj.utilcode.util.FileIOUtils;
+import com.raredev.vcspace.activity.MarkdownViewActivity;
 import com.raredev.vcspace.activity.WebViewActivity;
-import com.raredev.vcspace.util.DialogUtils;
 import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import org.commonmark.node.Node;
-import org.commonmark.parser.Parser;
-import org.commonmark.renderer.html.HtmlRenderer;
 
 public class SimpleExecuter {
 
@@ -23,13 +16,9 @@ public class SimpleExecuter {
         execute(context, file, null);
         break;
       case ".md":
-        try {
-          String html = convertMarkdownToHtml(file.getAbsolutePath());
-          execute(context, null, html);
-        } catch (IOException e) {
-          DialogUtils.newErrorDialog(context, "Error", e.toString());
-          e.printStackTrace();
-        }
+        Intent it = new Intent(context, MarkdownViewActivity.class);
+        it.putExtra(MarkdownViewActivity.EXTRA_MARKDOWN, FileIOUtils.readFile2String(file));
+        context.startActivity(it);
         break;
     }
   }
@@ -47,23 +36,9 @@ public class SimpleExecuter {
 
   private void execute(Context context, File executableFile, String html) {
     Intent it = new Intent(context, WebViewActivity.class);
-    it.putExtra("executable_file", executableFile == null ? null : executableFile.getAbsolutePath());
+    it.putExtra(
+        "executable_file", executableFile == null ? null : executableFile.getAbsolutePath());
     it.putExtra("html_content", html);
     context.startActivity(it);
-  }
-
-  private String convertMarkdownToHtml(String markdownFilePath) throws IOException {
-    // Read the Markdown file contents into a string
-    Path path = Paths.get(markdownFilePath);
-    byte[] bytes = Files.readAllBytes(path);
-    String markdownText = new String(bytes, StandardCharsets.UTF_8);
-
-    // Convert the Markdown to HTML
-    Parser parser = Parser.builder().build();
-    Node document = parser.parse(markdownText);
-    HtmlRenderer renderer = HtmlRenderer.builder().build();
-    String html = renderer.render(document);
-
-    return html;
   }
 }
