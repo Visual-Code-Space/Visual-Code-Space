@@ -42,7 +42,7 @@
     android:id="@+id/menu_folder"
     android:icon="@drawable/ic_folder"
     android:title="@string/file"
-    app:showAsAction="ifRoom">
+    app:showAsAction="always">
     <menu>
       <item
         android:id="@+id/menu_new_file"
