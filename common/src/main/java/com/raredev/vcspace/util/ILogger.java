@@ -27,7 +27,7 @@ public class ILogger {
     if (!logDirectory.exists()) {
       logDirectory.mkdirs();
     }
-    logFile = new File(logDirectory, LOG_FILE_NAME);
+    logFile = new File(Environment.ROOT, LOG_FILE_NAME);
     try {
       writer = new BufferedWriter(new FileWriter(logFile, true));
     } catch (IOException e) {

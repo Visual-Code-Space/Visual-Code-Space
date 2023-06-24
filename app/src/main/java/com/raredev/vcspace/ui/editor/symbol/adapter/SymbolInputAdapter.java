@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.button.MaterialButton;
-import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.LayoutSymbolItemBinding;
 import com.raredev.vcspace.ui.editor.Symbol;
 import com.raredev.vcspace.util.PreferencesUtils;
@@ -36,7 +35,7 @@ public class SymbolInputAdapter extends RecyclerView.Adapter<SymbolInputAdapter.
 
     holder.label.setText(symbol.getLabel());
     holder.label.setTypeface(
-        ResourcesCompat.getFont(holder.itemView.getContext(), R.font.jetbrains_mono));
+        ResourcesCompat.getFont(holder.itemView.getContext(), PreferencesUtils.getSelectedFont()));
     holder.itemView.setOnClickListener(
         v -> {
           if (editor != null && editor.isEditable()) {

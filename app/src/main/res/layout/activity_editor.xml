@@ -61,10 +61,24 @@
 
         </ViewFlipper>
 
-        <com.raredev.vcspace.ui.editor.symbol.SymbolInputView
+        <LinearLayout
           android:layout_height="wrap_content"
-          android:layout_width="wrap_content"
-          android:id="@+id/symbol_input" />
+          android:layout_width="match_parent"
+          android:orientation="vertical"
+          android:id="@+id/layout_symbol">
+
+          <View
+            android:layout_height="0.5dp"
+            android:layout_width="match_parent"
+            android:background="?attr/colorOutline"
+            android:id="@+id/top_divider" />
+
+          <com.raredev.vcspace.ui.editor.symbol.SymbolInputView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:id="@+id/symbol_input" />
+
+        </LinearLayout>
 
       </LinearLayout>
 
@@ -74,13 +88,6 @@
         android:gravity="center"
         android:orientation="vertical"
         android:id="@+id/no_file_opened">
-
-        <com.google.android.material.imageview.ShapeableImageView
-          android:layout_height="@dimen/dimen28dp"
-          android:layout_width="@dimen/dimen28dp"
-          android:layout_toEndOf="@id/directory"
-          android:src="@drawable/file_document_outline"
-          android:layout_centerVertical="true" />
 
         <com.google.android.material.textview.MaterialTextView
           android:layout_height="wrap_content"

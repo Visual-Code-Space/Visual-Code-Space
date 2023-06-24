@@ -15,7 +15,7 @@ import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.blankj.utilcode.util.ClipboardUtils;
 import com.raredev.vcspace.R;
-import com.raredev.vcspace.activity.MainActivity;
+import com.raredev.vcspace.activity.EditorActivity;
 import com.raredev.vcspace.databinding.FragmentFileManagerBinding;
 import com.raredev.vcspace.fragments.filemanager.adapters.DirectoryAdapter;
 import com.raredev.vcspace.fragments.filemanager.adapters.FileAdapter;
@@ -94,22 +94,22 @@ public class FileManagerFragment extends Fragment implements FileAdapter.FileLis
             menuBuilder.setOptionalIconsVisible(true);
           }
           pm.getMenu().add(R.string.refresh).setIcon(R.drawable.ic_refresh);
+        pm.getMenu().add(R.string.new_file_title).setIcon(R.drawable.file_plus_outline);
           pm.getMenu().add(R.string.new_folder_title).setIcon(R.drawable.folder_plus_outline);
-          pm.getMenu().add(R.string.new_file_title).setIcon(R.drawable.file_plus_outline);
           pm.setOnMenuItemClickListener(
               item -> {
                 if (item.getTitle().equals(getString(R.string.refresh))) {
                   refreshFiles();
-                } else if (item.getTitle().equals(getString(R.string.new_folder_title))) {
-                  FileManagerDialogs.createFolder(
-                      requireContext(),
-                      viewModel.getCurrentDir().toFile(),
-                      (newFolder) -> refreshFiles());
                 } else if (item.getTitle().equals(getString(R.string.new_file_title))) {
                   FileManagerDialogs.createFile(
                       requireContext(),
                       viewModel.getCurrentDir().toFile(),
                       (newFile) -> refreshFiles());
+                } else if (item.getTitle().equals(getString(R.string.new_folder_title))) {
+                  FileManagerDialogs.createFolder(
+                      requireContext(),
+                      viewModel.getCurrentDir().toFile(),
+                      (newFolder) -> refreshFiles());
                 }
                 return true;
               });
@@ -153,7 +153,7 @@ public class FileManagerFragment extends Fragment implements FileAdapter.FileLis
       viewModel.setCurrentDir(file);
     } else {
       if (FileUtil.isValidTextFile(file.getName())) {
-        ((MainActivity) requireActivity()).openFile(file);
+        ((EditorActivity) requireActivity()).openFile(file);
       } else if (file.getName().endsWith(".apk")) {
         ApkInstaller.installApplication(getContext(), file.toFile());
       }

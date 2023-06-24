@@ -19,7 +19,7 @@
     android:supportsRtl="true"
     android:theme="@style/AppTheme">
     <activity
-      android:name=".activity.MainActivity"
+      android:name=".activity.EditorActivity"
       android:configChanges="orientation|screenSize"
       android:windowSoftInputMode="adjustResize"
       android:exported="true">
@@ -34,10 +34,10 @@
     <activity android:name=".activity.TerminalActivity" />
     <activity
       android:name=".activity.WebViewActivity"
-      android:parentActivityName=".activity.MainActivity" />
+      android:parentActivityName=".activity.EditorActivity" />
     <activity
       android:name=".activity.MarkdownViewActivity"
-      android:parentActivityName=".activity.MainActivity" />
+      android:parentActivityName=".activity.EditorActivity" />
     <activity
       android:name=".activity.CrashActivity"
       android:exported="true" />
