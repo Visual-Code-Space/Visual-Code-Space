@@ -14,7 +14,7 @@ public class Environment {
     ROOT = new File("/data/data/com.raredev.vcspace/files");
     JAVA_TOOLS = mkdirIfNotExits(new File(ROOT, "java-tools"));
     VCSPACE_DIR = mkdirIfNotExits(new File("/storage/emulated/0/VCSpace"));
-    VCSPACE_DIR = mkdirIfNotExits(new File(VCSPACE_DIR, "plugins"));
+    PLUGINS_DIR = mkdirIfNotExits(new File(VCSPACE_DIR, "plugins"));
   }
   
   public static File mkdirIfNotExits(File in) {
