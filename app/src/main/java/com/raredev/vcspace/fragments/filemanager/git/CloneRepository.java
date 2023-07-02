@@ -11,7 +11,7 @@ import com.blankj.utilcode.util.ThreadUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.raredev.vcspace.R;
-import com.raredev.vcspace.databinding.LayoutCloneDialogBinding;
+import com.raredev.vcspace.databinding.LayoutTextinputBinding;
 import com.raredev.vcspace.progressdialog.ProgressDialog;
 import com.raredev.vcspace.progressdialog.ProgressStyle;
 import com.raredev.vcspace.task.TaskExecutor;
@@ -39,7 +39,7 @@ public class CloneRepository {
   }
 
   public void cloneRepository() {
-    LayoutCloneDialogBinding bind = LayoutCloneDialogBinding.inflate(LayoutInflater.from(context));
+    LayoutTextinputBinding bind = LayoutTextinputBinding.inflate(LayoutInflater.from(context));
     AlertDialog dialog =
         new MaterialAlertDialogBuilder(context)
             .setView(bind.getRoot())
@@ -51,7 +51,7 @@ public class CloneRepository {
     dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
     dialog.setOnShowListener(
         (p1) -> {
-          TextInputEditText repoUrl = bind.textinputUrl;
+          TextInputEditText repoUrl = bind.etInput;
           Button positive = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
 
           repoUrl.requestFocus();
