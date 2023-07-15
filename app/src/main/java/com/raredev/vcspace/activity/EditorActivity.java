@@ -102,6 +102,20 @@ public class EditorActivity extends BaseActivity
     ThemeRegistry.getInstance().setTheme(Utils.isDarkMode() ? "darcula" : "quietlight");
     registerResultActivity();
     observeViewModel();
+
+    Uri fileUri = getIntent().getData();
+    if (fileUri != null) {
+      String filePath = fileUri.getPath();
+      try {
+      	openFile(
+          new FileModel(
+              FileUtil.getFileFromUri(this, fileUri).getAbsolutePath(),
+              FileUtil.getFileName(this, fileUri),
+              true));
+      } catch(IOException err) {
+      	err.printStackTrace();
+      }
+    }
   }
 
   @Override
