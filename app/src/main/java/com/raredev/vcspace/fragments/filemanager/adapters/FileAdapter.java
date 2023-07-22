@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textview.MaterialTextView;
+import com.raredev.vcspace.SimpleExecuter;
 import com.raredev.vcspace.databinding.LayoutFileItemBinding;
 import com.raredev.vcspace.fragments.filemanager.models.FileModel;
 import com.raredev.vcspace.fragments.filemanager.viewmodel.FileListViewModel;
@@ -38,9 +39,11 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.VH> {
     holder.tv_name.setText(file.getName());
 
     holder.img_icon.setImageResource(file.getIcon());
-    
-    if (file.getName().endsWith(".html")) {
-      
+
+    if (file.isFile() && (file.getName().endsWith(".html") || file.getName().endsWith(".md"))) {
+      holder.img_execute.setVisibility(View.VISIBLE);
+    } else {
+      holder.img_execute.setVisibility(View.GONE);
     }
 
     holder.itemView.setOnClickListener(
@@ -56,6 +59,11 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.VH> {
             fileListener.onFileLongClick(file, v);
           }
           return true;
+        });
+
+    holder.img_execute.setOnClickListener(
+        v -> {
+          new SimpleExecuter(holder.img_execute.getContext(), file.toFile());
         });
 
     holder.img_menu.setOnClickListener(
@@ -88,13 +96,14 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.VH> {
   }
 
   public class VH extends RecyclerView.ViewHolder {
-    ShapeableImageView img_icon, img_menu;
+    ShapeableImageView img_icon, img_execute, img_menu;
     MaterialTextView tv_name;
 
     public VH(LayoutFileItemBinding binding) {
       super(binding.getRoot());
       img_icon = binding.imgIcon;
       tv_name = binding.fileName;
+      img_execute = binding.execute;
       img_menu = binding.imgMenu;
     }
   }

@@ -150,8 +150,10 @@ public class EditorActivity extends BaseActivity
     var id = item.getItemId();
     var editorView = getCurrentEditor();
 
-    if (id == R.id.menu_execute) new SimpleExecuter(this, editorView.getDocument().toFile());
-    else if (id == R.id.menu_undo) editorView.undo();
+    if (id == R.id.menu_execute) {
+      saveAllFiles(true);
+      new SimpleExecuter(this, editorView.getDocument().toFile());
+    } else if (id == R.id.menu_undo) editorView.undo();
     else if (id == R.id.menu_redo) editorView.redo();
     else if (id == R.id.menu_search) editorView.showAndHideSearcher();
     else if (id == R.id.menu_format) editorView.getEditor().formatCodeAsync();
