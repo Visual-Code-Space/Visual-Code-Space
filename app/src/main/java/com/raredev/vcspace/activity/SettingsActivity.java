@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.ActivitySettingsBinding;
+import com.raredev.vcspace.fragments.SettingsFragment;
 
 public class SettingsActivity extends BaseActivity {
   private ActivitySettingsBinding binding;
@@ -20,6 +21,13 @@ public class SettingsActivity extends BaseActivity {
     setSupportActionBar(binding.toolbar);
     getSupportActionBar().setTitle(R.string.menu_settings);
     binding.toolbar.setNavigationOnClickListener((v) -> onBackPressed());
+
+    if (getSupportFragmentManager().findFragmentByTag(SettingsFragment.TAG) == null) {
+      getSupportFragmentManager()
+          .beginTransaction()
+          .add(R.id.settings_container, new SettingsFragment(), SettingsFragment.TAG)
+          .commit();
+    }
   }
 
   @Override

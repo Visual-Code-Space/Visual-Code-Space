@@ -2,6 +2,7 @@ package io.github.rosemoe.sora.langs.textmate;
 
 import android.os.Bundle;
 import androidx.annotation.NonNull;
+import com.raredev.vcspace.plugin.snippet.SnippetPluginLoader;
 import com.raredev.vcspace.util.PreferencesUtils;
 import io.github.rosemoe.sora.lang.completion.CompletionPublisher;
 import io.github.rosemoe.sora.lang.format.Formatter;

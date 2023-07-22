@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="@string/git">
+
+        <Preference
+            app:icon="@drawable/key"
+            app:key="pref_credential"
+            app:summary="@string/pref_git_credentials_summary"
+            app:title="@string/pref_git_credentials" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

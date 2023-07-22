@@ -105,7 +105,6 @@ dependencies {
   implementation "io.noties.markwon:image-glide:$markwon_version"
   
   implementation project(path: ':common')
-  implementation project(path: ':extensions-api')
 
   //debugImplementation common.leakcanary
 }

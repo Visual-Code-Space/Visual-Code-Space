@@ -19,11 +19,10 @@
 
   </com.google.android.material.appbar.AppBarLayout>
 
-  <androidx.fragment.app.FragmentContainerView
+  <FrameLayout
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-    android:name="com.raredev.vcspace.fragments.SettingsFragment"
-    android:id="@+id/fragment" />
+    android:id="@+id/settings_container" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

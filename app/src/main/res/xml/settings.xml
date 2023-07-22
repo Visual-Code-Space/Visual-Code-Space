@@ -1,97 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-  <PreferenceCategory
-    app:iconSpaceReserved="false"
-    app:title="@string/application">
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="@string/configure">
 
-    <ListPreference
-      app:defaultValue="default"
-      app:entries="@array/settings_theme_entries"
-      app:entryValues="@array/pref_entry_values_theme"
-      app:icon="@drawable/theme_light_dark"
-      app:key="pref_theme"
-      app:title="@string/title_theme"
-      app:useSimpleSummaryProvider="true" />
-  </PreferenceCategory>
+        <Preference
+            app:key="pref_general"
+            app:title="@string/general"
+            app:iconSpaceReserved="false" />
 
-  <PreferenceCategory
-    app:iconSpaceReserved="false"
-    app:title="@string/editor">
+        <Preference
+            app:key="pref_editor"
+            app:title="@string/editor"
+            app:iconSpaceReserved="false" />
 
-    <Preference
-      app:icon="@drawable/format_size"
-      app:key="font_size"
-      app:summary="@string/pref_editor_textsize_summary"
-      app:title="@string/pref_editor_textsize" />
+        <Preference
+            app:key="pref_git"
+            app:title="@string/git"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
 
-    <ListPreference
-      app:defaultValue="4"
-      app:entries="@array/settings_tab_entries"
-      app:entryValues="@array/settings_tab_entries"
-      app:icon="@drawable/format_font"
-      app:key="pref_editortabsize"
-      app:title="@string/pref_editor_tabsize"
-      app:useSimpleSummaryProvider="true" />
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="@string/about">
 
-    <ListPreference
-      app:defaultValue="firacode"
-      app:entries="@array/settings_font_entries"
-      app:entryValues="@array/pref_entry_values_font"
-      app:icon="@drawable/format_font"
-      app:key="pref_editorfont"
-      app:title="@string/pref_editor_font"
-      app:useSimpleSummaryProvider="true" />
+        <Preference
+            app:icon="@drawable/github"
+            app:key="github"
+            app:summary="https://github.com/Visual-Code-Space/Visual-Code-Space"
+            app:title="GitHub:" />
 
-    <SwitchPreferenceCompat
-      app:defaultValue="true"
-      app:icon="@drawable/keyboard_tab"
-      app:key="pref_usespaces"
-      app:title="@string/pref_editor_use_spaces"
-      app:summary="@string/pref_editor_use_spaces_summary" />
-
-    <SwitchPreferenceCompat
-      app:defaultValue="true"
-      app:icon="@drawable/form_textbox_password"
-      app:key="pref_deleteemptylinefast"
-      app:title="@string/pref_editor_deleteemptylinefast"
-      app:summary="@string/pref_editor_deleteemptylinefast_summary" />
-      
-    <SwitchPreferenceCompat
-      app:defaultValue="false"
-      app:icon="@drawable/ic_save"
-      app:key="pref_auto_save"
-      app:title="@string/pref_editor_auto_save"
-      app:summary="@string/pref_editor_auto_save_summary" />
-  </PreferenceCategory>
-
-  <PreferenceCategory
-    app:iconSpaceReserved="false"
-    app:title="@string/git">
-
-    <Preference
-      app:icon="@drawable/key"
-      app:key="pref_credential"
-      app:summary="@string/pref_git_credentials_summary"
-      app:title="@string/pref_git_credentials" />
-  </PreferenceCategory>
-
-  <PreferenceCategory
-    app:iconSpaceReserved="false"
-    app:title="@string/about">
-
-    <Preference
-      app:icon="@drawable/github"
-      app:key="github"
-      app:summary="https://github.com/Visual-Code-Space/Visual-Code-Space"
-      app:title="GitHub:" />
-
-    <Preference
-      app:icon="@drawable/ic_license"
-      app:key="licenses"
-      app:title="Licenses" />
-  </PreferenceCategory>
+        <Preference
+            app:icon="@drawable/ic_license"
+            app:key="licenses"
+            app:title="Licenses" />
+    </PreferenceCategory>
 
 </PreferenceScreen>

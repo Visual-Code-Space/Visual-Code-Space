@@ -1,156 +1,163 @@
 <resources>
-  <!-- Linguagem Português Brasil -->
-  <string name="open">Abrir</string>
-  <string name="remove">Remover</string>
-  <string name="info">Informações</string>
-  <string name="close">Fechar</string>
-  <string name="close_others">Fechar outros</string>
-  <string name="close_all">Fechar tudo</string>
-  <string name="comment_line">Linha de comentário</string>
-  <string name="select_all">Selecionar tudo</string>
-  <string name="copy">Copiar</string>
-  <string name="cut">Cortar</string>
-  <string name="paste">Colar</string>
-  <string name="no_file_opened">Nenhum arquivo aberto</string>
-  <string name="refresh">Atualizar</string>
-  <string name="loading">Carregando..</string>
-  <string name="empty">Vazio</string>
-  <string name="yes">Sim</string>
-  <string name="no">Não</string>
-  <string name="url_copied">URL copiado para a área de transferência.</string>
-  <string name="exit">Sair</string>
+    <!-- Linguagem Português Brasil -->
+    <string name="open">Abrir</string>
+    <string name="remove">Remover</string>
+    <string name="info">Informações</string>
+    <string name="close">Fechar</string>
+    <string name="close_others">Fechar outros</string>
+    <string name="close_all">Fechar tudo</string>
+    <string name="comment_line">Linha de comentário</string>
+    <string name="select_all">Selecionar tudo</string>
+    <string name="copy">Copiar</string>
+    <string name="cut">Cortar</string>
+    <string name="paste">Colar</string>
+    <string name="no_file_opened">Nenhum arquivo aberto</string>
+    <string name="refresh">Atualizar</string>
+    <string name="loading">Carregando..</string>
+    <string name="empty">Vazio</string>
+    <string name="yes">Sim</string>
+    <string name="no">Não</string>
+    <string name="url_copied">URL copiado para a área de transferência.</string>
+    <string name="exit">Sair</string>
 
-  <!-- Menus Strings -->
-  <string name="menu_execute">Executar</string>
-  <string name="menu_format">Formatar</string>
-  <string name="menu_search">Pesquisar</string>
-  <string name="menu_reload">Recarregar</string>
-  <string name="menu_settings">Configurações</string>
-  <string name="menu_undo">Desfazer</string>
-  <string name="menu_redo">Refazer</string>
-  <string name="menu_edit">Editor</string>
-  <string name="menu_new_file">Novo arquivo</string>
-  <string name="menu_open_file">Abrir arquivo</string>
-  <string name="menu_save">Salvar</string>
-  <string name="menu_save_as">Salvar como</string>
-  <string name="menu_save_all">Salvar tudo</string>
-  <string name="menu_open_drawer">Abrir drawer</string>
-  <string name="menu_view_logs">Visualizar registros</string>
+    <!-- Menus Strings -->
+    <string name="menu_execute">Executar</string>
+    <string name="menu_format">Formatar</string>
+    <string name="menu_search">Pesquisar</string>
+    <string name="menu_reload">Recarregar</string>
+    <string name="menu_settings">Configurações</string>
+    <string name="menu_undo">Desfazer</string>
+    <string name="menu_redo">Refazer</string>
+    <string name="menu_edit">Editor</string>
+    <string name="menu_new_file">Novo arquivo</string>
+    <string name="menu_open_file">Abrir arquivo</string>
+    <string name="menu_save">Salvar</string>
+    <string name="menu_save_as">Salvar como</string>
+    <string name="menu_save_all">Salvar tudo</string>
+    <string name="menu_open_drawer">Abrir drawer</string>
+    <string name="menu_view_logs">Visualizar registros</string>
 
-  <!-- Errors Strings -->
-  <string name="error">Erro</string>
+    <!-- Errors Strings -->
+    <string name="error">Erro</string>
 
-  <!-- Buttons And Titles -->
-  <string name="saved">Salvo</string>
-  <string name="saved_files">Arquivos salvos</string>
-  <string name="existing_file">Arquivo já existente!</string>
-  <string name="delete">Deletar</string>
-  <string name="delete_message">Tem certeza que deseja deletar \"%1$s\"?</string>
-  <string name="deleted_message">Deletado</string>
-  <string name="deleting">Apagando</string>
-  <string name="deleting_please_wait">Apagando por favor aguarde.</string>
-  <string name="create">Criar</string>
-  <string name="cancel">Cancelar</string>
-  <string name="file">Arquivo</string>
-  <string name="folder">Pasta</string>
-  <string name="rename">Renomear</string>
-  <string name="renamed_message">\"%1$s\" renomeado para \"%2$s\"</string>
-  <string name="copy_path">Copiar caminho</string>
-  <string name="rename_hint">Digite um novo nome:</string>
-  <string name="open_folder">Abrir uma pasta</string>
-  <string name="open_recent">Abrir recente</string>
-  <string name="file_name_hint">Nome do arquivo:</string>
-  <string name="password_hint">Senha (Token)</string>
-  <string name="username_hint">Nome de usuário</string>
-  <string name="folder_name_hint">Nome da pasta:</string>
-  <string name="search">Pesquisar</string>
-  <string name="reset">Resetar</string>
-  <string name="replace">Substituir</string>
-  <string name="replace_all">Substituir tudo</string>
-  <string name="replacing_texts">Substituindo textos…</string>
-  <string name="new_file_title">Novo arquivo</string>
-  <string name="new_folder_title">Nova pasta</string>
-  <string name="file_access_title">Permissão de acesso aos arquivos</string>
-  <string name="file_access_message">Este aplicativo precisa de permissão para acessar arquivos no armazenamento do seu dispositivo para funcionar corretamente. Conceda permissão para continuar.</string>
-  <string name="grant_permission">Garantir permissão</string>
-  <string name="loading_log_file">Carregando arquivo de registros...</string>
+    <!-- Buttons And Titles -->
+    <string name="saved">Salvo</string>
+    <string name="saved_files">Arquivos salvos</string>
+    <string name="existing_file">Arquivo já existente!</string>
+    <string name="delete">Deletar</string>
+    <string name="delete_message">Tem certeza que deseja deletar \"%1$s\"?</string>
+    <string name="deleted_message">Deletado</string>
+    <string name="deleting">Apagando</string>
+    <string name="deleting_please_wait">Apagando por favor aguarde.</string>
+    <string name="create">Criar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="file">Arquivo</string>
+    <string name="folder">Pasta</string>
+    <string name="rename">Renomear</string>
+    <string name="renamed_message">\"%1$s\" renomeado para \"%2$s\"</string>
+    <string name="copy_path">Copiar caminho</string>
+    <string name="rename_hint">Digite um novo nome:</string>
+    <string name="open_folder">Abrir uma pasta</string>
+    <string name="open_recent">Abrir recente</string>
+    <string name="file_name_hint">Nome do arquivo:</string>
+    <string name="password_hint">Senha (Token)</string>
+    <string name="username_hint">Nome de usuário</string>
+    <string name="folder_name_hint">Nome da pasta:</string>
+    <string name="search">Pesquisar</string>
+    <string name="reset">Resetar</string>
+    <string name="replace">Substituir</string>
+    <string name="replace_all">Substituir tudo</string>
+    <string name="replacing_texts">Substituindo textos…</string>
+    <string name="new_file_title">Novo arquivo</string>
+    <string name="new_folder_title">Nova pasta</string>
+    <string name="file_access_title">Permissão de acesso aos arquivos</string>
+    <string name="file_access_message">Este aplicativo precisa de permissão para acessar arquivos no armazenamento do seu dispositivo para funcionar corretamente. Conceda permissão para continuar.</string>
+    <string name="grant_permission">Garantir permissão</string>
+    <string name="loading_log_file">Carregando arquivo de registros...</string>
 
-  <!-- Git -->
-  <string name="no_open_repository">Nenhum repositório aberto</string>
-  <string name="clone">Clonar</string>
-  <string name="clone_repo">Clonar Repositório</string>
-  <string name="clone_to_path">Clone to path</string>
-  <string name="clone_url_hint">URL do repositório</string>
-  <string name="successfully_cloned">Clonado com sucesso</string>
-  <string name="clone_error_empty_url">URL do repositório não pode estar vazio</string>
-  <string name="create_token_message">Create a GitHub token.</string>
-  <string name="github_token">GitHub token</string>
-  <string name="initialize_repo">Iniciar repo</string>
+    <!-- Git -->
+    <string name="no_open_repository">Nenhum repositório aberto</string>
+    <string name="clone">Clonar</string>
+    <string name="clone_repo">Clonar Repositório</string>
+    <string name="clone_to_path">Clone to path</string>
+    <string name="clone_url_hint">URL do repositório</string>
+    <string name="successfully_cloned">Clonado com sucesso</string>
+    <string name="clone_error_empty_url">URL do repositório não pode estar vazio</string>
+    <string name="create_token_message">Create a GitHub token.</string>
+    <string name="github_token">GitHub token</string>
+    <string name="initialize_repo">Iniciar repo</string>
 
-  <string name="branch_name">NOME DO BRANCH</string>
-  <string name="remote_name">NOME DO REMOTO</string>
-  <string name="remote">REMOTO</string>
-  <string name="branch">BRANCH</string>
-  <string name="merge_changes_from">MERGE MUDANÇAS DE</string>
-  <string name="into">EM</string>
-  <string name="description">DESCRIÇÃO</string>
-  <string name="title">TITÚLO</string>
-  <string name="pull_request_description">Descrição da solicitação pull</string>
-  <string name="create_as_draft">Criar como rascunho</string>
-  <string name="initializing">Iniciando...</string>
-  <string name="initializing_message">Inicializando o repositório git, por favor aguarde.</string>
-  <string name="choose_default_font">Escolha a fonte padrão do editor:</string>
+    <string name="branch_name">NOME DO BRANCH</string>
+    <string name="remote_name">NOME DO REMOTO</string>
+    <string name="remote">REMOTO</string>
+    <string name="branch">BRANCH</string>
+    <string name="merge_changes_from">MERGE MUDANÇAS DE</string>
+    <string name="into">EM</string>
+    <string name="description">DESCRIÇÃO</string>
+    <string name="title">TITÚLO</string>
+    <string name="pull_request_description">Descrição da solicitação pull</string>
+    <string name="create_as_draft">Criar como rascunho</string>
+    <string name="initializing">Iniciando...</string>
+    <string name="initializing_message">Inicializando o repositório git, por favor aguarde.</string>
+    <string name="choose_default_font">Escolha a fonte padrão do editor:</string>
 
-  <!-- Settings String -->
-  <string name="application">Aplicativo</string>
-  <string name="editor">Editor</string>
-  <string name="about">Sobre</string>
+    <!-- Settings -->
+    <string name="configure">Configurar</string>
 
-  <!-- theme -->
-  <string name="title_theme">Tema</string>
-  <string name="pref_theme_system">Tema do sistema</string>
-  <string name="pref_theme_dark">Tema escuro</string>
-  <string name="pref_theme_light">Tema claro</string>
-  <string-array name="settings_theme_entries">
-    <item>@string/pref_theme_system</item>
-    <item>@string/pref_theme_dark</item>
-    <item>@string/pref_theme_light</item>
-  </string-array>
-  <string-array name="pref_entry_values_theme">
-    <item>default</item>
-    <item>dark</item>
-    <item>light</item>
-  </string-array>
-  <string name="pref_open_recent_automatically">Abrir pasta recente automaticamente</string>
-  <string name="pref_open_recent_automatically_summary">Abra automaticamente a pasta usada recentemente</string>
 
-  <!-- Editor -->
-  <string name="pref_editor_textsize">Tamanho da fonte</string>
-  <string name="pref_editor_textsize_summary">Tamanho da fonte do editor.</string>
-  <string name="pref_editor_tabsize">Tamanho da TAB</string>
-  <string-array name="settings_tab_entries">
-    <item>2</item>
-    <item>4</item>
-    <item>6</item>
-    <item>8</item>
-  </string-array>
-  <string name="pref_editor_font">Fonte do editor</string>
-  <string name="pref_font_firacode">Fira Code Regular</string>
-  <string name="pref_font_jetbrains">JetBrains Mono</string>
-  <string-array name="settings_font_entries">
-    <item>@string/pref_font_firacode</item>
-    <item>@string/pref_font_jetbrains</item>
-  </string-array>
-  <string-array name="pref_entry_values_font">
-    <item>firacode</item>
-    <item>jetbrains</item>
-  </string-array>
-  <string name="pref_editor_use_spaces">Usar espaços</string>
-  <string name="pref_editor_use_spaces_summary">Use espaços em vez de tabs(\\t)</string>
-  <string name="pref_editor_deleteemptylinefast">Apagar linha vazia rapidamente</string>
-  <string name="pref_editor_deleteemptylinefast_summary">Se a linha atual tiver apenas espaços, ela será apagada rapidamente.</string>
-  <string name="pref_editor_auto_save">Salvamento automático</string>
-  <string name="pref_editor_auto_save_summary">Salva automaticamente seu trabalho, evitando perda de dados e economizando tempo.</string>
-  <string name="pref_git_credentials">Credenciais</string>
-  <string name="pref_git_credentials_summary">Configure suas credenciais do GitHub</string>
+    <!-- - General -->
+    <string name="general">Geral</string>
+
+    <string name="aparence">Aparência</string>
+
+    <string name="title_theme">Tema</string>
+    <string name="pref_theme_system">Tema do sistema</string>
+    <string name="pref_theme_dark">Tema escuro</string>
+    <string name="pref_theme_light">Tema claro</string>
+    <string-array name="settings_theme_entries">
+        <item>@string/pref_theme_system</item>
+        <item>@string/pref_theme_dark</item>
+        <item>@string/pref_theme_light</item>
+    </string-array>
+    <string-array name="pref_entry_values_theme">
+        <item>default</item>
+        <item>dark</item>
+        <item>light</item>
+    </string-array>
+    <string name="pref_open_recent_automatically">Abrir pasta recente automaticamente</string>
+    <string name="pref_open_recent_automatically_summary">Abra automaticamente a pasta usada recentemente</string>
+
+    <!-- Editor -->
+    <string name="editor">Editor</string>
+
+    <string name="pref_editor_textsize">Tamanho da fonte</string>
+    <string name="pref_editor_textsize_summary">Tamanho da fonte do editor.</string>
+    <string name="pref_editor_tabsize">Tamanho da TAB</string>
+    <string-array name="settings_tab_entries">
+        <item>2</item>
+        <item>4</item>
+        <item>6</item>
+        <item>8</item>
+    </string-array>
+    <string name="pref_editor_font">Fonte do editor</string>
+    <string name="pref_font_firacode">Fira Code Regular</string>
+    <string name="pref_font_jetbrains">JetBrains Mono</string>
+    <string-array name="settings_font_entries">
+        <item>@string/pref_font_firacode</item>
+        <item>@string/pref_font_jetbrains</item>
+    </string-array>
+    <string-array name="pref_entry_values_font">
+        <item>firacode</item>
+        <item>jetbrains</item>
+    </string-array>
+    <string name="pref_editor_use_spaces">Usar espaços</string>
+    <string name="pref_editor_use_spaces_summary">Use espaços em vez de tabs(\\t)</string>
+    <string name="pref_editor_deleteemptylinefast">Apagar linha vazia rapidamente</string>
+    <string name="pref_editor_deleteemptylinefast_summary">Se a linha atual tiver apenas espaços, ela será apagada rapidamente.</string>
+    <string name="pref_editor_auto_save">Salvamento automático</string>
+    <string name="pref_editor_auto_save_summary">Salva automaticamente seu trabalho, evitando perda de dados e economizando tempo.</string>
+    <string name="pref_git_credentials">Credenciais</string>
+    <string name="pref_git_credentials_summary">Configure suas credenciais do GitHub</string>
+
+    <string name="about">Sobre</string>
 </resources>

@@ -9,7 +9,8 @@ import android.content.SharedPreferences;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.PreferenceManager;
 import com.google.android.material.color.DynamicColors;
-import com.raredev.vcspace.fragments.SettingsFragment;
+import com.raredev.vcspace.fragments.settings.GeneralSettingsFragment;
+import com.raredev.vcspace.plugin.PluginsLoader;
 import com.raredev.vcspace.util.ILogger;
 import io.github.rosemoe.sora.langs.textmate.provider.TextMateProvider;
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry;
@@ -33,10 +34,12 @@ public class VCSpaceApplication extends Application {
     super.onCreate();
     defaultPref = PreferenceManager.getDefaultSharedPreferences(this);
     DynamicColors.applyToActivitiesIfAvailable(this);
-    AppCompatDelegate.setDefaultNightMode(SettingsFragment.getThemeFromPrefs());
+    AppCompatDelegate.setDefaultNightMode(GeneralSettingsFragment.getThemeFromPrefs());
     Thread.setDefaultUncaughtExceptionHandler(new CrashHandler(this));
     registerShutdownReceiver();
     loadTextMate();
+
+    PluginsLoader.loadPlugins();
   }
 
   @Override

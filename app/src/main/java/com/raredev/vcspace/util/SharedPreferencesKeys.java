@@ -1,22 +1,29 @@
-package com.raredev.vcspace.managers;
-import com.google.gson.internal.JavaVersion;
+package com.raredev.vcspace.util;
 
-public class SettingsManager {
+public class SharedPreferencesKeys {
+
+  // General
+  public static final String KEY_GENERAL = "pref_general";
   public static final String KEY_THEME = "pref_theme";
   public static final String KEY_DYNAMIC_COLORS = "pref_dynamiccolors";
-  public static final String KEY_OPEN_RECENT = "pref_openrecentsautomatically";
-  public static final String KEY_EDITOR_TEXT_SIZE = "pref_editortextsize";
+
+  // Editor
+  public static final String KEY_EDITOR = "pref_editor";
+  public static final String KEY_FONT_SIZE_PREFERENCE = "pref_font_size";
+  public static final String KEY_EDITOR_TEXT_SIZE = "pref_font_size_value";
   public static final String KEY_EDITOR_TAB_SIZE = "pref_editortabsize";
   public static final String KEY_EDITOR_FONT = "pref_editorfont";
   public static final String KEY_USE_SPACES = "pref_usespaces";
-  public static final String KEY_AUTO_SAVE = "pref_auto_save";
   public static final String KEY_DELETE_EMPTY_LINE_FAST = "pref_deleteemptylinefast";
+  public static final String KEY_AUTO_SAVE = "pref_auto_save";
+
+  // Git
+  public static final String KEY_GIT = "pref_git";
   public static final String KEY_CREDENTIAL = "pref_credential";
   public static final String KEY_CREDENTIAL_USERNAME = "credential_username";
   public static final String KEY_CREDENTIAL_PASSWORD = "credential_password";
+
+  // Others
   public static final String KEY_GITHUB = "github";
   public static final String KEY_LICENSES = "licenses";
-  public static final String KEY_RECENT_FOLDER = "recentFolderPath";
-  public static final String KEY_TOOLS_PREFERENCE = "tools";
-  public static final String KEY_FONT_SIZE_PREFERENCE = "font_size";
 }

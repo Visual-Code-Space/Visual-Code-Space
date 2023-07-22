@@ -17,5 +17,4 @@ rootProject.name = "Visual Code Space"
 
 include ':app'
 include ':common'
-include ':extensions-api'
 include ':cpp-compiler'
