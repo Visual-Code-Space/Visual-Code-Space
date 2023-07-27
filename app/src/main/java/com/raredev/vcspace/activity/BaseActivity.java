@@ -36,7 +36,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
   public abstract View getLayout();
 
-  private void takeFilePermissions() {
+  public void takeFilePermissions() {
     new MaterialAlertDialogBuilder(this)
         .setCancelable(false)
         .setTitle(R.string.file_access_title)
@@ -69,7 +69,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         .show();
   }
 
-  private boolean isPermissionGaranted() {
+  public boolean isPermissionGaranted() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
       return Environment.isExternalStorageManager();
     } else {

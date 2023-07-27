@@ -2,7 +2,6 @@ package com.raredev.vcspace.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,6 +27,7 @@ import com.raredev.vcspace.events.EditorContentChangedEvent;
 import com.raredev.vcspace.events.PreferenceChangedEvent;
 import com.raredev.vcspace.fragments.filemanager.models.FileModel;
 import com.raredev.vcspace.models.DocumentModel;
+import com.raredev.vcspace.plugin.PluginsLoader;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.ui.editor.CodeEditorView;
 import com.raredev.vcspace.ui.editor.Symbol;
@@ -103,18 +103,21 @@ public class EditorActivity extends BaseActivity
     registerResultActivity();
     observeViewModel();
 
-    Uri fileUri = getIntent().getData();
-    if (fileUri != null) {
-      String filePath = fileUri.getPath();
-      try {
-      	openFile(
-          new FileModel(
-              FileUtil.getFileFromUri(this, fileUri).getAbsolutePath(),
-              FileUtil.getFileName(this, fileUri),
-              true));
-      } catch(IOException err) {
-      	err.printStackTrace();
+    if (isPermissionGaranted()) {
+      Uri fileUri = getIntent().getData();
+      if (fileUri != null) {
+        String filePath = fileUri.getPath();
+        try {
+          openFile(
+              new FileModel(
+                  FileUtil.getFileFromUri(this, fileUri).getAbsolutePath(),
+                  FileUtil.getFileName(this, fileUri),
+                  true));
+        } catch (IOException err) {
+          err.printStackTrace();
+        }
       }
+      PluginsLoader.loadPlugins();
     }
   }
 
@@ -261,6 +264,10 @@ public class EditorActivity extends BaseActivity
   // Document Opener
 
   public void openFile(@NonNull FileModel file) {
+    if (!isPermissionGaranted()) {
+      takeFilePermissions();
+      return;
+    }
     if (!file.isFile()) {
       return;
     }
