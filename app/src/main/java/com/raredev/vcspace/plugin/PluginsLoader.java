@@ -12,6 +12,7 @@ public class PluginsLoader {
   public static final Map<String, Plugin> plugins = new HashMap<>();
 
   public static void loadPlugins() {
+    plugins.clear();
     String pluginsPath = "/storage/emulated/0/VCSpace/plugins/";
 
     File pluginsFolder = new File(pluginsPath);
@@ -33,9 +34,9 @@ public class PluginsLoader {
     if (pluginFile.exists()) {
       Plugin plugin = GsonUtils.fromJson(FileUtil.readFile(pluginFile), Plugin.class);
 
-      plugins.put(plugin.getName(), plugin);
+      plugins.put(file.getAbsolutePath(), plugin);
 
-      ILogger.debug("PluginRegistry", "Plugin: " + plugin.getName() + " loaded!");
+      ILogger.debug("PluginsLoader", "Plugin: " + plugin.getName() + " loaded!");
     }
   }
 }

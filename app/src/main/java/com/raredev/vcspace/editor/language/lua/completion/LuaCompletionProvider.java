@@ -1,4 +1,4 @@
-package com.raredev.vcspace.editor.language.kotlin.completion;
+package com.raredev.vcspace.editor.language.lua.completion;
 
 import com.raredev.vcspace.editor.completion.CompletionParams;
 import com.raredev.vcspace.editor.completion.CompletionProvider;
@@ -9,13 +9,13 @@ import com.raredev.vcspace.editor.completion.VCSpaceCompletionItem;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KotlinCompletionProvider extends CompletionProvider {
+public class LuaCompletionProvider extends CompletionProvider {
 
   @Override
   public List<VCSpaceCompletionItem> getCompletions(CompletionParams params) {
     String prefix = params.getPrefix();
     List<VCSpaceCompletionItem> completions = new ArrayList<>();
-    for (String keyword : kotlinKeywords) {
+    for (String keyword : luaKeywords) {
       if (keyword.startsWith(prefix) && prefix.length() > 0) {
         completions.add(
             new SimpleCompletionItem(
@@ -30,34 +30,28 @@ public class KotlinCompletionProvider extends CompletionProvider {
     return completions;
   }
 
-  public static final String[] kotlinKeywords = {
-    "as",
-    "as?",
+  public static final String[] luaKeywords = {
+    "and",
     "break",
-    "class",
-    "continue",
     "do",
     "else",
+    "elseif",
+    "end",
     "false",
     "for",
-    "fun",
+    "function",
+    "goto",
     "if",
     "in",
-    "interface",
-    "is",
-    "null",
-    "object",
-    "package",
+    "local",
+    "nil",
+    "not",
+    "or",
+    "repeat",
     "return",
-    "super",
-    "this",
-    "throw",
+    "then",
     "true",
-    "try",
-    "typealias",
-    "val",
-    "var",
-    "when",
-    "while"
+    "until",
+    "while",
   };
 }

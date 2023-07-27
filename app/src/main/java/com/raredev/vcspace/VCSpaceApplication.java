@@ -1,10 +1,6 @@
 package com.raredev.vcspace;
 
 import android.app.Application;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.PreferenceManager;
@@ -20,8 +16,6 @@ public class VCSpaceApplication extends Application {
 
   private static VCSpaceApplication instance;
 
-  private ShutdownReceiver shutdownReceiver;
-
   private SharedPreferences defaultPref;
 
   public static VCSpaceApplication getInstance() {
@@ -36,16 +30,9 @@ public class VCSpaceApplication extends Application {
     DynamicColors.applyToActivitiesIfAvailable(this);
     AppCompatDelegate.setDefaultNightMode(GeneralSettingsFragment.getThemeFromPrefs());
     Thread.setDefaultUncaughtExceptionHandler(new CrashHandler(this));
-    registerShutdownReceiver();
     loadTextMate();
 
     PluginsLoader.loadPlugins();
-  }
-
-  @Override
-  public void onTerminate() {
-    unregisterShutdownReceiver();
-    super.onTerminate();
   }
 
   private void loadTextMate() {
@@ -60,22 +47,5 @@ public class VCSpaceApplication extends Application {
 
   public SharedPreferences getDefaultPref() {
     return defaultPref;
-  }
-
-  private void registerShutdownReceiver() {
-    shutdownReceiver = new ShutdownReceiver();
-    IntentFilter intentFilter = new IntentFilter(Intent.ACTION_SHUTDOWN);
-    registerReceiver(shutdownReceiver, intentFilter);
-  }
-
-  private void unregisterShutdownReceiver() {
-    unregisterReceiver(shutdownReceiver);
-  }
-
-  private static class ShutdownReceiver extends BroadcastReceiver {
-    @Override
-    public void onReceive(Context context, Intent intent) {
-      ILogger.clear();
-    }
   }
 }

@@ -64,7 +64,7 @@
         android:enabled="false" />
       <item
         android:id="@+id/menu_save_all"
-        android:icon="@drawable/ic_save"
+        android:icon="@drawable/content_save_all"
         android:title="@string/menu_save_all"
         android:enabled="false" />
     </menu>

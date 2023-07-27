@@ -8,10 +8,6 @@ public class DirectoryModel implements Parcelable {
   
   private String path;
   private String name;
-  
-  private DirectoryModel parent;
-  private DirectoryModel child;
-
 
   public DirectoryModel(String path, String name) {
     this.path = path;

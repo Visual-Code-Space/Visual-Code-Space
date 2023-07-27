@@ -10,6 +10,7 @@
 
     <application
         android:name=".VCSpaceApplication"
+        android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:largeHeap="true"
         android:icon="@mipmap/ic_launcher"
@@ -37,6 +38,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.LogViewActivity" />
+        <activity android:name=".activity.SchemeEditorActivity" />
         <activity android:name=".activity.SettingsActivity" />
         <activity android:name=".activity.TerminalActivity" />
         <activity
@@ -65,5 +67,7 @@
         <activity
             android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
             android:theme="@style/AppTheme" />
+
+        <service android:name=".compiler.html.SimpleHttpServer" />
     </application>
 </manifest>

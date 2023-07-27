@@ -1,114 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:app="http://schemas.android.com/apk/res-auto"
-  android:layout_height="fill_parent"
-  android:layout_width="fill_parent">
-
-  <com.google.android.material.appbar.AppBarLayout
-    android:layout_height="wrap_content"
-    android:layout_width="match_parent"
-    app:layout_behavior="com.google.android.material.appbar.AppBarLayout$Behavior"
-    android:id="@+id/app_bar">
-
-    <com.google.android.material.appbar.MaterialToolbar
-      android:layout_height="wrap_content"
-      android:layout_width="match_parent"
-      android:id="@+id/toolbar" />
-
-    <com.google.android.material.progressindicator.LinearProgressIndicator
-      android:layout_height="wrap_content"
-      android:layout_width="match_parent"
-      android:visibility="gone"
-      android:indeterminate="true"
-      android:id="@+id/progress" />
-
-  </com.google.android.material.appbar.AppBarLayout>
-
-  <androidx.drawerlayout.widget.DrawerLayout
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
     android:id="@+id/drawerLayout">
 
-    <ViewFlipper
-      android:layout_height="match_parent"
-      android:layout_width="match_parent"
-      android:elevation="5dp"
-      android:id="@+id/main">
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_height="fill_parent"
+        android:layout_width="fill_parent">
 
-      <LinearLayout
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:visibility="gone"
-        android:orientation="vertical"
-        android:id="@+id/editor_container">
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$Behavior"
+            android:id="@+id/app_bar">
 
-        <com.google.android.material.tabs.TabLayout
-          android:layout_height="wrap_content"
-          android:layout_width="match_parent"
-          app:tabMode="scrollable"
-          app:tabIndicatorAnimationDuration="0"
-          app:tabGravity="start"
-          app:tabTextAppearance="@style/TabLayout.TextStyle"
-          android:id="@+id/tab_layout" />
+            <com.google.android.material.appbar.MaterialToolbar
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:id="@+id/toolbar" />
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:visibility="gone"
+                android:indeterminate="true"
+                android:id="@+id/progress" />
+
+        </com.google.android.material.appbar.AppBarLayout>
 
         <ViewFlipper
-          android:layout_height="match_parent"
-          android:layout_width="match_parent"
-          android:layout_weight="1"
-          android:id="@+id/container">
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+            android:elevation="5dp"
+            android:id="@+id/main">
+
+            <LinearLayout
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:visibility="gone"
+                android:orientation="vertical"
+                android:id="@+id/editor_container">
+
+                <com.google.android.material.tabs.TabLayout
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    app:tabMode="scrollable"
+                    app:tabIndicatorAnimationDuration="0"
+                    app:tabGravity="start"
+                    app:tabTextAppearance="@style/TabLayout.TextStyle"
+                    android:id="@+id/tab_layout" />
+
+                <ViewFlipper
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:id="@+id/container" />
+
+                <LinearLayout
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:orientation="vertical"
+                    android:id="@+id/layout_symbol">
+
+                    <View
+                        android:layout_height="0.5dp"
+                        android:layout_width="match_parent"
+                        android:background="?attr/colorOutline"
+                        android:id="@+id/top_divider" />
+
+                    <com.raredev.vcspace.ui.editor.symbol.SymbolInputView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:id="@+id/symbol_input" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:id="@+id/no_file_opened">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:textSize="15sp"
+                    android:text="@string/no_file_opened" />
+
+            </LinearLayout>
 
         </ViewFlipper>
 
-        <LinearLayout
-          android:layout_height="wrap_content"
-          android:layout_width="match_parent"
-          android:orientation="vertical"
-          android:id="@+id/layout_symbol">
-
-          <View
-            android:layout_height="0.5dp"
-            android:layout_width="match_parent"
-            android:background="?attr/colorOutline"
-            android:id="@+id/top_divider" />
-
-          <com.raredev.vcspace.ui.editor.symbol.SymbolInputView
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:id="@+id/symbol_input" />
-
-        </LinearLayout>
-
-      </LinearLayout>
-
-      <LinearLayout
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:id="@+id/no_file_opened">
-
-        <com.google.android.material.textview.MaterialTextView
-          android:layout_height="wrap_content"
-          android:layout_width="wrap_content"
-          android:layout_centerInParent="true"
-          android:textSize="15sp"
-          android:text="@string/no_file_opened" />
-
-      </LinearLayout>
-
-    </ViewFlipper>
-
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
     <androidx.fragment.app.FragmentContainerView
-      android:layout_height="match_parent"
-      android:layout_width="300dp"
-      android:background="?attr/colorSurface"
-      android:name="com.raredev.vcspace.fragments.filemanager.FileManagerFragment"
-      android:tag="filemanager"
-      android:layout_gravity="start"
-      android:id="@+id/filemanager_fragment" />
+        android:layout_height="match_parent"
+        android:layout_width="300dp"
+        android:background="?attr/colorSurface"
+        android:name="com.raredev.vcspace.fragments.filemanager.FileManagerFragment"
+        android:tag="filemanager"
+        android:layout_gravity="start"
+        android:id="@+id/filemanager_fragment" />
 
-  </androidx.drawerlayout.widget.DrawerLayout>
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.drawerlayout.widget.DrawerLayout>

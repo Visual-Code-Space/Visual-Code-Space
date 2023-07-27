@@ -33,7 +33,7 @@ public class JavaLanguage extends VCSpaceTMLanguage {
         GrammarRegistry.getInstance().findGrammar("source.java"),
         GrammarRegistry.getInstance().findLanguageConfiguration("source.java"),
         ThemeRegistry.getInstance(),
-        false);
+        "source.java");
     this.editor = editor;
     setCompleterKeywords(JavaCompletionProvider.javaKeywords);
   }

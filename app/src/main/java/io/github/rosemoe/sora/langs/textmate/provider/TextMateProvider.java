@@ -36,7 +36,7 @@ public class TextMateProvider {
         case "text.html.basic":
           return new HtmlLanguage(editor);
         case "source.lua":
-          return new LuaLanguage();
+          return new LuaLanguage(editor);
       }
 
       return VCSpaceTMLanguage.create(scope);

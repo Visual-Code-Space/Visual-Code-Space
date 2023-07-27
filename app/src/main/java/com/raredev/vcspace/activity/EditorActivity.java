@@ -393,15 +393,10 @@ public class EditorActivity extends BaseActivity
     drawerLayout.addDrawerListener(toggle);
     toggle.syncState();
 
-    drawerLayout.setScrimColor(Color.TRANSPARENT);
-    drawerLayout.setDrawerElevation(2);
     drawerLayout.addDrawerListener(
         new DrawerLayout.DrawerListener() {
           @Override
-          public void onDrawerSlide(@NonNull View view, float v) {
-            float slideX = view.getWidth() * v;
-            binding.main.setTranslationX(slideX);
-          }
+          public void onDrawerSlide(@NonNull View view, float v) {}
 
           @Override
           public void onDrawerOpened(@NonNull View view) {
@@ -490,6 +485,8 @@ public class EditorActivity extends BaseActivity
           if (tab != null && index >= 0 && !tab.isSelected()) {
             tab.select();
           }
+          var editorView = getCurrentEditor();
+          if (editorView != null) binding.symbolInput.bindEditor(editorView.getEditor());
           invalidateOptionsMenu();
         });
   }

@@ -42,13 +42,11 @@ public class SymbolInputAdapter extends RecyclerView.Adapter<SymbolInputAdapter.
             String insertText = symbol.getInsert();
 
             if (position == 0) {
-              if (PreferencesUtils.useSpaces()) {
+              if (PreferencesUtils.useSpaces() && !editor.getSnippetController().isInSnippet()) {
                 editor.commitText(PreferencesUtils.getTab());
                 return;
               }
-              if (editor.getSnippetController().isInSnippet()) {
-                editor.getSnippetController().shiftToNextTabStop();
-              }
+              editor.getSnippetController().shiftToNextTabStop();
               return;
             }
             if (insertText.length() == 2) {

@@ -5,13 +5,13 @@ public class Plugin {
   private String name;
   private String version;
   private String creator;
-  private String type;
+  
+  public SnippetPlugin snippet;
 
-  public Plugin(String name, String version, String creator, String type) {
+  public Plugin(String name, String version, String creator) {
     this.name = name;
     this.version = version;
     this.creator = creator;
-    this.type = type;
   }
 
   public String getName() {
@@ -38,11 +38,11 @@ public class Plugin {
     this.creator = creator;
   }
 
-  public String getType() {
-    return this.type;
+  public SnippetPlugin getSnippet() {
+    return this.snippet;
   }
 
-  public void setType(String type) {
-    this.type = type;
+  public void setSnippet(SnippetPlugin snippet) {
+    this.snippet = snippet;
   }
 }

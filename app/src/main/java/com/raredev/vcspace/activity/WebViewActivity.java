@@ -15,18 +15,19 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.FileProvider;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.raredev.vcspace.R;
+import com.raredev.vcspace.compiler.html.SimpleHttpServer;
 import com.raredev.vcspace.databinding.ActivityWebviewBinding;
 import com.raredev.vcspace.databinding.LayoutTextinputBinding;
 import com.raredev.vcspace.util.ToastUtils;
-import java.io.File;
 
 @SuppressWarnings("deprecation")
 public class WebViewActivity extends BaseActivity {
   public ActivityWebviewBinding binding;
+
+  private SimpleHttpServer httpServer;
 
   @Override
   public View getLayout() {
@@ -51,13 +52,16 @@ public class WebViewActivity extends BaseActivity {
     webSettings.setBuiltInZoomControls(true);
     webSettings.setDisplayZoomControls(false);
 
-    String executableFilePath = getIntent().getStringExtra("executable_file");
-    String htmlContent = getIntent().getStringExtra("html_content");
-    if (executableFilePath != null) {
-      binding.webView.loadUrl("file://" + executableFilePath);
-    } else {
-      binding.webView.loadDataWithBaseURL(null, htmlContent, "text/html", "UTF-8", null);
-    }
+    String path = getIntent().getStringExtra("executable_file");
+
+    httpServer =
+        new SimpleHttpServer(
+            8080,
+            (String) path.subSequence(0, path.lastIndexOf("/")),
+            path.substring(path.lastIndexOf("/") + 1));
+    httpServer.startServer();
+
+    binding.webView.loadUrl(httpServer.getLocalIpAddress());
 
     binding.webView.setWebChromeClient(
         new WebChromeClient() {
@@ -114,6 +118,7 @@ public class WebViewActivity extends BaseActivity {
   @Override
   protected void onDestroy() {
     super.onDestroy();
+    httpServer.stopServer();
     binding = null;
   }
 
@@ -216,20 +221,10 @@ public class WebViewActivity extends BaseActivity {
   }
 
   private void openInBrowser(WebView webView) {
-    String currentUrl = webView.getUrl();
-    boolean isFilePath = isFilePath(currentUrl);
-
-    Intent browserIntent = new Intent(Intent.ACTION_VIEW);
-    browserIntent.setData(Uri.parse(currentUrl));
-
-    if (isFilePath) {
-      File file = new File(currentUrl);
-      Uri contentUri = FileProvider.getUriForFile(this, getPackageName() + ".provider", file);
-      browserIntent.setData(contentUri);
-      browserIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-    }
-
-    startActivity(browserIntent);
+    String url = webView.getUrl();
+    Intent i = new Intent(Intent.ACTION_VIEW);
+    i.setData(Uri.parse(url));
+    startActivity(i);
   }
 
   private boolean isFilePath(String url) {

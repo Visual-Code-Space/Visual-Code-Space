@@ -42,7 +42,7 @@ public class HtmlLanguage extends VCSpaceTMLanguage {
         GrammarRegistry.getInstance().findGrammar("text.html.basic"),
         GrammarRegistry.getInstance().findLanguageConfiguration("text.html.basic"),
         ThemeRegistry.getInstance(),
-        false);
+        "text.html.basic");
     this.editor = editor;
   }
 
@@ -52,6 +52,7 @@ public class HtmlLanguage extends VCSpaceTMLanguage {
       @NonNull CharPosition position,
       @NonNull CompletionPublisher publisher,
       @NonNull Bundle extraArguments) {
+    super.requireAutoComplete(content, position, publisher, extraArguments);
     var prefix = CompletionHelper.computePrefix(content, position, this::checkIsCompletionChar);
 
     CompletionParams params =

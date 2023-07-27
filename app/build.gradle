@@ -104,6 +104,8 @@ dependencies {
   implementation "io.noties.markwon:image:$markwon_version"
   implementation "io.noties.markwon:image-glide:$markwon_version"
   
+  implementation 'org.nanohttpd:nanohttpd:2.3.0'
+  
   implementation project(path: ':common')
 
   //debugImplementation common.leakcanary
