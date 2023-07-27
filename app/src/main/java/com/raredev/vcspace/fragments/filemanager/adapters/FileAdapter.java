@@ -63,7 +63,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.VH> {
 
     holder.img_execute.setOnClickListener(
         v -> {
-          new SimpleExecuter(holder.img_execute.getContext(), file.toFile());
+          SimpleExecuter.run(holder.img_execute.getContext(), file.toFile(), false);
         });
 
     holder.img_menu.setOnClickListener(

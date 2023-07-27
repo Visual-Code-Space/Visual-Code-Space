@@ -126,7 +126,7 @@ public class EditorActivity extends BaseActivity
     var editorView = getCurrentEditor();
     if (editorView != null) {
       var document = editorView.getDocument();
-      menu.findItem(R.id.menu_execute).setVisible(SimpleExecuter.isExecutable(document.getName()));
+      menu.findItem(R.id.menu_execute_opt).setVisible(SimpleExecuter.isExecutable(document.getName()));
       menu.findItem(R.id.menu_undo).setVisible(KeyboardUtils.isSoftInputVisible(this));
       menu.findItem(R.id.menu_redo).setVisible(KeyboardUtils.isSoftInputVisible(this));
       menu.findItem(R.id.menu_undo).setEnabled(editorView.getEditor().canUndo());
@@ -155,7 +155,10 @@ public class EditorActivity extends BaseActivity
 
     if (id == R.id.menu_execute) {
       saveAllFiles(true);
-      new SimpleExecuter(this, editorView.getDocument().toFile());
+      SimpleExecuter.run(this, editorView.getDocument().toFile(), false);
+    } else if (id == R.id.menu_execute_new_task) {
+      saveAllFiles(true);
+      SimpleExecuter.run(this, editorView.getDocument().toFile(), true);
     } else if (id == R.id.menu_undo) editorView.undo();
     else if (id == R.id.menu_redo) editorView.redo();
     else if (id == R.id.menu_search) editorView.showAndHideSearcher();

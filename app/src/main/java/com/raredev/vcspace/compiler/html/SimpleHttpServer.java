@@ -5,17 +5,14 @@ import fi.iki.elonen.NanoHTTPD;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.util.Enumeration;
 
 public class SimpleHttpServer {
   public WebServer server;
 
-  private int port;
-
   private String rootFolder;
   private String indexName;
+  
+  private int port;
 
   public SimpleHttpServer(int port, String rootFolder, String indexName) {
     this.port = port;
@@ -40,7 +37,7 @@ public class SimpleHttpServer {
   }
 
   public String getLocalIpAddress() {
-    return "http://localhost:"+port;
+    return "http://localhost:" + port;
   }
 
   private class WebServer extends NanoHTTPD {

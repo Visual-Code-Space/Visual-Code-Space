@@ -22,6 +22,7 @@
 
     <!-- Menus Strings -->
     <string name="menu_execute">Executar</string>
+  <string name="menu_execute_new_task">Executar em uma nova tarefa</string>
     <string name="menu_format">Formatar</string>
     <string name="menu_search">Pesquisar</string>
     <string name="menu_reload">Recarregar</string>

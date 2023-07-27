@@ -9,11 +9,11 @@ import java.io.File;
 
 public class SimpleExecuter {
 
-  public SimpleExecuter(Context context, File file) {
+  public static void run(Context context, File file, boolean newTask) {
     String fileName = file.getName();
     switch (fileName.substring(fileName.lastIndexOf("."), fileName.length()).toLowerCase()) {
       case ".html":
-        execute(context, file, null);
+        execute(context, file, newTask);
         break;
       case ".md":
         Intent it = new Intent(context, MarkdownViewActivity.class);
@@ -34,11 +34,13 @@ public class SimpleExecuter {
     }
   }
 
-  private void execute(Context context, File executableFile, String html) {
+  private static void execute(Context context, File executableFile, boolean newTask) {
     Intent it = new Intent(context, WebViewActivity.class);
     it.putExtra(
         "executable_file", executableFile == null ? null : executableFile.getAbsolutePath());
-    it.putExtra("html_content", html);
+    if (newTask) {
+      it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+    }
     context.startActivity(it);
   }
 }

@@ -4,11 +4,22 @@
   xmlns:app="http://schemas.android.com/apk/res-auto">
 
   <item
-    android:id="@+id/menu_execute"
+    android:id="@+id/menu_execute_opt"
     android:icon="@drawable/ic_play"
     android:title="@string/menu_execute"
     android:visible="false"
-    app:showAsAction="always" />
+    app:showAsAction="always" >
+    <menu>
+      <item
+        android:id="@+id/menu_execute"
+        android:icon="@drawable/ic_play"
+        android:title="@string/menu_execute" />
+      <item
+        android:id="@+id/menu_execute_new_task"
+        android:icon="@drawable/ic_play"
+        android:title="@string/menu_execute_new_task" />
+    </menu>
+  </item>
   <item
     android:id="@+id/menu_undo"
     android:icon="@drawable/ic_undo"
