@@ -40,28 +40,13 @@ public class SimpleHttpServer {
   }
 
   public String getLocalIpAddress() {
-    try {
-      Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
-      while (networkInterfaces.hasMoreElements()) {
-        NetworkInterface networkInterface = networkInterfaces.nextElement();
-        Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
-        while (inetAddresses.hasMoreElements()) {
-          InetAddress inetAddress = inetAddresses.nextElement();
-          if (!inetAddress.isLoopbackAddress() && inetAddress.getAddress().length == 4) {
-            return inetAddress.getHostAddress() + ":" + port;
-          }
-        }
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return null;
+    return "http://localhost:"+port;
   }
 
   private class WebServer extends NanoHTTPD {
 
     public WebServer(int port) {
-      super(port);
+      super("localhost", port);
     }
 
     @Override

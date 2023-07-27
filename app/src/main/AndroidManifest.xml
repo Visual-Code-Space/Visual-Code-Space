@@ -67,7 +67,5 @@
         <activity
             android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
             android:theme="@style/AppTheme" />
-
-        <service android:name=".compiler.html.SimpleHttpServer" />
     </application>
 </manifest>
