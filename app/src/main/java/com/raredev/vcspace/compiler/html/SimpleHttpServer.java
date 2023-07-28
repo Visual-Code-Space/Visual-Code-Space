@@ -11,7 +11,7 @@ public class SimpleHttpServer {
 
   private String rootFolder;
   private String indexName;
-  
+
   private int port;
 
   public SimpleHttpServer(int port, String rootFolder, String indexName) {
@@ -37,7 +37,7 @@ public class SimpleHttpServer {
   }
 
   public String getLocalIpAddress() {
-    return "http://localhost:" + port;
+    return "http://localhost:" + port + "/" + indexName;
   }
 
   private class WebServer extends NanoHTTPD {
