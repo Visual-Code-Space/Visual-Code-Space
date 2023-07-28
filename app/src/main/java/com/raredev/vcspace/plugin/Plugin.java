@@ -5,8 +5,8 @@ public class Plugin {
   private String name;
   private String version;
   private String creator;
-  
-  public SnippetPlugin snippet;
+
+  public CompletionPlugin completion;
 
   public Plugin(String name, String version, String creator) {
     this.name = name;
@@ -38,11 +38,11 @@ public class Plugin {
     this.creator = creator;
   }
 
-  public SnippetPlugin getSnippet() {
-    return this.snippet;
+  public CompletionPlugin getCompletion() {
+    return this.completion;
   }
 
-  public void setSnippet(SnippetPlugin snippet) {
-    this.snippet = snippet;
+  public void setCompletion(CompletionPlugin completion) {
+    this.completion = completion;
   }
 }

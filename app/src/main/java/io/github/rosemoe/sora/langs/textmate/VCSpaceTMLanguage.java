@@ -7,6 +7,7 @@ import com.raredev.vcspace.editor.completion.SimpleCompletionItemKind;
 import com.raredev.vcspace.editor.completion.SimpleSnippetCompletionItem;
 import com.raredev.vcspace.plugin.Plugin;
 import com.raredev.vcspace.plugin.PluginsLoader;
+import com.raredev.vcspace.util.FileUtil;
 import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.util.PreferencesUtils;
 import io.github.rosemoe.sora.lang.completion.CompletionHelper;
@@ -22,16 +23,16 @@ import io.github.rosemoe.sora.text.ContentReference;
 import io.github.rosemoe.sora.text.TextRange;
 import io.github.rosemoe.sora.util.MyCharacter;
 import io.github.rosemoe.sora.widget.SymbolPairMatch;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.tm4e.core.grammar.IGrammar;
 import org.eclipse.tm4e.languageconfiguration.model.AutoClosingPairConditional;
 import org.eclipse.tm4e.languageconfiguration.model.LanguageConfiguration;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class VCSpaceTMLanguage extends TextMateLanguage {
 
@@ -49,7 +50,7 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
     this.languageScope = languageScope;
 
     pluginsCompletion = new ArrayList<>();
-    readPluginSnippets();
+    readCompletionsPlugin();
   }
 
   public static VCSpaceTMLanguage create(String languageScopeName) {
@@ -146,36 +147,59 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
   }
 
   // Load Snippets from plugins
-  public void readPluginSnippets() {
+  public void readCompletionsPlugin() {
     var plugins = PluginsLoader.plugins;
 
     for (Map.Entry<String, Plugin> entry : plugins.entrySet()) {
       var plugin = entry.getValue();
 
-      if (plugin.snippet != null && plugin.snippet.getLanguageScope().equals(languageScope)) {
-        var snippetFile = new File(entry.getKey() + "/" + plugin.snippet.getSnippetFilePath());
+      if (plugin.completion != null && plugin.completion.getLanguageScope().equals(languageScope)) {
+        for (String completionPath : plugin.completion.getCompletionFiles()) {
+          var completionFile = new File(entry.getKey() + "/" + completionPath);
+          readCompletionsPluginHandler(completionFile);
+        }
+      }
+    }
+  }
 
-        if (snippetFile.exists()) {
-          try {
-            BufferedReader reader = new BufferedReader(new FileReader(snippetFile));
-            String line;
-            while ((line = reader.readLine()) != null) {
-              String[] parts = line.split("::");
-              if (parts.length == 4) {
-                pluginsCompletion.add(
-                    new SimplePluginCompletionItem(
-                        parts[0], /* Label */
-                        parts[1], /* Desc */
-                        parts[2], /* Type */
-                        parts[3] /* Snippet */));
+  public void readCompletionsPluginHandler(File completionFile) {
+    if (completionFile.exists()) {
+
+      String json = FileUtil.readFile(completionFile);
+      try {
+        JSONObject obj = new JSONObject(json);
+
+        var iterator = obj.keys();
+        while (iterator.hasNext()) {
+          String key = iterator.next();
+
+          JSONObject completion = obj.getJSONObject(key);
+          JSONArray body = completion.getJSONArray("body");
+
+          String bodyCode = "";
+
+          if (body != null) {
+            for (int i = 0; i < body.length(); i++) {
+              String line = body.getString(i);
+              if (line != null) {
+                bodyCode += line;
+                if (i < body.length() - 1) {
+                  bodyCode += "\n";
+                }
               }
             }
-            reader.close();
-          } catch (IOException e) {
-            ILogger.error("VCSpaceTMLanguage", e);
-            e.printStackTrace();
           }
+
+          pluginsCompletion.add(
+              new SimplePluginCompletionItem(
+                  key, /* Label */
+                  completion.getString("desc"), /* Desc */
+                  completion.getString("type"), /* Type */
+                  bodyCode /* bodyCode */));
         }
+      } catch (JSONException jsone) {
+        ILogger.error("VCSpaceTMLanguage", jsone);
+        jsone.printStackTrace();
       }
     }
   }
@@ -190,7 +214,7 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
       this.label = label;
       this.desc = desc;
       this.type = type;
-      this.snippet = snippet.replaceAll("\n", System.getProperty("line.separator"));
+      this.snippet = snippet;
     }
   }
 }
