@@ -22,6 +22,10 @@ public class PluginsLoader {
     }
     File[] pluginsList = pluginsFolder.listFiles();
 
+    if (pluginsList == null) {
+      return;
+    }
+
     for (File file : pluginsList) {
       if (file.isDirectory()) {
         loadPlugin(file);
