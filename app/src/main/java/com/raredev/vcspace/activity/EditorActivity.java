@@ -388,7 +388,13 @@ public class EditorActivity extends BaseActivity
     TabLayout.Tab tab = binding.tabLayout.getTabAt(index);
     if (editorView != null && tab != null) {
       editorView.saveDocument();
-      runOnUiThread(() -> tab.setText(editorView.getDocument().getName()));
+      runOnUiThread(
+          () -> {
+            String name = tab.getText().toString();
+            if (name.startsWith("*")) {
+              tab.setText(name.replace("*", ""));
+            }
+          });
     }
   }
 

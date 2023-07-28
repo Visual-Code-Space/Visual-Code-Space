@@ -30,8 +30,8 @@
     <item name="android:windowLightStatusBar">false</item>
     <item name="android:fontFamily">@font/josefin_sans</item>
     <item name="switchPreferenceCompatStyle">@style/AppTheme.SwitchPreference</item>
-    <item name="materialAlertDialogTheme">@style/MaterialAlertDialog.Monet</item>
-    <item name="alertDialogTheme">@style/ThemeOverlay.Material3.MaterialAlertDialog</item>
+    <!--<item name="materialAlertDialogTheme">@style/MaterialAlertDialog.Monet</item>
+    <item name="alertDialogTheme">@style/ThemeOverlay.Material3.MaterialAlertDialog</item>-->
     <item name="dialogCornerRadius">28dp</item>
     <item name="overlapAnchor">false</item>
   </style>

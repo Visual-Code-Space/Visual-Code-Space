@@ -13,23 +13,17 @@
             app:summary="@string/pref_editor_textsize_summary"
             app:title="@string/pref_editor_textsize" />
 
-        <ListPreference
-            app:defaultValue="4"
-            app:entries="@array/settings_tab_entries"
-            app:entryValues="@array/settings_tab_entries"
+        <Preference
             app:icon="@drawable/format_font"
             app:key="pref_editortabsize"
             app:title="@string/pref_editor_tabsize"
-            app:useSimpleSummaryProvider="true" />
+            app:summary="@string/pref_editor_tabsize_summary" />
 
-        <ListPreference
-            app:defaultValue="firacode"
-            app:entries="@array/settings_font_entries"
-            app:entryValues="@array/pref_entry_values_font"
+        <Preference
             app:icon="@drawable/format_font"
             app:key="pref_editorfont"
             app:title="@string/pref_editor_font"
-            app:useSimpleSummaryProvider="true" />
+            app:summary="@string/pref_editor_font_summary" />
 
         <SwitchPreferenceCompat
             app:defaultValue="true"

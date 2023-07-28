@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.util.PreferencesUtils;
 import com.raredev.vcspace.util.SharedPreferencesKeys;
@@ -16,16 +17,50 @@ public class GeneralSettingsFragment extends PreferenceFragmentCompat {
     setPreferencesFromResource(R.xml.settings_general, rootKey);
 
     Preference theme = findPreference(SharedPreferencesKeys.KEY_THEME);
-    theme.setOnPreferenceChangeListener(
-        (preference, newValue) -> {
-          AppCompatDelegate.setDefaultNightMode(getTheme((String) newValue));
+
+    theme.setOnPreferenceClickListener(
+        (pref) -> {
+          String[] themes = {
+            getString(R.string.pref_theme_system),
+            getString(R.string.pref_theme_dark),
+            getString(R.string.pref_theme_light)
+          };
+
+          String[] themeValues = {"default", "dark", "light"};
+          var selectThemeBuilder = new MaterialAlertDialogBuilder(requireContext());
+          selectThemeBuilder.setTitle(R.string.title_theme);
+
+          SharedPreferences prefs = PreferencesUtils.getDefaultPrefs();
+
+          var selectedTheme = prefs.getString(SharedPreferencesKeys.KEY_THEME_VALUE, "default");
+          var i = 0;
+          if (selectedTheme.equals("dark")) {
+            i = 1;
+          } else if (selectedTheme.equals("light")) {
+            i = 2;
+          }
+          selectThemeBuilder.setSingleChoiceItems(
+              themes,
+              i,
+              (dlg, which) -> {
+                prefs
+                    .edit()
+                    .putString(SharedPreferencesKeys.KEY_THEME_VALUE, themeValues[which])
+                    .apply();
+
+                AppCompatDelegate.setDefaultNightMode(getTheme(themeValues[which]));
+                dlg.cancel();
+              });
+          selectThemeBuilder.setPositiveButton(android.R.string.cancel, null);
+          selectThemeBuilder.setCancelable(false);
+          selectThemeBuilder.show();
           return true;
         });
   }
-  
+
   public static int getThemeFromPrefs() {
     SharedPreferences prefs = PreferencesUtils.getDefaultPrefs();
-    String selectedTheme = prefs.getString(SharedPreferencesKeys.KEY_THEME, "default");
+    String selectedTheme = prefs.getString(SharedPreferencesKeys.KEY_THEME_VALUE, "default");
     return getTheme(selectedTheme);
   }
 

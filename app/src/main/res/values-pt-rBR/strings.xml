@@ -22,7 +22,7 @@
 
     <!-- Menus Strings -->
     <string name="menu_execute">Executar</string>
-  <string name="menu_execute_new_task">Executar em uma nova tarefa</string>
+    <string name="menu_execute_new_task">Executar em uma nova tarefa</string>
     <string name="menu_format">Formatar</string>
     <string name="menu_search">Pesquisar</string>
     <string name="menu_reload">Recarregar</string>
@@ -105,7 +105,6 @@
     <!-- Settings -->
     <string name="configure">Configurar</string>
 
-
     <!-- - General -->
     <string name="general">Geral</string>
 
@@ -115,18 +114,6 @@
     <string name="pref_theme_system">Tema do sistema</string>
     <string name="pref_theme_dark">Tema escuro</string>
     <string name="pref_theme_light">Tema claro</string>
-    <string-array name="settings_theme_entries">
-        <item>@string/pref_theme_system</item>
-        <item>@string/pref_theme_dark</item>
-        <item>@string/pref_theme_light</item>
-    </string-array>
-    <string-array name="pref_entry_values_theme">
-        <item>default</item>
-        <item>dark</item>
-        <item>light</item>
-    </string-array>
-    <string name="pref_open_recent_automatically">Abrir pasta recente automaticamente</string>
-    <string name="pref_open_recent_automatically_summary">Abra automaticamente a pasta usada recentemente</string>
 
     <!-- Editor -->
     <string name="editor">Editor</string>
@@ -134,23 +121,13 @@
     <string name="pref_editor_textsize">Tamanho da fonte</string>
     <string name="pref_editor_textsize_summary">Tamanho da fonte do editor.</string>
     <string name="pref_editor_tabsize">Tamanho da TAB</string>
-    <string-array name="settings_tab_entries">
-        <item>2</item>
-        <item>4</item>
-        <item>6</item>
-        <item>8</item>
-    </string-array>
+    <string name="pref_editor_tabsize_summary">Específica o tamanho do espaço para TAB</string>
+
     <string name="pref_editor_font">Fonte do editor</string>
+    <string name="pref_editor_font_summary">Altera a fonte do editor e a barra de atalhos.</string>
     <string name="pref_font_firacode">Fira Code Regular</string>
     <string name="pref_font_jetbrains">JetBrains Mono</string>
-    <string-array name="settings_font_entries">
-        <item>@string/pref_font_firacode</item>
-        <item>@string/pref_font_jetbrains</item>
-    </string-array>
-    <string-array name="pref_entry_values_font">
-        <item>firacode</item>
-        <item>jetbrains</item>
-    </string-array>
+
     <string name="pref_editor_use_spaces">Usar espaços</string>
     <string name="pref_editor_use_spaces_summary">Use espaços em vez de tabs(\\t)</string>
     <string name="pref_editor_deleteemptylinefast">Apagar linha vazia rapidamente</string>

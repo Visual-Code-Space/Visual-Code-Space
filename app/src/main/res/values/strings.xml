@@ -121,18 +121,6 @@
     <string name="pref_theme_system">System theme</string>
     <string name="pref_theme_dark">Dark theme</string>
     <string name="pref_theme_light">Light theme</string>
-    <string-array name="settings_theme_entries">
-        <item>@string/pref_theme_system</item>
-        <item>@string/pref_theme_dark</item>
-        <item>@string/pref_theme_light</item>
-    </string-array>
-    <string-array name="pref_entry_values_theme">
-        <item>default</item>
-        <item>dark</item>
-        <item>light</item>
-    </string-array>
-    <string name="pref_open_recent_automatically">Open recent folder automatically</string>
-    <string name="pref_open_recent_automatically_summary">Automatically open recently used folder</string>
 
     <!-- Editor -->
     <string name="editor">Editor</string>
@@ -140,30 +128,19 @@
     <string name="pref_editor_textsize">Font Size</string>
     <string name="pref_editor_textsize_summary">Font size of the editor.</string>
     <string name="pref_editor_tabsize">TAB Size</string>
-    <string-array name="settings_tab_entries">
-        <item>2</item>
-        <item>4</item>
-        <item>6</item>
-        <item>8</item>
-    </string-array>
+    <string name="pref_editor_tabsize_summary">Specifies the space size for TAB</string>
+
     <string name="pref_editor_font">Editor font</string>
+    <string name="pref_editor_font_summary">Change font of editor and shortcut bar.</string>
     <string name="pref_font_firacode">Fira Code Regular</string>
     <string name="pref_font_jetbrains">JetBrains Mono</string>
-    <string-array name="settings_font_entries">
-        <item>@string/pref_font_firacode</item>
-        <item>@string/pref_font_jetbrains</item>
-    </string-array>
-    <string-array name="pref_entry_values_font">
-        <item>firacode</item>
-        <item>jetbrains</item>
-    </string-array>
-
     <string name="pref_editor_use_spaces">Use spaces</string>
     <string name="pref_editor_use_spaces_summary">Use spaces instead of tabs(\\t)</string>
     <string name="pref_editor_deleteemptylinefast">Delete empty line fast</string>
     <string name="pref_editor_deleteemptylinefast_summary">If the current line has only spaces it will be deleted quickly.</string>
     <string name="pref_editor_auto_save">Auto save</string>
     <string name="pref_editor_auto_save_summary">Automatically saves your work, preventing data loss and saving time.</string>
+
     <string name="pref_git_credentials">Credentials</string>
     <string name="pref_git_credentials_summary">Set up your GitHub credentials</string>
 

@@ -41,7 +41,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
               .commit();
           return true;
         });
-
+    
     Preference git = findPreference(SharedPreferencesKeys.KEY_GIT);
     git.setOnPreferenceClickListener(
         (pref) -> {

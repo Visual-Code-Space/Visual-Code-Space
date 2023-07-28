@@ -7,14 +7,11 @@
     app:iconSpaceReserved="false"
     app:title="@string/aparence">
 
-    <ListPreference
-      app:defaultValue="default"
-      app:entries="@array/settings_theme_entries"
-      app:entryValues="@array/pref_entry_values_theme"
+    <Preference
       app:icon="@drawable/theme_light_dark"
       app:key="pref_theme"
       app:title="@string/title_theme"
-      app:useSimpleSummaryProvider="true" />
+      app:summary="Select theme for ide" />
   </PreferenceCategory>
 
 </PreferenceScreen>

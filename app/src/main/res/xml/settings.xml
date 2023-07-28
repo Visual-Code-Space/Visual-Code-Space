@@ -16,7 +16,7 @@
             app:key="pref_editor"
             app:title="@string/editor"
             app:iconSpaceReserved="false" />
-
+    
         <Preference
             app:key="pref_git"
             app:title="@string/git"

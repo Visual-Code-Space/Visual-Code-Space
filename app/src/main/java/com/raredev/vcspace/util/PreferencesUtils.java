@@ -26,7 +26,7 @@ public class PreferencesUtils {
 
   public static int getEditorTABSize() {
     return Integer.valueOf(
-        getDefaultPrefs().getString(SharedPreferencesKeys.KEY_EDITOR_TAB_SIZE, "4"));
+        getDefaultPrefs().getString(SharedPreferencesKeys.KEY_EDITOR_TAB_SIZE_VALUE, "4"));
   }
 
   /*
@@ -34,7 +34,7 @@ public class PreferencesUtils {
    */
   public static int getSelectedFont() {
     String selectedFont =
-        getDefaultPrefs().getString(SharedPreferencesKeys.KEY_EDITOR_FONT, "firacode");
+        getDefaultPrefs().getString(SharedPreferencesKeys.KEY_EDITOR_FONT_VALUE, "firacode");
     return getFont(selectedFont);
   }
 
