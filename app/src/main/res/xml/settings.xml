@@ -10,16 +10,19 @@
         <Preference
             app:key="pref_general"
             app:title="@string/general"
+            app:summary="@string/general_summary"
             app:iconSpaceReserved="false" />
 
         <Preference
             app:key="pref_editor"
             app:title="@string/editor"
+            app:summary="@string/editor_summary"
             app:iconSpaceReserved="false" />
 
         <Preference
             app:key="pref_git"
             app:title="@string/git"
+            app:summary="@string/git_summary"
             app:iconSpaceReserved="false" />
     </PreferenceCategory>
 
@@ -30,7 +33,7 @@
         <Preference
             app:icon="@drawable/github"
             app:key="github"
-            app:summary="https://github.com/Visual-Code-Space/Visual-Code-Space"
+            app:summary="@string/pref_github_summary"
             app:title="GitHub" />
 
         <Preference

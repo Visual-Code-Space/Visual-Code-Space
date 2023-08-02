@@ -115,6 +115,7 @@
 
     <!-- General -->
     <string name="general">General</string>
+    <string name="general_summary">General IDE settings</string>
     <string name="aparence">Aparence</string>
 
     <string name="title_theme">Theme</string>
@@ -128,6 +129,7 @@
 
     <!-- Editor -->
     <string name="editor">Editor</string>
+    <string name="editor_summary">Configure Editor</string>
 
     <string name="pref_editor_textsize">Font Size</string>
     <string name="pref_editor_textsize_summary">Font size of the editor.</string>
@@ -145,8 +147,12 @@
     <string name="pref_editor_auto_save">Auto save</string>
     <string name="pref_editor_auto_save_summary">Automatically saves your work, preventing data loss and saving time.</string>
 
+    <string name="git_summary">Configure Git</string>
+
     <string name="pref_git_credentials">Credentials</string>
     <string name="pref_git_credentials_summary">Set up your GitHub credentials</string>
 
     <string name="about">About</string>
+
+    <string name="pref_github_summary">VCSpace is open source!</string>
 </resources>
