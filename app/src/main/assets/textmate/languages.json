@@ -1,6 +1,12 @@
 {
   "languages": [
     {
+      "grammar": "textmate/bat/syntaxes/batchfile.tmLanguage.json",
+      "name": "bat",
+      "scopeName": "source.batchfile",
+      "languageConfiguration": "textmate/bat/language-configuration.json"
+    },
+    {
       "grammar": "textmate/cpp/syntaxes/cpp.tmLanguage.json",
       "name": "cpp",
       "scopeName": "source.cpp",

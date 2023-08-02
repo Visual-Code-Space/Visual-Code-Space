@@ -89,7 +89,7 @@ public class ILogger {
     StringBuilder logEntry = new StringBuilder();
     String[] lines = message.split("\\r?\\n");
     for (String line : lines) {
-      logEntry.append(String.format("%s [%s]: %s\n", priority.name(), tag, line));
+      logEntry.append(String.format("[%s/%s]: %s\n", tag, priority.name(), line));
     }
     try {
       writer.write(logEntry.toString());

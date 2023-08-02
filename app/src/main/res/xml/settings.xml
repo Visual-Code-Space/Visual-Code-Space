@@ -16,7 +16,7 @@
             app:key="pref_editor"
             app:title="@string/editor"
             app:iconSpaceReserved="false" />
-    
+
         <Preference
             app:key="pref_git"
             app:title="@string/git"
@@ -31,12 +31,12 @@
             app:icon="@drawable/github"
             app:key="github"
             app:summary="https://github.com/Visual-Code-Space/Visual-Code-Space"
-            app:title="GitHub:" />
+            app:title="GitHub" />
 
         <Preference
             app:icon="@drawable/ic_license"
             app:key="licenses"
-            app:title="Licenses" />
+            app:title="Open source licenses" />
     </PreferenceCategory>
 
 </PreferenceScreen>

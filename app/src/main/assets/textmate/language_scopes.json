@@ -1,4 +1,5 @@
 {
+  "bat": "source.batchfile",
   "js": "source.js",
   "json": "source.json",
   "java": "source.java",

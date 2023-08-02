@@ -11,7 +11,14 @@
       app:icon="@drawable/theme_light_dark"
       app:key="pref_theme"
       app:title="@string/title_theme"
-      app:summary="Select theme for ide" />
+      app:summary="@string/pref_theme_summary" />
+
+    <SwitchPreferenceCompat
+      app:defaultValue="true"
+      app:icon="@drawable/palette"
+      app:key="pref_dynamiccolors"
+      app:title="@string/pref_materialyou"
+      app:summary="@string/pref_materialyou_summary" />
   </PreferenceCategory>
 
 </PreferenceScreen>

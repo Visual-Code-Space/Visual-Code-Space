@@ -1,6 +1,8 @@
 package com.raredev.vcspace.activity;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -29,15 +31,15 @@ public abstract class BaseActivity extends AppCompatActivity {
     setContentView(getLayout());
     Utils.init(this);
 
-    if (!isPermissionGaranted()) {
-      takeFilePermissions();
+    if (!isPermissionGaranted(this)) {
+      takeFilePermissions(this);
     }
   }
 
   public abstract View getLayout();
 
-  public void takeFilePermissions() {
-    new MaterialAlertDialogBuilder(this)
+  public static void takeFilePermissions(Activity activity) {
+    new MaterialAlertDialogBuilder(activity)
         .setCancelable(false)
         .setTitle(R.string.file_access_title)
         .setMessage(R.string.file_access_message)
@@ -47,12 +49,12 @@ public abstract class BaseActivity extends AppCompatActivity {
               if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 Intent intent = new Intent();
                 intent.setAction(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-                Uri uri = Uri.fromParts("package", getPackageName(), null);
+                Uri uri = Uri.fromParts("package", activity.getPackageName(), null);
                 intent.setData(uri);
-                startActivity(intent);
+                activity.startActivity(intent);
               } else {
                 ActivityCompat.requestPermissions(
-                    this,
+                    activity,
                     new String[] {
                       Manifest.permission.READ_EXTERNAL_STORAGE,
                       Manifest.permission.MANAGE_EXTERNAL_STORAGE
@@ -63,17 +65,17 @@ public abstract class BaseActivity extends AppCompatActivity {
         .setNegativeButton(
             R.string.exit,
             (d, w) -> {
-              finish();
+              activity.finish();
               System.exit(0);
             })
         .show();
   }
 
-  public boolean isPermissionGaranted() {
+  public static boolean isPermissionGaranted(Context context) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
       return Environment.isExternalStorageManager();
     } else {
-      return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+      return ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)
           == PackageManager.PERMISSION_GRANTED;
     }
   }

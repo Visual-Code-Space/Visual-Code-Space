@@ -27,7 +27,6 @@ import com.raredev.vcspace.events.EditorContentChangedEvent;
 import com.raredev.vcspace.events.PreferenceChangedEvent;
 import com.raredev.vcspace.fragments.filemanager.models.FileModel;
 import com.raredev.vcspace.models.DocumentModel;
-import com.raredev.vcspace.plugin.PluginsLoader;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.ui.editor.CodeEditorView;
 import com.raredev.vcspace.ui.editor.Symbol;
@@ -103,7 +102,7 @@ public class EditorActivity extends BaseActivity
     registerResultActivity();
     observeViewModel();
 
-    if (isPermissionGaranted()) {
+    if (isPermissionGaranted(this)) {
       Uri fileUri = getIntent().getData();
       if (fileUri != null) {
         String filePath = fileUri.getPath();
@@ -117,7 +116,6 @@ public class EditorActivity extends BaseActivity
           err.printStackTrace();
         }
       }
-      PluginsLoader.loadPlugins();
     }
   }
 
@@ -126,7 +124,8 @@ public class EditorActivity extends BaseActivity
     var editorView = getCurrentEditor();
     if (editorView != null) {
       var document = editorView.getDocument();
-      menu.findItem(R.id.menu_execute_opt).setVisible(SimpleExecuter.isExecutable(document.getName()));
+      menu.findItem(R.id.menu_execute_opt)
+          .setVisible(SimpleExecuter.isExecutable(document.getName()));
       menu.findItem(R.id.menu_undo).setVisible(KeyboardUtils.isSoftInputVisible(this));
       menu.findItem(R.id.menu_redo).setVisible(KeyboardUtils.isSoftInputVisible(this));
       menu.findItem(R.id.menu_undo).setEnabled(editorView.getEditor().canUndo());
@@ -267,8 +266,8 @@ public class EditorActivity extends BaseActivity
   // Document Opener
 
   public void openFile(@NonNull FileModel file) {
-    if (!isPermissionGaranted()) {
-      takeFilePermissions();
+    if (!BaseActivity.isPermissionGaranted(this)) {
+      BaseActivity.takeFilePermissions(this);
       return;
     }
     if (!file.isFile()) {

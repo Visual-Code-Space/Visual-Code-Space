@@ -64,7 +64,7 @@ public class CodeEditorView extends LinearLayout {
   private void postRead() {
     binding.editor.setEditorLanguage(createLanguage());
 
-    binding.editor.setCursorPosition(document.getPositionLine(), document.getPositionLine());
+    binding.editor.setCursorPosition(document.getPositionLine(), document.getPositionColumn());
     binding.editor.setDocument(document);
     setLoading(false);
   }

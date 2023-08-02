@@ -3,6 +3,7 @@ package com.raredev.vcspace.activity;
 import android.os.Bundle;
 import android.view.View;
 import androidx.appcompat.app.AlertDialog;
+import com.blankj.utilcode.util.ThreadUtils;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.ActivityLogViewBinding;
 import com.raredev.vcspace.progressdialog.ProgressDialog;
@@ -61,21 +62,40 @@ public class LogViewActivity extends BaseActivity implements ILogger.Observer {
     dialog.show();
     TaskExecutor.executeAsyncProvideError(
         () -> {
-          try {
+          updateLogs(
+              logFile, (line) -> ThreadUtils.runOnUiThread(() -> binding.editor.appendText(line)));
+          /*try {
             BufferedReader reader = new BufferedReader(new FileReader(logFile));
             String line;
             while ((line = reader.readLine()) != null) {
-              binding.editor.appendText(line + "\n");
+
             }
             reader.close();
           } catch (IOException e) {
             e.printStackTrace();
-          }
+          }*/
           return null;
         },
         (result, error) -> {
           dialog.cancel();
           if (error != null) ILogger.error(LOG_TAG, error.toString());
         });
+  }
+
+  private void updateLogs(File logFile, Callback listener) {
+    try {
+      BufferedReader reader = new BufferedReader(new FileReader(logFile));
+      String line;
+      while ((line = reader.readLine()) != null) {
+        listener.update(line + "\n");
+      }
+      reader.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public interface Callback {
+    void update(String line);
   }
 }

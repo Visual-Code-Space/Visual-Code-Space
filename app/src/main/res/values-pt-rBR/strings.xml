@@ -111,9 +111,12 @@
     <string name="aparence">Aparência</string>
 
     <string name="title_theme">Tema</string>
+    <string name="pref_theme_summary">Escolha o tema para o IDE</string>
     <string name="pref_theme_system">Tema do sistema</string>
     <string name="pref_theme_dark">Tema escuro</string>
     <string name="pref_theme_light">Tema claro</string>
+
+    <string name="pref_materialyou_summary">Se ativado, o aplicativo seguirá o tema dinâmico do dispositivo.</string>
 
     <!-- Editor -->
     <string name="editor">Editor</string>

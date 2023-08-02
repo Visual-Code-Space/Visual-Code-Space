@@ -63,7 +63,7 @@ public class VCSpaceTMScheme extends EditorColorScheme
     if (selection != null) {
       setColor(SELECTED_TEXT_BACKGROUND, Color.parseColor(selection));
     }
-    
+
     String selectedText = (String) themeRaw.get("selectedText");
     if (selectedText != null) {
       setColor(TEXT_SELECTED, Color.parseColor(selectedText));
@@ -156,9 +156,8 @@ public class VCSpaceTMScheme extends EditorColorScheme
     String selection = (String) themeRaw.get("selection");
     if (selection != null) {
       setColor(SELECTED_TEXT_BACKGROUND, Color.parseColor(selection));
-      
     }
-    
+
     String selectedText = (String) themeRaw.get("selectedText");
     if (selectedText != null) {
       setColor(TEXT_SELECTED, Color.parseColor(selectedText));
@@ -191,15 +190,14 @@ public class VCSpaceTMScheme extends EditorColorScheme
       setColor(
           HIGHLIGHTED_DELIMITERS_FOREGROUND, Color.parseColor(highlightedDelimetersForeground));
     }
-    
+
     String lineNumber = (String) themeRaw.get("lineNumber");
 
     if (lineNumber != null) {
       setColor(LINE_NUMBER, Color.parseColor(lineNumber));
     }
 
-    String lineNumberCurrent =
-        (String) themeRaw.get("lineNumberCurrent");
+    String lineNumberCurrent = (String) themeRaw.get("lineNumberCurrent");
 
     if (lineNumberCurrent != null) {
       setColor(LINE_NUMBER_CURRENT, Color.parseColor(lineNumberCurrent));

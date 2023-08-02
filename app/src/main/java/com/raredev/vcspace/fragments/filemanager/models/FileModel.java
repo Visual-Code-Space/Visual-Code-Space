@@ -46,7 +46,7 @@ public class FileModel {
   private int getIconForFileName(String fileName) {
     int icon = R.drawable.ic_file;
 
-    for (String extension : TEXT_FILE) {
+    for (String extension : TEXT_FILES) {
       if (fileName.endsWith(extension)) {
         icon = R.drawable.file_document_outline;
       }
@@ -62,8 +62,8 @@ public class FileModel {
     return new FileModel(file.getAbsolutePath(), file.getName(), file.isFile());
   }
 
-  private static String[] TEXT_FILE = {
-    ".txt", ".js", ".ji", ".json", ".java", ".kt", ".kts", ".md", ".lua", ".cs", ".css", ".c", ".cpp", ".h",
+  private static String[] TEXT_FILES = {
+    ".bat", ".txt", ".js", ".ji", ".json", ".java", ".kt", ".kts", ".md", ".lua", ".cs", ".css", ".c", ".cpp", ".h",
     ".hpp", ".py", ".htm", ".html", ".xhtml", ".xht", ".xaml", ".xdf", ".xmpp", ".xml", ".sh",
     ".ksh", ".bsh", ".csh", ".tcsh", ".zsh", ".bash", ".groovy", ".gvy", ".gy", ".gsh", ".php",
     ".php3", ".php4", ".php5", ".phps", ".phtml", ".ts", ".log", ".yaml", ".yml", ".toml",
