@@ -19,9 +19,9 @@ import com.raredev.vcspace.activity.EditorActivity;
 import com.raredev.vcspace.databinding.FragmentFileManagerBinding;
 import com.raredev.vcspace.fragments.filemanager.adapters.DirectoryAdapter;
 import com.raredev.vcspace.fragments.filemanager.adapters.FileAdapter;
+import com.raredev.vcspace.fragments.filemanager.git.CloneRepository;
 import com.raredev.vcspace.fragments.filemanager.models.FileModel;
 import com.raredev.vcspace.fragments.filemanager.viewmodel.FileListViewModel;
-import com.raredev.vcspace.fragments.filemanager.git.CloneRepository;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.util.ApkInstaller;
 import com.raredev.vcspace.util.DialogUtils;
@@ -90,11 +90,11 @@ public class FileManagerFragment extends Fragment implements FileAdapter.FileLis
     binding.topbarMenu.setOnClickListener(
         v -> {
           PopupMenu pm = new PopupMenu(requireContext(), v);
-          if (pm.getMenu() instanceof MenuBuilder menuBuilder) {
-            menuBuilder.setOptionalIconsVisible(true);
+          if (pm.getMenu() instanceof MenuBuilder) {
+            ((MenuBuilder) pm.getMenu()).setOptionalIconsVisible(true);
           }
           pm.getMenu().add(R.string.refresh).setIcon(R.drawable.ic_refresh);
-        pm.getMenu().add(R.string.new_file_title).setIcon(R.drawable.file_plus_outline);
+          pm.getMenu().add(R.string.new_file_title).setIcon(R.drawable.file_plus_outline);
           pm.getMenu().add(R.string.new_folder_title).setIcon(R.drawable.folder_plus_outline);
           pm.setOnMenuItemClickListener(
               item -> {
@@ -166,8 +166,8 @@ public class FileManagerFragment extends Fragment implements FileAdapter.FileLis
   @Override
   public void onFileMenuClick(FileModel file, View v) {
     PopupMenu pm = new PopupMenu(requireActivity(), v);
-    if (pm.getMenu() instanceof MenuBuilder menuBuilder) {
-      menuBuilder.setOptionalIconsVisible(true);
+    if (pm.getMenu() instanceof MenuBuilder) {
+      ((MenuBuilder) pm.getMenu()).setOptionalIconsVisible(true);
     }
     pm.getMenu().add(R.string.copy_path).setIcon(R.drawable.content_copy);
     pm.getMenu().add(R.string.rename).setIcon(R.drawable.file_rename);

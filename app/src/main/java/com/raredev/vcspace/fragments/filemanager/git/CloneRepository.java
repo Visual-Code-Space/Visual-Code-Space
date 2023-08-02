@@ -12,13 +12,17 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.LayoutTextinputBinding;
+import com.raredev.vcspace.fragments.settings.GitSettingsFragment;
 import com.raredev.vcspace.progressdialog.ProgressDialog;
 import com.raredev.vcspace.progressdialog.ProgressStyle;
 import com.raredev.vcspace.task.TaskExecutor;
+import com.raredev.vcspace.util.PreferencesUtils;
+import com.raredev.vcspace.util.SharedPreferencesKeys;
 import com.raredev.vcspace.util.ToastUtils;
 import java.io.File;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.ProgressMonitor;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 public class CloneRepository {
   private CloneListener listener;
@@ -39,6 +43,10 @@ public class CloneRepository {
   }
 
   public void cloneRepository() {
+    if (verifyCredentials()) {
+      GitSettingsFragment.showCredentialDialog(context);
+      return;
+    }
     LayoutTextinputBinding bind = LayoutTextinputBinding.inflate(LayoutInflater.from(context));
     AlertDialog dialog =
         new MaterialAlertDialogBuilder(context)
@@ -84,6 +92,8 @@ public class CloneRepository {
     var output = new File(directory, extractRepositoryNameFromURL(repoURL));
     var monitor = new CloneProgressMonitor(progressDialog);
 
+    var prefs = PreferencesUtils.getDefaultPrefs();
+
     var task =
         TaskExecutor.executeAsyncProvideError(
             () -> {
@@ -93,6 +103,10 @@ public class CloneRepository {
               }
               git =
                   Git.cloneRepository()
+                      .setCredentialsProvider(
+                          new UsernamePasswordCredentialsProvider(
+                              prefs.getString(SharedPreferencesKeys.KEY_CREDENTIAL_USERNAME, ""),
+                              prefs.getString(SharedPreferencesKeys.KEY_CREDENTIAL_PASSWORD, "")))
                       .setURI(url)
                       .setDirectory(output)
                       .setProgressMonitor(monitor)
@@ -149,6 +163,12 @@ public class CloneRepository {
     return repositoryName;
   }
 
+  private boolean verifyCredentials() {
+    var prefs = PreferencesUtils.getDefaultPrefs();
+    return prefs.getString(SharedPreferencesKeys.KEY_CREDENTIAL_USERNAME, "").isEmpty()
+        || prefs.getString(SharedPreferencesKeys.KEY_CREDENTIAL_USERNAME, "").isEmpty();
+  }
+
   public class CloneProgressMonitor implements ProgressMonitor {
     private ProgressDialog progressDialog;
     public boolean cancelled = false;
@@ -189,7 +209,7 @@ public class CloneRepository {
     @Override
     public void showDuration(boolean arg0) {}
   }
-
+  
   public interface CloneListener {
     void onCloneSuccess(File output);
 
