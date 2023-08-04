@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
   <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
     <item name="colorPrimary">@color/dark_primary</item>
     <item name="colorOnPrimary">@color/dark_onPrimary</item>
@@ -32,6 +32,13 @@
     <item name="switchPreferenceCompatStyle">@style/AppTheme.SwitchPreference</item>
     <item name="dialogCornerRadius">28dp</item>
     <item name="overlapAnchor">false</item>
+  </style>
+
+  <style name="AppTheme.Licence" parent="AppTheme">
+    <item name="android:statusBarColor">?attr/colorSurface</item>
+    <item name="android:navigationBarColor">?attr/colorSurface</item>
+    <item name="android:windowLightStatusBar">false</item>
+    <item name="android:windowLightNavigationBar" tools:targetApi="27">false</item>
   </style>
 
   <style name="AppTheme.SwitchPreference" parent="Preference.SwitchPreference.Material">

@@ -36,7 +36,6 @@
     <string name="menu_save_as">Salvar como</string>
     <string name="menu_save_all">Salvar tudo</string>
     <string name="menu_open_drawer">Abrir drawer</string>
-    <string name="menu_view_logs">Visualizar registros</string>
 
     <!-- Errors Strings -->
     <string name="error">Erro</string>
@@ -74,7 +73,6 @@
     <string name="file_access_title">Permissão de acesso aos arquivos</string>
     <string name="file_access_message">Este aplicativo precisa de permissão para acessar arquivos no armazenamento do seu dispositivo para funcionar corretamente. Conceda permissão para continuar.</string>
     <string name="grant_permission">Garantir permissão</string>
-    <string name="loading_log_file">Carregando arquivo de registros...</string>
 
     <!-- Git -->
     <string name="no_open_repository">Nenhum repositório aberto</string>

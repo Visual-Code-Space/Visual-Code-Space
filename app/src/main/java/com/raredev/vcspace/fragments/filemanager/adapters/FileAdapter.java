@@ -12,6 +12,7 @@ import com.raredev.vcspace.SimpleExecuter;
 import com.raredev.vcspace.databinding.LayoutFileItemBinding;
 import com.raredev.vcspace.fragments.filemanager.models.FileModel;
 import com.raredev.vcspace.fragments.filemanager.viewmodel.FileListViewModel;
+import com.raredev.vcspace.models.DocumentModel;
 
 public class FileAdapter extends RecyclerView.Adapter<FileAdapter.VH> {
 
@@ -98,9 +99,11 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.VH> {
   public class VH extends RecyclerView.ViewHolder {
     ShapeableImageView img_icon, img_execute, img_menu;
     MaterialTextView tv_name;
+    View indicator;
 
     public VH(LayoutFileItemBinding binding) {
       super(binding.getRoot());
+      indicator = binding.indicator;
       img_icon = binding.imgIcon;
       tv_name = binding.fileName;
       img_execute = binding.execute;

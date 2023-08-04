@@ -3,7 +3,6 @@ package com.raredev.vcspace.fragments.filemanager.viewmodel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import com.raredev.vcspace.fragments.filemanager.models.DirectoryModel;
 import com.raredev.vcspace.fragments.filemanager.models.FileModel;
 import com.raredev.vcspace.util.FileUtil;
 import java.io.File;
@@ -14,10 +13,10 @@ public class FileListViewModel extends ViewModel {
 
   private MutableLiveData<List<FileModel>> files = new MutableLiveData<>(new ArrayList<>());
 
-  private MutableLiveData<List<DirectoryModel>> directories =
+  private MutableLiveData<List<FileModel>> directories =
       new MutableLiveData<>(new ArrayList<>());
-  private MutableLiveData<DirectoryModel> currentDir =
-      new MutableLiveData<>(DirectoryModel.fileToDirectoryModel(FileUtil.getDeviceDirectory()));
+  private MutableLiveData<FileModel> currentDir =
+      new MutableLiveData<>(FileModel.fileToFileModel(FileUtil.getDeviceDirectory()));
 
   public LiveData<List<FileModel>> getFilesLiveData() {
     return files;
@@ -27,19 +26,19 @@ public class FileListViewModel extends ViewModel {
     return files.getValue();
   }
 
-  public LiveData<List<DirectoryModel>> getDirectoriesLiveData() {
+  public LiveData<List<FileModel>> getDirectoriesLiveData() {
     return directories;
   }
 
-  public List<DirectoryModel> getDirectories() {
+  public List<FileModel> getDirectories() {
     return directories.getValue();
   }
 
-  public LiveData<DirectoryModel> getCurrentDirLiveData() {
+  public LiveData<FileModel> getCurrentDirLiveData() {
     return currentDir;
   }
 
-  public DirectoryModel getCurrentDir() {
+  public FileModel getCurrentDir() {
     return currentDir.getValue();
   }
 
@@ -52,19 +51,15 @@ public class FileListViewModel extends ViewModel {
   }
 
   public void setCurrentDir(FileModel dir) {
-    setCurrentDir(DirectoryModel.fileModelToDirectoryModel(dir));
-  }
-
-  public void setCurrentDir(DirectoryModel dir) {
     currentDir.setValue(dir);
   }
 
-  public void setDirectories(List<DirectoryModel> dirs) {
+  public void setDirectories(List<FileModel> dirs) {
     directories.setValue(dirs);
   }
 
-  public void openDirectory(DirectoryModel dir) {
-    List<DirectoryModel> dirs = getDirectories();
+  public void openDirectory(FileModel dir) {
+    List<FileModel> dirs = getDirectories();
     int index = findIndexOfDir(dir);
     if (index != -1) {
       return;
@@ -74,7 +69,7 @@ public class FileListViewModel extends ViewModel {
   }
 
   public void removeAllDirectoriesAfter(int index) {
-    List<DirectoryModel> dirs = getDirectories();
+    List<FileModel> dirs = getDirectories();
     int temp = index + 1;
     if (temp > dirs.size()) {
       return;
@@ -83,9 +78,9 @@ public class FileListViewModel extends ViewModel {
     setDirectories(dirs);
   }
 
-  public int findIndexOfDir(DirectoryModel dir) {
+  public int findIndexOfDir(FileModel dir) {
     for (int i = 0; i < getDirectories().size(); i++) {
-      DirectoryModel temp = getDirectories().get(i);
+      FileModel temp = getDirectories().get(i);
       if (temp.getPath().equals(dir.getPath())) {
         return i;
       }

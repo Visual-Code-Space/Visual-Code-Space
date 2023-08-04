@@ -3,9 +3,9 @@ package com.raredev.vcspace.models;
 import com.raredev.vcspace.fragments.filemanager.models.FileModel;
 import java.io.File;
 
-public class DocumentModel {
+public class DocumentModel extends FileModel {
 
-  private String path, name, content;
+  private String content;
   private boolean modified;
   private int positionLine, positionColumn;
 
@@ -20,28 +20,11 @@ public class DocumentModel {
       boolean modified,
       int positionLine,
       int positionColumn) {
-    this.path = path;
-    this.name = name;
+    super(path, name, true);
     this.content = content;
     this.modified = modified;
     this.positionLine = positionLine;
     this.positionColumn = positionColumn;
-  }
-
-  public String getPath() {
-    return this.path;
-  }
-
-  public void setPath(String path) {
-    this.path = path;
-  }
-
-  public String getName() {
-    return this.name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
   }
 
   public String getContent() {
@@ -82,6 +65,10 @@ public class DocumentModel {
 
   public File toFile() {
     return new File(path);
+  }
+
+  public static FileModel fileToDocument(File file) {
+    return new DocumentModel(file.getAbsolutePath(), file.getName());
   }
 
   public static DocumentModel fileModelToDocument(FileModel file) {

@@ -7,6 +7,13 @@
     android:padding="10dp"
     android:foreground="?attr/selectableItemBackground">
 
+    <View
+        android:layout_height="match_parent"
+        android:layout_width="2dp"
+        android:visibility="gone"
+        android:background="?attr/colorPrimary"
+        android:id="@+id/indicator" />
+
     <com.google.android.material.imageview.ShapeableImageView
         android:layout_height="28dp"
         android:layout_width="28dp"
@@ -27,12 +34,12 @@
     <com.google.android.material.imageview.ShapeableImageView
         android:layout_height="25dp"
         android:layout_width="25dp"
+        android:visibility="gone"
         android:src="@drawable/ic_play"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:layout_centerVertical="true"
         android:padding="2dp"
         android:layout_toLeftOf="@id/img_menu"
-        android:visibility="gone"
         android:id="@+id/execute" />
 
     <com.google.android.material.imageview.ShapeableImageView

@@ -53,31 +53,38 @@
 
     </RelativeLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_height="45dp"
-        android:layout_width="match_parent"
-        android:padding="2dp"
-        android:id="@+id/rv_dir" />
-
-    <ViewFlipper
+    <LinearLayout
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:id="@+id/container">
+        android:orientation="vertical">
 
         <androidx.recyclerview.widget.RecyclerView
+            android:layout_height="45dp"
+            android:layout_width="match_parent"
+            android:padding="2dp"
+            android:id="@+id/rv_dir" />
+
+        <ViewFlipper
             android:layout_height="match_parent"
             android:layout_width="match_parent"
-            android:clipToPadding="false"
-            android:id="@+id/rv_files" />
+            android:id="@+id/container">
 
-        <com.google.android.material.progressindicator.CircularProgressIndicator
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:indeterminate="true"
-            app:indicatorSize="14dp"
-            app:trackThickness="2.5dp"
-            android:layout_gravity="center" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:clipToPadding="false"
+                android:id="@+id/rv_files" />
 
-    </ViewFlipper>
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:indeterminate="true"
+                app:indicatorSize="14dp"
+                app:trackThickness="2.5dp"
+                android:layout_gravity="center" />
+
+        </ViewFlipper>
+
+    </LinearLayout>
 
 </LinearLayout>

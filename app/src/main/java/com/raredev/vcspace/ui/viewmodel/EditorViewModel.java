@@ -26,6 +26,7 @@ public class EditorViewModel extends ViewModel {
 
   public void addDocument(DocumentModel document) {
     List<DocumentModel> documentList = getDocuments();
+    
     documentList.add(document);
 
     documents.setValue(documentList);

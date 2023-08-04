@@ -20,6 +20,7 @@ import com.raredev.vcspace.databinding.FragmentFileManagerBinding;
 import com.raredev.vcspace.fragments.filemanager.adapters.DirectoryAdapter;
 import com.raredev.vcspace.fragments.filemanager.adapters.FileAdapter;
 import com.raredev.vcspace.fragments.filemanager.git.CloneRepository;
+import com.raredev.vcspace.fragments.filemanager.listeners.FileListResultListener;
 import com.raredev.vcspace.fragments.filemanager.models.FileModel;
 import com.raredev.vcspace.fragments.filemanager.viewmodel.FileListViewModel;
 import com.raredev.vcspace.task.TaskExecutor;
@@ -33,6 +34,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+@SuppressWarnings("deprecation")
 public class FileManagerFragment extends Fragment implements FileAdapter.FileListener {
   private static final String LOG = "FileManagerFragment";
   private FragmentFileManagerBinding binding;
@@ -116,6 +118,7 @@ public class FileManagerFragment extends Fragment implements FileAdapter.FileLis
           pm.show();
         });
 
+    
     setupRecyclerView();
 
     return binding.getRoot();
@@ -129,22 +132,11 @@ public class FileManagerFragment extends Fragment implements FileAdapter.FileLis
         .observe(
             getViewLifecycleOwner(),
             (dir) -> {
-              listArchives(dir.toFile());
+              listArchives(dir);
               viewModel.openDirectory(dir);
               mDirectoriesAdapter.notifyDataSetChanged();
               binding.rvDir.scrollToPosition(mDirectoriesAdapter.getItemCount() - 1);
             });
-
-    /*if (savedInstanceState != null) {
-      DirectoryModel dir = savedInstanceState.getParcelable("currentDir");
-      viewModel.setCurrentDir(dir);
-    }*/
-  }
-
-  @Override
-  public void onSaveInstanceState(Bundle outstate) {
-    super.onSaveInstanceState(outstate);
-    // outstate.putParcelable("currentDir", viewModel.getCurrentDir());
   }
 
   @Override
@@ -215,21 +207,28 @@ public class FileManagerFragment extends Fragment implements FileAdapter.FileLis
   }
 
   public void refreshFiles() {
-    listArchives(viewModel.getCurrentDirFile());
+    listArchives(viewModel.getCurrentDir());
   }
 
-  public void listArchives(File path) {
+  public void listArchives(FileModel path) {
     binding.container.setDisplayedChild(1);
     TaskExecutor.executeAsyncProvideError(
         () -> {
           List<FileModel> mFiles = new ArrayList<>();
-          File[] files = path.listFiles();
-          if (files != null) {
-            Arrays.sort(files, FILE_FIRST_ORDER);
-            for (File file : files) {
-              mFiles.add(FileModel.fileToFileModel(file));
-            }
-          }
+          path.listFiles(
+              new FileListResultListener() {
+
+                @Override
+                public void onResult(FileModel[] result) {
+                  if (result.length == 0) {
+                    return;
+                  }
+                  Arrays.sort(result, FILE_FIRST_ORDER);
+                  for (FileModel file : result) {
+                    mFiles.add(file);
+                  }
+                }
+              });
           return mFiles;
         },
         (result, error) -> {
@@ -246,11 +245,11 @@ public class FileManagerFragment extends Fragment implements FileAdapter.FileLis
     return viewModel;
   }
 
-  private static final Comparator<File> FILE_FIRST_ORDER =
+  private static final Comparator<FileModel> FILE_FIRST_ORDER =
       (file1, file2) -> {
-        if (file1.isFile() && file2.isDirectory()) {
+        if (file1.isFile() && !file2.isFile()) {
           return 1;
-        } else if (file2.isFile() && file1.isDirectory()) {
+        } else if (file2.isFile() && !file1.isFile()) {
           return -1;
         } else {
           return String.CASE_INSENSITIVE_ORDER.compare(file1.getName(), file2.getName());

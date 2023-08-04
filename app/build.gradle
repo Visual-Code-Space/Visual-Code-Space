@@ -84,6 +84,7 @@ dependencies {
   implementation androidx.appcompat
   implementation androidx.preference
   implementation androidx.fragment
+  implementation androidx.splashscreen
 
   implementation google.material
   implementation google.oss_licenses
@@ -95,7 +96,7 @@ dependencies {
   implementation common.eventbus
   implementation common.jsoup
   
-  implementation platform("io.github.Rosemoe.sora-editor:bom:0.21.1")
+  implementation platform("io.github.Rosemoe.sora-editor:bom:0.22.0")
   implementation "io.github.Rosemoe.sora-editor:editor"
   implementation "io.github.Rosemoe.sora-editor:language-textmate"
   

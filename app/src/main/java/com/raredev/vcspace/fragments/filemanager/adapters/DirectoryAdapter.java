@@ -11,7 +11,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.color.MaterialColors;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.raredev.vcspace.databinding.LayoutDirectoryItemBinding;
-import com.raredev.vcspace.fragments.filemanager.models.DirectoryModel;
+import com.raredev.vcspace.fragments.filemanager.models.FileModel;
 import com.raredev.vcspace.fragments.filemanager.viewmodel.FileListViewModel;
 
 public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.VH> {
@@ -32,7 +32,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.VH> 
 
   @Override
   public void onBindViewHolder(VH holder, int position) {
-    DirectoryModel directory = viewModel.getDirectories().get(position);
+    FileModel directory = viewModel.getDirectories().get(position);
 
     holder.directory.setText(directory.getName());
 

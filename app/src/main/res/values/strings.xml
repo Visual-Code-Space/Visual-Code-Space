@@ -43,7 +43,6 @@
     <string name="menu_save_as">Save as</string>
     <string name="menu_save_all">Save all</string>
     <string name="menu_open_drawer">Open Drawer</string>
-    <string name="menu_view_logs">View logs</string>
 
     <!-- Errors Strings -->
     <string name="error">Error</string>
@@ -81,7 +80,6 @@
     <string name="file_access_title">File Access Permission</string>
     <string name="file_access_message">This app needs permission to access files in your device\'s storage to function properly. Please grant permission to continue.</string>
     <string name="grant_permission">Grant Permission</string>
-    <string name="loading_log_file">Loading log file...</string>
 
     <!-- Git -->
     <string name="git">Git</string>

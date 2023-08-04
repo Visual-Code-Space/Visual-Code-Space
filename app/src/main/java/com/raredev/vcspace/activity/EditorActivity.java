@@ -17,8 +17,10 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
+import com.blankj.utilcode.util.GsonUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.google.android.material.tabs.TabLayout;
+import com.google.gson.reflect.TypeToken;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.SimpleExecuter;
 import com.raredev.vcspace.databinding.ActivityEditorBinding;
@@ -117,6 +119,8 @@ public class EditorActivity extends BaseActivity
         }
       }
     }
+
+    openRecentDocuments();
   }
 
   @Override
@@ -172,7 +176,6 @@ public class EditorActivity extends BaseActivity
       intent.putExtra(Intent.EXTRA_TITLE, viewModel.getCurrentDocument().getName());
       launcher.launch(intent);
     } else if (id == R.id.menu_save_all) saveAllFiles(true);
-    else if (id == R.id.menu_logview) startActivity(new Intent(this, LogViewActivity.class));
     else if (id == R.id.menu_settings) startActivity(new Intent(this, SettingsActivity.class));
 
     return true;
@@ -283,7 +286,7 @@ public class EditorActivity extends BaseActivity
     if (openedFileIndex != -1) {
       return openedFileIndex;
     }
-    DocumentModel document = DocumentModel.fileModelToDocument(file);
+    DocumentModel document = (DocumentModel) file /*DocumentModel.fileModelToDocument(file)*/;
     int index = viewModel.getOpenedDocumentCount();
 
     ILogger.debug(LOG_TAG, file.getName() + " Openening at index: " + index);
@@ -502,6 +505,7 @@ public class EditorActivity extends BaseActivity
           }
           var editorView = getCurrentEditor();
           if (editorView != null) binding.symbolInput.bindEditor(editorView.getEditor());
+
           invalidateOptionsMenu();
         });
   }
@@ -511,6 +515,7 @@ public class EditorActivity extends BaseActivity
     DocumentModel document = event.getDocument();
     document.markModified();
     invalidateOptionsMenu();
+    saveOpenedDocuments();
     int index = viewModel.indexOf(document);
     if (index == -1) {
       return;
@@ -547,6 +552,7 @@ public class EditorActivity extends BaseActivity
                 }
               });
         });
+    saveOpenedDocuments();
   }
 
   private Map<Integer, String> getUniqueNames() {
@@ -572,5 +578,30 @@ public class EditorActivity extends BaseActivity
       names.put(i, name);
     }
     return names;
+  }
+
+  private void saveOpenedDocuments() {
+    List<DocumentModel> documents = viewModel.getDocuments();
+
+    String json = GsonUtils.toJson(documents);
+
+    FileUtil.writeFile(getExternalFilesDir("documents.json").getPath(), json);
+  }
+
+  private void openRecentDocuments() {
+    try {
+      var type = new TypeToken<List<DocumentModel>>() {}.getType();
+      List<DocumentModel> documents =
+          GsonUtils.fromJson(
+              FileUtil.readFile(getExternalFilesDir("documents.json").getPath()), type);
+
+      if (documents == null) return;
+
+      for (DocumentModel doc : documents) {
+        openFile(doc);
+      }
+    } catch (Throwable e) {
+      e.printStackTrace();
+    }
   }
 }

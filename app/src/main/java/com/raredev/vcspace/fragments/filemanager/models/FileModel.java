@@ -1,14 +1,16 @@
 package com.raredev.vcspace.fragments.filemanager.models;
 
 import com.raredev.vcspace.R;
+import com.raredev.vcspace.fragments.filemanager.listeners.FileListResultListener;
+import com.raredev.vcspace.models.DocumentModel;
 import java.io.File;
 
 public class FileModel {
 
-  private String path;
-  private String name;
+  protected String path;
+  protected String name;
 
-  private boolean isFile;
+  protected boolean isFile;
 
   public FileModel(String path, String name, boolean isFile) {
     this.path = path;
@@ -53,20 +55,40 @@ public class FileModel {
     }
     return icon;
   }
-  
+
+  public void listFiles(FileListResultListener listener) {
+    if (listener == null) throw new NullPointerException();
+
+    File[] files = toFile().listFiles();
+    if (files.length == 0) {
+      listener.onResult(new FileModel[0]);
+      return;
+    }
+    FileModel[] localFiles = new FileModel[files.length];
+    for (int i = 0; i < files.length; i++) {
+      if (files[i].isFile()) {
+        localFiles[i] = DocumentModel.fileToDocument(files[i]);
+      } else {
+        localFiles[i] = fileToFileModel(files[i]);
+      }
+    }
+
+    listener.onResult(localFiles);
+  }
+
   public File toFile() {
     return new File(path);
   }
-  
+
   public static FileModel fileToFileModel(File file) {
     return new FileModel(file.getAbsolutePath(), file.getName(), file.isFile());
   }
 
   private static String[] TEXT_FILES = {
-    ".bat", ".txt", ".js", ".ji", ".json", ".java", ".kt", ".kts", ".md", ".lua", ".cs", ".css", ".c", ".cpp", ".h",
-    ".hpp", ".py", ".htm", ".html", ".xhtml", ".xht", ".xaml", ".xdf", ".xmpp", ".xml", ".sh",
-    ".ksh", ".bsh", ".csh", ".tcsh", ".zsh", ".bash", ".groovy", ".gvy", ".gy", ".gsh", ".php",
-    ".php3", ".php4", ".php5", ".phps", ".phtml", ".ts", ".log", ".yaml", ".yml", ".toml",
-    ".gradle", ".mts", ".cts", ".smali",
+    ".bat", ".txt", ".js", ".ji", ".json", ".java", ".kt", ".kts", ".md", ".lua", ".cs", ".css",
+    ".c", ".cpp", ".h", ".hpp", ".py", ".htm", ".html", ".xhtml", ".xht", ".xaml", ".xdf", ".xmpp",
+    ".xml", ".sh", ".ksh", ".bsh", ".csh", ".tcsh", ".zsh", ".bash", ".groovy", ".gvy", ".gy",
+    ".gsh", ".php", ".php3", ".php4", ".php5", ".phps", ".phtml", ".ts", ".log", ".yaml", ".yml",
+    ".toml", ".gradle", ".mts", ".cts", ".smali",
   };
 }
