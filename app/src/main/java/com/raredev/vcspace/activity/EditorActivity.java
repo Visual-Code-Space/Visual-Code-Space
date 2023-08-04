@@ -17,9 +17,11 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
-import com.blankj.utilcode.util.GsonUtils;
+import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
+import com.blankj.utilcode.util.PathUtils;
 import com.google.android.material.tabs.TabLayout;
+import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.SimpleExecuter;
@@ -297,6 +299,7 @@ public class EditorActivity extends BaseActivity
     binding.tabLayout.addTab(binding.tabLayout.newTab());
     viewModel.addDocument(document);
     updateTabs();
+    saveOpenedDocuments();
     return index;
   }
 
@@ -313,6 +316,7 @@ public class EditorActivity extends BaseActivity
       binding.tabLayout.removeTabAt(index);
       binding.container.removeViewAt(index);
       updateTabs();
+      saveOpenedDocuments();
     }
   }
 
@@ -333,6 +337,7 @@ public class EditorActivity extends BaseActivity
       }
     }
     viewModel.setCurrentPosition(viewModel.indexOf(document));
+    saveOpenedDocuments();
   }
 
   public void closeAllFiles() {
@@ -350,6 +355,7 @@ public class EditorActivity extends BaseActivity
     binding.tabLayout.removeAllTabs();
     binding.tabLayout.requestLayout();
     binding.container.removeAllViews();
+    clearRecentOpenedDocuments();
   }
 
   // Document Savers
@@ -583,17 +589,25 @@ public class EditorActivity extends BaseActivity
   private void saveOpenedDocuments() {
     List<DocumentModel> documents = viewModel.getDocuments();
 
-    String json = GsonUtils.toJson(documents);
+    String json = new Gson().toJson(documents);
 
-    FileUtil.writeFile(getExternalFilesDir("documents.json").getPath(), json);
+    // FileUtil.writeFile(getExternalFilesDir("documents.json").getPath(), json);
+    FileIOUtils.writeFileFromString(PathUtils.getExternalAppDataPath() + "/recentOpened/documents.json", json);
+  }
+  
+  private void clearRecentOpenedDocuments() {
+  	FileIOUtils.writeFileFromString(PathUtils.getExternalAppDataPath() + "/recentOpened/documents.json", "");
   }
 
   private void openRecentDocuments() {
     try {
       var type = new TypeToken<List<DocumentModel>>() {}.getType();
       List<DocumentModel> documents =
-          GsonUtils.fromJson(
-              FileUtil.readFile(getExternalFilesDir("documents.json").getPath()), type);
+          new Gson()
+              .fromJson(
+                  FileIOUtils.readFile2String(
+                      PathUtils.getExternalAppDataPath() + "/recentOpened/documents.json"),
+                  type);
 
       if (documents == null) return;
 
