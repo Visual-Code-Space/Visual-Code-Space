@@ -17,7 +17,10 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.security.crypto.EncryptedFile;
+import androidx.security.crypto.MasterKeys;
 import com.blankj.utilcode.util.FileIOUtils;
+import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.PathUtils;
 import com.google.android.material.tabs.TabLayout;
@@ -44,7 +47,11 @@ import com.raredev.vcspace.util.Utils;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +63,8 @@ public class EditorActivity extends BaseActivity
     implements TabLayout.OnTabSelectedListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
   private static final String LOG_TAG = EditorActivity.class.getSimpleName();
+  private static final String RECENT_OPENED_PATH =
+      PathUtils.getExternalAppDataPath() + "/recentOpened/documents.json";
 
   public ActivityResultLauncher<Intent> launcher;
   public ActivityResultLauncher<String> createFile;
@@ -589,25 +598,54 @@ public class EditorActivity extends BaseActivity
   private void saveOpenedDocuments() {
     List<DocumentModel> documents = viewModel.getDocuments();
 
-    String json = new Gson().toJson(documents);
-
-    // FileUtil.writeFile(getExternalFilesDir("documents.json").getPath(), json);
-    FileIOUtils.writeFileFromString(PathUtils.getExternalAppDataPath() + "/recentOpened/documents.json", json);
+    byte[] json = new Gson().toJson(documents).getBytes(StandardCharsets.UTF_8);
+    try {
+      if (FileUtils.isFileExists(new File(RECENT_OPENED_PATH))) {
+        FileUtils.delete(new File(RECENT_OPENED_PATH));
+      }
+      EncryptedFile encryptedFile =
+          new EncryptedFile.Builder(
+                  new File(RECENT_OPENED_PATH),
+                  this,
+                  MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC),
+                  EncryptedFile.FileEncryptionScheme.AES256_GCM_HKDF_4KB)
+              .build();
+      OutputStream outputStream = encryptedFile.openFileOutput();
+      outputStream.write(json);
+      outputStream.flush();
+      outputStream.close();
+    } catch (GeneralSecurityException | IOException err) {
+      err.printStackTrace();
+      ToastUtils.showShort(err.getLocalizedMessage(), ToastUtils.TYPE_ERROR);
+    }
   }
-  
+
   private void clearRecentOpenedDocuments() {
-  	FileIOUtils.writeFileFromString(PathUtils.getExternalAppDataPath() + "/recentOpened/documents.json", "");
+    FileIOUtils.writeFileFromString(RECENT_OPENED_PATH, "[]");
   }
 
   private void openRecentDocuments() {
     try {
       var type = new TypeToken<List<DocumentModel>>() {}.getType();
-      List<DocumentModel> documents =
-          new Gson()
-              .fromJson(
-                  FileIOUtils.readFile2String(
-                      PathUtils.getExternalAppDataPath() + "/recentOpened/documents.json"),
-                  type);
+      EncryptedFile encryptedFile =
+          new EncryptedFile.Builder(
+                  new File(RECENT_OPENED_PATH),
+                  this,
+                  MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC),
+                  EncryptedFile.FileEncryptionScheme.AES256_GCM_HKDF_4KB)
+              .build();
+
+      InputStream inputStream = encryptedFile.openFileInput();
+      ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+      int nextByte = inputStream.read();
+
+      while (nextByte != -1) {
+        byteArrayOutputStream.write(nextByte);
+        nextByte = inputStream.read();
+      }
+
+      byte[] plaintext = byteArrayOutputStream.toByteArray();
+      List<DocumentModel> documents = new Gson().fromJson(new String(plaintext), type);
 
       if (documents == null) return;
 

@@ -85,6 +85,7 @@ dependencies {
   implementation androidx.preference
   implementation androidx.fragment
   implementation androidx.splashscreen
+  implementation androidx.security
 
   implementation google.material
   implementation google.oss_licenses
