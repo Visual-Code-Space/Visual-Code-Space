@@ -45,10 +45,10 @@ import com.raredev.vcspace.util.ToastUtils;
 import com.raredev.vcspace.util.UniqueNameBuilder;
 import com.raredev.vcspace.util.Utils;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
@@ -308,7 +308,6 @@ public class EditorActivity extends BaseActivity
     binding.tabLayout.addTab(binding.tabLayout.newTab());
     viewModel.addDocument(document);
     updateTabs();
-    saveOpenedDocuments();
     return index;
   }
 
@@ -325,7 +324,6 @@ public class EditorActivity extends BaseActivity
       binding.tabLayout.removeTabAt(index);
       binding.container.removeViewAt(index);
       updateTabs();
-      saveOpenedDocuments();
     }
   }
 
@@ -346,7 +344,6 @@ public class EditorActivity extends BaseActivity
       }
     }
     viewModel.setCurrentPosition(viewModel.indexOf(document));
-    saveOpenedDocuments();
   }
 
   public void closeAllFiles() {
