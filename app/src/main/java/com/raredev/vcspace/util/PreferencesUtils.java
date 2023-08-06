@@ -51,6 +51,10 @@ public class PreferencesUtils {
   public static boolean useDeleteEmptyLineFast() {
     return getDefaultPrefs().getBoolean(SharedPreferencesKeys.KEY_DELETE_EMPTY_LINE_FAST, true);
   }
+  
+  public static boolean lineNumbers() {
+    return getDefaultPrefs().getBoolean(SharedPreferencesKeys.KEY_LINENUMBERS, true);
+  }
 
   public static String getTab() {
     String spaces = " ".repeat(getEditorTABSize());

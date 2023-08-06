@@ -130,6 +130,8 @@
     <string name="pref_font_firacode">Fira Code Regular</string>
     <string name="pref_font_jetbrains">JetBrains Mono</string>
 
+    <string name="pref_editor_linenumbers">Linha de números</string>
+    <string name="pref_editor_linenumbers_summary">Exiba os números de linha à esquerda do editor de código.</string>
     <string name="pref_editor_use_spaces">Usar espaços</string>
     <string name="pref_editor_use_spaces_summary">Use espaços em vez de tabs(\\t)</string>
     <string name="pref_editor_deleteemptylinefast">Apagar linha vazia rapidamente</string>
@@ -140,7 +142,7 @@
     <string name="git_summary">Configurar Git</string>
 
     <!-- File Settings -->
-    <string name="file_summary">Configure how files are handled</string>
+    <string name="file_summary">Configurar como os arquivos são tratados</string>
 
     <string name="codification">Codificação</string>
 

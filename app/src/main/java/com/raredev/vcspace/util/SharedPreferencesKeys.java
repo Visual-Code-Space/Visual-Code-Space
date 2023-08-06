@@ -16,6 +16,7 @@ public class SharedPreferencesKeys {
   public static final String KEY_EDITOR_TAB_SIZE_VALUE = "tab_size_value";
   public static final String KEY_EDITOR_FONT = "pref_editorfont";
   public static final String KEY_EDITOR_FONT_VALUE = "font_value";
+  public static final String KEY_LINENUMBERS = "pref_linenumbers";
   public static final String KEY_USE_SPACES = "pref_usespaces";
   public static final String KEY_DELETE_EMPTY_LINE_FAST = "pref_deleteemptylinefast";
   public static final String KEY_AUTO_SAVE = "pref_auto_save";

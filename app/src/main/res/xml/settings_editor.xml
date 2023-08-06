@@ -27,6 +27,13 @@
 
         <SwitchPreferenceCompat
             app:defaultValue="true"
+            app:icon="@drawable/ic_line_number"
+            app:key="pref_linenumbers"
+            app:title="@string/pref_editor_linenumbers"
+            app:summary="@string/pref_editor_linenumbers_summary" />
+
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
             app:icon="@drawable/keyboard_tab"
             app:key="pref_usespaces"
             app:title="@string/pref_editor_use_spaces"

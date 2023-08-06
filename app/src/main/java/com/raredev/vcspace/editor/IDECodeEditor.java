@@ -13,6 +13,7 @@ import com.raredev.vcspace.events.EditorContentChangedEvent;
 import com.raredev.vcspace.events.PreferenceChangedEvent;
 import com.raredev.vcspace.models.DocumentModel;
 import com.raredev.vcspace.util.PreferencesUtils;
+import com.raredev.vcspace.util.SharedPreferencesKeys;
 import io.github.rosemoe.sora.event.ContentChangeEvent;
 import io.github.rosemoe.sora.lang.Language;
 import io.github.rosemoe.sora.langs.textmate.VCSpaceTMLanguage;
@@ -151,17 +152,20 @@ public class IDECodeEditor extends CodeEditor {
   public void onSharedPreferenceChanged(PreferenceChangedEvent event) {
     String key = event.getKey();
     switch (key) {
-      case "pref_editortextsize":
+      case SharedPreferencesKeys.KEY_FONT_SIZE_PREFERENCE:
         updateTextSize();
         break;
-      case "pref_editortabsize":
+      case SharedPreferencesKeys.KEY_EDITOR_TAB_SIZE:
         updateTABSize();
         break;
-      case "pref_deleteemptylinefast":
+      case SharedPreferencesKeys.KEY_DELETE_EMPTY_LINE_FAST:
         updateDeleteEmptyLineFast();
         break;
-      case "pref_editorfont":
+      case SharedPreferencesKeys.KEY_EDITOR_FONT:
         updateEditorFont();
+        break;
+      case SharedPreferencesKeys.KEY_LINENUMBERS:
+        updateLineNumbers();
         break;
     }
   }
@@ -170,6 +174,7 @@ public class IDECodeEditor extends CodeEditor {
     updateEditorFont();
     updateTextSize();
     updateTABSize();
+    updateLineNumbers();
     updateDeleteEmptyLineFast();
 
     setInputType(createInputFlags());
@@ -221,6 +226,11 @@ public class IDECodeEditor extends CodeEditor {
     boolean deleteEmptyLineFast = PreferencesUtils.useDeleteEmptyLineFast();
     getProps().deleteEmptyLineFast = deleteEmptyLineFast;
     getProps().deleteMultiSpaces = deleteEmptyLineFast ? -1 : 1;
+  }
+  
+  private void updateLineNumbers() {
+    boolean lineNumbers = PreferencesUtils.lineNumbers();
+    setLineNumberEnabled(lineNumbers);
   }
 
   private void updateNonPrintablePaintingFlags() {
