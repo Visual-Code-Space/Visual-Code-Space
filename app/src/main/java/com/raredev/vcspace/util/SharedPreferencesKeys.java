@@ -19,7 +19,12 @@ public class SharedPreferencesKeys {
   public static final String KEY_USE_SPACES = "pref_usespaces";
   public static final String KEY_DELETE_EMPTY_LINE_FAST = "pref_deleteemptylinefast";
   public static final String KEY_AUTO_SAVE = "pref_auto_save";
-
+  
+  // File
+  public static final String KEY_FILE = "pref_file";
+  public static final String KEY_ENCODING_FOR_OPENING = "pref_encoding_for_opening";
+  public static final String KEY_SHOW_HIDDEN_FILES = "pref_show_hidden_files";
+  
   // Git
   public static final String KEY_GIT = "pref_git";
   public static final String KEY_CREDENTIAL = "pref_credential";

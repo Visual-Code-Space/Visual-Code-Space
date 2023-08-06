@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.blankj.utilcode.util.ClipboardUtils;
+import com.blankj.utilcode.util.FileUtils;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.activity.EditorActivity;
 import com.raredev.vcspace.databinding.FragmentFileManagerBinding;
@@ -26,8 +27,8 @@ import com.raredev.vcspace.fragments.filemanager.viewmodel.FileListViewModel;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.util.ApkInstaller;
 import com.raredev.vcspace.util.DialogUtils;
-import com.raredev.vcspace.util.FileUtil;
 import com.raredev.vcspace.util.ILogger;
+import com.raredev.vcspace.util.PreferencesUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -144,9 +145,11 @@ public class FileManagerFragment extends Fragment implements FileAdapter.FileLis
     if (!file.isFile()) {
       viewModel.setCurrentDir(file);
     } else {
-      if (FileUtil.isValidTextFile(file.getName())) {
+      if (FileUtils.getFileCharsetSimple(file.getPath())
+          .equals(PreferencesUtils.getEncodingForOpening())) {
         ((EditorActivity) requireActivity()).openFile(file);
-      } else if (file.getName().endsWith(".apk")) {
+      }
+      if (file.getName().endsWith(".apk")) {
         ApkInstaller.installApplication(getContext(), file.toFile());
       }
     }
@@ -225,6 +228,9 @@ public class FileManagerFragment extends Fragment implements FileAdapter.FileLis
                   }
                   Arrays.sort(result, FILE_FIRST_ORDER);
                   for (FileModel file : result) {
+                    if (file.getName().startsWith(".") && !PreferencesUtils.showHiddenFiles()) {
+                      continue;
+                    }
                     mFiles.add(file);
                   }
                 }

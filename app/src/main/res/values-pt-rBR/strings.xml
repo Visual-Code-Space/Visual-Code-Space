@@ -139,6 +139,17 @@
 
     <string name="git_summary">Configurar Git</string>
 
+    <!-- File Settings -->
+    <string name="file_summary">Configure how files are handled</string>
+
+    <string name="codification">Codificação</string>
+
+    <string name="pref_encoding_for_opening">Codificação para abrir arquivos</string>
+    <string name="pref_encoding_for_opening_summary">Especifica a codificação que um arquivo precisa ter para abri-lo.</string>
+
+    <string name="pref_show_hidden_files">Mostrar arquivos ocultos</string>
+    <string name="pref_show_hidden_files_summary">Arquivos e pastas que começam com um ponto aparecerão</string>
+
     <string name="pref_git_credentials">Credenciais</string>
     <string name="pref_git_credentials_summary">Configure suas credenciais do GitHub</string>
 

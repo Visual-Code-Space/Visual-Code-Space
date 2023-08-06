@@ -647,7 +647,14 @@ public class EditorActivity extends BaseActivity
       if (documents == null) return;
 
       for (DocumentModel doc : documents) {
-        openFile(doc);
+        if (!BaseActivity.isPermissionGaranted(this)) {
+          BaseActivity.takeFilePermissions(this);
+          return;
+        }
+        if (!doc.isFile()) {
+          return;
+        }
+        int index = openFileAndGetIndex(doc);
       }
     } catch (Throwable e) {
       e.printStackTrace();

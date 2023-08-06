@@ -20,6 +20,12 @@
             app:iconSpaceReserved="false" />
 
         <Preference
+            app:key="pref_file"
+            app:title="@string/file"
+            app:summary="@string/file_summary"
+            app:iconSpaceReserved="false" />
+
+        <Preference
             app:key="pref_git"
             app:title="@string/git"
             app:summary="@string/git_summary"

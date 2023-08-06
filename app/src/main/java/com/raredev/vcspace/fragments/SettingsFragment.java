@@ -8,6 +8,7 @@ import androidx.preference.PreferenceFragmentCompat;
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.fragments.settings.EditorSettingsFragment;
+import com.raredev.vcspace.fragments.settings.FileSettingsFragment;
 import com.raredev.vcspace.fragments.settings.GeneralSettingsFragment;
 import com.raredev.vcspace.fragments.settings.GitSettingsFragment;
 import com.raredev.vcspace.util.SharedPreferencesKeys;
@@ -41,7 +42,18 @@ public class SettingsFragment extends PreferenceFragmentCompat {
               .commit();
           return true;
         });
-    
+
+    Preference file = findPreference(SharedPreferencesKeys.KEY_FILE);
+    file.setOnPreferenceClickListener(
+        (pref) -> {
+          getParentFragmentManager()
+              .beginTransaction()
+              .replace(R.id.settings_container, new FileSettingsFragment())
+              .addToBackStack(null)
+              .commit();
+          return true;
+        });
+
     Preference git = findPreference(SharedPreferencesKeys.KEY_GIT);
     git.setOnPreferenceClickListener(
         (pref) -> {

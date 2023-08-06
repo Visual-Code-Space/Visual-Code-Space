@@ -145,6 +145,19 @@
     <string name="pref_editor_auto_save">Auto save</string>
     <string name="pref_editor_auto_save_summary">Automatically saves your work, preventing data loss and saving time.</string>
 
+    <!-- File Settings -->
+    <string name="file_summary">Configure how files are handled</string>
+
+    <string name="codification">Codification</string>
+
+    <string name="pref_encoding_for_opening">Encoding to open file</string>
+    <string name="pref_encoding_for_opening_summary">Specifies the encoding a file needs to be in order to open it.</string>
+
+    <string name="file_manager">File Manager</string>
+
+    <string name="pref_show_hidden_files">Show hidden files</string>
+    <string name="pref_show_hidden_files_summary">Files and folders that start with a dot will appear.</string>
+
     <string name="git_summary">Configure Git</string>
 
     <string name="pref_git_credentials">Credentials</string>

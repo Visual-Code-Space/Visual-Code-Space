@@ -66,10 +66,11 @@ public class FileModel {
     }
     FileModel[] localFiles = new FileModel[files.length];
     for (int i = 0; i < files.length; i++) {
-      if (files[i].isFile()) {
-        localFiles[i] = DocumentModel.fileToDocument(files[i]);
+      File file = files[i];
+      if (file.isFile()) {
+        localFiles[i] = DocumentModel.fileToDocument(file);
       } else {
-        localFiles[i] = fileToFileModel(files[i]);
+        localFiles[i] = fileToFileModel(file);
       }
     }
 

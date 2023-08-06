@@ -76,4 +76,12 @@ public class PreferencesUtils {
         return R.font.firacode_regular;
     }
   }
+
+  public static String getEncodingForOpening() {
+    return getDefaultPrefs().getString(SharedPreferencesKeys.KEY_ENCODING_FOR_OPENING, "UTF-8");
+  }
+
+  public static boolean showHiddenFiles() {
+    return getDefaultPrefs().getBoolean(SharedPreferencesKeys.KEY_SHOW_HIDDEN_FILES, true);
+  }
 }
