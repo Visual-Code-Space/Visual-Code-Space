@@ -18,3 +18,4 @@ rootProject.name = "Visual Code Space"
 include ':app'
 include ':common'
 include ':cpp-compiler'
+include ':treeview'

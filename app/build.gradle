@@ -109,6 +109,7 @@ dependencies {
   implementation 'org.nanohttpd:nanohttpd:2.3.0'
   
   implementation project(path: ':common')
+  implementation project(path: ':treeview')
 
   //debugImplementation common.leakcanary
 }

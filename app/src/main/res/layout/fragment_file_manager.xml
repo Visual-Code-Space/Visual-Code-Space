@@ -58,11 +58,11 @@
         android:layout_width="match_parent"
         android:orientation="vertical">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_height="45dp"
+        <com.raredev.vcspace.ui.PathListView
+            android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:padding="2dp"
-            android:id="@+id/rv_dir" />
+            android:id="@+id/path_list" />
 
         <ViewFlipper
             android:layout_height="match_parent"

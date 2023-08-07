@@ -85,7 +85,7 @@ public class FileModel {
     return new FileModel(file.getAbsolutePath(), file.getName(), file.isFile());
   }
 
-  private static String[] TEXT_FILES = {
+  public static String[] TEXT_FILES = {
     ".bat", ".txt", ".js", ".ji", ".json", ".java", ".kt", ".kts", ".md", ".lua", ".cs", ".css",
     ".c", ".cpp", ".h", ".hpp", ".py", ".htm", ".html", ".xhtml", ".xht", ".xaml", ".xdf", ".xmpp",
     ".xml", ".sh", ".ksh", ".bsh", ".csh", ".tcsh", ".zsh", ".bash", ".groovy", ".gvy", ".gy",

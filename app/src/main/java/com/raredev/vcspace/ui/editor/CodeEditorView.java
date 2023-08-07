@@ -7,6 +7,7 @@ import android.widget.LinearLayout;
 import com.raredev.vcspace.databinding.LayoutCodeEditorBinding;
 import com.raredev.vcspace.models.DocumentModel;
 import com.raredev.vcspace.editor.IDECodeEditor;
+import com.raredev.vcspace.ui.PathListView;
 import com.raredev.vcspace.ui.VCSpaceSearcherLayout;
 import com.raredev.vcspace.util.FileUtil;
 import io.github.rosemoe.sora.langs.textmate.VCSpaceTMLanguage;
@@ -16,9 +17,7 @@ import java.util.concurrent.CompletableFuture;
 public class CodeEditorView extends LinearLayout {
 
   private LayoutCodeEditorBinding binding;
-
   private VCSpaceSearcherLayout searcherLayout;
-
   private DocumentModel document;
 
   public CodeEditorView(Context context, DocumentModel document) {

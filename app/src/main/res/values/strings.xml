@@ -147,6 +147,8 @@
     <string name="pref_editor_auto_save">Auto save</string>
     <string name="pref_editor_auto_save_summary">Automatically saves your work, preventing data loss and saving time.</string>
 
+    <string name="tabs">Tabs</string>
+
     <!-- File Settings -->
     <string name="file_summary">Configure how files are handled</string>
 

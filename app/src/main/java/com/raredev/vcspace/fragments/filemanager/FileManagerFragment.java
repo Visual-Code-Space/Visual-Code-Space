@@ -18,13 +18,13 @@ import com.blankj.utilcode.util.FileUtils;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.activity.EditorActivity;
 import com.raredev.vcspace.databinding.FragmentFileManagerBinding;
-import com.raredev.vcspace.fragments.filemanager.adapters.DirectoryAdapter;
 import com.raredev.vcspace.fragments.filemanager.adapters.FileAdapter;
 import com.raredev.vcspace.fragments.filemanager.git.CloneRepository;
 import com.raredev.vcspace.fragments.filemanager.listeners.FileListResultListener;
 import com.raredev.vcspace.fragments.filemanager.models.FileModel;
 import com.raredev.vcspace.fragments.filemanager.viewmodel.FileListViewModel;
 import com.raredev.vcspace.task.TaskExecutor;
+import com.raredev.vcspace.ui.PathListView;
 import com.raredev.vcspace.util.ApkInstaller;
 import com.raredev.vcspace.util.DialogUtils;
 import com.raredev.vcspace.util.ILogger;
@@ -42,7 +42,6 @@ public class FileManagerFragment extends Fragment implements FileAdapter.FileLis
 
   private FileListViewModel viewModel;
 
-  private DirectoryAdapter mDirectoriesAdapter;
   private FileAdapter mFilesAdapter;
 
   @Override
@@ -119,7 +118,7 @@ public class FileManagerFragment extends Fragment implements FileAdapter.FileLis
           pm.show();
         });
 
-    
+    binding.pathList.setType(PathListView.TYPE_FOLDER_PATH);
     setupRecyclerView();
 
     return binding.getRoot();
@@ -134,10 +133,9 @@ public class FileManagerFragment extends Fragment implements FileAdapter.FileLis
             getViewLifecycleOwner(),
             (dir) -> {
               listArchives(dir);
-              viewModel.openDirectory(dir);
-              mDirectoriesAdapter.notifyDataSetChanged();
-              binding.rvDir.scrollToPosition(mDirectoriesAdapter.getItemCount() - 1);
+              binding.pathList.setPath(dir.getPath());
             });
+    binding.pathList.setFileViewModel(viewModel);
   }
 
   @Override
@@ -196,14 +194,9 @@ public class FileManagerFragment extends Fragment implements FileAdapter.FileLis
   }
 
   private void setupRecyclerView() {
-    mDirectoriesAdapter = new DirectoryAdapter(viewModel);
     mFilesAdapter = new FileAdapter(viewModel);
 
     mFilesAdapter.setFileListener(this);
-
-    binding.rvDir.setLayoutManager(
-        new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
-    binding.rvDir.setAdapter(mDirectoriesAdapter);
 
     binding.rvFiles.setLayoutManager(new LinearLayoutManager(requireContext()));
     binding.rvFiles.setAdapter(mFilesAdapter);

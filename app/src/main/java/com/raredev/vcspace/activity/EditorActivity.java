@@ -35,6 +35,7 @@ import com.raredev.vcspace.events.PreferenceChangedEvent;
 import com.raredev.vcspace.fragments.filemanager.models.FileModel;
 import com.raredev.vcspace.models.DocumentModel;
 import com.raredev.vcspace.task.TaskExecutor;
+import com.raredev.vcspace.ui.PathListView;
 import com.raredev.vcspace.ui.editor.CodeEditorView;
 import com.raredev.vcspace.ui.editor.Symbol;
 import com.raredev.vcspace.ui.viewmodel.EditorViewModel;
@@ -131,6 +132,7 @@ public class EditorActivity extends BaseActivity
       }
     }
 
+    binding.pathList.setType(PathListView.TYPE_FILE_PATH);
     openRecentDocuments();
   }
 
@@ -516,7 +518,10 @@ public class EditorActivity extends BaseActivity
             tab.select();
           }
           var editorView = getCurrentEditor();
-          if (editorView != null) binding.symbolInput.bindEditor(editorView.getEditor());
+          if (editorView != null) {
+            binding.symbolInput.bindEditor(editorView.getEditor());
+            binding.pathList.setPath(editorView.getDocument().getPath());
+          }
 
           invalidateOptionsMenu();
         });

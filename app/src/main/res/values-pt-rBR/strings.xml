@@ -139,6 +139,8 @@
     <string name="pref_editor_auto_save">Salvamento automático</string>
     <string name="pref_editor_auto_save_summary">Salva automaticamente seu trabalho, evitando perda de dados e economizando tempo.</string>
 
+    <string name="tabs">Abas</string>
+
     <string name="git_summary">Configurar Git</string>
 
     <!-- File Settings -->
