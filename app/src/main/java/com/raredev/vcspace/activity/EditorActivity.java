@@ -23,7 +23,7 @@ import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.PathUtils;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.blankj.utilcode.util.UriUtils;
 import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -125,16 +125,12 @@ public class EditorActivity extends BaseActivity
     if (isPermissionGaranted(this)) {
       Uri fileUri = getIntent().getData();
       if (fileUri != null) {
-        String filePath = fileUri.getPath();
-        try {
-          openFile(
-              new FileModel(
-                  FileUtil.getFileFromUri(this, fileUri).getAbsolutePath(),
-                  FileUtil.getFileName(this, fileUri),
-                  true));
-        } catch (IOException err) {
-          err.printStackTrace();
-        }
+        openRecentDocuments();
+        openFile(
+            new FileModel(
+                UriUtils.uri2File(fileUri).getAbsolutePath(),
+                FileUtil.getFileName(this, fileUri),
+                true));
       }
     }
 
@@ -308,7 +304,7 @@ public class EditorActivity extends BaseActivity
     if (openedFileIndex != -1) {
       return openedFileIndex;
     }
-    DocumentModel document = (DocumentModel) file /*DocumentModel.fileModelToDocument(file)*/;
+    DocumentModel document = DocumentModel.fileModelToDocument(file);
     int index = viewModel.getOpenedDocumentCount();
 
     ILogger.debug(LOG_TAG, file.getName() + " Openening at index: " + index);
