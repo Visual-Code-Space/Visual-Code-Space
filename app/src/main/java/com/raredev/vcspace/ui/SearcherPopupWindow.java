@@ -6,12 +6,14 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.PopupWindow;
+import android.widget.Toast;
 import com.google.android.material.color.MaterialColors;
 import com.google.android.material.elevation.SurfaceColors;
 import com.raredev.vcspace.databinding.LayoutSearcherBinding;
@@ -27,9 +29,8 @@ public class SearcherPopupWindow implements View.OnClickListener {
   private Context context;
   private View view;
 
-  private int lastX;
-  private int lastY;
-  
+  private int currentX, currentY;
+
   private EditorSearcher.SearchOptions searchOptions =
       new EditorSearcher.SearchOptions(true, false);
   private EditorSearcher searcher;
@@ -39,7 +40,6 @@ public class SearcherPopupWindow implements View.OnClickListener {
     this.view = view;
     init();
   }
-  
 
   private void init() {
     binding = LayoutSearcherBinding.inflate(LayoutInflater.from(context));
@@ -57,24 +57,21 @@ public class SearcherPopupWindow implements View.OnClickListener {
 
     binding.move.setOnTouchListener(
         new View.OnTouchListener() {
+          private float dx, dy;
+
           @Override
           public boolean onTouch(View v, MotionEvent event) {
-            int x = (int) event.getRawX();
-            int y = (int) event.getRawY();
             switch (event.getAction()) {
               case MotionEvent.ACTION_DOWN:
-                lastX = x;
-                lastY = y;
+                dx = currentX - event.getRawX();
+                dy = currentY - event.getRawY();
                 break;
-
               case MotionEvent.ACTION_MOVE:
-                int deltaX = x - lastX;
-                int deltaY = y - lastY;
-
-                window.update(window.getWidth() + deltaX, window.getHeight() + deltaY, -1, -1);
+                currentX = (int) (event.getRawX() + dx);
+                currentY = (int) (event.getRawY() + dy);
+                window.update(currentX, currentY, -1, -1);
                 break;
             }
-
             return true;
           }
         });
@@ -134,15 +131,15 @@ public class SearcherPopupWindow implements View.OnClickListener {
     }
     searcher.stopSearch();
   }
-  
+
   public boolean isShowing() {
     return window.isShowing();
   }
-  
+
   public void bindSearcher(EditorSearcher searcher) {
     this.searcher = searcher;
   }
-  
+
   public void show() {
     window.showAtLocation(view, Gravity.CENTER, 0, 0);
   }
@@ -150,7 +147,7 @@ public class SearcherPopupWindow implements View.OnClickListener {
   public void dismiss() {
     window.dismiss();
   }
-  
+
   private void search(String text) {
     if (!text.isEmpty()) {
       searcher.search(text, searchOptions);
