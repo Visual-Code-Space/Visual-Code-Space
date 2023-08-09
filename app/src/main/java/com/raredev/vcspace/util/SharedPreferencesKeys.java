@@ -19,6 +19,7 @@ public class SharedPreferencesKeys {
   public static final String KEY_LINENUMBERS = "pref_linenumbers";
   public static final String KEY_USE_SPACES = "pref_usespaces";
   public static final String KEY_DELETE_EMPTY_LINE_FAST = "pref_deleteemptylinefast";
+  public static final String KEY_FILE_PATH = "pref_file_path";
   public static final String KEY_AUTO_SAVE = "pref_auto_save";
   
   // File

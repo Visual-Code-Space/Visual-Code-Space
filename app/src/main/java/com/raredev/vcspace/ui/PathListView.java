@@ -29,6 +29,8 @@ public class PathListView extends RecyclerView {
 
   private FileListViewModel viewModel;
 
+  private boolean enabled;
+
   private int type;
 
   public PathListView(Context context) {
@@ -44,6 +46,13 @@ public class PathListView extends RecyclerView {
     setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
     setAdapter(adapter = new PathListAdapter());
     adapter.registerAdapterDataObserver(observer = new DataObserver());
+
+    enabled = true;
+  }
+
+  public void setEnabled(boolean enabled) {
+    setVisibility(enabled ? View.VISIBLE : View.GONE);
+    this.enabled = enabled;
   }
 
   public void setType(int type) {
@@ -55,8 +64,9 @@ public class PathListView extends RecyclerView {
   }
 
   public void setPath(String path) {
-    File file = new File(path);
-    adapter.setPath(file);
+    if (enabled) {
+      adapter.setPath(new File(path));
+    }
   }
 
   public class PathListAdapter extends RecyclerView.Adapter<VH> {

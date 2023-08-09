@@ -50,6 +50,7 @@ public class FileTreePopupWindow
 
     window.setFocusable(true);
     window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+    window.setElevation(5);
 
     window.setContentView(binding.getRoot());
     window.showAsDropDown(v);

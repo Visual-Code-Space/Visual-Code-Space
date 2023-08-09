@@ -136,6 +136,8 @@
     <string name="pref_editor_use_spaces_summary">Use espaços em vez de tabs(\\t)</string>
     <string name="pref_editor_deleteemptylinefast">Apagar linha vazia rapidamente</string>
     <string name="pref_editor_deleteemptylinefast_summary">Se a linha atual tiver apenas espaços, ela será apagada rapidamente.</string>
+    <string name="pref_editor_file_path">Caminho do arquivo</string>
+    <string name="pref_editor_file_path_summary">Mostrar o caminho do arquivo acima da guia.</string>
     <string name="pref_editor_auto_save">Salvamento automático</string>
     <string name="pref_editor_auto_save_summary">Salva automaticamente seu trabalho, evitando perda de dados e economizando tempo.</string>
 

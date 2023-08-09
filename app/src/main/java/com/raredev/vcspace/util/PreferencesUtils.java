@@ -60,6 +60,11 @@ public class PreferencesUtils {
     String spaces = " ".repeat(getEditorTABSize());
     return useSpaces() ? spaces : "\t";
   }
+  
+  public static boolean showFilePath() {
+    return getDefaultPrefs().getBoolean(SharedPreferencesKeys.KEY_FILE_PATH, true);
+  }
+  
   /*
    * Returns whether the user wants to automatically save the file
    */

@@ -5,10 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import com.raredev.vcspace.databinding.LayoutCodeEditorBinding;
-import com.raredev.vcspace.models.DocumentModel;
 import com.raredev.vcspace.editor.IDECodeEditor;
-import com.raredev.vcspace.ui.PathListView;
-import com.raredev.vcspace.ui.VCSpaceSearcherLayout;
+import com.raredev.vcspace.models.DocumentModel;
 import com.raredev.vcspace.util.FileUtil;
 import io.github.rosemoe.sora.langs.textmate.VCSpaceTMLanguage;
 import io.github.rosemoe.sora.langs.textmate.provider.TextMateProvider;
@@ -17,7 +15,6 @@ import java.util.concurrent.CompletableFuture;
 public class CodeEditorView extends LinearLayout {
 
   private LayoutCodeEditorBinding binding;
-  private VCSpaceSearcherLayout searcherLayout;
   private DocumentModel document;
 
   public CodeEditorView(Context context, DocumentModel document) {
@@ -27,13 +24,10 @@ public class CodeEditorView extends LinearLayout {
 
     setOrientation(VERTICAL);
     removeAllViews();
-
-    searcherLayout = new VCSpaceSearcherLayout(context, binding.editor.getSearcher());
-
+    
     addView(
         binding.getRoot(),
         new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, 1f));
-    addView(searcherLayout, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 
     setLoading(true);
     if (document.getContent() == null) {
@@ -82,14 +76,6 @@ public class CodeEditorView extends LinearLayout {
 
   public String getCode() {
     return binding.editor.getText().toString();
-  }
-
-  public void showAndHideSearcher() {
-    searcherLayout.showAndHide();
-  }
-
-  public boolean searcherIsShowing() {
-    return searcherLayout.isShowing;
   }
 
   public void release() {

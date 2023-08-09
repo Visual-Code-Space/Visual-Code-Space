@@ -1,83 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:app="http://schemas.android.com/apk/res-auto"
-  android:id="@+id/root"
-  android:layout_height="wrap_content"
-  android:layout_width="match_parent"
-  android:orientation="vertical">
-
-  <View
-    android:layout_height="0.5dp"
-    android:layout_width="match_parent"
-    android:background="?attr/colorOutline"
-    android:id="@+id/top_divider" />
-
-  <EditText
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    android:layout_below="@id/top_divider"
-    android:layout_marginEnd="5dp"
-    android:hint="@string/search"
-    android:layout_marginStart="5dp"
-    android:maxLines="1"
-    android:inputType="text"
-    android:id="@+id/search_text" />
+    android:id="@+id/root">
 
-  <EditText
-    android:layout_height="wrap_content"
-    android:layout_width="match_parent"
-    android:layout_below="@id/search_text"
-    android:layout_marginEnd="5dp"
-    android:hint="@string/replace"
-    android:layout_marginStart="5dp"
-    android:maxLines="1"
-    android:inputType="text"
-    android:id="@+id/replace_text" />
+    <RelativeLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_marginEnd="5dp"
+        android:padding="5dp"
+        android:layout_marginStart="5dp"
+        android:id="@+id/top_layout">
 
-  <LinearLayout
-    android:layout_height="50dp"
-    android:layout_width="match_parent"
-    android:layout_marginEnd="5dp"
-    android:layout_below="@id/replace_text"
-    android:layout_marginStart="5dp">
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="@string/search" />
 
-    <com.google.android.material.button.MaterialButton
-      android:layout_height="match_parent"
-      android:layout_width="match_parent"
-      android:layout_margin="2dp"
-      style="?attr/materialButtonOutlinedStyle"
-      android:layout_weight="1.0"
-      android:id="@+id/goto_last"
-      android:text="PREV" />
+        <ImageView
+            android:layout_height="25dp"
+            android:layout_width="25dp"
+            android:src="@drawable/close"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_centerVertical="true"
+            android:padding="2dp"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/close" />
 
-    <com.google.android.material.button.MaterialButton
-      android:layout_height="match_parent"
-      android:layout_width="match_parent"
-      android:layout_margin="2dp"
-      style="?attr/materialButtonOutlinedStyle"
-      android:layout_weight="1.0"
-      android:id="@+id/goto_next"
-      android:text="NEXT" />
+        <ImageView
+            android:layout_height="25dp"
+            android:layout_width="25dp"
+            android:src="@drawable/gesture_tap"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_centerVertical="true"
+            android:layout_margin="3dp"
+            android:padding="2dp"
+            android:layout_toLeftOf="@id/close"
+            android:id="@+id/move" />
 
-    <com.google.android.material.button.MaterialButton
-      android:layout_height="match_parent"
-      android:layout_width="match_parent"
-      android:layout_margin="2dp"
-      style="?attr/materialButtonOutlinedStyle"
-      android:layout_weight="1.0"
-      android:id="@+id/replace"
-      android:text="REP" />
+    </RelativeLayout>
 
-    <com.google.android.material.button.MaterialButton
-      android:layout_height="match_parent"
-      android:layout_width="match_parent"
-      android:layout_margin="2dp"
-      style="?attr/materialButtonOutlinedStyle"
-      android:layout_weight="1.0"
-      android:id="@+id/replace_all"
-      android:text="REP ALL" />
+    <View
+        android:layout_height="0.5dp"
+        android:layout_width="match_parent"
+        android:layout_below="@id/top_layout"
+        android:background="?attr/colorOutline"
+        android:id="@+id/top_divider" />
 
-  </LinearLayout>
+    <EditText
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_below="@id/top_divider"
+        android:layout_marginEnd="5dp"
+        android:hint="@string/search"
+        android:layout_marginStart="5dp"
+        android:maxLines="1"
+        android:inputType="text"
+        android:id="@+id/search_text" />
+
+    <EditText
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_below="@id/search_text"
+        android:layout_marginEnd="5dp"
+        android:hint="@string/replace"
+        android:layout_marginStart="5dp"
+        android:maxLines="1"
+        android:inputType="text"
+        android:id="@+id/replace_text" />
+
+    <LinearLayout
+        android:layout_height="50dp"
+        android:layout_width="match_parent"
+        android:layout_marginEnd="5dp"
+        android:layout_below="@id/replace_text"
+        android:layout_marginStart="5dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_margin="2dp"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_weight="1.0"
+            android:id="@+id/goto_last"
+            android:text="PREV" />
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_margin="2dp"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_weight="1.0"
+            android:id="@+id/goto_next"
+            android:text="NEXT" />
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_margin="2dp"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_weight="1.0"
+            android:id="@+id/replace"
+            android:text="REP" />
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_margin="2dp"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_weight="1.0"
+            android:id="@+id/replace_all"
+            android:text="REP ALL" />
+
+    </LinearLayout>
 
 </RelativeLayout>

@@ -2,6 +2,8 @@ package com.raredev.vcspace.fragments.filemanager;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.view.LayoutInflater;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -11,9 +13,11 @@ import com.blankj.utilcode.util.ThreadUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.raredev.vcspace.R;
+import com.raredev.vcspace.VCSpaceApplication;
 import com.raredev.vcspace.databinding.LayoutTextinputBinding;
 import com.raredev.vcspace.progressdialog.ProgressDialog;
 import com.raredev.vcspace.task.TaskExecutor;
+import com.raredev.vcspace.util.ApkInstaller;
 import com.raredev.vcspace.util.DialogUtils;
 import com.raredev.vcspace.util.FileUtil;
 import com.raredev.vcspace.util.ToastUtils;
@@ -195,6 +199,36 @@ public class FileManagerDialogs {
       return true;
     }
     return false;
+  }
+
+  public static void showApkInfoDialog(Context context, File file) {
+    var builder = new MaterialAlertDialogBuilder(context);
+
+    builder.setTitle("Install apk");
+
+    PackageManager pm = context.getPackageManager();
+
+    PackageInfo pi = pm.getPackageArchiveInfo(file.getAbsolutePath(), 0);
+    if (pi != null) {
+      builder.setIcon(pi.applicationInfo.loadIcon(pm));
+      builder.setTitle(pi.applicationInfo.loadLabel(pm));
+      builder.setMessage(
+          "Package: "
+              + pi.packageName
+              + "\nVersion code: "
+              + pi.versionCode
+              + "\nVersion name: "
+              + pi.versionName);
+    } else {
+      builder.setMessage("No apk info.");
+    }
+    builder.setNegativeButton(R.string.cancel, null);
+    builder.setPositiveButton(
+        "Install",
+        (di, witch) -> {
+          ApkInstaller.installApplication(context, file);
+        });
+    builder.show();
   }
 
   public interface UpdateListener {

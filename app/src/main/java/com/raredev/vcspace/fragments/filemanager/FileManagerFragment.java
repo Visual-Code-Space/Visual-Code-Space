@@ -25,7 +25,6 @@ import com.raredev.vcspace.fragments.filemanager.models.FileModel;
 import com.raredev.vcspace.fragments.filemanager.viewmodel.FileListViewModel;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.ui.PathListView;
-import com.raredev.vcspace.util.ApkInstaller;
 import com.raredev.vcspace.util.DialogUtils;
 import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.util.PreferencesUtils;
@@ -119,6 +118,7 @@ public class FileManagerFragment extends Fragment implements FileAdapter.FileLis
         });
 
     binding.pathList.setType(PathListView.TYPE_FOLDER_PATH);
+    binding.pathList.setFileViewModel(viewModel);
     setupRecyclerView();
 
     return binding.getRoot();
@@ -135,7 +135,6 @@ public class FileManagerFragment extends Fragment implements FileAdapter.FileLis
               listArchives(dir);
               binding.pathList.setPath(dir.getPath());
             });
-    binding.pathList.setFileViewModel(viewModel);
   }
 
   @Override
@@ -148,7 +147,8 @@ public class FileManagerFragment extends Fragment implements FileAdapter.FileLis
         ((EditorActivity) requireActivity()).openFile(file);
       }
       if (file.getName().endsWith(".apk")) {
-        ApkInstaller.installApplication(getContext(), file.toFile());
+        FileManagerDialogs.showApkInfoDialog(requireContext(), file.toFile());
+        //ApkInstaller.installApplication(getContext(), file.toFile());
       }
     }
   }
@@ -244,7 +244,7 @@ public class FileManagerFragment extends Fragment implements FileAdapter.FileLis
     return viewModel;
   }
 
-  private static final Comparator<FileModel> FILE_FIRST_ORDER =
+  public static final Comparator<FileModel> FILE_FIRST_ORDER =
       (file1, file2) -> {
         if (file1.isFile() && !file2.isFile()) {
           return 1;

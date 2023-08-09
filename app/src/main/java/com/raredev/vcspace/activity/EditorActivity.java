@@ -23,6 +23,7 @@ import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.PathUtils;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -36,12 +37,14 @@ import com.raredev.vcspace.fragments.filemanager.models.FileModel;
 import com.raredev.vcspace.models.DocumentModel;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.ui.PathListView;
+import com.raredev.vcspace.ui.SearcherPopupWindow;
 import com.raredev.vcspace.ui.editor.CodeEditorView;
 import com.raredev.vcspace.ui.editor.Symbol;
 import com.raredev.vcspace.ui.viewmodel.EditorViewModel;
 import com.raredev.vcspace.util.FileUtil;
 import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.util.PreferencesUtils;
+import com.raredev.vcspace.util.SharedPreferencesKeys;
 import com.raredev.vcspace.util.ToastUtils;
 import com.raredev.vcspace.util.UniqueNameBuilder;
 import com.raredev.vcspace.util.Utils;
@@ -74,6 +77,8 @@ public class EditorActivity extends BaseActivity
   private ActivityEditorBinding binding;
 
   public EditorViewModel viewModel;
+  
+  private SearcherPopupWindow searcher;
 
   // Overrides
 
@@ -90,6 +95,7 @@ public class EditorActivity extends BaseActivity
     setupDrawer();
 
     viewModel = new ViewModelProvider(this).get(EditorViewModel.class);
+    searcher = new SearcherPopupWindow(this, binding.getRoot());
 
     binding.tabLayout.addOnTabSelectedListener(this);
     binding.noFileOpened.setOnClickListener(v -> viewModel.setDrawerState(true));
@@ -132,6 +138,7 @@ public class EditorActivity extends BaseActivity
       }
     }
 
+    binding.pathList.setEnabled(PreferencesUtils.showFilePath());
     binding.pathList.setType(PathListView.TYPE_FILE_PATH);
     openRecentDocuments();
   }
@@ -177,7 +184,7 @@ public class EditorActivity extends BaseActivity
       SimpleExecuter.run(this, editorView.getDocument().toFile(), true);
     } else if (id == R.id.menu_undo) editorView.undo();
     else if (id == R.id.menu_redo) editorView.redo();
-    else if (id == R.id.menu_search) editorView.showAndHideSearcher();
+    else if (id == R.id.menu_search) searcher.showAndHide();
     else if (id == R.id.menu_format) editorView.getEditor().formatCodeAsync();
     else if (id == R.id.menu_new_file) createFile.launch("untitled");
     else if (id == R.id.menu_open_file) pickFile.launch("text/*");
@@ -200,9 +207,8 @@ public class EditorActivity extends BaseActivity
       viewModel.setDrawerState(false);
       return;
     }
-    CodeEditorView editor = getCurrentEditor();
-    if (editor != null && editor.searcherIsShowing()) {
-      editor.showAndHideSearcher();
+    if (searcher.isShowing()) {
+      searcher.showAndHide();
       return;
     }
     super.onBackPressed();
@@ -267,6 +273,9 @@ public class EditorActivity extends BaseActivity
   @Override
   public void onSharedPreferenceChanged(SharedPreferences pref, String key) {
     EventBus.getDefault().post(new PreferenceChangedEvent(key));
+    if (key.equals(SharedPreferencesKeys.KEY_FILE_PATH)) {
+      binding.pathList.setEnabled(PreferencesUtils.showFilePath());
+    }
   }
 
   // getters
@@ -321,7 +330,6 @@ public class EditorActivity extends BaseActivity
       if (editor != null) {
         editor.release();
       }
-
       viewModel.removeDocument(index);
       binding.tabLayout.removeTabAt(index);
       binding.container.removeViewAt(index);
@@ -330,6 +338,9 @@ public class EditorActivity extends BaseActivity
   }
 
   public void closeOthers() {
+    if (viewModel.getDocuments().isEmpty()) {
+      return;
+    }
     DocumentModel document = viewModel.getCurrentDocument();
     if (document == null) return;
 
@@ -383,6 +394,10 @@ public class EditorActivity extends BaseActivity
   }
 
   public void saveAllFiles(boolean showMsg) {
+    saveAllFiles(showMsg, () -> {});
+  }
+
+  public void saveAllFiles(boolean showMsg, Runnable post) {
     if (!viewModel.getDocuments().isEmpty()) {
       TaskExecutor.executeAsync(
           () -> {
@@ -395,6 +410,7 @@ public class EditorActivity extends BaseActivity
             if (showMsg) {
               ToastUtils.showShort(getString(R.string.saved_files), ToastUtils.TYPE_SUCCESS);
             }
+            post.run();
           });
     }
   }
@@ -494,6 +510,7 @@ public class EditorActivity extends BaseActivity
         documents -> {
           if (documents.isEmpty()) {
             binding.main.setDisplayedChild(1);
+            searcher.dismiss();
             invalidateOptionsMenu();
           } else {
             binding.main.setDisplayedChild(0);
@@ -521,6 +538,7 @@ public class EditorActivity extends BaseActivity
           if (editorView != null) {
             binding.symbolInput.bindEditor(editorView.getEditor());
             binding.pathList.setPath(editorView.getDocument().getPath());
+            searcher.bindSearcher(editorView.getEditor().getSearcher());
           }
 
           invalidateOptionsMenu();
@@ -665,4 +683,5 @@ public class EditorActivity extends BaseActivity
       e.printStackTrace();
     }
   }
+  
 }
