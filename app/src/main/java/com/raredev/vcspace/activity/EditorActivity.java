@@ -17,10 +17,8 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.security.crypto.EncryptedFile;
-import androidx.security.crypto.MasterKeys;
+import com.blankj.utilcode.util.EncodeUtils;
 import com.blankj.utilcode.util.FileIOUtils;
-import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.PathUtils;
 import com.blankj.utilcode.util.UriUtils;
@@ -32,6 +30,7 @@ import com.raredev.vcspace.SimpleExecuter;
 import com.raredev.vcspace.databinding.ActivityEditorBinding;
 import com.raredev.vcspace.editor.completion.CompletionProvider;
 import com.raredev.vcspace.events.EditorContentChangedEvent;
+import com.raredev.vcspace.events.OnFileRenamedEvent;
 import com.raredev.vcspace.events.PreferenceChangedEvent;
 import com.raredev.vcspace.fragments.filemanager.models.FileModel;
 import com.raredev.vcspace.models.DocumentModel;
@@ -49,13 +48,9 @@ import com.raredev.vcspace.util.ToastUtils;
 import com.raredev.vcspace.util.UniqueNameBuilder;
 import com.raredev.vcspace.util.Utils;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,8 +62,9 @@ public class EditorActivity extends BaseActivity
     implements TabLayout.OnTabSelectedListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
   private static final String LOG_TAG = EditorActivity.class.getSimpleName();
+
   private static final String RECENT_OPENED_PATH =
-      PathUtils.getExternalAppDataPath() + "/recentOpened/documents.json";
+      PathUtils.getExternalAppDataPath() + "/files/recentOpened/documents.json";
 
   public ActivityResultLauncher<Intent> launcher;
   public ActivityResultLauncher<String> createFile;
@@ -77,7 +73,7 @@ public class EditorActivity extends BaseActivity
   private ActivityEditorBinding binding;
 
   public EditorViewModel viewModel;
-  
+
   private SearcherPopupWindow searcher;
 
   // Overrides
@@ -95,7 +91,9 @@ public class EditorActivity extends BaseActivity
     setupDrawer();
 
     viewModel = new ViewModelProvider(this).get(EditorViewModel.class);
-    searcher = new SearcherPopupWindow(this, binding.getRoot());
+
+    searcher = new SearcherPopupWindow(this);
+    binding.floatingContainer.addView(searcher);
 
     binding.tabLayout.addOnTabSelectedListener(this);
     binding.noFileOpened.setOnClickListener(v -> viewModel.setDrawerState(true));
@@ -126,11 +124,7 @@ public class EditorActivity extends BaseActivity
       Uri fileUri = getIntent().getData();
       if (fileUri != null) {
         openRecentDocuments();
-        openFile(
-            new FileModel(
-                UriUtils.uri2File(fileUri).getAbsolutePath(),
-                FileUtil.getFileName(this, fileUri),
-                true));
+        openFile(DocumentModel.fileToDocument(UriUtils.uri2File(fileUri)));
       }
     }
 
@@ -152,7 +146,7 @@ public class EditorActivity extends BaseActivity
       menu.findItem(R.id.menu_redo).setEnabled(editorView.getEditor().canRedo());
       menu.findItem(R.id.menu_save).setEnabled(document.isModified());
       menu.findItem(R.id.menu_save_as).setEnabled(true);
-      menu.findItem(R.id.menu_save_all).setEnabled(true);
+      menu.findItem(R.id.menu_save_all).setEnabled(viewModel.getUnsavedDocumentsCount() > 0);
       menu.findItem(R.id.menu_editor).setVisible(true);
     }
     return super.onPrepareOptionsMenu(menu);
@@ -180,8 +174,10 @@ public class EditorActivity extends BaseActivity
       SimpleExecuter.run(this, editorView.getDocument().toFile(), true);
     } else if (id == R.id.menu_undo) editorView.undo();
     else if (id == R.id.menu_redo) editorView.redo();
-    else if (id == R.id.menu_search) searcher.showAndHide();
-    else if (id == R.id.menu_format) editorView.getEditor().formatCodeAsync();
+    else if (id == R.id.menu_search) {
+      searcher.bindSearcher(editorView.getEditor().getSearcher());
+      searcher.showAndHide();
+    } else if (id == R.id.menu_format) editorView.getEditor().formatCodeAsync();
     else if (id == R.id.menu_new_file) createFile.launch("untitled");
     else if (id == R.id.menu_open_file) pickFile.launch("text/*");
     else if (id == R.id.menu_save) saveFile(true);
@@ -304,10 +300,8 @@ public class EditorActivity extends BaseActivity
     if (openedFileIndex != -1) {
       return openedFileIndex;
     }
-    DocumentModel document = DocumentModel.fileModelToDocument(file);
+    DocumentModel document = (DocumentModel) file;
     int index = viewModel.getOpenedDocumentCount();
-
-    ILogger.debug(LOG_TAG, file.getName() + " Openening at index: " + index);
 
     CodeEditorView editor = new CodeEditorView(this, document);
     binding.container.addView(editor);
@@ -345,7 +339,7 @@ public class EditorActivity extends BaseActivity
       CodeEditorView editor = getEditorAtIndex(index);
 
       if (editor != null) {
-        if (document != editor.getDocument()) {
+        if (document.equals(editor.getDocument())) {
           closeFile(index);
         } else {
           index = 1;
@@ -380,6 +374,7 @@ public class EditorActivity extends BaseActivity
       TaskExecutor.executeAsync(
           () -> {
             saveDocumentAtIndex(viewModel.getCurrentPosition());
+            saveOpenedDocuments();
             return null;
           },
           (result) -> {
@@ -400,12 +395,13 @@ public class EditorActivity extends BaseActivity
             for (int i = 0; i < viewModel.getOpenedDocumentCount(); i++) {
               saveDocumentAtIndex(i);
             }
+            saveOpenedDocuments();
             return null;
           },
           (result) -> {
-            if (showMsg) {
+            if (showMsg)
               ToastUtils.showShort(getString(R.string.saved_files), ToastUtils.TYPE_SUCCESS);
-            }
+            invalidateOptionsMenu();
             post.run();
           });
     }
@@ -468,7 +464,7 @@ public class EditorActivity extends BaseActivity
                   OutputStream outputStream = getContentResolver().openOutputStream(uri);
                   outputStream.write(getCurrentEditor().getCode().getBytes());
                   outputStream.close();
-                  openFile(FileModel.fileToFileModel(FileUtil.getFileFromUri(this, uri)));
+                  openFile(DocumentModel.fileToDocument(FileUtil.getFileFromUri(this, uri)));
                 } catch (IOException e) {
                   ILogger.error(LOG_TAG, Log.getStackTraceString(e));
                 }
@@ -480,7 +476,7 @@ public class EditorActivity extends BaseActivity
             uri -> {
               if (uri != null) {
                 try {
-                  openFile(FileModel.fileToFileModel(FileUtil.getFileFromUri(this, uri)));
+                  openFile(DocumentModel.fileToDocument(FileUtil.getFileFromUri(this, uri)));
                 } catch (IOException e) {
                   ILogger.error(LOG_TAG, Log.getStackTraceString(e));
                 }
@@ -492,7 +488,7 @@ public class EditorActivity extends BaseActivity
             uri -> {
               if (uri != null) {
                 try {
-                  openFile(FileModel.fileToFileModel(FileUtil.getFileFromUri(this, uri)));
+                  openFile(DocumentModel.fileToDocument(FileUtil.getFileFromUri(this, uri)));
                 } catch (IOException e) {
                   ILogger.error(LOG_TAG, Log.getStackTraceString(e));
                 }
@@ -506,6 +502,7 @@ public class EditorActivity extends BaseActivity
         documents -> {
           if (documents.isEmpty()) {
             binding.main.setDisplayedChild(1);
+            viewModel.setDrawerState(true);
             searcher.dismiss();
             invalidateOptionsMenu();
           } else {
@@ -542,11 +539,26 @@ public class EditorActivity extends BaseActivity
   }
 
   @Subscribe(threadMode = ThreadMode.MAIN)
+  public void onFileRenamed(OnFileRenamedEvent event) {
+    var index = viewModel.indexOf(event.oldFile.getPath());
+    if (index != -1) {
+      var oldDocument = viewModel.getDocument(index);
+      var newDocument = DocumentModel.fileToDocument(event.newFile);
+      newDocument.setModified(oldDocument.isModified());
+      if (viewModel.getCurrentPosition() == index) {
+        binding.pathList.setPath(newDocument.getPath());
+      }
+      getEditorAtIndex(index).setDocument(newDocument);
+      viewModel.setDocumentAtIndex(index, newDocument);
+      updateTabs();
+    }
+  }
+
+  @Subscribe(threadMode = ThreadMode.MAIN)
   public void onEditorContentChanged(EditorContentChangedEvent event) {
     DocumentModel document = event.getDocument();
     document.markModified();
     invalidateOptionsMenu();
-    saveOpenedDocuments();
     int index = viewModel.indexOf(document);
     if (index == -1) {
       return;
@@ -562,6 +574,7 @@ public class EditorActivity extends BaseActivity
         return;
       }
       tab.setText("*" + name);
+      saveOpenedDocuments();
     } else {
       saveFile(false);
     }
@@ -614,23 +627,10 @@ public class EditorActivity extends BaseActivity
   private void saveOpenedDocuments() {
     List<DocumentModel> documents = viewModel.getDocuments();
 
-    byte[] json = new Gson().toJson(documents).getBytes(StandardCharsets.UTF_8);
+    String json = new Gson().toJson(documents);
     try {
-      if (FileUtils.isFileExists(new File(RECENT_OPENED_PATH))) {
-        FileUtils.delete(new File(RECENT_OPENED_PATH));
-      }
-      EncryptedFile encryptedFile =
-          new EncryptedFile.Builder(
-                  new File(RECENT_OPENED_PATH),
-                  this,
-                  MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC),
-                  EncryptedFile.FileEncryptionScheme.AES256_GCM_HKDF_4KB)
-              .build();
-      OutputStream outputStream = encryptedFile.openFileOutput();
-      outputStream.write(json);
-      outputStream.flush();
-      outputStream.close();
-    } catch (GeneralSecurityException | IOException err) {
+      FileIOUtils.writeFileFromString(RECENT_OPENED_PATH, EncodeUtils.base64Encode2String(json.getBytes()));
+    } catch (Exception err) {
       err.printStackTrace();
       ToastUtils.showShort(err.getLocalizedMessage(), ToastUtils.TYPE_ERROR);
     }
@@ -643,25 +643,12 @@ public class EditorActivity extends BaseActivity
   private void openRecentDocuments() {
     try {
       var type = new TypeToken<List<DocumentModel>>() {}.getType();
-      EncryptedFile encryptedFile =
-          new EncryptedFile.Builder(
-                  new File(RECENT_OPENED_PATH),
-                  this,
-                  MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC),
-                  EncryptedFile.FileEncryptionScheme.AES256_GCM_HKDF_4KB)
-              .build();
-
-      InputStream inputStream = encryptedFile.openFileInput();
-      ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-      int nextByte = inputStream.read();
-
-      while (nextByte != -1) {
-        byteArrayOutputStream.write(nextByte);
-        nextByte = inputStream.read();
-      }
-
-      byte[] plaintext = byteArrayOutputStream.toByteArray();
-      List<DocumentModel> documents = new Gson().fromJson(new String(plaintext), type);
+      List<DocumentModel> documents =
+          new Gson()
+              .fromJson(
+                  new String(
+                      EncodeUtils.base64Decode(FileIOUtils.readFile2String(RECENT_OPENED_PATH))),
+                  type);
 
       if (documents == null) return;
 
@@ -679,5 +666,4 @@ public class EditorActivity extends BaseActivity
       e.printStackTrace();
     }
   }
-  
 }

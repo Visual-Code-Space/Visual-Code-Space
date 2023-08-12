@@ -58,11 +58,23 @@
                     app:tabTextAppearance="@style/TabLayout.TextStyle"
                     android:id="@+id/tab_layout" />
 
-                <ViewFlipper
-                    android:layout_height="match_parent"
-                    android:layout_width="match_parent"
+                <RelativeLayout
                     android:layout_weight="1"
-                    android:id="@+id/container" />
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ViewFlipper
+                        android:layout_height="match_parent"
+                        android:layout_width="match_parent"
+                        android:layout_weight="1"
+                        android:id="@+id/container" />
+
+                    <RelativeLayout
+                        android:id="@+id/floating_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                </RelativeLayout>
 
                 <LinearLayout
                     android:layout_height="wrap_content"
@@ -104,6 +116,7 @@
         </ViewFlipper>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
     <androidx.fragment.app.FragmentContainerView
         android:layout_height="match_parent"
         android:layout_width="300dp"
@@ -112,5 +125,4 @@
         android:tag="filemanager"
         android:layout_gravity="start"
         android:id="@+id/filemanager_fragment" />
-
 </androidx.drawerlayout.widget.DrawerLayout>

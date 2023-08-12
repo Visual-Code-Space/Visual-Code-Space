@@ -31,6 +31,14 @@ public class EditorViewModel extends ViewModel {
 
     documents.setValue(documentList);
   }
+  
+  public void setDocumentAtIndex(int index, DocumentModel doc) {
+    List<DocumentModel> documentList = getDocuments();
+
+    documentList.set(index, doc);
+
+    documents.setValue(documentList);
+  }
 
   public DocumentModel getDocument(int index) {
     return getDocuments().get(index);
@@ -52,6 +60,16 @@ public class EditorViewModel extends ViewModel {
 
   public int getOpenedDocumentCount() {
     return getDocuments().size();
+  }
+  
+  public int getUnsavedDocumentsCount() {
+    int count = 0;
+    for (DocumentModel doc : getDocuments()) {
+      if (doc.isModified()) {
+        count++;
+      }
+    }
+    return count;
   }
 
   public void observeDocuments(LifecycleOwner owner, Observer<List<DocumentModel>> obs) {

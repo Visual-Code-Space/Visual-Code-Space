@@ -14,10 +14,10 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.blankj.utilcode.util.ClipboardUtils;
-import com.blankj.utilcode.util.FileUtils;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.activity.EditorActivity;
 import com.raredev.vcspace.databinding.FragmentFileManagerBinding;
+import com.raredev.vcspace.events.OnFileRenamedEvent;
 import com.raredev.vcspace.fragments.filemanager.adapters.FileAdapter;
 import com.raredev.vcspace.fragments.filemanager.git.CloneRepository;
 import com.raredev.vcspace.fragments.filemanager.listeners.FileListResultListener;
@@ -26,6 +26,7 @@ import com.raredev.vcspace.fragments.filemanager.viewmodel.FileListViewModel;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.ui.PathListView;
 import com.raredev.vcspace.util.DialogUtils;
+import com.raredev.vcspace.util.FileUtil;
 import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.util.PreferencesUtils;
 import java.io.File;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import org.greenrobot.eventbus.EventBus;
 
 @SuppressWarnings("deprecation")
 public class FileManagerFragment extends Fragment implements FileAdapter.FileListener {
@@ -142,8 +144,7 @@ public class FileManagerFragment extends Fragment implements FileAdapter.FileLis
     if (!file.isFile()) {
       viewModel.setCurrentDir(file);
     } else {
-      if (FileUtils.getFileCharsetSimple(file.getPath())
-          .equals(PreferencesUtils.getEncodingForOpening())) {
+      if (FileUtil.isValidTextFile(file.getName())) {
         ((EditorActivity) requireActivity()).openFile(file);
       }
       if (file.getName().endsWith(".apk")) {
@@ -171,7 +172,12 @@ public class FileManagerFragment extends Fragment implements FileAdapter.FileLis
             ClipboardUtils.copyText(file.getPath());
           } else if (item.getTitle() == getString(R.string.rename)) {
             FileManagerDialogs.renameFile(
-                requireContext(), file.toFile(), (oldFile, newFile) -> refreshFiles());
+                requireContext(),
+                file.toFile(),
+                (oldFile, newFile) -> {
+                  EventBus.getDefault().post(new OnFileRenamedEvent(oldFile, newFile));
+                  refreshFiles();
+                });
           } else if (item.getTitle() == getString(R.string.delete)) {
             FileManagerDialogs.deleteFile(
                 requireContext(), file.toFile(), (deletedFile) -> refreshFiles());

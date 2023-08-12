@@ -24,34 +24,6 @@
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         android:orientation="vertical">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_height="45dp"
-            android:layout_width="match_parent"
-            android:padding="2dp"
-            android:id="@+id/rv_dir" />
-
-        <ViewFlipper
-            android:layout_height="match_parent"
-            android:layout_width="match_parent"
-            android:layout_weight="1.0"
-            android:id="@+id/container">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:layout_height="match_parent"
-                android:layout_width="match_parent"
-                android:clipToPadding="false"
-                android:id="@+id/rv_files" />
-
-            <com.google.android.material.progressindicator.CircularProgressIndicator
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:indeterminate="true"
-                app:indicatorSize="14dp"
-                app:trackThickness="2.5dp"
-                android:layout_gravity="center" />
-
-        </ViewFlipper>
-
         <LinearLayout
             android:layout_height="wrap_content"
             android:layout_width="match_parent"

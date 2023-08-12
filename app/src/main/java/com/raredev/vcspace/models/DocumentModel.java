@@ -5,7 +5,7 @@ import java.io.File;
 
 public class DocumentModel extends FileModel {
 
-  private String content;
+  private byte[] content;
   private boolean modified;
   private int positionLine, positionColumn;
 
@@ -16,7 +16,7 @@ public class DocumentModel extends FileModel {
   public DocumentModel(
       String path,
       String name,
-      String content,
+      byte[] content,
       boolean modified,
       int positionLine,
       int positionColumn) {
@@ -27,16 +27,20 @@ public class DocumentModel extends FileModel {
     this.positionColumn = positionColumn;
   }
 
-  public String getContent() {
+  public byte[] getContent() {
     return this.content;
   }
 
-  public void setContent(String content) {
+  public void setContent(byte[] content) {
     this.content = content;
   }
 
   public boolean isModified() {
     return this.modified;
+  }
+  
+  public void setModified(boolean modified) {
+    this.modified = modified;
   }
 
   public void markModified() {
@@ -63,11 +67,7 @@ public class DocumentModel extends FileModel {
     this.positionColumn = positionColumn;
   }
 
-  public File toFile() {
-    return new File(path);
-  }
-
-  public static FileModel fileToDocument(File file) {
+  public static DocumentModel fileToDocument(File file) {
     return new DocumentModel(file.getAbsolutePath(), file.getName());
   }
 

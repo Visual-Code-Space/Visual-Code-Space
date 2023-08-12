@@ -24,7 +24,7 @@ public class CodeEditorView extends LinearLayout {
 
     setOrientation(VERTICAL);
     removeAllViews();
-    
+
     addView(
         binding.getRoot(),
         new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, 1f));
@@ -33,7 +33,7 @@ public class CodeEditorView extends LinearLayout {
     if (document.getContent() == null) {
       readDocument();
     } else {
-      binding.editor.setText(document.getContent(), null);
+      binding.editor.setText(new String(document.getContent()), null);
       postRead();
     }
 
@@ -92,6 +92,11 @@ public class CodeEditorView extends LinearLayout {
     if (binding.editor.canRedo()) {
       binding.editor.redo();
     }
+  }
+
+  public void setDocument(DocumentModel document) {
+    binding.editor.setDocument(document);
+    this.document = document;
   }
 
   public DocumentModel getDocument() {

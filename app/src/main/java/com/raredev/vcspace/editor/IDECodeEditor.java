@@ -187,7 +187,7 @@ public class IDECodeEditor extends CodeEditor {
           if (document == null) {
             return;
           }
-          document.setContent(getText().toString());
+          document.setContent(getText().toString().getBytes());
           EventBus.getDefault().post(new EditorContentChangedEvent(document));
         });
   }

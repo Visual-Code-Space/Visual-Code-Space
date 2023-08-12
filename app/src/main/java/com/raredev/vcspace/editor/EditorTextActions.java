@@ -39,7 +39,7 @@ public class EditorTextActions extends EditorPopupWindow implements View.OnClick
   private int lastCause;
 
   public EditorTextActions(IDECodeEditor editor) {
-    super(editor, FEATURE_HIDE_WHEN_FAST_SCROLL);
+    super(editor, FEATURE_SHOW_OUTSIDE_VIEW_ALLOWED);
     this.editor = editor;
     handler = editor.getEventHandler();
 
