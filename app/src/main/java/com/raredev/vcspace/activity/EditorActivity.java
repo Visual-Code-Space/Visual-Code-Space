@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.activity.result.ActivityResultLauncher;
@@ -41,10 +42,13 @@ import com.raredev.vcspace.fragments.filemanager.models.FileModel;
 import com.raredev.vcspace.models.DocumentModel;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.ui.PathListView;
-import com.raredev.vcspace.ui.SearcherWindow;
 import com.raredev.vcspace.ui.editor.CodeEditorView;
 import com.raredev.vcspace.ui.editor.Symbol;
 import com.raredev.vcspace.ui.viewmodel.EditorViewModel;
+import com.raredev.vcspace.ui.window.SearcherWindow;
+import com.raredev.vcspace.ui.window.VCSpaceWindow;
+import com.raredev.vcspace.ui.window.VCSpaceWindowManager;
+import com.raredev.vcspace.ui.window.WebViewWindow;
 import com.raredev.vcspace.util.FileUtil;
 import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.util.PreferencesUtils;
@@ -81,6 +85,7 @@ public class EditorActivity extends BaseActivity
   public EditorViewModel viewModel;
 
   private SearcherWindow searcher;
+  private WebViewWindow webView;
 
   // Overrides
 
@@ -98,8 +103,17 @@ public class EditorActivity extends BaseActivity
 
     viewModel = new ViewModelProvider(this).get(EditorViewModel.class);
 
-    searcher = new SearcherWindow(this);
-    binding.floatingContainer.addView(searcher);
+    searcher = (SearcherWindow) VCSpaceWindowManager.getInstance(this).getWindow(VCSpaceWindowManager.SEARCHER_WINDOW);
+    webView = (WebViewWindow) VCSpaceWindowManager.getInstance(this).getWindow(VCSpaceWindowManager.WEBVIEW_WINDOW);
+    
+    var windows = VCSpaceWindowManager.getInstance(this).getWindows();
+    for (Map.Entry<String, VCSpaceWindow> entry : windows.entrySet()) {
+      var window = entry.getValue();
+      if (window.getParent() != null) {
+        ((ViewGroup) window.getParent()).removeView(window);
+      }
+      binding.floatingContainer.addView(window);
+    }
 
     binding.tabLayout.addOnTabSelectedListener(this);
     binding.noFileOpened.setOnClickListener(v -> viewModel.setDrawerState(true));
@@ -144,7 +158,7 @@ public class EditorActivity extends BaseActivity
     var editorView = getCurrentEditor();
     if (editorView != null) {
       var document = editorView.getDocument();
-      menu.findItem(R.id.menu_execute_opt)
+      menu.findItem(R.id.menu_execute)
           .setVisible(SimpleExecuter.isExecutable(document.getName()));
       menu.findItem(R.id.menu_undo).setVisible(KeyboardUtils.isSoftInputVisible(this));
       menu.findItem(R.id.menu_redo).setVisible(KeyboardUtils.isSoftInputVisible(this));
@@ -174,10 +188,7 @@ public class EditorActivity extends BaseActivity
 
     if (id == R.id.menu_execute) {
       saveAllFiles(true);
-      SimpleExecuter.run(this, editorView.getDocument().toFile(), false);
-    } else if (id == R.id.menu_execute_new_task) {
-      saveAllFiles(true);
-      SimpleExecuter.run(this, editorView.getDocument().toFile(), true);
+      SimpleExecuter.run(this, editorView.getDocument().toFile());
     } else if (id == R.id.menu_undo) editorView.undo();
     else if (id == R.id.menu_redo) editorView.redo();
     else if (id == R.id.menu_search) {
@@ -203,10 +214,6 @@ public class EditorActivity extends BaseActivity
   public void onBackPressed() {
     if (viewModel.getDrawerState()) {
       viewModel.setDrawerState(false);
-      return;
-    }
-    if (searcher.isShowing()) {
-      searcher.showAndHide();
       return;
     }
     super.onBackPressed();

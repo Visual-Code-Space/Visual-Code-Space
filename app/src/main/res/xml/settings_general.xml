@@ -19,6 +19,12 @@
       app:key="pref_dynamiccolors"
       app:title="@string/pref_materialyou"
       app:summary="@string/pref_materialyou_summary" />
+    
+    <SwitchPreferenceCompat
+      app:defaultValue="false"
+      app:key="pref_usewindows"
+      app:title="Use windows"
+      app:summary="experimental" />
   </PreferenceCategory>
 
 </PreferenceScreen>

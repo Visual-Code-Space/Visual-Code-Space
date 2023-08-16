@@ -26,7 +26,7 @@ public class DocumentModel {
     this.name = name;
     this.content = content;
     this.modified = modified;
-    this.modified = pinned;
+    this.pinned = pinned;
     this.positionLine = positionLine;
     this.positionColumn = positionColumn;
   }

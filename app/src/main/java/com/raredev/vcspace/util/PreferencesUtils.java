@@ -16,6 +16,10 @@ public class PreferencesUtils {
   public static boolean useDynamicColors() {
     return getDefaultPrefs().getBoolean(SharedPreferencesKeys.KEY_DYNAMIC_COLORS, true);
   }
+  
+  public static boolean useWindows() {
+    return getDefaultPrefs().getBoolean(SharedPreferencesKeys.KEY_USE_WINDOWS, false);
+  }
 
   /*
    * Returns the user-selected font value

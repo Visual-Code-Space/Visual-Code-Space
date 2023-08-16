@@ -1,10 +1,7 @@
-package com.raredev.vcspace.activity;
+package com.raredev.vcspace.ui.window;
 
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.JsPromptResult;
@@ -15,33 +12,29 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import androidx.appcompat.app.AlertDialog;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.raredev.vcspace.R;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.raredev.vcspace.compiler.html.SimpleHttpServer;
-import com.raredev.vcspace.databinding.ActivityWebviewBinding;
 import com.raredev.vcspace.databinding.LayoutTextinputBinding;
-import com.raredev.vcspace.util.ToastUtils;
+import com.raredev.vcspace.databinding.LayoutWebviewWindowBinding;
 
 @SuppressWarnings("deprecation")
-public class WebViewActivity extends BaseActivity {
-  public ActivityWebviewBinding binding;
+public class WebViewWindow extends VCSpaceWindow {
+
+  private LayoutWebviewWindowBinding binding;
 
   private SimpleHttpServer httpServer;
 
-  @Override
-  public View getLayout() {
-    binding = ActivityWebviewBinding.inflate(getLayoutInflater());
-    return binding.getRoot();
+  public WebViewWindow(Context context) {
+    super(context);
+    init();
   }
 
-  @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setSupportActionBar(binding.toolbar);
-
-    binding.toolbar.setNavigationOnClickListener((v) -> onBackPressed());
-
+  private void init() {
+    binding = LayoutWebviewWindowBinding.inflate(LayoutInflater.from(getContext()));
+    httpServer = new SimpleHttpServer(8080);
+    
     WebSettings webSettings = binding.webView.getSettings();
     webSettings.setAllowContentAccess(true);
     webSettings.setAllowFileAccess(true);
@@ -51,17 +44,10 @@ public class WebViewActivity extends BaseActivity {
     webSettings.setSupportZoom(true);
     webSettings.setBuiltInZoomControls(true);
     webSettings.setDisplayZoomControls(false);
-
-    String path = getIntent().getStringExtra("executable_file");
-
-    httpServer = new SimpleHttpServer(8080);
-    httpServer.setFolderAndFile(
-        (String) path.subSequence(0, path.lastIndexOf("/")),
-        path.substring(path.lastIndexOf("/") + 1));
-    httpServer.startServer();
-
-    binding.webView.loadUrl(httpServer.getLocalIpAddress());
-
+    
+    setContentView(binding.getRoot());
+    setTitle("WebView");
+    
     binding.webView.setWebChromeClient(
         new WebChromeClient() {
 
@@ -86,13 +72,10 @@ public class WebViewActivity extends BaseActivity {
           public void onProgressChanged(WebView view, int progress) {
             binding.progressIndicator.setVisibility(progress == 100 ? View.GONE : View.VISIBLE);
             binding.progressIndicator.setProgressCompat(progress, true);
-            getSupportActionBar()
-                .setTitle(
+            setTitle(
                     view.getTitle() == "about:blank"
-                        ? getString(R.string.app_name)
+                        ? getContext().getString(R.string.app_name)
                         : view.getTitle());
-            getSupportActionBar()
-                .setSubtitle(view.getUrl() == "about:blank" ? "Preview" : view.getUrl());
           }
         });
     binding.webView.setWebViewClient(
@@ -105,24 +88,30 @@ public class WebViewActivity extends BaseActivity {
         });
   }
 
+  public void loadFile(String path) {
+    httpServer.setFolderAndFile(
+        (String) path.subSequence(0, path.lastIndexOf("/")),
+        path.substring(path.lastIndexOf("/") + 1));
+  }
+  
   @Override
-  public void onBackPressed() {
-    if (binding.webView.canGoBack()) {
-      binding.webView.goBack();
-      return;
-    }
-    super.onBackPressed();
+  public void show() {
+    httpServer.startServer();
+    binding.webView.loadUrl(httpServer.getLocalIpAddress());
+    super.show();
   }
 
   @Override
-  protected void onDestroy() {
-    super.onDestroy();
-    httpServer.stopServer();
-    binding = null;
+  public void dismiss() {
+    if (httpServer != null) {
+      httpServer.stopServer();
+    }
+    super.dismiss();
   }
+  
 
   private void showAlertDialog(String url, String message, JsResult result) {
-    new MaterialAlertDialogBuilder(WebViewActivity.this)
+    new MaterialAlertDialogBuilder(getContext())
         .setTitle(url)
         .setMessage(message)
         .setCancelable(false)
@@ -133,10 +122,10 @@ public class WebViewActivity extends BaseActivity {
 
   private void showPromptDialog(
       String url, String message, String defaultValue, JsPromptResult result) {
-    LayoutTextinputBinding bind = LayoutTextinputBinding.inflate(getLayoutInflater());
+    LayoutTextinputBinding bind = LayoutTextinputBinding.inflate(LayoutInflater.from(getContext()));
 
     AlertDialog dialog =
-        new MaterialAlertDialogBuilder(this)
+        new MaterialAlertDialogBuilder(getContext())
             .setView(bind.getRoot())
             .setTitle(url)
             .setCancelable(false)
@@ -184,50 +173,5 @@ public class WebViewActivity extends BaseActivity {
       webSettings.setUseWideViewPort(false);
       webSettings.setLoadWithOverviewMode(false);
     }
-  }
-
-  @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
-    getMenuInflater().inflate(R.menu.webview_menu, menu);
-    return super.onCreateOptionsMenu(menu);
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    var id = item.getItemId();
-    var webView = binding.webView;
-
-    if (id == R.id.back) {
-      if (webView.canGoBack()) webView.goBack();
-      else ToastUtils.showShort("Can't go back...", ToastUtils.TYPE_ERROR);
-    } else if (id == R.id.forward) {
-      if (webView.canGoForward()) webView.goForward();
-      else ToastUtils.showShort("Can't go forward...", ToastUtils.TYPE_ERROR);
-    } else if (id == R.id.zooming) {
-      webView.getSettings().setSupportZoom(!item.isChecked());
-      item.setChecked(!item.isChecked());
-    } else if (id == R.id.desktop_mode) {
-      setDesktopMode(!item.isChecked());
-      item.setChecked(!item.isChecked());
-    } else if (id == R.id.refresh) {
-      webView.reload();
-    } else if (id == R.id.open_in_browser) {
-      openInBrowser(webView);
-    } else if (id == R.id.exit) {
-      super.onBackPressed();
-    }
-    return true;
-  }
-
-  private void openInBrowser(WebView webView) {
-    String url = webView.getUrl();
-    Intent i = new Intent(Intent.ACTION_VIEW);
-    i.setData(Uri.parse(url));
-    startActivity(i);
-  }
-
-  private boolean isFilePath(String url) {
-    Uri uri = Uri.parse(url);
-    return uri.getScheme() != null && uri.getScheme().equals("file");
   }
 }

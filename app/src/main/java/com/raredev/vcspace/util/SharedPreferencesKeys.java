@@ -7,6 +7,7 @@ public class SharedPreferencesKeys {
   public static final String KEY_THEME = "pref_theme";
   public static final String KEY_THEME_VALUE = "theme_value";
   public static final String KEY_DYNAMIC_COLORS = "pref_dynamiccolors";
+  public static final String KEY_USE_WINDOWS = "pref_usewindows";
 
   // Editor
   public static final String KEY_EDITOR = "pref_editor";

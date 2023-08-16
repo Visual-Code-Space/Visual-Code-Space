@@ -1,5 +1,6 @@
 package com.raredev.vcspace.compiler.html;
 
+import androidx.core.view.ViewCompat;
 import com.raredev.vcspace.util.ILogger;
 import fi.iki.elonen.NanoHTTPD;
 import java.io.File;
@@ -14,8 +15,11 @@ public class SimpleHttpServer {
 
   private int port;
 
-  public SimpleHttpServer(int port, String rootFolder, String indexName) {
+  public SimpleHttpServer(int port) {
     this.port = port;
+  }
+  
+  public void setFolderAndFile(String rootFolder, String indexName) {
     this.rootFolder = rootFolder;
     this.indexName = indexName;
   }

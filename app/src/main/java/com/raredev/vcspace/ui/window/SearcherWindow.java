@@ -1,27 +1,21 @@
-package com.raredev.vcspace.ui;
+package com.raredev.vcspace.ui.window;
 
 import android.content.Context;
-import android.graphics.drawable.GradientDrawable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.FrameLayout;
 import androidx.appcompat.widget.TooltipCompat;
 import com.google.android.material.color.MaterialColors;
-import com.google.android.material.elevation.SurfaceColors;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.LayoutSearcherBinding;
 import com.raredev.vcspace.util.PreferencesUtils;
 import com.raredev.vcspace.util.Utils;
 import io.github.rosemoe.sora.widget.EditorSearcher;
 
-public class SearcherWindow extends FrameLayout implements View.OnClickListener {
+public class SearcherWindow extends VCSpaceWindow implements View.OnClickListener {
 
   private LayoutSearcherBinding binding;
-
-  private int currentX, currentY;
 
   private EditorSearcher.SearchOptions searchOptions;
   private EditorSearcher searcher;
@@ -33,36 +27,8 @@ public class SearcherWindow extends FrameLayout implements View.OnClickListener 
 
   private void init() {
     binding = LayoutSearcherBinding.inflate(LayoutInflater.from(getContext()));
-    setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-    setElevation(5);
-    addView(binding.getRoot());
-    dismiss();
-
-    binding.move.setOnTouchListener(
-        new View.OnTouchListener() {
-          private float dx, dy;
-
-          @Override
-          public boolean onTouch(View v, MotionEvent event) {
-            switch (event.getAction()) {
-              case MotionEvent.ACTION_DOWN:
-                dx = currentX - event.getRawX();
-                dy = currentY - event.getRawY();
-                break;
-              case MotionEvent.ACTION_MOVE:
-                currentX = (int) (event.getRawX() + dx);
-                currentY = (int) (event.getRawY() + dy);
-                setX(currentX);
-                setY(currentY);
-                break;
-            }
-            return true;
-          }
-        });
-    binding.close.setOnClickListener(v -> dismiss());
-
-    applyBackground();
-
+    setContentView(binding.getRoot());
+    setTitle(R.string.search);
     initSearcher();
   }
 
@@ -130,21 +96,10 @@ public class SearcherWindow extends FrameLayout implements View.OnClickListener 
     }
   }
 
-  public boolean isShowing() {
-    return getVisibility() == View.VISIBLE;
-  }
-
+  @Override
   public void show() {
     search(binding.searchText.getText().toString());
-    setVisibility(View.VISIBLE);
-    currentX = 0;
-    currentY = 0;
-    setX(0);
-    setY(0);
-  }
-
-  public void dismiss() {
-    setVisibility(View.GONE);
+    super.show();
   }
 
   public void updateSearchOptions() {
@@ -222,15 +177,5 @@ public class SearcherWindow extends FrameLayout implements View.OnClickListener 
     } catch (IllegalStateException e) {
       e.printStackTrace();
     }
-  }
-
-  private void applyBackground() {
-    GradientDrawable drawable = new GradientDrawable();
-    drawable.setShape(GradientDrawable.RECTANGLE);
-    drawable.setCornerRadius(Utils.pxToDp(9));
-    drawable.setColor(SurfaceColors.SURFACE_0.getColor(getContext()));
-    drawable.setStroke(
-        2, MaterialColors.getColor(getContext(), com.google.android.material.R.attr.colorOutline, 0));
-    setBackground(drawable);
   }
 }

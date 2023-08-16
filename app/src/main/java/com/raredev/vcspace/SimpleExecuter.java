@@ -5,15 +5,28 @@ import android.content.Intent;
 import com.blankj.utilcode.util.FileIOUtils;
 import com.raredev.vcspace.activity.MarkdownViewActivity;
 import com.raredev.vcspace.activity.WebViewActivity;
+import com.raredev.vcspace.ui.window.VCSpaceWindow;
+import com.raredev.vcspace.ui.window.VCSpaceWindowManager;
+import com.raredev.vcspace.ui.window.WebViewWindow;
+import com.raredev.vcspace.util.PreferencesUtils;
 import java.io.File;
 
 public class SimpleExecuter {
 
-  public static void run(Context context, File file, boolean newTask) {
+  public static void run(Context context, File file) {
     String fileName = file.getName();
     switch (fileName.substring(fileName.lastIndexOf("."), fileName.length()).toLowerCase()) {
       case ".html":
-        execute(context, file, newTask);
+        if (PreferencesUtils.useWindows()) {
+          var webView =
+              (WebViewWindow)
+                  VCSpaceWindowManager.getInstance(context)
+                      .getWindow(VCSpaceWindowManager.WEBVIEW_WINDOW);
+          webView.loadFile(file.getPath());
+          webView.show();
+        } else {
+          execute(context, file);
+        }
         break;
       case ".md":
         Intent it = new Intent(context, MarkdownViewActivity.class);
@@ -34,13 +47,10 @@ public class SimpleExecuter {
     }
   }
 
-  private static void execute(Context context, File executableFile, boolean newTask) {
+  private static void execute(Context context, File executableFile) {
     Intent it = new Intent(context, WebViewActivity.class);
     it.putExtra(
         "executable_file", executableFile == null ? null : executableFile.getAbsolutePath());
-    if (newTask) {
-      it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-    }
     context.startActivity(it);
   }
 }

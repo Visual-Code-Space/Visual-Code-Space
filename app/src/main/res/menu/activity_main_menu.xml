@@ -1,87 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-  <item
-    android:id="@+id/menu_execute_opt"
-    android:icon="@drawable/ic_play"
-    android:title="@string/menu_execute"
-    android:visible="false"
-    app:showAsAction="always" >
-    <menu>
-      <item
+    <item
         android:id="@+id/menu_execute"
         android:icon="@drawable/ic_play"
-        android:title="@string/menu_execute" />
-      <item
-        android:id="@+id/menu_execute_new_task"
-        android:icon="@drawable/ic_play"
-        android:title="@string/menu_execute_new_task" />
-    </menu>
-  </item>
-  <item
-    android:id="@+id/menu_undo"
-    android:icon="@drawable/ic_undo"
-    android:title="@string/menu_undo"
-    android:visible="false"
-    app:showAsAction="always" />
-  <item
-    android:id="@+id/menu_redo"
-    android:icon="@drawable/ic_redo"
-    android:title="@string/menu_redo"
-    android:visible="false"
-    app:showAsAction="always" />
-  <item
-    android:id="@+id/menu_editor"
-    android:icon="@drawable/pencil"
-    android:title="@string/editor"
-    android:visible="false"
-    app:showAsAction="ifRoom">
-    <menu>
-      <item
-        android:id="@+id/menu_search"
-        android:icon="@drawable/ic_search"
-        android:title="@string/menu_search" />
-      <item
-        android:id="@+id/menu_format"
-        android:icon="@drawable/format_align_left"
-        android:title="@string/menu_format" />
-    </menu>
-  </item>
-  <item
-    android:id="@+id/menu_folder"
-    android:icon="@drawable/ic_folder"
-    android:title="@string/file"
-    app:showAsAction="always">
-    <menu>
-      <item
-        android:id="@+id/menu_new_file"
-        android:icon="@drawable/ic_add"
-        android:title="@string/menu_new_file" />
-      <item
-        android:id="@+id/menu_open_file"
-        android:icon="@drawable/ic_file"
-        android:title="@string/menu_open_file" />
-      <item
-        android:id="@+id/menu_save"
-        android:icon="@drawable/ic_save"
-        android:title="@string/menu_save"
-        android:enabled="false" />
-      <item
-        android:id="@+id/menu_save_as"
-        android:icon="@drawable/ic_save"
-        android:title="@string/menu_save_as"
-        android:enabled="false" />
-      <item
-        android:id="@+id/menu_save_all"
-        android:icon="@drawable/content_save_all"
-        android:title="@string/menu_save_all"
-        android:enabled="false" />
-    </menu>
-  </item>
-  <item
-    android:id="@+id/menu_settings"
-    android:icon="@drawable/ic_settings"
-    android:title="@string/menu_settings" />
+        android:title="@string/menu_execute"
+        android:visible="false"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_undo"
+        android:icon="@drawable/ic_undo"
+        android:title="@string/menu_undo"
+        android:visible="false"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_redo"
+        android:icon="@drawable/ic_redo"
+        android:title="@string/menu_redo"
+        android:visible="false"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_editor"
+        android:icon="@drawable/pencil"
+        android:title="@string/editor"
+        android:visible="false"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/menu_search"
+                android:icon="@drawable/ic_search"
+                android:title="@string/menu_search" />
+            <item
+                android:id="@+id/menu_format"
+                android:icon="@drawable/format_align_left"
+                android:title="@string/menu_format" />
+        </menu>
+    </item>
+    <item
+        android:id="@+id/menu_folder"
+        android:icon="@drawable/ic_folder"
+        android:title="@string/file"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/menu_new_file"
+                android:icon="@drawable/ic_add"
+                android:title="@string/menu_new_file" />
+            <item
+                android:id="@+id/menu_open_file"
+                android:icon="@drawable/ic_file"
+                android:title="@string/menu_open_file" />
+            <item
+                android:id="@+id/menu_save"
+                android:icon="@drawable/ic_save"
+                android:title="@string/menu_save"
+                android:enabled="false" />
+            <item
+                android:id="@+id/menu_save_as"
+                android:icon="@drawable/ic_save"
+                android:title="@string/menu_save_as"
+                android:enabled="false" />
+            <item
+                android:id="@+id/menu_save_all"
+                android:icon="@drawable/content_save_all"
+                android:title="@string/menu_save_all"
+                android:enabled="false" />
+        </menu>
+    </item>
+    <item
+        android:id="@+id/menu_settings"
+        android:icon="@drawable/ic_settings"
+        android:title="@string/menu_settings" />
 </menu>
