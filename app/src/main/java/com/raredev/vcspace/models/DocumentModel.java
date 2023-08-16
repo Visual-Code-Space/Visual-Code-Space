@@ -3,14 +3,15 @@ package com.raredev.vcspace.models;
 import com.raredev.vcspace.fragments.filemanager.models.FileModel;
 import java.io.File;
 
-public class DocumentModel extends FileModel {
+public class DocumentModel {
 
+  private String path, name;
   private byte[] content;
-  private boolean modified;
+  private boolean modified, pinned;
   private int positionLine, positionColumn;
 
   public DocumentModel(String path, String name) {
-    this(path, name, null, false, 0, 0);
+    this(path, name, null, false, false, 0, 0);
   }
 
   public DocumentModel(
@@ -18,13 +19,32 @@ public class DocumentModel extends FileModel {
       String name,
       byte[] content,
       boolean modified,
+      boolean pinned,
       int positionLine,
       int positionColumn) {
-    super(path, name, true);
+    this.path = path;
+    this.name = name;
     this.content = content;
     this.modified = modified;
+    this.modified = pinned;
     this.positionLine = positionLine;
     this.positionColumn = positionColumn;
+  }
+
+  public String getPath() {
+    return this.path;
+  }
+
+  public void setPath(String path) {
+    this.path = path;
+  }
+
+  public String getName() {
+    return this.name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 
   public byte[] getContent() {
@@ -38,7 +58,7 @@ public class DocumentModel extends FileModel {
   public boolean isModified() {
     return this.modified;
   }
-  
+
   public void setModified(boolean modified) {
     this.modified = modified;
   }
@@ -49,6 +69,14 @@ public class DocumentModel extends FileModel {
 
   public void markUnmodified() {
     this.modified = false;
+  }
+
+  public boolean isPinned() {
+    return this.pinned;
+  }
+
+  public void setPinned(boolean pinned) {
+    this.pinned = pinned;
   }
 
   public int getPositionLine() {
@@ -65,6 +93,10 @@ public class DocumentModel extends FileModel {
 
   public void setPositionColumn(int positionColumn) {
     this.positionColumn = positionColumn;
+  }
+
+  public File toFile() {
+    return new File(path);
   }
 
   public static DocumentModel fileToDocument(File file) {

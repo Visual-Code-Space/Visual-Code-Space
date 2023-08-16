@@ -8,12 +8,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.appcompat.widget.TooltipCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
@@ -22,12 +25,14 @@ import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.PathUtils;
 import com.blankj.utilcode.util.UriUtils;
+import com.google.android.material.color.MaterialColors;
 import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.SimpleExecuter;
 import com.raredev.vcspace.databinding.ActivityEditorBinding;
+import com.raredev.vcspace.databinding.LayoutTabItemBinding;
 import com.raredev.vcspace.editor.completion.CompletionProvider;
 import com.raredev.vcspace.events.EditorContentChangedEvent;
 import com.raredev.vcspace.events.OnFileRenamedEvent;
@@ -36,7 +41,7 @@ import com.raredev.vcspace.fragments.filemanager.models.FileModel;
 import com.raredev.vcspace.models.DocumentModel;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.ui.PathListView;
-import com.raredev.vcspace.ui.SearcherPopupWindow;
+import com.raredev.vcspace.ui.SearcherWindow;
 import com.raredev.vcspace.ui.editor.CodeEditorView;
 import com.raredev.vcspace.ui.editor.Symbol;
 import com.raredev.vcspace.ui.viewmodel.EditorViewModel;
@@ -51,6 +56,7 @@ import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +80,7 @@ public class EditorActivity extends BaseActivity
 
   public EditorViewModel viewModel;
 
-  private SearcherPopupWindow searcher;
+  private SearcherWindow searcher;
 
   // Overrides
 
@@ -92,7 +98,7 @@ public class EditorActivity extends BaseActivity
 
     viewModel = new ViewModelProvider(this).get(EditorViewModel.class);
 
-    searcher = new SearcherPopupWindow(this);
+    searcher = new SearcherWindow(this);
     binding.floatingContainer.addView(searcher);
 
     binding.tabLayout.addOnTabSelectedListener(this);
@@ -124,7 +130,7 @@ public class EditorActivity extends BaseActivity
       Uri fileUri = getIntent().getData();
       if (fileUri != null) {
         openRecentDocuments();
-        openFile(DocumentModel.fileToDocument(UriUtils.uri2File(fileUri)));
+        openFile(FileModel.fileToFileModel(UriUtils.uri2File(fileUri)));
       }
     }
 
@@ -219,6 +225,7 @@ public class EditorActivity extends BaseActivity
     if (EventBus.getDefault().isRegistered(this)) {
       EventBus.getDefault().unregister(this);
     }
+    saveOpenedDocuments();
     super.onStop();
   }
 
@@ -233,30 +240,25 @@ public class EditorActivity extends BaseActivity
   // OnTabSelectedListener
 
   @Override
-  public void onTabUnselected(TabLayout.Tab p1) {}
+  public void onTabUnselected(TabLayout.Tab p1) {
+    TextView tabTitle = p1.getCustomView().findViewById(R.id.title);
+    ImageView close = p1.getCustomView().findViewById(R.id.close);
+    tabTitle.setTextColor(
+        MaterialColors.getColor(this, com.google.android.material.R.attr.colorControlNormal, 0));
+  }
 
   @Override
   public void onTabReselected(TabLayout.Tab p1) {
-    PopupMenu pm = new PopupMenu(this, p1.view);
-    pm.getMenu().add(R.string.close);
-    pm.getMenu().add(R.string.close_others);
-    pm.getMenu().add(R.string.close_all);
-    pm.setOnMenuItemClickListener(
-        item -> {
-          if (item.getTitle() == getString(R.string.close)) {
-            closeFile(viewModel.getCurrentPosition());
-          } else if (item.getTitle().equals(getString(R.string.close_others))) {
-            closeOthers();
-          } else if (item.getTitle().equals(getString(R.string.close_all))) {
-            closeAllFiles();
-          }
-          return true;
-        });
-    pm.show();
+    tabPopupMenu(p1.getPosition(), p1.view).show();
   }
 
   @Override
   public void onTabSelected(TabLayout.Tab p1) {
+    TextView tabTitle = p1.getCustomView().findViewById(R.id.title);
+    ImageView close = p1.getCustomView().findViewById(R.id.close);
+    tabTitle.setTextColor(
+        MaterialColors.getColor(this, com.google.android.material.R.attr.colorPrimary, 0));
+
     viewModel.setCurrentPosition(p1.getPosition());
   }
 
@@ -291,30 +293,58 @@ public class EditorActivity extends BaseActivity
       return;
     }
     viewModel.setDrawerState(false);
-    int index = openFileAndGetIndex(file);
+    int index = openFileAndGetIndex(DocumentModel.fileModelToDocument(file));
     viewModel.setCurrentPosition(index);
   }
 
-  private int openFileAndGetIndex(@NonNull FileModel file) {
-    int openedFileIndex = viewModel.indexOf(file.getPath());
+  private int openFileAndGetIndex(@NonNull DocumentModel document) {
+    int openedFileIndex = viewModel.indexOf(document.getPath());
     if (openedFileIndex != -1) {
       return openedFileIndex;
     }
-    DocumentModel document = (DocumentModel) file;
     int index = viewModel.getOpenedDocumentCount();
 
     CodeEditorView editor = new CodeEditorView(this, document);
     binding.container.addView(editor);
 
-    binding.tabLayout.addTab(binding.tabLayout.newTab());
+    binding.tabLayout.addTab(createTabItem());
     viewModel.addDocument(document);
     updateTabs();
     return index;
   }
 
+  private TabLayout.Tab createTabItem() {
+    var bind = LayoutTabItemBinding.inflate(getLayoutInflater());
+    var tab = binding.tabLayout.newTab();
+
+    bind.close.setOnClickListener(v -> closeFile(tab.getPosition()));
+    tab.setCustomView(bind.getRoot());
+    return tab;
+  }
+
   // Document closers
 
   public void closeFile(int index) {
+    var doc = viewModel.getDocument(index);
+    if (doc.isPinned()) {
+      return;
+    }
+    
+    var currentIndex = viewModel.getCurrentPosition();
+    var currentDocument = viewModel.getCurrentDocument();
+
+    if (currentIndex == -1 || currentDocument == null) return;
+
+    if (index != currentIndex) {
+      closeFileHandler(index);
+      
+      viewModel.setCurrentPosition(viewModel.indexOf(currentDocument));
+    } else {
+      closeFileHandler(index);
+    }
+  }
+
+  public void closeFileHandler(int index) {
     if (index >= 0 && index < viewModel.getOpenedDocumentCount()) {
       CodeEditorView editor = getEditorAtIndex(index);
       if (editor != null) {
@@ -334,17 +364,15 @@ public class EditorActivity extends BaseActivity
     DocumentModel document = viewModel.getCurrentDocument();
     if (document == null) return;
 
-    int index = 0;
-    while (viewModel.getOpenedDocumentCount() != 1) {
-      CodeEditorView editor = getEditorAtIndex(index);
-
-      if (editor != null) {
-        if (document.equals(editor.getDocument())) {
-          closeFile(index);
-        } else {
-          index = 1;
-        }
+    List<DocumentModel> documentsToClose = new ArrayList<>();
+    for (DocumentModel doc : viewModel.getDocuments()) {
+      if (doc != null && !document.equals(doc) && !doc.isPinned()) {
+        documentsToClose.add(doc);
       }
+    }
+
+    for (DocumentModel doc : documentsToClose) {
+      closeFileHandler(viewModel.indexOf(doc));
     }
     viewModel.setCurrentPosition(viewModel.indexOf(document));
   }
@@ -353,18 +381,17 @@ public class EditorActivity extends BaseActivity
     if (viewModel.getDocuments().isEmpty()) {
       return;
     }
-    for (int i = 0; i < viewModel.getOpenedDocumentCount(); i++) {
-      CodeEditorView editor = getEditorAtIndex(i);
-      if (editor != null) {
-        editor.release();
+
+    List<DocumentModel> documentsToClose = new ArrayList<>();
+    for (DocumentModel doc : viewModel.getDocuments()) {
+      if (doc != null && !doc.isPinned()) {
+        documentsToClose.add(doc);
       }
     }
 
-    viewModel.clearDocuments();
-    binding.tabLayout.removeAllTabs();
-    binding.tabLayout.requestLayout();
-    binding.container.removeAllViews();
-    clearRecentOpenedDocuments();
+    for (DocumentModel doc : documentsToClose) {
+      closeFileHandler(viewModel.indexOf(doc));
+    }
   }
 
   // Document Savers
@@ -374,7 +401,6 @@ public class EditorActivity extends BaseActivity
       TaskExecutor.executeAsync(
           () -> {
             saveDocumentAtIndex(viewModel.getCurrentPosition());
-            saveOpenedDocuments();
             return null;
           },
           (result) -> {
@@ -395,7 +421,6 @@ public class EditorActivity extends BaseActivity
             for (int i = 0; i < viewModel.getOpenedDocumentCount(); i++) {
               saveDocumentAtIndex(i);
             }
-            saveOpenedDocuments();
             return null;
           },
           (result) -> {
@@ -414,9 +439,10 @@ public class EditorActivity extends BaseActivity
       editorView.saveDocument();
       runOnUiThread(
           () -> {
-            String name = tab.getText().toString();
+            TextView tabTitle = tab.getCustomView().findViewById(R.id.title);
+            String name = tabTitle.getText().toString();
             if (name.startsWith("*")) {
-              tab.setText(name.replace("*", ""));
+              tabTitle.setText(name.replace("*", ""));
             }
           });
     }
@@ -464,7 +490,7 @@ public class EditorActivity extends BaseActivity
                   OutputStream outputStream = getContentResolver().openOutputStream(uri);
                   outputStream.write(getCurrentEditor().getCode().getBytes());
                   outputStream.close();
-                  openFile(DocumentModel.fileToDocument(FileUtil.getFileFromUri(this, uri)));
+                  openFile(FileModel.fileToFileModel(FileUtil.getFileFromUri(this, uri)));
                 } catch (IOException e) {
                   ILogger.error(LOG_TAG, Log.getStackTraceString(e));
                 }
@@ -476,7 +502,7 @@ public class EditorActivity extends BaseActivity
             uri -> {
               if (uri != null) {
                 try {
-                  openFile(DocumentModel.fileToDocument(FileUtil.getFileFromUri(this, uri)));
+                  openFile(FileModel.fileToFileModel(FileUtil.getFileFromUri(this, uri)));
                 } catch (IOException e) {
                   ILogger.error(LOG_TAG, Log.getStackTraceString(e));
                 }
@@ -488,7 +514,7 @@ public class EditorActivity extends BaseActivity
             uri -> {
               if (uri != null) {
                 try {
-                  openFile(DocumentModel.fileToDocument(FileUtil.getFileFromUri(this, uri)));
+                  openFile(FileModel.fileToFileModel(FileUtil.getFileFromUri(this, uri)));
                 } catch (IOException e) {
                   ILogger.error(LOG_TAG, Log.getStackTraceString(e));
                 }
@@ -508,6 +534,7 @@ public class EditorActivity extends BaseActivity
           } else {
             binding.main.setDisplayedChild(0);
           }
+          saveOpenedDocuments();
         });
     viewModel.observeDrawerState(
         this,
@@ -533,9 +560,33 @@ public class EditorActivity extends BaseActivity
             binding.pathList.setPath(editorView.getDocument().getPath());
             searcher.bindSearcher(editorView.getEditor().getSearcher());
           }
-
           invalidateOptionsMenu();
         });
+  }
+
+  private PopupMenu tabPopupMenu(int index, View view) {
+    final var doc = viewModel.getDocument(index);
+    final var pm = new PopupMenu(this, view);
+    pm.inflate(R.menu.editor_tab_menu);
+    pm.getMenu().getItem(3).setTitle(doc.isPinned() ? R.string.unpin : R.string.pin);
+
+    pm.setOnMenuItemClickListener(
+        item -> {
+          if (item.getTitle() == getString(R.string.close)) {
+            closeFile(index);
+          } else if (item.getTitle().equals(getString(R.string.close_others))) {
+            closeOthers();
+          } else if (item.getTitle().equals(getString(R.string.close_all))) {
+            closeAllFiles();
+          } else if (item.getTitle().equals(getString(R.string.pin))
+              || item.getTitle().equals(getString(R.string.unpin))) {
+            doc.setPinned(!doc.isPinned());
+            item.setTitle(doc.isPinned() ? R.string.unpin : R.string.pin);
+            updateTabs();
+          }
+          return true;
+        });
+    return pm;
   }
 
   @Subscribe(threadMode = ThreadMode.MAIN)
@@ -568,13 +619,12 @@ public class EditorActivity extends BaseActivity
       if (tab == null) {
         return;
       }
-
-      String name = tab.getText().toString();
+      TextView tabTitle = tab.getCustomView().findViewById(R.id.title);
+      String name = tabTitle.getText().toString();
       if (name.startsWith("*")) {
         return;
       }
-      tab.setText("*" + name);
-      saveOpenedDocuments();
+      tabTitle.setText("*" + name);
     } else {
       saveFile(false);
     }
@@ -592,11 +642,16 @@ public class EditorActivity extends BaseActivity
               (index, name) -> {
                 TabLayout.Tab tab = binding.tabLayout.getTabAt(index);
                 if (tab != null) {
-                  tab.setText(name);
+                  var doc = viewModel.getDocument(index);
+                  TextView tabTitle = tab.getCustomView().findViewById(R.id.title);
+                  TooltipCompat.setTooltipText(tab.view, doc.getPath());
+                  tabTitle.setText(name);
+
+                  ImageView close = tab.getCustomView().findViewById(R.id.close);
+                  close.setImageResource(doc.isPinned() ? R.drawable.ic_pin : R.drawable.close);
                 }
               });
         });
-    saveOpenedDocuments();
   }
 
   private Map<Integer, String> getUniqueNames() {
@@ -629,7 +684,8 @@ public class EditorActivity extends BaseActivity
 
     String json = new Gson().toJson(documents);
     try {
-      FileIOUtils.writeFileFromString(RECENT_OPENED_PATH, EncodeUtils.base64Encode2String(json.getBytes()));
+      FileIOUtils.writeFileFromString(
+          RECENT_OPENED_PATH, EncodeUtils.base64Encode2String(json.getBytes()));
     } catch (Exception err) {
       err.printStackTrace();
       ToastUtils.showShort(err.getLocalizedMessage(), ToastUtils.TYPE_ERROR);
@@ -652,12 +708,13 @@ public class EditorActivity extends BaseActivity
 
       if (documents == null) return;
 
+      if (!BaseActivity.isPermissionGaranted(this)) {
+        BaseActivity.takeFilePermissions(this);
+        return;
+      }
+
       for (DocumentModel doc : documents) {
-        if (!BaseActivity.isPermissionGaranted(this)) {
-          BaseActivity.takeFilePermissions(this);
-          return;
-        }
-        if (!doc.isFile()) {
+        if (!doc.toFile().isFile()) {
           return;
         }
         int index = openFileAndGetIndex(doc);

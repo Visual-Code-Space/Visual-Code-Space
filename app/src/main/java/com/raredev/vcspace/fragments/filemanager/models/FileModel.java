@@ -2,15 +2,12 @@ package com.raredev.vcspace.fragments.filemanager.models;
 
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.fragments.filemanager.listeners.FileListResultListener;
-import com.raredev.vcspace.models.DocumentModel;
 import java.io.File;
 
 public class FileModel {
 
-  protected String path;
-  protected String name;
-
-  protected boolean isFile;
+  private String path, name;
+  private boolean isFile;
 
   public FileModel(String path, String name, boolean isFile) {
     this.path = path;
@@ -66,12 +63,7 @@ public class FileModel {
     }
     FileModel[] localFiles = new FileModel[files.length];
     for (int i = 0; i < files.length; i++) {
-      File file = files[i];
-      if (file.isFile()) {
-        localFiles[i] = DocumentModel.fileToDocument(file);
-      } else {
-        localFiles[i] = fileToFileModel(file);
-      }
+      localFiles[i] = fileToFileModel(files[i]);
     }
 
     listener.onResult(localFiles);

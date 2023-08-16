@@ -6,6 +6,8 @@
     <string name="close">Fechar</string>
     <string name="close_others">Fechar outros</string>
     <string name="close_all">Fechar tudo</string>
+    <string name="pin">Fixar</string>
+    <string name="unpin">Desafixar</string>
     <string name="comment_line">Linha de comentário</string>
     <string name="select_all">Selecionar tudo</string>
     <string name="copy">Copiar</string>
@@ -19,6 +21,7 @@
     <string name="no">Não</string>
     <string name="url_copied">URL copiado para a área de transferência.</string>
     <string name="exit">Sair</string>
+    <string name="empty_folder">Pasta vazia</string>
 
     <!-- Menus Strings -->
     <string name="menu_execute">Executar</string>

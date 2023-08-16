@@ -17,7 +17,7 @@ import com.raredev.vcspace.util.PreferencesUtils;
 import com.raredev.vcspace.util.Utils;
 import io.github.rosemoe.sora.widget.EditorSearcher;
 
-public class SearcherPopupWindow extends FrameLayout implements View.OnClickListener {
+public class SearcherWindow extends FrameLayout implements View.OnClickListener {
 
   private LayoutSearcherBinding binding;
 
@@ -26,7 +26,7 @@ public class SearcherPopupWindow extends FrameLayout implements View.OnClickList
   private EditorSearcher.SearchOptions searchOptions;
   private EditorSearcher searcher;
 
-  public SearcherPopupWindow(Context context) {
+  public SearcherWindow(Context context) {
     super(context);
     init();
   }

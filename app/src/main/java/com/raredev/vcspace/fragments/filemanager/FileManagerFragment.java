@@ -130,6 +130,13 @@ public class FileManagerFragment extends Fragment implements FileAdapter.FileLis
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     viewModel
+        .getFilesLiveData()
+        .observe(
+            getViewLifecycleOwner(),
+            (files) -> {
+              binding.container.setDisplayedChild(files.isEmpty() ? 2 : 0);
+            });
+    viewModel
         .getCurrentDirLiveData()
         .observe(
             getViewLifecycleOwner(),

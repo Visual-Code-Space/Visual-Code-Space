@@ -25,8 +25,6 @@ public class PathListView extends RecyclerView {
   public static final int TYPE_FOLDER_PATH = 1;
 
   private PathListAdapter adapter;
-  private DataObserver observer;
-
   private FileListViewModel viewModel;
 
   private boolean enabled;
@@ -45,8 +43,7 @@ public class PathListView extends RecyclerView {
     super(context, attrs, defStyle);
     setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
     setAdapter(adapter = new PathListAdapter());
-    adapter.registerAdapterDataObserver(observer = new DataObserver());
-
+    
     enabled = true;
   }
 
@@ -77,8 +74,7 @@ public class PathListView extends RecyclerView {
 
     @Override
     public VH onCreateViewHolder(ViewGroup parent, int viewType) {
-      return new VH(
-          LayoutPathItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
+      return new VH(LayoutPathItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
     }
 
     @Override
@@ -87,20 +83,12 @@ public class PathListView extends RecyclerView {
 
       holder.path.setText(path.getName());
       if (position == getItemCount() - 1) {
+        holder.path.setTextColor(MaterialColors.getColor(getContext(), R.attr.colorPrimary, 0));
         holder.separator.setVisibility(View.GONE);
       } else {
-        holder.separator.setVisibility(View.VISIBLE);
-      }
-
-      if (type == TYPE_FOLDER_PATH) {
-        if (position == getItemCount() - 1) {
-          holder.path.setTextColor(MaterialColors.getColor(getContext(), R.attr.colorPrimary, 0));
-          holder.separator.setVisibility(View.GONE);
-        } else {
-          holder.path.setTextColor(
+        holder.path.setTextColor(
               MaterialColors.getColor(getContext(), R.attr.colorControlNormal, 0));
-          holder.separator.setVisibility(View.VISIBLE);
-        }
+        holder.separator.setVisibility(View.VISIBLE);
       }
 
       holder.itemView.setOnClickListener(
@@ -138,6 +126,8 @@ public class PathListView extends RecyclerView {
 
       Collections.reverse(paths);
       notifyDataSetChanged();
+      
+      scrollToPosition(adapter.getItemCount() - 1);
     }
   }
 
@@ -149,18 +139,6 @@ public class PathListView extends RecyclerView {
       super(binding.getRoot());
       path = binding.path;
       separator = binding.separator;
-
-      if (type == TYPE_FOLDER_PATH) {
-        path.setTextSize(15);
-      }
-    }
-  }
-
-  class DataObserver extends RecyclerView.AdapterDataObserver {
-    @Override
-    public void onChanged() {
-      super.onChanged();
-      scrollToPosition(adapter.getItemCount() - 1);
     }
   }
 }

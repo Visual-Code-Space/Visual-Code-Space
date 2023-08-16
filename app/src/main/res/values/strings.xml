@@ -7,6 +7,8 @@
     <string name="close">Close</string>
     <string name="close_others">Close others</string>
     <string name="close_all">Close all</string>
+    <string name="pin">Pin</string>
+    <string name="unpin">Unpin</string>
     <string name="comment_line">Comment line</string>
     <string name="uncomment_line">Uncomment line</string>
     <string name="select_all">Select all</string>
@@ -26,6 +28,7 @@
     <string name="zooming">Zooming</string>
     <string name="desktop_mode">Desktop mode</string>
     <string name="open_in_browser">Open in Browser...</string>
+    <string name="empty_folder">Empty folder</string>
 
     <!-- Menus Strings -->
     <string name="menu_execute">Execute</string>

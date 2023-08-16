@@ -14,7 +14,7 @@ import com.google.android.material.elevation.SurfaceColors;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.activity.EditorActivity;
 import com.raredev.vcspace.databinding.LayoutTreeviewWindowBinding;
-import com.raredev.vcspace.models.DocumentModel;
+import com.raredev.vcspace.fragments.filemanager.models.FileModel;
 import com.raredev.vcspace.models.holder.FileTreeViewHolder;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.util.FileUtil;
@@ -81,7 +81,7 @@ public class FileTreePopupWindow
 
     if (file.isFile()) {
       if (FileUtil.isValidTextFile(file.getName())) {
-        ((EditorActivity) context).openFile(DocumentModel.fileToDocument(file));
+        ((EditorActivity) context).openFile(FileModel.fileToFileModel(file));
         dismiss();
       }
     } else {

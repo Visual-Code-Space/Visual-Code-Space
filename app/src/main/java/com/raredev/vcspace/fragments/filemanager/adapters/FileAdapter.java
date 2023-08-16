@@ -41,7 +41,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.VH> {
 
     holder.img_icon.setImageResource(file.getIcon());
 
-    if (file.isFile() && (file.getName().endsWith(".html") || file.getName().endsWith(".md"))) {
+    if (file.isFile() && SimpleExecuter.isExecutable(file.getPath())) {
       holder.img_execute.setVisibility(View.VISIBLE);
     } else {
       holder.img_execute.setVisibility(View.GONE);
