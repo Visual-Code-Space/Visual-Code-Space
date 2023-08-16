@@ -41,7 +41,7 @@ public class FileManagerFragment extends Fragment implements FileAdapter.FileLis
   private static final String LOG = "FileManagerFragment";
   private FragmentFileManagerBinding binding;
 
-  private FileListViewModel viewModel;
+  public FileListViewModel viewModel;
 
   private FileAdapter mFilesAdapter;
 
@@ -144,6 +144,8 @@ public class FileManagerFragment extends Fragment implements FileAdapter.FileLis
               listArchives(dir);
               binding.pathList.setPath(dir.getPath());
             });
+    
+    mFilesAdapter.setEditorViewModel(((EditorActivity) requireActivity()).viewModel);
   }
 
   @Override
@@ -156,7 +158,7 @@ public class FileManagerFragment extends Fragment implements FileAdapter.FileLis
       }
       if (file.getName().endsWith(".apk")) {
         FileManagerDialogs.showApkInfoDialog(requireContext(), file.toFile());
-        //ApkInstaller.installApplication(getContext(), file.toFile());
+        // ApkInstaller.installApplication(getContext(), file.toFile());
       }
     }
   }
@@ -213,6 +215,10 @@ public class FileManagerFragment extends Fragment implements FileAdapter.FileLis
 
     binding.rvFiles.setLayoutManager(new LinearLayoutManager(requireContext()));
     binding.rvFiles.setAdapter(mFilesAdapter);
+  }
+
+  public void onBackPressed() {
+    viewModel.setCurrentDir(FileModel.fileToFileModel(viewModel.getCurrentDirFile().getParentFile()));
   }
 
   public void refreshFiles() {

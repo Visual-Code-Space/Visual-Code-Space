@@ -38,6 +38,7 @@ import com.raredev.vcspace.editor.completion.CompletionProvider;
 import com.raredev.vcspace.events.EditorContentChangedEvent;
 import com.raredev.vcspace.events.OnFileRenamedEvent;
 import com.raredev.vcspace.events.PreferenceChangedEvent;
+import com.raredev.vcspace.fragments.filemanager.FileManagerFragment;
 import com.raredev.vcspace.fragments.filemanager.models.FileModel;
 import com.raredev.vcspace.models.DocumentModel;
 import com.raredev.vcspace.task.TaskExecutor;
@@ -80,10 +81,10 @@ public class EditorActivity extends BaseActivity
   public ActivityResultLauncher<String> createFile;
   public ActivityResultLauncher<String> pickFile;
 
-  private ActivityEditorBinding binding;
-
   public EditorViewModel viewModel;
 
+  private ActivityEditorBinding binding;
+  private FileManagerFragment fileManager;
   private SearcherWindow searcher;
   private WebViewWindow webView;
 
@@ -101,6 +102,7 @@ public class EditorActivity extends BaseActivity
     setSupportActionBar(binding.toolbar);
     setupDrawer();
 
+    fileManager = ((FileManagerFragment) getSupportFragmentManager().findFragmentByTag("filemanager"));
     viewModel = new ViewModelProvider(this).get(EditorViewModel.class);
 
     searcher = (SearcherWindow) VCSpaceWindowManager.getInstance(this).getWindow(VCSpaceWindowManager.SEARCHER_WINDOW);
@@ -213,6 +215,10 @@ public class EditorActivity extends BaseActivity
   @Override
   public void onBackPressed() {
     if (viewModel.getDrawerState()) {
+      if (!fileManager.viewModel.getCurrentDir().getPath().equals("/storage/emulated/0")) {
+        fileManager.onBackPressed();
+        return;
+      }
       viewModel.setDrawerState(false);
       return;
     }
@@ -567,6 +573,7 @@ public class EditorActivity extends BaseActivity
             binding.pathList.setPath(editorView.getDocument().getPath());
             searcher.bindSearcher(editorView.getEditor().getSearcher());
           }
+          fileManager.refreshFiles();
           invalidateOptionsMenu();
         });
   }

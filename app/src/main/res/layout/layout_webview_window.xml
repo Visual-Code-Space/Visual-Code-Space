@@ -12,7 +12,7 @@
          android:id="@+id/progressIndicator" />
 
     <android.webkit.WebView
-         android:layout_height="500dp"
+         android:layout_height="match_parent"
          android:layout_width="match_parent"
          android:layout_margin="5dp"
          android:id="@+id/web_view">

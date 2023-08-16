@@ -7,13 +7,6 @@
     android:padding="10dp"
     android:foreground="?attr/selectableItemBackground">
 
-    <View
-        android:layout_height="match_parent"
-        android:layout_width="2dp"
-        android:visibility="gone"
-        android:background="?attr/colorPrimary"
-        android:id="@+id/indicator" />
-
     <com.google.android.material.imageview.ShapeableImageView
         android:layout_height="28dp"
         android:layout_width="28dp"

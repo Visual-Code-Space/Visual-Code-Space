@@ -1,22 +1,28 @@
 package com.raredev.vcspace.fragments.filemanager.adapters;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.R;
+import com.google.android.material.color.MaterialColors;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textview.MaterialTextView;
 import com.raredev.vcspace.SimpleExecuter;
+import com.raredev.vcspace.activity.EditorActivity;
 import com.raredev.vcspace.databinding.LayoutFileItemBinding;
 import com.raredev.vcspace.fragments.filemanager.models.FileModel;
 import com.raredev.vcspace.fragments.filemanager.viewmodel.FileListViewModel;
-import com.raredev.vcspace.models.DocumentModel;
+import com.raredev.vcspace.ui.viewmodel.EditorViewModel;
+import com.raredev.vcspace.util.Utils;
 
 public class FileAdapter extends RecyclerView.Adapter<FileAdapter.VH> {
 
   private FileListViewModel viewModel;
+  private EditorViewModel editorViewModel;
   private FileListener fileListener;
 
   public FileAdapter(FileListViewModel viewModel) {
@@ -45,6 +51,19 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.VH> {
       holder.img_execute.setVisibility(View.VISIBLE);
     } else {
       holder.img_execute.setVisibility(View.GONE);
+    }
+
+    var currentDoc = editorViewModel.getCurrentDocument();
+    if (currentDoc != null && file.isFile()) {
+      if (currentDoc.getPath().equals(file.getPath())) {
+        Utils.updateImageTint(
+            holder.img_icon,
+            MaterialColors.getColor(holder.itemView.getContext(), R.attr.colorPrimary, 0));
+      } else {
+        Utils.updateImageTint(
+            holder.img_icon,
+            MaterialColors.getColor(holder.itemView.getContext(), R.attr.colorControlNormal, 0));
+      }
     }
 
     holder.itemView.setOnClickListener(
@@ -80,6 +99,10 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.VH> {
     return viewModel.getFiles().size();
   }
 
+  public void setEditorViewModel(EditorViewModel viewModel) {
+    this.editorViewModel = viewModel;
+  }
+
   public void refreshFiles() {
     notifyDataSetChanged();
   }
@@ -99,11 +122,9 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.VH> {
   public class VH extends RecyclerView.ViewHolder {
     ShapeableImageView img_icon, img_execute, img_menu;
     MaterialTextView tv_name;
-    View indicator;
 
     public VH(LayoutFileItemBinding binding) {
       super(binding.getRoot());
-      indicator = binding.indicator;
       img_icon = binding.imgIcon;
       tv_name = binding.fileName;
       img_execute = binding.execute;

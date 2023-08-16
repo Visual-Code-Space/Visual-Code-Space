@@ -5,10 +5,13 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.transition.ChangeBounds;
+import androidx.transition.TransitionManager;
 import com.google.android.material.R;
 import com.google.android.material.color.MaterialColors;
 import com.raredev.vcspace.databinding.LayoutPathItemBinding;
@@ -134,9 +137,12 @@ public class PathListView extends RecyclerView {
   public class VH extends RecyclerView.ViewHolder {
     TextView path;
     ImageView separator;
+    
+    LayoutPathItemBinding bind;
 
     public VH(LayoutPathItemBinding binding) {
       super(binding.getRoot());
+      bind = binding;
       path = binding.path;
       separator = binding.separator;
     }
