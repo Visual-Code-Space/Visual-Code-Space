@@ -86,11 +86,10 @@
             <TextView
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:layout_centerVertical="true"
+                android:layout_gravity="center"
                 android:padding="2dp"
                 android:textSize="14sp"
                 android:singleLine="true"
-                android:layout_marginStart="10dp"
                 android:text="@string/empty_folder" />
 
         </ViewFlipper>
