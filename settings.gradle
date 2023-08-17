@@ -17,5 +17,10 @@ rootProject.name = "Visual Code Space"
 
 include ':app'
 include ':common'
+include ':common-res'
+include ':eventbus-events'
 include ':cpp-compiler'
+include ':plugins'
+include ':editor'
+include ':models'
 include ':treeview'

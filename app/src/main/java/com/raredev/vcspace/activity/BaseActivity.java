@@ -17,7 +17,7 @@ import androidx.core.content.ContextCompat;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.elevation.SurfaceColors;
 import com.raredev.vcspace.CrashHandler;
-import com.raredev.vcspace.R;
+import com.raredev.vcspace.res.R;
 import com.raredev.vcspace.util.Utils;
 
 public abstract class BaseActivity extends AppCompatActivity {

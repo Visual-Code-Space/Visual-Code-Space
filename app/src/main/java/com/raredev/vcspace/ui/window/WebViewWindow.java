@@ -1,5 +1,7 @@
 package com.raredev.vcspace.ui.window;
 
+import static com.raredev.vcspace.res.R.string;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,9 +14,9 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import androidx.appcompat.app.AlertDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.raredev.vcspace.R;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.raredev.vcspace.compiler.html.SimpleHttpServer;
 import com.raredev.vcspace.databinding.LayoutTextinputBinding;
 import com.raredev.vcspace.databinding.LayoutWebviewWindowBinding;
@@ -74,7 +76,7 @@ public class WebViewWindow extends VCSpaceWindow {
             binding.progressIndicator.setProgressCompat(progress, true);
             setTitle(
                     view.getTitle() == "about:blank"
-                        ? getContext().getString(R.string.app_name)
+                        ? getContext().getString(string.app_name)
                         : view.getTitle());
           }
         });

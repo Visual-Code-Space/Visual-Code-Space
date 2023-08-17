@@ -1,5 +1,7 @@
 package com.raredev.vcspace.fragments;
 
+import static com.raredev.vcspace.res.R.xml;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,7 +21,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
   @Override
   public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-    setPreferencesFromResource(R.xml.settings, rootKey);
+    setPreferencesFromResource(xml.settings, rootKey);
 
     Preference general = findPreference(SharedPreferencesKeys.KEY_GENERAL);
     general.setOnPreferenceClickListener(

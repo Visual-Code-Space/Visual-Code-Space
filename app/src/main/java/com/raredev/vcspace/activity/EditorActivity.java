@@ -1,5 +1,8 @@
 package com.raredev.vcspace.activity;
 
+import static com.raredev.vcspace.res.R.drawable;
+import static com.raredev.vcspace.res.R.string;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -38,14 +41,13 @@ import com.raredev.vcspace.editor.completion.CompletionProvider;
 import com.raredev.vcspace.events.EditorContentChangedEvent;
 import com.raredev.vcspace.events.OnFileRenamedEvent;
 import com.raredev.vcspace.events.PreferenceChangedEvent;
-import com.raredev.vcspace.fragments.filemanager.FileManagerFragment;
-import com.raredev.vcspace.fragments.filemanager.models.FileModel;
+import com.raredev.vcspace.fragments.explorer.FileExplorerFragment;
 import com.raredev.vcspace.models.DocumentModel;
+import com.raredev.vcspace.models.FileModel;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.ui.PathListView;
 import com.raredev.vcspace.ui.editor.CodeEditorView;
 import com.raredev.vcspace.ui.editor.Symbol;
-import com.raredev.vcspace.ui.viewmodel.EditorViewModel;
 import com.raredev.vcspace.ui.window.SearcherWindow;
 import com.raredev.vcspace.ui.window.VCSpaceWindow;
 import com.raredev.vcspace.ui.window.VCSpaceWindowManager;
@@ -56,8 +58,7 @@ import com.raredev.vcspace.util.PreferencesUtils;
 import com.raredev.vcspace.util.SharedPreferencesKeys;
 import com.raredev.vcspace.util.ToastUtils;
 import com.raredev.vcspace.util.UniqueNameBuilder;
-import com.raredev.vcspace.util.Utils;
-import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
+import com.raredev.vcspace.viewmodel.EditorViewModel;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -84,7 +85,7 @@ public class EditorActivity extends BaseActivity
   public EditorViewModel viewModel;
 
   private ActivityEditorBinding binding;
-  private FileManagerFragment fileManager;
+  private FileExplorerFragment fileExplorer;
   private SearcherWindow searcher;
   private WebViewWindow webView;
 
@@ -102,12 +103,17 @@ public class EditorActivity extends BaseActivity
     setSupportActionBar(binding.toolbar);
     setupDrawer();
 
-    fileManager = ((FileManagerFragment) getSupportFragmentManager().findFragmentByTag("filemanager"));
+    fileExplorer =
+        ((FileExplorerFragment) getSupportFragmentManager().findFragmentByTag("filemanager"));
     viewModel = new ViewModelProvider(this).get(EditorViewModel.class);
 
-    searcher = (SearcherWindow) VCSpaceWindowManager.getInstance(this).getWindow(VCSpaceWindowManager.SEARCHER_WINDOW);
-    webView = (WebViewWindow) VCSpaceWindowManager.getInstance(this).getWindow(VCSpaceWindowManager.WEBVIEW_WINDOW);
-    
+    searcher =
+        (SearcherWindow)
+            VCSpaceWindowManager.getInstance(this).getWindow(VCSpaceWindowManager.SEARCHER_WINDOW);
+    webView =
+        (WebViewWindow)
+            VCSpaceWindowManager.getInstance(this).getWindow(VCSpaceWindowManager.WEBVIEW_WINDOW);
+
     var windows = VCSpaceWindowManager.getInstance(this).getWindows();
     for (Map.Entry<String, VCSpaceWindow> entry : windows.entrySet()) {
       var window = entry.getValue();
@@ -138,7 +144,7 @@ public class EditorActivity extends BaseActivity
 
     CompletionProvider.registerCompletionProviders();
     PreferencesUtils.getDefaultPrefs().registerOnSharedPreferenceChangeListener(this);
-    ThemeRegistry.getInstance().setTheme(Utils.isDarkMode() ? "darcula" : "quietlight");
+   // ThemeRegistry.getInstance().setTheme(Utils.isDarkMode() ? "darcula" : "quietlight");
     registerResultActivity();
     observeViewModel();
 
@@ -160,8 +166,7 @@ public class EditorActivity extends BaseActivity
     var editorView = getCurrentEditor();
     if (editorView != null) {
       var document = editorView.getDocument();
-      menu.findItem(R.id.menu_execute)
-          .setVisible(SimpleExecuter.isExecutable(document.getName()));
+      menu.findItem(R.id.menu_execute).setVisible(SimpleExecuter.isExecutable(document.getName()));
       menu.findItem(R.id.menu_undo).setVisible(KeyboardUtils.isSoftInputVisible(this));
       menu.findItem(R.id.menu_redo).setVisible(KeyboardUtils.isSoftInputVisible(this));
       menu.findItem(R.id.menu_undo).setEnabled(editorView.getEditor().canUndo());
@@ -215,8 +220,8 @@ public class EditorActivity extends BaseActivity
   @Override
   public void onBackPressed() {
     if (viewModel.getDrawerState()) {
-      if (!fileManager.viewModel.getCurrentDir().getPath().equals("/storage/emulated/0")) {
-        fileManager.onBackPressed();
+      if (!fileExplorer.viewModel.getCurrentDir().getPath().equals("/storage/emulated/0")) {
+        fileExplorer.onBackPressed();
         return;
       }
       viewModel.setDrawerState(false);
@@ -342,7 +347,7 @@ public class EditorActivity extends BaseActivity
     if (doc.isPinned()) {
       return;
     }
-    
+
     var currentIndex = viewModel.getCurrentPosition();
     var currentDocument = viewModel.getCurrentDocument();
 
@@ -350,7 +355,7 @@ public class EditorActivity extends BaseActivity
 
     if (index != currentIndex) {
       closeFileHandler(index);
-      
+
       viewModel.setCurrentPosition(viewModel.indexOf(currentDocument));
     } else {
       closeFileHandler(index);
@@ -417,7 +422,7 @@ public class EditorActivity extends BaseActivity
             return null;
           },
           (result) -> {
-            if (showMsg) ToastUtils.showShort(getString(R.string.saved), ToastUtils.TYPE_SUCCESS);
+            if (showMsg) ToastUtils.showShort(getString(string.saved), ToastUtils.TYPE_SUCCESS);
             invalidateOptionsMenu();
           });
     }
@@ -438,7 +443,7 @@ public class EditorActivity extends BaseActivity
           },
           (result) -> {
             if (showMsg)
-              ToastUtils.showShort(getString(R.string.saved_files), ToastUtils.TYPE_SUCCESS);
+              ToastUtils.showShort(getString(string.saved_files), ToastUtils.TYPE_SUCCESS);
             invalidateOptionsMenu();
             post.run();
           });
@@ -467,8 +472,7 @@ public class EditorActivity extends BaseActivity
     DrawerLayout drawerLayout = binding.drawerLayout;
 
     ActionBarDrawerToggle toggle =
-        new ActionBarDrawerToggle(
-            this, drawerLayout, binding.toolbar, R.string.open, R.string.close);
+        new ActionBarDrawerToggle(this, drawerLayout, binding.toolbar, string.open, string.close);
     drawerLayout.addDrawerListener(toggle);
     toggle.syncState();
 
@@ -573,7 +577,6 @@ public class EditorActivity extends BaseActivity
             binding.pathList.setPath(editorView.getDocument().getPath());
             searcher.bindSearcher(editorView.getEditor().getSearcher());
           }
-          fileManager.refreshFiles();
           invalidateOptionsMenu();
         });
   }
@@ -582,20 +585,19 @@ public class EditorActivity extends BaseActivity
     final var doc = viewModel.getDocument(index);
     final var pm = new PopupMenu(this, view);
     pm.inflate(R.menu.editor_tab_menu);
-    pm.getMenu().getItem(3).setTitle(doc.isPinned() ? R.string.unpin : R.string.pin);
+    pm.getMenu().getItem(3).setTitle(doc.isPinned() ? string.unpin : string.pin);
 
     pm.setOnMenuItemClickListener(
         item -> {
-          if (item.getTitle() == getString(R.string.close)) {
+          if (item.getItemId() == R.id.close) {
             closeFile(index);
-          } else if (item.getTitle().equals(getString(R.string.close_others))) {
+          } else if (item.getItemId() == R.id.close_others) {
             closeOthers();
-          } else if (item.getTitle().equals(getString(R.string.close_all))) {
+          } else if (item.getItemId() == R.id.close_all) {
             closeAllFiles();
-          } else if (item.getTitle().equals(getString(R.string.pin))
-              || item.getTitle().equals(getString(R.string.unpin))) {
+          } else if (item.getItemId() == R.id.pin) {
             doc.setPinned(!doc.isPinned());
-            item.setTitle(doc.isPinned() ? R.string.unpin : R.string.pin);
+            item.setTitle(doc.isPinned() ? string.unpin : string.pin);
             updateTabs();
           }
           return true;
@@ -662,7 +664,7 @@ public class EditorActivity extends BaseActivity
                   tabTitle.setText(name);
 
                   ImageView close = tab.getCustomView().findViewById(R.id.close);
-                  close.setImageResource(doc.isPinned() ? R.drawable.ic_pin : R.drawable.close);
+                  close.setImageResource(doc.isPinned() ? drawable.ic_pin : drawable.close);
                 }
               });
         });

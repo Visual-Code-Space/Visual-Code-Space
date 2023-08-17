@@ -5,8 +5,8 @@ import android.os.Bundle;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.LayoutMaterialSliderBinding;
+import com.raredev.vcspace.res.R;
 import com.raredev.vcspace.util.PreferencesUtils;
 import com.raredev.vcspace.util.SharedPreferencesKeys;
 

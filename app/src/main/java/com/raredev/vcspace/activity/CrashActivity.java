@@ -3,13 +3,10 @@ package com.raredev.vcspace.activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-
 import android.view.View;
-
 import com.blankj.utilcode.util.ClipboardUtils;
 import com.blankj.utilcode.util.DeviceUtils;
-import com.blankj.utilcode.util.ToastUtils;
-import com.raredev.vcspace.R;
+import com.raredev.vcspace.res.R;
 import com.raredev.vcspace.databinding.ActivityCrashBinding;
 
 public class CrashActivity extends BaseActivity {

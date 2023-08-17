@@ -5,9 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import com.blankj.utilcode.util.SizeUtils;
-import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.LayoutFiletreeItemBinding;
-import com.raredev.vcspace.fragments.filemanager.models.FileModel;
+import com.raredev.vcspace.models.FileModel;
+import com.raredev.vcspace.res.R;
 import com.unnamed.b.atv.model.TreeNode;
 import java.io.File;
 

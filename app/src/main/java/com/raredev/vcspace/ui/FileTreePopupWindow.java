@@ -11,11 +11,11 @@ import android.view.WindowManager;
 import android.widget.PopupWindow;
 import com.google.android.material.color.MaterialColors;
 import com.google.android.material.elevation.SurfaceColors;
-import com.raredev.vcspace.R;
 import com.raredev.vcspace.activity.EditorActivity;
 import com.raredev.vcspace.databinding.LayoutTreeviewWindowBinding;
-import com.raredev.vcspace.fragments.filemanager.models.FileModel;
+import com.raredev.vcspace.models.FileModel;
 import com.raredev.vcspace.models.holder.FileTreeViewHolder;
+import com.raredev.vcspace.res.R;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.util.FileUtil;
 import com.raredev.vcspace.util.Utils;
@@ -43,7 +43,7 @@ public class FileTreePopupWindow
     this.context = context;
     binding = LayoutTreeviewWindowBinding.inflate(LayoutInflater.from(context));
     window = new PopupWindow(context);
-    
+
     window.setWidth(Utils.pxToDp(200));
     window.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
 
@@ -210,7 +210,8 @@ public class FileTreePopupWindow
     drawable.setShape(GradientDrawable.RECTANGLE);
     drawable.setCornerRadius(Utils.pxToDp(9));
     drawable.setColor(SurfaceColors.SURFACE_0.getColor(context));
-    drawable.setStroke(2, MaterialColors.getColor(context, com.google.android.material.R.attr.colorOutline, 0));
+    drawable.setStroke(
+        2, MaterialColors.getColor(context, com.google.android.material.R.attr.colorOutline, 0));
     binding.getRoot().setBackground(drawable);
   }
 

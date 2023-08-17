@@ -1,5 +1,7 @@
 package com.raredev.vcspace.activity;
 
+import static com.raredev.vcspace.res.R.string;
+
 import android.os.Bundle;
 import android.view.View;
 import com.raredev.vcspace.R;
@@ -19,7 +21,7 @@ public class SettingsActivity extends BaseActivity {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setSupportActionBar(binding.toolbar);
-    getSupportActionBar().setTitle(R.string.menu_settings);
+    getSupportActionBar().setTitle(string.menu_settings);
     binding.toolbar.setNavigationOnClickListener((v) -> onBackPressed());
 
     if (getSupportFragmentManager().findFragmentByTag(SettingsFragment.TAG) == null) {

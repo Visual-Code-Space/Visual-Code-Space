@@ -1,5 +1,7 @@
 package com.raredev.vcspace.activity;
 
+import static com.raredev.vcspace.res.R.string;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -89,7 +91,7 @@ public class WebViewActivity extends BaseActivity {
             getSupportActionBar()
                 .setTitle(
                     view.getTitle() == "about:blank"
-                        ? getString(R.string.app_name)
+                        ? getString(string.app_name)
                         : view.getTitle());
             getSupportActionBar()
                 .setSubtitle(view.getUrl() == "about:blank" ? "Preview" : view.getUrl());

@@ -121,7 +121,7 @@
         android:layout_height="match_parent"
         android:layout_width="300dp"
         android:background="?attr/colorSurface"
-        android:name="com.raredev.vcspace.fragments.filemanager.FileManagerFragment"
+        android:name="com.raredev.vcspace.fragments.explorer.FileExplorerFragment"
         android:tag="filemanager"
         android:layout_gravity="start"
         android:id="@+id/filemanager_fragment" />

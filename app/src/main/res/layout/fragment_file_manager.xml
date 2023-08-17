@@ -27,8 +27,7 @@
             android:textSize="14sp"
             android:singleLine="true"
             android:layout_marginStart="10dp"
-            android:text="File Manager"
-            android:id="@+id/folder_name" />
+            android:text="File Explorer" />
 
         <ImageView
             android:layout_height="25dp"

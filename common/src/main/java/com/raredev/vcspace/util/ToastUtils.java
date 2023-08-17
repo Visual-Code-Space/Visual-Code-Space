@@ -1,17 +1,14 @@
 package com.raredev.vcspace.util;
 
-import android.content.Context;
-import android.graphics.PixelFormat;
+import static com.raredev.vcspace.res.R.drawable;
+
 import android.graphics.drawable.GradientDrawable;
-import android.os.Handler;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Toast;
 import com.google.android.material.R;
 import com.google.android.material.color.MaterialColors;
-import com.raredev.vcspace.common.databinding.LayoutToastBinding;
+import com.raredev.vcspace.res.databinding.LayoutToastBinding;
 
 public class ToastUtils {
   public static final int TYPE_ERROR = 0;
@@ -50,9 +47,9 @@ public class ToastUtils {
   private static int getIconForType(int type) {
     switch (type) {
       case TYPE_ERROR:
-        return com.raredev.vcspace.common.R.drawable.ic_alert_circle_outline;
+        return drawable.ic_alert_circle_outline;
       case TYPE_SUCCESS:
-        return com.raredev.vcspace.common.R.drawable.ic_check;
+        return drawable.ic_check;
       default:
         return 0;
     }

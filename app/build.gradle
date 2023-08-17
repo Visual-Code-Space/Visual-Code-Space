@@ -111,6 +111,11 @@ dependencies {
   implementation 'net.dongliu:apk-parser:2.4.0'
   
   implementation project(path: ':common')
+  implementation project(path: ':common-res')
+  implementation project(path: ':eventbus-events')
+  implementation project(path: ':plugins')
+  implementation project(path: ':editor')
+  implementation project(path: ':models')
   implementation project(path: ':treeview')
 
   //debugImplementation common.leakcanary
