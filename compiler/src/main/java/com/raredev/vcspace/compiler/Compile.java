@@ -14,6 +14,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import org.json.JSONObject;
 
 public class Compile {
 
@@ -91,7 +92,7 @@ public class Compile {
               .build();
 
       Response response = client.newCall(request).execute();
-      return response.body().string();
+      return new JSONObject(response.body().string()).getString("output");
     } catch (Exception e) {
       return e.toString();
     }
