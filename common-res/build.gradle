@@ -28,6 +28,4 @@ android {
 dependencies {
   implementation androidx.appcompat
   implementation google.material
-  implementation google.gson
-  implementation common.utilcode
 }

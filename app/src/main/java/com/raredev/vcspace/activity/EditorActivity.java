@@ -51,7 +51,6 @@ import com.raredev.vcspace.ui.editor.Symbol;
 import com.raredev.vcspace.ui.window.SearcherWindow;
 import com.raredev.vcspace.ui.window.VCSpaceWindow;
 import com.raredev.vcspace.ui.window.VCSpaceWindowManager;
-import com.raredev.vcspace.ui.window.WebViewWindow;
 import com.raredev.vcspace.util.FileUtil;
 import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.util.PreferencesUtils;
@@ -87,7 +86,6 @@ public class EditorActivity extends BaseActivity
   private ActivityEditorBinding binding;
   private FileExplorerFragment fileExplorer;
   private SearcherWindow searcher;
-  private WebViewWindow webView;
 
   // Overrides
 
@@ -110,10 +108,7 @@ public class EditorActivity extends BaseActivity
     searcher =
         (SearcherWindow)
             VCSpaceWindowManager.getInstance(this).getWindow(VCSpaceWindowManager.SEARCHER_WINDOW);
-    webView =
-        (WebViewWindow)
-            VCSpaceWindowManager.getInstance(this).getWindow(VCSpaceWindowManager.WEBVIEW_WINDOW);
-
+  
     var windows = VCSpaceWindowManager.getInstance(this).getWindows();
     for (Map.Entry<String, VCSpaceWindow> entry : windows.entrySet()) {
       var window = entry.getValue();
@@ -144,7 +139,6 @@ public class EditorActivity extends BaseActivity
 
     CompletionProvider.registerCompletionProviders();
     PreferencesUtils.getDefaultPrefs().registerOnSharedPreferenceChangeListener(this);
-   // ThemeRegistry.getInstance().setTheme(Utils.isDarkMode() ? "darcula" : "quietlight");
     registerResultActivity();
     observeViewModel();
 
@@ -351,14 +345,15 @@ public class EditorActivity extends BaseActivity
     var currentIndex = viewModel.getCurrentPosition();
     var currentDocument = viewModel.getCurrentDocument();
 
-    if (currentIndex == -1 || currentDocument == null) return;
-
-    if (index != currentIndex) {
+    if (currentIndex != -1 || currentDocument != null) {
       closeFileHandler(index);
-
-      viewModel.setCurrentPosition(viewModel.indexOf(currentDocument));
-    } else {
-      closeFileHandler(index);
+      if (index != currentIndex) {
+        viewModel.setCurrentPosition(viewModel.indexOf(currentDocument));
+      }
+      var newCurrentDocument = viewModel.getCurrentDocument();
+      if (newCurrentDocument != null) {
+        binding.pathList.setPath(newCurrentDocument.getPath());
+      }
     }
   }
 

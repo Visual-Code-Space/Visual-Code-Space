@@ -3,14 +3,21 @@ package com.raredev.vcspace.ui.editor;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.LinearLayout;
+import androidx.core.content.res.ResourcesCompat;
 import com.raredev.vcspace.databinding.LayoutCodeEditorBinding;
 import com.raredev.vcspace.editor.IDECodeEditor;
+import com.raredev.vcspace.events.PreferenceChangedEvent;
 import com.raredev.vcspace.models.DocumentModel;
+import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.util.FileUtil;
+import com.raredev.vcspace.util.PreferencesUtils;
+import com.raredev.vcspace.util.SharedPreferencesKeys;
 import io.github.rosemoe.sora.langs.textmate.VCSpaceTMLanguage;
 import io.github.rosemoe.sora.langs.textmate.provider.TextMateProvider;
-import java.util.concurrent.CompletableFuture;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 public class CodeEditorView extends LinearLayout {
 
@@ -19,7 +26,6 @@ public class CodeEditorView extends LinearLayout {
 
   public CodeEditorView(Context context, DocumentModel document) {
     super(context);
-    this.document = document;
     binding = LayoutCodeEditorBinding.inflate(LayoutInflater.from(context));
 
     setOrientation(VERTICAL);
@@ -29,36 +35,32 @@ public class CodeEditorView extends LinearLayout {
         binding.getRoot(),
         new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, 1f));
 
+    setDocument(document);
     setLoading(true);
-    if (document.getContent() == null) {
-      readDocument();
-    } else {
-      binding.editor.setText(new String(document.getContent()), null);
-      postRead();
-    }
+    
+    var modified = document.isModified();
 
-    binding.editor.configureEditor();
-  }
-
-  private void readDocument() {
-    CompletableFuture.runAsync(
+    TaskExecutor.executeAsync(
         () -> {
-          var editor = binding.editor;
-          var content = FileUtil.readFile(document.getPath());
-          editor.post(
-              () -> {
-                editor.setText(content, null);
-                document.markUnmodified();
-                postRead();
-              });
+          String content = "";
+          if (document.getContent() != null) {
+            content = new String(document.getContent());
+          } else {
+            content = FileUtil.readFile(document.getPath());
+          }
+          return content;
+        },
+        (result) -> {
+          binding.editor.setText((String) result, null);
+          if (!modified) document.markUnmodified();
+          configureEditor();
+          postRead();
         });
   }
 
   private void postRead() {
     binding.editor.setEditorLanguage(createLanguage());
-
     binding.editor.setCursorPosition(document.getPositionLine(), document.getPositionColumn());
-    binding.editor.setDocument(document);
     setLoading(false);
   }
 
@@ -117,5 +119,79 @@ public class CodeEditorView extends LinearLayout {
     } catch (Exception e) {
       return null;
     }
+  }
+
+  @Subscribe(threadMode = ThreadMode.MAIN)
+  public void onSharedPreferenceChanged(PreferenceChangedEvent event) {
+    String key = event.getKey();
+    switch (key) {
+      case SharedPreferencesKeys.KEY_FONT_SIZE_PREFERENCE:
+        updateTextSize();
+        break;
+      case SharedPreferencesKeys.KEY_EDITOR_TAB_SIZE:
+        updateTABSize();
+        break;
+      case SharedPreferencesKeys.KEY_DELETE_EMPTY_LINE_FAST:
+        updateDeleteEmptyLineFast();
+        break;
+      case SharedPreferencesKeys.KEY_EDITOR_FONT:
+        updateEditorFont();
+        break;
+      case SharedPreferencesKeys.KEY_LINENUMBERS:
+        updateLineNumbers();
+        break;
+    }
+  }
+
+  public void configureEditor() {
+    updateEditorFont();
+    updateTextSize();
+    updateTABSize();
+    updateLineNumbers();
+    updateDeleteEmptyLineFast();
+
+    binding.editor.setInputType(createInputFlags());
+  }
+
+  private void updateTextSize() {
+    int textSize = PreferencesUtils.getEditorTextSize();
+    binding.editor.setTextSize(textSize);
+  }
+
+  private void updateTABSize() {
+    int tabSize = PreferencesUtils.getEditorTABSize();
+    binding.editor.setTabWidth(tabSize);
+  }
+
+  private void updateEditorFont() {
+    binding.editor.setTypefaceText(
+        ResourcesCompat.getFont(getContext(), PreferencesUtils.getSelectedFont()));
+    binding.editor.setTypefaceLineNumber(
+        ResourcesCompat.getFont(getContext(), PreferencesUtils.getSelectedFont()));
+  }
+
+  private void updateDeleteEmptyLineFast() {
+    boolean deleteEmptyLineFast = PreferencesUtils.useDeleteEmptyLineFast();
+    binding.editor.getProps().deleteEmptyLineFast = deleteEmptyLineFast;
+    binding.editor.getProps().deleteMultiSpaces = deleteEmptyLineFast ? -1 : 1;
+  }
+
+  private void updateLineNumbers() {
+    boolean lineNumbers = PreferencesUtils.lineNumbers();
+    binding.editor.setLineNumberEnabled(lineNumbers);
+  }
+
+  private void updateNonPrintablePaintingFlags() {
+    /*binding.editor.setNonPrintablePaintingFlags(
+    CodeEditor.FLAG_DRAW_WHITESPACE_LEADING
+        | CodeEditor.FLAG_DRAW_WHITESPACE_INNER
+        | CodeEditor.FLAG_DRAW_WHITESPACE_FOR_EMPTY_LINE);*/
+  }
+
+  private int createInputFlags() {
+    return EditorInfo.TYPE_CLASS_TEXT
+        | EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE
+        | EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS
+        | EditorInfo.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD;
   }
 }

@@ -21,7 +21,7 @@ public class VCSpaceWindowManager {
 
   public VCSpaceWindowManager(Context context) {
     windows.put(SEARCHER_WINDOW, new SearcherWindow(context));
-    windows.put(WEBVIEW_WINDOW, new WebViewWindow(context));
+    //windows.put(WEBVIEW_WINDOW, new WebViewWindow(context));
   }
 
   public VCSpaceWindow getWindow(String key) {

@@ -95,7 +95,6 @@ dependencies {
   implementation common.utilcode
   implementation common.jgit
   implementation common.eventbus
-  implementation common.jsoup
   
   implementation platform("io.github.Rosemoe.sora-editor:bom:0.22.0")
   implementation "io.github.Rosemoe.sora-editor:editor"
@@ -106,13 +105,10 @@ dependencies {
   implementation "io.noties.markwon:image:$markwon_version"
   implementation "io.noties.markwon:image-glide:$markwon_version"
   
-  implementation 'org.nanohttpd:nanohttpd:2.3.0'
-  
-  implementation 'net.dongliu:apk-parser:2.4.0'
-  
   implementation project(path: ':common')
   implementation project(path: ':common-res')
   implementation project(path: ':eventbus-events')
+  implementation project(path: ':compiler')
   implementation project(path: ':plugins')
   implementation project(path: ':editor')
   implementation project(path: ':models')

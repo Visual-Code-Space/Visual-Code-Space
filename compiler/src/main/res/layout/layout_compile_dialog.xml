@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:hint="@string/enter_input"
+        android:padding="15dp"
+        app:hintAnimationEnabled="true"
+        android:id="@+id/input_input_layout">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:textSize="16sp"
+            android:singleLine="true"
+            android:id="@+id/input" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:hint="@string/enter_language"
+        android:padding="15dp"
+        app:hintAnimationEnabled="true"
+        android:id="@+id/language_input_layout">
+
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:textSize="16sp"
+            android:singleLine="true"
+            android:inputType="none"
+            android:id="@+id/language" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+</LinearLayout>
