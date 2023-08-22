@@ -13,7 +13,7 @@ ext {
   google = [
     material: 'com.google.android.material:material:1.9.0',
     oss_licenses: 'com.google.android.gms:play-services-oss-licenses:17.0.1',
-    guava: 'com.google.guava:guava:31.1-jre',
+    guava: 'com.google.guava:guava:32.1.2-jre',
     gson: 'com.google.code.gson:gson:2.10.1'
   ]
   common = [
