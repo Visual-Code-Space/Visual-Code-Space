@@ -15,9 +15,9 @@ import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.blankj.utilcode.util.ClipboardUtils;
 import com.raredev.vcspace.activity.EditorActivity;
+import com.raredev.vcspace.adapters.FileAdapter;
 import com.raredev.vcspace.databinding.FragmentFileManagerBinding;
 import com.raredev.vcspace.events.OnFileRenamedEvent;
-import com.raredev.vcspace.fragments.explorer.adapters.FileAdapter;
 import com.raredev.vcspace.fragments.explorer.git.CloneRepository;
 import com.raredev.vcspace.models.FileModel;
 import com.raredev.vcspace.res.R;
@@ -36,8 +36,8 @@ import java.util.List;
 import org.greenrobot.eventbus.EventBus;
 
 @SuppressWarnings("deprecation")
-public class FileExplorerFragment extends Fragment implements FileAdapter.FileListener {
-  private static final String LOG = "FileManagerFragment";
+public class FileExplorerFragment extends Fragment {
+/*  private static final String LOG = "FileManagerFragment";
   private FragmentFileManagerBinding binding;
 
   public FileListViewModel viewModel;
@@ -268,5 +268,5 @@ public class FileExplorerFragment extends Fragment implements FileAdapter.FileLi
         } else {
           return String.CASE_INSENSITIVE_ORDER.compare(file1.getName(), file2.getName());
         }
-      };
+      };*/
 }

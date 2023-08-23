@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:padding="5dp"
+    android:orientation="vertical"
+    android:id="@+id/root">
+
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:gravity="center_vertical"
+        android:layout_marginStart="2dp">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:hint="@string/search"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            app:hintAnimationEnabled="true"
+            android:layout_weight="1"
+            android:id="@+id/search_text_input_layout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:textSize="16sp"
+                android:singleLine="true"
+                android:inputType="text"
+                android:id="@+id/search_text" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <ImageView
+            android:layout_height="25dp"
+            android:layout_width="25dp"
+            android:src="@drawable/format_letter_case"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_margin="3dp"
+            android:padding="2dp"
+            android:id="@+id/ignore_letter_case" />
+
+        <ImageView
+            android:layout_height="25dp"
+            android:layout_width="25dp"
+            android:src="@drawable/regex"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_margin="3dp"
+            android:padding="2dp"
+            android:id="@+id/use_regex" />
+
+    </LinearLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_marginEnd="2dp"
+        android:hint="@string/replace"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        android:layout_marginStart="2dp"
+        app:hintAnimationEnabled="true"
+        android:id="@+id/replace_text_input_layout">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:textSize="16sp"
+            android:singleLine="true"
+            android:inputType="text"
+            android:id="@+id/replace_text" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <LinearLayout
+        android:layout_height="50dp"
+        android:layout_width="match_parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_margin="2dp"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_weight="1.0"
+            android:id="@+id/goto_last"
+            android:text="PREV" />
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_margin="2dp"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_weight="1.0"
+            android:id="@+id/goto_next"
+            android:text="NEXT" />
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_margin="2dp"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_weight="1.0"
+            android:id="@+id/replace"
+            android:text="REP" />
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_margin="2dp"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_weight="1.0"
+            android:id="@+id/replace_all"
+            android:text="REP ALL" />
+
+    </LinearLayout>
+
+</LinearLayout>

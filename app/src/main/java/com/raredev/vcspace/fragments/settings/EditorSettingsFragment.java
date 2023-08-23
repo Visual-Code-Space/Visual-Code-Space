@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceScreen;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.raredev.vcspace.databinding.LayoutMaterialSliderBinding;
 import com.raredev.vcspace.res.R;
@@ -61,7 +62,7 @@ public class EditorSettingsFragment extends PreferenceFragmentCompat {
 
           SharedPreferences prefs = PreferencesUtils.getDefaultPrefs();
 
-          var selectedSize = prefs.getString(SharedPreferencesKeys.KEY_EDITOR_TAB_SIZE_VALUE, "4");
+          var selectedSize = prefs.getString(SharedPreferencesKeys.KEY_EDITOR_TAB_SIZE, "4");
           var i = 0;
           if (selectedSize.equals("4")) {
             i = 1;
@@ -76,7 +77,7 @@ public class EditorSettingsFragment extends PreferenceFragmentCompat {
               (dlg, which) -> {
                 prefs
                     .edit()
-                    .putString(SharedPreferencesKeys.KEY_EDITOR_TAB_SIZE_VALUE, tabSizes[which])
+                    .putString(SharedPreferencesKeys.KEY_EDITOR_TAB_SIZE, tabSizes[which])
                     .apply();
                 dlg.cancel();
               });
@@ -100,7 +101,7 @@ public class EditorSettingsFragment extends PreferenceFragmentCompat {
           SharedPreferences prefs = PreferencesUtils.getDefaultPrefs();
 
           var selectedFont =
-              prefs.getString(SharedPreferencesKeys.KEY_EDITOR_FONT_VALUE, "firacode");
+              prefs.getString(SharedPreferencesKeys.KEY_EDITOR_FONT, "firacode");
           var i = 0;
           if (selectedFont.equals("jetbrains")) {
             i = 1;
@@ -111,7 +112,7 @@ public class EditorSettingsFragment extends PreferenceFragmentCompat {
               (dlg, which) -> {
                 prefs
                     .edit()
-                    .putString(SharedPreferencesKeys.KEY_EDITOR_FONT_VALUE, fontValues[which])
+                    .putString(SharedPreferencesKeys.KEY_EDITOR_FONT, fontValues[which])
                     .apply();
                 dlg.cancel();
               });

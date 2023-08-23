@@ -3,16 +3,20 @@ package com.raredev.vcspace.editor;
 import android.content.Context;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.view.inputmethod.EditorInfo;
 import androidx.annotation.Nullable;
+import androidx.core.content.res.ResourcesCompat;
 import com.google.common.collect.ImmutableSet;
 import com.raredev.vcspace.editor.completion.CompletionItemAdapter;
 import com.raredev.vcspace.editor.completion.CustomCompletionLayout;
 import com.raredev.vcspace.events.EditorContentChangedEvent;
+import com.raredev.vcspace.events.PreferenceChangedEvent;
 import com.raredev.vcspace.models.DocumentModel;
+import com.raredev.vcspace.util.PreferencesUtils;
+import com.raredev.vcspace.util.SharedPreferencesKeys;
 import io.github.rosemoe.sora.event.ContentChangeEvent;
 import io.github.rosemoe.sora.lang.Language;
 import io.github.rosemoe.sora.langs.textmate.VCSpaceTMLanguage;
-import io.github.rosemoe.sora.langs.textmate.provider.TextMateProvider;
 import io.github.rosemoe.sora.widget.CodeEditor;
 import io.github.rosemoe.sora.widget.EditorSearcher;
 import io.github.rosemoe.sora.widget.VCSpaceSearcher;
@@ -21,6 +25,8 @@ import io.github.rosemoe.sora.widget.component.EditorTextActionWindow;
 import java.util.Set;
 import org.eclipse.tm4e.languageconfiguration.model.CommentRule;
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 public class IDECodeEditor extends CodeEditor {
   
@@ -64,12 +70,11 @@ public class IDECodeEditor extends CodeEditor {
     
     getComponent(EditorAutoCompletion.class).setLayout(new CustomCompletionLayout());
     getComponent(EditorAutoCompletion.class).setAdapter(new CompletionItemAdapter());
-    setColorScheme(TextMateProvider.getColorScheme());
     subscribeContentChangeEvent();
 
-    /*if (!EventBus.getDefault().isRegistered(this)) {
+    if (!EventBus.getDefault().isRegistered(this)) {
       EventBus.getDefault().register(this);
-    }*/
+    }
   }
 
   @Override
@@ -124,9 +129,9 @@ public class IDECodeEditor extends CodeEditor {
 
   @Override
   public void release() {
-   /* if (!EventBus.getDefault().isRegistered(this)) {
+    if (!EventBus.getDefault().isRegistered(this)) {
       EventBus.getDefault().unregister(this);
-    }*/
+    }
     super.release();
     textActions = null;
     searcher = null;
@@ -165,5 +170,79 @@ public class IDECodeEditor extends CodeEditor {
     }
     content.insert(line, col, text);
     return line;
+  }
+  
+  @Subscribe(threadMode = ThreadMode.MAIN)
+  public void onSharedPreferenceChanged(PreferenceChangedEvent event) {
+    String key = event.getKey();
+    switch (key) {
+      case SharedPreferencesKeys.KEY_FONT_SIZE_PREFERENCE:
+        updateTextSize();
+        break;
+      case SharedPreferencesKeys.KEY_EDITOR_TAB_SIZE:
+        updateTABSize();
+        break;
+      case SharedPreferencesKeys.KEY_DELETE_EMPTY_LINE_FAST:
+        updateDeleteEmptyLineFast();
+        break;
+      case SharedPreferencesKeys.KEY_EDITOR_FONT:
+        updateEditorFont();
+        break;
+      case SharedPreferencesKeys.KEY_LINENUMBERS:
+        updateLineNumbers();
+        break;
+    }
+  }
+
+  public void configureEditor() {
+    updateEditorFont();
+    updateTextSize();
+    updateTABSize();
+    updateLineNumbers();
+    updateDeleteEmptyLineFast();
+
+    setInputType(createInputFlags());
+  }
+
+  private void updateTextSize() {
+    int textSize = PreferencesUtils.getEditorTextSize();
+    setTextSize(textSize);
+  }
+
+  private void updateTABSize() {
+    int tabSize = PreferencesUtils.getEditorTABSize();
+    setTabWidth(tabSize);
+  }
+
+  private void updateEditorFont() {
+    setTypefaceText(
+        ResourcesCompat.getFont(getContext(), PreferencesUtils.getSelectedFont()));
+    setTypefaceLineNumber(
+        ResourcesCompat.getFont(getContext(), PreferencesUtils.getSelectedFont()));
+  }
+
+  private void updateDeleteEmptyLineFast() {
+    boolean deleteEmptyLineFast = PreferencesUtils.useDeleteEmptyLineFast();
+    getProps().deleteEmptyLineFast = deleteEmptyLineFast;
+    getProps().deleteMultiSpaces = deleteEmptyLineFast ? -1 : 1;
+  }
+
+  private void updateLineNumbers() {
+    boolean lineNumbers = PreferencesUtils.lineNumbers();
+    setLineNumberEnabled(lineNumbers);
+  }
+
+  private void updateNonPrintablePaintingFlags() {
+    /*binding.editor.setNonPrintablePaintingFlags(
+    CodeEditor.FLAG_DRAW_WHITESPACE_LEADING
+        | CodeEditor.FLAG_DRAW_WHITESPACE_INNER
+        | CodeEditor.FLAG_DRAW_WHITESPACE_FOR_EMPTY_LINE);*/
+  }
+
+  private int createInputFlags() {
+    return EditorInfo.TYPE_CLASS_TEXT
+        | EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE
+        | EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS
+        | EditorInfo.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD;
   }
 }

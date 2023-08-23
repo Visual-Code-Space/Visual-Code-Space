@@ -37,12 +37,8 @@
                 <data android:scheme="content" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.FileExplorerActivity" />
         <activity android:name=".activity.SettingsActivity" />
         <activity android:name=".activity.TerminalActivity" />
-        <activity
-            android:name=".activity.WebViewActivity"
-            android:parentActivityName=".activity.EditorActivity" />
         <activity
             android:name=".activity.MarkdownViewActivity"
             android:parentActivityName=".activity.EditorActivity" />

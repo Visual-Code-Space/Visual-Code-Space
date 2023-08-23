@@ -32,7 +32,7 @@ public class GeneralSettingsFragment extends PreferenceFragmentCompat {
 
           SharedPreferences prefs = PreferencesUtils.getDefaultPrefs();
 
-          var selectedTheme = prefs.getString(SharedPreferencesKeys.KEY_THEME_VALUE, "default");
+          var selectedTheme = prefs.getString(SharedPreferencesKeys.KEY_THEME, "default");
           var i = 0;
           if (selectedTheme.equals("dark")) {
             i = 1;
@@ -45,7 +45,7 @@ public class GeneralSettingsFragment extends PreferenceFragmentCompat {
               (dlg, which) -> {
                 prefs
                     .edit()
-                    .putString(SharedPreferencesKeys.KEY_THEME_VALUE, themeValues[which])
+                    .putString(SharedPreferencesKeys.KEY_THEME, themeValues[which])
                     .apply();
 
                 AppCompatDelegate.setDefaultNightMode(getTheme(themeValues[which]));
@@ -60,7 +60,7 @@ public class GeneralSettingsFragment extends PreferenceFragmentCompat {
 
   public static int getThemeFromPrefs() {
     SharedPreferences prefs = PreferencesUtils.getDefaultPrefs();
-    String selectedTheme = prefs.getString(SharedPreferencesKeys.KEY_THEME_VALUE, "default");
+    String selectedTheme = prefs.getString(SharedPreferencesKeys.KEY_THEME, "default");
     return getTheme(selectedTheme);
   }
 

@@ -6,7 +6,7 @@
     <item
         android:id="@+id/menu_execute"
         android:icon="@drawable/ic_play"
-        android:title="@string/menu_execute"
+        android:title="@string/execute"
         android:visible="false"
         app:showAsAction="always" />
     <item
@@ -46,7 +46,7 @@
         <menu>
             <item
                 android:id="@+id/menu_new_file"
-                android:icon="@drawable/ic_add"
+                android:icon="@drawable/ic_file_add"
                 android:title="@string/menu_new_file" />
             <item
                 android:id="@+id/menu_open_file"
@@ -66,6 +66,11 @@
                 android:id="@+id/menu_save_all"
                 android:icon="@drawable/content_save_all"
                 android:title="@string/menu_save_all"
+                android:enabled="false" />
+            <item
+                android:id="@+id/menu_reload"
+                android:icon="@drawable/ic_refresh"
+                android:title="@string/menu_reload"
                 android:enabled="false" />
         </menu>
     </item>

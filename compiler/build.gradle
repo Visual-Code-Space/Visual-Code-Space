@@ -29,10 +29,12 @@ dependencies {
   implementation androidx.appcompat
   implementation google.material
   implementation google.gson
+  implementation common.utilcode
 
   implementation 'org.nanohttpd:nanohttpd:2.3.0'
   implementation 'com.squareup.okhttp3:okhttp:4.9.1'
 
   implementation project(path: ':common')
   implementation project(path: ':common-res')
+  implementation project(path: ':panels')
 }

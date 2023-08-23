@@ -6,11 +6,11 @@ public class DocumentModel {
 
   private String path, name;
   private byte[] content;
-  private boolean modified, pinned;
+  private boolean modified;
   private int positionLine, positionColumn;
 
   public DocumentModel(String path, String name) {
-    this(path, name, null, false, false, 0, 0);
+    this(path, name, null, false, 0, 0);
   }
 
   public DocumentModel(
@@ -18,14 +18,12 @@ public class DocumentModel {
       String name,
       byte[] content,
       boolean modified,
-      boolean pinned,
       int positionLine,
       int positionColumn) {
     this.path = path;
     this.name = name;
     this.content = content;
     this.modified = modified;
-    this.pinned = pinned;
     this.positionLine = positionLine;
     this.positionColumn = positionColumn;
   }
@@ -70,14 +68,6 @@ public class DocumentModel {
     this.modified = false;
   }
 
-  public boolean isPinned() {
-    return this.pinned;
-  }
-
-  public void setPinned(boolean pinned) {
-    this.pinned = pinned;
-  }
-
   public int getPositionLine() {
     return this.positionLine;
   }
@@ -92,6 +82,13 @@ public class DocumentModel {
 
   public void setPositionColumn(int positionColumn) {
     this.positionColumn = positionColumn;
+  }
+
+  public String getExtension() {
+    if (name == null || !name.contains(".")) {
+      return null;
+    }
+    return name.substring(name.lastIndexOf(".") + 1, name.length()).toLowerCase();
   }
 
   public File toFile() {

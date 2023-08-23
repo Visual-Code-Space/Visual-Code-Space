@@ -1,5 +1,6 @@
 <resources>
     <!-- Linguagem Português Brasil -->
+    <string name="welcome">Bem-vindo</string>
     <string name="open">Abrir</string>
     <string name="remove">Remover</string>
     <string name="info">Informações</string>
@@ -14,6 +15,7 @@
     <string name="cut">Cortar</string>
     <string name="paste">Colar</string>
     <string name="no_file_opened">Nenhum arquivo aberto</string>
+    <string name="no_panels">Sem painéis</string>
     <string name="refresh">Atualizar</string>
     <string name="loading">Carregando..</string>
     <string name="empty">Vazio</string>
@@ -22,10 +24,9 @@
     <string name="url_copied">URL copiado para a área de transferência.</string>
     <string name="exit">Sair</string>
     <string name="empty_folder">Pasta vazia</string>
+    <string name="discard_changes">Tem certeza que deseja descartar suas alterações?</string>
 
     <!-- Menus Strings -->
-    <string name="menu_execute">Executar</string>
-    <string name="menu_execute_new_task">Executar em uma nova tarefa</string>
     <string name="menu_format">Formatar</string>
     <string name="menu_search">Pesquisar</string>
     <string name="menu_reload">Recarregar</string>
@@ -78,7 +79,7 @@
     <string name="grant_permission">Garantir permissão</string>
     <string name="enter_input">Digite a entrada</string>
     <string name="enter_language">Digite a linguagem</string>
-    <string name="compile">Compilar</string>
+    <string name="execute">Executar</string>
     <string name="output">Saída</string>
 
     <!-- Git -->

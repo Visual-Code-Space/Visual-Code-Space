@@ -21,64 +21,34 @@
                 android:layout_width="match_parent"
                 android:id="@+id/toolbar" />
 
-            <com.google.android.material.progressindicator.LinearProgressIndicator
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent"
-                android:visibility="gone"
-                android:indeterminate="true"
-                android:id="@+id/progress" />
-
         </com.google.android.material.appbar.AppBarLayout>
 
-        <ViewFlipper
+        <RelativeLayout
             android:layout_height="match_parent"
             android:layout_width="match_parent"
-            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-            android:elevation="5dp"
-            android:id="@+id/main">
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
             <LinearLayout
                 android:layout_height="match_parent"
                 android:layout_width="match_parent"
-                android:visibility="gone"
-                android:orientation="vertical"
-                android:id="@+id/editor_container">
+                android:orientation="vertical">
 
                 <com.raredev.vcspace.ui.PathListView
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"
                     android:id="@+id/path_list" />
 
-                <com.google.android.material.tabs.TabLayout
-                    android:layout_height="wrap_content"
+                <FrameLayout
+                    android:layout_height="match_parent"
                     android:layout_width="match_parent"
-                    app:tabMode="scrollable"
-                    app:tabIndicatorAnimationDuration="0"
-                    app:tabGravity="start"
-                    app:tabTextAppearance="@style/TabLayout.TextStyle"
-                    android:id="@+id/tab_layout" />
-
-                <RelativeLayout
+                    android:orientation="vertical"
                     android:layout_weight="1"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <ViewFlipper
-                        android:layout_height="match_parent"
-                        android:layout_width="match_parent"
-                        android:layout_weight="1"
-                        android:id="@+id/container" />
-
-                    <RelativeLayout
-                        android:id="@+id/floating_container"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
-
-                </RelativeLayout>
+                    android:id="@+id/panel_area" />
 
                 <LinearLayout
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"
+                    android:visibility="gone"
                     android:orientation="vertical"
                     android:id="@+id/layout_symbol">
 
@@ -88,7 +58,7 @@
                         android:background="?attr/colorOutline"
                         android:id="@+id/top_divider" />
 
-                    <com.raredev.vcspace.ui.editor.symbol.SymbolInputView
+                    <com.raredev.vcspace.ui.SymbolInputView
                         android:layout_height="wrap_content"
                         android:layout_width="wrap_content"
                         android:id="@+id/symbol_input" />
@@ -97,32 +67,24 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_height="match_parent"
-                android:layout_width="match_parent"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:id="@+id/no_file_opened">
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:textSize="15sp"
-                    android:text="@string/no_file_opened" />
-
-            </LinearLayout>
-
-        </ViewFlipper>
+        </RelativeLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <androidx.fragment.app.FragmentContainerView
+    <com.google.android.material.navigation.NavigationView
         android:layout_height="match_parent"
         android:layout_width="300dp"
-        android:background="?attr/colorSurface"
-        android:name="com.raredev.vcspace.fragments.explorer.FileExplorerFragment"
-        android:tag="filemanager"
-        android:layout_gravity="start"
-        android:id="@+id/filemanager_fragment" />
+        android:fitsSystemWindows="false"
+        android:layout_gravity="start">
+
+        <androidx.fragment.app.FragmentContainerView
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:background="?attr/colorSurface"
+            android:name="com.raredev.vcspace.fragments.EditorDrawerFragment"
+            android:tag="filemanager"
+            android:id="@+id/filemanager_fragment" />
+
+    </com.google.android.material.navigation.NavigationView>
+
 </androidx.drawerlayout.widget.DrawerLayout>

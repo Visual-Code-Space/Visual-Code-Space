@@ -17,10 +17,6 @@ public class PreferencesUtils {
     return getDefaultPrefs().getBoolean(SharedPreferencesKeys.KEY_DYNAMIC_COLORS, true);
   }
 
-  public static boolean useWindows() {
-    return getDefaultPrefs().getBoolean(SharedPreferencesKeys.KEY_USE_WINDOWS, false);
-  }
-
   /*
    * Returns the user-selected font value
    */
@@ -30,7 +26,7 @@ public class PreferencesUtils {
 
   public static int getEditorTABSize() {
     return Integer.valueOf(
-        getDefaultPrefs().getString(SharedPreferencesKeys.KEY_EDITOR_TAB_SIZE_VALUE, "4"));
+        getDefaultPrefs().getString(SharedPreferencesKeys.KEY_EDITOR_TAB_SIZE, "4"));
   }
 
   /*
@@ -38,7 +34,7 @@ public class PreferencesUtils {
    */
   public static int getSelectedFont() {
     String selectedFont =
-        getDefaultPrefs().getString(SharedPreferencesKeys.KEY_EDITOR_FONT_VALUE, "firacode");
+        getDefaultPrefs().getString(SharedPreferencesKeys.KEY_EDITOR_FONT, "firacode");
     return getFont(selectedFont);
   }
 
@@ -60,7 +56,7 @@ public class PreferencesUtils {
     return getDefaultPrefs().getBoolean(SharedPreferencesKeys.KEY_LINENUMBERS, true);
   }
 
-  public static String getTab() {
+  public static String getIndentationString() {
     String spaces = " ".repeat(getEditorTABSize());
     return useSpaces() ? spaces : "\t";
   }

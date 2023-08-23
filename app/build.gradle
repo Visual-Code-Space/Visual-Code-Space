@@ -111,6 +111,7 @@ dependencies {
   implementation project(path: ':compiler')
   implementation project(path: ':plugins')
   implementation project(path: ':editor')
+  implementation project(path: ':panels')
   implementation project(path: ':models')
   implementation project(path: ':treeview')
 

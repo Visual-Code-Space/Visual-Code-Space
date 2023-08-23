@@ -21,7 +21,7 @@ public class FileSettingsFragment extends PreferenceFragmentCompat {
     fontSize.setOnPreferenceClickListener(
         (pref) -> {
           var encodingsBuilder = new MaterialAlertDialogBuilder(requireContext());
-          encodingsBuilder.setTitle(R.string.pref_editor_tabsize);
+          encodingsBuilder.setTitle(R.string.pref_encoding_for_opening);
 
           List<String> entries = getSupportedEncodings();
 
