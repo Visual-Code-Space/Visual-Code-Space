@@ -89,6 +89,7 @@
     <string name="enter_language">Enter language</string>
     <string name="execute">Execute</string>
     <string name="output">Output</string>
+    <string name="add_panel">Add panel</string>
 
     <!-- Git -->
     <string name="git">Git</string>

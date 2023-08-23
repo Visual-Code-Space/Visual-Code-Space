@@ -81,6 +81,7 @@
     <string name="enter_language">Digite a linguagem</string>
     <string name="execute">Executar</string>
     <string name="output">Saída</string>
+    <string name="add_panel">Adicionar painel</string>
 
     <!-- Git -->
     <string name="no_open_repository">Nenhum repositório aberto</string>

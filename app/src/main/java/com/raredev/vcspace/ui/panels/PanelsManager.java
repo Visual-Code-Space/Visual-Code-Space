@@ -10,7 +10,6 @@ import com.raredev.vcspace.events.PanelEvent;
 import com.raredev.vcspace.res.R;
 import com.raredev.vcspace.ui.panels.editor.WelcomePanel;
 import com.raredev.vcspace.ui.panels.file.FileExplorerPanel;
-import com.raredev.vcspace.util.ToastUtils;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -62,10 +61,16 @@ public class PanelsManager {
 
           @Override
           public void addAvailablePanels(PanelArea panelArea, Menu menu) {
+            menu.add(R.string.welcome)
+                .setOnMenuItemClickListener(
+                    item -> {
+                      panelArea.addPanel(new WelcomePanel(activity), true);
+                      return true;
+                    });
             menu.add("File Explorer")
                 .setOnMenuItemClickListener(
                     item -> {
-                      PanelsManager.this.addPanel(new FileExplorerPanel(activity), true);
+                      panelArea.addPanel(new FileExplorerPanel(activity), true);
                       return true;
                     });
           }
@@ -77,8 +82,10 @@ public class PanelsManager {
 
           @Override
           public void selectedPanel(Panel panel) {
-            activity.updateCurrentPanel(panel);
-            activity.invalidateOptionsMenu();
+            if (panel.getPanelArea() == panelArea) {
+              activity.updateCurrentPanel(panel);
+              activity.invalidateOptionsMenu();
+            }
           }
 
           @Override
@@ -137,7 +144,6 @@ public class PanelsManager {
     if (floatingPanels.contains(panelArea)) {
       floatingPanels.remove(panelArea);
     }
-    ToastUtils.showShort("Size: " + floatingPanels.size(), 0);
   }
 
   public void removePanel(Panel panel) {

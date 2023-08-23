@@ -3,6 +3,7 @@ package com.raredev.vcspace.ui.panels;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -94,8 +95,9 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
     add.setOnClickListener(
         v -> {
           PopupMenu pm = new PopupMenu(context, v);
+          SubMenu addPanelMenu = pm.getMenu().addSubMenu(R.string.add_panel);
           if (listener != null) {
-            listener.addAvailablePanels(this, pm.getMenu());
+            listener.addAvailablePanels(this, addPanelMenu);
           }
           pm.show();
         });
