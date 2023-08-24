@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.TextView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -42,6 +43,7 @@ import com.raredev.vcspace.ui.PathListView;
 import com.raredev.vcspace.ui.panels.Panel;
 import com.raredev.vcspace.ui.panels.PanelsManager;
 import com.raredev.vcspace.ui.panels.compiler.ExecutePanel;
+import com.raredev.vcspace.ui.panels.compiler.WebViewPanel;
 import com.raredev.vcspace.ui.panels.editor.EditorPanel;
 import com.raredev.vcspace.ui.panels.editor.SearcherPanel;
 import com.raredev.vcspace.util.FileUtil;
@@ -131,9 +133,9 @@ public class EditorActivity extends BaseActivity
 
   @Override
   public boolean onPrepareOptionsMenu(Menu menu) {
-    Panel panel = panelsManager.getSelectedPanel();
-    if (panel != null && panel instanceof EditorPanel) {
-      EditorPanel editorPanel = (EditorPanel) panel;
+    EditorPanel editorPanel = getSelectedEditorPanel();
+    WebViewPanel webViewPanel = getSelectedWebViewPanel();
+    if (editorPanel != null) {
       var document = editorPanel.getDocument();
       menu.findItem(R.id.menu_execute).setVisible(true);
       menu.findItem(R.id.menu_undo).setVisible(KeyboardUtils.isSoftInputVisible(this));
@@ -145,6 +147,10 @@ public class EditorActivity extends BaseActivity
       menu.findItem(R.id.menu_save_all).setEnabled(getUnsavedDocumentsCount() > 0);
       menu.findItem(R.id.menu_reload).setEnabled(true);
       menu.findItem(R.id.menu_editor).setVisible(true);
+    } else if (webViewPanel != null) {
+      menu.findItem(R.id.menu_webview).setVisible(true);
+      menu.findItem(R.id.zooming).setChecked(webViewPanel.isSupportZoom());
+      menu.findItem(R.id.desktop_mode).setChecked(webViewPanel.isDesktopMode());
     }
     return super.onPrepareOptionsMenu(menu);
   }
@@ -162,16 +168,21 @@ public class EditorActivity extends BaseActivity
   public boolean onOptionsItemSelected(MenuItem item) {
     var id = item.getItemId();
     EditorPanel editorPanel = getSelectedEditorPanel();
+    WebViewPanel webViewPanel = getSelectedWebViewPanel();
     if (editorPanel != null) {
       var document = editorPanel.getDocument();
       if (id == R.id.menu_execute) {
         saveAllFiles(false);
-        panelsManager.addFloatingPanel(ExecutePanel.createFloating(this, binding.panelArea));
-        panelsManager.sendEvent(
-            new UpdateExecutePanelEvent(
-                document.getPath(),
-                FileUtils.getFileExtension(document.getPath()),
-                editorPanel.getCode()));
+        if (document.getName().endsWith(".html")) {
+          panelsManager.addWebViewPanel(document.getPath());
+        } else {
+          panelsManager.addFloatingPanel(ExecutePanel.createFloating(this, binding.panelArea));
+          panelsManager.sendEvent(
+              new UpdateExecutePanelEvent(
+                  document.getPath(),
+                  FileUtils.getFileExtension(document.getPath()),
+                  editorPanel.getCode()));
+        }
       } else if (id == R.id.menu_undo) editorPanel.undo();
       else if (id == R.id.menu_redo) editorPanel.redo();
       else if (id == R.id.menu_search) {
@@ -186,6 +197,26 @@ public class EditorActivity extends BaseActivity
         launcher.launch(intent);
       } else if (id == R.id.menu_save_all) saveAllFiles(true);
       else if (id == R.id.menu_reload) editorPanel.reloadFile(() -> updateTabs());
+      
+    } else if (webViewPanel != null) {
+      WebView webView = webViewPanel.getWebView();
+      if (id == R.id.back) {
+        if (webView.canGoBack()) webView.goBack();
+        else ToastUtils.showShort("Can't go back...", ToastUtils.TYPE_ERROR);
+      } else if (id == R.id.forward) {
+        if (webView.canGoForward()) webView.goForward();
+        else ToastUtils.showShort("Can't go forward...", ToastUtils.TYPE_ERROR);
+      } else if (id == R.id.zooming) {
+        webViewPanel.setSupportZoom(!item.isChecked());
+        item.setChecked(!item.isChecked());
+      } else if (id == R.id.desktop_mode) {
+        webViewPanel.setDesktopMode(!item.isChecked());
+        item.setChecked(!item.isChecked());
+      } else if (id == R.id.refresh) {
+        webView.reload();
+      } else if (id == R.id.open_in_browser) {
+        webViewPanel.openInBrowser();
+      }
     }
 
     if (id == R.id.menu_new_file) createFile.launch("untitled");
@@ -403,6 +434,14 @@ public class EditorActivity extends BaseActivity
     return null;
   }
 
+  public WebViewPanel getSelectedWebViewPanel() {
+    Panel panel = panelsManager.getSelectedPanel();
+    if (panel != null && panel instanceof WebViewPanel) {
+      return (WebViewPanel) panel;
+    }
+    return null;
+  }
+  
   public void onRemovePanel() {
     if (panelsManager.getPanelAreaPanels().isEmpty()) {
       binding.pathList.setPath(null);

@@ -5,7 +5,7 @@
     <string name="open">Open</string>
     <string name="remove">Remove</string>
     <string name="info">Info</string>
-    <string name="close">Close</string>
+    <string name="close">Close this</string>
     <string name="close_others">Close others</string>
     <string name="close_all">Close all</string>
     <string name="pin">Pin</string>

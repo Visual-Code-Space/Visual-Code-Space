@@ -18,6 +18,8 @@ public abstract class Panel {
 
   public Panel(Context context) {
     this.context = context;
+
+    this.pinned = false;
   }
 
   void setPanel2PanelArea(Panel2PanelArea panel2PanelArea) {
@@ -31,7 +33,7 @@ public abstract class Panel {
   void setUnselected() {
     if (!destroyed) unselected();
   }
-  
+
   void setDestroyed() {
     destroyed = true;
     destroy();

@@ -75,6 +75,37 @@
         </menu>
     </item>
     <item
+        android:id="@+id/menu_webview"
+        android:icon="@drawable/web"
+        android:title="WebView"
+        android:visible="false"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/back"
+                android:title="@string/back" />
+            <item
+                android:id="@+id/forward"
+                android:title="@string/forward" />
+            <item
+                android:id="@+id/zooming"
+                android:title="@string/zooming"
+                android:checkable="true"
+                android:checked="true" />
+            <item
+                android:id="@+id/desktop_mode"
+                android:title="@string/desktop_mode"
+                android:checkable="true"
+                android:checked="false" />
+            <item
+                android:id="@+id/refresh"
+                android:title="@string/refresh" />
+            <item
+                android:id="@+id/open_in_browser"
+                android:title="@string/open_in_browser" />
+        </menu>
+    </item>
+    <item
         android:id="@+id/menu_settings"
         android:icon="@drawable/ic_settings"
         android:title="@string/menu_settings" />

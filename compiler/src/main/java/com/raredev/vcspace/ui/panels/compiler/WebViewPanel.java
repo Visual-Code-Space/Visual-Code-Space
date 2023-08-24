@@ -1,6 +1,8 @@
 package com.raredev.vcspace.ui.panels.compiler;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -26,10 +28,16 @@ public class WebViewPanel extends Panel {
 
   private SimpleHttpServer httpServer;
 
+  private boolean desktopMode, supportZoom;
+  private String filePath;
+
   public WebViewPanel(Context context) {
     super(context);
     binding = LayoutWebviewPanelBinding.inflate(LayoutInflater.from(getContext()));
     httpServer = new SimpleHttpServer(8080);
+    supportZoom = true;
+    desktopMode = false;
+    filePath = "";
 
     WebSettings webSettings = binding.webView.getSettings();
     webSettings.setAllowContentAccess(true);
@@ -63,6 +71,7 @@ public class WebViewPanel extends Panel {
 
           @Override
           public void onProgressChanged(WebView view, int progress) {
+            if (binding == null) return;
             binding.progressIndicator.setVisibility(progress == 100 ? View.GONE : View.VISIBLE);
             binding.progressIndicator.setProgressCompat(progress, true);
             /*setTitle(
@@ -88,6 +97,7 @@ public class WebViewPanel extends Panel {
         (String) path.subSequence(0, path.lastIndexOf("/")),
         path.substring(path.lastIndexOf("/") + 1));
     binding.webView.loadUrl(httpServer.getLocalIpAddress());
+    filePath = path;
   }
 
   @Override
@@ -111,6 +121,14 @@ public class WebViewPanel extends Panel {
     if (binding == null) return;
     httpServer.startServer();
     binding.webView.loadUrl(httpServer.getLocalIpAddress());
+  }
+
+  public WebView getWebView() {
+    return binding.webView;
+  }
+
+  public String getFilePath() {
+    return filePath;
   }
 
   private void showAlertDialog(String url, String message, JsResult result) {
@@ -160,6 +178,26 @@ public class WebViewPanel extends Panel {
     dialog.show();
   }
 
+  public void openInBrowser() {
+    String url = binding.webView.getUrl();
+    Intent i = new Intent(Intent.ACTION_VIEW);
+    i.setData(Uri.parse(url));
+    getContext().startActivity(i);
+  }
+
+  public boolean isSupportZoom() {
+    return supportZoom;
+  }
+
+  public void setSupportZoom(boolean enabled) {
+    binding.webView.getSettings().setSupportZoom(enabled);
+    supportZoom = enabled;
+  }
+
+  public boolean isDesktopMode() {
+    return desktopMode;
+  }
+
   public void setDesktopMode(boolean enabled) {
     WebSettings webSettings = binding.webView.getSettings();
 
@@ -176,5 +214,6 @@ public class WebViewPanel extends Panel {
       webSettings.setUseWideViewPort(false);
       webSettings.setLoadWithOverviewMode(false);
     }
+    desktopMode = enabled;
   }
 }

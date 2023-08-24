@@ -8,6 +8,7 @@ import com.blankj.utilcode.util.KeyboardUtils;
 import com.raredev.vcspace.activity.EditorActivity;
 import com.raredev.vcspace.events.PanelEvent;
 import com.raredev.vcspace.res.R;
+import com.raredev.vcspace.ui.panels.compiler.WebViewPanel;
 import com.raredev.vcspace.ui.panels.editor.WelcomePanel;
 import com.raredev.vcspace.ui.panels.file.FileExplorerPanel;
 import java.util.LinkedList;
@@ -73,11 +74,18 @@ public class PanelsManager {
                       panelArea.addPanel(new FileExplorerPanel(activity), true);
                       return true;
                     });
+            menu.add("WebView")
+                .setOnMenuItemClickListener(
+                    item -> {
+                      panelArea.addPanel(new WebViewPanel(activity), true);
+                      return true;
+                    });
           }
 
           @Override
           public void addPanel(Panel panel) {
             activity.updateTabs();
+            activity.savePanels();
           }
 
           @Override
@@ -187,6 +195,16 @@ public class PanelsManager {
 
   public PanelArea getPanelArea() {
     return panelArea;
+  }
+
+  public void addWebViewPanel(String path) {
+    WebViewPanel webViewPanel = getPanelArea().getPanel(WebViewPanel.class);
+    if (webViewPanel == null) {
+      webViewPanel = new WebViewPanel(activity);
+      addPanel(webViewPanel, false);
+    }
+    webViewPanel.loadFile(path);
+    panelArea.setSelectedPanel(webViewPanel);
   }
 
   public interface PanelsListener {
