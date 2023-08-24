@@ -96,7 +96,7 @@ dependencies {
   implementation common.jgit
   implementation common.eventbus
   
-  implementation platform("io.github.Rosemoe.sora-editor:bom:0.22.0")
+  implementation platform("io.github.Rosemoe.sora-editor:bom:0.22.1")
   implementation "io.github.Rosemoe.sora-editor:editor"
   implementation "io.github.Rosemoe.sora-editor:language-textmate"
   
