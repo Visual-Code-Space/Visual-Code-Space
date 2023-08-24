@@ -12,6 +12,7 @@ import androidx.appcompat.app.AlertDialog;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
+import com.raredev.vcspace.fragments.explorer.git.CloneRepository;
 import com.raredev.vcspace.progressdialog.ProgressDialog;
 import com.raredev.vcspace.res.R;
 import com.raredev.vcspace.res.databinding.LayoutTextinputBinding;
@@ -23,24 +24,18 @@ import com.raredev.vcspace.util.ToastUtils;
 import java.io.File;
 
 public class FileManagerDialogs {
-  public static void createFile(Context context, File file, Concluded concluded) {
-    createNew(context, file, false, concluded);
-  }
-
-  public static void createFolder(Context context, File file, Concluded concluded) {
-    createNew(context, file, true, concluded);
-  }
 
   @SuppressWarnings("deprecation")
-  private static void createNew(Context context, File file, boolean isFolder, Concluded concluded) {
+  public static void createNew(Context context, File file, Concluded concluded) {
     LayoutTextinputBinding binding = LayoutTextinputBinding.inflate(LayoutInflater.from(context));
 
     AlertDialog dialog =
         new MaterialAlertDialogBuilder(context)
             .setView(binding.getRoot())
-            .setTitle(isFolder ? R.string.new_folder_title : R.string.new_file_title)
-            .setPositiveButton(R.string.create, null)
-            .setNegativeButton(R.string.cancel, null)
+            .setTitle(R.string.create)
+            .setPositiveButton(R.string.folder, null)
+            .setNegativeButton(R.string.file, null)
+            .setNeutralButton(R.string.cancel, null)
             .create();
 
     dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
@@ -48,27 +43,26 @@ public class FileManagerDialogs {
     dialog.setOnShowListener(
         (p1) -> {
           TextInputEditText et_filename = binding.etInput;
-          binding.tvInputLayout.setHint(
-              isFolder
-                  ? context.getString(R.string.folder_name_hint)
-                  : context.getString(R.string.file_name_hint));
+          binding.tvInputLayout.setHint(context.getString(R.string.file_name_hint));
           et_filename.requestFocus();
-          Button positive = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-          positive.setOnClickListener(
+          Button createFolder = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+          createFolder.setOnClickListener(
               v -> {
-                if (isFolder) {
-                  File newFolder = new File(file, "/" + et_filename.getText().toString());
-                  if (!newFolder.exists()) {
-                    if (newFolder.mkdirs()) {
-                      concluded.concluded(newFolder);
-                    }
+                File newFolder = new File(file, "/" + et_filename.getText().toString());
+                if (!newFolder.exists()) {
+                  if (newFolder.mkdirs()) {
+                    concluded.concluded(newFolder);
                   }
-                } else {
-                  File newFile = new File(file, "/" + et_filename.getText().toString());
-                  if (!newFile.exists()) {
-                    if (FileUtil.writeFile(newFile.getAbsolutePath(), "")) {
-                      concluded.concluded(newFile);
-                    }
+                }
+                dialog.dismiss();
+              });
+          Button createFile = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+          createFile.setOnClickListener(
+              v -> {
+                File newFile = new File(file, "/" + et_filename.getText().toString());
+                if (!newFile.exists()) {
+                  if (FileUtil.writeFile(newFile.getAbsolutePath(), "")) {
+                    concluded.concluded(newFile);
                   }
                 }
                 dialog.dismiss();
@@ -228,6 +222,25 @@ public class FileManagerDialogs {
           ApkInstaller.installApplication(context, file);
         });
     builder.show();
+  }
+
+  public static void cloneRepoDialog(Context context, File file, Concluded concluded) {
+    CloneRepository cloneRepo = new CloneRepository(context);
+    cloneRepo.setDirectory(file);
+    cloneRepo.cloneRepository();
+    cloneRepo.setListener(
+        new CloneRepository.CloneListener() {
+
+          @Override
+          public void onCloneSuccess(File output) {
+            concluded.concluded(output);
+          }
+
+          @Override
+          public void onCloneFailed(String message) {
+            DialogUtils.newErrorDialog(context, "Clone failed", message);
+          }
+        });
   }
 
   public interface UpdateListener {

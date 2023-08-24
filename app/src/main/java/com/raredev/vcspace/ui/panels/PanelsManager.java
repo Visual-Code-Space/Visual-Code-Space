@@ -114,6 +114,7 @@ public class PanelsManager {
   public void addDefaultPanels() {
     if (panelArea.getPanels().isEmpty()) {
       addPanel(new WelcomePanel(activity), true);
+      addPanel(new FileExplorerPanel(activity), false);
     }
   }
 

@@ -15,6 +15,7 @@
     <ViewFlipper
         android:layout_height="match_parent"
         android:layout_width="match_parent"
+        android:layout_weight="1"
         android:id="@+id/container">
 
         <androidx.recyclerview.widget.RecyclerView
@@ -34,12 +35,22 @@
         <TextView
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:layout_gravity="center"
             android:padding="2dp"
             android:textSize="14sp"
             android:singleLine="true"
+            android:layout_gravity="center"
             android:text="@string/empty_folder" />
 
     </ViewFlipper>
+
+    <View
+        android:layout_height="0.5dp"
+        android:layout_width="match_parent"
+        android:background="?attr/colorOutline" />
+
+    <com.raredev.vcspace.ui.NavigationSpace
+        android:layout_height="45dp"
+        android:layout_width="match_parent"
+        android:id="@+id/navigation_space" />
 
 </LinearLayout>

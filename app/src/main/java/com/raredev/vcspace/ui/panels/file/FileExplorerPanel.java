@@ -38,8 +38,26 @@ public class FileExplorerPanel extends Panel implements FileAdapter.FileListener
 
     binding.pathList.setType(PathListView.TYPE_FOLDER_PATH);
     binding.pathList.setFileExplorerPanel(this);
+    
+    binding.navigationSpace.addItem(
+        context, R.string.refresh, R.drawable.ic_refresh, (v) -> refreshFiles());
+    binding.navigationSpace.addItem(
+        context,
+        R.string.create,
+        R.drawable.ic_add,
+        (v) -> {
+          FileManagerDialogs.createNew(context, currentDir.toFile(), (file) -> refreshFiles());
+        });
+    binding.navigationSpace.addItem(
+        context,
+        R.string.clone_repo,
+        R.drawable.git,
+        (v) ->
+            FileManagerDialogs.cloneRepoDialog(
+                context, currentDir.toFile(), (output) -> setCurrentDir(FileModel.fileToFileModel(output))));
     setupRecyclerView();
     refreshFiles();
+
     setContentView(binding.getRoot());
     setTitle("Explorer");
   }

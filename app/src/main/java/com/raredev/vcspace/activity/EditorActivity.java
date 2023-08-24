@@ -66,7 +66,7 @@ public class EditorActivity extends BaseActivity
 
   private static final String LOG_TAG = EditorActivity.class.getSimpleName();
 
-  private static final String RECENT_PANELS_PATH =
+  public static final String RECENT_PANELS_PATH =
       PathUtils.getExternalAppDataPath() + "/files/recentPanels/editorPanels.json";
 
   public ActivityResultLauncher<Intent> launcher;
@@ -114,7 +114,7 @@ public class EditorActivity extends BaseActivity
             invalidateOptionsMenu();
           }
         });
-
+    
     CompletionProvider.registerCompletionProviders();
     PreferencesUtils.getDefaultPrefs().registerOnSharedPreferenceChangeListener(this);
     registerResultActivity();
