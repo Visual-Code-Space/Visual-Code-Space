@@ -68,7 +68,7 @@ android {
 
 dependencies {
   def lifecycle_version = "2.6.1"
-  def activity_version = "1.7.1"
+  def activity_version = "1.7.2"
   def markwon_version = "4.6.2"
 
   implementation fileTree(dir: 'libs', include: ['*.jar'])
