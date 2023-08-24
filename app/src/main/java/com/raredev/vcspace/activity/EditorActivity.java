@@ -116,7 +116,7 @@ public class EditorActivity extends BaseActivity
             invalidateOptionsMenu();
           }
         });
-    
+
     CompletionProvider.registerCompletionProviders();
     PreferencesUtils.getDefaultPrefs().registerOnSharedPreferenceChangeListener(this);
     registerResultActivity();
@@ -187,6 +187,7 @@ public class EditorActivity extends BaseActivity
       else if (id == R.id.menu_redo) editorPanel.redo();
       else if (id == R.id.menu_search) {
         panelsManager.addFloatingPanel(SearcherPanel.createFloating(this, binding.panelArea));
+        panelsManager.sendEvent(new UpdateSearcherEvent(editorPanel.getEditor().getSearcher()));
       } else if (id == R.id.menu_format) editorPanel.getEditor().formatCodeAsync();
       else if (id == R.id.menu_save) saveFile(true);
       else if (id == R.id.menu_save_as) {
@@ -197,7 +198,7 @@ public class EditorActivity extends BaseActivity
         launcher.launch(intent);
       } else if (id == R.id.menu_save_all) saveAllFiles(true);
       else if (id == R.id.menu_reload) editorPanel.reloadFile(() -> updateTabs());
-      
+
     } else if (webViewPanel != null) {
       WebView webView = webViewPanel.getWebView();
       if (id == R.id.back) {
@@ -441,7 +442,7 @@ public class EditorActivity extends BaseActivity
     }
     return null;
   }
-  
+
   public void onRemovePanel() {
     if (panelsManager.getPanelAreaPanels().isEmpty()) {
       binding.pathList.setPath(null);
@@ -576,7 +577,7 @@ public class EditorActivity extends BaseActivity
     return names;
   }
 
-  private void savePanels() {
+  public void savePanels() {
     List<Panel> panels = panelsManager.getPanelAreaPanels();
     try {
       String json = PanelUtils.panelsToJson(panels);
