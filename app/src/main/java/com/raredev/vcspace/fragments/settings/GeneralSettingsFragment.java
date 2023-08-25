@@ -52,7 +52,6 @@ public class GeneralSettingsFragment extends PreferenceFragmentCompat {
                 dlg.cancel();
               });
           selectThemeBuilder.setPositiveButton(android.R.string.cancel, null);
-          selectThemeBuilder.setCancelable(false);
           selectThemeBuilder.show();
           return true;
         });

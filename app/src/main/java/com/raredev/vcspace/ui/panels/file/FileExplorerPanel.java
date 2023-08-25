@@ -7,6 +7,7 @@ import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.blankj.utilcode.util.ClipboardUtils;
+import com.blankj.utilcode.util.PathUtils;
 import com.raredev.vcspace.activity.EditorActivity;
 import com.raredev.vcspace.adapters.FileAdapter;
 import com.raredev.vcspace.databinding.LayoutFileExplorerPanelBinding;
@@ -19,6 +20,7 @@ import com.raredev.vcspace.ui.PathListView;
 import com.raredev.vcspace.ui.panels.Panel;
 import com.raredev.vcspace.util.FileUtil;
 import com.raredev.vcspace.util.PreferencesUtils;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -30,7 +32,7 @@ public class FileExplorerPanel extends Panel implements FileAdapter.FileListener
   private LayoutFileExplorerPanelBinding binding;
   private FileAdapter mFilesAdapter;
 
-  private FileModel currentDir = FileModel.fileToFileModel(FileUtil.getDeviceDirectory());
+  private FileModel currentDir = FileModel.fileToFileModel(new File(PathUtils.getRootPathExternalFirst()));
 
   public FileExplorerPanel(Context context) {
     super(context);
@@ -143,7 +145,6 @@ public class FileExplorerPanel extends Panel implements FileAdapter.FileListener
   }
 
   public void listArchives(FileModel path) {
-
     binding.container.setDisplayedChild(1);
     TaskExecutor.executeAsyncProvideError(
         () -> {

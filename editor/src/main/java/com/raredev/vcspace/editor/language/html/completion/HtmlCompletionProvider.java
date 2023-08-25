@@ -30,7 +30,7 @@ public class HtmlCompletionProvider extends CompletionProvider {
     completion =
         GsonUtils.fromJson(
             FileUtil.readAssetFile(
-                BaseApp.getInstance(), "textmate/html/completions/completions.json"),
+                BaseApp.getInstance(), "editor/textmate/html/completions/completions.json"),
             HtmlCompletion.class);
   }
 

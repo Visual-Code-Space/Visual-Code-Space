@@ -40,6 +40,7 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
   protected final String languageScope;
 
   private List<SimplePluginCompletionItem> pluginsCompletion;
+  private SymbolPairMatch symbolPair;
 
   protected VCSpaceTMLanguage(
       IGrammar grammar,
@@ -51,6 +52,7 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
 
     pluginsCompletion = new ArrayList<>();
     readCompletionsPlugin();
+    addSymbolPairs();
   }
 
   public static VCSpaceTMLanguage create(String languageScopeName) {
@@ -112,7 +114,9 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
 
   @Override
   public SymbolPairMatch getSymbolPairs() {
-    SymbolPairMatch symbolPair = new SymbolPairMatch();
+    /*if (symbolPair == null) {
+      
+    }
     if (languageConfiguration == null) {
       return symbolPair;
     }
@@ -128,8 +132,28 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
               autoClosingPair.open,
               autoClosingPair.close,
               new TextMateSymbolPairMatch.SymbolPairEx(autoClosingPair)));
-    }
+    }*/
     return symbolPair;
+  }
+  
+  private void addSymbolPairs() {
+    symbolPair = new SymbolPairMatch();
+    if (languageConfiguration == null) {
+      return;
+    }
+
+    List<AutoClosingPairConditional> autoClosingPairs = languageConfiguration.getAutoClosingPairs();
+    if (autoClosingPairs == null) {
+      return;
+    }
+    for (AutoClosingPairConditional autoClosingPair : autoClosingPairs) {
+      symbolPair.putPair(
+          autoClosingPair.open,
+          new SymbolPairMatch.SymbolPair(
+              autoClosingPair.open,
+              autoClosingPair.close,
+              new TextMateSymbolPairMatch.SymbolPairEx(autoClosingPair)));
+    }
   }
 
   public String formatCode(Content text, TextRange range) {
@@ -164,7 +188,6 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
 
   public void readCompletionsPluginHandler(File completionFile) {
     if (completionFile.exists()) {
-
       String json = FileUtil.readFile(completionFile);
       try {
         JSONObject obj = new JSONObject(json);

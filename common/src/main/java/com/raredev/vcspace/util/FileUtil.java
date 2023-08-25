@@ -28,15 +28,6 @@ import java.util.List;
 
 public class FileUtil {
 
-  private static File deviceDirectory;
-
-  public static File getDeviceDirectory() {
-    if (deviceDirectory == null) {
-      deviceDirectory = new File(Environment.getExternalStorageDirectory().getAbsolutePath());
-    }
-    return deviceDirectory;
-  }
-
   public static boolean isValidTextFile(String filename) {
     return !filename.matches(
         ".*\\.(bin|ttf|png|jpe?g|bmp|mp4|mp3|m4a|iso|so|zip|rar|jar|dex|odex|vdex|7z|apk|apks|xapk)$");

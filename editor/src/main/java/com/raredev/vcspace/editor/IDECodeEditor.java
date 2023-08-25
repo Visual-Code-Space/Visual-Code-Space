@@ -176,7 +176,7 @@ public class IDECodeEditor extends CodeEditor {
   public void onSharedPreferenceChanged(PreferenceChangedEvent event) {
     String key = event.getKey();
     switch (key) {
-      case SharedPreferencesKeys.KEY_FONT_SIZE_PREFERENCE:
+      case SharedPreferencesKeys.KEY_EDITOR_TEXT_SIZE:
         updateTextSize();
         break;
       case SharedPreferencesKeys.KEY_EDITOR_TAB_SIZE:

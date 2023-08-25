@@ -53,6 +53,8 @@ import com.raredev.vcspace.util.PreferencesUtils;
 import com.raredev.vcspace.util.SharedPreferencesKeys;
 import com.raredev.vcspace.util.ToastUtils;
 import com.raredev.vcspace.util.UniqueNameBuilder;
+import com.raredev.vcspace.util.Utils;
+import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -118,6 +120,7 @@ public class EditorActivity extends BaseActivity
         });
 
     CompletionProvider.registerCompletionProviders();
+    ThemeRegistry.getInstance().setTheme(Utils.isDarkMode() ? "darcula" : "quietlight");
     PreferencesUtils.getDefaultPrefs().registerOnSharedPreferenceChangeListener(this);
     registerResultActivity();
 

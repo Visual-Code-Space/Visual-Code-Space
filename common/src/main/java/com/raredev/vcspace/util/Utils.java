@@ -11,28 +11,17 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
 import android.widget.ImageView;
+import androidx.appcompat.app.AppCompatDelegate;
+import com.raredev.vcspace.BaseApp;
 
 public class Utils {
-
-  private static Context mContext;
-
-  public static void init(Context context) {
-    mContext = context;
-  }
-
-  public static Context getContext() {
-    return mContext;
-  }
 
   public static int pxToDp(int value) {
     return (int)
         TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP, value, mContext.getResources().getDisplayMetrics());
-  }
-
-  public static void copyText(final CharSequence text) {
-    ClipboardManager cm = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
-    cm.setPrimaryClip(ClipData.newPlainText(mContext.getPackageName(), text));
+            TypedValue.COMPLEX_UNIT_DIP,
+            value,
+            BaseApp.getInstance().getResources().getDisplayMetrics());
   }
 
   public static void updateImageTint(ImageView image, int color) {
@@ -43,8 +32,13 @@ public class Utils {
   }
 
   public static boolean isDarkMode() {
+    if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) return true;
+    else if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO)
+      return false;
+    
     int uiMode =
-        mContext.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        BaseApp.getInstance().getResources().getConfiguration().uiMode
+            & Configuration.UI_MODE_NIGHT_MASK;
     return uiMode == Configuration.UI_MODE_NIGHT_YES;
   }
 }

@@ -9,8 +9,7 @@ public class SharedPreferencesKeys {
 
   // Editor
   public static final String KEY_EDITOR = "pref_editor";
-  public static final String KEY_FONT_SIZE_PREFERENCE = "pref_font_size";
-  public static final String KEY_EDITOR_TEXT_SIZE = "pref_font_size_value";
+  public static final String KEY_EDITOR_TEXT_SIZE = "pref_font_size";
   public static final String KEY_EDITOR_TAB_SIZE = "pref_editortabsize";
   public static final String KEY_EDITOR_FONT = "pref_editorfont";
   public static final String KEY_LINENUMBERS = "pref_linenumbers";

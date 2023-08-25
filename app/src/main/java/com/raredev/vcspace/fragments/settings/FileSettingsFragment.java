@@ -42,7 +42,6 @@ public class FileSettingsFragment extends PreferenceFragmentCompat {
                 dlg.cancel();
               });
           encodingsBuilder.setPositiveButton(android.R.string.cancel, null);
-          encodingsBuilder.setCancelable(false);
           encodingsBuilder.show();
           return true;
         });

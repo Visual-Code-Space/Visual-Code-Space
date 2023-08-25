@@ -11,9 +11,11 @@ import com.raredev.vcspace.models.DocumentModel;
 import com.raredev.vcspace.res.R;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.ui.panels.Panel;
+import io.github.rosemoe.sora.langs.textmate.TextMateColorScheme;
 import io.github.rosemoe.sora.langs.textmate.VCSpaceTMLanguage;
 import io.github.rosemoe.sora.langs.textmate.provider.TextMateProvider;
-import io.github.rosemoe.sora.text.Cursor;
+import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
+import io.github.rosemoe.sora.widget.schemes.EditorColorScheme;
 
 public class EditorPanel extends Panel {
 
@@ -25,7 +27,7 @@ public class EditorPanel extends Panel {
     this.document = document;
     binding = LayoutEditorPanelBinding.inflate(LayoutInflater.from(getContext()));
 
-    binding.editor.setColorScheme(TextMateProvider.getColorScheme());
+    binding.editor.setColorScheme(createColorScheme());
     binding.editor.setDocument(document);
     setLoading(true);
 
@@ -44,7 +46,6 @@ public class EditorPanel extends Panel {
         (result) -> {
           binding.editor.setText((String) result, null);
           if (!modified) document.markUnmodified();
-          binding.editor.configureEditor();
           postRead();
         });
     setContentView(binding.getRoot());
@@ -66,6 +67,7 @@ public class EditorPanel extends Panel {
 
   private void postRead() {
     binding.editor.setEditorLanguage(createLanguage());
+    binding.editor.configureEditor();
     //binding.editor.setCursorPosition(document.getPositionLine(), document.getPositionColumn());
     setLoading(false);
   }
@@ -78,7 +80,7 @@ public class EditorPanel extends Panel {
           .setNegativeButton(R.string.cancel, null)
           .setPositiveButton(
               android.R.string.ok,
-              (dpg, witch) -> {
+              (dlg, witch) -> {
                 reloadFileHandler(post);
               })
           .show();
@@ -99,11 +101,6 @@ public class EditorPanel extends Panel {
           setLoading(false);
           post.run();
         });
-  }
-
-  public void reloadEditor() {
-    getEditor().setColorScheme(TextMateProvider.getColorScheme());
-    getEditor().setEditorLanguage(createLanguage());
   }
 
   public void saveDocument() {
@@ -144,6 +141,14 @@ public class EditorPanel extends Panel {
 
   public void setLoading(boolean loading) {
     binding.circularProgressIndicator.setVisibility(loading ? View.VISIBLE : View.GONE);
+  }
+  
+  public EditorColorScheme createColorScheme() {
+    try {
+      return TextMateColorScheme.create(ThemeRegistry.getInstance());
+    } catch (Exception e) {
+      return new EditorColorScheme();
+    }
   }
 
   public VCSpaceTMLanguage createLanguage() {

@@ -17,7 +17,7 @@ public class EditorSettingsFragment extends PreferenceFragmentCompat {
   public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
     setPreferencesFromResource(R.xml.settings_editor, rootKey);
 
-    Preference fontSize = findPreference(SharedPreferencesKeys.KEY_FONT_SIZE_PREFERENCE);
+    Preference fontSize = findPreference(SharedPreferencesKeys.KEY_EDITOR_TEXT_SIZE);
     fontSize.setOnPreferenceClickListener(
         (pref) -> {
           LayoutMaterialSliderBinding binding =
@@ -47,7 +47,6 @@ public class EditorSettingsFragment extends PreferenceFragmentCompat {
                   (d, w) ->
                       prefs.edit().putInt(SharedPreferencesKeys.KEY_EDITOR_TEXT_SIZE, 14).apply())
               .setView(binding.getRoot())
-              .setCancelable(false)
               .show();
           return true;
         });
@@ -82,7 +81,6 @@ public class EditorSettingsFragment extends PreferenceFragmentCompat {
                 dlg.cancel();
               });
           selectTabSizeBuilder.setPositiveButton(android.R.string.cancel, null);
-          selectTabSizeBuilder.setCancelable(false);
           selectTabSizeBuilder.show();
           return true;
         });
@@ -117,7 +115,6 @@ public class EditorSettingsFragment extends PreferenceFragmentCompat {
                 dlg.cancel();
               });
           selectFontBuilder.setPositiveButton(android.R.string.cancel, null);
-          selectFontBuilder.setCancelable(false);
           selectFontBuilder.show();
           return true;
         });

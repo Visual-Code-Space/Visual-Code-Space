@@ -478,41 +478,6 @@
       "settings": {
         "foreground": "#333333ff"
       }
-    },
-    {
-      "name": "Log Assert",
-      "scope": "constant.language.log.assert, constant.language.log.assert.line",
-      "settings": {
-        "foreground": "#9C27B0"
-      }
-    },
-    {
-      "name": "Log Info",
-      "scope": "constant.language.log.info, constant.language.log.info.line",
-      "settings": {
-        "foreground": "#4CAF50"
-      }
-    },
-    {
-      "name": "Log Warning",
-      "scope": "constant.language.log.warning, constant.language.log.warning.line",
-      "settings": {
-        "foreground": "#FFC107"
-      }
-    },
-    {
-      "name": "Log Debug",
-      "scope": "constant.language.log.debug, constant.language.log.debug.line",
-      "settings": {
-        "foreground": "#2196F3"
-      }
-    },
-    {
-      "name": "Log Error",
-      "scope": "constant.language.log.error, constant.language.log.error.line",
-      "settings": {
-        "foreground": "#F44336"
-      }
     }
   ],
   "colors": {
@@ -526,7 +491,7 @@
     "list.inactiveSelectionBackground": "#d3dbcd",
     "list.highlightForeground": "#9769dc",
     "selection.background": "#C9D0D9",
-    "editor.background": "#FAFDFD",
+    "editor.background": "#F5F5F5",
     "editorWhitespace.foreground": "#AAAAAA",
     "editor.lineHighlightBackground": "#E4F6D4",
     "editorLineNumber.activeForeground": "#9769dc",
@@ -538,7 +503,7 @@
     "editorLineNumber.foreground": "#6D705B",
     "editorCursor.foreground": "#54494B",
     "inputOption.activeBorder": "#adafb7",
-    "dropdown.background": "#FAFDFD",
+    "dropdown.background": "#F5F5F5",
     "editor.findMatchBackground": "#BF9CAC",
     "editor.findMatchHighlightBackground": "#edc9d8",
     "peekViewEditor.matchHighlightBackground": "#C2DFE3",

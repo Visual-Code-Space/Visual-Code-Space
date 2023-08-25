@@ -18,7 +18,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.elevation.SurfaceColors;
 import com.raredev.vcspace.CrashHandler;
 import com.raredev.vcspace.res.R;
-import com.raredev.vcspace.util.Utils;
+import com.raredev.vcspace.util.ToastUtils;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
@@ -29,7 +29,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     getWindow().setNavigationBarColor(SurfaceColors.SURFACE_0.getColor(this));
     Thread.setDefaultUncaughtExceptionHandler(new CrashHandler(this));
     setContentView(getLayout());
-    Utils.init(this);
+    ToastUtils.setContext(this);
 
     if (!isPermissionGaranted(this)) {
       takeFilePermissions(this);
