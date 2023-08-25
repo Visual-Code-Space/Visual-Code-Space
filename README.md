@@ -3,6 +3,8 @@
 <div align="center">
     
 [![Debug Build](https://github.com/raredeveloperofc/Visual-Code-Space/actions/workflows/debug_build.yml/badge.svg)](https://github.com/raredeveloperofc/Visual-Code-Space/actions/workflows/debug_build.yml)
+
+[![](https://dcbadge.vercel.app/api/server/4uTBTZeAgS)](https://discord.gg/4uTBTZeAgS)
 </div>
 
 ## Screenshots
