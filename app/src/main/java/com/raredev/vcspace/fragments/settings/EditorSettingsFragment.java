@@ -4,7 +4,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.PreferenceScreen;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.raredev.vcspace.databinding.LayoutMaterialSliderBinding;
 import com.raredev.vcspace.res.R;
@@ -31,7 +30,6 @@ public class EditorSettingsFragment extends PreferenceFragmentCompat {
 
           new MaterialAlertDialogBuilder(requireContext())
               .setTitle(R.string.pref_editor_textsize)
-              .setMessage(R.string.choose_default_font)
               .setPositiveButton(
                   android.R.string.ok,
                   (d, w) ->
@@ -48,6 +46,33 @@ public class EditorSettingsFragment extends PreferenceFragmentCompat {
                       prefs.edit().putInt(SharedPreferencesKeys.KEY_EDITOR_TEXT_SIZE, 14).apply())
               .setView(binding.getRoot())
               .show();
+          return true;
+        });
+
+    Preference lineHeight = findPreference(SharedPreferencesKeys.KEY_EDITOR_LINEHEIGHT);
+    lineHeight.setOnPreferenceClickListener(
+        (pref) -> {
+          String[] heights = {"1", "2", "3", "4"};
+          var selectLineHeightBuilder = new MaterialAlertDialogBuilder(requireContext());
+          selectLineHeightBuilder.setTitle(R.string.pref_editor_lineheight);
+
+          var prefs = PreferencesUtils.getDefaultPrefs();
+          var selectedHeight = prefs.getInt(SharedPreferencesKeys.KEY_EDITOR_LINEHEIGHT, 3);
+
+          selectLineHeightBuilder.setSingleChoiceItems(
+              heights,
+              selectedHeight - 1,
+              (dlg, which) -> {
+                prefs
+                    .edit()
+                    .putInt(
+                        SharedPreferencesKeys.KEY_EDITOR_LINEHEIGHT,
+                        Integer.valueOf(heights[which]))
+                    .apply();
+                dlg.cancel();
+              });
+          selectLineHeightBuilder.setPositiveButton(android.R.string.cancel, null);
+          selectLineHeightBuilder.show();
           return true;
         });
 
@@ -98,8 +123,7 @@ public class EditorSettingsFragment extends PreferenceFragmentCompat {
 
           SharedPreferences prefs = PreferencesUtils.getDefaultPrefs();
 
-          var selectedFont =
-              prefs.getString(SharedPreferencesKeys.KEY_EDITOR_FONT, "firacode");
+          var selectedFont = prefs.getString(SharedPreferencesKeys.KEY_EDITOR_FONT, "firacode");
           var i = 0;
           if (selectedFont.equals("jetbrains")) {
             i = 1;

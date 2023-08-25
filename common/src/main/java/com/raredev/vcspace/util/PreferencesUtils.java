@@ -24,6 +24,10 @@ public class PreferencesUtils {
     return getDefaultPrefs().getInt(SharedPreferencesKeys.KEY_EDITOR_TEXT_SIZE, 14);
   }
 
+  public static int getEditorLineHeight() {
+    return getDefaultPrefs().getInt(SharedPreferencesKeys.KEY_EDITOR_LINEHEIGHT, 3);
+  }
+
   public static int getEditorTABSize() {
     return Integer.valueOf(
         getDefaultPrefs().getString(SharedPreferencesKeys.KEY_EDITOR_TAB_SIZE, "4"));
@@ -36,6 +40,22 @@ public class PreferencesUtils {
     String selectedFont =
         getDefaultPrefs().getString(SharedPreferencesKeys.KEY_EDITOR_FONT, "firacode");
     return getFont(selectedFont);
+  }
+
+  public static boolean useStickyScroll() {
+    return getDefaultPrefs().getBoolean(SharedPreferencesKeys.KEY_STICKYSCROLL, false);
+  }
+
+  public static boolean useFontLigatures() {
+    return getDefaultPrefs().getBoolean(SharedPreferencesKeys.KEY_FONTLIGATURES, true);
+  }
+
+  public static boolean useWordWrap() {
+    return getDefaultPrefs().getBoolean(SharedPreferencesKeys.KEY_WORDWRAP, false);
+  }
+
+  public static boolean lineNumbers() {
+    return getDefaultPrefs().getBoolean(SharedPreferencesKeys.KEY_LINENUMBERS, true);
   }
 
   /*
@@ -52,8 +72,8 @@ public class PreferencesUtils {
     return getDefaultPrefs().getBoolean(SharedPreferencesKeys.KEY_DELETE_EMPTY_LINE_FAST, true);
   }
 
-  public static boolean lineNumbers() {
-    return getDefaultPrefs().getBoolean(SharedPreferencesKeys.KEY_LINENUMBERS, true);
+  public static boolean useDeleteTabs() {
+    return getDefaultPrefs().getBoolean(SharedPreferencesKeys.KEY_DELETETABS, true);
   }
 
   public static String getIndentationString() {

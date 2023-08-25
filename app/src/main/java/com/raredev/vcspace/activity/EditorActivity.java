@@ -236,6 +236,12 @@ public class EditorActivity extends BaseActivity
       binding.drawerLayout.closeDrawer(GravityCompat.START);
       return;
     }
+    WebViewPanel webViewPanel = getSelectedWebViewPanel();
+    if (webViewPanel != null && webViewPanel.getWebView().canGoBack()) {
+      webViewPanel.getWebView().goBack();
+      return;
+    }
+
     super.onBackPressed();
   }
 

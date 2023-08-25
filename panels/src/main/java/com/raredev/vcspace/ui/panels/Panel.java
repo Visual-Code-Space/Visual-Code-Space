@@ -20,6 +20,7 @@ public abstract class Panel {
     this.context = context;
 
     this.pinned = false;
+    this.destroyed = false;
   }
 
   void setPanel2PanelArea(Panel2PanelArea panel2PanelArea) {

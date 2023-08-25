@@ -20,18 +20,13 @@ import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import io.github.rosemoe.sora.text.CharPosition;
 import io.github.rosemoe.sora.text.Content;
 import io.github.rosemoe.sora.text.ContentReference;
-import io.github.rosemoe.sora.text.Cursor;
 import io.github.rosemoe.sora.text.TextRange;
 import io.github.rosemoe.sora.text.TextUtils;
 import io.github.rosemoe.sora.util.MyCharacter;
 import java.util.List;
-import org.eclipse.lemminx.dom.DOMDocument;
-import org.eclipse.lemminx.dom.DOMNode;
-import org.eclipse.lemminx.dom.DOMParser;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.parser.Parser;
-import org.jsoup.parser.Tag;
 
 public class HtmlLanguage extends VCSpaceTMLanguage {
 
@@ -88,6 +83,7 @@ public class HtmlLanguage extends VCSpaceTMLanguage {
     return doc.html();
   }
 
+  /*
   @Override
   public void editorCommitText(CharSequence text) {
     super.editorCommitText(text);
@@ -110,7 +106,7 @@ public class HtmlLanguage extends VCSpaceTMLanguage {
       }
     } catch (Exception e) {
     }
-  }
+  }*/
 
   @Override
   public boolean checkIsCompletionChar(char c) {

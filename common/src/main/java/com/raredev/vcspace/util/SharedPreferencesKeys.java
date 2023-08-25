@@ -10,11 +10,16 @@ public class SharedPreferencesKeys {
   // Editor
   public static final String KEY_EDITOR = "pref_editor";
   public static final String KEY_EDITOR_TEXT_SIZE = "pref_font_size";
+  public static final String KEY_EDITOR_LINEHEIGHT = "pref_lineheight";
   public static final String KEY_EDITOR_TAB_SIZE = "pref_editortabsize";
   public static final String KEY_EDITOR_FONT = "pref_editorfont";
+  public static final String KEY_STICKYSCROLL = "pref_stickyscroll";
+  public static final String KEY_FONTLIGATURES = "pref_fontligatures";
+  public static final String KEY_WORDWRAP = "pref_wordwrap";
   public static final String KEY_LINENUMBERS = "pref_linenumbers";
   public static final String KEY_USE_SPACES = "pref_usespaces";
   public static final String KEY_DELETE_EMPTY_LINE_FAST = "pref_deleteemptylinefast";
+  public static final String KEY_DELETETABS = "pref_deletetabs";
   public static final String KEY_FILE_PATH = "pref_file_path";
   public static final String KEY_AUTO_SAVE = "pref_auto_save";
   

@@ -141,19 +141,28 @@
 
     <string name="pref_editor_textsize">Font Size</string>
     <string name="pref_editor_textsize_summary">Font size of the editor.</string>
+    <string name="pref_editor_lineheight">Line height</string>
+    <string name="pref_editor_lineheight_summary">Sets the height of the editor line.</string>
     <string name="pref_editor_tabsize">TAB Size</string>
     <string name="pref_editor_tabsize_summary">Specifies the space size for TAB</string>
-
     <string name="pref_editor_font">Editor font</string>
     <string name="pref_editor_font_summary">Change font of editor and shortcut bar.</string>
     <string name="pref_font_firacode">Fira Code Regular</string>
     <string name="pref_font_jetbrains">JetBrains Mono</string>
+    <string name="pref_editor_stickyscroll">Sticky scroll</string>
+    <string name="pref_editor_stickyscroll_summary">Shows the nested current scopes during the scroll at the top of the editor.</string>
+    <string name="pref_editor_fontligatures">Font ligatures</string>
+    <string name="pref_editor_fontligatures_summary">Enable ligatures on special characters.</string>
+    <string name="pref_editor_wordwrap">Word wrap</string>
+    <string name="pref_editor_wordwrap_summary">If activated, it will remove the horizontal scroll of the editor.</string>
     <string name="pref_editor_linenumbers">Line Numbers</string>
     <string name="pref_editor_linenumbers_summary">Display the line numbers to the left of the code editor.</string>
     <string name="pref_editor_use_spaces">Use spaces</string>
     <string name="pref_editor_use_spaces_summary">Use spaces instead of tabs(\\t)</string>
-    <string name="pref_editor_deleteemptylinefast">Delete empty line fast</string>
+    <string name="pref_editor_deleteemptylinefast">Delete empty lines on backspace</string>
     <string name="pref_editor_deleteemptylinefast_summary">If the current line has only spaces it will be deleted quickly.</string>
+    <string name="pref_editor_deletetabs">Delete tabs on backspace</string>
+    <string name="pref_editor_deletetabs_summary">If enabled deletes tabs quickly.</string>
     <string name="pref_editor_file_path">File path</string>
     <string name="pref_editor_file_path_summary">Show file path above tab.</string>
     <string name="pref_editor_auto_save">Auto save</string>

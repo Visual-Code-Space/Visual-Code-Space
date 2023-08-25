@@ -70,6 +70,7 @@ public class IDECodeEditor extends CodeEditor {
     
     getComponent(EditorAutoCompletion.class).setLayout(new CustomCompletionLayout());
     getComponent(EditorAutoCompletion.class).setAdapter(new CompletionItemAdapter());
+    getComponent(EditorAutoCompletion.class).setEnabledAnimation(true);
     subscribeContentChangeEvent();
 
     if (!EventBus.getDefault().isRegistered(this)) {
@@ -179,8 +180,20 @@ public class IDECodeEditor extends CodeEditor {
       case SharedPreferencesKeys.KEY_EDITOR_TEXT_SIZE:
         updateTextSize();
         break;
+      case SharedPreferencesKeys.KEY_EDITOR_LINEHEIGHT:
+        updateLineHeight();
+        break;
       case SharedPreferencesKeys.KEY_EDITOR_TAB_SIZE:
         updateTABSize();
+        break;
+      case SharedPreferencesKeys.KEY_STICKYSCROLL:
+        updateStickyScroll();
+        break;
+      case SharedPreferencesKeys.KEY_FONTLIGATURES:
+        updateFontLigatures();
+        break;
+      case SharedPreferencesKeys.KEY_WORDWRAP:
+        updateWordWrap();
         break;
       case SharedPreferencesKeys.KEY_DELETE_EMPTY_LINE_FAST:
         updateDeleteEmptyLineFast();
@@ -191,15 +204,23 @@ public class IDECodeEditor extends CodeEditor {
       case SharedPreferencesKeys.KEY_LINENUMBERS:
         updateLineNumbers();
         break;
+      case SharedPreferencesKeys.KEY_DELETETABS:
+        updateDeleteTabs();
+        break;
     }
   }
 
   public void configureEditor() {
     updateEditorFont();
     updateTextSize();
+    updateLineHeight();
     updateTABSize();
+    updateStickyScroll();
+    updateFontLigatures();
+    updateWordWrap();
     updateLineNumbers();
     updateDeleteEmptyLineFast();
+    updateDeleteTabs();
 
     setInputType(createInputFlags());
   }
@@ -207,6 +228,11 @@ public class IDECodeEditor extends CodeEditor {
   private void updateTextSize() {
     int textSize = PreferencesUtils.getEditorTextSize();
     setTextSize(textSize);
+  }
+  
+  private void updateLineHeight() {
+    int lineHeight = PreferencesUtils.getEditorLineHeight();
+    setLineSpacing(lineHeight, 1.1f);
   }
 
   private void updateTABSize() {
@@ -220,16 +246,36 @@ public class IDECodeEditor extends CodeEditor {
     setTypefaceLineNumber(
         ResourcesCompat.getFont(getContext(), PreferencesUtils.getSelectedFont()));
   }
+  
+  private void updateStickyScroll() {
+    boolean stickyScroll = PreferencesUtils.useStickyScroll();
+    getProps().stickyScroll = stickyScroll;
+    getProps().stickyScrollMaxLines = 4; 
+  }
+  
+  private void updateFontLigatures() {
+    boolean fontLigatures = PreferencesUtils.useFontLigatures();
+    setLigatureEnabled(fontLigatures);
+  }
+  
+  private void updateWordWrap() {
+    boolean wordWrap = PreferencesUtils.useWordWrap();
+    setWordwrap(wordWrap);
+  }
+  
+  private void updateLineNumbers() {
+    boolean lineNumbers = PreferencesUtils.lineNumbers();
+    setLineNumberEnabled(lineNumbers);
+  }
 
   private void updateDeleteEmptyLineFast() {
     boolean deleteEmptyLineFast = PreferencesUtils.useDeleteEmptyLineFast();
     getProps().deleteEmptyLineFast = deleteEmptyLineFast;
-    getProps().deleteMultiSpaces = deleteEmptyLineFast ? -1 : 1;
   }
-
-  private void updateLineNumbers() {
-    boolean lineNumbers = PreferencesUtils.lineNumbers();
-    setLineNumberEnabled(lineNumbers);
+  
+  private void updateDeleteTabs() {
+    boolean deleteTabs = PreferencesUtils.useDeleteTabs();
+    getProps().deleteMultiSpaces = deleteTabs ? -1 : 1;
   }
 
   private void updateNonPrintablePaintingFlags() {

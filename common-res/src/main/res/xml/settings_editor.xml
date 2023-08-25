@@ -8,43 +8,77 @@
         app:title="@string/editor">
 
         <Preference
-            app:icon="@drawable/format_size"
+            app:iconSpaceReserved="false"
             app:key="pref_font_size"
-            app:summary="@string/pref_editor_textsize_summary"
-            app:title="@string/pref_editor_textsize" />
+            app:title="@string/pref_editor_textsize"
+            app:summary="@string/pref_editor_textsize_summary" />
 
         <Preference
-            app:icon="@drawable/format_font"
+            app:iconSpaceReserved="false"
+            app:key="pref_lineheight"
+            app:title="@string/pref_editor_lineheight"
+            app:summary="@string/pref_editor_lineheight_summary" />
+
+        <Preference
+            app:iconSpaceReserved="false"
             app:key="pref_editortabsize"
             app:title="@string/pref_editor_tabsize"
             app:summary="@string/pref_editor_tabsize_summary" />
 
         <Preference
-            app:icon="@drawable/format_font"
+            app:iconSpaceReserved="false"
             app:key="pref_editorfont"
             app:title="@string/pref_editor_font"
             app:summary="@string/pref_editor_font_summary" />
 
         <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"
+            app:key="pref_stickyscroll"
+            app:title="@string/pref_editor_stickyscroll"
+            app:summary="@string/pref_editor_stickyscroll_summary" />
+
+        <SwitchPreferenceCompat
             app:defaultValue="true"
-            app:icon="@drawable/ic_line_number"
+            app:iconSpaceReserved="false"
+            app:key="pref_fontligatures"
+            app:title="@string/pref_editor_fontligatures"
+            app:summary="@string/pref_editor_fontligatures_summary" />
+
+        <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"
+            app:key="pref_wordwrap"
+            app:title="@string/pref_editor_wordwrap"
+            app:summary="@string/pref_editor_wordwrap_summary" />
+
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:iconSpaceReserved="false"
             app:key="pref_linenumbers"
             app:title="@string/pref_editor_linenumbers"
             app:summary="@string/pref_editor_linenumbers_summary" />
 
         <SwitchPreferenceCompat
             app:defaultValue="true"
-            app:icon="@drawable/keyboard_tab"
+            app:iconSpaceReserved="false"
             app:key="pref_usespaces"
             app:title="@string/pref_editor_use_spaces"
             app:summary="@string/pref_editor_use_spaces_summary" />
 
         <SwitchPreferenceCompat
             app:defaultValue="true"
-            app:icon="@drawable/form_textbox_password"
+            app:iconSpaceReserved="false"
             app:key="pref_deleteemptylinefast"
             app:title="@string/pref_editor_deleteemptylinefast"
             app:summary="@string/pref_editor_deleteemptylinefast_summary" />
+
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:iconSpaceReserved="false"
+            app:key="pref_deletetabs"
+            app:title="@string/pref_editor_deletetabs"
+            app:summary="@string/pref_editor_deletetabs_summary" />
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -53,14 +87,14 @@
 
         <SwitchPreferenceCompat
             app:defaultValue="true"
-            app:icon="@drawable/ic_save"
+            app:iconSpaceReserved="false"
             app:key="pref_file_path"
             app:title="@string/pref_editor_file_path"
             app:summary="@string/pref_editor_file_path_summary" />
 
         <SwitchPreferenceCompat
             app:defaultValue="false"
-            app:icon="@drawable/ic_save"
+            app:iconSpaceReserved="false"
             app:key="pref_auto_save"
             app:title="@string/pref_editor_auto_save"
             app:summary="@string/pref_editor_auto_save_summary" />
