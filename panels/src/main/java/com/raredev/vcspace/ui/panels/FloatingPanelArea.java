@@ -81,7 +81,6 @@ public class FloatingPanelArea extends PanelArea {
       if (listener != null) {
         listener.removedPanel(this);
       }
-      removeAllPanels();
 
       binding
           .getRoot()
@@ -90,7 +89,11 @@ public class FloatingPanelArea extends PanelArea {
           .scaleY(0.5f)
           .alpha(0.0f)
           .setDuration(100)
-          .withEndAction(() -> parent.removeView(binding.getRoot()))
+          .withEndAction(
+              () -> {
+                removeAllPanels();
+                parent.removeView(binding.getRoot());
+              })
           .start();
     }
   }
@@ -151,7 +154,7 @@ public class FloatingPanelArea extends PanelArea {
 
     leftEdge.setOnTouchListener(getLeftEdgeTouchListener());
     rightEdge.setOnTouchListener(getRightEdgeTouchListener());
-    // topEdge.setOnTouchListener(getTopEdgeTouchListener());
+    topEdge.setOnTouchListener(getTopEdgeTouchListener());
     bottomEdge.setOnTouchListener(getBottomEdgeTouchListener());
   }
 

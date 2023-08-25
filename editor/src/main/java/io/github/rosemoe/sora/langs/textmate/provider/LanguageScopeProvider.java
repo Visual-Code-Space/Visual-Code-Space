@@ -24,4 +24,13 @@ public class LanguageScopeProvider {
   public static String scopeForFileName(String fileName) {
     return scopes.get(FileUtils.getFileExtension(fileName).toLowerCase());
   }
+
+  public static String getFileExtensionByScope(String scope) {
+    for (Map.Entry<String, String> entry : scopes.entrySet()) {
+      if (entry.getValue().equals(scope)) {
+        return entry.getKey();
+      }
+    }
+    return null;
+  }
 }

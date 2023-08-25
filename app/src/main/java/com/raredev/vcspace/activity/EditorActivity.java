@@ -46,6 +46,7 @@ import com.raredev.vcspace.ui.panels.compiler.ExecutePanel;
 import com.raredev.vcspace.ui.panels.compiler.WebViewPanel;
 import com.raredev.vcspace.ui.panels.editor.EditorPanel;
 import com.raredev.vcspace.ui.panels.editor.SearcherPanel;
+import com.raredev.vcspace.ui.panels.editor.UserSnippetsPanel;
 import com.raredev.vcspace.util.FileUtil;
 import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.util.PanelUtils;
@@ -226,6 +227,7 @@ public class EditorActivity extends BaseActivity
     if (id == R.id.menu_new_file) createFile.launch("untitled");
     else if (id == R.id.menu_open_file) pickFile.launch("text/*");
     else if (id == R.id.menu_settings) startActivity(new Intent(this, SettingsActivity.class));
+    else if (id == R.id.menu_usersnippets) panelsManager.addFloatingPanel(UserSnippetsPanel.createFloating(this, binding.panelArea));
 
     return true;
   }

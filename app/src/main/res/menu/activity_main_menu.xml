@@ -106,6 +106,10 @@
         </menu>
     </item>
     <item
+        android:id="@+id/menu_usersnippets"
+        android:icon="@drawable/ic_comment_text_outline"
+        android:title="@string/user_snippets" />
+    <item
         android:id="@+id/menu_settings"
         android:icon="@drawable/ic_settings"
         android:title="@string/menu_settings" />

@@ -77,6 +77,7 @@
     <string name="file_access_title">Permissão de acesso aos arquivos</string>
     <string name="file_access_message">Este aplicativo precisa de permissão para acessar arquivos no armazenamento do seu dispositivo para funcionar corretamente. Conceda permissão para continuar.</string>
     <string name="grant_permission">Garantir permissão</string>
+    <string name="user_snippets">User snippets</string>
     <string name="enter_input">Digite a entrada</string>
     <string name="enter_language">Digite a linguagem</string>
     <string name="execute">Executar</string>

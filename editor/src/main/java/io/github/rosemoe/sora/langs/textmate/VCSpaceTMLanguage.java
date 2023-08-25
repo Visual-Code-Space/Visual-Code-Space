@@ -1,20 +1,23 @@
 package io.github.rosemoe.sora.langs.textmate;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import androidx.annotation.NonNull;
+import com.blankj.utilcode.util.FileIOUtils;
+import com.blankj.utilcode.util.PathUtils;
 import com.raredev.vcspace.editor.completion.SimpleCompletionIconDrawer;
 import com.raredev.vcspace.editor.completion.SimpleCompletionItemKind;
 import com.raredev.vcspace.editor.completion.SimpleSnippetCompletionItem;
-import com.raredev.vcspace.plugin.Plugin;
-import com.raredev.vcspace.plugin.PluginsLoader;
-import com.raredev.vcspace.util.FileUtil;
+import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.util.PreferencesUtils;
+import com.raredev.vcspace.util.ToastUtils;
 import io.github.rosemoe.sora.lang.completion.CompletionHelper;
 import io.github.rosemoe.sora.lang.completion.CompletionPublisher;
 import io.github.rosemoe.sora.lang.completion.SnippetDescription;
 import io.github.rosemoe.sora.lang.completion.snippet.parser.CodeSnippetParser;
 import io.github.rosemoe.sora.lang.format.Formatter;
+import io.github.rosemoe.sora.langs.textmate.provider.LanguageScopeProvider;
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import io.github.rosemoe.sora.text.CharPosition;
@@ -26,7 +29,6 @@ import io.github.rosemoe.sora.widget.SymbolPairMatch;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.eclipse.tm4e.core.grammar.IGrammar;
 import org.eclipse.tm4e.languageconfiguration.model.AutoClosingPairConditional;
 import org.eclipse.tm4e.languageconfiguration.model.LanguageConfiguration;
@@ -36,10 +38,13 @@ import org.json.JSONObject;
 
 public class VCSpaceTMLanguage extends TextMateLanguage {
 
-  protected TMFormatter formatter;
-  protected final String languageScope;
+  public static final String SNIPPETS_FOLDER_PATH =
+      PathUtils.getExternalAppDataPath() + "/files/snippets/";
 
-  private List<SimplePluginCompletionItem> pluginsCompletion;
+  protected final String languageScope;
+  protected TMFormatter formatter;
+
+  private List<UserSnippetCompletionItem> languageSnippets;
   private SymbolPairMatch symbolPair;
 
   protected VCSpaceTMLanguage(
@@ -50,9 +55,14 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
     super(grammar, languageConfiguration, null, themeRegistry, false);
     this.languageScope = languageScope;
 
-    pluginsCompletion = new ArrayList<>();
-    readCompletionsPlugin();
+    languageSnippets = new ArrayList<>();
     addSymbolPairs();
+    TaskExecutor.executeAsync(
+        () -> {
+          readLanguageSnippets();
+          return null;
+        },
+        (result) -> {});
   }
 
   public static VCSpaceTMLanguage create(String languageScopeName) {
@@ -78,17 +88,16 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
       @NonNull Bundle extraArguments) {
     var prefix =
         CompletionHelper.computePrefix(content, position, MyCharacter::isJavaIdentifierPart);
-
-    for (var pluginSnippet : pluginsCompletion) {
-      if (pluginSnippet.label.startsWith(prefix) && prefix.length() > 0) {
+    for (var snippet : languageSnippets) {
+      if (snippet.prefix.startsWith(prefix) && prefix.length() > 0) {
         publisher.addItem(
             new SimpleSnippetCompletionItem(
-                pluginSnippet.label, /* Label */
-                pluginSnippet.desc, /* Desc */
-                pluginSnippet.type, /* Type */
+                snippet.label, /* Label */
+                snippet.desc, /* Desc */
+                "Snippet", /* Type */
                 SimpleCompletionIconDrawer.draw(SimpleCompletionItemKind.SNIPPET),
                 new SnippetDescription(
-                    prefix.length(), CodeSnippetParser.parse(pluginSnippet.snippet), true)));
+                    prefix.length(), CodeSnippetParser.parse(snippet.body), true)));
       }
     }
   }
@@ -114,28 +123,23 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
 
   @Override
   public SymbolPairMatch getSymbolPairs() {
-    /*if (symbolPair == null) {
-      
-    }
-    if (languageConfiguration == null) {
-      return symbolPair;
-    }
-
-    List<AutoClosingPairConditional> autoClosingPairs = languageConfiguration.getAutoClosingPairs();
-    if (autoClosingPairs == null) {
-      return symbolPair;
-    }
-    for (AutoClosingPairConditional autoClosingPair : autoClosingPairs) {
-      symbolPair.putPair(
-          autoClosingPair.open,
-          new SymbolPairMatch.SymbolPair(
-              autoClosingPair.open,
-              autoClosingPair.close,
-              new TextMateSymbolPairMatch.SymbolPairEx(autoClosingPair)));
-    }*/
     return symbolPair;
   }
-  
+
+  public String formatCode(Content text, TextRange range) {
+    return text.toString();
+  }
+
+  public LanguageConfiguration getLanguageConfiguration() {
+    return this.languageConfiguration;
+  }
+
+  public void editorCommitText(CharSequence text) {}
+
+  public boolean checkIsCompletionChar(char c) {
+    return MyCharacter.isJavaIdentifierPart(c);
+  }
+
   private void addSymbolPairs() {
     symbolPair = new SymbolPairMatch();
     if (languageConfiguration == null) {
@@ -156,69 +160,42 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
     }
   }
 
-  public String formatCode(Content text, TextRange range) {
-    return text.toString();
-  }
-
-  public LanguageConfiguration getLanguageConfiguration() {
-    return this.languageConfiguration;
-  }
-
-  public void editorCommitText(CharSequence text) {}
-
-  public boolean checkIsCompletionChar(char c) {
-    return MyCharacter.isJavaIdentifierPart(c);
-  }
-
-  // Load Snippets from plugins
-  public void readCompletionsPlugin() {
-    var plugins = PluginsLoader.plugins;
-
-    for (Map.Entry<String, Plugin> entry : plugins.entrySet()) {
-      var plugin = entry.getValue();
-
-      if (plugin.completion != null && plugin.completion.getLanguageScope().equals(languageScope)) {
-        for (String completionPath : plugin.completion.getCompletionFiles()) {
-          var completionFile = new File(entry.getKey() + "/" + completionPath);
-          readCompletionsPluginHandler(completionFile);
-        }
-      }
-    }
-  }
-
-  public void readCompletionsPluginHandler(File completionFile) {
-    if (completionFile.exists()) {
-      String json = FileUtil.readFile(completionFile);
+  private void readLanguageSnippets() {
+    String fileExtension = LanguageScopeProvider.getFileExtensionByScope(languageScope);
+    File snippetsFile = new File(SNIPPETS_FOLDER_PATH + fileExtension + ".json");
+    if (snippetsFile.exists() && snippetsFile.isFile()) {
+      String json = FileIOUtils.readFile2String(snippetsFile);
       try {
         JSONObject obj = new JSONObject(json);
 
         var iterator = obj.keys();
         while (iterator.hasNext()) {
-          String key = iterator.next();
+          String label = iterator.next();
 
-          JSONObject completion = obj.getJSONObject(key);
-          JSONArray body = completion.getJSONArray("body");
+          JSONObject snippetObject = obj.getJSONObject(label);
+          JSONArray bodyArray = snippetObject.getJSONArray("body");
 
-          String bodyCode = "";
+          String prefix = snippetObject.getString("prefix");
+          String desc = snippetObject.getString("description");
 
-          if (body != null) {
-            for (int i = 0; i < body.length(); i++) {
-              String line = body.getString(i);
-              if (line != null) {
-                bodyCode += line;
-                if (i < body.length() - 1) {
-                  bodyCode += "\n";
-                }
+          if (TextUtils.isEmpty(prefix) || TextUtils.isEmpty(desc) || bodyArray == null) {
+            return;
+          }
+
+          String body = "";
+          for (int i = 0; i < bodyArray.length(); i++) {
+            String line = bodyArray.getString(i);
+            if (line != null) {
+              body += line;
+              if (i < bodyArray.length() - 1) {
+                body += "\n";
               }
             }
           }
 
-          pluginsCompletion.add(
-              new SimplePluginCompletionItem(
-                  key, /* Label */
-                  completion.getString("desc"), /* Desc */
-                  completion.getString("type"), /* Type */
-                  bodyCode /* bodyCode */));
+          if (TextUtils.isEmpty(body)) return;
+
+          languageSnippets.add(new UserSnippetCompletionItem(label, prefix, desc, body));
         }
       } catch (JSONException jsone) {
         ILogger.error("VCSpaceTMLanguage", jsone);
@@ -227,17 +204,14 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
     }
   }
 
-  private class SimplePluginCompletionItem {
-    public String label;
-    public String desc;
-    public String type;
-    public String snippet;
+  private class UserSnippetCompletionItem {
+    public String label, prefix, desc, body;
 
-    public SimplePluginCompletionItem(String label, String desc, String type, String snippet) {
+    public UserSnippetCompletionItem(String label, String prefix, String desc, String body) {
       this.label = label;
+      this.prefix = prefix;
       this.desc = desc;
-      this.type = type;
-      this.snippet = snippet;
+      this.body = body;
     }
   }
 }
