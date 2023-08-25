@@ -1,7 +1,6 @@
 package io.github.rosemoe.sora.langs.textmate;
 
 import android.os.Bundle;
-import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.PathUtils;
@@ -11,7 +10,6 @@ import com.raredev.vcspace.editor.completion.SimpleSnippetCompletionItem;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.util.PreferencesUtils;
-import com.raredev.vcspace.util.ToastUtils;
 import io.github.rosemoe.sora.lang.completion.CompletionHelper;
 import io.github.rosemoe.sora.lang.completion.CompletionPublisher;
 import io.github.rosemoe.sora.lang.completion.SnippetDescription;
@@ -88,16 +86,22 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
       @NonNull Bundle extraArguments) {
     var prefix =
         CompletionHelper.computePrefix(content, position, MyCharacter::isJavaIdentifierPart);
-    for (var snippet : languageSnippets) {
-      if (snippet.prefix.startsWith(prefix) && prefix.length() > 0) {
-        publisher.addItem(
-            new SimpleSnippetCompletionItem(
-                snippet.label, /* Label */
-                snippet.desc, /* Desc */
-                "Snippet", /* Type */
-                SimpleCompletionIconDrawer.draw(SimpleCompletionItemKind.SNIPPET),
-                new SnippetDescription(
-                    prefix.length(), CodeSnippetParser.parse(snippet.body), true)));
+    
+    if (prefix.length() <= 0) {
+      return;
+    }
+    for (UserSnippetCompletionItem snippet : languageSnippets) {
+      for (String snippetPrefix : snippet.prefix) {
+        if (snippetPrefix.startsWith(prefix)) {
+          publisher.addItem(
+              new SimpleSnippetCompletionItem(
+                  snippetPrefix, /* Label */
+                  snippet.desc, /* Desc */
+                  "Snippet", /* Type */
+                  SimpleCompletionIconDrawer.draw(SimpleCompletionItemKind.SNIPPET),
+                  new SnippetDescription(
+                      prefix.length(), CodeSnippetParser.parse(snippet.body), true)));
+        }
       }
     }
   }
@@ -163,51 +167,97 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
   private void readLanguageSnippets() {
     String fileExtension = LanguageScopeProvider.getFileExtensionByScope(languageScope);
     File snippetsFile = new File(SNIPPETS_FOLDER_PATH + fileExtension + ".json");
-    if (snippetsFile.exists() && snippetsFile.isFile()) {
-      String json = FileIOUtils.readFile2String(snippetsFile);
-      try {
-        JSONObject obj = new JSONObject(json);
 
-        var iterator = obj.keys();
-        while (iterator.hasNext()) {
-          String label = iterator.next();
+    if (!snippetsFile.exists() || !snippetsFile.isFile()) {
+      return;
+    }
 
-          JSONObject snippetObject = obj.getJSONObject(label);
-          JSONArray bodyArray = snippetObject.getJSONArray("body");
-
-          String prefix = snippetObject.getString("prefix");
-          String desc = snippetObject.getString("description");
-
-          if (TextUtils.isEmpty(prefix) || TextUtils.isEmpty(desc) || bodyArray == null) {
-            return;
-          }
-
-          String body = "";
-          for (int i = 0; i < bodyArray.length(); i++) {
-            String line = bodyArray.getString(i);
-            if (line != null) {
-              body += line;
-              if (i < bodyArray.length() - 1) {
-                body += "\n";
-              }
-            }
-          }
-
-          if (TextUtils.isEmpty(body)) return;
-
-          languageSnippets.add(new UserSnippetCompletionItem(label, prefix, desc, body));
-        }
-      } catch (JSONException jsone) {
-        ILogger.error("VCSpaceTMLanguage", jsone);
-        jsone.printStackTrace();
+    String json = FileIOUtils.readFile2String(snippetsFile);
+    try {
+      JSONObject obj = new JSONObject(json);
+      var iterator = obj.keys();
+      while (iterator.hasNext()) {
+        String label = iterator.next();
+        processSnippet(label, obj.getJSONObject(label));
       }
+    } catch (JSONException jsone) {
+      ILogger.error("VCSpaceTMLanguage", jsone);
+      jsone.printStackTrace();
     }
   }
 
-  private class UserSnippetCompletionItem {
-    public String label, prefix, desc, body;
+  private void processSnippet(String label, JSONObject snippetObject) throws JSONException {
+    Object bodyObj = snippetObject.opt("body");
+    Object prefixObj = snippetObject.opt("prefix");
+    Object descObj = snippetObject.opt("description");
 
-    public UserSnippetCompletionItem(String label, String prefix, String desc, String body) {
+    if (prefixObj == null || descObj == null || bodyObj == null) {
+      return;
+    }
+
+    if (!(bodyObj instanceof JSONArray)
+        || !(prefixObj instanceof JSONArray || prefixObj instanceof String)
+        || !(descObj instanceof String)) {
+      return;
+    }
+
+    var bodyArray = (JSONArray) bodyObj;
+    var desc = (String) descObj;
+
+    if (desc.isEmpty()) {
+      desc = label;
+    }
+
+    String[] prefix = getPrefixArray(prefixObj);
+    if (prefix == null) {
+      return;
+    }
+
+    String body = getBodyString(bodyArray);
+
+    if (body.isEmpty()) {
+      return;
+    }
+
+    languageSnippets.add(new UserSnippetCompletionItem(label, prefix, desc, body));
+  }
+
+  private String[] getPrefixArray(Object prefixObj) {
+    if (prefixObj instanceof JSONArray) {
+      JSONArray prefixArray = (JSONArray) prefixObj;
+      String[] prefix = new String[prefixArray.length()];
+      for (int i = 0; i < prefixArray.length(); i++) {
+        Object value = prefixArray.opt(i);
+        if (value instanceof String) {
+          prefix[i] = (String) value;
+        }
+      }
+      return prefix;
+    } else if (prefixObj instanceof String) {
+      return new String[] {(String) prefixObj};
+    }
+    return null;
+  }
+
+  private String getBodyString(JSONArray bodyArray) {
+    StringBuilder body = new StringBuilder();
+    for (int i = 0; i < bodyArray.length(); i++) {
+      Object value = bodyArray.opt(i);
+      if (value instanceof String) {
+        body.append(value);
+        if (i < bodyArray.length() - 1) {
+          body.append("\n");
+        }
+      }
+    }
+    return body.toString();
+  }
+
+  private class UserSnippetCompletionItem {
+    public String label, desc, body;
+    public String[] prefix;
+
+    public UserSnippetCompletionItem(String label, String[] prefix, String desc, String body) {
       this.label = label;
       this.prefix = prefix;
       this.desc = desc;
