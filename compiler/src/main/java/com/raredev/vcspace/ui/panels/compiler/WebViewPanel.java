@@ -74,9 +74,9 @@ public class WebViewPanel extends Panel {
             if (binding == null) return;
             binding.progressIndicator.setVisibility(progress == 100 ? View.GONE : View.VISIBLE);
             binding.progressIndicator.setProgressCompat(progress, true);
-            /*setTitle(
+           /* setTitle(
             view.getTitle() == "about:blank"
-                ? getContext().getString(string.app_name)
+                ? "WebView"
                 : view.getTitle());*/
           }
         });

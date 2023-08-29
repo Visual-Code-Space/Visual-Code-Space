@@ -7,10 +7,14 @@ import com.blankj.utilcode.util.FileIOUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.raredev.vcspace.databinding.LayoutEditorPanelBinding;
 import com.raredev.vcspace.editor.IDECodeEditor;
+import com.raredev.vcspace.events.PanelEvent;
+import com.raredev.vcspace.events.PreferenceChangedEvent;
 import com.raredev.vcspace.models.DocumentModel;
 import com.raredev.vcspace.res.R;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.ui.panels.Panel;
+import com.raredev.vcspace.util.PreferencesUtils;
+import com.raredev.vcspace.util.SharedPreferencesKeys;
 import io.github.rosemoe.sora.langs.textmate.TextMateColorScheme;
 import io.github.rosemoe.sora.langs.textmate.VCSpaceTMLanguage;
 import io.github.rosemoe.sora.langs.textmate.provider.TextMateProvider;
@@ -48,7 +52,23 @@ public class EditorPanel extends Panel {
           if (!modified) document.markUnmodified();
           postRead();
         });
+    
+    binding.pathList.setEnabled(PreferencesUtils.showFilePath());
+    binding.pathList.setColorScheme(getEditor().getColorScheme());
     setContentView(binding.getRoot());
+  }
+
+  @Override
+  public void receiveEvent(PanelEvent event) {
+    if (event instanceof PreferenceChangedEvent) {
+      var preferenceChangedEvent = (PreferenceChangedEvent) event;
+      String key = preferenceChangedEvent.getKey();
+      if (key.equals(SharedPreferencesKeys.KEY_FILE_PATH)) {
+        binding.pathList.setEnabled(PreferencesUtils.showFilePath());
+        updatePathList();
+      }
+      getEditor().onSharedPreferenceChanged(key);
+    }
   }
 
   @Override
@@ -57,8 +77,7 @@ public class EditorPanel extends Panel {
   }
 
   @Override
-  public void unselected() {
-  }
+  public void unselected() {}
 
   @Override
   public void selected() {
@@ -68,7 +87,8 @@ public class EditorPanel extends Panel {
   private void postRead() {
     binding.editor.setEditorLanguage(createLanguage());
     binding.editor.configureEditor();
-    //binding.editor.setCursorPosition(document.getPositionLine(), document.getPositionColumn());
+    updatePathList();
+    // binding.editor.setCursorPosition(document.getPositionLine(), document.getPositionColumn());
     setLoading(false);
   }
 
@@ -129,6 +149,7 @@ public class EditorPanel extends Panel {
   public void setDocument(DocumentModel document) {
     binding.editor.setDocument(document);
     this.document = document;
+    updatePathList();
   }
 
   public DocumentModel getDocument() {
@@ -143,6 +164,10 @@ public class EditorPanel extends Panel {
     binding.circularProgressIndicator.setVisibility(loading ? View.VISIBLE : View.GONE);
   }
   
+  private void updatePathList() {
+    binding.pathList.setPath(document.getPath());
+  }
+
   public EditorColorScheme createColorScheme() {
     try {
       return TextMateColorScheme.create(ThemeRegistry.getInstance());

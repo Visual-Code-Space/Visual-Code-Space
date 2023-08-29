@@ -2,7 +2,6 @@ package com.raredev.vcspace.ui.panels;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +25,7 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
   protected FrameLayout parent;
 
   protected List<Panel> panels = new LinkedList<>();
+  private List<Panel> panelsToRemove = new LinkedList<>();
 
   protected LayoutPanelAreaBinding binding;
   protected Panel selectedPanel;
@@ -41,6 +41,7 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
 
   private void init() {
     binding = LayoutPanelAreaBinding.inflate(LayoutInflater.from(context));
+    binding.tabs.setTabIndicatorAnimationMode(TabLayout.INDICATOR_ANIMATION_MODE_LINEAR);
     binding.tabs.addOnTabSelectedListener(this);
 
     panel2PanelArea =
@@ -55,7 +56,6 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
             removePanel(panel);
           }
         };
-
     parent.addView(binding.getRoot());
   }
 
@@ -88,11 +88,11 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
 
   public void addPanelTopBarButtons() {
     int padding = Utils.pxToDp(2);
-    ImageView add = new ImageView(context);
-    add.setLayoutParams(new ViewGroup.LayoutParams(Utils.pxToDp(25), Utils.pxToDp(25)));
-    add.setImageResource(R.drawable.ic_add);
-    add.setPadding(padding, padding, padding, padding);
-    add.setOnClickListener(
+    ImageView menu = new ImageView(context);
+    menu.setLayoutParams(new ViewGroup.LayoutParams(Utils.pxToDp(25), Utils.pxToDp(25)));
+    menu.setImageResource(R.drawable.ic_menu);
+    menu.setPadding(padding, padding, padding, padding);
+    menu.setOnClickListener(
         v -> {
           PopupMenu pm = new PopupMenu(context, v);
           SubMenu addPanelMenu = pm.getMenu().addSubMenu(R.string.add_panel);
@@ -102,7 +102,7 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
           pm.show();
         });
 
-    addViewInTopbar(add);
+    addViewInTopbar(menu);
   }
 
   public void sendEvent(PanelEvent event) {
@@ -117,10 +117,12 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
     if (tab != null && !tab.isSelected()) {
       tab.select();
     }
-    Panel oldCurrentPanel = selectedPanel;
-    if (oldCurrentPanel != null) {
-      oldCurrentPanel.setUnselected();
+
+    Panel lastSelectedPanel = selectedPanel;
+    if (lastSelectedPanel != null) {
+      lastSelectedPanel.setUnselected();
     }
+
     binding.panelContainer.setDisplayedChild(position);
     panel.setSelected();
 
@@ -139,7 +141,7 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
     binding.tabs.addTab(createTabItem(panel.getTitle()));
     binding.panelContainer.addView(panel.getContentView());
     if (select) setSelectedPanel(panel);
-    toggleEmptyPanels(false);
+    switchEmptyPanels(false);
     updateTabs();
 
     if (listener != null) listener.addPanel(panel);
@@ -181,7 +183,7 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
       }
 
       if (panels.isEmpty()) {
-        toggleEmptyPanels(true);
+        switchEmptyPanels(true);
         selectedPanel = null;
       }
       updateTabs();
@@ -196,17 +198,17 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
     }
     if (selectedPanel == null) return;
 
-    List<Panel> panelsToClose = new LinkedList<>();
     for (Panel panel : panels) {
       if (panel != null && !panel.equals(selectedPanel) && !panel.isPinned()) {
-        panelsToClose.add(panel);
+        panelsToRemove.add(panel);
       }
     }
 
-    for (Panel closePanel : panelsToClose) {
+    for (Panel closePanel : panelsToRemove) {
       removePanel(closePanel);
     }
     setSelectedPanel(selectedPanel);
+    panelsToRemove.clear();
   }
 
   public void removeAllPanels() {
@@ -214,16 +216,16 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
       return;
     }
 
-    List<Panel> panelsToClose = new LinkedList<>();
     for (Panel panel : panels) {
       if (panel != null && !panel.isPinned()) {
-        panelsToClose.add(panel);
+        panelsToRemove.add(panel);
       }
     }
 
-    for (Panel closePanel : panelsToClose) {
+    for (Panel closePanel : panelsToRemove) {
       removePanel(closePanel);
     }
+    panelsToRemove.clear();
   }
 
   public <T> T getPanel(Class<T> panelClass) {
@@ -244,7 +246,7 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
     return false;
   }
 
-  public void toggleEmptyPanels(boolean isEmpty) {
+  public void switchEmptyPanels(boolean isEmpty) {
     binding.viewFlipper.setDisplayedChild(isEmpty ? 1 : 0);
   }
 

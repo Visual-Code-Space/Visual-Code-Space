@@ -16,7 +16,6 @@ import com.raredev.vcspace.fragments.explorer.FileManagerDialogs;
 import com.raredev.vcspace.models.FileModel;
 import com.raredev.vcspace.res.R;
 import com.raredev.vcspace.task.TaskExecutor;
-import com.raredev.vcspace.ui.PathListView;
 import com.raredev.vcspace.ui.panels.Panel;
 import com.raredev.vcspace.util.FileUtil;
 import com.raredev.vcspace.util.PreferencesUtils;
@@ -32,15 +31,15 @@ public class FileExplorerPanel extends Panel implements FileAdapter.FileListener
   private LayoutFileExplorerPanelBinding binding;
   private FileAdapter mFilesAdapter;
 
-  private FileModel currentDir = FileModel.fileToFileModel(new File(PathUtils.getRootPathExternalFirst()));
+  private FileModel currentDir =
+      FileModel.fileToFileModel(new File(PathUtils.getRootPathExternalFirst()));
 
   public FileExplorerPanel(Context context) {
     super(context);
     binding = LayoutFileExplorerPanelBinding.inflate(LayoutInflater.from(getContext()));
 
-    binding.pathList.setType(PathListView.TYPE_FOLDER_PATH);
     binding.pathList.setFileExplorerPanel(this);
-    
+
     binding.navigationSpace.addItem(
         context, R.string.refresh, R.drawable.ic_refresh, (v) -> refreshFiles());
     binding.navigationSpace.addItem(
@@ -56,7 +55,9 @@ public class FileExplorerPanel extends Panel implements FileAdapter.FileListener
         R.drawable.git,
         (v) ->
             FileManagerDialogs.cloneRepoDialog(
-                context, currentDir.toFile(), (output) -> setCurrentDir(FileModel.fileToFileModel(output))));
+                context,
+                currentDir.toFile(),
+                (output) -> setCurrentDir(FileModel.fileToFileModel(output))));
     setupRecyclerView();
     refreshFiles();
 
@@ -79,20 +80,26 @@ public class FileExplorerPanel extends Panel implements FileAdapter.FileListener
   }
 
   @Override
-  public void onFileLongClick(FileModel file, View v) {}
-
-  @Override
-  public void onFileMenuClick(FileModel file, View v) {
+  public void onFileMenuClick(List<FileModel> selectedFiles, FileModel file, View v) {
     PopupMenu pm = new PopupMenu(getContext(), v);
     if (pm.getMenu() instanceof MenuBuilder) {
       ((MenuBuilder) pm.getMenu()).setOptionalIconsVisible(true);
     }
-    pm.getMenu().add(R.string.copy_path).setIcon(R.drawable.content_copy);
-    pm.getMenu().add(R.string.rename).setIcon(R.drawable.file_rename);
+    pm.getMenu().add(R.string.select_all).setIcon(R.drawable.ic_select_all);
+    if (selectedFiles.isEmpty()) {
+      pm.getMenu().add(R.string.copy_path).setIcon(R.drawable.content_copy);
+      pm.getMenu().add(R.string.rename).setIcon(R.drawable.file_rename);
+    } else {
+      pm.getMenu().add(R.string.unselect_all).setIcon(R.drawable.ic_select_all);
+    }
     pm.getMenu().add(R.string.delete).setIcon(R.drawable.delete_outline);
     pm.setOnMenuItemClickListener(
         item -> {
-          if (item.getTitle().equals(getContext().getString(R.string.copy_path))) {
+          if (item.getTitle().equals(getContext().getString(R.string.select_all))) {
+            mFilesAdapter.selectAllFiles();
+          } else if (item.getTitle().equals(getContext().getString(R.string.unselect_all))) {
+            mFilesAdapter.unselectAllFiles();
+          } else if (item.getTitle().equals(getContext().getString(R.string.copy_path))) {
             ClipboardUtils.copyText(file.getPath());
           } else if (item.getTitle().equals(getContext().getString(R.string.rename))) {
             FileManagerDialogs.renameFile(
@@ -104,7 +111,7 @@ public class FileExplorerPanel extends Panel implements FileAdapter.FileListener
                 });
           } else if (item.getTitle() == getContext().getString(R.string.delete)) {
             FileManagerDialogs.deleteFile(
-                getContext(), file.toFile(), (deletedFile) -> refreshFiles());
+                getContext(), selectedFiles, file.toFile(), (deletedFile) -> refreshFiles());
           }
           return true;
         });

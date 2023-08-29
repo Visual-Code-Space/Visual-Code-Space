@@ -10,7 +10,6 @@ import com.google.common.collect.ImmutableSet;
 import com.raredev.vcspace.editor.completion.CompletionItemAdapter;
 import com.raredev.vcspace.editor.completion.CustomCompletionLayout;
 import com.raredev.vcspace.events.EditorContentChangedEvent;
-import com.raredev.vcspace.events.PreferenceChangedEvent;
 import com.raredev.vcspace.models.DocumentModel;
 import com.raredev.vcspace.util.PreferencesUtils;
 import com.raredev.vcspace.util.SharedPreferencesKeys;
@@ -25,8 +24,6 @@ import io.github.rosemoe.sora.widget.component.EditorTextActionWindow;
 import java.util.Set;
 import org.eclipse.tm4e.languageconfiguration.model.CommentRule;
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 public class IDECodeEditor extends CodeEditor {
   
@@ -67,15 +64,10 @@ public class IDECodeEditor extends CodeEditor {
     textActions = new EditorTextActions(this);
 
     getComponent(EditorTextActionWindow.class).setEnabled(false);
-    
+    getComponent(EditorTextActionWindow.class).unregister();
     getComponent(EditorAutoCompletion.class).setLayout(new CustomCompletionLayout());
     getComponent(EditorAutoCompletion.class).setAdapter(new CompletionItemAdapter());
-    getComponent(EditorAutoCompletion.class).setEnabledAnimation(true);
     subscribeContentChangeEvent();
-
-    if (!EventBus.getDefault().isRegistered(this)) {
-      EventBus.getDefault().register(this);
-    }
   }
 
   @Override
@@ -130,16 +122,25 @@ public class IDECodeEditor extends CodeEditor {
 
   @Override
   public void release() {
-    if (!EventBus.getDefault().isRegistered(this)) {
-      EventBus.getDefault().unregister(this);
-    }
     super.release();
     textActions = null;
     searcher = null;
     document = null;
   }
+  
+  public DocumentModel getDocument() {
+    return document;
+  }
 
   public void setCursorPosition(int line, int column) {
+    final var content = getText();
+    if (getLineCount() <= 0) {
+      return;
+    }
+    int col = content.getColumnCount(line);
+    if (col < 0) {
+      col = 0;
+    }
     getCursor().set(line, column);
   }
 
@@ -172,10 +173,8 @@ public class IDECodeEditor extends CodeEditor {
     content.insert(line, col, text);
     return line;
   }
-  
-  @Subscribe(threadMode = ThreadMode.MAIN)
-  public void onSharedPreferenceChanged(PreferenceChangedEvent event) {
-    String key = event.getKey();
+
+  public void onSharedPreferenceChanged(String key) {
     switch (key) {
       case SharedPreferencesKeys.KEY_EDITOR_TEXT_SIZE:
         updateTextSize();

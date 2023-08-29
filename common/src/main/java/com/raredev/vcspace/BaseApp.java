@@ -3,6 +3,7 @@ package com.raredev.vcspace;
 import android.app.Application;
 import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;
+import com.raredev.vcspace.util.Environment;
 
 public class BaseApp extends Application {
 
@@ -19,6 +20,7 @@ public class BaseApp extends Application {
     instance = this;
     super.onCreate();
     defaultPref = PreferenceManager.getDefaultSharedPreferences(this);
+    Environment.init();
   }
 
   public SharedPreferences getDefaultPref() {

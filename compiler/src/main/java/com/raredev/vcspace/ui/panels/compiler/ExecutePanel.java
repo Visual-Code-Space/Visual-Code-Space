@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
+import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.google.gson.Gson;
 import com.raredev.vcspace.compiler.CompilationRequest;
@@ -34,7 +35,6 @@ public class ExecutePanel extends Panel {
 
   private ArrayAdapter<String> adapter;
   private String path;
-  private String code;
 
   public static FloatingPanelArea createFloating(Context context, FrameLayout parent) {
     FloatingPanelArea floatingPanel = new FloatingPanelArea(context, parent);
@@ -44,10 +44,14 @@ public class ExecutePanel extends Panel {
 
   public ExecutePanel(Context context) {
     super(context);
-    setTitle(getContext().getString(R.string.execute));
+    init();
+  }
+
+  private void init() {
     binding = LayoutExecutePanelBinding.inflate(LayoutInflater.from(getContext()));
     client = new OkHttpClient();
     mediaType = MediaType.parse("application/json");
+
     adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, LANGUAGES);
     binding.execute.setOnClickListener(
         v -> {
@@ -56,6 +60,8 @@ public class ExecutePanel extends Panel {
           compile(input, language);
         });
     binding.language.setAdapter(adapter);
+
+    setTitle(getContext().getString(R.string.execute));
     setContentView(binding.getRoot());
   }
 
@@ -64,7 +70,6 @@ public class ExecutePanel extends Panel {
     if (event instanceof UpdateExecutePanelEvent) {
       var updateExecuteEvent = (UpdateExecutePanelEvent) event;
       this.path = updateExecuteEvent.getPath();
-      this.code = updateExecuteEvent.getCode();
       if (updateExecuteEvent.getFileExtension() == null) {
         binding.language.setText("");
         return;
@@ -98,7 +103,9 @@ public class ExecutePanel extends Panel {
 
       TaskExecutor.executeAsync(
           () -> {
-            return compileWithServer(new CompilationRequest(language, "lasted", code, input));
+            return compileWithServer(
+                new CompilationRequest(
+                    language, "lasted", FileIOUtils.readFile2String(path), input));
           },
           (result) -> {
             dialog.cancel();

@@ -2,9 +2,7 @@ package com.raredev.vcspace;
 
 import androidx.appcompat.app.AppCompatDelegate;
 import com.google.android.material.color.DynamicColors;
-import com.raredev.vcspace.activity.BaseActivity;
 import com.raredev.vcspace.fragments.settings.GeneralSettingsFragment;
-import com.raredev.vcspace.plugin.PluginsLoader;
 import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.util.PreferencesUtils;
 import io.github.rosemoe.sora.langs.textmate.provider.TextMateProvider;
@@ -16,13 +14,10 @@ public class VCSpaceApplication extends BaseApp {
   @Override
   public void onCreate() {
     super.onCreate();
+    Thread.setDefaultUncaughtExceptionHandler(new CrashHandler(this));
     AppCompatDelegate.setDefaultNightMode(GeneralSettingsFragment.getThemeFromPrefs());
     if (PreferencesUtils.useDynamicColors()) {
       DynamicColors.applyToActivitiesIfAvailable(this);
-    }
-    Thread.setDefaultUncaughtExceptionHandler(new CrashHandler(this));
-    if (BaseActivity.isPermissionGaranted(this)) {
-      PluginsLoader.loadPlugins();
     }
     loadTextMate();
   }

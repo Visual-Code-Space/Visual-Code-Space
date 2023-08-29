@@ -35,7 +35,6 @@ public class JavaLanguage extends VCSpaceTMLanguage {
         ThemeRegistry.getInstance(),
         "source.java");
     this.editor = editor;
-    setCompleterKeywords(JavaCompletionProvider.javaKeywords);
   }
 
   @Override

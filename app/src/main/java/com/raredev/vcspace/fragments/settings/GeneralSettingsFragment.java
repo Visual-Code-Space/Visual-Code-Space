@@ -2,6 +2,7 @@ package com.raredev.vcspace.fragments.settings;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -9,8 +10,15 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.raredev.vcspace.res.R;
 import com.raredev.vcspace.util.PreferencesUtils;
 import com.raredev.vcspace.util.SharedPreferencesKeys;
+import com.raredev.vcspace.util.Utils;
 
 public class GeneralSettingsFragment extends PreferenceFragmentCompat {
+
+  @Override
+  public void onViewCreated(View view, Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    Utils.setActivityTitle(requireActivity(), getString(R.string.general));
+  }
 
   @Override
   public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -43,10 +51,7 @@ public class GeneralSettingsFragment extends PreferenceFragmentCompat {
               themes,
               i,
               (dlg, which) -> {
-                prefs
-                    .edit()
-                    .putString(SharedPreferencesKeys.KEY_THEME, themeValues[which])
-                    .apply();
+                prefs.edit().putString(SharedPreferencesKeys.KEY_THEME, themeValues[which]).apply();
 
                 AppCompatDelegate.setDefaultNightMode(getTheme(themeValues[which]));
                 dlg.cancel();

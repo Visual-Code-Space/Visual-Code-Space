@@ -1,6 +1,5 @@
 package com.raredev.vcspace.compiler.html;
 
-import androidx.core.view.ViewCompat;
 import com.raredev.vcspace.util.ILogger;
 import fi.iki.elonen.NanoHTTPD;
 import java.io.File;
@@ -11,7 +10,7 @@ public class SimpleHttpServer {
   public WebServer server;
 
   private String rootFolder;
-  private String indexName;
+  private String fileName;
 
   private int port;
 
@@ -19,9 +18,9 @@ public class SimpleHttpServer {
     this.port = port;
   }
   
-  public void setFolderAndFile(String rootFolder, String indexName) {
+  public void setFolderAndFile(String rootFolder, String fileName) {
     this.rootFolder = rootFolder;
-    this.indexName = indexName;
+    this.fileName = fileName;
   }
 
   public void startServer() {
@@ -41,7 +40,7 @@ public class SimpleHttpServer {
   }
 
   public String getLocalIpAddress() {
-    return "http://localhost:" + port + "/" + indexName;
+    return "http://localhost:" + port + "/" + fileName;
   }
 
   private class WebServer extends NanoHTTPD {
@@ -54,7 +53,7 @@ public class SimpleHttpServer {
     public Response serve(IHTTPSession session) {
       String uri = session.getUri();
       if (uri.endsWith("/")) {
-        uri += indexName;
+        uri += fileName;
       }
       String filePath = rootFolder + uri;
 

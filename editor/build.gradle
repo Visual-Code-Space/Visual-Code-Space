@@ -43,6 +43,5 @@ dependencies {
   implementation project(path: ':common-res')
   implementation project(path: ':eventbus-events')
   implementation project(path: ':panels')
-  implementation project(path: ':plugins')
   implementation project(path: ':models')
 }

@@ -38,7 +38,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.SettingsActivity" />
-        <activity android:name=".activity.TerminalActivity" />
+        <activity
+            android:name=".activity.TerminalActivity"
+            android:configChanges="orientation|screenSize"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activity.MarkdownViewActivity"
             android:parentActivityName=".activity.EditorActivity" />

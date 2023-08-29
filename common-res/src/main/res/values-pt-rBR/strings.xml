@@ -50,6 +50,7 @@
     <string name="existing_file">Arquivo já existente!</string>
     <string name="delete">Deletar</string>
     <string name="delete_message">Tem certeza que deseja deletar \"%1$s\"?</string>
+    <string name="delete_count_message">Tem certeza que deseja deletar \"%1$s\" arquivos?</string>
     <string name="deleted_message">Deletado</string>
     <string name="deleting">Apagando</string>
     <string name="deleting_please_wait">Apagando por favor aguarde.</string>
@@ -72,6 +73,8 @@
     <string name="replace">Substituir</string>
     <string name="replace_all">Substituir tudo</string>
     <string name="replacing_texts">Substituindo textos…</string>
+    <string name="ignore_letter_case">Ignorar maiúsculas/minúsculas</string>
+    <string name="use_regex">Usar regex</string>
     <string name="new_file_title">Novo arquivo</string>
     <string name="new_folder_title">Nova pasta</string>
     <string name="file_access_title">Permissão de acesso aos arquivos</string>
@@ -157,7 +160,7 @@
     <string name="pref_editor_deletetabs">Apagar tabs</string>
     <string name="pref_editor_deletetabs_summary">Se ativado, exclui tabs rapidamente.</string>
     <string name="pref_editor_file_path">Caminho do arquivo</string>
-    <string name="pref_editor_file_path_summary">Mostrar o caminho do arquivo acima da guia.</string>
+    <string name="pref_editor_file_path_summary">Mostrar o caminho do arquivo selecionado abaixo da aba.</string>
     <string name="pref_editor_auto_save">Salvamento automático</string>
     <string name="pref_editor_auto_save_summary">Salva automaticamente seu trabalho, evitando perda de dados e economizando tempo.</string>
 

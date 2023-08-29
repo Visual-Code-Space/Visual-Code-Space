@@ -13,6 +13,7 @@
     <string name="comment_line">Comment line</string>
     <string name="uncomment_line">Uncomment line</string>
     <string name="select_all">Select all</string>
+    <string name="unselect_all">Unselect all</string>
     <string name="copy">Copy</string>
     <string name="cut">Cut</string>
     <string name="paste">Paste</string>
@@ -57,6 +58,7 @@
     <string name="existing_file">Existing file!</string>
     <string name="delete">Delete</string>
     <string name="delete_message">Are you sure you want to delete \"%1$s\"?</string>
+    <string name="delete_count_message">Are you sure you want to delete \"%1$s\" files?</string>
     <string name="deleted_message">Deleted</string>
     <string name="deleting">Deleting...</string>
     <string name="deleting_please_wait">Deleting please wait.</string>
@@ -80,6 +82,7 @@
     <string name="replace_all">Replace all</string>
     <string name="replacing_texts">Replacing texts…</string>
     <string name="ignore_letter_case">Ignore letter case</string>
+    <string name="use_regex">Use regex</string>
     <string name="new_file_title">New file</string>
     <string name="new_folder_title">New folder</string>
     <string name="file_access_title">File Access Permission</string>
@@ -165,7 +168,7 @@
     <string name="pref_editor_deletetabs">Delete tabs on backspace</string>
     <string name="pref_editor_deletetabs_summary">If enabled deletes tabs quickly.</string>
     <string name="pref_editor_file_path">File path</string>
-    <string name="pref_editor_file_path_summary">Show file path above tab.</string>
+    <string name="pref_editor_file_path_summary">Show selected file path below tab.</string>
     <string name="pref_editor_auto_save">Auto save</string>
     <string name="pref_editor_auto_save_summary">Automatically saves your work, preventing data loss and saving time.</string>
 

@@ -83,31 +83,6 @@ public class HtmlLanguage extends VCSpaceTMLanguage {
     return doc.html();
   }
 
-  /*
-  @Override
-  public void editorCommitText(CharSequence text) {
-    super.editorCommitText(text);
-    try {
-      if (text.length() == 1) {
-        char c = text.charAt(0);
-        if (c != '/') {
-          return;
-        }
-        Cursor cursor = editor.getCursor();
-
-        DOMDocument document = DOMParser.getInstance().parse(editor.getText().toString(), "", null);
-        DOMNode nodeAt = document.findNodeAt(cursor.getLeft());
-        if (!HtmlUtils.isClosed(nodeAt)
-            && nodeAt.getNodeName() != null
-            && !Tag.valueOf(nodeAt.getNodeName()).isEmpty()) {
-          String insertText = nodeAt.getNodeName() + ">";
-          editor.commitText(insertText);
-        }
-      }
-    } catch (Exception e) {
-    }
-  }*/
-
   @Override
   public boolean checkIsCompletionChar(char c) {
     return MyCharacter.isJavaIdentifierPart(c) || c == '\"' || c == '<' || c == '/';

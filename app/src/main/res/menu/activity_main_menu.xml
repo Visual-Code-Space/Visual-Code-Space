@@ -109,6 +109,10 @@
         android:id="@+id/menu_usersnippets"
         android:icon="@drawable/ic_comment_text_outline"
         android:title="@string/user_snippets" />
+  <item
+        android:id="@+id/menu_terminal"
+        android:icon="@drawable/ic_console_line"
+        android:title="Terminal" />
     <item
         android:id="@+id/menu_settings"
         android:icon="@drawable/ic_settings"

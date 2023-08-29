@@ -19,8 +19,15 @@ import com.raredev.vcspace.databinding.LayoutCredentialBinding;
 import com.raredev.vcspace.res.R;
 import com.raredev.vcspace.util.PreferencesUtils;
 import com.raredev.vcspace.util.SharedPreferencesKeys;
+import com.raredev.vcspace.util.Utils;
 
 public class GitSettingsFragment extends PreferenceFragmentCompat {
+
+  @Override
+  public void onViewCreated(View view, Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    Utils.setActivityTitle(requireActivity(), getString(R.string.git));
+  }
 
   @Override
   public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {

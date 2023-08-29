@@ -27,13 +27,15 @@
             android:textSize="14sp"
             android:singleLine="true"
             android:layout_marginStart="10dp"
-            android:text="Deprecated" />
+            android:text="" />
 
     </RelativeLayout>
 
     <FrameLayout
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:id="@+id/root" />
+        android:id="@+id/root">
+
+    </FrameLayout>
 
 </LinearLayout>

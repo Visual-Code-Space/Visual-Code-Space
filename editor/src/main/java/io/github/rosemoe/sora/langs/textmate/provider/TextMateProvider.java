@@ -3,6 +3,7 @@ package io.github.rosemoe.sora.langs.textmate.provider;
 import com.raredev.vcspace.editor.IDECodeEditor;
 import com.raredev.vcspace.editor.language.html.HtmlLanguage;
 import com.raredev.vcspace.editor.language.java.JavaLanguage;
+import com.raredev.vcspace.editor.language.json.JsonLanguage;
 import com.raredev.vcspace.editor.language.kotlin.KotlinLanguage;
 import com.raredev.vcspace.editor.language.lua.LuaLanguage;
 import com.raredev.vcspace.util.Utils;
@@ -44,6 +45,8 @@ public class TextMateProvider {
           return new HtmlLanguage(editor);
         case "source.lua":
           return new LuaLanguage(editor);
+        case "source.json":
+          return new JsonLanguage(editor);
       }
 
       return VCSpaceTMLanguage.create(scope);

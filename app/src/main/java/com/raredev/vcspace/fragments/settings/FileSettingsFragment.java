@@ -1,17 +1,25 @@
 package com.raredev.vcspace.fragments.settings;
 
 import android.os.Bundle;
+import android.view.View;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.raredev.vcspace.res.R;
 import com.raredev.vcspace.util.PreferencesUtils;
 import com.raredev.vcspace.util.SharedPreferencesKeys;
+import com.raredev.vcspace.util.Utils;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FileSettingsFragment extends PreferenceFragmentCompat {
+
+  @Override
+  public void onViewCreated(View view, Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    Utils.setActivityTitle(requireActivity(), getString(R.string.file));
+  }
 
   @Override
   public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {

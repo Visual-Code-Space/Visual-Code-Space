@@ -157,7 +157,12 @@ public class EditorTextActions extends EditorPopupWindow implements View.OnClick
     }
     lastCause = event.getCause();
     if (event.isSelected()) {
-      editor.post(this::displayWindow);
+      // Always post show. See #193
+      if (event.getCause() != SelectionChangeEvent.CAUSE_SEARCH) {
+        editor.postInLifecycle(this::displayWindow);
+      } else {
+        dismiss();
+      }
       lastPosition = -1;
     } else {
       var show = false;
@@ -166,7 +171,7 @@ public class EditorTextActions extends EditorPopupWindow implements View.OnClick
           && !isShowing()
           && !editor.getText().isInBatchEdit()
           && editor.isEditable()) {
-        editor.post(this::displayWindow);
+        editor.postInLifecycle(this::displayWindow);
         show = true;
       } else {
         dismiss();

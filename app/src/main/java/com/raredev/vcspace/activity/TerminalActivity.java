@@ -1,15 +1,50 @@
 package com.raredev.vcspace.activity;
 
+import static com.raredev.vcspace.util.Environment.getEnvironment;
+
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import androidx.core.content.res.ResourcesCompat;
+import com.blankj.utilcode.util.ClipboardUtils;
+import com.blankj.utilcode.util.KeyboardUtils;
+import com.blankj.utilcode.util.PathUtils;
+import com.raredev.terminal.TerminalEmulator;
+import com.raredev.terminal.TerminalSession;
+import com.raredev.terminal.TerminalSessionClient;
+import com.raredev.terminal.TextStyle;
+import com.raredev.terminal.view.TerminalView;
+import com.raredev.terminal.view.TerminalViewClient;
 import com.raredev.vcspace.databinding.ActivityTerminalBinding;
+import com.raredev.vcspace.ui.virtualkeys.SpecialButton;
+import com.raredev.vcspace.ui.virtualkeys.VirtualKeyButton;
+import com.raredev.vcspace.ui.virtualkeys.VirtualKeysConstants;
+import com.raredev.vcspace.ui.virtualkeys.VirtualKeysInfo;
+import com.raredev.vcspace.ui.virtualkeys.VirtualKeysView;
+import com.raredev.vcspace.util.ILogger;
+import com.raredev.vcspace.util.PreferencesUtils;
+import com.raredev.vcspace.util.Utils;
+import java.util.Map;
+import org.json.JSONException;
+
+/*
+ *  @see <a href="https://github.com/AndroidIDEOfficial/AndroidIDE/blob/dev/app/src/main/java/com/itsaky/androidide/activities/TerminalActivity.java">TerminalActivity</a>
+ */
 
 public class TerminalActivity extends BaseActivity
-    /*implements TerminalViewClient, TerminalSessionClient */{
+    implements TerminalViewClient, TerminalSessionClient {
+
   private ActivityTerminalBinding binding;
 
-  //private TerminalSession session;
-  
+  private TerminalSession session;
+  private TerminalView terminal;
+  private KeyListener listener;
+
   @Override
   public View getLayout() {
     binding = ActivityTerminalBinding.inflate(getLayoutInflater());
@@ -19,29 +54,78 @@ public class TerminalActivity extends BaseActivity
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    /*TerminalView terminal = binding.terminal;
-    terminal.setTerminalViewClient(this);
-
-    terminal.attachSession(createSession());
-    terminal.setKeepScreenOn(true);
-    terminal.setTextSize(Utils.pxToDp(14));*/
+    getWindow().setStatusBarColor(Color.BLACK);
+    getWindow().setNavigationBarColor(Color.BLACK);
+    setupTerminalView();
   }
   
-  /*private TerminalSession createSession() {
+  @Override
+  protected void onResume() {
+    super.onResume();
+    showSoftInput();
+    setTerminalCursorBlinkingState(true);
+  }
+
+  @Override
+  protected void onStop() {
+    super.onStop();
+    setTerminalCursorBlinkingState(false);
+  }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    binding = null;
+  }
+
+  private void setupTerminalView() {
+    terminal = new TerminalView(this, null);
+    terminal.setTerminalViewClient(this);
+    terminal.attachSession(createSession());
+    terminal.setKeepScreenOn(true);
+    terminal.setTextSize(Utils.pxToDp(14));
+    terminal.setTypeface(ResourcesCompat.getFont(this, PreferencesUtils.getSelectedFont()));
+
+    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-1, 0);
+    params.weight = 1f;
+
+    binding.getRoot().addView(terminal, 0, params);
+    try {
+      binding.virtualKeys.setVirtualKeysViewClient(getKeyListener());
+      binding.virtualKeys.reload(
+          new VirtualKeysInfo(VIRTUAL_KEYS, "", VirtualKeysConstants.CONTROL_CHARS_ALIASES));
+    } catch (JSONException e) {
+      ILogger.error("TerminalActivity", "Unable to parse terminal virtual keys json data", e);
+    }
+  }
+
+  private KeyListener getKeyListener() {
+    return listener == null ? listener = new KeyListener(terminal) : listener;
+  }
+
+  private TerminalSession createSession() {
+    final Map<String, String> environment = getEnvironment();
+    final String[] env = new String[environment.size()];
+    int i = 0;
+    for (Map.Entry<String, String> entry : environment.entrySet()) {
+      env[i] = entry.getKey() + "=" + entry.getValue();
+      i++;
+    }
     session =
         new TerminalSession(
             "/system/bin/sh",
-            Environment.getExternalStorageDirectory().getAbsolutePath(),
+            PathUtils.getRootPathExternalFirst(),
             new String[] {},
-            new String[] {"HOME=/data/data/com.raredev.vcspace/files/", "SYSROOT=" + getDataDir().getAbsolutePath(), "TERMUX_APP_PACKAGE_MANAGER=apt", "TERMUX_PKG_NO_MIRROR_SELECT=true"},
+            env,
             TerminalEmulator.DEFAULT_TERMINAL_TRANSCRIPT_ROWS,
             this);
+    
     return session;
   }
 
   @Override
   public void onTextChanged(TerminalSession changedSession) {
-    binding.terminal.onScreenUpdated();
+    terminal.onScreenUpdated();
   }
 
   @Override
@@ -60,8 +144,8 @@ public class TerminalActivity extends BaseActivity
   @Override
   public void onPasteTextFromClipboard(TerminalSession session) {
     String clip = ClipboardUtils.getText().toString();
-    if (clip.trim().length() > 0 && binding.terminal.mEmulator != null) {
-      binding.terminal.mEmulator.paste(clip);
+    if (clip.trim().length() > 0 && terminal.mEmulator != null) {
+      terminal.mEmulator.paste(clip);
     }
   }
 
@@ -168,12 +252,14 @@ public class TerminalActivity extends BaseActivity
 
   @Override
   public boolean readControlKey() {
-    return false;
+    Boolean state = binding.virtualKeys.readSpecialButton(SpecialButton.CTRL, true);
+    return state != null && state;
   }
 
   @Override
   public boolean readAltKey() {
-    return false;
+    Boolean state = binding.virtualKeys.readSpecialButton(SpecialButton.ALT, true);
+    return state != null && state;
   }
 
   @Override
@@ -203,13 +289,124 @@ public class TerminalActivity extends BaseActivity
   }
 
   private void setTerminalCursorBlinkingState(boolean start) {
-    if (binding.terminal.mEmulator != null) {
-      binding.terminal.setTerminalCursorBlinkerState(start, true);
+    if (terminal.mEmulator != null) {
+      terminal.setTerminalCursorBlinkerState(start, true);
     }
   }
 
   private void showSoftInput() {
-    binding.terminal.requestFocus();
-    KeyboardUtils.showSoftInput(binding.terminal);
-  }*/
+    terminal.requestFocus();
+    KeyboardUtils.showSoftInput(terminal);
+  }
+
+  private static final class KeyListener implements VirtualKeysView.IVirtualKeysView {
+
+    private final TerminalView terminal;
+
+    public KeyListener(TerminalView terminal) {
+      this.terminal = terminal;
+    }
+
+    @Override
+    public void onVirtualKeyButtonClick(View view, VirtualKeyButton buttonInfo, Button button) {
+      if (terminal == null) {
+        return;
+      }
+      if (buttonInfo.isMacro()) {
+        String[] keys = buttonInfo.getKey().split(" ");
+        boolean ctrlDown = false;
+        boolean altDown = false;
+        boolean shiftDown = false;
+        boolean fnDown = false;
+        for (String key : keys) {
+          if (SpecialButton.CTRL.getKey().equals(key)) {
+            ctrlDown = true;
+          } else if (SpecialButton.ALT.getKey().equals(key)) {
+            altDown = true;
+          } else if (SpecialButton.SHIFT.getKey().equals(key)) {
+            shiftDown = true;
+          } else if (SpecialButton.FN.getKey().equals(key)) {
+            fnDown = true;
+          } else {
+            onTerminalExtraKeyButtonClick(key, ctrlDown, altDown, shiftDown, fnDown);
+            ctrlDown = false;
+            altDown = false;
+            shiftDown = false;
+            fnDown = false;
+          }
+        }
+      } else {
+        onTerminalExtraKeyButtonClick(buttonInfo.getKey(), false, false, false, false);
+      }
+    }
+
+    private void onTerminalExtraKeyButtonClick(
+        String key, boolean ctrlDown, boolean altDown, boolean shiftDown, boolean fnDown) {
+      if (VirtualKeysConstants.PRIMARY_KEY_CODES_FOR_STRINGS.containsKey(key)) {
+        Integer keyCode = VirtualKeysConstants.PRIMARY_KEY_CODES_FOR_STRINGS.get(key);
+        if (keyCode == null) {
+          return;
+        }
+        int metaState = 0;
+        if (ctrlDown) {
+          metaState |= KeyEvent.META_CTRL_ON | KeyEvent.META_CTRL_LEFT_ON;
+        }
+        if (altDown) {
+          metaState |= KeyEvent.META_ALT_ON | KeyEvent.META_ALT_LEFT_ON;
+        }
+        if (shiftDown) {
+          metaState |= KeyEvent.META_SHIFT_ON | KeyEvent.META_SHIFT_LEFT_ON;
+        }
+        if (fnDown) {
+          metaState |= KeyEvent.META_FUNCTION_ON;
+        }
+
+        KeyEvent keyEvent = new KeyEvent(0, 0, KeyEvent.ACTION_UP, keyCode, 0, metaState);
+        terminal.onKeyDown(keyCode, keyEvent);
+      } else {
+        // not a control char
+        for (int off = 0; off < key.length(); ) {
+          int codePoint = key.codePointAt(off);
+          terminal.inputCodePoint(codePoint, ctrlDown, altDown);
+          off += Character.charCount(codePoint);
+        }
+      }
+    }
+
+    @Override
+    public boolean performVirtualKeyButtonHapticFeedback(
+        View view, VirtualKeyButton buttonInfo, Button button) {
+      // No need to handle this
+      // VirtualKeysView will take care of performing haptic feedback
+      return false;
+    }
+  }
+
+  public static final String VIRTUAL_KEYS =
+      "["
+          + "\n  ["
+          + "\n    \"ESC\","
+          + "\n    {"
+          + "\n      \"key\": \"/\","
+          + "\n      \"popup\": \"\\\\\""
+          + "\n    },"
+          + "\n    {"
+          + "\n      \"key\": \"-\","
+          + "\n      \"popup\": \"|\""
+          + "\n    },"
+          + "\n    \"HOME\","
+          + "\n    \"UP\","
+          + "\n    \"END\","
+          + "\n    \"PGUP\""
+          + "\n  ],"
+          + "\n  ["
+          + "\n    \"TAB\","
+          + "\n    \"CTRL\","
+          + "\n    \"ALT\","
+          + "\n    \"LEFT\","
+          + "\n    \"DOWN\","
+          + "\n    \"RIGHT\","
+          + "\n    \"PGDN\""
+          + "\n  ]"
+          + "\n]";
 }

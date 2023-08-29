@@ -21,6 +21,7 @@ ext {
     jgit: 'org.eclipse.jgit:org.eclipse.jgit:6.5.0.202303070854-r',
     eventbus: 'org.greenrobot:eventbus:3.3.1',
     jsoup: 'org.jsoup:jsoup:1.16.1',
-    leakcanary: 'com.squareup.leakcanary:leakcanary-android:2.10'
+    leakcanary: 'com.squareup.leakcanary:leakcanary-android:2.10',
+    lsp4j: 'org.eclipse.lsp4j:org.eclipse.lsp4j:0.21.0'
   ]
 }

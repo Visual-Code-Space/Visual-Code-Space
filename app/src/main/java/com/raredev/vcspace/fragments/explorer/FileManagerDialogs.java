@@ -13,6 +13,7 @@ import com.blankj.utilcode.util.ThreadUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.raredev.vcspace.fragments.explorer.git.CloneRepository;
+import com.raredev.vcspace.models.FileModel;
 import com.raredev.vcspace.progressdialog.ProgressDialog;
 import com.raredev.vcspace.res.R;
 import com.raredev.vcspace.res.databinding.LayoutTextinputBinding;
@@ -22,6 +23,7 @@ import com.raredev.vcspace.util.DialogUtils;
 import com.raredev.vcspace.util.FileUtil;
 import com.raredev.vcspace.util.ToastUtils;
 import java.io.File;
+import java.util.List;
 
 public class FileManagerDialogs {
 
@@ -117,10 +119,11 @@ public class FileManagerDialogs {
     dialog.show();
   }
 
-  public static void deleteFile(Context context, File file, Concluded concluded) {
+  public static void deleteFile(
+      Context context, List<FileModel> selectedFiles, File file, Concluded concluded) {
     new MaterialAlertDialogBuilder(context)
         .setTitle(R.string.delete)
-        .setMessage(context.getString(R.string.delete_message, file.getName()))
+        .setMessage(selectedFiles.isEmpty() ? context.getString(R.string.delete_message, file.getName()) : context.getString(R.string.delete_count_message, selectedFiles.size()))
         .setPositiveButton(
             R.string.delete,
             (di, witch) -> {
@@ -137,6 +140,7 @@ public class FileManagerDialogs {
               TaskExecutor.executeAsyncProvideError(
                   () -> {
                     return deleteFiles(
+                        selectedFiles,
                         file,
                         message ->
                             ThreadUtils.runOnUiThread(() -> progress.setLoadingMessage(message)));
@@ -153,6 +157,18 @@ public class FileManagerDialogs {
             })
         .setNegativeButton(R.string.cancel, (di, witch) -> di.dismiss())
         .show();
+  }
+
+  private static boolean deleteFiles(
+      List<FileModel> selectedFiles, File file, @NonNull final UpdateListener listener) {
+    if (!selectedFiles.isEmpty()) {
+      for (FileModel fileModel : selectedFiles) {
+        deleteFiles(fileModel.toFile(), listener);
+      }
+      return true;
+    }
+
+    return deleteFiles(file, listener);
   }
 
   private static boolean deleteFiles(File file, @NonNull final UpdateListener listener) {

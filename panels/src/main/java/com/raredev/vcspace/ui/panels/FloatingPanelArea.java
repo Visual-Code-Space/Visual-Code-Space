@@ -104,7 +104,7 @@ public class FloatingPanelArea extends PanelArea {
     var move = new ImageView(context);
     var moveLayoutParams = new LinearLayout.LayoutParams(Utils.pxToDp(25), Utils.pxToDp(25));
     moveLayoutParams.leftMargin = margins;
-    moveLayoutParams.leftMargin = margins;
+    moveLayoutParams.rightMargin = margins;
     move.setLayoutParams(moveLayoutParams);
     move.setImageResource(R.drawable.gesture_tap);
     move.setPadding(padding, padding, padding, padding);
@@ -113,7 +113,7 @@ public class FloatingPanelArea extends PanelArea {
     var close = new ImageView(context);
     var closeLayoutParams = new LinearLayout.LayoutParams(Utils.pxToDp(25), Utils.pxToDp(25));
     closeLayoutParams.leftMargin = margins;
-    closeLayoutParams.leftMargin = margins + 5;
+    closeLayoutParams.rightMargin = margins + 5;
     close.setLayoutParams(closeLayoutParams);
     close.setImageResource(R.drawable.close);
     close.setPadding(padding, padding, padding, padding);

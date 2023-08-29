@@ -39,7 +39,6 @@ import com.raredev.vcspace.models.DocumentModel;
 import com.raredev.vcspace.models.FileModel;
 import com.raredev.vcspace.models.Symbol;
 import com.raredev.vcspace.task.TaskExecutor;
-import com.raredev.vcspace.ui.PathListView;
 import com.raredev.vcspace.ui.panels.Panel;
 import com.raredev.vcspace.ui.panels.PanelsManager;
 import com.raredev.vcspace.ui.panels.compiler.ExecutePanel;
@@ -51,7 +50,6 @@ import com.raredev.vcspace.util.FileUtil;
 import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.util.PanelUtils;
 import com.raredev.vcspace.util.PreferencesUtils;
-import com.raredev.vcspace.util.SharedPreferencesKeys;
 import com.raredev.vcspace.util.ToastUtils;
 import com.raredev.vcspace.util.UniqueNameBuilder;
 import com.raredev.vcspace.util.Utils;
@@ -96,29 +94,8 @@ public class EditorActivity extends BaseActivity
 
     panelsManager = new PanelsManager(this, binding.panelArea);
     binding.symbolInput.setSymbols(Symbol.baseSymbols());
-    binding.pathList.setEnabled(PreferencesUtils.showFilePath());
-    binding.pathList.setType(PathListView.TYPE_FILE_PATH);
 
-    KeyboardUtils.registerSoftInputChangedListener(
-        this,
-        new KeyboardUtils.OnSoftInputChangedListener() {
-          @Override
-          public void onSoftInputChanged(int i) {
-            Panel panel = panelsManager.getSelectedPanel();
-            if (panel != null && panel instanceof EditorPanel) {
-              EditorPanel editorPanel = (EditorPanel) panel;
-              if (i > 1) {
-                binding.layoutSymbol.setVisibility(View.VISIBLE);
-                binding.symbolInput.bindEditor(editorPanel.getEditor());
-              } else {
-                binding.layoutSymbol.setVisibility(View.GONE);
-              }
-            } else {
-              binding.layoutSymbol.setVisibility(View.GONE);
-            }
-            invalidateOptionsMenu();
-          }
-        });
+    KeyboardUtils.registerSoftInputChangedListener(this, (i) -> invalidateOptionsMenu());
 
     CompletionProvider.registerCompletionProviders();
     ThemeRegistry.getInstance().setTheme(Utils.isDarkMode() ? "darcula" : "quietlight");
@@ -183,9 +160,7 @@ public class EditorActivity extends BaseActivity
           panelsManager.addFloatingPanel(ExecutePanel.createFloating(this, binding.panelArea));
           panelsManager.sendEvent(
               new UpdateExecutePanelEvent(
-                  document.getPath(),
-                  FileUtils.getFileExtension(document.getPath()),
-                  editorPanel.getCode()));
+                  document.getPath(), FileUtils.getFileExtension(document.getPath())));
         }
       } else if (id == R.id.menu_undo) editorPanel.undo();
       else if (id == R.id.menu_redo) editorPanel.redo();
@@ -226,8 +201,10 @@ public class EditorActivity extends BaseActivity
 
     if (id == R.id.menu_new_file) createFile.launch("untitled");
     else if (id == R.id.menu_open_file) pickFile.launch("text/*");
+    else if (id == R.id.menu_usersnippets)
+      panelsManager.addFloatingPanel(UserSnippetsPanel.createFloating(this, binding.panelArea));
+    else if (id == R.id.menu_terminal) startActivity(new Intent(this, TerminalActivity.class));
     else if (id == R.id.menu_settings) startActivity(new Intent(this, SettingsActivity.class));
-    else if (id == R.id.menu_usersnippets) panelsManager.addFloatingPanel(UserSnippetsPanel.createFloating(this, binding.panelArea));
 
     return true;
   }
@@ -273,10 +250,7 @@ public class EditorActivity extends BaseActivity
 
   @Override
   public void onSharedPreferenceChanged(SharedPreferences pref, String key) {
-    if (key.equals(SharedPreferencesKeys.KEY_FILE_PATH)) {
-      binding.pathList.setEnabled(PreferencesUtils.showFilePath());
-    }
-    EventBus.getDefault().post(new PreferenceChangedEvent(key));
+    panelsManager.sendEvent(new PreferenceChangedEvent(key));
   }
 
   private void setupDrawer() {
@@ -456,7 +430,7 @@ public class EditorActivity extends BaseActivity
 
   public void onRemovePanel() {
     if (panelsManager.getPanelAreaPanels().isEmpty()) {
-      binding.pathList.setPath(null);
+      binding.layoutSymbol.setVisibility(View.GONE);
       invalidateOptionsMenu();
     }
     savePanels();
@@ -467,17 +441,15 @@ public class EditorActivity extends BaseActivity
       EditorPanel editorPanel = (EditorPanel) panel;
       var editor = editorPanel.getEditor();
       var document = editorPanel.getDocument();
-      binding.symbolInput.bindEditor(editor);
-      binding.pathList.setPath(document.getPath());
+      binding.layoutSymbol.setVisibility(View.VISIBLE);
+      binding.symbolInput.bindEditor(editorPanel.getEditor());
 
       panelsManager.sendEvent(new UpdateSearcherEvent(editorPanel.getEditor().getSearcher()));
       panelsManager.sendEvent(
           new UpdateExecutePanelEvent(
-              document.getPath(),
-              FileUtils.getFileExtension(document.getPath()),
-              editorPanel.getCode()));
+              document.getPath(), FileUtils.getFileExtension(document.getPath())));
     } else {
-      binding.pathList.setPath(null);
+      binding.layoutSymbol.setVisibility(View.GONE);
     }
     invalidateOptionsMenu();
   }

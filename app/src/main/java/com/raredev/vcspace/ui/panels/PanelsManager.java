@@ -19,8 +19,6 @@ public class PanelsManager {
   private List<FloatingPanelArea> floatingPanels = new LinkedList<>();
   private PanelArea panelArea;
 
-  private PanelsListener listener;
-
   private EditorActivity activity;
   private FrameLayout parent;
 
@@ -29,6 +27,9 @@ public class PanelsManager {
   public PanelsManager(EditorActivity activity, FrameLayout parent) {
     this.activity = activity;
     this.parent = parent;
+
+    panelArea = new PanelArea(activity, parent);
+    panelArea.addPanelTopBarButtons();
 
     panelAreaListener =
         new PanelAreaListener() {
@@ -106,8 +107,6 @@ public class PanelsManager {
             activity.onRemovePanel();
           }
         };
-    panelArea = new PanelArea(activity, parent);
-    panelArea.addPanelTopBarButtons();
 
     panelArea.setPanelAreaListener(panelAreaListener);
   }
@@ -128,9 +127,6 @@ public class PanelsManager {
 
   public void addPanel(Panel panel, boolean select) {
     panelArea.addPanel(panel, select);
-    if (listener != null) {
-      listener.addPanel(panel);
-    }
   }
 
   public Panel getSelectedPanel() {
@@ -144,9 +140,6 @@ public class PanelsManager {
   public void addFloatingPanel(FloatingPanelArea floatingPanel) {
     floatingPanel.setPanelAreaListener(panelAreaListener);
     floatingPanels.add(floatingPanel);
-    if (listener != null) {
-      listener.addFloating(floatingPanel);
-    }
   }
 
   public void removePanelArea(PanelArea panelArea) {
@@ -185,10 +178,6 @@ public class PanelsManager {
     return panelArea.getPanel(position);
   }
 
-  public void setPanelsListener(PanelsListener listener) {
-    this.listener = listener;
-  }
-
   public List<FloatingPanelArea> getFloatingPanels() {
     return floatingPanels;
   }
@@ -205,14 +194,5 @@ public class PanelsManager {
     }
     webViewPanel.loadFile(path);
     panelArea.setSelectedPanel(webViewPanel);
-  }
-
-  public interface PanelsListener {
-
-    void addPanel(Panel panel);
-
-    void addFloating(FloatingPanelArea floatingPanel);
-
-    void removedPanel(Panel panel);
   }
 }

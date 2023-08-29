@@ -74,6 +74,7 @@ public class SearcherPanel extends Panel implements View.OnClickListener {
 
     TooltipCompat.setTooltipText(
         binding.ignoreLetterCase, getContext().getString(R.string.ignore_letter_case));
+    TooltipCompat.setTooltipText(binding.useRegex, getContext().getString(R.string.use_regex));
     updateSearchOptions();
     setTitle(getContext().getString(R.string.search));
     setContentView(binding.getRoot());
@@ -120,28 +121,15 @@ public class SearcherPanel extends Panel implements View.OnClickListener {
     var prefs = PreferencesUtils.getDefaultPrefs();
     var ignoreCase = prefs.getBoolean("searcher_ignoreLetterCase", true);
     var useRegex = prefs.getBoolean("searcher_useRegex", false);
-    if (ignoreCase) {
-      Utils.updateImageTint(
-          binding.ignoreLetterCase,
-          MaterialColors.getColor(
-              getContext(), com.google.android.material.R.attr.colorPrimary, 0));
-    } else {
-      Utils.updateImageTint(
-          binding.ignoreLetterCase,
-          MaterialColors.getColor(
-              getContext(), com.google.android.material.R.attr.colorControlNormal, 0));
-    }
-    if (useRegex) {
-      Utils.updateImageTint(
-          binding.useRegex,
-          MaterialColors.getColor(
-              getContext(), com.google.android.material.R.attr.colorPrimary, 0));
-    } else {
-      Utils.updateImageTint(
-          binding.useRegex,
-          MaterialColors.getColor(
-              getContext(), com.google.android.material.R.attr.colorControlNormal, 0));
-    }
+
+    var colorPrimary =
+        MaterialColors.getColor(getContext(), com.google.android.material.R.attr.colorPrimary, 0);
+    var colorControlNormal =
+        MaterialColors.getColor(
+            getContext(), com.google.android.material.R.attr.colorControlNormal, 0);
+
+    Utils.updateImageTint(binding.ignoreLetterCase, ignoreCase ? colorPrimary : colorControlNormal);
+    Utils.updateImageTint(binding.useRegex, useRegex ? colorPrimary : colorControlNormal);
 
     searchOptions = new EditorSearcher.SearchOptions(ignoreCase, useRegex);
   }

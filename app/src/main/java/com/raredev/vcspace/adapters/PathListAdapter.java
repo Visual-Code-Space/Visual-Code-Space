@@ -11,8 +11,8 @@ import com.google.android.material.color.MaterialColors;
 import com.raredev.vcspace.databinding.LayoutPathItemBinding;
 import com.raredev.vcspace.models.FileModel;
 import com.raredev.vcspace.ui.FileTreePopupWindow;
-import com.raredev.vcspace.ui.PathListView;
 import com.raredev.vcspace.ui.panels.file.FileExplorerPanel;
+import io.github.rosemoe.sora.widget.schemes.EditorColorScheme;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,10 +23,7 @@ public class PathListAdapter extends RecyclerView.Adapter<PathListAdapter.VH> {
   private List<FileModel> paths = new ArrayList<>();
 
   private FileExplorerPanel fileExplorer;
-
-  private int type;
-
-  public PathListAdapter() {}
+  private EditorColorScheme colorScheme;
 
   @Override
   public VH onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -38,20 +35,27 @@ public class PathListAdapter extends RecyclerView.Adapter<PathListAdapter.VH> {
   public void onBindViewHolder(VH holder, int position) {
     FileModel path = paths.get(position);
 
+    int colorPrimary =
+        MaterialColors.getColor(holder.itemView.getContext(), R.attr.colorPrimary, 0);
+    int colorControlNormal =
+        MaterialColors.getColor(holder.itemView.getContext(), R.attr.colorControlNormal, 0);
+
     holder.path.setText(path.getName());
     if (position == getItemCount() - 1) {
       holder.path.setTextColor(
-          MaterialColors.getColor(holder.itemView.getContext(), R.attr.colorPrimary, 0));
+          colorScheme == null ? colorPrimary : colorScheme.getColor(EditorColorScheme.TEXT_NORMAL));
       holder.separator.setVisibility(View.GONE);
     } else {
       holder.path.setTextColor(
-          MaterialColors.getColor(holder.itemView.getContext(), R.attr.colorControlNormal, 0));
+          colorScheme == null
+              ? colorControlNormal
+              : colorScheme.getColor(EditorColorScheme.TEXT_NORMAL));
       holder.separator.setVisibility(View.VISIBLE);
     }
 
     holder.itemView.setOnClickListener(
         (v) -> {
-          if (type == PathListView.TYPE_FILE_PATH) {
+          if (fileExplorer == null) {
             if (!path.isFile())
               new FileTreePopupWindow(holder.itemView.getContext(), v).setPath(path.getPath());
           } else {
@@ -72,8 +76,8 @@ public class PathListAdapter extends RecyclerView.Adapter<PathListAdapter.VH> {
     this.fileExplorer = fileExplorer;
   }
 
-  public void setType(int type) {
-    this.type = type;
+  public void setColorScheme(EditorColorScheme colorScheme) {
+    this.colorScheme = colorScheme;
   }
 
   public void setPath(File path) {
