@@ -44,12 +44,10 @@
         android:layout_below="@id/top_divider"
         android:id="@+id/view_flipper">
 
-        <ViewFlipper
+        <FrameLayout
             android:layout_height="match_parent"
             android:layout_width="match_parent"
-            android:id="@+id/panel_container">
-
-        </ViewFlipper>
+            android:id="@+id/panel_container" />
 
         <com.google.android.material.textview.MaterialTextView
             android:layout_height="match_parent"

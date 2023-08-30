@@ -13,7 +13,6 @@ import com.google.android.material.color.MaterialColors;
 import com.google.android.material.tabs.TabLayout;
 import com.raredev.vcspace.events.PanelEvent;
 import com.raredev.vcspace.res.R;
-import com.raredev.vcspace.res.databinding.LayoutTabItemBinding;
 import com.raredev.vcspace.ui.panels.databinding.LayoutPanelAreaBinding;
 import com.raredev.vcspace.util.Utils;
 import java.util.LinkedList;
@@ -62,7 +61,9 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
   @Override
   public void onTabReselected(TabLayout.Tab tab) {
     if (listener != null) {
-      listener.createTabPopupMenu(panels.get(tab.getPosition()), tab.view).show();
+      var pm = listener.createTabPopupMenu(panels.get(tab.getPosition()), tab.view);
+
+      if (pm != null) pm.show();
     }
   }
 
@@ -107,6 +108,9 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
 
   public void sendEvent(PanelEvent event) {
     for (Panel panel : panels) {
+      if (panel.contentView == null) {
+        continue;
+      }
       panel.receiveEvent(event);
     }
   }
@@ -120,11 +124,12 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
 
     Panel lastSelectedPanel = selectedPanel;
     if (lastSelectedPanel != null) {
-      lastSelectedPanel.setUnselected();
+      binding.panelContainer.removeView(lastSelectedPanel.getContentView());
+      lastSelectedPanel.performUnselected();
     }
 
-    binding.panelContainer.setDisplayedChild(position);
-    panel.setSelected();
+    binding.panelContainer.addView(panel.getContentView());
+    panel.performSelected();
 
     if (listener != null) {
       listener.selectedPanel(panel);
@@ -139,21 +144,19 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
     panel.setPanel2PanelArea(panel2PanelArea);
     panels.add(panel);
     binding.tabs.addTab(createTabItem(panel.getTitle()));
-    binding.panelContainer.addView(panel.getContentView());
-    if (select) setSelectedPanel(panel);
-    switchEmptyPanels(false);
+
+    if (panels.size() == 0 || select) setSelectedPanel(panel);
+    switchEmptyPanels();
     updateTabs();
 
     if (listener != null) listener.addPanel(panel);
   }
 
   private TabLayout.Tab createTabItem(String title) {
-    var bind = LayoutTabItemBinding.inflate(LayoutInflater.from(context));
     var tab = binding.tabs.newTab();
-
-    bind.title.setText(title);
-
-    bind.close.setOnClickListener(
+    tab.setCustomView(R.layout.layout_tab_item);
+    ((TextView)tab.getCustomView().findViewById(R.id.title)).setText(title);
+    tab.getCustomView().findViewById(R.id.close).setOnClickListener(
         v -> {
           var panel = panels.get(tab.getPosition());
           if (panel.isPinned()) {
@@ -164,7 +167,6 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
           removePanel(panels.get(tab.getPosition()));
         });
 
-    tab.setCustomView(bind.getRoot());
     return tab;
   }
 
@@ -172,18 +174,23 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
     if (panel != null && panels.contains(panel)) {
       if (panel.isPinned()) return false;
       int index = panels.indexOf(panel);
+      View contentView = panel.contentView;
 
-      panel.setDestroyed();
+      panel.performDestroy();
+
       panels.remove(panel);
       binding.tabs.removeTabAt(index);
-      binding.panelContainer.removeViewAt(index);
+
+      if (contentView != null) {
+        binding.panelContainer.removeView(contentView);
+      }
 
       if (listener != null) {
         listener.removedPanel(panel);
       }
 
       if (panels.isEmpty()) {
-        switchEmptyPanels(true);
+        switchEmptyPanels();
         selectedPanel = null;
       }
       updateTabs();
@@ -246,8 +253,8 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
     return false;
   }
 
-  public void switchEmptyPanels(boolean isEmpty) {
-    binding.viewFlipper.setDisplayedChild(isEmpty ? 1 : 0);
+  public void switchEmptyPanels() {
+    binding.viewFlipper.setDisplayedChild(panels.isEmpty() ? 1 : 0);
   }
 
   public Panel getPanel(int position) {

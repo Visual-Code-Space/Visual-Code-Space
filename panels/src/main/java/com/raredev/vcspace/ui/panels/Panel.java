@@ -11,8 +11,8 @@ public abstract class Panel {
   private boolean pinned;
 
   private Context context;
-  private View contentView;
 
+  View contentView;
   Panel2PanelArea panel2PanelArea;
   boolean destroyed;
 
@@ -27,26 +27,18 @@ public abstract class Panel {
     this.panel2PanelArea = panel2PanelArea;
   }
 
-  void setSelected() {
+  void performSelected() {
     if (!destroyed) selected();
   }
 
-  void setUnselected() {
+  void performUnselected() {
     if (!destroyed) unselected();
   }
 
-  void setDestroyed() {
+  void performDestroy() {
     destroyed = true;
     destroy();
   }
-
-  public void receiveEvent(PanelEvent event) {}
-
-  public abstract void unselected();
-
-  public abstract void selected();
-
-  public abstract void destroy();
 
   public void setTitle(String title) {
     this.title = title;
@@ -71,6 +63,14 @@ public abstract class Panel {
     contentView = view;
   }
 
+  public View getContentView() {
+    return contentView;
+  }
+
+  public Context getContext() {
+    return this.context;
+  }
+  
   public PanelArea getPanelArea() {
     return panel2PanelArea.getPanelArea();
   }
@@ -79,11 +79,11 @@ public abstract class Panel {
     panel2PanelArea.romoveThis(this);
   }
 
-  public View getContentView() {
-    return contentView;
-  }
+  public void receiveEvent(PanelEvent event) {}
 
-  public Context getContext() {
-    return this.context;
-  }
+  public abstract void unselected();
+
+  public abstract void selected();
+
+  public abstract void destroy();
 }
