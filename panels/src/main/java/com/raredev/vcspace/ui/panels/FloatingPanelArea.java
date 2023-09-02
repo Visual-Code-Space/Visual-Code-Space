@@ -184,8 +184,10 @@ public class FloatingPanelArea extends PanelArea {
             break;
           case MotionEvent.ACTION_MOVE:
             float deltaX = event.getRawX() - startX;
+
             int newWidth = (int) (originalWidth - deltaX);
-            if (newWidth < 100) break;
+            if (newWidth < 100 || panel.currentX < 0) break;
+
             ViewGroup.LayoutParams params = panel.getLayoutParams();
             params.width = newWidth;
             panel.setLayoutParams(params);
@@ -212,8 +214,11 @@ public class FloatingPanelArea extends PanelArea {
             break;
           case MotionEvent.ACTION_MOVE:
             float deltaX = event.getRawX() - startX;
+            if (deltaX >= parent.getWidth()) break;
+
             int newWidth = (int) (originalWidth + deltaX);
-            if (newWidth < 100) break;
+            if (newWidth < 100 || panel.currentX < 0) break;
+
             ViewGroup.LayoutParams params = panel.getLayoutParams();
             params.width = newWidth;
             panel.setLayoutParams(params);
@@ -240,7 +245,11 @@ public class FloatingPanelArea extends PanelArea {
             break;
           case MotionEvent.ACTION_MOVE:
             float deltaY = event.getRawY() - startY;
+            if (deltaY >= parent.getHeight()) break;
+
             int newHeight = (int) (originalHeight - deltaY);
+            if (newHeight < 100 || panel.currentY < 0) break;
+
             ViewGroup.LayoutParams params = panel.getLayoutParams();
             params.height = newHeight;
             panel.setLayoutParams(params);
@@ -267,7 +276,10 @@ public class FloatingPanelArea extends PanelArea {
             break;
           case MotionEvent.ACTION_MOVE:
             float deltaY = event.getRawY() - startY;
+
             int newHeight = originalHeight + (int) deltaY;
+            if (newHeight < 100 || panel.currentY < 0) break;
+
             ViewGroup.LayoutParams params = panel.getLayoutParams();
             params.height = newHeight;
             panel.setLayoutParams(params);

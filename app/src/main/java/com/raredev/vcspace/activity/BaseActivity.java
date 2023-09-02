@@ -46,7 +46,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         .setPositiveButton(
             R.string.grant_permission,
             (d, w) -> {
-              if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+              /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 Intent intent = new Intent();
                 intent.setAction(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
                 Uri uri = Uri.fromParts("package", activity.getPackageName(), null);
@@ -60,7 +60,14 @@ public abstract class BaseActivity extends AppCompatActivity {
                       Manifest.permission.MANAGE_EXTERNAL_STORAGE
                     },
                     1);
-              }
+              }*/
+              ActivityCompat.requestPermissions(
+                  activity,
+                  new String[] {
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.MANAGE_EXTERNAL_STORAGE
+                  },
+                  1);
             })
         .setNegativeButton(
             R.string.exit,
@@ -72,11 +79,13 @@ public abstract class BaseActivity extends AppCompatActivity {
   }
 
   public static boolean isPermissionGaranted(Context context) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+    /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
       return Environment.isExternalStorageManager();
     } else {
       return ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)
           == PackageManager.PERMISSION_GRANTED;
-    }
+    }*/
+    return ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)
+        == PackageManager.PERMISSION_GRANTED;
   }
 }

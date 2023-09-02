@@ -22,16 +22,13 @@ public class PanelsManager {
   private EditorActivity activity;
   private FrameLayout parent;
 
-  private PanelAreaListener panelAreaListener;
-
   public PanelsManager(EditorActivity activity, FrameLayout parent) {
     this.activity = activity;
     this.parent = parent;
-
+    
     panelArea = new PanelArea(activity, parent);
     panelArea.addPanelTopBarButtons();
-
-    panelAreaListener =
+    panelArea.setPanelAreaListener(
         new PanelAreaListener() {
           @Override
           public PopupMenu createTabPopupMenu(Panel panel, View v) {
@@ -85,16 +82,12 @@ public class PanelsManager {
 
           @Override
           public void addPanel(Panel panel) {
-            activity.updateTabs();
             activity.savePanels();
           }
 
           @Override
           public void selectedPanel(Panel panel) {
-            if (panel.getPanelArea() == panelArea) {
-              activity.updateCurrentPanel(panel);
-              activity.invalidateOptionsMenu();
-            }
+            activity.updateCurrentPanel(panel);
           }
 
           @Override
@@ -106,9 +99,7 @@ public class PanelsManager {
           public void removedPanel(Panel panel) {
             activity.onRemovePanel();
           }
-        };
-
-    panelArea.setPanelAreaListener(panelAreaListener);
+        });
   }
 
   public void sendEvent(PanelEvent event) {
@@ -138,7 +129,6 @@ public class PanelsManager {
   }
 
   public void addFloatingPanel(FloatingPanelArea floatingPanel) {
-    floatingPanel.setPanelAreaListener(panelAreaListener);
     floatingPanels.add(floatingPanel);
   }
 

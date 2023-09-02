@@ -27,15 +27,24 @@ public class SearcherPanel extends Panel implements View.OnClickListener {
 
   public static FloatingPanelArea createFloating(Context context, FrameLayout parent) {
     FloatingPanelArea floatingPanel = new FloatingPanelArea(context, parent);
-    SearcherPanel searcherPanel = new SearcherPanel(context);
-    floatingPanel.addPanel(searcherPanel, true);
+    floatingPanel.addPanel(new SearcherPanel(context), true);
     return floatingPanel;
   }
 
   public SearcherPanel(Context context) {
     super(context);
+    setTitle(getContext().getString(R.string.search));
+  }
+  
+  @Override
+  public View createView() {
     binding = LayoutSearcherPanelBinding.inflate(LayoutInflater.from(getContext()));
-
+    return binding.getRoot();
+  }
+  
+  @Override
+  public void viewCreated(View view) {
+    super.viewCreated(view);
     binding.searchText.requestFocus();
     binding.searchText.addTextChangedListener(
         new TextWatcher() {
@@ -76,9 +85,8 @@ public class SearcherPanel extends Panel implements View.OnClickListener {
         binding.ignoreLetterCase, getContext().getString(R.string.ignore_letter_case));
     TooltipCompat.setTooltipText(binding.useRegex, getContext().getString(R.string.use_regex));
     updateSearchOptions();
-    setTitle(getContext().getString(R.string.search));
-    setContentView(binding.getRoot());
   }
+  
 
   @Override
   public void onClick(View v) {

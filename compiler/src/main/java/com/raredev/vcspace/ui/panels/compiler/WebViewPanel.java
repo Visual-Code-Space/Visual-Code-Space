@@ -33,7 +33,18 @@ public class WebViewPanel extends Panel {
 
   public WebViewPanel(Context context) {
     super(context);
+    setTitle("WebView");
+  }
+
+  @Override
+  public View createView() {
     binding = LayoutWebviewPanelBinding.inflate(LayoutInflater.from(getContext()));
+    return binding.getRoot();
+  }
+
+  @Override
+  public void viewCreated(View view) {
+    super.viewCreated(view);
     httpServer = new SimpleHttpServer(8080);
     supportZoom = true;
     desktopMode = false;
@@ -74,7 +85,7 @@ public class WebViewPanel extends Panel {
             if (binding == null) return;
             binding.progressIndicator.setVisibility(progress == 100 ? View.GONE : View.VISIBLE);
             binding.progressIndicator.setProgressCompat(progress, true);
-           /* setTitle(
+            /* setTitle(
             view.getTitle() == "about:blank"
                 ? "WebView"
                 : view.getTitle());*/
@@ -88,8 +99,6 @@ public class WebViewPanel extends Panel {
             return true;
           }
         });
-    setContentView(binding.getRoot());
-    setTitle("WebView");
   }
 
   public void loadFile(String path) {

@@ -2,6 +2,8 @@ package com.raredev.vcspace.activity;
 
 import static com.raredev.vcspace.util.Environment.getEnvironment;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 import com.blankj.utilcode.util.ClipboardUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
@@ -39,11 +42,19 @@ import org.json.JSONException;
 public class TerminalActivity extends BaseActivity
     implements TerminalViewClient, TerminalSessionClient {
 
+  public static final String KEY_WORKING_DIRECTORY = "terminal_workingDirectory";
+  public static final String KEY_EXECUTE_SH = "terminal_executeSh";
   private ActivityTerminalBinding binding;
 
   private TerminalSession session;
   private TerminalView terminal;
   private KeyListener listener;
+
+  public static void startTerminalWithDir(Context context, String path) {
+    Intent it = new Intent(context, TerminalActivity.class);
+    it.putExtra(KEY_WORKING_DIRECTORY, path);
+    context.startActivity(it);
+  }
 
   @Override
   public View getLayout() {
@@ -58,7 +69,7 @@ public class TerminalActivity extends BaseActivity
     getWindow().setNavigationBarColor(Color.BLACK);
     setupTerminalView();
   }
-  
+
   @Override
   protected void onResume() {
     super.onResume();
@@ -114,13 +125,25 @@ public class TerminalActivity extends BaseActivity
     session =
         new TerminalSession(
             "/system/bin/sh",
-            PathUtils.getRootPathExternalFirst(),
+            getWorkingDirectory(),
             new String[] {},
             env,
             TerminalEmulator.DEFAULT_TERMINAL_TRANSCRIPT_ROWS,
             this);
-    
     return session;
+  }
+
+  @NonNull
+  private String getWorkingDirectory() {
+    final Bundle extras = getIntent().getExtras();
+    if (extras != null && extras.containsKey(KEY_WORKING_DIRECTORY)) {
+      String directory = extras.getString(KEY_WORKING_DIRECTORY, null);
+      if (directory == null || directory.trim().length() <= 0) {
+        directory = PathUtils.getRootPathExternalFirst();
+      }
+      return directory;
+    }
+    return PathUtils.getRootPathExternalFirst();
   }
 
   @Override
@@ -133,7 +156,7 @@ public class TerminalActivity extends BaseActivity
 
   @Override
   public void onSessionFinished(TerminalSession finishedSession) {
-    finish();
+    // finish();
   }
 
   @Override

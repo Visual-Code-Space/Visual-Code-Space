@@ -83,6 +83,26 @@ public class PanelUtils {
     }
     return panels;
   }
+  
+  public static String getUniqueTabTitle(EditorPanel selectedPanel, List<Panel> panels) {
+    int count = 0;
+    UniqueNameBuilder<EditorPanel> builder = new UniqueNameBuilder<>("", "/");
+
+    for (Panel panel : panels) {
+      if (panel instanceof EditorPanel) {
+        var doc = ((EditorPanel) panel).getDocument();
+        if (doc.getName().equals(selectedPanel.getDocument().getName())) {
+          count++;
+        }
+        builder.addPath((EditorPanel) panel, doc.getPath());
+      }
+    }
+    if (count > 1) {
+      return builder.getShortPath(selectedPanel);
+    } else {
+      return selectedPanel.getDocument().getName();
+    }
+  }
 
   private static Panel createPanel(Context context, String type) {
     switch (type) {

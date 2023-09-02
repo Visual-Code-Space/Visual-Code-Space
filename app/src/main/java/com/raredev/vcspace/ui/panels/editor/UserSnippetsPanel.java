@@ -55,11 +55,18 @@ public class UserSnippetsPanel extends Panel implements SnippetFilesAdapter.Snip
 
   public UserSnippetsPanel(Context context) {
     super(context);
-    init();
+    setTitle(getContext().getString(R.string.user_snippets));
   }
 
-  private void init() {
+  @Override
+  public View createView() {
     binding = LayoutUserSnippetsPanelBinding.inflate(LayoutInflater.from(getContext()));
+    return binding.getRoot();
+  }
+
+  @Override
+  public void viewCreated(View view) {
+    super.viewCreated(view);
     adapter = new SnippetFilesAdapter();
     userSnippets = getSnippetFiles();
 
@@ -84,9 +91,6 @@ public class UserSnippetsPanel extends Panel implements SnippetFilesAdapter.Snip
 
     adapter.setSnippetFileListener(this);
     adapter.setData(userSnippets);
-
-    setContentView(binding.getRoot());
-    setTitle(getContext().getString(R.string.user_snippets));
   }
 
   @Override

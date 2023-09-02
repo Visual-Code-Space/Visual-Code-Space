@@ -2,6 +2,7 @@ package com.raredev.vcspace.ui.panels.editor;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.View;
 import com.raredev.vcspace.activity.EditorActivity;
 import com.raredev.vcspace.databinding.LayoutWelcomePanelBinding;
 import com.raredev.vcspace.res.R;
@@ -14,12 +15,20 @@ public class WelcomePanel extends Panel {
   public WelcomePanel(Context context) {
     super(context);
     setTitle(getContext().getString(R.string.welcome));
-    binding = LayoutWelcomePanelBinding.inflate(LayoutInflater.from(getContext()));
+  }
 
+  @Override
+  public View createView() {
+    binding = LayoutWelcomePanelBinding.inflate(LayoutInflater.from(getContext()));
+    return binding.getRoot();
+  }
+
+  @Override
+  public void viewCreated(View view) {
+    super.viewCreated(view);
     binding.newFile.setOnClickListener(v -> newFile());
 
     binding.openFile.setOnClickListener(v -> openFile());
-    setContentView(binding.getRoot());
   }
 
   @Override

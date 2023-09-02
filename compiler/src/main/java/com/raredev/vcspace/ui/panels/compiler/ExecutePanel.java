@@ -2,6 +2,7 @@ package com.raredev.vcspace.ui.panels.compiler;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import com.blankj.utilcode.util.FileIOUtils;
@@ -44,11 +45,17 @@ public class ExecutePanel extends Panel {
 
   public ExecutePanel(Context context) {
     super(context);
-    init();
   }
 
-  private void init() {
+  @Override
+  public View createView() {
     binding = LayoutExecutePanelBinding.inflate(LayoutInflater.from(getContext()));
+    return binding.getRoot();
+  }
+
+  @Override
+  public void viewCreated(View view) {
+    super.viewCreated(view);
     client = new OkHttpClient();
     mediaType = MediaType.parse("application/json");
 
@@ -60,9 +67,6 @@ public class ExecutePanel extends Panel {
           compile(input, language);
         });
     binding.language.setAdapter(adapter);
-
-    setTitle(getContext().getString(R.string.execute));
-    setContentView(binding.getRoot());
   }
 
   @Override

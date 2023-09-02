@@ -56,7 +56,7 @@ public final class Environment {
 
     ENV_VARS.put("SHELL", SHELL.getAbsolutePath());
     ENV_VARS.put("CONFIG_SHELL", SHELL.getAbsolutePath());
-    ENV_VARS.put("TERM", "screen");
+    ENV_VARS.put("TERM", "xterm");
 
     return ENV_VARS;
   }

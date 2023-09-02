@@ -67,7 +67,6 @@ public class IDECodeEditor extends CodeEditor {
     getComponent(EditorTextActionWindow.class).unregister();
     getComponent(EditorAutoCompletion.class).setLayout(new CustomCompletionLayout());
     getComponent(EditorAutoCompletion.class).setAdapter(new CompletionItemAdapter());
-    subscribeContentChangeEvent();
   }
 
   @Override

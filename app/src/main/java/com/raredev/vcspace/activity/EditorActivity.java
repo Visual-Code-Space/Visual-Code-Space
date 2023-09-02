@@ -12,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
-import android.widget.TextView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -26,7 +25,6 @@ import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.PathUtils;
 import com.blankj.utilcode.util.UriUtils;
-import com.google.android.material.tabs.TabLayout;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.ActivityEditorBinding;
 import com.raredev.vcspace.editor.completion.CompletionProvider;
@@ -51,15 +49,11 @@ import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.util.PanelUtils;
 import com.raredev.vcspace.util.PreferencesUtils;
 import com.raredev.vcspace.util.ToastUtils;
-import com.raredev.vcspace.util.UniqueNameBuilder;
 import com.raredev.vcspace.util.Utils;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -153,15 +147,7 @@ public class EditorActivity extends BaseActivity
     if (editorPanel != null) {
       var document = editorPanel.getDocument();
       if (id == R.id.menu_execute) {
-        saveAllFiles(false);
-        if (document.getName().endsWith(".html")) {
-          panelsManager.addWebViewPanel(document.getPath());
-        } else {
-          panelsManager.addFloatingPanel(ExecutePanel.createFloating(this, binding.panelArea));
-          panelsManager.sendEvent(
-              new UpdateExecutePanelEvent(
-                  document.getPath(), FileUtils.getFileExtension(document.getPath())));
-        }
+        executeDocument(document);
       } else if (id == R.id.menu_undo) editorPanel.undo();
       else if (id == R.id.menu_redo) editorPanel.redo();
       else if (id == R.id.menu_search) {
@@ -176,7 +162,7 @@ public class EditorActivity extends BaseActivity
         intent.putExtra(Intent.EXTRA_TITLE, editorPanel.getDocument().getName());
         launcher.launch(intent);
       } else if (id == R.id.menu_save_all) saveAllFiles(true);
-      else if (id == R.id.menu_reload) editorPanel.reloadFile(() -> updateTabs());
+      else if (id == R.id.menu_reload) editorPanel.reloadFile();
 
     } else if (webViewPanel != null) {
       WebView webView = webViewPanel.getWebView();
@@ -308,6 +294,18 @@ public class EditorActivity extends BaseActivity
             });
   }
 
+  private void executeDocument(DocumentModel document) {
+    saveAllFiles(false);
+    if (document.getName().endsWith(".html")) {
+      panelsManager.addWebViewPanel(document.getPath());
+    } else {
+      panelsManager.addFloatingPanel(ExecutePanel.createFloating(this, binding.panelArea));
+      panelsManager.sendEvent(
+          new UpdateExecutePanelEvent(
+              document.getPath(), FileUtils.getFileExtension(document.getPath())));
+    }
+  }
+
   // Document Opener
 
   public void openFile(@NonNull FileModel file) {
@@ -400,15 +398,7 @@ public class EditorActivity extends BaseActivity
   private void saveDocument(Panel panel) {
     if (panel != null && panel instanceof EditorPanel) {
       EditorPanel editorPanel = (EditorPanel) panel;
-      TabLayout.Tab tab =
-          panelsManager
-              .getPanelArea()
-              .getTabLayout()
-              .getTabAt(panelsManager.getPanelAreaPanels().indexOf(panel));
-      if (tab != null) {
-        editorPanel.saveDocument();
-        markUnmodifiedTab(tab);
-      }
+      editorPanel.saveDocument();
     }
   }
 
@@ -431,8 +421,8 @@ public class EditorActivity extends BaseActivity
   public void onRemovePanel() {
     if (panelsManager.getPanelAreaPanels().isEmpty()) {
       binding.layoutSymbol.setVisibility(View.GONE);
-      invalidateOptionsMenu();
     }
+    invalidateOptionsMenu();
     savePanels();
   }
 
@@ -467,97 +457,12 @@ public class EditorActivity extends BaseActivity
         editorPanel.setDocument(document);
       }
       updateCurrentPanel(panelsManager.getSelectedPanel());
-      updateTabs();
     }
   }
 
   @Subscribe(threadMode = ThreadMode.MAIN)
   public void onEditorContentChanged(EditorContentChangedEvent event) {
-    DocumentModel document = event.getDocument();
-    document.markModified();
     invalidateOptionsMenu();
-    int index = indexOfDocument(document.getPath());
-    if (index == -1) {
-      return;
-    }
-    if (!PreferencesUtils.autoSave()) {
-      TabLayout.Tab tab = panelsManager.getPanelArea().getTabLayout().getTabAt(index);
-      if (tab == null) {
-        return;
-      }
-      TextView tabTitle = tab.getCustomView().findViewById(R.id.title);
-      String name = tabTitle.getText().toString();
-      if (name.startsWith("*")) {
-        return;
-      }
-      tabTitle.setText("*" + name);
-    } else {
-      saveFile(false);
-    }
-  }
-
-  private void markUnmodifiedTab(TabLayout.Tab tab) {
-    runOnUiThread(
-        () -> {
-          TextView tabTitle = tab.getCustomView().findViewById(id.title);
-          String name = tabTitle.getText().toString();
-          if (name.startsWith("*")) {
-            tabTitle.setText(name.replace("*", ""));
-          }
-        });
-  }
-
-  public void updateTabs() {
-    TaskExecutor.executeAsyncProvideError(
-        () -> getUniqueNames(),
-        (result, error) -> {
-          if (result == null || error != null) {
-            return;
-          }
-
-          result.forEach(
-              (index, name) -> {
-                TabLayout.Tab tab = panelsManager.getPanelArea().getTabLayout().getTabAt(index);
-                if (tab != null) {
-                  TextView tabTitle = tab.getCustomView().findViewById(id.title);
-                  tabTitle.setText(name);
-                }
-              });
-        });
-  }
-
-  private Map<Integer, String> getUniqueNames() {
-    List<Panel> panels = panelsManager.getPanelAreaPanels();
-    Map<String, Integer> dupliCount = new HashMap<>();
-    Map<Integer, String> names = new HashMap<>();
-    UniqueNameBuilder<DocumentModel> nameBuilder = new UniqueNameBuilder<>("", File.separator);
-
-    for (Panel panel : panels) {
-      if (panel instanceof EditorPanel) {
-        EditorPanel editorPanel = (EditorPanel) panel;
-        DocumentModel document = editorPanel.getDocument();
-        int count = dupliCount.getOrDefault(document.getName(), 0);
-        dupliCount.put(document.getName(), ++count);
-        nameBuilder.addPath(document, document.getPath());
-      }
-    }
-
-    for (int i = 0; i < panelsManager.getPanelArea().getTabLayout().getTabCount(); i++) {
-      Panel panel = panels.get(i);
-      if (panel instanceof EditorPanel) {
-        EditorPanel editorPanel = (EditorPanel) panel;
-        DocumentModel document = editorPanel.getDocument();
-
-        int count = dupliCount.getOrDefault(document.getName(), 0);
-        boolean isModified = document.isModified();
-        String name = (count > 1) ? nameBuilder.getShortPath(document) : document.getName();
-        if (isModified) {
-          name = "*" + name;
-        }
-        names.put(i, name);
-      }
-    }
-    return names;
   }
 
   public void savePanels() {
@@ -582,7 +487,6 @@ public class EditorActivity extends BaseActivity
       for (Panel panel : panels) {
         panelsManager.addPanel(panel, false);
       }
-      updateTabs();
     } catch (Exception e) {
       e.printStackTrace();
       ToastUtils.showShort(e.getLocalizedMessage(), ToastUtils.TYPE_ERROR);

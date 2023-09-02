@@ -45,6 +45,14 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
 
     panel2PanelArea =
         new Panel2PanelArea() {
+
+          @Override
+          public void updateTitle(String title, Panel panel) {
+            var tab = binding.tabs.getTabAt(panels.indexOf(panel));
+            TextView text = tab.getCustomView().findViewById(R.id.title);
+            text.setText(title);
+          }
+
           @Override
           public PanelArea getPanelArea() {
             return PanelArea.this;
@@ -102,13 +110,12 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
           }
           pm.show();
         });
-
-    addViewInTopbar(menu);
+    binding.topBarButtons.addView(menu, 0);
   }
 
   public void sendEvent(PanelEvent event) {
     for (Panel panel : panels) {
-      if (panel.contentView == null) {
+      if (!panel.viewCreated) {
         continue;
       }
       panel.receiveEvent(event);
@@ -127,6 +134,7 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
       binding.panelContainer.removeView(lastSelectedPanel.getContentView());
       lastSelectedPanel.performUnselected();
     }
+    panel.performCreateView();
 
     binding.panelContainer.addView(panel.getContentView());
     panel.performSelected();
@@ -138,10 +146,9 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
   }
 
   public void addPanel(Panel panel, boolean select) {
-    if (panel.getContentView() == null) {
-      return;
-    }
     panel.setPanel2PanelArea(panel2PanelArea);
+    panel.performCreateView();
+
     panels.add(panel);
     binding.tabs.addTab(createTabItem(panel.getTitle()));
 
@@ -155,18 +162,19 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
   private TabLayout.Tab createTabItem(String title) {
     var tab = binding.tabs.newTab();
     tab.setCustomView(R.layout.layout_tab_item);
-    ((TextView)tab.getCustomView().findViewById(R.id.title)).setText(title);
-    tab.getCustomView().findViewById(R.id.close).setOnClickListener(
-        v -> {
-          var panel = panels.get(tab.getPosition());
-          if (panel.isPinned()) {
-            panel.setPinned(false);
-            updateTab(tab, panel);
-            return;
-          }
-          removePanel(panels.get(tab.getPosition()));
-        });
-
+    ((TextView) tab.getCustomView().findViewById(R.id.title)).setText(title);
+    tab.getCustomView()
+        .findViewById(R.id.close)
+        .setOnClickListener(
+            v -> {
+              var panel = panels.get(tab.getPosition());
+              if (panel.isPinned()) {
+                panel.setPinned(false);
+                updateTab(tab, panel);
+                return;
+              }
+              removePanel(panels.get(tab.getPosition()));
+            });
     return tab;
   }
 
@@ -174,15 +182,14 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
     if (panel != null && panels.contains(panel)) {
       if (panel.isPinned()) return false;
       int index = panels.indexOf(panel);
-      View contentView = panel.contentView;
 
       panel.performDestroy();
 
       panels.remove(panel);
       binding.tabs.removeTabAt(index);
 
-      if (contentView != null) {
-        binding.panelContainer.removeView(contentView);
+      if (panel.viewCreated) {
+        binding.panelContainer.removeView(panel.getContentView());
       }
 
       if (listener != null) {
@@ -200,10 +207,9 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
   }
 
   public void removeOthers() {
-    if (panels.isEmpty()) {
+    if (panels.isEmpty() || selectedPanel == null) {
       return;
     }
-    if (selectedPanel == null) return;
 
     for (Panel panel : panels) {
       if (panel != null && !panel.equals(selectedPanel) && !panel.isPinned()) {
@@ -214,7 +220,6 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
     for (Panel closePanel : panelsToRemove) {
       removePanel(closePanel);
     }
-    setSelectedPanel(selectedPanel);
     panelsToRemove.clear();
   }
 
@@ -294,5 +299,6 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
   private void updateTab(TabLayout.Tab tab, Panel panel) {
     ImageView close = tab.getCustomView().findViewById(R.id.close);
     close.setImageResource(panel.isPinned() ? R.drawable.ic_pin : R.drawable.close);
+    panel.updatePanelTab();
   }
 }

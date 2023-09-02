@@ -1,6 +1,7 @@
 package com.raredev.vcspace.ui.panels;
 
 import android.content.Context;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -11,15 +12,13 @@ public class TextPanel extends Panel {
   private ScrollView scroll;
   private TextView text;
 
-  public static TextPanel newTextPanel(Context context, String text) {
-    TextPanel textPanel = new TextPanel(context);
-    textPanel.setText(text);
-    return textPanel;
-  }
-
   public TextPanel(Context context) {
     super(context);
-    scroll = new ScrollView(context);
+  }
+
+  @Override
+  public View createView() {
+    scroll = new ScrollView(getContext());
     scroll.setLayoutParams(
         new ScrollView.LayoutParams(
             ScrollView.LayoutParams.MATCH_PARENT, ScrollView.LayoutParams.MATCH_PARENT));
@@ -33,8 +32,7 @@ public class TextPanel extends Panel {
     text.setTextSize(14);
 
     scroll.addView(text);
-
-    setContentView(scroll);
+    return scroll;
   }
 
   @Override
@@ -50,6 +48,6 @@ public class TextPanel extends Panel {
   public void selected() {}
 
   public void setText(String text) {
-    this.text.setText(text);
+    if (isViewCreated()) this.text.setText(text);
   }
 }

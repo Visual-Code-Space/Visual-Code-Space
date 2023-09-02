@@ -2,7 +2,6 @@ package com.raredev.vcspace.ui.panels;
 
 import android.content.Context;
 import android.view.View;
-import android.view.ViewGroup;
 import com.raredev.vcspace.events.PanelEvent;
 
 public abstract class Panel {
@@ -12,14 +11,17 @@ public abstract class Panel {
 
   private Context context;
 
-  View contentView;
-  Panel2PanelArea panel2PanelArea;
+  private View contentView;
+  private Panel2PanelArea panel2PanelArea;
+
+  boolean viewCreated;
   boolean destroyed;
 
   public Panel(Context context) {
     this.context = context;
 
     this.pinned = false;
+    this.viewCreated = false;
     this.destroyed = false;
   }
 
@@ -28,16 +30,32 @@ public abstract class Panel {
   }
 
   void performSelected() {
-    if (!destroyed) selected();
+    if (!destroyed && viewCreated) selected();
   }
 
   void performUnselected() {
-    if (!destroyed) unselected();
+    if (!destroyed && viewCreated) unselected();
+  }
+
+  void performCreateView() {
+    if (!viewCreated) {
+      contentView = createView();
+      viewCreated = true;
+
+      viewCreated(contentView);
+    }
   }
 
   void performDestroy() {
-    destroyed = true;
-    destroy();
+    if (viewCreated) {
+      destroyed = true;
+      destroy();
+    }
+  }
+
+  public void updateTitle(String title) {
+    panel2PanelArea.updateTitle(title, this);
+    setTitle(title);
   }
 
   public void setTitle(String title) {
@@ -56,13 +74,6 @@ public abstract class Panel {
     this.pinned = pinned;
   }
 
-  public void setContentView(View view) {
-    view.setLayoutParams(
-        new ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-    contentView = view;
-  }
-
   public View getContentView() {
     return contentView;
   }
@@ -70,7 +81,7 @@ public abstract class Panel {
   public Context getContext() {
     return this.context;
   }
-  
+
   public PanelArea getPanelArea() {
     return panel2PanelArea.getPanelArea();
   }
@@ -79,7 +90,19 @@ public abstract class Panel {
     panel2PanelArea.romoveThis(this);
   }
 
+  public View createView() {
+    return null;
+  }
+
+  public void viewCreated(View view) {}
+
   public void receiveEvent(PanelEvent event) {}
+  
+  public void updatePanelTab() {}
+
+  public boolean isViewCreated() {
+    return viewCreated;
+  }
 
   public abstract void unselected();
 

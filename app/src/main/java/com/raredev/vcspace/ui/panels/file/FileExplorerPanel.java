@@ -36,33 +36,40 @@ public class FileExplorerPanel extends Panel implements FileAdapter.FileListener
 
   public FileExplorerPanel(Context context) {
     super(context);
-    binding = LayoutFileExplorerPanelBinding.inflate(LayoutInflater.from(getContext()));
+    setTitle("Explorer");
+  }
 
+  @Override
+  public View createView() {
+    binding = LayoutFileExplorerPanelBinding.inflate(LayoutInflater.from(getContext()));
+    return binding.getRoot();
+  }
+
+  @Override
+  public void viewCreated(View view) {
+    super.viewCreated(view);
     binding.pathList.setFileExplorerPanel(this);
 
     binding.navigationSpace.addItem(
-        context, R.string.refresh, R.drawable.ic_refresh, (v) -> refreshFiles());
+        getContext(), R.string.refresh, R.drawable.ic_refresh, (v) -> refreshFiles());
     binding.navigationSpace.addItem(
-        context,
+        getContext(),
         R.string.create,
         R.drawable.ic_add,
         (v) -> {
-          FileManagerDialogs.createNew(context, currentDir.toFile(), (file) -> refreshFiles());
+          FileManagerDialogs.createNew(getContext(), currentDir.toFile(), (file) -> refreshFiles());
         });
     binding.navigationSpace.addItem(
-        context,
+        getContext(),
         R.string.clone_repo,
         R.drawable.git,
         (v) ->
             FileManagerDialogs.cloneRepoDialog(
-                context,
+                getContext(),
                 currentDir.toFile(),
                 (output) -> setCurrentDir(FileModel.fileToFileModel(output))));
     setupRecyclerView();
     refreshFiles();
-
-    setContentView(binding.getRoot());
-    setTitle("Explorer");
   }
 
   @Override
@@ -152,6 +159,7 @@ public class FileExplorerPanel extends Panel implements FileAdapter.FileListener
   }
 
   public void listArchives(FileModel path) {
+    if (!isViewCreated()) return;
     binding.container.setDisplayedChild(1);
     TaskExecutor.executeAsyncProvideError(
         () -> {
