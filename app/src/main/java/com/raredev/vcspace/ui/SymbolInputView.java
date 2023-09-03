@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.raredev.vcspace.adapters.SymbolInputAdapter;
 import com.raredev.vcspace.editor.IDECodeEditor;
 import com.raredev.vcspace.models.Symbol;
+import io.github.rosemoe.sora.widget.schemes.EditorColorScheme;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class SymbolInputView extends RecyclerView {
   }
 
   public void bindEditor(@NonNull IDECodeEditor editor) {
+    setBackgroundColor(editor.getColorScheme().getColor(EditorColorScheme.WHOLE_BACKGROUND));
     adapter.bindEditor(editor);
   }
 

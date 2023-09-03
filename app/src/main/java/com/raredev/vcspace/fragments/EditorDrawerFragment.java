@@ -126,7 +126,7 @@ public class EditorDrawerFragment extends Fragment {
 
   private void openRecentPanels() {
     try {
-      List<Panel> panels =
+     /* List<Panel> panels =
           PanelUtils.jsonToPanels(
               requireContext(),
               new String(
@@ -136,7 +136,7 @@ public class EditorDrawerFragment extends Fragment {
       }
       if (!panelArea.getPanels().isEmpty()) {
         panelArea.setSelectedPanel(panelArea.getPanels().get(0));
-      }
+      }*/
     } catch (Exception e) {
       e.printStackTrace();
     }

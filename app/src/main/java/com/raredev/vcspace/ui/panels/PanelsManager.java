@@ -25,7 +25,7 @@ public class PanelsManager {
   public PanelsManager(EditorActivity activity, FrameLayout parent) {
     this.activity = activity;
     this.parent = parent;
-    
+
     panelArea = new PanelArea(activity, parent);
     panelArea.addPanelTopBarButtons();
     panelArea.setPanelAreaListener(
@@ -97,7 +97,8 @@ public class PanelsManager {
 
           @Override
           public void removedPanel(Panel panel) {
-            activity.onRemovePanel();
+            activity.invalidateOptionsMenu();
+            activity.savePanels();
           }
         });
   }

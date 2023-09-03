@@ -33,6 +33,9 @@ public class WebViewPanel extends Panel {
 
   public WebViewPanel(Context context) {
     super(context);
+    supportZoom = true;
+    desktopMode = false;
+    filePath = "";
     setTitle("WebView");
   }
 
@@ -46,9 +49,6 @@ public class WebViewPanel extends Panel {
   public void viewCreated(View view) {
     super.viewCreated(view);
     httpServer = new SimpleHttpServer(8080);
-    supportZoom = true;
-    desktopMode = false;
-    filePath = "";
 
     WebSettings webSettings = binding.webView.getSettings();
     webSettings.setAllowContentAccess(true);
@@ -102,11 +102,14 @@ public class WebViewPanel extends Panel {
   }
 
   public void loadFile(String path) {
-    httpServer.setFolderAndFile(
-        (String) path.subSequence(0, path.lastIndexOf("/")),
-        path.substring(path.lastIndexOf("/") + 1));
-    binding.webView.loadUrl(httpServer.getLocalIpAddress());
     filePath = path;
+
+    if (isViewCreated()) {
+      httpServer.setFolderAndFile(
+          (String) path.subSequence(0, path.lastIndexOf("/")),
+          path.substring(path.lastIndexOf("/") + 1));
+      binding.webView.loadUrl(httpServer.getLocalIpAddress());
+    }
   }
 
   @Override
@@ -199,8 +202,11 @@ public class WebViewPanel extends Panel {
   }
 
   public void setSupportZoom(boolean enabled) {
-    binding.webView.getSettings().setSupportZoom(enabled);
     supportZoom = enabled;
+
+    if (isViewCreated()) {
+      binding.webView.getSettings().setSupportZoom(enabled);
+    }
   }
 
   public boolean isDesktopMode() {
@@ -209,6 +215,8 @@ public class WebViewPanel extends Panel {
 
   public void setDesktopMode(boolean enabled) {
     WebSettings webSettings = binding.webView.getSettings();
+
+    if (!isViewCreated()) return;
 
     // Check if the desktop mode is enabled or not
     if (enabled) {

@@ -45,6 +45,7 @@ public class ExecutePanel extends Panel {
 
   public ExecutePanel(Context context) {
     super(context);
+    setTitle(context.getString(R.string.execute));
   }
 
   @Override

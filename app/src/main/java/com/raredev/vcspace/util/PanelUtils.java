@@ -7,6 +7,7 @@ import com.google.gson.reflect.TypeToken;
 import com.raredev.vcspace.models.DocumentModel;
 import com.raredev.vcspace.models.FileModel;
 import com.raredev.vcspace.ui.panels.Panel;
+import com.raredev.vcspace.ui.panels.PanelArea;
 import com.raredev.vcspace.ui.panels.compiler.WebViewPanel;
 import com.raredev.vcspace.ui.panels.editor.EditorPanel;
 import com.raredev.vcspace.ui.panels.editor.SearcherPanel;
@@ -18,6 +19,11 @@ import java.util.List;
 
 public class PanelUtils {
 
+  public static final String TYPE_WELCOME = "WelcomePanel";
+  public static final String TYPE_EDITOR = "EditorPanel";
+  public static final String TYPE_EXPLORER = "FileExplorerPanel";
+  public static final String TYPE_WEBVIEW = "WebViewPanel";
+
   public static String panelsToJson(List<Panel> panels) {
     if (panels.isEmpty()) return "";
     List<LinkedTreeMap<String, String>> panelsMapList = new ArrayList<>();
@@ -27,15 +33,16 @@ public class PanelUtils {
       map.put("type", panel.getClass().getSimpleName());
       map.put("pinned", String.valueOf(panel.isPinned()));
 
-      if (panel instanceof EditorPanel editorPanel) {
-        map.put("document", gson.toJson(editorPanel.getDocument()));
+      if (panel instanceof EditorPanel) {
+        map.put("document", gson.toJson(((EditorPanel) panel).getDocument()));
       }
 
-      if (panel instanceof FileExplorerPanel fileExplorer) {
-        map.put("currentPath", fileExplorer.getCurrentDir().getPath());
+      if (panel instanceof FileExplorerPanel) {
+        map.put("currentPath", ((FileExplorerPanel) panel).getCurrentDir().getPath());
       }
-      
-      if (panel instanceof WebViewPanel webViewPanel) {
+
+      if (panel instanceof WebViewPanel) {
+        var webViewPanel = (WebViewPanel) panel;
         map.put("filePath", webViewPanel.getFilePath());
         map.put("supportZoom", String.valueOf(webViewPanel.isSupportZoom()));
         map.put("desktopMode", String.valueOf(webViewPanel.isDesktopMode()));
@@ -45,45 +52,42 @@ public class PanelUtils {
     return gson.toJson(panelsMapList);
   }
 
-  public static List<Panel> jsonToPanels(Context context, String json) {
+  public static void addJsonPanelsInArea(Context context, String json, PanelArea panelArea) {
     Gson gson = new Gson();
 
     var typeToken = new TypeToken<List<LinkedTreeMap<String, String>>>() {}.getType();
 
     List<LinkedTreeMap<String, String>> panelsMapList = gson.fromJson(json, typeToken);
 
-    List<Panel> panels = new ArrayList<>();
-    if (panelsMapList != null) {
-      for (LinkedTreeMap<String, String> panelMap : panelsMapList) {
-        String type = panelMap.get("type");
-        Panel panel = null;
-        if (type.equals("EditorPanel")) {
-          DocumentModel document =
-              gson.fromJson(panelMap.get("document"), DocumentModel.class);
-          panel = new EditorPanel(context, document);
-        } else {
-          panel = createPanel(context, type);
-        }
-
-        if (type.equals("FileExplorerPanel")) {
-          ((FileExplorerPanel) panel)
-              .setCurrentDir(
-                  FileModel.fileToFileModel(new File(panelMap.get("currentPath"))));
-        }
-        
-        if (type.equals("WebViewPanel")) {
-          var webViewPanel = (WebViewPanel) panel;
-          webViewPanel.loadFile(panelMap.get("filePath"));
-          webViewPanel.setSupportZoom(Boolean.parseBoolean(panelMap.get("supportZoom")));
-          webViewPanel.setDesktopMode(Boolean.parseBoolean(panelMap.get("desktopMode")));
-        }
-        panel.setPinned(Boolean.parseBoolean(panelMap.get("pinned")));
-        panels.add(panel);
-      }
+    if (panelsMapList == null) {
+      return;
     }
-    return panels;
+    for (LinkedTreeMap<String, String> panelMap : panelsMapList) {
+      String type = panelMap.get("type");
+
+      Panel panel = createPanel(context, type);
+      if (type.equals(TYPE_EDITOR)) {
+        DocumentModel document = gson.fromJson(panelMap.get("document"), DocumentModel.class);
+        panel = new EditorPanel(context, document);
+      }
+
+      panelArea.addPanel(panel, false);
+
+      if (type.equals(TYPE_EXPLORER)) {
+        ((FileExplorerPanel) panel)
+            .setCurrentDir(FileModel.fileToFileModel(new File(panelMap.get("currentPath"))));
+      }
+
+      if (type.equals(TYPE_WEBVIEW)) {
+        var webViewPanel = (WebViewPanel) panel;
+        webViewPanel.loadFile(panelMap.get("filePath"));
+        webViewPanel.setSupportZoom(Boolean.parseBoolean(panelMap.get("supportZoom")));
+        webViewPanel.setDesktopMode(Boolean.parseBoolean(panelMap.get("desktopMode")));
+      }
+      panel.setPinned(Boolean.parseBoolean(panelMap.get("pinned")));
+    }
   }
-  
+
   public static String getUniqueTabTitle(EditorPanel selectedPanel, List<Panel> panels) {
     int count = 0;
     UniqueNameBuilder<EditorPanel> builder = new UniqueNameBuilder<>("", "/");
@@ -106,13 +110,11 @@ public class PanelUtils {
 
   private static Panel createPanel(Context context, String type) {
     switch (type) {
-      case "SearcherPanel":
-        return new SearcherPanel(context);
-      case "WelcomePanel":
+      case TYPE_WELCOME:
         return new WelcomePanel(context);
-      case "FileExplorerPanel":
+      case TYPE_EXPLORER:
         return new FileExplorerPanel(context);
-      case "WebViewPanel":
+      case TYPE_WEBVIEW:
         return new WebViewPanel(context);
       default:
         return null;

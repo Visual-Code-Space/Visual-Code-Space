@@ -183,14 +183,12 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
       if (panel.isPinned()) return false;
       int index = panels.indexOf(panel);
 
-      panel.performDestroy();
-
       panels.remove(panel);
-      binding.tabs.removeTabAt(index);
-
       if (panel.viewCreated) {
         binding.panelContainer.removeView(panel.getContentView());
       }
+      binding.tabs.removeTabAt(index);
+      panel.performDestroy();
 
       if (listener != null) {
         listener.removedPanel(panel);

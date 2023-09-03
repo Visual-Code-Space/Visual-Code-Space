@@ -15,10 +15,7 @@ import android.webkit.WebView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.view.menu.MenuBuilder;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import com.blankj.utilcode.util.EncodeUtils;
 import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.FileUtils;
@@ -35,7 +32,6 @@ import com.raredev.vcspace.events.UpdateExecutePanelEvent;
 import com.raredev.vcspace.events.UpdateSearcherEvent;
 import com.raredev.vcspace.models.DocumentModel;
 import com.raredev.vcspace.models.FileModel;
-import com.raredev.vcspace.models.Symbol;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.ui.panels.Panel;
 import com.raredev.vcspace.ui.panels.PanelsManager;
@@ -84,10 +80,8 @@ public class EditorActivity extends BaseActivity
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setSupportActionBar(binding.toolbar);
-    setupDrawer();
 
     panelsManager = new PanelsManager(this, binding.panelArea);
-    binding.symbolInput.setSymbols(Symbol.baseSymbols());
 
     KeyboardUtils.registerSoftInputChangedListener(this, (i) -> invalidateOptionsMenu());
 
@@ -197,10 +191,6 @@ public class EditorActivity extends BaseActivity
 
   @Override
   public void onBackPressed() {
-    if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-      binding.drawerLayout.closeDrawer(GravityCompat.START);
-      return;
-    }
     WebViewPanel webViewPanel = getSelectedWebViewPanel();
     if (webViewPanel != null && webViewPanel.getWebView().canGoBack()) {
       webViewPanel.getWebView().goBack();
@@ -237,15 +227,6 @@ public class EditorActivity extends BaseActivity
   @Override
   public void onSharedPreferenceChanged(SharedPreferences pref, String key) {
     panelsManager.sendEvent(new PreferenceChangedEvent(key));
-  }
-
-  private void setupDrawer() {
-    DrawerLayout drawerLayout = binding.drawerLayout;
-
-    ActionBarDrawerToggle toggle =
-        new ActionBarDrawerToggle(this, drawerLayout, binding.toolbar, string.open, string.close);
-    drawerLayout.addDrawerListener(toggle);
-    toggle.syncState();
   }
 
   private void registerResultActivity() {
@@ -316,7 +297,6 @@ public class EditorActivity extends BaseActivity
     if (!file.isFile()) {
       return;
     }
-    binding.drawerLayout.closeDrawer(GravityCompat.START);
     int openedFileIndex = indexOfDocument(file.getPath());
     if (openedFileIndex != -1) {
       panelsManager.getPanelArea().setSelectedPanel(panelsManager.getPanel(openedFileIndex));
@@ -418,28 +398,16 @@ public class EditorActivity extends BaseActivity
     return null;
   }
 
-  public void onRemovePanel() {
-    if (panelsManager.getPanelAreaPanels().isEmpty()) {
-      binding.layoutSymbol.setVisibility(View.GONE);
-    }
-    invalidateOptionsMenu();
-    savePanels();
-  }
-
   public void updateCurrentPanel(Panel panel) {
     if (panel instanceof EditorPanel) {
       EditorPanel editorPanel = (EditorPanel) panel;
       var editor = editorPanel.getEditor();
       var document = editorPanel.getDocument();
-      binding.layoutSymbol.setVisibility(View.VISIBLE);
-      binding.symbolInput.bindEditor(editorPanel.getEditor());
 
       panelsManager.sendEvent(new UpdateSearcherEvent(editorPanel.getEditor().getSearcher()));
       panelsManager.sendEvent(
           new UpdateExecutePanelEvent(
               document.getPath(), FileUtils.getFileExtension(document.getPath())));
-    } else {
-      binding.layoutSymbol.setVisibility(View.GONE);
     }
     invalidateOptionsMenu();
   }
@@ -479,14 +447,17 @@ public class EditorActivity extends BaseActivity
 
   private void openRecentPanels() {
     try {
-      List<Panel> panels =
+      var json = new String(
+                  EncodeUtils.base64Decode(FileIOUtils.readFile2String(RECENT_PANELS_PATH)));
+      PanelUtils.addJsonPanelsInArea(this, json, panelsManager.getPanelArea());
+     /* List<Panel> panels =
           PanelUtils.jsonToPanels(
               this,
               new String(
                   EncodeUtils.base64Decode(FileIOUtils.readFile2String(RECENT_PANELS_PATH))));
       for (Panel panel : panels) {
         panelsManager.addPanel(panel, false);
-      }
+      }*/
     } catch (Exception e) {
       e.printStackTrace();
       ToastUtils.showShort(e.getLocalizedMessage(), ToastUtils.TYPE_ERROR);

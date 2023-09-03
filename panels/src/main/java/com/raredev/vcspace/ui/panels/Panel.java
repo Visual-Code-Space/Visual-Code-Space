@@ -1,6 +1,7 @@
 package com.raredev.vcspace.ui.panels;
 
 import android.content.Context;
+import android.view.Menu;
 import android.view.View;
 import com.raredev.vcspace.events.PanelEvent;
 
@@ -48,6 +49,8 @@ public abstract class Panel {
 
   void performDestroy() {
     if (viewCreated) {
+      viewCreated = false;
+      contentView = null;
       destroyed = true;
       destroy();
     }
@@ -94,10 +97,12 @@ public abstract class Panel {
     return null;
   }
 
+  public void createPanelMenu(Menu menu) {}
+
   public void viewCreated(View view) {}
 
   public void receiveEvent(PanelEvent event) {}
-  
+
   public void updatePanelTab() {}
 
   public boolean isViewCreated() {
