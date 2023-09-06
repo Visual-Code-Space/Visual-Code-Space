@@ -18,7 +18,7 @@ ext {
   ]
   common = [
     utilcode: 'com.blankj:utilcodex:1.31.1',
-    jgit: 'org.eclipse.jgit:org.eclipse.jgit:6.5.0.202303070854-r',
+    jgit: 'org.eclipse.jgit:org.eclipse.jgit:6.7.0.202309050840-r',
     eventbus: 'org.greenrobot:eventbus:3.3.1',
     jsoup: 'org.jsoup:jsoup:1.16.1',
     leakcanary: 'com.squareup.leakcanary:leakcanary-android:2.10',
