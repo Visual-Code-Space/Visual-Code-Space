@@ -117,5 +117,5 @@ dependencies {
   implementation project(path: ':models')
   implementation project(path: ':treeview')
 
-  //debugImplementation common.leakcanary
+  debugImplementation common.leakcanary
 }

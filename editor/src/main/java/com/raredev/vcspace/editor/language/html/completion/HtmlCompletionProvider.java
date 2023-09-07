@@ -43,8 +43,6 @@ public class HtmlCompletionProvider extends CompletionProvider {
       return completions;
     }
 
-    IDECodeEditor editor = params.getEditor();
-
     DOMDocument document = DOMParser.getInstance().parse(params.getContent(), "", null);
 
     if (prefix.startsWith("<") || prefix.startsWith("</")) {

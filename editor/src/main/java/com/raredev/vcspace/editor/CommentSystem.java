@@ -14,7 +14,7 @@ public class CommentSystem {
     if (commentLine != null) {
       // Insert single-line comment at the beginning of the line
       var lineText = text.getLine(line).toString();
-      var column = lineText.indexOf(lineText.trim().charAt(0));
+      var column = lineText.indexOf(lineText.trim().charAt(0))-1;
       
       text.insert(line, column, commentLine);
     }

@@ -1,15 +1,22 @@
 package com.raredev.vcspace.activity;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import com.blankj.utilcode.util.ClipboardUtils;
 import com.blankj.utilcode.util.DeviceUtils;
-import com.raredev.vcspace.res.R;
 import com.raredev.vcspace.databinding.ActivityCrashBinding;
+import com.raredev.vcspace.res.R;
+import java.util.Calendar;
+import java.util.Date;
 
 public class CrashActivity extends BaseActivity {
+  public static final String KEY_EXTRA_ERROR = "error";
+
+  private static final String newLine = "\n";
+
   private ActivityCrashBinding binding;
 
   @Override
@@ -31,11 +38,12 @@ public class CrashActivity extends BaseActivity {
 
     error.append("Manufacturer: " + DeviceUtils.getManufacturer() + "\n");
     error.append("Device: " + DeviceUtils.getModel() + "\n");
-    error.append(getIntent().getStringExtra("Software"));
+    error.append(getSoftwareInfo());
     error.append("\n\n");
-    error.append(getIntent().getStringExtra("Error"));
+    error.append(getIntent().getStringExtra(KEY_EXTRA_ERROR));
     error.append("\n\n");
-    error.append(getIntent().getStringExtra("Date"));
+    error.append(getDate());
+    error.append("\n\n");
 
     binding.result.setText(error.toString());
 
@@ -43,11 +51,6 @@ public class CrashActivity extends BaseActivity {
         v -> {
           ClipboardUtils.copyText(binding.result.getText());
         });
-  }
-
-  @Override
-  public void onBackPressed() {
-    finishAffinity();
   }
 
   @Override
@@ -63,10 +66,15 @@ public class CrashActivity extends BaseActivity {
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     if (item.getTitle().equals(getString(R.string.close))) {
-      finish();
+      onBackPressed();
       return true;
     }
     return false;
+  }
+
+  @Override
+  public void onBackPressed() {
+    finishAffinity();
   }
 
   @Override
@@ -75,9 +83,20 @@ public class CrashActivity extends BaseActivity {
     binding = null;
   }
 
-  @Override
-  public void finish() {
-    super.finish();
-    System.exit(0);
+  private String getSoftwareInfo() {
+    return new StringBuilder("SDK: ")
+        .append(Build.VERSION.SDK_INT)
+        .append(newLine)
+        .append("Android: ")
+        .append(Build.VERSION.RELEASE)
+        .append(newLine)
+        .append("Model: ")
+        .append(Build.VERSION.INCREMENTAL)
+        .append(newLine)
+        .toString();
+  }
+
+  private Date getDate() {
+    return Calendar.getInstance().getTime();
   }
 }

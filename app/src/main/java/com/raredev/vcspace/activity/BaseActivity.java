@@ -16,9 +16,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.elevation.SurfaceColors;
-import com.raredev.vcspace.CrashHandler;
 import com.raredev.vcspace.res.R;
-import com.raredev.vcspace.util.ToastUtils;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
@@ -27,9 +25,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     getWindow().setStatusBarColor(SurfaceColors.SURFACE_0.getColor(this));
     getWindow().setNavigationBarColor(SurfaceColors.SURFACE_0.getColor(this));
-    Thread.setDefaultUncaughtExceptionHandler(new CrashHandler(this));
     setContentView(getLayout());
-    ToastUtils.setContext(this);
 
     if (!isPermissionGaranted(this)) {
       takeFilePermissions(this);
@@ -46,7 +42,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         .setPositiveButton(
             R.string.grant_permission,
             (d, w) -> {
-              /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+              if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 Intent intent = new Intent();
                 intent.setAction(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
                 Uri uri = Uri.fromParts("package", activity.getPackageName(), null);
@@ -60,14 +56,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                       Manifest.permission.MANAGE_EXTERNAL_STORAGE
                     },
                     1);
-              }*/
-              ActivityCompat.requestPermissions(
-                  activity,
-                  new String[] {
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.MANAGE_EXTERNAL_STORAGE
-                  },
-                  1);
+              }
             })
         .setNegativeButton(
             R.string.exit,
@@ -79,13 +68,11 @@ public abstract class BaseActivity extends AppCompatActivity {
   }
 
   public static boolean isPermissionGaranted(Context context) {
-    /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
       return Environment.isExternalStorageManager();
     } else {
       return ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)
           == PackageManager.PERMISSION_GRANTED;
-    }*/
-    return ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)
-        == PackageManager.PERMISSION_GRANTED;
+    }
   }
 }
