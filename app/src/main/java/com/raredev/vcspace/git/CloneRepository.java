@@ -1,4 +1,4 @@
-package com.raredev.vcspace.fragments.explorer.git;
+package com.raredev.vcspace.git;
 
 import android.content.Context;
 import android.content.DialogInterface;

@@ -74,8 +74,7 @@ public class PanelUtils {
       panelArea.addPanel(panel, false);
 
       if (type.equals(TYPE_EXPLORER)) {
-        ((FileExplorerPanel) panel)
-            .setCurrentDir(FileModel.fileToFileModel(new File(panelMap.get("currentPath"))));
+        ((FileExplorerPanel) panel).setCurrentDir(panelMap.get("currentPath"));
       }
 
       if (type.equals(TYPE_WEBVIEW)) {

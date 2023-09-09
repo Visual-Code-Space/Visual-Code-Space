@@ -12,6 +12,30 @@
         android:padding="5dp"
         android:id="@+id/path_list" />
 
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:gravity="center_vertical"
+        android:padding="10dp"
+        android:id="@+id/back_folder"
+        android:foreground="?attr/selectableItemBackground">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:layout_height="28dp"
+            android:layout_width="28dp"
+            android:src="@drawable/ic_folder" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginEnd="55dp"
+            android:textSize="14sp"
+            android:singleLine="true"
+            android:layout_marginStart="10dp"
+            android:text=".." />
+
+    </LinearLayout>
+
     <ViewFlipper
         android:layout_height="match_parent"
         android:layout_width="match_parent"

@@ -1,4 +1,4 @@
-package com.raredev.vcspace.fragments.explorer;
+package com.raredev.vcspace.util;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,7 +12,7 @@ import androidx.appcompat.app.AlertDialog;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
-import com.raredev.vcspace.fragments.explorer.git.CloneRepository;
+import com.raredev.vcspace.git.CloneRepository;
 import com.raredev.vcspace.models.FileModel;
 import com.raredev.vcspace.progressdialog.ProgressDialog;
 import com.raredev.vcspace.res.R;

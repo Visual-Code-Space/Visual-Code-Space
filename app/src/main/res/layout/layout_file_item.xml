@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
+    android:gravity="center_vertical"
     android:padding="10dp"
     android:foreground="?attr/selectableItemBackground">
 
     <CheckBox
         android:layout_height="20dp"
-        android:layout_width="20dp"
+        android:layout_width="40dp"
         android:visibility="gone"
-        android:paddingRight="20dp"
-        android:layout_centerVertical="true"
+        android:gravity="start|center_vertical"
+        android:clickable="false"
         android:id="@+id/checkbox" />
 
     <com.google.android.material.imageview.ShapeableImageView
         android:layout_height="28dp"
         android:layout_width="28dp"
         android:layout_centerVertical="true"
-        android:layout_toRightOf="@id/checkbox"
         android:id="@+id/img_icon" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_marginEnd="55dp"
-        android:layout_centerVertical="true"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_marginEnd="5dp"
+        android:gravity="center_vertical"
         android:textSize="14sp"
-        android:layout_toRightOf="@id/img_icon"
         android:singleLine="true"
         android:layout_marginStart="10dp"
+        android:layout_weight="1"
         android:id="@+id/file_name" />
 
     <com.google.android.material.imageview.ShapeableImageView
@@ -38,9 +38,7 @@
         android:layout_width="25dp"
         android:src="@drawable/ic_menu"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:layout_centerVertical="true"
         android:padding="2dp"
-        android:layout_alignParentEnd="true"
         android:id="@+id/img_menu" />
 
-</RelativeLayout>
+</LinearLayout>

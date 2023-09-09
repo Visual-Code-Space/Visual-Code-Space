@@ -12,11 +12,11 @@ import com.raredev.vcspace.activity.EditorActivity;
 import com.raredev.vcspace.adapters.FileAdapter;
 import com.raredev.vcspace.databinding.LayoutFileExplorerPanelBinding;
 import com.raredev.vcspace.events.OnFileRenamedEvent;
-import com.raredev.vcspace.fragments.explorer.FileManagerDialogs;
 import com.raredev.vcspace.models.FileModel;
 import com.raredev.vcspace.res.R;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.ui.panels.Panel;
+import com.raredev.vcspace.util.FileManagerDialogs;
 import com.raredev.vcspace.util.FileUtil;
 import com.raredev.vcspace.util.PreferencesUtils;
 import java.io.File;
@@ -65,9 +65,15 @@ public class FileExplorerPanel extends Panel implements FileAdapter.FileListener
         R.drawable.git,
         (v) ->
             FileManagerDialogs.cloneRepoDialog(
-                getContext(),
-                currentDir.toFile(),
-                (output) -> setCurrentDir(FileModel.fileToFileModel(output))));
+                getContext(), currentDir.toFile(), (output) -> setCurrentDir(output.getPath())));
+    binding.backFolder.setOnClickListener(
+        v -> {
+          if (currentDir.getPath().equals(PathUtils.getRootPathExternalFirst())) return;
+          var parentPath = FileUtil.getParentPath(currentDir.getPath());
+          if (parentPath != null) {
+            setCurrentDir(parentPath);
+          }
+        });
     setupRecyclerView();
     refreshFiles();
   }
@@ -75,7 +81,7 @@ public class FileExplorerPanel extends Panel implements FileAdapter.FileListener
   @Override
   public void onFileClick(FileModel file, View v) {
     if (!file.isFile()) {
-      setCurrentDir(file);
+      setCurrentDir(file.getPath());
     } else {
       if (FileUtil.isValidTextFile(file.getName())) {
         ((EditorActivity) getContext()).openFile(file);
@@ -149,9 +155,9 @@ public class FileExplorerPanel extends Panel implements FileAdapter.FileListener
     binding.rvFiles.setAdapter(mFilesAdapter);
   }
 
-  public void setCurrentDir(FileModel dir) {
-    listArchives(dir);
-    currentDir = dir;
+  public void setCurrentDir(String path) {
+    currentDir.setPath(path);
+    refreshFiles();
   }
 
   public void refreshFiles() {

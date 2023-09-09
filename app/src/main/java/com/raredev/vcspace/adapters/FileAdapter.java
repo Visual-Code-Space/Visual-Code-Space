@@ -1,15 +1,19 @@
 package com.raredev.vcspace.adapters;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.R;
+import com.google.android.material.color.MaterialColors;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textview.MaterialTextView;
 import com.raredev.vcspace.databinding.LayoutFileItemBinding;
 import com.raredev.vcspace.models.FileModel;
+import com.raredev.vcspace.ui.panels.file.FileExplorerPanel;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,6 +44,11 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.VH> {
     holder.checkBox.setVisibility(selectedFiles.isEmpty() ? View.GONE : View.VISIBLE);
     holder.checkBox.setChecked(selectedFiles.contains(file));
 
+    int colorControlHighlight =
+        MaterialColors.getColor(holder.itemView.getContext(), R.attr.colorControlHighlight, 0);
+    holder.itemView.setBackgroundColor(
+        selectedFiles.contains(file) ? colorControlHighlight : Color.TRANSPARENT);
+
     holder.itemView.setOnClickListener(
         (v) -> {
           if (!selectedFiles.isEmpty()) {
@@ -67,10 +76,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.VH> {
 
   @Override
   public int getItemCount() {
-    if (files == null) {
-      return 0;
-    }
-    return files.size();
+    return files == null ? 0 : files.size();
   }
 
   public void switchSelectedFile(FileModel file) {
@@ -81,7 +87,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.VH> {
     }
     notifyDataSetChanged();
   }
-  
+
   public void selectAllFiles() {
     for (FileModel file : files) {
       if (!selectedFiles.contains(file)) {
@@ -90,7 +96,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.VH> {
     }
     notifyDataSetChanged();
   }
-  
+
   public void unselectAllFiles() {
     selectedFiles.clear();
     notifyDataSetChanged();

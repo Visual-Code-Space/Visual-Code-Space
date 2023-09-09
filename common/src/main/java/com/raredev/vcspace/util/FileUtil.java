@@ -14,6 +14,7 @@ import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -28,6 +29,15 @@ public class FileUtil {
   public static boolean isValidTextFile(String filename) {
     return !filename.matches(
         ".*\\.(bin|ttf|png|jpe?g|bmp|mp4|mp3|m4a|iso|so|zip|rar|jar|dex|odex|vdex|7z|apk|apks|xapk)$");
+  }
+
+  public static String getParentPath(String path) {
+    int index = path.lastIndexOf("/");
+    if (index != -1) {
+      String parentPath = path.substring(0, index);
+      return parentPath;
+    }
+    return null;
   }
 
   public static boolean rename(String filePath, String name) {

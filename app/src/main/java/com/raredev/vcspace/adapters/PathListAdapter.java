@@ -62,7 +62,7 @@ public class PathListAdapter extends RecyclerView.Adapter<PathListAdapter.VH> {
             if (position == getItemCount() - 1) {
               return;
             }
-            fileExplorer.setCurrentDir(path);
+            fileExplorer.setCurrentDir(path.getPath());
           }
         });
   }
