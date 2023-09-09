@@ -40,8 +40,7 @@ import org.eclipse.jgit.treewalk.EmptyTreeIterator;
 import org.eclipse.jgit.treewalk.TreeWalk;
 
 public class GitUtils {
-  private final String LOG_TAG = GitUtils.class.getSimpleName();
-
+  
   private Git git;
   private File repoPath;
 
@@ -63,9 +62,6 @@ public class GitUtils {
 
   public void init() throws GitAPIException {
     Git.init().setDirectory(repoPath.getParentFile()).call();
-    ILogger.info(
-        LOG_TAG,
-        "Initialized empty Git repository in " + repoPath.getParentFile().getAbsolutePath());
   }
 
   private void open(File repoPath) throws IOException {
@@ -255,7 +251,7 @@ public class GitUtils {
     git.add().addFilepattern(fileOrDirPath).call();
     Set<String> addedFiles = git.status().call().getAdded();
     for (String file : addedFiles) {
-      ILogger.debug(LOG_TAG, "Added file: " + file);
+      //ILogger.debug(LOG_TAG, "Added file: " + file);
     }
   }
 
@@ -444,7 +440,6 @@ public class GitUtils {
     addCmd.setUpdate(true);
     addCmd.addFilepattern(".");
     addCmd.call();
-    ILogger.info(LOG_TAG, "Added all files to git.");
   }
 
   // This method is not tested

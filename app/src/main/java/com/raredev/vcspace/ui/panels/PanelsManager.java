@@ -11,12 +11,14 @@ import com.raredev.vcspace.res.R;
 import com.raredev.vcspace.ui.panels.compiler.WebViewPanel;
 import com.raredev.vcspace.ui.panels.editor.WelcomePanel;
 import com.raredev.vcspace.ui.panels.file.FileExplorerPanel;
+import com.raredev.vcspace.util.Logger;
 import java.util.LinkedList;
 import java.util.List;
 
 public class PanelsManager {
 
-  private List<FloatingPanelArea> floatingPanels = new LinkedList<>();
+  private final Logger logger = Logger.newInstance("PanelsManager");
+  private final List<FloatingPanelArea> floatingPanels = new LinkedList<>();
   private PanelArea panelArea;
 
   private EditorActivity activity;
@@ -108,6 +110,7 @@ public class PanelsManager {
     for (FloatingPanelArea floatingPanel : floatingPanels) {
       floatingPanel.sendEvent(event);
     }
+    logger.i("PanelEvent: " + event.getClass().getSimpleName()+". sent!");
   }
 
   public void addDefaultPanels() {

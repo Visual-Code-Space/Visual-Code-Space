@@ -6,7 +6,6 @@ import com.blankj.utilcode.util.ThrowableUtils;
 import com.google.android.material.color.DynamicColors;
 import com.raredev.vcspace.activity.CrashActivity;
 import com.raredev.vcspace.fragments.settings.GeneralSettingsFragment;
-import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.util.PreferencesUtils;
 import io.github.rosemoe.sora.langs.textmate.provider.TextMateProvider;
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry;
@@ -34,7 +33,7 @@ public class VCSpaceApplication extends BaseApp implements Thread.UncaughtExcept
     try {
       TextMateProvider.registerLanguages();
     } catch (Exception e) {
-      ILogger.error("LanguageLoader", "Error when trying to load languages:", e);
+      e.printStackTrace();
     }
   }
 

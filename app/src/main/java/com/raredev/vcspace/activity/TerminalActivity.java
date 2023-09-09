@@ -29,7 +29,7 @@ import com.raredev.vcspace.ui.virtualkeys.VirtualKeyButton;
 import com.raredev.vcspace.ui.virtualkeys.VirtualKeysConstants;
 import com.raredev.vcspace.ui.virtualkeys.VirtualKeysInfo;
 import com.raredev.vcspace.ui.virtualkeys.VirtualKeysView;
-import com.raredev.vcspace.util.ILogger;
+import com.raredev.vcspace.util.Logger;
 import com.raredev.vcspace.util.PreferencesUtils;
 import com.raredev.vcspace.util.Utils;
 import java.util.Map;
@@ -44,6 +44,8 @@ public class TerminalActivity extends BaseActivity
 
   public static final String KEY_WORKING_DIRECTORY = "terminal_workingDirectory";
   public static final String KEY_EXECUTE_SH = "terminal_executeSh";
+  
+  private final Logger logger = Logger.newInstance("TerminalActivity");
   private ActivityTerminalBinding binding;
 
   private TerminalSession session;
@@ -106,7 +108,7 @@ public class TerminalActivity extends BaseActivity
       binding.virtualKeys.reload(
           new VirtualKeysInfo(VIRTUAL_KEYS, "", VirtualKeysConstants.CONTROL_CHARS_ALIASES));
     } catch (JSONException e) {
-      ILogger.error("TerminalActivity", "Unable to parse terminal virtual keys json data", e);
+      logger.e("Unable to parse terminal virtual keys json data", e);
     }
   }
 
@@ -188,37 +190,37 @@ public class TerminalActivity extends BaseActivity
 
   @Override
   public void logError(String tag, String message) {
-    ILogger.error(tag, message);
+    logger.e(message);
   }
 
   @Override
   public void logWarn(String tag, String message) {
-    ILogger.warning(tag, message);
+    logger.w(message);
   }
 
   @Override
   public void logInfo(String tag, String message) {
-    ILogger.info(tag, message);
+    logger.i(message);
   }
 
   @Override
   public void logDebug(String tag, String message) {
-    ILogger.debug(tag, message);
+    logger.d(message);
   }
 
   @Override
   public void logVerbose(String tag, String message) {
-    ILogger.verbose(tag, message);
+    logger.v(message);
   }
 
   @Override
   public void logStackTraceWithMessage(String tag, String message, Exception e) {
-    ILogger.warning(tag, Log.getStackTraceString(e));
+    logger.w(Log.getStackTraceString(e));
   }
 
   @Override
   public void logStackTrace(String tag, Exception e) {
-    ILogger.warning(tag, Log.getStackTraceString(e));
+    logger.w(Log.getStackTraceString(e));
   }
 
   @Override

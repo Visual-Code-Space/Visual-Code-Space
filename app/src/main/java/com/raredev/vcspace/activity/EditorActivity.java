@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,7 +40,7 @@ import com.raredev.vcspace.ui.panels.editor.EditorPanel;
 import com.raredev.vcspace.ui.panels.editor.SearcherPanel;
 import com.raredev.vcspace.ui.panels.editor.UserSnippetsPanel;
 import com.raredev.vcspace.util.FileUtil;
-import com.raredev.vcspace.util.ILogger;
+import com.raredev.vcspace.util.Logger;
 import com.raredev.vcspace.util.PanelUtils;
 import com.raredev.vcspace.util.PreferencesUtils;
 import com.raredev.vcspace.util.ToastUtils;
@@ -57,10 +56,10 @@ import org.greenrobot.eventbus.ThreadMode;
 public class EditorActivity extends BaseActivity
     implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-  private static final String LOG_TAG = EditorActivity.class.getSimpleName();
-
   public static final String RECENT_PANELS_PATH =
       PathUtils.getExternalAppDataPath() + "/files/recentPanels/editorPanels.json";
+
+  private final Logger logger = Logger.newInstance("EditorActivity");
 
   public ActivityResultLauncher<Intent> launcher;
   public ActivityResultLauncher<String> createFile;
@@ -94,6 +93,7 @@ public class EditorActivity extends BaseActivity
     if (isPermissionGaranted(this)) {
       Uri fileUri = getIntent().getData();
       if (fileUri != null) {
+        logger.i("Opening file from Uri: " + fileUri.toString());
         openFile(FileModel.fileToFileModel(UriUtils.uri2File(fileUri)));
       }
     }
@@ -244,7 +244,8 @@ public class EditorActivity extends BaseActivity
                     outputStream.close();
                     openFile(FileModel.fileToFileModel(FileUtil.getFileFromUri(this, uri)));
                   } catch (IOException e) {
-                    ILogger.error(LOG_TAG, Log.getStackTraceString(e));
+                    e.printStackTrace();
+                    logger.e(e);
                   }
                 }
               }
@@ -257,7 +258,8 @@ public class EditorActivity extends BaseActivity
                 try {
                   openFile(FileModel.fileToFileModel(FileUtil.getFileFromUri(this, uri)));
                 } catch (IOException e) {
-                  ILogger.error(LOG_TAG, Log.getStackTraceString(e));
+                  e.printStackTrace();
+                  logger.e(e);
                 }
               }
             });
@@ -269,7 +271,8 @@ public class EditorActivity extends BaseActivity
                 try {
                   openFile(FileModel.fileToFileModel(FileUtil.getFileFromUri(this, uri)));
                 } catch (IOException e) {
-                  ILogger.error(LOG_TAG, Log.getStackTraceString(e));
+                  e.printStackTrace();
+                  logger.e(e);
                 }
               }
             });
@@ -290,10 +293,6 @@ public class EditorActivity extends BaseActivity
   // Document Opener
 
   public void openFile(@NonNull FileModel file) {
-    if (!BaseActivity.isPermissionGaranted(this)) {
-      BaseActivity.takeFilePermissions(this);
-      return;
-    }
     if (!file.isFile()) {
       return;
     }
@@ -439,28 +438,20 @@ public class EditorActivity extends BaseActivity
       String json = PanelUtils.panelsToJson(panels);
       FileIOUtils.writeFileFromString(
           RECENT_PANELS_PATH, EncodeUtils.base64Encode2String(json.getBytes()));
-    } catch (Exception err) {
-      err.printStackTrace();
-      ToastUtils.showShort(err.getLocalizedMessage(), ToastUtils.TYPE_ERROR);
+    } catch (Exception e) {
+      e.printStackTrace();
+      logger.e(e);
     }
   }
 
   private void openRecentPanels() {
     try {
-      var json = new String(
-                  EncodeUtils.base64Decode(FileIOUtils.readFile2String(RECENT_PANELS_PATH)));
+      var json =
+          new String(EncodeUtils.base64Decode(FileIOUtils.readFile2String(RECENT_PANELS_PATH)));
       PanelUtils.addJsonPanelsInArea(this, json, panelsManager.getPanelArea());
-     /* List<Panel> panels =
-          PanelUtils.jsonToPanels(
-              this,
-              new String(
-                  EncodeUtils.base64Decode(FileIOUtils.readFile2String(RECENT_PANELS_PATH))));
-      for (Panel panel : panels) {
-        panelsManager.addPanel(panel, false);
-      }*/
     } catch (Exception e) {
       e.printStackTrace();
-      ToastUtils.showShort(e.getLocalizedMessage(), ToastUtils.TYPE_ERROR);
+      logger.e(e);
     }
   }
 }

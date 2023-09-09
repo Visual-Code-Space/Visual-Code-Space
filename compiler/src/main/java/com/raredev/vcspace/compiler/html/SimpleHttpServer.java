@@ -1,6 +1,5 @@
 package com.raredev.vcspace.compiler.html;
 
-import com.raredev.vcspace.util.ILogger;
 import fi.iki.elonen.NanoHTTPD;
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,7 +27,6 @@ public class SimpleHttpServer {
       server = new WebServer(port);
       server.start();
     } catch (IOException e) {
-      ILogger.error("SimpleHttpServer", "Failed to start the server: " + e.getMessage());
       e.printStackTrace();
     }
   }
@@ -70,7 +68,6 @@ public class SimpleHttpServer {
               NanoHTTPD.Response.Status.NOT_FOUND, NanoHTTPD.MIME_PLAINTEXT, "File not found.");
         }
       } catch (IOException e) {
-        ILogger.error("SimpleHttpServer", e);
         e.printStackTrace();
         return newFixedLengthResponse(
             NanoHTTPD.Response.Status.INTERNAL_ERROR,

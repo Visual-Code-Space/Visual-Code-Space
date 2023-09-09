@@ -8,7 +8,7 @@ import com.raredev.vcspace.editor.completion.SimpleCompletionIconDrawer;
 import com.raredev.vcspace.editor.completion.SimpleCompletionItemKind;
 import com.raredev.vcspace.editor.completion.SimpleSnippetCompletionItem;
 import com.raredev.vcspace.task.TaskExecutor;
-import com.raredev.vcspace.util.ILogger;
+import com.raredev.vcspace.util.Logger;
 import com.raredev.vcspace.util.PreferencesUtils;
 import io.github.rosemoe.sora.lang.completion.CompletionHelper;
 import io.github.rosemoe.sora.lang.completion.CompletionPublisher;
@@ -39,6 +39,7 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
   public static final String SNIPPETS_FOLDER_PATH =
       PathUtils.getExternalAppDataPath() + "/files/snippets/";
 
+  private final Logger logger = Logger.newInstance("VCSpaceTMLanguage");
   protected final String languageScope;
   protected TMFormatter formatter;
 
@@ -86,7 +87,7 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
       @NonNull Bundle extraArguments) {
     var prefix =
         CompletionHelper.computePrefix(content, position, MyCharacter::isJavaIdentifierPart);
-    
+
     if (prefix.length() <= 0) {
       return;
     }
@@ -181,8 +182,8 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
         processSnippet(label, obj.getJSONObject(label));
       }
     } catch (JSONException jsone) {
-      ILogger.error("VCSpaceTMLanguage", jsone);
       jsone.printStackTrace();
+      logger.e(jsone);
     }
   }
 
@@ -219,7 +220,10 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
       return;
     }
 
-    languageSnippets.add(new UserSnippetCompletionItem(label, prefix, desc, body));
+    var userSnippet = new UserSnippetCompletionItem(label, prefix, desc, body);
+    languageSnippets.add(userSnippet);
+
+    logger.d("Snippet: " + userSnippet.toString() + ". added!");
   }
 
   private String[] getPrefixArray(Object prefixObj) {
@@ -262,6 +266,19 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
       this.prefix = prefix;
       this.desc = desc;
       this.body = body;
+    }
+
+    @Override
+    public String toString() {
+      return "UserSnippetCompletionItem[label="
+          + label
+          + ", desc="
+          + desc
+          + ", body="
+          + body
+          + ", prefix="
+          + prefix
+          + "]";
     }
   }
 }

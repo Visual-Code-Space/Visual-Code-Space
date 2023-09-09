@@ -1,38 +1,56 @@
 package com.raredev.vcspace.util;
 
 import android.util.Log;
+import java.util.Map;
+import java.util.WeakHashMap;
 
-public class ILogger {
+public class Logger {
 
-  public static void debug(String tag, String message) {
+  private static final Map<String, Logger> map = new WeakHashMap<>();
+  private final String tag;
+
+  private Logger(String tag) {
+    this.tag = tag;
+  }
+
+  public static synchronized Logger newInstance(String tag) {
+    var logger = map.get(tag);
+    if (logger == null) {
+      logger = new Logger(tag);
+      map.put(tag, logger);
+    }
+    return logger;
+  }
+
+  public void d(String message) {
     log(Priority.DEBUG, tag, message);
   }
 
-  public static void warning(String tag, String message) {
+  public void w(String message) {
     log(Priority.WARNING, tag, message);
   }
 
-  public static void error(String tag, String message, Throwable e) {
+  public void e(String message, Throwable e) {
     log(Priority.ERROR, tag, message + "\n" + Log.getStackTraceString(e));
   }
 
-  public static void error(String tag, Throwable e) {
+  public void e(Throwable e) {
     log(Priority.ERROR, tag, Log.getStackTraceString(e));
   }
 
-  public static void error(String tag, String message) {
+  public void e(String message) {
     log(Priority.ERROR, tag, message);
   }
 
-  public static void info(String tag, String message) {
+  public void i(String message) {
     log(Priority.INFO, tag, message);
   }
 
-  public static void verbose(String tag, String message) {
+  public void v(String message) {
     log(Priority.VERBOSE, tag, message);
   }
 
-  private static void log(Priority priority, String tag, String message) {
+  private void log(Priority priority, String tag, String message) {
     switch (priority) {
       case DEBUG:
         Log.d(tag, message);

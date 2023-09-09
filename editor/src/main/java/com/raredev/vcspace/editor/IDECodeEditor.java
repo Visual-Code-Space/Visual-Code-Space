@@ -9,11 +9,9 @@ import androidx.core.content.res.ResourcesCompat;
 import com.google.common.collect.ImmutableSet;
 import com.raredev.vcspace.editor.completion.CompletionItemAdapter;
 import com.raredev.vcspace.editor.completion.CustomCompletionLayout;
-import com.raredev.vcspace.events.EditorContentChangedEvent;
 import com.raredev.vcspace.models.DocumentModel;
 import com.raredev.vcspace.util.PreferencesUtils;
 import com.raredev.vcspace.util.SharedPreferencesKeys;
-import io.github.rosemoe.sora.event.ContentChangeEvent;
 import io.github.rosemoe.sora.lang.Language;
 import io.github.rosemoe.sora.langs.textmate.VCSpaceTMLanguage;
 import io.github.rosemoe.sora.widget.CodeEditor;
@@ -23,7 +21,6 @@ import io.github.rosemoe.sora.widget.component.EditorAutoCompletion;
 import io.github.rosemoe.sora.widget.component.EditorTextActionWindow;
 import java.util.Set;
 import org.eclipse.tm4e.languageconfiguration.model.CommentRule;
-import org.greenrobot.eventbus.EventBus;
 
 public class IDECodeEditor extends CodeEditor {
   
@@ -104,8 +101,8 @@ public class IDECodeEditor extends CodeEditor {
   @Nullable
   public CommentRule getCommentRule() {
     Language language = getEditorLanguage();
-    if (language instanceof VCSpaceTMLanguage tmLanguage) {
-      var languageConfiguration = tmLanguage.getLanguageConfiguration();
+    if (language instanceof VCSpaceTMLanguage) {
+      var languageConfiguration = ((VCSpaceTMLanguage)language).getLanguageConfiguration();
       if (languageConfiguration == null) {
         return null;
       }
@@ -146,19 +143,7 @@ public class IDECodeEditor extends CodeEditor {
   public void setDocument(DocumentModel document) {
     this.document = document;
   }
-
-  public void subscribeContentChangeEvent() {
-    subscribeEvent(
-        ContentChangeEvent.class,
-        (event, subscribe) -> {
-          if (document == null) {
-            return;
-          }
-          document.setContent(getText().toString().getBytes());
-          EventBus.getDefault().post(new EditorContentChangedEvent(document));
-        });
-  }
-
+  
   public int appendText(String text) {
     final var content = getText();
     if (getLineCount() <= 0) {

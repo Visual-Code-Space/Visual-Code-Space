@@ -3,7 +3,6 @@ package com.raredev.vcspace.editor.completion;
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
 import android.os.SystemClock;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -12,7 +11,6 @@ import com.google.android.material.R;
 import com.google.android.material.color.MaterialColors;
 import com.google.android.material.elevation.SurfaceColors;
 import com.raredev.vcspace.editor.databinding.LayoutCompletionListBinding;
-import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.util.Utils;
 import io.github.rosemoe.sora.widget.component.CompletionLayout;
 import io.github.rosemoe.sora.widget.component.EditorAutoCompletion;
@@ -20,7 +18,7 @@ import io.github.rosemoe.sora.widget.schemes.EditorColorScheme;
 
 public class CustomCompletionLayout implements CompletionLayout {
   private EditorAutoCompletion mEditorAutoCompletion;
-  
+
   private LayoutCompletionListBinding binding;
 
   @Override
@@ -32,14 +30,14 @@ public class CustomCompletionLayout implements CompletionLayout {
   public View inflate(Context context) {
     binding = LayoutCompletionListBinding.inflate(LayoutInflater.from(context));
     binding.getRoot().setBackground(applyBackground(context));
-    
+
     setLoading(true);
     binding.listView.setOnItemClickListener(
         (parent, view, position, id) -> {
           try {
             mEditorAutoCompletion.select(position);
           } catch (Exception e) {
-            ILogger.error("EditorAutoCompletion", Log.getStackTraceString(e));
+            e.printStackTrace();
           }
         });
 
@@ -86,7 +84,8 @@ public class CustomCompletionLayout implements CompletionLayout {
               && binding.listView.canScrollList(-1)) {
             performScrollList(increment / 2);
           }
-          while (binding.listView.getLastVisiblePosition() - 1 < position && binding.listView.canScrollList(1)) {
+          while (binding.listView.getLastVisiblePosition() - 1 < position
+              && binding.listView.canScrollList(1)) {
             performScrollList(-increment / 2);
           }
         });

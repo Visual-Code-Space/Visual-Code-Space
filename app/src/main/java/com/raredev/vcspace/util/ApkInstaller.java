@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 import androidx.core.content.FileProvider;
-import com.raredev.vcspace.util.ILogger;
 import com.raredev.vcspace.BuildConfig;
 import java.io.File;
 
@@ -25,7 +24,7 @@ public class ApkInstaller {
     try {
       context.startActivity(intent);
     } catch (ActivityNotFoundException e) {
-      ILogger.error("ApkInstaller", Log.getStackTraceString(e));
+      e.printStackTrace();
     }
   }
 

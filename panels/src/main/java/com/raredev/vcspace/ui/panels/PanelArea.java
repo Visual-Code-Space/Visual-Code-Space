@@ -14,6 +14,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.raredev.vcspace.events.PanelEvent;
 import com.raredev.vcspace.res.R;
 import com.raredev.vcspace.ui.panels.databinding.LayoutPanelAreaBinding;
+import com.raredev.vcspace.util.Logger;
 import com.raredev.vcspace.util.Utils;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,8 +24,9 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
   protected Context context;
   protected FrameLayout parent;
 
-  protected List<Panel> panels = new LinkedList<>();
-  private List<Panel> panelsToRemove = new LinkedList<>();
+  protected final Logger logger = Logger.newInstance("PanelArea");
+  protected final List<Panel> panels = new LinkedList<>();
+  protected final List<Panel> panelsToRemove = new LinkedList<>();
 
   protected LayoutPanelAreaBinding binding;
   protected Panel selectedPanel;
@@ -142,6 +144,12 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
     if (listener != null) {
       listener.selectedPanel(panel);
     }
+    logger.i(
+        "Panel: "
+            + panel.getClass().getSimpleName()
+            + ". in position: "
+            + position
+            + ". selected!");
     selectedPanel = panel;
   }
 
@@ -206,6 +214,7 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
 
   public void removeOthers() {
     if (panels.isEmpty() || selectedPanel == null) {
+      logger.e("No panels to remove!");
       return;
     }
 
@@ -223,6 +232,7 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
 
   public void removeAllPanels() {
     if (panels.isEmpty()) {
+      logger.e("No panels to remove!");
       return;
     }
 
@@ -290,6 +300,8 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
       var panel = panels.get(i);
       if (tab != null && panel != null) {
         updateTab(tab, panel);
+
+        logger.i("Tab at index: " + i + ". updated!");
       }
     }
   }

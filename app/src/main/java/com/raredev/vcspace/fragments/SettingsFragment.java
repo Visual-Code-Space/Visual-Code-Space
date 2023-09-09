@@ -70,10 +70,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     Preference github = findPreference(SharedPreferencesKeys.KEY_GITHUB);
     github.setOnPreferenceClickListener(
         (pref) -> {
-          /* String url = "https://github.com/Visual-Code-Space/Visual-Code-Space";
-          Intent i = new Intent(Intent.ACTION_VIEW);
-          i.setData(Uri.parse(url));
-          startActivity(i);*/
           openCustomTab("https://github.com/Visual-Code-Space/Visual-Code-Space");
           return true;
         });
