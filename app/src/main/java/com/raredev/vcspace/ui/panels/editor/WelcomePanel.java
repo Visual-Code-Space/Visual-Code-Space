@@ -3,7 +3,7 @@ package com.raredev.vcspace.ui.panels.editor;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import com.raredev.vcspace.activity.EditorActivity;
+import com.raredev.vcspace.activities.EditorActivity;
 import com.raredev.vcspace.databinding.LayoutWelcomePanelBinding;
 import com.raredev.vcspace.res.R;
 import com.raredev.vcspace.ui.panels.Panel;

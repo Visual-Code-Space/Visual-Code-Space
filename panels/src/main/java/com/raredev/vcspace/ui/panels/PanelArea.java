@@ -14,8 +14,8 @@ import com.google.android.material.tabs.TabLayout;
 import com.raredev.vcspace.events.PanelEvent;
 import com.raredev.vcspace.res.R;
 import com.raredev.vcspace.ui.panels.databinding.LayoutPanelAreaBinding;
-import com.raredev.vcspace.util.Logger;
-import com.raredev.vcspace.util.Utils;
+import com.raredev.vcspace.utils.Logger;
+import com.raredev.vcspace.utils.Utils;
 import java.util.LinkedList;
 import java.util.List;
 

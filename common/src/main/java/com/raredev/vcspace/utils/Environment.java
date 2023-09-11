@@ -1,4 +1,4 @@
-package com.raredev.vcspace.util;
+package com.raredev.vcspace.utils;
 
 import com.blankj.utilcode.util.FileUtils;
 import java.io.File;

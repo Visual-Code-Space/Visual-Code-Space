@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.blankj.utilcode.util.FileIOUtils;
-import com.raredev.vcspace.activity.EditorActivity;
+import com.raredev.vcspace.activities.EditorActivity;
 import com.raredev.vcspace.adapters.SnippetFilesAdapter;
 import com.raredev.vcspace.databinding.LayoutUserSnippetsPanelBinding;
 import com.raredev.vcspace.models.FileModel;

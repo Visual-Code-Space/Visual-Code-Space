@@ -1,6 +1,6 @@
 package com.raredev.vcspace.editor;
 
-import com.raredev.vcspace.util.ToastUtils;
+import com.raredev.vcspace.utils.ToastUtils;
 import io.github.rosemoe.sora.text.Content;
 import io.github.rosemoe.sora.text.Cursor;
 import org.eclipse.tm4e.languageconfiguration.model.CharacterPair;

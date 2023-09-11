@@ -1,4 +1,4 @@
-package com.raredev.vcspace.activity;
+package com.raredev.vcspace.activities;
 
 import android.Manifest;
 import android.content.Intent;
@@ -12,7 +12,7 @@ import androidx.core.app.ActivityCompat;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.elevation.SurfaceColors;
 import com.raredev.vcspace.res.R;
-import com.raredev.vcspace.util.Utils;
+import com.raredev.vcspace.utils.Utils;
 
 public abstract class BaseActivity extends AppCompatActivity {
 

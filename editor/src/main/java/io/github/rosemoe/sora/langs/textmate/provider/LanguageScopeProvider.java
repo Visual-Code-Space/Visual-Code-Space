@@ -4,8 +4,8 @@ import com.blankj.utilcode.util.FileUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.raredev.vcspace.BaseApp;
-import com.raredev.vcspace.util.FileUtil;
-import com.raredev.vcspace.util.Utils;
+import com.raredev.vcspace.utils.FileUtil;
+import com.raredev.vcspace.utils.Utils;
 import java.util.Map;
 
 public class LanguageScopeProvider {

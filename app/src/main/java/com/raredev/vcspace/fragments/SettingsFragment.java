@@ -16,8 +16,8 @@ import com.raredev.vcspace.fragments.settings.EditorSettingsFragment;
 import com.raredev.vcspace.fragments.settings.FileSettingsFragment;
 import com.raredev.vcspace.fragments.settings.GeneralSettingsFragment;
 import com.raredev.vcspace.fragments.settings.GitSettingsFragment;
-import com.raredev.vcspace.util.SharedPreferencesKeys;
-import com.raredev.vcspace.util.Utils;
+import com.raredev.vcspace.utils.SharedPreferencesKeys;
+import com.raredev.vcspace.utils.Utils;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 

@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.raredev.vcspace.databinding.LayoutSymbolItemBinding;
 import com.raredev.vcspace.editor.IDECodeEditor;
 import com.raredev.vcspace.models.Symbol;
-import com.raredev.vcspace.util.PreferencesUtils;
+import com.raredev.vcspace.utils.PreferencesUtils;
 import java.util.List;
 
 public class SymbolInputAdapter extends RecyclerView.Adapter<SymbolInputAdapter.VH> {

@@ -5,7 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.raredev.vcspace.editor.databinding.LayoutCompletionItemBinding;
-import com.raredev.vcspace.util.Utils;
+import com.raredev.vcspace.utils.Utils;
 import io.github.rosemoe.sora.widget.component.EditorCompletionAdapter;
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme;
 

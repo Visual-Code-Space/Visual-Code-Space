@@ -1,4 +1,4 @@
-package com.raredev.vcspace.util;
+package com.raredev.vcspace.utils;
 
 public class SharedPreferencesKeys {
 

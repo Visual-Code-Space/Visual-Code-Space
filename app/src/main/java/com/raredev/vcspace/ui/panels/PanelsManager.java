@@ -5,13 +5,13 @@ import android.view.View;
 import android.widget.FrameLayout;
 import androidx.appcompat.widget.PopupMenu;
 import com.blankj.utilcode.util.KeyboardUtils;
-import com.raredev.vcspace.activity.EditorActivity;
+import com.raredev.vcspace.activities.EditorActivity;
 import com.raredev.vcspace.events.PanelEvent;
 import com.raredev.vcspace.res.R;
 import com.raredev.vcspace.ui.panels.compiler.WebViewPanel;
 import com.raredev.vcspace.ui.panels.editor.WelcomePanel;
 import com.raredev.vcspace.ui.panels.file.FileExplorerPanel;
-import com.raredev.vcspace.util.Logger;
+import com.raredev.vcspace.utils.Logger;
 import java.util.LinkedList;
 import java.util.List;
 

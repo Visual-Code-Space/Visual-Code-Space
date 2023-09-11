@@ -7,7 +7,7 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.graphics.drawable.DrawableCompat;
 import com.raredev.vcspace.BaseApp;
 import com.raredev.vcspace.res.R;
-import com.raredev.vcspace.util.Utils;
+import com.raredev.vcspace.utils.Utils;
 
 public class SimpleCompletionIconDrawer {
   public static Drawable draw(SimpleCompletionItemKind kind) {

@@ -1,4 +1,4 @@
-package com.raredev.vcspace.activity;
+package com.raredev.vcspace.activities;
 
 import static com.raredev.vcspace.res.R.string;
 

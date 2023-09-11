@@ -8,9 +8,9 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.raredev.vcspace.res.R;
-import com.raredev.vcspace.util.PreferencesUtils;
-import com.raredev.vcspace.util.SharedPreferencesKeys;
-import com.raredev.vcspace.util.Utils;
+import com.raredev.vcspace.utils.PreferencesUtils;
+import com.raredev.vcspace.utils.SharedPreferencesKeys;
+import com.raredev.vcspace.utils.Utils;
 
 public class GeneralSettingsFragment extends PreferenceFragmentCompat {
 

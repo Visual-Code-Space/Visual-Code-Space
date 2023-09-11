@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.TooltipCompat;
 import com.google.android.material.color.MaterialColors;
 import com.raredev.vcspace.editor.databinding.LayoutTextActionsBinding;
-import com.raredev.vcspace.util.Utils;
+import com.raredev.vcspace.utils.Utils;
 import io.github.rosemoe.sora.event.HandleStateChangeEvent;
 import io.github.rosemoe.sora.event.InterceptTarget;
 import io.github.rosemoe.sora.event.LongPressEvent;

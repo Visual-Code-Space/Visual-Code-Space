@@ -1,4 +1,4 @@
-package com.raredev.vcspace.activity;
+package com.raredev.vcspace.activities;
 
 import static com.raredev.vcspace.res.R.id;
 import static com.raredev.vcspace.res.R.string;
@@ -39,12 +39,12 @@ import com.raredev.vcspace.ui.panels.compiler.WebViewPanel;
 import com.raredev.vcspace.ui.panels.editor.EditorPanel;
 import com.raredev.vcspace.ui.panels.editor.SearcherPanel;
 import com.raredev.vcspace.ui.panels.editor.UserSnippetsPanel;
-import com.raredev.vcspace.util.FileUtil;
-import com.raredev.vcspace.util.Logger;
-import com.raredev.vcspace.util.PanelUtils;
-import com.raredev.vcspace.util.PreferencesUtils;
-import com.raredev.vcspace.util.ToastUtils;
-import com.raredev.vcspace.util.Utils;
+import com.raredev.vcspace.utils.FileUtil;
+import com.raredev.vcspace.utils.Logger;
+import com.raredev.vcspace.utils.PanelUtils;
+import com.raredev.vcspace.utils.PreferencesUtils;
+import com.raredev.vcspace.utils.ToastUtils;
+import com.raredev.vcspace.utils.Utils;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import java.io.IOException;
 import java.io.OutputStream;

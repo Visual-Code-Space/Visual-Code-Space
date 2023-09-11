@@ -1,4 +1,4 @@
-package com.raredev.vcspace.activity;
+package com.raredev.vcspace.activities;
 
 import android.os.Build;
 import android.os.Bundle;

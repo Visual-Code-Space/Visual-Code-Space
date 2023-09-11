@@ -20,7 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activity.EditorActivity"
+            android:name=".activities.EditorActivity"
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="adjustResize"
             android:exported="true">
@@ -37,16 +37,16 @@
                 <data android:scheme="content" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.SettingsActivity" />
+        <activity android:name=".activities.SettingsActivity" />
         <activity
-            android:name=".activity.TerminalActivity"
+            android:name=".activities.TerminalActivity"
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".activity.MarkdownViewActivity"
-            android:parentActivityName=".activity.EditorActivity" />
+            android:name=".activities.MarkdownViewActivity"
+            android:parentActivityName=".activities.EditorActivity" />
         <activity
-            android:name=".activity.CrashActivity"
+            android:name=".activities.CrashActivity"
             android:exported="true" />
 
         <provider

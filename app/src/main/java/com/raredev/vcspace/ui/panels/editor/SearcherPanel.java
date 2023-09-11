@@ -14,8 +14,8 @@ import com.raredev.vcspace.events.UpdateSearcherEvent;
 import com.raredev.vcspace.res.R;
 import com.raredev.vcspace.ui.panels.FloatingPanelArea;
 import com.raredev.vcspace.ui.panels.Panel;
-import com.raredev.vcspace.util.PreferencesUtils;
-import com.raredev.vcspace.util.Utils;
+import com.raredev.vcspace.utils.PreferencesUtils;
+import com.raredev.vcspace.utils.Utils;
 import io.github.rosemoe.sora.widget.EditorSearcher;
 
 public class SearcherPanel extends Panel implements View.OnClickListener {

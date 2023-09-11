@@ -8,7 +8,7 @@ import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.raredev.vcspace.res.databinding.LayoutProgressDialogBinding;
-import com.raredev.vcspace.util.Utils;
+import com.raredev.vcspace.utils.Utils;
 
 public class ProgressDialog {
 

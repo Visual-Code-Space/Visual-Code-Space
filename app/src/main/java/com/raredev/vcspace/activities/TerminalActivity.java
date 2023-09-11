@@ -1,6 +1,6 @@
-package com.raredev.vcspace.activity;
+package com.raredev.vcspace.activities;
 
-import static com.raredev.vcspace.util.Environment.getEnvironment;
+import static com.raredev.vcspace.utils.Environment.getEnvironment;
 
 import android.content.Context;
 import android.content.Intent;
@@ -29,9 +29,9 @@ import com.raredev.vcspace.ui.virtualkeys.VirtualKeyButton;
 import com.raredev.vcspace.ui.virtualkeys.VirtualKeysConstants;
 import com.raredev.vcspace.ui.virtualkeys.VirtualKeysInfo;
 import com.raredev.vcspace.ui.virtualkeys.VirtualKeysView;
-import com.raredev.vcspace.util.Logger;
-import com.raredev.vcspace.util.PreferencesUtils;
-import com.raredev.vcspace.util.Utils;
+import com.raredev.vcspace.utils.Logger;
+import com.raredev.vcspace.utils.PreferencesUtils;
+import com.raredev.vcspace.utils.Utils;
 import java.util.Map;
 import org.json.JSONException;
 

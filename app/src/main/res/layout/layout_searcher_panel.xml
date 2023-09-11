@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:hint="@string/search"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             app:hintAnimationEnabled="true"
             android:layout_weight="1"
             android:id="@+id/search_text_input_layout">
@@ -58,7 +58,7 @@
         android:layout_width="match_parent"
         android:layout_marginEnd="2dp"
         android:hint="@string/replace"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_marginStart="2dp"
         app:hintAnimationEnabled="true"
         android:id="@+id/replace_text_input_layout">

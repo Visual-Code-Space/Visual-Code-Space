@@ -11,7 +11,7 @@ import com.google.android.material.R;
 import com.google.android.material.color.MaterialColors;
 import com.google.android.material.elevation.SurfaceColors;
 import com.raredev.vcspace.editor.databinding.LayoutCompletionListBinding;
-import com.raredev.vcspace.util.Utils;
+import com.raredev.vcspace.utils.Utils;
 import io.github.rosemoe.sora.widget.component.CompletionLayout;
 import io.github.rosemoe.sora.widget.component.EditorAutoCompletion;
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme;

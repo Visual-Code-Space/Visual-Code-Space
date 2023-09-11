@@ -10,7 +10,7 @@ import com.raredev.vcspace.editor.completion.SimpleCompletionItem;
 import com.raredev.vcspace.editor.completion.SimpleCompletionItemKind;
 import com.raredev.vcspace.editor.completion.SimpleSnippetCompletionItem;
 import com.raredev.vcspace.editor.completion.VCSpaceCompletionItem;
-import com.raredev.vcspace.util.FileUtil;
+import com.raredev.vcspace.utils.FileUtil;
 import io.github.rosemoe.sora.lang.completion.SnippetDescription;
 import io.github.rosemoe.sora.lang.completion.snippet.parser.CodeSnippetParser;
 import io.github.rosemoe.sora.text.Cursor;

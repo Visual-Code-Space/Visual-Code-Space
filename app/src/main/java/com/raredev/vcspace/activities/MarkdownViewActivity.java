@@ -1,4 +1,4 @@
-package com.raredev.vcspace.activity;
+package com.raredev.vcspace.activities;
 
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;

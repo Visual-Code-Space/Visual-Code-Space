@@ -1,4 +1,4 @@
-package com.raredev.vcspace.util;
+package com.raredev.vcspace.utils;
 
 import android.content.SharedPreferences;
 import com.raredev.vcspace.BaseApp;

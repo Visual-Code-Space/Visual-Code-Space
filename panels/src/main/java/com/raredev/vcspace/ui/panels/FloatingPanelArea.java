@@ -12,7 +12,7 @@ import android.widget.RelativeLayout;
 import com.google.android.material.color.MaterialColors;
 import com.google.android.material.elevation.SurfaceColors;
 import com.raredev.vcspace.res.R;
-import com.raredev.vcspace.util.Utils;
+import com.raredev.vcspace.utils.Utils;
 
 public class FloatingPanelArea extends PanelArea {
 
