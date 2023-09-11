@@ -120,8 +120,11 @@ public class FileManagerDialogs {
   public static void deleteFile(
       Context context, List<FileModel> selectedFiles, File file, Concluded concluded) {
     new MaterialAlertDialogBuilder(context)
-        .setTitle(selectedFiles.isEmpty()? R.string.delete: R.string.delete_multi)
-        .setMessage(selectedFiles.isEmpty() ? context.getString(R.string.delete_message, file.getName()) : context.getString(R.string.delete_count_message, selectedFiles.size()))
+        .setTitle(selectedFiles.isEmpty() ? R.string.delete : R.string.delete_multi)
+        .setMessage(
+            selectedFiles.isEmpty()
+                ? context.getString(R.string.delete_message, file.getName())
+                : context.getString(R.string.delete_count_message, selectedFiles.size()))
         .setPositiveButton(
             R.string.delete,
             (di, witch) -> {
@@ -138,6 +141,7 @@ public class FileManagerDialogs {
               TaskExecutor.executeAsyncProvideError(
                   () -> {
                     return deleteFiles(
+                        selectedFiles,
                         file,
                         message ->
                             ThreadUtils.runOnUiThread(() -> progress.setLoadingMessage(message)));
@@ -152,7 +156,7 @@ public class FileManagerDialogs {
                     }
                   });
             })
-        .setNegativeButton(R.string.cancel, (di, witch) -> di.dismiss())
+        .setNegativeButton(R.string.no, (di, witch) -> di.dismiss())
         .show();
   }
 
