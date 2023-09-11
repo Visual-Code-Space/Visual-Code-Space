@@ -40,25 +40,19 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
       PathUtils.getExternalAppDataPath() + "/files/snippets/";
 
   private final Logger logger = Logger.newInstance("VCSpaceTMLanguage");
-  protected final String languageScope;
   protected TMFormatter formatter;
 
   private List<UserSnippetCompletionItem> languageSnippets;
   private SymbolPairMatch symbolPair;
 
   protected VCSpaceTMLanguage(
-      IGrammar grammar,
-      LanguageConfiguration languageConfiguration,
-      ThemeRegistry themeRegistry,
-      String languageScope) {
+      IGrammar grammar, LanguageConfiguration languageConfiguration, ThemeRegistry themeRegistry) {
     super(grammar, languageConfiguration, null, themeRegistry, false);
-    this.languageScope = languageScope;
-
     languageSnippets = new ArrayList<>();
     addSymbolPairs();
     TaskExecutor.executeAsync(
         () -> {
-          readLanguageSnippets();
+          readLanguageSnippets(grammar.getScopeName());
           return null;
         },
         (result) -> {});
@@ -73,10 +67,7 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
           String.format("Language with %s scope name not found", grammarRegistry));
     }
 
-    var languageConfiguration = grammarRegistry.findLanguageConfiguration(grammar.getScopeName());
-
-    return new VCSpaceTMLanguage(
-        grammar, languageConfiguration, ThemeRegistry.getInstance(), languageScopeName);
+    return new VCSpaceTMLanguage(grammar, grammarRegistry.findLanguageConfiguration(languageScopeName), ThemeRegistry.getInstance());
   }
 
   @Override
@@ -114,6 +105,14 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
       formatter = new TMFormatter(this);
     }
     return formatter;
+  }
+
+  @Override
+  public void destroy() {
+    super.destroy();
+    languageSnippets = null;
+    formatter = null;
+    symbolPair = null;
   }
 
   @Override
@@ -165,8 +164,8 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
     }
   }
 
-  private void readLanguageSnippets() {
-    String fileExtension = LanguageScopeProvider.getFileExtensionByScope(languageScope);
+  private void readLanguageSnippets(String scopeName) {
+    String fileExtension = LanguageScopeProvider.getFileExtensionByScope(scopeName);
     File snippetsFile = new File(SNIPPETS_FOLDER_PATH + fileExtension + ".json");
 
     if (!snippetsFile.exists() || !snippetsFile.isFile()) {

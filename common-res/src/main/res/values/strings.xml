@@ -12,6 +12,7 @@
     <string name="unpin">Unpin</string>
     <string name="comment_line">Comment line</string>
     <string name="uncomment_line">Uncomment line</string>
+    <string name="long_select">Long select</string>
     <string name="select_all">Select all</string>
     <string name="unselect_all">Unselect all</string>
     <string name="copy">Copy</string>

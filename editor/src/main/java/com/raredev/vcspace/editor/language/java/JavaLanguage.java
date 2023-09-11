@@ -32,8 +32,7 @@ public class JavaLanguage extends VCSpaceTMLanguage {
     super(
         GrammarRegistry.getInstance().findGrammar("source.java"),
         GrammarRegistry.getInstance().findLanguageConfiguration("source.java"),
-        ThemeRegistry.getInstance(),
-        "source.java");
+        ThemeRegistry.getInstance());
     this.editor = editor;
   }
 
@@ -46,7 +45,7 @@ public class JavaLanguage extends VCSpaceTMLanguage {
     super.requireAutoComplete(content, position, publisher, extraArguments);
     var prefix =
         CompletionHelper.computePrefix(content, position, MyCharacter::isJavaIdentifierPart);
-    
+
     CompletionParams params =
         new CompletionParams(
             editor,

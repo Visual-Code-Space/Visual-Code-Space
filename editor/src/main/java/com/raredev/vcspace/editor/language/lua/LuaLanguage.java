@@ -25,8 +25,7 @@ public class LuaLanguage extends VCSpaceTMLanguage {
     super(
         GrammarRegistry.getInstance().findGrammar("source.lua"),
         GrammarRegistry.getInstance().findLanguageConfiguration("source.lua"),
-        ThemeRegistry.getInstance(),
-        "source.lua");
+        ThemeRegistry.getInstance());
     this.editor = editor;
   }
 

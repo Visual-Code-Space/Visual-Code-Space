@@ -24,8 +24,7 @@ public class KotlinLanguage extends VCSpaceTMLanguage {
     super(
         GrammarRegistry.getInstance().findGrammar("source.kotlin"),
         GrammarRegistry.getInstance().findLanguageConfiguration("source.kotlin"),
-        ThemeRegistry.getInstance(),
-        "source.kotlin");
+        ThemeRegistry.getInstance());
     this.editor = editor;
   }
 

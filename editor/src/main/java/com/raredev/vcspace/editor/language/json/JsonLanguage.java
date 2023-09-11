@@ -16,8 +16,7 @@ public class JsonLanguage extends VCSpaceTMLanguage {
     super(
         GrammarRegistry.getInstance().findGrammar("source.json"),
         GrammarRegistry.getInstance().findLanguageConfiguration("source.json"),
-        ThemeRegistry.getInstance(),
-        "source.json");
+        ThemeRegistry.getInstance());
     this.editor = editor;
   }
 

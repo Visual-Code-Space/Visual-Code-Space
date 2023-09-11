@@ -1,7 +1,5 @@
 package com.raredev.vcspace.editor;
 
-import static com.raredev.vcspace.res.R.string;
-
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.RectF;
@@ -9,10 +7,14 @@ import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.TooltipCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.color.MaterialColors;
-import com.raredev.vcspace.editor.databinding.LayoutTextActionsBinding;
+import com.raredev.vcspace.editor.databinding.LayoutTextActionItemBinding;
+import com.raredev.vcspace.res.R;
 import com.raredev.vcspace.utils.Utils;
 import io.github.rosemoe.sora.event.HandleStateChangeEvent;
 import io.github.rosemoe.sora.event.InterceptTarget;
@@ -24,16 +26,22 @@ import io.github.rosemoe.sora.text.Content;
 import io.github.rosemoe.sora.text.Cursor;
 import io.github.rosemoe.sora.widget.EditorTouchEventHandler;
 import io.github.rosemoe.sora.widget.base.EditorPopupWindow;
+import java.util.LinkedList;
+import java.util.List;
 import org.eclipse.tm4e.languageconfiguration.model.CommentRule;
 
-public class EditorTextActions extends EditorPopupWindow implements View.OnClickListener {
+public class EditorTextActions extends EditorPopupWindow {
   private static final long DELAY = 200;
-
-  private LayoutTextActionsBinding binding;
 
   private final EditorTouchEventHandler handler;
   private final IDECodeEditor editor;
 
+  private final List<TextAction> actions = new LinkedList<>();
+  private final TextActionsAdapter adapter;
+  
+  private final RelativeLayout root;
+  private final RecyclerView list;
+  
   private long lastScroll;
   private int lastPosition;
   private int lastCause;
@@ -43,26 +51,22 @@ public class EditorTextActions extends EditorPopupWindow implements View.OnClick
     this.editor = editor;
     handler = editor.getEventHandler();
 
-    Context tempContext = editor.getContext();
+    Context context = editor.getContext();
 
-    binding = LayoutTextActionsBinding.inflate(LayoutInflater.from(tempContext));
+    adapter = new TextActionsAdapter();
+    
+    root = new RelativeLayout(context);
+    list = new RecyclerView(context);
 
+    list.setLayoutManager(
+        new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+    list.setAdapter(adapter);
+    root.addView(list);
+
+    ensureTextActions();
     applyBackground();
 
-    binding.comment.setOnClickListener(this);
-    binding.selectAll.setOnClickListener(this);
-    binding.cut.setOnClickListener(this);
-    binding.copy.setOnClickListener(this);
-    binding.paste.setOnClickListener(this);
-
-    TooltipCompat.setTooltipText(binding.comment, tempContext.getString(string.comment_line));
-    TooltipCompat.setTooltipText(binding.uncomment, tempContext.getString(string.uncomment_line));
-    TooltipCompat.setTooltipText(binding.selectAll, tempContext.getString(string.select_all));
-    TooltipCompat.setTooltipText(binding.cut, tempContext.getString(string.cut));
-    TooltipCompat.setTooltipText(binding.copy, tempContext.getString(string.copy));
-    TooltipCompat.setTooltipText(binding.paste, tempContext.getString(string.paste));
-
-    setContentView(binding.getRoot());
+    setContentView(root);
     setSize(0, (int) (this.editor.getDpUnit() * 48));
 
     editor.subscribeEvent(SelectionChangeEvent.class, this::onSelectionChanged);
@@ -119,10 +123,6 @@ public class EditorTextActions extends EditorPopupWindow implements View.OnClick
         }));
 
     getPopup().setAnimationStyle(io.github.rosemoe.sora.R.style.text_action_popup_animation);
-  }
-
-  public ViewGroup getView() {
-    return (ViewGroup) getPopup().getContentView();
   }
 
   private void postDisplay() {
@@ -194,7 +194,7 @@ public class EditorTextActions extends EditorPopupWindow implements View.OnClick
   }
 
   public void displayWindow() {
-    updateBtnState();
+    updateActionsBtnState();
     int top;
     var cursor = editor.getCursor();
     if (cursor.isSelected()) {
@@ -212,33 +212,37 @@ public class EditorTextActions extends EditorPopupWindow implements View.OnClick
     float handleRightX =
         editor.getOffset(editor.getCursor().getRightLine(), editor.getCursor().getRightColumn());
     int panelX =
-        (int) ((handleLeftX + handleRightX) / 2f - binding.getRoot().getMeasuredWidth() / 2f);
+        (int) ((handleLeftX + handleRightX) / 2f - root.getMeasuredWidth() / 2f);
     setLocationAbsolutely(panelX, top);
     show();
   }
 
-  private void updateBtnState() {
-    binding.paste.setEnabled(editor.hasClip());
-
+  private void updateActionsBtnState() {
     CommentRule commentRule = editor.getCommentRule();
-    if (commentRule != null
-        && (commentRule.lineComment != null || commentRule.blockComment != null)) {
-      binding.comment.setVisibility(View.VISIBLE);
-    }
+    actions.get(0).visible =
+        commentRule != null
+            && (commentRule.lineComment != null || commentRule.blockComment != null);
+    
+    actions.get(2).visible = editor.getCursor().isSelected();
+    
+    actions.get(3).enabled = editor.hasClip();
+    actions.get(3).visible = editor.isEditable();
 
-    binding.uncomment.setVisibility(View.GONE);
-    binding.copy.setVisibility(editor.getCursor().isSelected() ? View.VISIBLE : View.GONE);
-    binding.paste.setVisibility(editor.isEditable() ? View.VISIBLE : View.GONE);
-    binding.cut.setVisibility(
-        (editor.getCursor().isSelected() && editor.isEditable()) ? View.VISIBLE : View.GONE);
-    binding
-        .getRoot()
-        .measure(
-            View.MeasureSpec.makeMeasureSpec(1000000, View.MeasureSpec.AT_MOST),
-            View.MeasureSpec.makeMeasureSpec(100000, View.MeasureSpec.AT_MOST));
-    setSize(
-        Math.min(binding.getRoot().getMeasuredWidth(), (int) (editor.getDpUnit() * 230)),
-        getHeight());
+    actions.get(4).visible = (!editor.getCursor().isSelected() && editor.isEditable());
+    actions.get(5).visible = (editor.getCursor().isSelected() && editor.isEditable());
+    
+    adapter.clear();
+    for (TextAction action : actions) {
+      if (action.visible) {
+        adapter.addAction(action);
+      }
+    }
+    adapter.notifyDataSetChanged();
+    
+    root.measure(
+        View.MeasureSpec.makeMeasureSpec(1000000, View.MeasureSpec.AT_MOST),
+        View.MeasureSpec.makeMeasureSpec(100000, View.MeasureSpec.AT_MOST));
+    setSize(Math.min(root.getMeasuredWidth(), (int) (editor.getDpUnit() * 230)), getHeight());
   }
 
   @Override
@@ -249,10 +253,13 @@ public class EditorTextActions extends EditorPopupWindow implements View.OnClick
     super.show();
   }
 
-  @Override
-  public void onClick(View view) {
-    int id = view.getId();
-    if (id == R.id.comment) {
+  public void onTextActionClick(TextAction action) {
+    if (editor == null) {
+      dismiss();
+      return;
+    }
+    int name = action.name;
+    if (name == R.string.comment_line) {
       CommentRule commentRule = editor.getCommentRule();
 
       Cursor cursor = editor.getCursor();
@@ -264,31 +271,35 @@ public class EditorTextActions extends EditorPopupWindow implements View.OnClick
         CommentSystem.addBlockComment(commentRule, text, cursor);
       }
       editor.setSelection(cursor.getRightLine(), cursor.getRightColumn());
-    } /* else if (id == R.id.uncomment) {
-        String commentPrefix = editor.commentPrefix;
-        if (commentPrefix != null) {
-          Cursor cursor = editor.getCursor();
-          Content text = editor.getText();
-          text.replace(cursor.getLeftLine(), cursor.getRightLine(), CommentSystem.uncomment(text));
-        }
-      }*/ else if (id == R.id.select_all) {
+    } else if (name == R.string.select_all) {
       editor.selectAll();
       return;
-    } else if (id == R.id.cut) {
+    } else if (name == R.string.long_select) {
+      editor.beginLongSelect();
+    } else if (name == R.string.copy) {
+      editor.copyText();
+      editor.setSelection(editor.getCursor().getRightLine(), editor.getCursor().getRightColumn());
+    } else if (name == R.string.paste) {
+      editor.pasteText();
+      editor.setSelection(editor.getCursor().getRightLine(), editor.getCursor().getRightColumn());
+    } else if (name == R.string.cut) {
       if (editor.getCursor().isSelected()) {
         editor.cutText();
       }
-    } else if (id == R.id.paste) {
-      editor.pasteText();
-      editor.setSelection(editor.getCursor().getRightLine(), editor.getCursor().getRightColumn());
-    } else if (id == R.id.copy) {
-      editor.copyText();
-      editor.setSelection(editor.getCursor().getRightLine(), editor.getCursor().getRightColumn());
     }
     dismiss();
   }
 
-  protected void applyBackground() {
+  private void ensureTextActions() {
+    actions.add(new TextAction(R.drawable.ic_comment_text_outline, R.string.comment_line));
+    actions.add(new TextAction(R.drawable.ic_select_all, R.string.select_all));
+    actions.add(new TextAction(R.drawable.content_copy, R.string.copy));
+    actions.add(new TextAction(R.drawable.ic_paste, R.string.paste));
+    actions.add(new TextAction(R.drawable.editor_text_select_start, R.string.long_select));
+    actions.add(new TextAction(R.drawable.ic_cut, R.string.cut));
+  }
+
+  private void applyBackground() {
     final var colorSurface =
         MaterialColors.getColor(
             editor.getContext(), com.google.android.material.R.attr.colorSurface, 0);
@@ -301,6 +312,62 @@ public class EditorTextActions extends EditorPopupWindow implements View.OnClick
     drawable.setCornerRadius(Utils.pxToDp(20));
     drawable.setColor(ColorStateList.valueOf(colorSurface));
     drawable.setStroke(2, colorOutline);
-    binding.getRoot().setBackground(drawable);
+    root.setBackground(drawable);
+  }
+
+  class TextActionsAdapter extends RecyclerView.Adapter<VH> {
+
+    private List<TextAction> data = new LinkedList<>();
+
+    @Override
+    public VH onCreateViewHolder(ViewGroup parent, int viewType) {
+      return new VH(
+          LayoutTextActionItemBinding.inflate(
+              LayoutInflater.from(parent.getContext()), parent, false));
+    }
+
+    @Override
+    public void onBindViewHolder(VH holder, int position) {
+      var action = data.get(position);
+      holder.action.setEnabled(action.enabled);
+      holder.action.setIconResource(action.icon);
+      holder.action.setTooltipText(holder.itemView.getContext().getString(action.name));
+      holder.action.setOnClickListener(v -> onTextActionClick(action));
+    }
+
+    @Override
+    public int getItemCount() {
+      return data.size();
+    }
+
+    public void addAction(TextAction action) {
+      data.add(action);
+    }
+    
+    public void clear() {
+      data.clear();
+    }
+  }
+
+  class VH extends RecyclerView.ViewHolder {
+    MaterialButton action;
+
+    public VH(LayoutTextActionItemBinding binding) {
+      super(binding.getRoot());
+      action = binding.action;
+    }
+  }
+
+  class TextAction {
+    public int icon, name;
+    public boolean visible, enabled;
+
+    public TextAction(int icon, int name) {
+      this.icon = icon;
+      this.name = name;
+
+      visible = true;
+      enabled = true;
+    }
   }
 }

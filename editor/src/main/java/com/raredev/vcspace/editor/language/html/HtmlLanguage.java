@@ -36,8 +36,7 @@ public class HtmlLanguage extends VCSpaceTMLanguage {
     super(
         GrammarRegistry.getInstance().findGrammar("text.html.basic"),
         GrammarRegistry.getInstance().findLanguageConfiguration("text.html.basic"),
-        ThemeRegistry.getInstance(),
-        "text.html.basic");
+        ThemeRegistry.getInstance());
     this.editor = editor;
   }
 

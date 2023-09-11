@@ -13,8 +13,7 @@ public class CssLanguage extends VCSpaceTMLanguage {
     super(
         GrammarRegistry.getInstance().findGrammar("source.css"),
         GrammarRegistry.getInstance().findLanguageConfiguration("source.css"),
-        ThemeRegistry.getInstance(),
-        "source.css");
+        ThemeRegistry.getInstance());
     this.editor = editor;
   }
 }
