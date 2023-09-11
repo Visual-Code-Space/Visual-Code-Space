@@ -15,7 +15,7 @@ public class MarkdownViewActivity extends BaseActivity {
   private ActivityMarkdownViewBinding binding;
 
   @Override
-  public View getLayout() {
+  protected View getLayout() {
     binding = ActivityMarkdownViewBinding.inflate(getLayoutInflater());
     return binding.getRoot();
   }

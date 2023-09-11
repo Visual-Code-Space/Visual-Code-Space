@@ -26,7 +26,7 @@
         android:icon="@drawable/pencil"
         android:title="@string/editor"
         android:visible="false"
-        app:showAsAction="ifRoom">
+        app:showAsAction="always">
         <menu>
             <item
                 android:id="@+id/menu_search"
@@ -109,7 +109,7 @@
         android:id="@+id/menu_usersnippets"
         android:icon="@drawable/ic_comment_text_outline"
         android:title="@string/user_snippets" />
-  <item
+    <item
         android:id="@+id/menu_terminal"
         android:icon="@drawable/ic_console_line"
         android:title="Terminal" />

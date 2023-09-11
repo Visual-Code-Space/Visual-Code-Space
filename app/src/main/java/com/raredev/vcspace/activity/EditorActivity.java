@@ -70,7 +70,7 @@ public class EditorActivity extends BaseActivity
   private PanelsManager panelsManager;
 
   @Override
-  public View getLayout() {
+  protected View getLayout() {
     binding = ActivityEditorBinding.inflate(getLayoutInflater());
     return binding.getRoot();
   }
@@ -90,14 +90,12 @@ public class EditorActivity extends BaseActivity
     registerResultActivity();
 
     openRecentPanels();
-    if (isPermissionGaranted(this)) {
-      Uri fileUri = getIntent().getData();
-      if (fileUri != null) {
-        logger.i("Opening file from Uri: " + fileUri.toString());
-        openFile(FileModel.fileToFileModel(UriUtils.uri2File(fileUri)));
-      }
-    }
     panelsManager.addDefaultPanels();
+    Uri fileUri = getIntent().getData();
+    if (fileUri != null) {
+      logger.i("Opening file from Uri: " + fileUri.toString());
+      openFile(FileModel.fileToFileModel(UriUtils.uri2File(fileUri)));
+    }
   }
 
   @Override
@@ -107,6 +105,7 @@ public class EditorActivity extends BaseActivity
     if (editorPanel != null) {
       var document = editorPanel.getDocument();
       menu.findItem(R.id.menu_execute).setVisible(true);
+      menu.findItem(R.id.menu_editor).setVisible(!KeyboardUtils.isSoftInputVisible(this));
       menu.findItem(R.id.menu_undo).setVisible(KeyboardUtils.isSoftInputVisible(this));
       menu.findItem(R.id.menu_redo).setVisible(KeyboardUtils.isSoftInputVisible(this));
       menu.findItem(R.id.menu_undo).setEnabled(editorPanel.getEditor().canUndo());
@@ -115,7 +114,6 @@ public class EditorActivity extends BaseActivity
       menu.findItem(R.id.menu_save_as).setEnabled(true);
       menu.findItem(R.id.menu_save_all).setEnabled(getUnsavedDocumentsCount() > 0);
       menu.findItem(R.id.menu_reload).setEnabled(true);
-      menu.findItem(R.id.menu_editor).setVisible(true);
     } else if (webViewPanel != null) {
       menu.findItem(R.id.menu_webview).setVisible(true);
       menu.findItem(R.id.zooming).setChecked(webViewPanel.isSupportZoom());
@@ -216,10 +214,17 @@ public class EditorActivity extends BaseActivity
     savePanels();
     super.onStop();
   }
+  
+  @Override
+  protected void onPause() {
+    super.onPause();
+    savePanels();
+  }
 
   @Override
   protected void onDestroy() {
     PreferencesUtils.getDefaultPrefs().unregisterOnSharedPreferenceChangeListener(this);
+    unregisterResultActivity();
     super.onDestroy();
     binding = null;
   }
@@ -276,6 +281,12 @@ public class EditorActivity extends BaseActivity
                 }
               }
             });
+  }
+  
+  private void unregisterResultActivity() {
+    launcher.unregister();
+    createFile.unregister();
+    pickFile.unregister();
   }
 
   private void executeDocument(DocumentModel document) {

@@ -4,14 +4,13 @@ import static com.raredev.vcspace.res.R.string;
 import static com.raredev.vcspace.res.R.xml;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
-import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.fragment.app.Fragment;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
+import com.raredev.vcspace.BaseApp;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.fragments.settings.EditorSettingsFragment;
 import com.raredev.vcspace.fragments.settings.FileSettingsFragment;
@@ -70,7 +69,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     Preference github = findPreference(SharedPreferencesKeys.KEY_GITHUB);
     github.setOnPreferenceClickListener(
         (pref) -> {
-          openCustomTab("https://github.com/Visual-Code-Space/Visual-Code-Space");
+          BaseApp.getInstance().openProjectRepo();
           return true;
         });
     Preference licenses = findPreference(SharedPreferencesKeys.KEY_LICENSES);
@@ -88,11 +87,5 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         .replace(R.id.settings_container, fragment)
         .addToBackStack(null)
         .commit();
-  }
-
-  private void openCustomTab(String url) {
-    CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-    CustomTabsIntent customTabsIntent = builder.build();
-    customTabsIntent.launchUrl(requireContext(), Uri.parse(url));
   }
 }

@@ -59,7 +59,7 @@ public class TerminalActivity extends BaseActivity
   }
 
   @Override
-  public View getLayout() {
+  protected View getLayout() {
     binding = ActivityTerminalBinding.inflate(getLayoutInflater());
     return binding.getRoot();
   }

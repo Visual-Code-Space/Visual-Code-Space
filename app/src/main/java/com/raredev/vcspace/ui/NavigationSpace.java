@@ -1,6 +1,5 @@
 package com.raredev.vcspace.ui;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -13,7 +12,7 @@ import com.raredev.vcspace.R;
 
 public class NavigationSpace extends LinearLayout {
 
-  public NavigationSpace(Activity context) {
+  public NavigationSpace(Context context) {
     super(context);
     init();
   }

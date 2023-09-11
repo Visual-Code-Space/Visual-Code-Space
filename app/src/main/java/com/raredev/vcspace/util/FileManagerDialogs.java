@@ -18,10 +18,6 @@ import com.raredev.vcspace.progressdialog.ProgressDialog;
 import com.raredev.vcspace.res.R;
 import com.raredev.vcspace.res.databinding.LayoutTextinputBinding;
 import com.raredev.vcspace.task.TaskExecutor;
-import com.raredev.vcspace.util.ApkInstaller;
-import com.raredev.vcspace.util.DialogUtils;
-import com.raredev.vcspace.util.FileUtil;
-import com.raredev.vcspace.util.ToastUtils;
 import java.io.File;
 import java.util.List;
 
@@ -98,6 +94,8 @@ public class FileManagerDialogs {
           int lastIndex = oldFileName.lastIndexOf(".");
           if (lastIndex >= 0) {
             et_filename.setSelection(0, lastIndex);
+          } else {
+            et_filename.setSelection(oldFileName.length(), oldFileName.length());
           }
           et_filename.requestFocus();
           positive.setOnClickListener(
@@ -122,7 +120,7 @@ public class FileManagerDialogs {
   public static void deleteFile(
       Context context, List<FileModel> selectedFiles, File file, Concluded concluded) {
     new MaterialAlertDialogBuilder(context)
-        .setTitle(R.string.delete)
+        .setTitle(selectedFiles.isEmpty()? R.string.delete: R.string.delete_multi)
         .setMessage(selectedFiles.isEmpty() ? context.getString(R.string.delete_message, file.getName()) : context.getString(R.string.delete_count_message, selectedFiles.size()))
         .setPositiveButton(
             R.string.delete,
@@ -140,7 +138,6 @@ public class FileManagerDialogs {
               TaskExecutor.executeAsyncProvideError(
                   () -> {
                     return deleteFiles(
-                        selectedFiles,
                         file,
                         message ->
                             ThreadUtils.runOnUiThread(() -> progress.setLoadingMessage(message)));

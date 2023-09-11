@@ -5,16 +5,15 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.PopupWindow;
 import com.google.android.material.color.MaterialColors;
 import com.google.android.material.elevation.SurfaceColors;
 import com.raredev.vcspace.activity.EditorActivity;
+import com.raredev.vcspace.adapters.holder.FileTreeViewHolder;
 import com.raredev.vcspace.databinding.LayoutTreeviewWindowBinding;
 import com.raredev.vcspace.models.FileModel;
-import com.raredev.vcspace.models.holder.FileTreeViewHolder;
 import com.raredev.vcspace.res.R;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.util.FileUtil;
@@ -54,19 +53,6 @@ public class FileTreePopupWindow
     window.setContentView(binding.getRoot());
     window.showAsDropDown(v);
 
-    binding
-        .getRoot()
-        .setOnTouchListener(
-            new View.OnTouchListener() {
-              @Override
-              public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_OUTSIDE) {
-                  dismiss();
-                  return true;
-                }
-                return false;
-              }
-            });
     applyBackground();
   }
 

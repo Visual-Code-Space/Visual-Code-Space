@@ -11,7 +11,6 @@ import com.google.android.material.textview.MaterialTextView;
 import com.raredev.vcspace.databinding.LayoutFileItemBinding;
 import com.raredev.vcspace.models.UserSnippetModel;
 import com.raredev.vcspace.res.R;
-import com.raredev.vcspace.ui.panels.editor.UserSnippetsPanel;
 import java.io.File;
 import java.util.List;
 
@@ -103,7 +102,6 @@ public class SnippetFilesAdapter extends RecyclerView.Adapter<SnippetFilesAdapte
       binding.getRoot().setPadding(5, 5, 5, 5);
       img_icon = binding.imgIcon;
       tv_name = binding.fileName;
-      binding.imgMenu.setVisibility(View.GONE);
     }
   }
 }

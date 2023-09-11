@@ -12,7 +12,7 @@ public class SettingsActivity extends BaseActivity {
   private ActivitySettingsBinding binding;
 
   @Override
-  public View getLayout() {
+  protected View getLayout() {
     binding = ActivitySettingsBinding.inflate(getLayoutInflater());
     return binding.getRoot();
   }

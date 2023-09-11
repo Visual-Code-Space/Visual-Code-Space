@@ -96,7 +96,7 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
     tabTitle.setTextColor(
         MaterialColors.getColor(context, com.google.android.material.R.attr.colorControlNormal, 0));
   }
-
+  
   public void addPanelTopBarButtons() {
     int padding = Utils.pxToDp(2);
     ImageView menu = new ImageView(context);

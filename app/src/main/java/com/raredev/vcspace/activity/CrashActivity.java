@@ -20,7 +20,7 @@ public class CrashActivity extends BaseActivity {
   private ActivityCrashBinding binding;
 
   @Override
-  public View getLayout() {
+  protected View getLayout() {
     binding = ActivityCrashBinding.inflate(getLayoutInflater());
     return binding.getRoot();
   }

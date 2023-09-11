@@ -23,7 +23,7 @@ public class PanelsManager {
 
   private EditorActivity activity;
   private FrameLayout parent;
-
+  
   public PanelsManager(EditorActivity activity, FrameLayout parent) {
     this.activity = activity;
     this.parent = parent;

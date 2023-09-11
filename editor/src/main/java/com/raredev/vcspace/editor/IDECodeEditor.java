@@ -23,8 +23,6 @@ import java.util.Set;
 import org.eclipse.tm4e.languageconfiguration.model.CommentRule;
 
 public class IDECodeEditor extends CodeEditor {
-  
-  private static final String LOG = "IDECodeEditor";
 
   private static final Set<Character> IGNORED_PAIR_ENDS =
       ImmutableSet.<Character>builder()
@@ -61,7 +59,6 @@ public class IDECodeEditor extends CodeEditor {
     textActions = new EditorTextActions(this);
 
     getComponent(EditorTextActionWindow.class).setEnabled(false);
-    getComponent(EditorTextActionWindow.class).unregister();
     getComponent(EditorAutoCompletion.class).setLayout(new CustomCompletionLayout());
     getComponent(EditorAutoCompletion.class).setAdapter(new CompletionItemAdapter());
   }
@@ -78,8 +75,8 @@ public class IDECodeEditor extends CodeEditor {
       }
     }
     super.commitText(text, applyAutoIndent);
-    if (getEditorLanguage() instanceof VCSpaceTMLanguage language) {
-      language.editorCommitText(text);
+    if (getEditorLanguage() instanceof VCSpaceTMLanguage) {
+      ((VCSpaceTMLanguage) getEditorLanguage()).editorCommitText(text);
     }
   }
 
@@ -102,7 +99,7 @@ public class IDECodeEditor extends CodeEditor {
   public CommentRule getCommentRule() {
     Language language = getEditorLanguage();
     if (language instanceof VCSpaceTMLanguage) {
-      var languageConfiguration = ((VCSpaceTMLanguage)language).getLanguageConfiguration();
+      var languageConfiguration = ((VCSpaceTMLanguage) language).getLanguageConfiguration();
       if (languageConfiguration == null) {
         return null;
       }
@@ -123,9 +120,13 @@ public class IDECodeEditor extends CodeEditor {
     searcher = null;
     document = null;
   }
-  
+
   public DocumentModel getDocument() {
     return document;
+  }
+
+  public void setDocument(DocumentModel document) {
+    this.document = document;
   }
 
   public void setCursorPosition(int line, int column) {
@@ -140,10 +141,6 @@ public class IDECodeEditor extends CodeEditor {
     getCursor().set(line, column);
   }
 
-  public void setDocument(DocumentModel document) {
-    this.document = document;
-  }
-  
   public int appendText(String text) {
     final var content = getText();
     if (getLineCount() <= 0) {
@@ -212,7 +209,7 @@ public class IDECodeEditor extends CodeEditor {
     int textSize = PreferencesUtils.getEditorTextSize();
     setTextSize(textSize);
   }
-  
+
   private void updateLineHeight() {
     int lineHeight = PreferencesUtils.getEditorLineHeight();
     setLineSpacing(lineHeight, 1.1f);
@@ -224,28 +221,27 @@ public class IDECodeEditor extends CodeEditor {
   }
 
   private void updateEditorFont() {
-    setTypefaceText(
-        ResourcesCompat.getFont(getContext(), PreferencesUtils.getSelectedFont()));
+    setTypefaceText(ResourcesCompat.getFont(getContext(), PreferencesUtils.getSelectedFont()));
     setTypefaceLineNumber(
         ResourcesCompat.getFont(getContext(), PreferencesUtils.getSelectedFont()));
   }
-  
+
   private void updateStickyScroll() {
     boolean stickyScroll = PreferencesUtils.useStickyScroll();
     getProps().stickyScroll = stickyScroll;
-    getProps().stickyScrollMaxLines = 4; 
+    getProps().stickyScrollMaxLines = 4;
   }
-  
+
   private void updateFontLigatures() {
     boolean fontLigatures = PreferencesUtils.useFontLigatures();
     setLigatureEnabled(fontLigatures);
   }
-  
+
   private void updateWordWrap() {
     boolean wordWrap = PreferencesUtils.useWordWrap();
     setWordwrap(wordWrap);
   }
-  
+
   private void updateLineNumbers() {
     boolean lineNumbers = PreferencesUtils.lineNumbers();
     setLineNumberEnabled(lineNumbers);
@@ -255,7 +251,7 @@ public class IDECodeEditor extends CodeEditor {
     boolean deleteEmptyLineFast = PreferencesUtils.useDeleteEmptyLineFast();
     getProps().deleteEmptyLineFast = deleteEmptyLineFast;
   }
-  
+
   private void updateDeleteTabs() {
     boolean deleteTabs = PreferencesUtils.useDeleteTabs();
     getProps().deleteMultiSpaces = deleteTabs ? -1 : 1;

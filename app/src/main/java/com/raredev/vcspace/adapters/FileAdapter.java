@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.R;
@@ -13,7 +12,6 @@ import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textview.MaterialTextView;
 import com.raredev.vcspace.databinding.LayoutFileItemBinding;
 import com.raredev.vcspace.models.FileModel;
-import com.raredev.vcspace.ui.panels.file.FileExplorerPanel;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -41,9 +39,6 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.VH> {
     holder.tv_name.setText(file.getName());
     holder.img_icon.setImageResource(file.getIcon());
 
-    holder.checkBox.setVisibility(selectedFiles.isEmpty() ? View.GONE : View.VISIBLE);
-    holder.checkBox.setChecked(selectedFiles.contains(file));
-
     int colorControlHighlight =
         MaterialColors.getColor(holder.itemView.getContext(), R.attr.colorControlHighlight, 0);
     holder.itemView.setBackgroundColor(
@@ -62,16 +57,13 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.VH> {
 
     holder.itemView.setOnLongClickListener(
         (v) -> {
-          switchSelectedFile(file);
-          return true;
+          if (fileListener != null) {
+            return fileListener.onFileLongClick(selectedFiles, file, v);
+          }
+          return false;
         });
 
-    holder.img_menu.setOnClickListener(
-        v -> {
-          if (fileListener != null) {
-            fileListener.onFileMenuClick(selectedFiles, file, v);
-          }
-        });
+    holder.img_icon.setOnClickListener(v -> switchSelectedFile(file));
   }
 
   @Override
@@ -122,20 +114,17 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.VH> {
   public interface FileListener {
     void onFileClick(FileModel file, View v);
 
-    void onFileMenuClick(List<FileModel> selectedFiles, FileModel file, View v);
+    boolean onFileLongClick(List<FileModel> selectedFiles, FileModel file, View v);
   }
 
   public class VH extends RecyclerView.ViewHolder {
-    CheckBox checkBox;
-    ShapeableImageView img_icon, img_menu;
+    ShapeableImageView img_icon;
     MaterialTextView tv_name;
 
     public VH(LayoutFileItemBinding binding) {
       super(binding.getRoot());
-      checkBox = binding.checkbox;
       img_icon = binding.imgIcon;
       tv_name = binding.fileName;
-      img_menu = binding.imgMenu;
     }
   }
 }

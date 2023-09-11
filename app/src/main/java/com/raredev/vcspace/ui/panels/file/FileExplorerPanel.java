@@ -3,8 +3,7 @@ package com.raredev.vcspace.ui.panels.file;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import androidx.appcompat.view.menu.MenuBuilder;
-import androidx.appcompat.widget.PopupMenu;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.blankj.utilcode.util.ClipboardUtils;
 import com.blankj.utilcode.util.PathUtils;
@@ -12,14 +11,15 @@ import com.raredev.vcspace.activity.EditorActivity;
 import com.raredev.vcspace.adapters.FileAdapter;
 import com.raredev.vcspace.databinding.LayoutFileExplorerPanelBinding;
 import com.raredev.vcspace.events.OnFileRenamedEvent;
+import com.raredev.vcspace.fragments.sheets.OptionsBottomSheet;
 import com.raredev.vcspace.models.FileModel;
+import com.raredev.vcspace.models.OptionModel;
 import com.raredev.vcspace.res.R;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.ui.panels.Panel;
 import com.raredev.vcspace.util.FileManagerDialogs;
 import com.raredev.vcspace.util.FileUtil;
 import com.raredev.vcspace.util.PreferencesUtils;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -31,8 +31,7 @@ public class FileExplorerPanel extends Panel implements FileAdapter.FileListener
   private LayoutFileExplorerPanelBinding binding;
   private FileAdapter mFilesAdapter;
 
-  private FileModel currentDir =
-      FileModel.fileToFileModel(new File(PathUtils.getRootPathExternalFirst()));
+  private FileModel currentDir = new FileModel(PathUtils.getRootPathExternalFirst(), "", false);
 
   public FileExplorerPanel(Context context) {
     super(context);
@@ -93,28 +92,30 @@ public class FileExplorerPanel extends Panel implements FileAdapter.FileListener
   }
 
   @Override
-  public void onFileMenuClick(List<FileModel> selectedFiles, FileModel file, View v) {
-    PopupMenu pm = new PopupMenu(getContext(), v);
-    if (pm.getMenu() instanceof MenuBuilder) {
-      ((MenuBuilder) pm.getMenu()).setOptionalIconsVisible(true);
-    }
-    pm.getMenu().add(R.string.select_all).setIcon(R.drawable.ic_select_all);
+  public boolean onFileLongClick(List<FileModel> selectedFiles, FileModel file, View v) {
+    var optionsSheet = new OptionsBottomSheet();
+
+    optionsSheet.addOption(
+        new OptionModel(R.drawable.ic_select_all, getString(R.string.select_all)));
     if (selectedFiles.isEmpty()) {
-      pm.getMenu().add(R.string.copy_path).setIcon(R.drawable.content_copy);
-      pm.getMenu().add(R.string.rename).setIcon(R.drawable.file_rename);
+      optionsSheet.addOption(
+          new OptionModel(R.drawable.content_copy, getString(R.string.copy_path)));
+      optionsSheet.addOption(new OptionModel(R.drawable.file_rename, getString(R.string.rename)));
     } else {
-      pm.getMenu().add(R.string.unselect_all).setIcon(R.drawable.ic_select_all);
+      optionsSheet.addOption(
+          new OptionModel(R.drawable.ic_select_all, getString(R.string.unselect_all)));
     }
-    pm.getMenu().add(R.string.delete).setIcon(R.drawable.delete_outline);
-    pm.setOnMenuItemClickListener(
-        item -> {
-          if (item.getTitle().equals(getContext().getString(R.string.select_all))) {
+    optionsSheet.addOption(new OptionModel(R.drawable.delete_outline, getString(R.string.delete)));
+
+    optionsSheet.setOptionListener(
+        (option) -> {
+          if (option.getName().equals(getContext().getString(R.string.select_all))) {
             mFilesAdapter.selectAllFiles();
-          } else if (item.getTitle().equals(getContext().getString(R.string.unselect_all))) {
+          } else if (option.getName().equals(getContext().getString(R.string.unselect_all))) {
             mFilesAdapter.unselectAllFiles();
-          } else if (item.getTitle().equals(getContext().getString(R.string.copy_path))) {
+          } else if (option.getName().equals(getContext().getString(R.string.copy_path))) {
             ClipboardUtils.copyText(file.getPath());
-          } else if (item.getTitle().equals(getContext().getString(R.string.rename))) {
+          } else if (option.getName().equals(getContext().getString(R.string.rename))) {
             FileManagerDialogs.renameFile(
                 getContext(),
                 file.toFile(),
@@ -122,13 +123,14 @@ public class FileExplorerPanel extends Panel implements FileAdapter.FileListener
                   EventBus.getDefault().post(new OnFileRenamedEvent(oldFile, newFile));
                   refreshFiles();
                 });
-          } else if (item.getTitle() == getContext().getString(R.string.delete)) {
+          } else if (option.getName().equals(getContext().getString(R.string.delete))) {
             FileManagerDialogs.deleteFile(
                 getContext(), selectedFiles, file.toFile(), (deletedFile) -> refreshFiles());
           }
-          return true;
+          optionsSheet.dismiss();
         });
-    pm.show();
+    optionsSheet.show(((AppCompatActivity) getContext()).getSupportFragmentManager(), "");
+    return true;
   }
 
   @Override
@@ -144,6 +146,10 @@ public class FileExplorerPanel extends Panel implements FileAdapter.FileListener
   @Override
   public void selected() {
     refreshFiles();
+  }
+
+  public String getString(int resId) {
+    return getContext().getString(resId);
   }
 
   private void setupRecyclerView() {

@@ -1,4 +1,4 @@
-package com.raredev.vcspace.models.holder;
+package com.raredev.vcspace.adapters.holder;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -23,11 +23,10 @@ public class FileTreeViewHolder extends TreeNode.BaseNodeViewHolder<File> {
   public View createNodeView(TreeNode node, File file) {
     this.binding = LayoutFiletreeItemBinding.inflate(LayoutInflater.from(context));
 
-    final var dp15 = SizeUtils.dp2px(10);
     final var chevron = binding.chevron;
     binding.filetreeName.setText(file.getName());
     
-    final var root = applyPadding(node, binding, dp15);
+    final var root = applyPadding(node, binding, SizeUtils.dp2px(10));
 
     if (file.isDirectory()) {
       updateChevronIcon(node.isExpanded());
@@ -77,13 +76,11 @@ public class FileTreeViewHolder extends TreeNode.BaseNodeViewHolder<File> {
   }
   
   private int getIconForFileName(String fileName) {
-    int icon = R.drawable.ic_file;
-
     for (String extension : FileModel.TEXT_FILES) {
       if (fileName.endsWith(extension)) {
-        icon = R.drawable.file_document_outline;
+        return R.drawable.file_document_outline;
       }
     }
-    return icon;
+    return R.drawable.ic_file;
   }
 }

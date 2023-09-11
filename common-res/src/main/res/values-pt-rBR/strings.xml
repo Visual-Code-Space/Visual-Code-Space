@@ -49,8 +49,9 @@
     <string name="saved_files">Arquivos salvos</string>
     <string name="existing_file">Arquivo já existente!</string>
     <string name="delete">Deletar</string>
+    <string name="delete_multi">Excluir vários arquivos</string>
     <string name="delete_message">Tem certeza que deseja deletar \"%1$s\"?</string>
-    <string name="delete_count_message">Tem certeza que deseja deletar \"%1$s\" arquivos?</string>
+    <string name="delete_count_message">Tem certeza que deseja deletar %1$s arquivos?</string>
     <string name="deleted_message">Deletado</string>
     <string name="deleting">Apagando</string>
     <string name="deleting_please_wait">Apagando por favor aguarde.</string>

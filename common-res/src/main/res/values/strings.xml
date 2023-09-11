@@ -57,8 +57,9 @@
     <string name="saved_files">Saved files</string>
     <string name="existing_file">Existing file!</string>
     <string name="delete">Delete</string>
+    <string name="delete_multi">Delete Multi-Files</string>
     <string name="delete_message">Are you sure you want to delete \"%1$s\"?</string>
-    <string name="delete_count_message">Are you sure you want to delete \"%1$s\" files?</string>
+    <string name="delete_count_message">Are you sure you want to delete %1$s files?</string>
     <string name="deleted_message">Deleted</string>
     <string name="deleting">Deleting...</string>
     <string name="deleting_please_wait">Deleting please wait.</string>

@@ -1,16 +1,22 @@
 package com.raredev.vcspace.util;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.os.Environment;
 import android.util.TypedValue;
 import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.content.ContextCompat;
 import com.raredev.vcspace.BaseApp;
 
 public class Utils {
@@ -35,6 +41,15 @@ public class Utils {
       ((AppCompatActivity) activity).getSupportActionBar().setTitle(title);
     } else {
       activity.getActionBar().setTitle(title);
+    }
+  }
+  
+  public static boolean isPermissionGaranted(Context context) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+      return Environment.isExternalStorageManager();
+    } else {
+      return ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)
+          == PackageManager.PERMISSION_GRANTED;
     }
   }
 

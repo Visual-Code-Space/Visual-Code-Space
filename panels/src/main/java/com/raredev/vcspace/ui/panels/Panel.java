@@ -97,8 +97,6 @@ public abstract class Panel {
     return null;
   }
 
-  public void createPanelMenu(Menu menu) {}
-
   public void viewCreated(View view) {}
 
   public void receiveEvent(PanelEvent event) {}

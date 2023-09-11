@@ -42,14 +42,12 @@ public class FileModel {
   }
 
   private int getIconForFileName(String fileName) {
-    int icon = R.drawable.ic_file;
-
     for (String extension : TEXT_FILES) {
       if (fileName.endsWith(extension)) {
-        icon = R.drawable.file_document_outline;
+        return R.drawable.file_document_outline;
       }
     }
-    return icon;
+    return R.drawable.ic_file;
   }
 
   public void listFiles(FileListResultListener listener) {
