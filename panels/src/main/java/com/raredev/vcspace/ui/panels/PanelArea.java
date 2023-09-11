@@ -33,7 +33,7 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
 
   protected Panel2PanelArea panel2PanelArea;
   protected PanelAreaListener listener;
-
+  
   public PanelArea(Context context, FrameLayout parent) {
     this.context = context;
     this.parent = parent;
@@ -72,7 +72,6 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
   public void onTabReselected(TabLayout.Tab tab) {
     if (listener != null) {
       var pm = listener.createTabPopupMenu(panels.get(tab.getPosition()), tab.view);
-
       if (pm != null) pm.show();
     }
   }
@@ -158,7 +157,7 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
     panel.performCreateView();
 
     panels.add(panel);
-    binding.tabs.addTab(createTabItem(panel.getTitle()));
+    binding.tabs.addTab(createTabItem(panel));
 
     if (panels.size() == 0 || select) setSelectedPanel(panel);
     switchEmptyPanels();
@@ -167,21 +166,20 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
     if (listener != null) listener.addPanel(panel);
   }
 
-  private TabLayout.Tab createTabItem(String title) {
+  private TabLayout.Tab createTabItem(Panel panel) {
     var tab = binding.tabs.newTab();
     tab.setCustomView(R.layout.layout_tab_item);
-    ((TextView) tab.getCustomView().findViewById(R.id.title)).setText(title);
+    ((TextView) tab.getCustomView().findViewById(R.id.title)).setText(panel.getTitle());
     tab.getCustomView()
         .findViewById(R.id.close)
         .setOnClickListener(
             v -> {
-              var panel = panels.get(tab.getPosition());
               if (panel.isPinned()) {
                 panel.setPinned(false);
                 updateTab(tab, panel);
                 return;
               }
-              removePanel(panels.get(tab.getPosition()));
+              removePanel(panel);
             });
     return tab;
   }

@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.blankj.utilcode.util.SizeUtils;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.color.MaterialColors;
 import com.raredev.vcspace.editor.databinding.LayoutTextActionItemBinding;
@@ -38,10 +39,10 @@ public class EditorTextActions extends EditorPopupWindow {
 
   private final List<TextAction> actions = new LinkedList<>();
   private final TextActionsAdapter adapter;
-  
+
   private final RelativeLayout root;
   private final RecyclerView list;
-  
+
   private long lastScroll;
   private int lastPosition;
   private int lastCause;
@@ -54,12 +55,11 @@ public class EditorTextActions extends EditorPopupWindow {
     Context context = editor.getContext();
 
     adapter = new TextActionsAdapter();
-    
+
     root = new RelativeLayout(context);
     list = new RecyclerView(context);
 
-    list.setLayoutManager(
-        new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+    list.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
     list.setAdapter(adapter);
     root.addView(list);
 
@@ -211,8 +211,7 @@ public class EditorTextActions extends EditorPopupWindow {
         editor.getOffset(editor.getCursor().getLeftLine(), editor.getCursor().getLeftColumn());
     float handleRightX =
         editor.getOffset(editor.getCursor().getRightLine(), editor.getCursor().getRightColumn());
-    int panelX =
-        (int) ((handleLeftX + handleRightX) / 2f - root.getMeasuredWidth() / 2f);
+    int panelX = (int) ((handleLeftX + handleRightX) / 2f - root.getMeasuredWidth() / 2f);
     setLocationAbsolutely(panelX, top);
     show();
   }
@@ -222,15 +221,16 @@ public class EditorTextActions extends EditorPopupWindow {
     actions.get(0).visible =
         commentRule != null
             && (commentRule.lineComment != null || commentRule.blockComment != null);
-    
+
     actions.get(2).visible = editor.getCursor().isSelected();
-    
+
     actions.get(3).enabled = editor.hasClip();
     actions.get(3).visible = editor.isEditable();
 
     actions.get(4).visible = (!editor.getCursor().isSelected() && editor.isEditable());
     actions.get(5).visible = (editor.getCursor().isSelected() && editor.isEditable());
-    
+    actions.get(6).visible = editor.isEditable();
+
     adapter.clear();
     for (TextAction action : actions) {
       if (action.visible) {
@@ -238,11 +238,15 @@ public class EditorTextActions extends EditorPopupWindow {
       }
     }
     adapter.notifyDataSetChanged();
-    
+
+    int dp8 = SizeUtils.dp2px(8f);
+    int dp16 = dp8 * 2;
+
     root.measure(
-        View.MeasureSpec.makeMeasureSpec(1000000, View.MeasureSpec.AT_MOST),
-        View.MeasureSpec.makeMeasureSpec(100000, View.MeasureSpec.AT_MOST));
-    setSize(Math.min(root.getMeasuredWidth(), (int) (editor.getDpUnit() * 230)), getHeight());
+        View.MeasureSpec.makeMeasureSpec(editor.getWidth() - dp16 * 2, View.MeasureSpec.AT_MOST),
+        View.MeasureSpec.makeMeasureSpec(
+            (int) (260 * editor.getDpUnit()) - dp16 * 2, View.MeasureSpec.AT_MOST));
+    setSize(Math.min(root.getMeasuredWidth(), (int) (editor.getDpUnit() * 260)), getHeight());
   }
 
   @Override
@@ -286,6 +290,10 @@ public class EditorTextActions extends EditorPopupWindow {
       if (editor.getCursor().isSelected()) {
         editor.cutText();
       }
+    } else if (name == R.string.menu_format) {
+      Cursor cursor = editor.getCursor();
+      editor.setSelection(cursor.getRightLine(), cursor.getRightColumn());
+      editor.formatCodeAsync();
     }
     dismiss();
   }
@@ -297,6 +305,7 @@ public class EditorTextActions extends EditorPopupWindow {
     actions.add(new TextAction(R.drawable.ic_paste, R.string.paste));
     actions.add(new TextAction(R.drawable.editor_text_select_start, R.string.long_select));
     actions.add(new TextAction(R.drawable.ic_cut, R.string.cut));
+    actions.add(new TextAction(R.drawable.format_align_left, R.string.menu_format));
   }
 
   private void applyBackground() {
@@ -343,7 +352,7 @@ public class EditorTextActions extends EditorPopupWindow {
     public void addAction(TextAction action) {
       data.add(action);
     }
-    
+
     public void clear() {
       data.clear();
     }

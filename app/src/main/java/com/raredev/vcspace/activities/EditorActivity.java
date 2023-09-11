@@ -145,8 +145,7 @@ public class EditorActivity extends BaseActivity
       else if (id == R.id.menu_search) {
         panelsManager.addFloatingPanel(SearcherPanel.createFloating(this, binding.panelArea));
         panelsManager.sendEvent(new UpdateSearcherEvent(editorPanel.getEditor().getSearcher()));
-      } else if (id == R.id.menu_format) editorPanel.getEditor().formatCodeAsync();
-      else if (id == R.id.menu_save) saveFile(true);
+      } else if (id == R.id.menu_save) saveFile(true);
       else if (id == R.id.menu_save_as) {
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -214,7 +213,7 @@ public class EditorActivity extends BaseActivity
     savePanels();
     super.onStop();
   }
-  
+
   @Override
   protected void onPause() {
     super.onPause();
@@ -282,7 +281,7 @@ public class EditorActivity extends BaseActivity
               }
             });
   }
-  
+
   private void unregisterResultActivity() {
     launcher.unregister();
     createFile.unregister();
