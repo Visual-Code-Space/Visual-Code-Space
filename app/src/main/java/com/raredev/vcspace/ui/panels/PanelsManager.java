@@ -74,12 +74,6 @@ public class PanelsManager {
                       panelArea.addPanel(new FileExplorerPanel(activity), true);
                       return true;
                     });
-            menu.add("WebView")
-                .setOnMenuItemClickListener(
-                    item -> {
-                      panelArea.addPanel(new WebViewPanel(activity), true);
-                      return true;
-                    });
           }
 
           @Override

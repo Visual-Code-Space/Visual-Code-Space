@@ -75,9 +75,6 @@ public class IDECodeEditor extends CodeEditor {
       }
     }
     super.commitText(text, applyAutoIndent);
-    if (getEditorLanguage() instanceof VCSpaceTMLanguage) {
-      ((VCSpaceTMLanguage) getEditorLanguage()).editorCommitText(text);
-    }
   }
 
   @Override

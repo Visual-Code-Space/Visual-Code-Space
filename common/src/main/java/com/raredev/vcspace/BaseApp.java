@@ -8,7 +8,7 @@ import androidx.preference.PreferenceManager;
 import com.raredev.vcspace.utils.Environment;
 
 public class BaseApp extends Application {
-  
+
   public static final String REPO_URL = "https://github.com/Visual-Code-Space/Visual-Code-Space";
 
   private static BaseApp instance;
@@ -30,11 +30,11 @@ public class BaseApp extends Application {
   public SharedPreferences getDefaultPref() {
     return defaultPref;
   }
-  
+
   public void openProjectRepo() {
     openUrl(REPO_URL);
   }
-  
+
   public void openUrl(String url) {
     try {
       Intent open = new Intent();

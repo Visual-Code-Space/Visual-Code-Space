@@ -31,6 +31,6 @@ dependencies {
   implementation google.material
   implementation google.gson
   implementation common.utilcode
-  
+
   implementation project(path: ':common-res')
 }

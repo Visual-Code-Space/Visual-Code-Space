@@ -70,6 +70,7 @@ public class PanelUtils {
         DocumentModel document = gson.fromJson(panelMap.get("document"), DocumentModel.class);
         panel = new EditorPanel(context, document);
       }
+      panel.setPinned(Boolean.parseBoolean(panelMap.get("pinned")));
 
       panelArea.addPanel(panel, false);
 
@@ -83,7 +84,6 @@ public class PanelUtils {
         webViewPanel.setSupportZoom(Boolean.parseBoolean(panelMap.get("supportZoom")));
         webViewPanel.setDesktopMode(Boolean.parseBoolean(panelMap.get("desktopMode")));
       }
-      panel.setPinned(Boolean.parseBoolean(panelMap.get("pinned")));
     }
   }
 

@@ -69,7 +69,6 @@ android {
 dependencies {
   def lifecycle_version = "2.6.1"
   def activity_version = "1.7.2"
-  def markwon_version = "4.6.2"
 
   implementation fileTree(dir: 'libs', include: ['*.jar'])
   implementation "androidx.activity:activity:$activity_version"
@@ -99,11 +98,6 @@ dependencies {
   implementation platform("io.github.Rosemoe.sora-editor:bom:0.22.1")
   implementation "io.github.Rosemoe.sora-editor:editor"
   implementation "io.github.Rosemoe.sora-editor:language-textmate"
-  
-  implementation "io.noties.markwon:core:$markwon_version"
-  implementation "io.noties.markwon:linkify:$markwon_version"
-  implementation "io.noties.markwon:image:$markwon_version"
-  implementation "io.noties.markwon:image-glide:$markwon_version"
   
   implementation project(path: ':common')
   implementation project(path: ':common-res')

@@ -159,11 +159,15 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
     panels.add(panel);
     binding.tabs.addTab(createTabItem(panel));
 
-    if (panels.size() == 0 || select) setSelectedPanel(panel);
+    if (panels.size() == 0 || select) {
+      setSelectedPanel(panel);
+    }
+
+    if (listener != null) {
+      listener.addPanel(panel);
+    }
     switchEmptyPanels();
     updateTabs();
-
-    if (listener != null) listener.addPanel(panel);
   }
 
   private TabLayout.Tab createTabItem(Panel panel) {
@@ -212,7 +216,7 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
 
   public void removeOthers() {
     if (panels.isEmpty() || selectedPanel == null) {
-      logger.e("No panels to remove!");
+      logger.w("No panels to remove!");
       return;
     }
 
@@ -230,7 +234,7 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
 
   public void removeAllPanels() {
     if (panels.isEmpty()) {
-      logger.e("No panels to remove!");
+      logger.w("No panels to remove!");
       return;
     }
 

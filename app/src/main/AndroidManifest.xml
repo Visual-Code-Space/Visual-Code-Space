@@ -19,6 +19,7 @@
         android:resizeableActivity="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity
             android:name=".activities.EditorActivity"
             android:configChanges="orientation|screenSize"

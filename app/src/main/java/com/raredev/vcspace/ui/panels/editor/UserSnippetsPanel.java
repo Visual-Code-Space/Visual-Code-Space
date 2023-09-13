@@ -27,7 +27,7 @@ public class UserSnippetsPanel extends Panel implements SnippetFilesAdapter.Snip
 
   private SnippetFilesAdapter adapter;
   private List<UserSnippetModel> userSnippets;
-
+  
   public static final String SNIPPET_FILE_EXAMPLE =
       """
   {

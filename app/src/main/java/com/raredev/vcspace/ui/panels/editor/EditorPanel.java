@@ -47,7 +47,7 @@ public class EditorPanel extends Panel {
   }
 
   @Override
-  public void viewCreated(View view) {
+  public synchronized void viewCreated(View view) {
     super.viewCreated(view);
     binding.editor.setColorScheme(createColorScheme());
     binding.editor.setDocument(document);
