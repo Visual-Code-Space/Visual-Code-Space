@@ -11,7 +11,6 @@ import com.google.android.material.R;
 import com.google.android.material.color.MaterialColors;
 import com.google.android.material.elevation.SurfaceColors;
 import com.raredev.vcspace.editor.databinding.LayoutCompletionListBinding;
-import com.raredev.vcspace.utils.Utils;
 import io.github.rosemoe.sora.widget.component.CompletionLayout;
 import io.github.rosemoe.sora.widget.component.EditorAutoCompletion;
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme;
@@ -94,7 +93,7 @@ public class CustomCompletionLayout implements CompletionLayout {
   private GradientDrawable applyBackground(Context context) {
     GradientDrawable drawable = new GradientDrawable();
     drawable.setShape(GradientDrawable.RECTANGLE);
-    drawable.setCornerRadius(Utils.pxToDp(9));
+    drawable.setCornerRadius(20);
     drawable.setColor(SurfaceColors.SURFACE_0.getColor(context));
     drawable.setStroke(2, MaterialColors.getColor(context, R.attr.colorOutline, 0));
     return drawable;

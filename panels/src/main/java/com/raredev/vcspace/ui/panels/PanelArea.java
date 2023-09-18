@@ -9,13 +9,13 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.widget.PopupMenu;
+import com.blankj.utilcode.util.SizeUtils;
 import com.google.android.material.color.MaterialColors;
 import com.google.android.material.tabs.TabLayout;
 import com.raredev.vcspace.events.PanelEvent;
 import com.raredev.vcspace.res.R;
 import com.raredev.vcspace.ui.panels.databinding.LayoutPanelAreaBinding;
 import com.raredev.vcspace.utils.Logger;
-import com.raredev.vcspace.utils.Utils;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -97,9 +97,9 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
   }
   
   public void addPanelTopBarButtons() {
-    int padding = Utils.pxToDp(2);
+    int padding = SizeUtils.dp2px(2);
     ImageView menu = new ImageView(context);
-    menu.setLayoutParams(new ViewGroup.LayoutParams(Utils.pxToDp(25), Utils.pxToDp(25)));
+    menu.setLayoutParams(new ViewGroup.LayoutParams(SizeUtils.dp2px(25), SizeUtils.dp2px(25)));
     menu.setImageResource(R.drawable.ic_menu);
     menu.setPadding(padding, padding, padding, padding);
     menu.setOnClickListener(

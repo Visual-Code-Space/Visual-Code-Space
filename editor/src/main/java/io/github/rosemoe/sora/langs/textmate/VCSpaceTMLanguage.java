@@ -2,20 +2,16 @@ package io.github.rosemoe.sora.langs.textmate;
 
 import android.os.Bundle;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.PathUtils;
 import com.raredev.vcspace.editor.completion.SimpleCompletionIconDrawer;
-import com.raredev.vcspace.editor.completion.SimpleCompletionItem;
 import com.raredev.vcspace.editor.completion.SimpleCompletionItemKind;
 import com.raredev.vcspace.editor.completion.SimpleSnippetCompletionItem;
-import com.raredev.vcspace.editor.completion.VCSpaceCompletionItem;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.utils.Logger;
 import com.raredev.vcspace.utils.PreferencesUtils;
 import io.github.rosemoe.sora.lang.completion.CompletionHelper;
 import io.github.rosemoe.sora.lang.completion.CompletionPublisher;
-import io.github.rosemoe.sora.lang.completion.IdentifierAutoComplete.Identifiers;
 import io.github.rosemoe.sora.lang.completion.SnippetDescription;
 import io.github.rosemoe.sora.lang.completion.snippet.parser.CodeSnippetParser;
 import io.github.rosemoe.sora.lang.format.Formatter;
@@ -100,38 +96,6 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
         }
       }
     }
-
-    final var idt = textMateAnalyzer.syncIdentifiers;
-    var identifiersList = createIdentifierCompletionsList(prefix, idt);
-
-    for (VCSpaceCompletionItem identifier : identifiersList) {
-      publisher.addItem(identifier);
-    }
-  }
-
-  private List<VCSpaceCompletionItem> createIdentifierCompletionsList(
-      @NonNull String prefix, @Nullable Identifiers userIdentifiers) {
-    var result = new ArrayList<VCSpaceCompletionItem>();
-
-    if (userIdentifiers != null) {
-      List<String> dest = new ArrayList<>();
-
-      userIdentifiers.filterIdentifiers(prefix, dest);
-      for (var word : dest) {
-        if (word.startsWith(prefix)) {
-          result.add(
-              new SimpleCompletionItem(
-                  word,
-                  null,
-                  "Identifier",
-                  SimpleCompletionIconDrawer.draw(SimpleCompletionItemKind.KEYWORD),
-                  prefix.length(),
-                  word));
-          logger.d(word);
-        }
-      }
-    }
-    return result;
   }
 
   @NonNull

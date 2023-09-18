@@ -5,13 +5,13 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.raredev.vcspace.BaseApp;
 import com.raredev.vcspace.utils.FileUtil;
-import com.raredev.vcspace.utils.Utils;
 import java.util.Map;
 
 public class LanguageScopeProvider {
   private static Map<String, String> scopes;
 
-  static {
+  public static void init() {
+    if (scopes != null) return;
     var type = new TypeToken<Map<String, String>>() {}.getType();
     scopes =
         new Gson()

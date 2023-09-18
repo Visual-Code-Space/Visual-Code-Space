@@ -12,7 +12,6 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Environment;
-import android.util.TypedValue;
 import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -20,14 +19,6 @@ import androidx.core.content.ContextCompat;
 import com.raredev.vcspace.BaseApp;
 
 public class Utils {
-
-  public static int pxToDp(int value) {
-    return (int)
-        TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            value,
-            BaseApp.getInstance().getResources().getDisplayMetrics());
-  }
 
   public static void updateImageTint(ImageView image, int color) {
     Drawable drawable = image.getDrawable();

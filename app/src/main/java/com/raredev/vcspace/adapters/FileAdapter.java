@@ -24,6 +24,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.VH> {
 
   public FileAdapter() {
     selectedFiles = new LinkedList<>();
+    files = new LinkedList<>();
   }
 
   @NonNull
@@ -77,25 +78,29 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.VH> {
     } else {
       selectedFiles.add(file);
     }
-    notifyDataSetChanged();
+    notifyItemChanged(files.indexOf(file));
   }
 
   public void selectAllFiles() {
     for (FileModel file : files) {
       if (!selectedFiles.contains(file)) {
         selectedFiles.add(file);
+        notifyItemChanged(files.indexOf(file));
       }
     }
-    notifyDataSetChanged();
   }
 
   public void unselectAllFiles() {
-    selectedFiles.clear();
-    notifyDataSetChanged();
+    for (FileModel file : files) {
+      if (selectedFiles.contains(file)) {
+        selectedFiles.remove(file);
+        notifyItemChanged(files.indexOf(file));
+      }
+    }
   }
 
-  public void setFiles(List<FileModel> files) {
-    this.files = files;
+  public void setFiles(List<FileModel> data) {
+    this.files = data;
     selectedFiles.clear();
     notifyDataSetChanged();
   }

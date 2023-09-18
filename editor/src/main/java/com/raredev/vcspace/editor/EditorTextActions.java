@@ -16,7 +16,6 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.color.MaterialColors;
 import com.raredev.vcspace.editor.databinding.LayoutTextActionItemBinding;
 import com.raredev.vcspace.res.R;
-import com.raredev.vcspace.utils.Utils;
 import io.github.rosemoe.sora.event.HandleStateChangeEvent;
 import io.github.rosemoe.sora.event.InterceptTarget;
 import io.github.rosemoe.sora.event.LongPressEvent;
@@ -318,7 +317,7 @@ public class EditorTextActions extends EditorPopupWindow {
 
     GradientDrawable drawable = new GradientDrawable();
     drawable.setShape(GradientDrawable.RECTANGLE);
-    drawable.setCornerRadius(Utils.pxToDp(20));
+    drawable.setCornerRadius(SizeUtils.dp2px(20));
     drawable.setColor(ColorStateList.valueOf(colorSurface));
     drawable.setStroke(2, colorOutline);
     root.setBackground(drawable);

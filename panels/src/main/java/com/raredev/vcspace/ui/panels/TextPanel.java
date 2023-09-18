@@ -5,7 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import com.raredev.vcspace.utils.Utils;
+import com.blankj.utilcode.util.SizeUtils;
 
 public class TextPanel extends Panel {
 
@@ -24,7 +24,7 @@ public class TextPanel extends Panel {
             ScrollView.LayoutParams.MATCH_PARENT, ScrollView.LayoutParams.MATCH_PARENT));
 
     text = new TextView(getContext());
-    int padding = Utils.pxToDp(8);
+    int padding = SizeUtils.dp2px(8);
     text.setPadding(padding, padding, padding, padding);
     text.setLayoutParams(
         new ViewGroup.LayoutParams(

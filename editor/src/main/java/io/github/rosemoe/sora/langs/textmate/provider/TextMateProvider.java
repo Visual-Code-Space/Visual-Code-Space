@@ -6,7 +6,6 @@ import com.raredev.vcspace.editor.language.java.JavaLanguage;
 import com.raredev.vcspace.editor.language.json.JsonLanguage;
 import com.raredev.vcspace.editor.language.kotlin.KotlinLanguage;
 import com.raredev.vcspace.editor.language.lua.LuaLanguage;
-import com.raredev.vcspace.utils.Utils;
 import io.github.rosemoe.sora.langs.textmate.VCSpaceTMLanguage;
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;
@@ -18,6 +17,7 @@ public class TextMateProvider {
 
   public static void registerLanguages() throws Exception {
     GrammarRegistry.getInstance().loadGrammars("editor/textmate/languages.json");
+    LanguageScopeProvider.init();
 
     var themeRegistry = ThemeRegistry.getInstance();
     var names = new String[] {"darcula", "abyss", "quietlight", "solarized_drak"};

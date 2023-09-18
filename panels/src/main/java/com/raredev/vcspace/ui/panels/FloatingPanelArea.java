@@ -9,10 +9,10 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import com.blankj.utilcode.util.SizeUtils;
 import com.google.android.material.color.MaterialColors;
 import com.google.android.material.elevation.SurfaceColors;
 import com.raredev.vcspace.res.R;
-import com.raredev.vcspace.utils.Utils;
 
 public class FloatingPanelArea extends PanelArea {
 
@@ -32,10 +32,10 @@ public class FloatingPanelArea extends PanelArea {
 
     var layoutParams = panel.getLayoutParams();
     if (layoutParams == null) {
-      layoutParams = new ViewGroup.LayoutParams(Utils.pxToDp(390), Utils.pxToDp(210));
+      layoutParams = new ViewGroup.LayoutParams(SizeUtils.dp2px(390), SizeUtils.dp2px(210));
     } else {
-      layoutParams.width = Utils.pxToDp(390);
-      layoutParams.height = Utils.pxToDp(210);
+      layoutParams.width = SizeUtils.dp2px(390);
+      layoutParams.height = SizeUtils.dp2px(210);
     }
     panel.setLayoutParams(layoutParams);
 
@@ -99,10 +99,10 @@ public class FloatingPanelArea extends PanelArea {
   }
 
   private void addFloatingPanelTopBar() {
-    int padding = Utils.pxToDp(2);
-    int margins = Utils.pxToDp(4);
+    int padding = SizeUtils.dp2px(2);
+    int margins = SizeUtils.dp2px(4);
     var move = new ImageView(context);
-    var moveLayoutParams = new LinearLayout.LayoutParams(Utils.pxToDp(25), Utils.pxToDp(25));
+    var moveLayoutParams = new LinearLayout.LayoutParams(SizeUtils.dp2px(25), SizeUtils.dp2px(25));
     moveLayoutParams.leftMargin = margins;
     moveLayoutParams.rightMargin = margins;
     move.setLayoutParams(moveLayoutParams);
@@ -111,7 +111,7 @@ public class FloatingPanelArea extends PanelArea {
     move.setOnTouchListener(getMoveTouchListener());
 
     var close = new ImageView(context);
-    var closeLayoutParams = new LinearLayout.LayoutParams(Utils.pxToDp(25), Utils.pxToDp(25));
+    var closeLayoutParams = new LinearLayout.LayoutParams(SizeUtils.dp2px(25), SizeUtils.dp2px(25));
     closeLayoutParams.leftMargin = margins;
     closeLayoutParams.rightMargin = margins + 5;
     close.setLayoutParams(closeLayoutParams);
@@ -127,28 +127,28 @@ public class FloatingPanelArea extends PanelArea {
     // Left side
     View leftEdge = new View(context);
     RelativeLayout.LayoutParams leftParams =
-        new RelativeLayout.LayoutParams(Utils.pxToDp(9), RelativeLayout.LayoutParams.MATCH_PARENT);
+        new RelativeLayout.LayoutParams(SizeUtils.dp2px(9), RelativeLayout.LayoutParams.MATCH_PARENT);
     leftParams.addRule(RelativeLayout.ALIGN_PARENT_START);
     binding.getRoot().addView(leftEdge, leftParams);
 
     // Right side
     View rightEdge = new View(context);
     RelativeLayout.LayoutParams rightParams =
-        new RelativeLayout.LayoutParams(Utils.pxToDp(9), RelativeLayout.LayoutParams.MATCH_PARENT);
+        new RelativeLayout.LayoutParams(SizeUtils.dp2px(9), RelativeLayout.LayoutParams.MATCH_PARENT);
     rightParams.addRule(RelativeLayout.ALIGN_PARENT_END);
     binding.getRoot().addView(rightEdge, rightParams);
 
     // Upper part
     View topEdge = new View(context);
     RelativeLayout.LayoutParams topParams =
-        new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, Utils.pxToDp(9));
+        new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, SizeUtils.dp2px(9));
     topParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
     binding.getRoot().addView(topEdge, topParams);
 
     // Lower part
     View bottomEdge = new View(context);
     RelativeLayout.LayoutParams bottomParams =
-        new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, Utils.pxToDp(9));
+        new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, SizeUtils.dp2px(9));
     bottomParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
     binding.getRoot().addView(bottomEdge, bottomParams);
 
@@ -161,7 +161,7 @@ public class FloatingPanelArea extends PanelArea {
   private void applyBackground() {
     GradientDrawable drawable = new GradientDrawable();
     drawable.setShape(GradientDrawable.RECTANGLE);
-    drawable.setCornerRadius(Utils.pxToDp(9));
+    drawable.setCornerRadius(25);
     drawable.setColor(SurfaceColors.SURFACE_0.getColor(context));
     drawable.setStroke(
         2, MaterialColors.getColor(context, com.google.android.material.R.attr.colorOutline, 0));

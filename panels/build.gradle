@@ -29,6 +29,7 @@ dependencies {
   implementation androidx.appcompat
   implementation google.material
   implementation google.gson
+  implementation common.utilcode
 
   implementation project(path: ':common')
   implementation project(path: ':common-res')

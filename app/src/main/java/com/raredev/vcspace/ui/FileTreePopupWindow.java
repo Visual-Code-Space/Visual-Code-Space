@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.PopupWindow;
+import com.blankj.utilcode.util.SizeUtils;
 import com.google.android.material.color.MaterialColors;
 import com.google.android.material.elevation.SurfaceColors;
 import com.raredev.vcspace.activities.EditorActivity;
@@ -17,7 +18,6 @@ import com.raredev.vcspace.models.FileModel;
 import com.raredev.vcspace.res.R;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.utils.FileUtil;
-import com.raredev.vcspace.utils.Utils;
 import com.unnamed.b.atv.model.TreeNode;
 import com.unnamed.b.atv.view.AndroidTreeView;
 import java.io.File;
@@ -43,7 +43,7 @@ public class FileTreePopupWindow
     binding = LayoutTreeviewWindowBinding.inflate(LayoutInflater.from(context));
     window = new PopupWindow(context);
 
-    window.setWidth(Utils.pxToDp(200));
+    window.setWidth(SizeUtils.dp2px(220));
     window.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
 
     window.setFocusable(true);
@@ -194,7 +194,7 @@ public class FileTreePopupWindow
   private void applyBackground() {
     GradientDrawable drawable = new GradientDrawable();
     drawable.setShape(GradientDrawable.RECTANGLE);
-    drawable.setCornerRadius(Utils.pxToDp(9));
+    drawable.setCornerRadius(15);
     drawable.setColor(SurfaceColors.SURFACE_0.getColor(context));
     drawable.setStroke(
         2, MaterialColors.getColor(context, com.google.android.material.R.attr.colorOutline, 0));

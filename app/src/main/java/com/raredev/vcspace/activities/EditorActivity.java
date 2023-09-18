@@ -39,7 +39,6 @@ import com.raredev.vcspace.ui.panels.compiler.WebViewPanel;
 import com.raredev.vcspace.ui.panels.editor.EditorPanel;
 import com.raredev.vcspace.ui.panels.editor.SearcherPanel;
 import com.raredev.vcspace.ui.panels.editor.UserSnippetsPanel;
-import com.raredev.vcspace.utils.FileUtil;
 import com.raredev.vcspace.utils.Logger;
 import com.raredev.vcspace.utils.PanelUtils;
 import com.raredev.vcspace.utils.PreferencesUtils;
@@ -246,7 +245,7 @@ public class EditorActivity extends BaseActivity
                     OutputStream outputStream = getContentResolver().openOutputStream(uri);
                     outputStream.write(editorPanel.getCode().getBytes());
                     outputStream.close();
-                    openFile(FileModel.fileToFileModel(FileUtil.getFileFromUri(this, uri)));
+                    openFile(FileModel.fileToFileModel(UriUtils.uri2File(uri)));
                   } catch (IOException e) {
                     e.printStackTrace();
                     logger.e(e);
@@ -259,12 +258,7 @@ public class EditorActivity extends BaseActivity
             new ActivityResultContracts.CreateDocument("text/*"),
             uri -> {
               if (uri != null) {
-                try {
-                  openFile(FileModel.fileToFileModel(FileUtil.getFileFromUri(this, uri)));
-                } catch (IOException e) {
-                  e.printStackTrace();
-                  logger.e(e);
-                }
+                openFile(FileModel.fileToFileModel(UriUtils.uri2File(uri)));
               }
             });
     pickFile =
@@ -272,12 +266,7 @@ public class EditorActivity extends BaseActivity
             new ActivityResultContracts.GetContent(),
             uri -> {
               if (uri != null) {
-                try {
-                  openFile(FileModel.fileToFileModel(FileUtil.getFileFromUri(this, uri)));
-                } catch (IOException e) {
-                  e.printStackTrace();
-                  logger.e(e);
-                }
+                openFile(FileModel.fileToFileModel(UriUtils.uri2File(uri)));
               }
             });
   }

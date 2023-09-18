@@ -6,9 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
+import com.blankj.utilcode.util.SizeUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.raredev.vcspace.res.databinding.LayoutProgressDialogBinding;
-import com.raredev.vcspace.utils.Utils;
 
 public class ProgressDialog {
 
@@ -40,7 +40,7 @@ public class ProgressDialog {
     binding.linearProgressIndicator.setVisibility(
         progressStyle.equals(ProgressStyle.LINEAR) ? View.VISIBLE : View.GONE);
     binding.loadingMessage.setPadding(
-        progressStyle.equals(ProgressStyle.CIRCULAR) ? Utils.pxToDp(10) : 0, 0, 0, 0);
+        progressStyle.equals(ProgressStyle.CIRCULAR) ? SizeUtils.dp2px(10) : 0, 0, 0, 0);
   }
 
   private void invalidatePercentText() {

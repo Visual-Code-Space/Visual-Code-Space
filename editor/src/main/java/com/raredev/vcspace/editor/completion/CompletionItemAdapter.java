@@ -4,8 +4,8 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import com.blankj.utilcode.util.SizeUtils;
 import com.raredev.vcspace.editor.databinding.LayoutCompletionItemBinding;
-import com.raredev.vcspace.utils.Utils;
 import io.github.rosemoe.sora.widget.component.EditorCompletionAdapter;
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme;
 
@@ -14,7 +14,7 @@ public class CompletionItemAdapter extends EditorCompletionAdapter {
 
   @Override
   public int getItemHeight() {
-    return Utils.pxToDp(50);
+    return SizeUtils.dp2px(50);
   }
 
   @Override

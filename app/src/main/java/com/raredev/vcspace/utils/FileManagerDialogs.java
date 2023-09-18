@@ -9,6 +9,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
@@ -59,7 +60,7 @@ public class FileManagerDialogs {
               v -> {
                 File newFile = new File(file, "/" + et_filename.getText().toString());
                 if (!newFile.exists()) {
-                  if (FileUtil.writeFile(newFile.getAbsolutePath(), "")) {
+                  if (FileIOUtils.writeFileFromString(newFile, "")) {
                     concluded.concluded(newFile);
                   }
                 }
@@ -255,7 +256,11 @@ public class FileManagerDialogs {
 
           @Override
           public void onCloneFailed(String message) {
-            DialogUtils.newErrorDialog(context, "Clone failed", message);
+            new MaterialAlertDialogBuilder(context)
+                .setTitle("Clone failed")
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok, null)
+                .show();
           }
         });
   }

@@ -31,7 +31,6 @@ import com.raredev.vcspace.ui.virtualkeys.VirtualKeysInfo;
 import com.raredev.vcspace.ui.virtualkeys.VirtualKeysView;
 import com.raredev.vcspace.utils.Logger;
 import com.raredev.vcspace.utils.PreferencesUtils;
-import com.raredev.vcspace.utils.Utils;
 import java.util.Map;
 import org.json.JSONException;
 
@@ -96,7 +95,7 @@ public class TerminalActivity extends BaseActivity
     terminal.setTerminalViewClient(this);
     terminal.attachSession(createSession());
     terminal.setKeepScreenOn(true);
-    terminal.setTextSize(Utils.pxToDp(14));
+    terminal.setTextSize(14);
     terminal.setTypeface(ResourcesCompat.getFont(this, PreferencesUtils.getSelectedFont()));
 
     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-1, 0);

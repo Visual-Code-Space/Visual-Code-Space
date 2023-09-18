@@ -1,5 +1,6 @@
 package com.raredev.vcspace.utils;
 
+import com.blankj.utilcode.util.FileIOUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -558,6 +559,6 @@ public class GitUtils {
       *.iws
       *.ipr
        """;
-    FileUtil.writeFile(path.getAbsolutePath(), gitIgnore);
+    FileIOUtils.writeFileFromString(path, gitIgnore);
   }
 }
