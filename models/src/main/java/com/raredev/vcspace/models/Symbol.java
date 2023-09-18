@@ -32,19 +32,22 @@ public class Symbol {
     this.insert = insert;
   }
 
-  public static final String[] baseSymbols = {
-    "(", ")", "{", "}", ";", "\"", "'", ":", "[", "]", "=", "+", "-", "*", "/", "%", "&", "|", "^",
-    "!", "?", "<", ">"
-  };
+  private static List<Symbol> baseSymbols;
 
   public static List<Symbol> baseSymbols() {
-    List<Symbol> symbols = new ArrayList<>();
-    symbols.add(new Symbol("→"));
+    if (baseSymbols != null) return baseSymbols;
+    baseSymbols = new ArrayList<>();
+    baseSymbols.add(new Symbol("→"));
 
-    for (String symbol : baseSymbols) {
-      symbols.add(new Symbol(symbol, getClosingPair(symbol)));
+    String[] baseSymbolsArray = {
+      "(", ")", "{", "}", ";", "\"", "'", ":", "[", "]", "=", "+", "-", "*", "/", "%", "&", "|",
+      "^", "!", "?", "<", ">"
+    };
+
+    for (String symbol : baseSymbolsArray) {
+      baseSymbols.add(new Symbol(symbol, getClosingPair(symbol)));
     }
-    return symbols;
+    return baseSymbols;
   }
 
   private static String getClosingPair(String openingSymbol) {

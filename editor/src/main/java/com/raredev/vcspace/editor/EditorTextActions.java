@@ -337,7 +337,7 @@ public class EditorTextActions extends EditorPopupWindow {
     @Override
     public void onBindViewHolder(VH holder, int position) {
       var action = data.get(position);
-      holder.action.setEnabled(action.enabled);
+      holder.action.setClickable(action.enabled);
       holder.action.setIconResource(action.icon);
       holder.action.setTooltipText(holder.itemView.getContext().getString(action.name));
       holder.action.setOnClickListener(v -> onTextActionClick(action));

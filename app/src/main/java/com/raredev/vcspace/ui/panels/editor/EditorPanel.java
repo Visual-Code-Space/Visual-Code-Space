@@ -19,14 +19,12 @@ import com.raredev.vcspace.ui.panels.Panel;
 import com.raredev.vcspace.utils.PanelUtils;
 import com.raredev.vcspace.utils.PreferencesUtils;
 import com.raredev.vcspace.utils.SharedPreferencesKeys;
-import com.raredev.vcspace.utils.UniqueNameBuilder;
 import io.github.rosemoe.sora.event.ContentChangeEvent;
 import io.github.rosemoe.sora.langs.textmate.TextMateColorScheme;
 import io.github.rosemoe.sora.langs.textmate.VCSpaceTMLanguage;
 import io.github.rosemoe.sora.langs.textmate.provider.TextMateProvider;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme;
-import java.util.List;
 import org.greenrobot.eventbus.EventBus;
 
 public class EditorPanel extends Panel {
@@ -47,7 +45,7 @@ public class EditorPanel extends Panel {
   }
 
   @Override
-  public synchronized void viewCreated(View view) {
+  public void viewCreated(View view) {
     super.viewCreated(view);
     binding.editor.setColorScheme(createColorScheme());
     binding.editor.setDocument(document);
@@ -55,10 +53,8 @@ public class EditorPanel extends Panel {
     binding.pathList.setColorScheme(getEditor().getColorScheme());
     binding.symbolInput.setSymbols(Symbol.baseSymbols());
     binding.symbolInput.bindEditor(getEditor());
+
     setLoading(true);
-
-    var modified = document.isModified();
-
     TaskExecutor.executeAsync(
         () -> {
           String content = "";
@@ -71,7 +67,6 @@ public class EditorPanel extends Panel {
         },
         (result) -> {
           binding.editor.setText((String) result, null);
-          if (!modified) document.markUnmodified();
           postRead();
         });
   }
@@ -113,11 +108,11 @@ public class EditorPanel extends Panel {
   }
 
   private void postRead() {
+    binding.editor.setCursorPosition(document.getPositionLine(), document.getPositionColumn());
     binding.editor.setEditorLanguage(createLanguage());
     binding.editor.configureEditor();
     subscribeContentChangeEvent();
     updatePathList();
-    // binding.editor.setCursorPosition(document.getPositionLine(), document.getPositionColumn());
     setLoading(false);
   }
 
@@ -129,8 +124,10 @@ public class EditorPanel extends Panel {
               if (document == null) {
                 return;
               }
+              var cursor = binding.editor.getCursor();
+              document.setPositionLine(cursor.getRightLine());
+              document.setPositionColumn(cursor.getRightColumn());
               document.setContent(getCode().getBytes());
-              document.markModified();
               if (!PreferencesUtils.autoSave()) {
                 markModifiedPanel();
               } else {
@@ -141,6 +138,7 @@ public class EditorPanel extends Panel {
   }
 
   public void markModifiedPanel() {
+    document.markModified();
     ThreadUtils.runOnUiThread(
         () -> {
           String panelTitle = getTitle();
@@ -151,6 +149,7 @@ public class EditorPanel extends Panel {
   }
 
   public void markUnmodifiedPanel() {
+    document.markUnmodified();
     ThreadUtils.runOnUiThread(
         () -> {
           String panelTitle = getTitle();
@@ -185,16 +184,14 @@ public class EditorPanel extends Panel {
         },
         (result) -> {
           binding.editor.setText((String) result, null);
-          document.markUnmodified();
           markUnmodifiedPanel();
           setLoading(false);
         });
   }
 
   public void saveDocument() {
-    if (document.isModified()) {
+    if (document.isModified() || PreferencesUtils.autoSave()) {
       FileIOUtils.writeFileFromString(document.getPath(), getCode());
-      document.markUnmodified();
       markUnmodifiedPanel();
     }
   }
