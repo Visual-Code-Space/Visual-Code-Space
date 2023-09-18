@@ -43,7 +43,7 @@ public class FileTreePopupWindow
     binding = LayoutTreeviewWindowBinding.inflate(LayoutInflater.from(context));
     window = new PopupWindow(context);
 
-    window.setWidth(SizeUtils.dp2px(220));
+    window.setWidth(SizeUtils.dp2px(210));
     window.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
 
     window.setFocusable(true);
@@ -52,6 +52,12 @@ public class FileTreePopupWindow
 
     window.setContentView(binding.getRoot());
     window.showAsDropDown(v);
+
+    window.setOnDismissListener(
+        () -> {
+          treeView = null;
+          mRoot = null;
+        });
 
     applyBackground();
   }
@@ -87,8 +93,6 @@ public class FileTreePopupWindow
 
   public void dismiss() {
     window.dismiss();
-    treeView = null;
-    mRoot = null;
   }
 
   public void setPath(String path) {
@@ -110,8 +114,8 @@ public class FileTreePopupWindow
           treeView.setDefaultNodeClickListener(this);
           treeView.setDefaultNodeLongClickListener(this);
 
-          if (treeView != null) {
-            var view = treeView.getView();
+          var view = treeView.getView();
+          if (view != null) {
 
             binding.horizontalScroll.removeAllViews();
             binding.horizontalScroll.addView(view);
@@ -119,12 +123,6 @@ public class FileTreePopupWindow
             binding.loading.setVisibility(View.GONE);
           }
         });
-  }
-
-  public void addNewChild(TreeNode parent, File file) {
-    TreeNode newNode = new TreeNode(file);
-    newNode.setViewHolder(new FileTreeViewHolder(context));
-    parent.addChild(newNode);
   }
 
   public void listNode(TreeNode node, Runnable post) {
@@ -153,7 +151,7 @@ public class FileTreePopupWindow
   public void listFilesForNode(TreeNode parent) {
     File[] files = parent.getValue().listFiles();
     if (files != null) {
-      Arrays.sort(files, new SortFileName());
+      //Arrays.sort(files, new SortFileName());
       Arrays.sort(files, new SortFolder());
       for (File file : files) {
         TreeNode child = new TreeNode(file);
@@ -175,6 +173,7 @@ public class FileTreePopupWindow
     if (treeView == null) {
       return;
     }
+    node.getChildren().clear();
     treeView.collapseNode(node);
     updateToggle(node);
   }
@@ -194,7 +193,7 @@ public class FileTreePopupWindow
   private void applyBackground() {
     GradientDrawable drawable = new GradientDrawable();
     drawable.setShape(GradientDrawable.RECTANGLE);
-    drawable.setCornerRadius(15);
+    drawable.setCornerRadius(10);
     drawable.setColor(SurfaceColors.SURFACE_0.getColor(context));
     drawable.setStroke(
         2, MaterialColors.getColor(context, com.google.android.material.R.attr.colorOutline, 0));
