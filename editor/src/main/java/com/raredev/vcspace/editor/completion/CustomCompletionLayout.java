@@ -93,18 +93,18 @@ public class CustomCompletionLayout implements CompletionLayout {
   }
 
   private void performScrollList(int offset) {
-    ListView adpView = getCompletionList();
+    var adpView = getCompletionList();
 
     long down = SystemClock.uptimeMillis();
-    MotionEvent ev = MotionEvent.obtain(down, down, MotionEvent.ACTION_DOWN, 0f, 0f, 0);
+    var ev = MotionEvent.obtain(down, down, MotionEvent.ACTION_DOWN, 0, 0, 0);
     adpView.onTouchEvent(ev);
     ev.recycle();
 
-    ev = MotionEvent.obtain(down, down, MotionEvent.ACTION_MOVE, 0f, offset, 0);
+    ev = MotionEvent.obtain(down, down, MotionEvent.ACTION_MOVE, 0, offset, 0);
     adpView.onTouchEvent(ev);
     ev.recycle();
 
-    ev = MotionEvent.obtain(down, down, MotionEvent.ACTION_CANCEL, 0f, offset, 0);
+    ev = MotionEvent.obtain(down, down, MotionEvent.ACTION_CANCEL, 0, offset, 0);
     adpView.onTouchEvent(ev);
     ev.recycle();
   }
@@ -113,12 +113,10 @@ public class CustomCompletionLayout implements CompletionLayout {
   public void ensureListPositionVisible(int position, int increment) {
     binding.listView.post(
         () -> {
-          while (binding.listView.getFirstVisiblePosition() + 1 > position
-              && binding.listView.canScrollList(-1)) {
+          while (binding.listView.getFirstVisiblePosition() + 1 > position && binding.listView.canScrollList(-1)) {
             performScrollList(increment / 2);
           }
-          while (binding.listView.getLastVisiblePosition() - 1 < position
-              && binding.listView.canScrollList(1)) {
+          while (binding.listView.getLastVisiblePosition() - 1 < position && binding.listView.canScrollList(1)) {
             performScrollList(-increment / 2);
           }
         });

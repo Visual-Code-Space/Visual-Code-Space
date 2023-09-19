@@ -9,11 +9,8 @@ import io.github.rosemoe.sora.util.IntPair;
 
 public class VCSpaceSearcher extends EditorSearcher {
 
-  private CodeEditor editor;
-
   public VCSpaceSearcher(CodeEditor editor) {
     super(editor);
-    this.editor = editor;
   }
 
   @Override
@@ -21,6 +18,7 @@ public class VCSpaceSearcher extends EditorSearcher {
     if (!hasQuery()) {
       throw new IllegalStateException("pattern not set");
     }
+    var editor = getEditor();
     if (isResultValid()) {
       var res = lastResults;
       if (res == null || res.size() == 0) {
@@ -53,6 +51,7 @@ public class VCSpaceSearcher extends EditorSearcher {
     if (!hasQuery()) {
       throw new IllegalStateException("pattern not set");
     }
+    var editor = getEditor();
     if (isResultValid()) {
       var res = lastResults;
       if (res == null) {
@@ -79,6 +78,7 @@ public class VCSpaceSearcher extends EditorSearcher {
 
   @Override
   public void replaceAll(String replacement, Runnable whenSucceeded) {
+    var editor = getEditor();
     if (!editor.isEditable()) {
       return;
     }
@@ -139,5 +139,16 @@ public class VCSpaceSearcher extends EditorSearcher {
             result.run();
           }
         });
+  }
+
+  private CodeEditor getEditor() {
+    try {
+      var field = EditorSearcher.class.getDeclaredField("editor");
+      field.setAccessible(true);
+      return (CodeEditor) field.get(this);
+    } catch (Throwable e) {
+      e.printStackTrace();
+      return null;
+    }
   }
 }

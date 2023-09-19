@@ -1,48 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_height="wrap_content"
-  android:layout_width="match_parent"
-  android:background="@drawable/ripple_effect"
-  android:padding="4dp"
-  android:orientation="horizontal">
-
-  <ImageView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="wrap_content"
-    android:layout_width="wrap_content"
-    android:src="@drawable/cube"
-    android:gravity="center"
-    android:layout_centerVertical="true"
-    android:layout_marginHorizontal="4dp"
-    android:paddingHorizontal="8dp"
-    android:id="@+id/item_icon" />
+    android:layout_width="match_parent"
+    android:padding="2dp">
 
-  <TextView
-    android:layout_height="wrap_content"
-    android:layout_width="wrap_content"
-    android:layout_toEndOf="@id/item_icon"
-    android:textSize="15sp"
-    android:singleLine="true"
-    android:layout_marginStart="4dp"
-    android:id="@+id/item_label" />
+    <ImageView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:src="@drawable/cube"
+        android:gravity="center"
+        android:layout_centerVertical="true"
+        android:layout_marginHorizontal="2dp"
+        android:paddingHorizontal="4dp"
+        android:id="@+id/item_icon" />
 
-  <TextView
-    android:layout_height="wrap_content"
-    android:layout_width="wrap_content"
-    android:layout_toEndOf="@id/item_icon"
-    android:layout_marginEnd="8dp"
-    android:layout_below="@id/item_label"
-    android:textSize="11sp"
-    android:layout_marginTop="4dp"
-    android:layout_marginStart="4dp"
-    android:id="@+id/item_desc" />
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_toEndOf="@id/item_icon"
+        android:textSize="15sp"
+        android:singleLine="true"
+        android:layout_marginStart="2dp"
+        android:id="@+id/item_label" />
 
-  <TextView
-    android:layout_height="wrap_content"
-    android:layout_width="wrap_content"
-    android:layout_marginEnd="2dp"
-    android:textSize="11sp"
-    android:layout_alignParentEnd="true"
-    android:id="@+id/item_type" />
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_toEndOf="@id/item_icon"
+        android:layout_marginEnd="8dp"
+        android:layout_below="@id/item_label"
+        android:textSize="11sp"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="2dp"
+        android:id="@+id/item_desc" />
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_marginEnd="2dp"
+        android:textSize="11sp"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/item_type" />
 
 </RelativeLayout>

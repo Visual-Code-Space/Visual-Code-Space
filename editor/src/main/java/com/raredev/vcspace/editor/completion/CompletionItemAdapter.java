@@ -42,6 +42,7 @@ public class CompletionItemAdapter extends EditorCompletionAdapter {
 
     if (!TextUtils.isEmpty(item.label)) {
       binding.itemLabel.setText(item.label);
+      binding.itemDesc.setText(item.label);
     }
 
     if (!TextUtils.isEmpty(item.desc)) {

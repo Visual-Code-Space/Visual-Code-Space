@@ -77,6 +77,7 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
       @NonNull CharPosition position,
       @NonNull CompletionPublisher publisher,
       @NonNull Bundle extraArguments) {
+    super.requireAutoComplete(content, position, publisher, extraArguments);
     var prefix =
         CompletionHelper.computePrefix(content, position, MyCharacter::isJavaIdentifierPart);
     if (prefix.length() <= 0) {
