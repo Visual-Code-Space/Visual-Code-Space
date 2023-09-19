@@ -7,19 +7,6 @@
 [![](https://dcbadge.vercel.app/api/server/4uTBTZeAgS)](https://discord.gg/4uTBTZeAgS)
 </div>
 
-## Screenshots
-<div align="center">
-    <img width="30%" src="./images/screenshot1.png" alt="Screenshot1" title="Screenshot1">
-    <img width="30%" src="./images/screenshot2.png" alt="Screenshot2" title="Screenshot2">
-    <img width="30%" src="./images/screenshot3.png" alt="Screenshot2" title="Screenshot3">
-    <img width="30%" src="./images/screenshot4.png" alt="Screenshot2" title="Screenshot4">
-    <img width="30%" src="./images/screenshot5.png" alt="Screenshot2" title="Screenshot5">
-    <img width="30%" src="./images/screenshot6.png" alt="Screenshot2" title="Screenshot6">
-    <img width="30%" src="./images/screenshot7.png" alt="Screenshot2" title="Screenshot7">
-    <img width="30%" src="./images/screenshot8.png" alt="Screenshot2" title="Screenshot8">
-    <img width="30%" src="./images/screenshot9.png" alt="Screenshot2" title="Screenshot9">
-</div>
-
 ## TODO
 - [ ] Git integration: Manage your source code with Git integration, including support for branching, merging, and committing changes.
 - [ ] Extensions: A vast library of extensions allows you to customize your development environment to your needs.
