@@ -19,9 +19,13 @@
         <com.raredev.vcspace.editor.IDECodeEditor
             android:layout_height="match_parent"
             android:layout_width="match_parent"
-            android:layout_below="@id/path_list"
             android:layout_weight="1"
             android:id="@+id/editor" />
+
+        <View
+            android:layout_height="0.5dp"
+            android:layout_width="match_parent"
+            android:background="?attr/colorOutline" />
 
         <com.raredev.vcspace.ui.SymbolInputView
             android:layout_height="wrap_content"

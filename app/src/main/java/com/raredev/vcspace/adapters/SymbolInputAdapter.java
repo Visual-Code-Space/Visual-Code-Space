@@ -3,10 +3,10 @@ package com.raredev.vcspace.adapters;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
-import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.button.MaterialButton;
 import com.raredev.vcspace.databinding.LayoutSymbolItemBinding;
 import com.raredev.vcspace.editor.IDECodeEditor;
 import com.raredev.vcspace.models.Symbol;
@@ -76,7 +76,7 @@ public class SymbolInputAdapter extends RecyclerView.Adapter<SymbolInputAdapter.
   }
 
   public class VH extends RecyclerView.ViewHolder {
-    TextView label;
+    MaterialButton label;
 
     public VH(LayoutSymbolItemBinding binding) {
       super(binding.getRoot());

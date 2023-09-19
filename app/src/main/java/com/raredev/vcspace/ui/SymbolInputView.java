@@ -31,7 +31,6 @@ public class SymbolInputView extends RecyclerView {
   }
 
   public void bindEditor(@NonNull IDECodeEditor editor) {
-    setBackgroundColor(editor.getColorScheme().getColor(EditorColorScheme.WHOLE_BACKGROUND));
     adapter.bindEditor(editor);
   }
 

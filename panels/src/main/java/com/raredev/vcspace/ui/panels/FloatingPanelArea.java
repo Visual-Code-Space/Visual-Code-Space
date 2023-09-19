@@ -161,7 +161,7 @@ public class FloatingPanelArea extends PanelArea {
   private void applyBackground() {
     GradientDrawable drawable = new GradientDrawable();
     drawable.setShape(GradientDrawable.RECTANGLE);
-    drawable.setCornerRadius(25);
+    drawable.setCornerRadius(18);
     drawable.setColor(SurfaceColors.SURFACE_0.getColor(context));
     drawable.setStroke(
         2, MaterialColors.getColor(context, com.google.android.material.R.attr.colorOutline, 0));
