@@ -209,7 +209,6 @@ public class EditorActivity extends BaseActivity
     if (EventBus.getDefault().isRegistered(this)) {
       EventBus.getDefault().unregister(this);
     }
-    savePanels();
     super.onStop();
   }
 

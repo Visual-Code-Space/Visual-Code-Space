@@ -27,5 +27,6 @@ android {
 
 dependencies {
   implementation androidx.appcompat
+  implementation androidx.preference
   implementation google.material
 }

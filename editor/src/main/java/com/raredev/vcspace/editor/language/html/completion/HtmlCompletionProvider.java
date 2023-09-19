@@ -24,9 +24,10 @@ import org.eclipse.lemminx.dom.DOMParser;
 
 public class HtmlCompletionProvider extends CompletionProvider {
 
-  private HtmlCompletion completion;
+  private static HtmlCompletion completion;
 
   public HtmlCompletionProvider() {
+    if (completion != null) return;
     completion =
         GsonUtils.fromJson(
             FileUtil.readAssetFile(

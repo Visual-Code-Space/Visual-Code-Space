@@ -31,7 +31,6 @@
     <item name="android:fontFamily">@font/josefin_sans</item>
     <item name="switchPreferenceCompatStyle">@style/AppTheme.SwitchPreference</item>
     <item name="dialogCornerRadius">28dp</item>
-    <item name="overlapAnchor">false</item>
   </style>
 
   <style name="AppTheme.Licence" parent="AppTheme">
