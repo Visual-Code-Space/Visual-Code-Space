@@ -1,11 +1,13 @@
 package com.raredev.vcspace.editor.completion;
 
+import android.animation.LayoutTransition;
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
 import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 import com.google.android.material.R;
 import com.google.android.material.color.MaterialColors;
@@ -41,6 +43,38 @@ public class CustomCompletionLayout implements CompletionLayout {
         });
 
     return binding.getRoot();
+  }
+
+  @Override
+  public void setEnabledAnimation(boolean enabledAnimation) {
+    if (enabledAnimation) {
+      var transition = new LayoutTransition();
+      transition.enableTransitionType(LayoutTransition.CHANGING);
+      transition.enableTransitionType(LayoutTransition.APPEARING);
+      transition.enableTransitionType(LayoutTransition.DISAPPEARING);
+      transition.enableTransitionType(LayoutTransition.CHANGE_APPEARING);
+      transition.enableTransitionType(LayoutTransition.CHANGE_DISAPPEARING);
+      transition.addTransitionListener(
+          new LayoutTransition.TransitionListener() {
+            @Override
+            public void startTransition(
+                LayoutTransition transition, ViewGroup container, View view, int transitionType) {}
+
+            @Override
+            public void endTransition(
+                LayoutTransition transition, ViewGroup container, View view, int transitionType) {
+              if (view != binding.listView) {
+                return;
+              }
+              view.requestLayout();
+            }
+          });
+      binding.getRoot().setLayoutTransition(transition);
+      binding.listView.setLayoutTransition(transition);
+    } else {
+      binding.getRoot().setLayoutTransition(null);
+      binding.listView.setLayoutTransition(null);
+    }
   }
 
   @Override
@@ -93,7 +127,7 @@ public class CustomCompletionLayout implements CompletionLayout {
   private GradientDrawable applyBackground(Context context) {
     GradientDrawable drawable = new GradientDrawable();
     drawable.setShape(GradientDrawable.RECTANGLE);
-    drawable.setCornerRadius(20);
+    drawable.setCornerRadius(18);
     drawable.setColor(SurfaceColors.SURFACE_0.getColor(context));
     drawable.setStroke(2, MaterialColors.getColor(context, R.attr.colorOutline, 0));
     return drawable;

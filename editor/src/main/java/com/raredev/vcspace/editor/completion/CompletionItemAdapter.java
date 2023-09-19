@@ -10,7 +10,6 @@ import io.github.rosemoe.sora.widget.component.EditorCompletionAdapter;
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme;
 
 public class CompletionItemAdapter extends EditorCompletionAdapter {
-  private LayoutCompletionItemBinding binding;
 
   @Override
   public int getItemHeight() {
@@ -19,7 +18,8 @@ public class CompletionItemAdapter extends EditorCompletionAdapter {
 
   @Override
   protected View getView(int pos, View v, ViewGroup parent, boolean isCurrentCursorPosition) {
-    binding = LayoutCompletionItemBinding.inflate(LayoutInflater.from(getContext()), parent, false);
+    LayoutCompletionItemBinding binding =
+        LayoutCompletionItemBinding.inflate(LayoutInflater.from(getContext()), parent, false);
 
     if (isCurrentCursorPosition) {
       binding
@@ -27,17 +27,21 @@ public class CompletionItemAdapter extends EditorCompletionAdapter {
           .setBackgroundColor(getThemeColor(EditorColorScheme.COMPLETION_WND_ITEM_CURRENT));
     }
 
-    var item = (VCSpaceCompletionItem) getItem(pos);
+    var item = getItem(pos);
+
+    if (item.icon != null) {
+      binding.itemIcon.setImageDrawable(item.icon);
+    }
+
+    if (item instanceof VCSpaceCompletionItem) {
+      var vcspaceItem = (VCSpaceCompletionItem) item;
+      if (!TextUtils.isEmpty(vcspaceItem.type)) {
+        binding.itemType.setText(vcspaceItem.type);
+      }
+    }
 
     if (!TextUtils.isEmpty(item.label)) {
       binding.itemLabel.setText(item.label);
-    }
-
-    if (!TextUtils.isEmpty(item.type)) {
-      binding.itemIcon.setImageDrawable(item.icon);
-      binding.itemType.setText(item.type);
-    } else if (!TextUtils.isEmpty(item.desc)) {
-      binding.itemIcon.setImageDrawable(item.icon);
     }
 
     if (!TextUtils.isEmpty(item.desc)) {
