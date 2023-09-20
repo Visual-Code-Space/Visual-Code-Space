@@ -7,12 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.raredev.vcspace.adapters.OptionsAdapter;
 import com.raredev.vcspace.databinding.LayoutSheetDialogBinding;
 import com.raredev.vcspace.models.OptionModel;
 import java.util.ArrayList;
-import com.raredev.vcspace.res.R;
 import java.util.List;
 
 public class OptionsBottomSheet extends BottomSheetDialogFragment {

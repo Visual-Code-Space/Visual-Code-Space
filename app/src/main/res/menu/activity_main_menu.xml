@@ -102,9 +102,9 @@
         </menu>
     </item>
     <item
-        android:id="@+id/menu_usersnippets"
+        android:id="@+id/menu_snippets"
         android:icon="@drawable/ic_comment_text_outline"
-        android:title="@string/user_snippets" />
+        android:title="@string/snippets" />
     <item
         android:id="@+id/menu_terminal"
         android:icon="@drawable/ic_console_line"

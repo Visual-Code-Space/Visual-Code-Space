@@ -1,4 +1,4 @@
-package com.raredev.vcspace.ui.panels.editor;
+package com.raredev.vcspace.ui.panels.searcher;
 
 import android.content.Context;
 import android.text.Editable;

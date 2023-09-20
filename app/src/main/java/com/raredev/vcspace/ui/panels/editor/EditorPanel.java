@@ -229,6 +229,7 @@ public class EditorPanel extends Panel {
 
   public void setLoading(boolean loading) {
     binding.circularProgressIndicator.setVisibility(loading ? View.VISIBLE : View.GONE);
+    binding.editor.setEditable(!loading);
   }
 
   private void updatePathList() {

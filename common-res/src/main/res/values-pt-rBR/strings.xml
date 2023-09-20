@@ -83,7 +83,7 @@
     <string name="file_access_title">Permissão de acesso aos arquivos</string>
     <string name="file_access_message">Este aplicativo precisa de permissão para acessar arquivos no armazenamento do seu dispositivo para funcionar corretamente. Conceda permissão para continuar.</string>
     <string name="grant_permission">Garantir permissão</string>
-    <string name="user_snippets">User snippets</string>
+    <string name="snippets">Snippets</string>
     <string name="enter_input">Digite a entrada</string>
     <string name="enter_language">Digite a linguagem</string>
     <string name="execute">Executar</string>
@@ -114,7 +114,6 @@
     <string name="create_as_draft">Criar como rascunho</string>
     <string name="initializing">Iniciando...</string>
     <string name="initializing_message">Inicializando o repositório git, por favor aguarde.</string>
-    <string name="choose_default_font">Escolha a fonte padrão do editor:</string>
 
     <!-- Settings -->
     <string name="configure">Configurar</string>

@@ -1,4 +1,4 @@
-package com.raredev.vcspace.ui.panels.compiler;
+package com.raredev.vcspace.ui.panels.web;
 
 import android.content.Context;
 import android.content.Intent;

@@ -1,7 +1,6 @@
 package com.raredev.vcspace.ui.panels;
 
 import android.content.Context;
-import android.view.Menu;
 import android.view.View;
 import com.raredev.vcspace.events.PanelEvent;
 
@@ -15,12 +14,14 @@ public abstract class Panel {
   private View contentView;
   private Panel2PanelArea panel2PanelArea;
 
+  boolean selected;
   boolean viewCreated;
   boolean destroyed;
 
   public Panel(Context context) {
     this.context = context;
 
+    this.selected = false;
     this.pinned = false;
     this.viewCreated = false;
     this.destroyed = false;
@@ -31,11 +32,17 @@ public abstract class Panel {
   }
 
   void performSelected() {
-    if (!destroyed && viewCreated) selected();
+    if (!selected && !destroyed && viewCreated) {
+      selected = true;
+      selected();
+    }
   }
 
   void performUnselected() {
-    if (!destroyed && viewCreated) unselected();
+    if (selected && !destroyed && viewCreated) {
+      selected = false;
+      unselected();
+    }
   }
 
   void performCreateView() {
@@ -49,10 +56,10 @@ public abstract class Panel {
 
   void performDestroy() {
     if (viewCreated) {
+      destroy();
       viewCreated = false;
       contentView = null;
       destroyed = true;
-      destroy();
     }
   }
 
@@ -67,6 +74,10 @@ public abstract class Panel {
 
   public String getTitle() {
     return title;
+  }
+
+  public boolean isSelected() {
+    return selected;
   }
 
   public boolean isPinned() {

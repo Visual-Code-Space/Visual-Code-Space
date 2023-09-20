@@ -18,6 +18,7 @@ import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.ui.panels.FloatingPanelArea;
 import com.raredev.vcspace.ui.panels.Panel;
 import com.raredev.vcspace.ui.panels.TextPanel;
+import com.raredev.vcspace.ui.panels.web.WebViewPanel;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

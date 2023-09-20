@@ -8,9 +8,9 @@ import com.blankj.utilcode.util.KeyboardUtils;
 import com.raredev.vcspace.activities.EditorActivity;
 import com.raredev.vcspace.events.PanelEvent;
 import com.raredev.vcspace.res.R;
-import com.raredev.vcspace.ui.panels.compiler.WebViewPanel;
-import com.raredev.vcspace.ui.panels.editor.WelcomePanel;
 import com.raredev.vcspace.ui.panels.file.FileExplorerPanel;
+import com.raredev.vcspace.ui.panels.web.WebViewPanel;
+import com.raredev.vcspace.ui.panels.welcome.WelcomePanel;
 import com.raredev.vcspace.utils.Logger;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,7 +23,7 @@ public class PanelsManager {
 
   private EditorActivity activity;
   private FrameLayout parent;
-  
+
   public PanelsManager(EditorActivity activity, FrameLayout parent) {
     this.activity = activity;
     this.parent = parent;
@@ -77,9 +77,7 @@ public class PanelsManager {
           }
 
           @Override
-          public void addPanel(Panel panel) {
-            activity.savePanels();
-          }
+          public void addPanel(Panel panel) {}
 
           @Override
           public void selectedPanel(Panel panel) {
@@ -94,7 +92,6 @@ public class PanelsManager {
           @Override
           public void removedPanel(Panel panel) {
             activity.invalidateOptionsMenu();
-            activity.savePanels();
           }
         });
   }
@@ -104,7 +101,7 @@ public class PanelsManager {
     for (FloatingPanelArea floatingPanel : floatingPanels) {
       floatingPanel.sendEvent(event);
     }
-    logger.i("PanelEvent: " + event.getClass().getSimpleName()+". sent!");
+    logger.i("PanelEvent: " + event.getClass().getSimpleName() + ". sent!");
   }
 
   public void addDefaultPanels() {

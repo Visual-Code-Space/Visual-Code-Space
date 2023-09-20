@@ -219,7 +219,7 @@ public class EditorTextActions extends EditorPopupWindow {
     CommentRule commentRule = editor.getCommentRule();
     actions.get(0).visible =
         commentRule != null
-            && (commentRule.lineComment != null || commentRule.blockComment != null);
+            && (commentRule.lineComment != null || commentRule.blockComment != null) && editor.isEditable();
 
     actions.get(2).visible = editor.getCursor().isSelected();
 

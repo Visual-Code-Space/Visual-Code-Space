@@ -5,15 +5,12 @@ import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
 import com.raredev.vcspace.models.DocumentModel;
-import com.raredev.vcspace.models.FileModel;
 import com.raredev.vcspace.ui.panels.Panel;
 import com.raredev.vcspace.ui.panels.PanelArea;
-import com.raredev.vcspace.ui.panels.compiler.WebViewPanel;
 import com.raredev.vcspace.ui.panels.editor.EditorPanel;
-import com.raredev.vcspace.ui.panels.editor.SearcherPanel;
-import com.raredev.vcspace.ui.panels.editor.WelcomePanel;
 import com.raredev.vcspace.ui.panels.file.FileExplorerPanel;
-import java.io.File;
+import com.raredev.vcspace.ui.panels.web.WebViewPanel;
+import com.raredev.vcspace.ui.panels.welcome.WelcomePanel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,11 +23,12 @@ public class PanelUtils {
 
   public static String panelsToJson(List<Panel> panels) {
     if (panels.isEmpty()) return "";
-    List<LinkedTreeMap<String, String>> panelsMapList = new ArrayList<>();
+    List<LinkedTreeMap<String, String>> panelMapList = new ArrayList<>();
     Gson gson = new Gson();
     for (Panel panel : panels) {
       LinkedTreeMap<String, String> map = new LinkedTreeMap<>();
       map.put("type", panel.getClass().getSimpleName());
+      map.put("selected", String.valueOf(panel.isSelected()));
       map.put("pinned", String.valueOf(panel.isPinned()));
 
       if (panel instanceof EditorPanel) {
@@ -47,9 +45,9 @@ public class PanelUtils {
         map.put("supportZoom", String.valueOf(webViewPanel.isSupportZoom()));
         map.put("desktopMode", String.valueOf(webViewPanel.isDesktopMode()));
       }
-      panelsMapList.add(map);
+      panelMapList.add(map);
     }
-    return gson.toJson(panelsMapList);
+    return gson.toJson(panelMapList);
   }
 
   public static void addJsonPanelsInArea(Context context, String json, PanelArea panelArea) {
@@ -57,12 +55,12 @@ public class PanelUtils {
 
     var typeToken = new TypeToken<List<LinkedTreeMap<String, String>>>() {}.getType();
 
-    List<LinkedTreeMap<String, String>> panelsMapList = gson.fromJson(json, typeToken);
-
-    if (panelsMapList == null) {
+    List<LinkedTreeMap<String, String>> panelMapList = gson.fromJson(json, typeToken);
+    if (panelMapList == null) {
       return;
     }
-    for (LinkedTreeMap<String, String> panelMap : panelsMapList) {
+    
+    for (LinkedTreeMap<String, String> panelMap : panelMapList) {
       String type = panelMap.get("type");
 
       Panel panel = createPanel(context, type);
@@ -72,7 +70,7 @@ public class PanelUtils {
       }
       panel.setPinned(Boolean.parseBoolean(panelMap.get("pinned")));
 
-      panelArea.addPanel(panel, false);
+      panelArea.addPanel(panel, Boolean.parseBoolean(panelMap.get("selected")));
 
       if (type.equals(TYPE_EXPLORER)) {
         ((FileExplorerPanel) panel).setCurrentDir(panelMap.get("currentPath"));

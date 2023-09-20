@@ -24,7 +24,6 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.VH> {
 
   public FileAdapter() {
     selectedFiles = new LinkedList<>();
-    files = new LinkedList<>();
   }
 
   @NonNull

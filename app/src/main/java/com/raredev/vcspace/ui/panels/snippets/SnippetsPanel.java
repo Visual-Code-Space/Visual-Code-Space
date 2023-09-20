@@ -1,4 +1,4 @@
-package com.raredev.vcspace.ui.panels.editor;
+package com.raredev.vcspace.ui.panels.snippets;
 
 import android.content.Context;
 import android.text.Editable;
@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.blankj.utilcode.util.FileIOUtils;
 import com.raredev.vcspace.activities.EditorActivity;
 import com.raredev.vcspace.adapters.SnippetFilesAdapter;
-import com.raredev.vcspace.databinding.LayoutUserSnippetsPanelBinding;
+import com.raredev.vcspace.databinding.LayoutSnippetsPanelBinding;
 import com.raredev.vcspace.models.FileModel;
 import com.raredev.vcspace.models.UserSnippetModel;
 import com.raredev.vcspace.res.R;
@@ -21,9 +21,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserSnippetsPanel extends Panel implements SnippetFilesAdapter.SnippetFileListener {
+public class SnippetsPanel extends Panel implements SnippetFilesAdapter.SnippetFileListener {
 
-  private LayoutUserSnippetsPanelBinding binding;
+  private LayoutSnippetsPanelBinding binding;
 
   private SnippetFilesAdapter adapter;
   private List<UserSnippetModel> userSnippets;
@@ -49,18 +49,18 @@ public class UserSnippetsPanel extends Panel implements SnippetFilesAdapter.Snip
 
   public static FloatingPanelArea createFloating(Context context, FrameLayout parent) {
     FloatingPanelArea floatingPanel = new FloatingPanelArea(context, parent);
-    floatingPanel.addPanel(new UserSnippetsPanel(context), true);
+    floatingPanel.addPanel(new SnippetsPanel(context), true);
     return floatingPanel;
   }
 
-  public UserSnippetsPanel(Context context) {
+  public SnippetsPanel(Context context) {
     super(context);
-    setTitle(getContext().getString(R.string.user_snippets));
+    setTitle(getContext().getString(R.string.snippets));
   }
 
   @Override
   public View createView() {
-    binding = LayoutUserSnippetsPanelBinding.inflate(LayoutInflater.from(getContext()));
+    binding = LayoutSnippetsPanelBinding.inflate(LayoutInflater.from(getContext()));
     return binding.getRoot();
   }
 

@@ -35,10 +35,10 @@ import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.ui.panels.Panel;
 import com.raredev.vcspace.ui.panels.PanelsManager;
 import com.raredev.vcspace.ui.panels.compiler.ExecutePanel;
-import com.raredev.vcspace.ui.panels.compiler.WebViewPanel;
 import com.raredev.vcspace.ui.panels.editor.EditorPanel;
-import com.raredev.vcspace.ui.panels.editor.SearcherPanel;
-import com.raredev.vcspace.ui.panels.editor.UserSnippetsPanel;
+import com.raredev.vcspace.ui.panels.searcher.SearcherPanel;
+import com.raredev.vcspace.ui.panels.snippets.SnippetsPanel;
+import com.raredev.vcspace.ui.panels.web.WebViewPanel;
 import com.raredev.vcspace.utils.Logger;
 import com.raredev.vcspace.utils.PanelUtils;
 import com.raredev.vcspace.utils.PreferencesUtils;
@@ -87,14 +87,6 @@ public class EditorActivity extends BaseActivity
     ThemeRegistry.getInstance().setTheme(Utils.isDarkMode() ? "darcula" : "quietlight");
     PreferencesUtils.getDefaultPrefs().registerOnSharedPreferenceChangeListener(this);
     registerResultActivity();
-
-    openRecentPanels();
-    panelsManager.addDefaultPanels();
-    Uri fileUri = getIntent().getData();
-    if (fileUri != null) {
-      logger.i("Opening file from Uri: " + fileUri.toString());
-      openFile(FileModel.fileToFileModel(UriUtils.uri2File(fileUri)));
-    }
   }
 
   @Override
@@ -137,9 +129,8 @@ public class EditorActivity extends BaseActivity
     WebViewPanel webViewPanel = getSelectedWebViewPanel();
     if (editorPanel != null) {
       var document = editorPanel.getDocument();
-      if (id == R.id.menu_execute) {
-        executeDocument(document);
-      } else if (id == R.id.menu_undo) editorPanel.undo();
+      if (id == R.id.menu_execute) executeDocument(document);
+      else if (id == R.id.menu_undo) editorPanel.undo();
       else if (id == R.id.menu_redo) editorPanel.redo();
       else if (id == R.id.menu_search) {
         panelsManager.addFloatingPanel(SearcherPanel.createFloating(this, binding.panelArea));
@@ -177,8 +168,8 @@ public class EditorActivity extends BaseActivity
 
     if (id == R.id.menu_new_file) createFile.launch("untitled");
     else if (id == R.id.menu_open_file) pickFile.launch("text/*");
-    else if (id == R.id.menu_usersnippets)
-      panelsManager.addFloatingPanel(UserSnippetsPanel.createFloating(this, binding.panelArea));
+    else if (id == R.id.menu_snippets)
+      panelsManager.addFloatingPanel(SnippetsPanel.createFloating(this, binding.panelArea));
     else if (id == R.id.menu_terminal) startActivity(new Intent(this, TerminalActivity.class));
     else if (id == R.id.menu_settings) startActivity(new Intent(this, SettingsActivity.class));
 
@@ -201,6 +192,16 @@ public class EditorActivity extends BaseActivity
     super.onStart();
     if (!EventBus.getDefault().isRegistered(this)) {
       EventBus.getDefault().register(this);
+    }
+    if (panelsManager.getPanelArea().getPanels().isEmpty()) {
+      openRecentPanels();
+      panelsManager.addDefaultPanels();
+    }
+
+    Uri fileUri = getIntent().getData();
+    if (fileUri != null) {
+      logger.i("Opening file from Uri: " + fileUri.toString());
+      openFile(FileModel.fileToFileModel(UriUtils.uri2File(fileUri)));
     }
   }
 

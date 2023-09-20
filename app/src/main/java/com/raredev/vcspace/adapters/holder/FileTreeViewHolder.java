@@ -26,7 +26,7 @@ public class FileTreeViewHolder extends TreeNode.BaseNodeViewHolder<File> {
     final var chevron = binding.chevron;
     binding.filetreeName.setText(file.getName());
     
-    final var root = applyPadding(node, binding, SizeUtils.dp2px(10));
+    final var root = applyPadding(node, binding, SizeUtils.dp2px(15));
 
     if (file.isDirectory()) {
       updateChevronIcon(node.isExpanded());
