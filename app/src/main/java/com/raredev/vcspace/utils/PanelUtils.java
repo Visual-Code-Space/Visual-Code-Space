@@ -109,8 +109,6 @@ public class PanelUtils {
     switch (type) {
       case TYPE_WELCOME:
         return new WelcomePanel(context);
-      case TYPE_EXPLORER:
-        return new FileExplorerPanel(context);
       case TYPE_WEBVIEW:
         return new WebViewPanel(context);
       default:

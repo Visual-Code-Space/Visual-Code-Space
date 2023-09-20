@@ -57,8 +57,7 @@ public class TreeNode {
     childNode.mParent = this;
     childNode.mId = generateId();
     children.add(childNode);
-    Collections.sort(children, new SortFileName());
-    Collections.sort(children, new SortFolder());
+    Collections.sort(children, FILE_FIRST_ORDER);
     return this;
   }
 
@@ -292,23 +291,14 @@ public class TreeNode {
     }
   }
 
-  public class SortFileName implements Comparator<TreeNode> {
-    @Override
-    public int compare(TreeNode f1, TreeNode f2) {
-      return f1.getValue().getName().compareTo(f2.getValue().getName());
-    }
-  }
-
-  public class SortFolder implements Comparator<TreeNode> {
-    @Override
-    public int compare(TreeNode p1, TreeNode p2) {
-      File f1 = p1.getValue();
-      File f2 = p2.getValue();
-      if (f1.isDirectory() == f2.isDirectory()) return 0;
-      else if (f1.isDirectory() && !f2.isDirectory()) return -1;
-      else return 1;
-    }
-  }
+  public static final Comparator<TreeNode> FILE_FIRST_ORDER =
+      (p1, p2) -> {
+        File f1 = p1.getValue();
+        File f2 = p2.getValue();
+        if (f1.isFile() && !f2.isFile()) return 1;
+        else if (f2.isFile() && !f1.isFile()) return -1;
+        else return String.CASE_INSENSITIVE_ORDER.compare(f1.getName(), f2.getName());
+      };
 
   public interface TreeNodeClickListener {
     void onClick(TreeNode node, Object value);

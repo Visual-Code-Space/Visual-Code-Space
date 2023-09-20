@@ -5,8 +5,10 @@ import static com.raredev.vcspace.res.R.string;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,7 +16,9 @@ import android.webkit.WebView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.drawerlayout.widget.DrawerLayout;
 import com.blankj.utilcode.util.EncodeUtils;
 import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.FileUtils;
@@ -78,13 +82,14 @@ public class EditorActivity extends BaseActivity
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setSupportActionBar(binding.toolbar);
+    setupWorkspaceDrawer();
 
-    panelsManager = new PanelsManager(this, binding.panelArea);
+    panelsManager = new PanelsManager(this, binding.workspaceArea, binding.panelArea);
 
     KeyboardUtils.registerSoftInputChangedListener(this, (i) -> invalidateOptionsMenu());
 
     CompletionProvider.registerCompletionProviders();
-    ThemeRegistry.getInstance().setTheme(Utils.isDarkMode() ? "darcula" : "quietlight");
+    
     PreferencesUtils.getDefaultPrefs().registerOnSharedPreferenceChangeListener(this);
     registerResultActivity();
   }
@@ -178,6 +183,10 @@ public class EditorActivity extends BaseActivity
 
   @Override
   public void onBackPressed() {
+    if (binding.drawerLayout.isDrawerOpen(Gravity.START)) {
+      binding.drawerLayout.closeDrawer(Gravity.START);
+      return;
+    }
     WebViewPanel webViewPanel = getSelectedWebViewPanel();
     if (webViewPanel != null && webViewPanel.getWebView().canGoBack()) {
       webViewPanel.getWebView().goBack();
@@ -201,7 +210,7 @@ public class EditorActivity extends BaseActivity
     Uri fileUri = getIntent().getData();
     if (fileUri != null) {
       logger.i("Opening file from Uri: " + fileUri.toString());
-      openFile(FileModel.fileToFileModel(UriUtils.uri2File(fileUri)));
+      openFile(UriUtils.uri2File(fileUri).getPath());
     }
   }
 
@@ -232,6 +241,33 @@ public class EditorActivity extends BaseActivity
     panelsManager.sendEvent(new PreferenceChangedEvent(key));
   }
 
+  private void setupWorkspaceDrawer() {
+    DrawerLayout drawerLayout = binding.drawerLayout;
+
+    ActionBarDrawerToggle toggle =
+        new ActionBarDrawerToggle(this, drawerLayout, binding.toolbar, string.open, string.close);
+    drawerLayout.addDrawerListener(toggle);
+    toggle.syncState();
+
+    drawerLayout.addDrawerListener(
+        new DrawerLayout.DrawerListener() {
+          @Override
+          public void onDrawerSlide(@NonNull View view, float v) {
+            float slideX = view.getWidth() * v;
+            binding.root.setTranslationX(slideX);
+          }
+
+          @Override
+          public void onDrawerOpened(@NonNull View view) {}
+
+          @Override
+          public void onDrawerClosed(@NonNull View view) {}
+
+          @Override
+          public void onDrawerStateChanged(int i) {}
+        });
+  }
+
   private void registerResultActivity() {
     launcher =
         registerForActivityResult(
@@ -245,7 +281,7 @@ public class EditorActivity extends BaseActivity
                     OutputStream outputStream = getContentResolver().openOutputStream(uri);
                     outputStream.write(editorPanel.getCode().getBytes());
                     outputStream.close();
-                    openFile(FileModel.fileToFileModel(UriUtils.uri2File(uri)));
+                    openFile(UriUtils.uri2File(uri).getPath());
                   } catch (IOException e) {
                     e.printStackTrace();
                     logger.e(e);
@@ -258,7 +294,7 @@ public class EditorActivity extends BaseActivity
             new ActivityResultContracts.CreateDocument("text/*"),
             uri -> {
               if (uri != null) {
-                openFile(FileModel.fileToFileModel(UriUtils.uri2File(uri)));
+                openFile(UriUtils.uri2File(uri).getPath());
               }
             });
     pickFile =
@@ -266,7 +302,7 @@ public class EditorActivity extends BaseActivity
             new ActivityResultContracts.GetContent(),
             uri -> {
               if (uri != null) {
-                openFile(FileModel.fileToFileModel(UriUtils.uri2File(uri)));
+                openFile(UriUtils.uri2File(uri).getPath());
               }
             });
   }
@@ -295,13 +331,21 @@ public class EditorActivity extends BaseActivity
     if (!file.isFile()) {
       return;
     }
-    int openedFileIndex = indexOfDocument(file.getPath());
+    openFile(file.getPath());
+  }
+
+  public void openFile(@NonNull String path) {
+    if (binding.drawerLayout.isDrawerOpen(Gravity.START)) {
+      binding.drawerLayout.closeDrawer(Gravity.START);
+    }
+    int openedFileIndex = indexOfDocument(path);
     if (openedFileIndex != -1) {
       panelsManager.getPanelArea().setSelectedPanel(panelsManager.getPanel(openedFileIndex));
       return;
     }
 
-    EditorPanel editorPanel = new EditorPanel(this, DocumentModel.fileModelToDocument(file));
+    EditorPanel editorPanel =
+        new EditorPanel(this, new DocumentModel(path, FileUtils.getFileName(path)));
     panelsManager.addPanel(editorPanel, true);
   }
 

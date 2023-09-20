@@ -128,28 +128,32 @@ public class FloatingPanelArea extends PanelArea {
     // Left side
     View leftEdge = new View(context);
     RelativeLayout.LayoutParams leftParams =
-        new RelativeLayout.LayoutParams(SizeUtils.dp2px(9), RelativeLayout.LayoutParams.MATCH_PARENT);
+        new RelativeLayout.LayoutParams(
+            SizeUtils.dp2px(9), RelativeLayout.LayoutParams.MATCH_PARENT);
     leftParams.addRule(RelativeLayout.ALIGN_PARENT_START);
     binding.getRoot().addView(leftEdge, leftParams);
 
     // Right side
     View rightEdge = new View(context);
     RelativeLayout.LayoutParams rightParams =
-        new RelativeLayout.LayoutParams(SizeUtils.dp2px(9), RelativeLayout.LayoutParams.MATCH_PARENT);
+        new RelativeLayout.LayoutParams(
+            SizeUtils.dp2px(9), RelativeLayout.LayoutParams.MATCH_PARENT);
     rightParams.addRule(RelativeLayout.ALIGN_PARENT_END);
     binding.getRoot().addView(rightEdge, rightParams);
 
     // Upper part
     View topEdge = new View(context);
     RelativeLayout.LayoutParams topParams =
-        new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, SizeUtils.dp2px(9));
+        new RelativeLayout.LayoutParams(
+            RelativeLayout.LayoutParams.MATCH_PARENT, SizeUtils.dp2px(9));
     topParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
     binding.getRoot().addView(topEdge, topParams);
 
     // Lower part
     View bottomEdge = new View(context);
     RelativeLayout.LayoutParams bottomParams =
-        new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, SizeUtils.dp2px(9));
+        new RelativeLayout.LayoutParams(
+            RelativeLayout.LayoutParams.MATCH_PARENT, SizeUtils.dp2px(9));
     bottomParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
     binding.getRoot().addView(bottomEdge, bottomParams);
 
@@ -162,7 +166,7 @@ public class FloatingPanelArea extends PanelArea {
   private void applyBackground() {
     GradientDrawable drawable = new GradientDrawable();
     drawable.setShape(GradientDrawable.RECTANGLE);
-    drawable.setCornerRadius(15);
+    drawable.setCornerRadius(10);
     drawable.setColor(SurfaceColors.SURFACE_0.getColor(context));
     drawable.setStroke(
         2, MaterialColors.getColor(context, com.google.android.material.R.attr.colorOutline, 0));

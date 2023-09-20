@@ -38,7 +38,7 @@ public class FileTreePopupWindow
 
   private String path;
 
-  public FileTreePopupWindow(Context context, View v) {
+  public FileTreePopupWindow(Context context) {
     this.context = context;
     binding = LayoutTreeviewWindowBinding.inflate(LayoutInflater.from(context));
     window = new PopupWindow(context);
@@ -51,10 +51,10 @@ public class FileTreePopupWindow
     window.setElevation(5);
 
     window.setContentView(binding.getRoot());
-    window.showAsDropDown(v);
 
     window.setOnDismissListener(
         () -> {
+          binding.horizontalScroll.removeAllViews();
           treeView = null;
           mRoot = null;
         });
@@ -89,6 +89,10 @@ public class FileTreePopupWindow
             expandNode(node);
           });
     }
+  }
+
+  public void show(View target) {
+    window.showAsDropDown(target);
   }
 
   public void dismiss() {
@@ -151,8 +155,7 @@ public class FileTreePopupWindow
   public void listFilesForNode(TreeNode parent) {
     File[] files = parent.getValue().listFiles();
     if (files != null) {
-      //Arrays.sort(files, new SortFileName());
-      Arrays.sort(files, new SortFolder());
+      Arrays.sort(files, FILE_FIRST_ORDER);
       for (File file : files) {
         TreeNode child = new TreeNode(file);
         child.setViewHolder(new FileTreeViewHolder(context));
@@ -199,13 +202,13 @@ public class FileTreePopupWindow
         2, MaterialColors.getColor(context, com.google.android.material.R.attr.colorOutline, 0));
     binding.getRoot().setBackground(drawable);
   }
-
-  public static class SortFileName implements Comparator<File> {
-    @Override
-    public int compare(File f1, File f2) {
-      return f1.getName().compareTo(f2.getName());
-    }
-  }
+  
+  public static final Comparator<File> FILE_FIRST_ORDER =
+      (f1, f2) -> {
+        if (f1.isFile() && !f2.isFile()) return 1;
+        else if (f2.isFile() && !f1.isFile()) return -1;
+        else return String.CASE_INSENSITIVE_ORDER.compare(f1.getName(), f2.getName());
+      };
 
   public static class SortFolder implements Comparator<File> {
     @Override

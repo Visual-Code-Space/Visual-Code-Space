@@ -29,14 +29,17 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
   protected final List<Panel> panelsToRemove = new LinkedList<>();
 
   protected LayoutPanelAreaBinding binding;
+
   protected Panel selectedPanel;
+  protected boolean fixedPanels;
 
   protected Panel2PanelArea panel2PanelArea;
   protected PanelAreaListener listener;
-  
+
   public PanelArea(Context context, FrameLayout parent) {
     this.context = context;
     this.parent = parent;
+    this.fixedPanels = false;
     init();
   }
 
@@ -95,7 +98,7 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
     tabTitle.setTextColor(
         MaterialColors.getColor(context, com.google.android.material.R.attr.colorControlNormal, 0));
   }
-  
+
   public void addPanelTopBarButtons() {
     int padding = SizeUtils.dp2px(2);
     ImageView menu = new ImageView(context);
@@ -121,6 +124,10 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
       }
       panel.receiveEvent(event);
     }
+  }
+
+  public void setFixedPanels(boolean fixedPanels) {
+    this.fixedPanels = fixedPanels;
   }
 
   public void setSelectedPanel(Panel panel) {
@@ -174,6 +181,10 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
     var tab = binding.tabs.newTab();
     tab.setCustomView(R.layout.layout_tab_item);
     ((TextView) tab.getCustomView().findViewById(R.id.title)).setText(panel.getTitle());
+    if (fixedPanels) {
+      tab.getCustomView().findViewById(R.id.close).setVisibility(View.GONE);
+      return tab;
+    }
     tab.getCustomView()
         .findViewById(R.id.close)
         .setOnClickListener(

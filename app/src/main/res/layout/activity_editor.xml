@@ -1,28 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_height="fill_parent"
-    android:layout_width="fill_parent">
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:id="@+id/drawerLayout">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$Behavior"
-        android:id="@+id/app_bar">
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:id="@+id/toolbar" />
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <FrameLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-        android:layout_weight="1.0"
-        android:id="@+id/panel_area" />
+        android:id="@+id/root">
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$Behavior"
+            android:id="@+id/app_bar">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:id="@+id/toolbar" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <FrameLayout
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+            android:id="@+id/panel_area" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_gravity="start">
+
+        <LinearLayout
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:background="?attr/colorSurface"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_height="?actionBarSize"
+                android:layout_width="match_parent"
+                android:gravity="center_vertical"
+                android:padding="10dp"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:text="Workspace"
+                android:id="@+id/workspace_title" />
+
+            <FrameLayout
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:layout_gravity="start"
+                android:id="@+id/workspace_area" />
+
+        </LinearLayout>
+
+    </com.google.android.material.navigation.NavigationView>
+
+</androidx.drawerlayout.widget.DrawerLayout>

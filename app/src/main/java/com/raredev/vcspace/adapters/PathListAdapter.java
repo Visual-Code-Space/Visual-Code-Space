@@ -23,6 +23,7 @@ public class PathListAdapter extends RecyclerView.Adapter<PathListAdapter.VH> {
   private List<FileModel> paths = new ArrayList<>();
 
   private FileExplorerPanel fileExplorer;
+
   private EditorColorScheme colorScheme;
 
   @Override
@@ -56,8 +57,11 @@ public class PathListAdapter extends RecyclerView.Adapter<PathListAdapter.VH> {
     holder.itemView.setOnClickListener(
         (v) -> {
           if (fileExplorer == null) {
-            if (!path.isFile())
-              new FileTreePopupWindow(holder.itemView.getContext(), v).setPath(path.getPath());
+            if (!path.isFile()) {
+              var fileTree = new FileTreePopupWindow(holder.itemView.getContext());
+              fileTree.setPath(path.getPath());
+              fileTree.show(v);
+            }
           } else {
             if (position == getItemCount() - 1) {
               return;

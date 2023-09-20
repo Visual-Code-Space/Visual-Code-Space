@@ -14,11 +14,15 @@ import com.raredev.vcspace.utils.PreferencesUtils;
 import com.raredev.vcspace.utils.SharedPreferencesKeys;
 import io.github.rosemoe.sora.lang.Language;
 import io.github.rosemoe.sora.langs.textmate.VCSpaceTMLanguage;
+import io.github.rosemoe.sora.text.Content;
+import io.github.rosemoe.sora.text.Cursor;
 import io.github.rosemoe.sora.widget.CodeEditor;
 import io.github.rosemoe.sora.widget.EditorSearcher;
+import io.github.rosemoe.sora.widget.SymbolPairMatch;
 import io.github.rosemoe.sora.widget.VCSpaceSearcher;
 import io.github.rosemoe.sora.widget.component.EditorAutoCompletion;
 import io.github.rosemoe.sora.widget.component.EditorTextActionWindow;
+import java.util.List;
 import java.util.Set;
 import org.eclipse.tm4e.languageconfiguration.model.CommentRule;
 
@@ -75,6 +79,45 @@ public class IDECodeEditor extends CodeEditor {
       }
     }
     super.commitText(text, applyAutoIndent);
+  }
+
+  @Override
+  public void deleteText() {
+    if (removeSymbolPair()) return;
+    super.deleteText();
+  }
+
+  private boolean removeSymbolPair() {
+    Cursor cursor = getCursor();
+    if (cursor.isSelected()) return false;
+    Content text = getText();
+    int startIndex = cursor.getLeft();
+
+    if (startIndex - 1 >= 0) {
+      char deleteChar = text.charAt(startIndex - 1);
+      char afterChar = text.charAt(startIndex);
+      String deletePairOpen = ""+deleteChar;
+      String deletePairClose = ""+afterChar;
+      
+      SymbolPairMatch.SymbolPair deletePair = null;
+      SymbolPairMatch pairs = getEditorLanguage().getSymbolPairs();
+
+      if (pairs == null) return false;
+
+      List<SymbolPairMatch.SymbolPair> matchPairs = pairs.matchBestPairList(deleteChar);
+      for (SymbolPairMatch.SymbolPair pair : matchPairs) {
+        if (pair.open.equals(deletePairOpen) && pair.close.equals(deletePairClose)) {
+          deletePair = pair;
+        }
+      }
+
+      if (deletePair == null) return false;
+
+      text.delete(startIndex - 1, startIndex + 1);
+      return true;
+    }
+
+    return false;
   }
 
   @Override
@@ -226,7 +269,6 @@ public class IDECodeEditor extends CodeEditor {
   private void updateStickyScroll() {
     boolean stickyScroll = PreferencesUtils.useStickyScroll();
     getProps().stickyScroll = stickyScroll;
-    getProps().stickyScrollMaxLines = 4;
   }
 
   private void updateFontLigatures() {

@@ -11,6 +11,8 @@ import com.raredev.vcspace.databinding.LayoutSymbolItemBinding;
 import com.raredev.vcspace.editor.IDECodeEditor;
 import com.raredev.vcspace.models.Symbol;
 import com.raredev.vcspace.utils.PreferencesUtils;
+import io.github.rosemoe.sora.text.Content;
+import io.github.rosemoe.sora.text.Cursor;
 import java.util.List;
 
 public class SymbolInputAdapter extends RecyclerView.Adapter<SymbolInputAdapter.VH> {
@@ -47,6 +49,21 @@ public class SymbolInputAdapter extends RecyclerView.Adapter<SymbolInputAdapter.
 
   private void insertSymbol(Symbol symbol) {
     if (editor == null || !editor.isEditable()) return;
+    
+    Cursor cursor = editor.getCursor();
+    Content text = editor.getText();
+    if ("→".equals(symbol.getLabel()) && cursor.isSelected()) {
+      var identationString = PreferencesUtils.getIndentationString();
+
+      int leftLine = cursor.getLeftLine();
+      int rightLine = cursor.getRightLine();
+      for (int i = leftLine; i <= rightLine; i++) {
+        text.insert(i, 0, identationString);
+      }
+
+      return;
+    }
+
     final var controller = editor.getSnippetController();
     if ("→".equals(symbol.getLabel()) && controller.isInSnippet()) {
       controller.shiftToNextTabStop();

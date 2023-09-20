@@ -19,17 +19,23 @@ public class PanelsManager {
 
   private final Logger logger = Logger.newInstance("PanelsManager");
   private final List<FloatingPanelArea> floatingPanels = new LinkedList<>();
-  private PanelArea panelArea;
 
   private EditorActivity activity;
-  private FrameLayout parent;
 
-  public PanelsManager(EditorActivity activity, FrameLayout parent) {
+  private FrameLayout workspaceParent;
+  private PanelArea workspaceArea;
+
+  private FrameLayout parent;
+  private PanelArea panelArea;
+
+  public PanelsManager(EditorActivity activity, FrameLayout workspaceParent, FrameLayout parent) {
     this.activity = activity;
+    this.workspaceParent = workspaceParent;
     this.parent = parent;
 
+    workspaceArea = new PanelArea(activity, workspaceParent);
+    workspaceArea.setFixedPanels(true);
     panelArea = new PanelArea(activity, parent);
-    panelArea.addPanelTopBarButtons();
     panelArea.setPanelAreaListener(
         new PanelAreaListener() {
           @Override
@@ -61,20 +67,7 @@ public class PanelsManager {
           }
 
           @Override
-          public void addAvailablePanels(PanelArea panelArea, Menu menu) {
-            menu.add(R.string.welcome)
-                .setOnMenuItemClickListener(
-                    item -> {
-                      panelArea.addPanel(new WelcomePanel(activity), true);
-                      return true;
-                    });
-            menu.add("File Explorer")
-                .setOnMenuItemClickListener(
-                    item -> {
-                      panelArea.addPanel(new FileExplorerPanel(activity), true);
-                      return true;
-                    });
-          }
+          public void addAvailablePanels(PanelArea panelArea, Menu menu) {}
 
           @Override
           public void addPanel(Panel panel) {}
@@ -98,6 +91,7 @@ public class PanelsManager {
 
   public void sendEvent(PanelEvent event) {
     panelArea.sendEvent(event);
+    workspaceArea.sendEvent(event);
     for (FloatingPanelArea floatingPanel : floatingPanels) {
       floatingPanel.sendEvent(event);
     }
@@ -105,10 +99,16 @@ public class PanelsManager {
   }
 
   public void addDefaultPanels() {
+    if (workspaceArea.getPanels().isEmpty()) {
+      addPanelInWorkspace(new FileExplorerPanel(activity), true);
+    }
     if (panelArea.getPanels().isEmpty()) {
       addPanel(new WelcomePanel(activity), true);
-      addPanel(new FileExplorerPanel(activity), false);
     }
+  }
+
+  public void addPanelInWorkspace(Panel panel, boolean select) {
+    workspaceArea.addPanel(panel, select);
   }
 
   public void addPanel(Panel panel, boolean select) {

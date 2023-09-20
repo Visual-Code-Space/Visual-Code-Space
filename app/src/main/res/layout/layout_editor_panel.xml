@@ -28,7 +28,7 @@
             android:background="?attr/colorOutline" />
 
         <com.raredev.vcspace.ui.SymbolInputView
-            android:layout_height="wrap_content"
+            android:layout_height="45dp"
             android:layout_width="wrap_content"
             android:layout_alignParentBottom="true"
             android:id="@+id/symbol_input" />
