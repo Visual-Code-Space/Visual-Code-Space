@@ -18,7 +18,6 @@ rootProject.name = "Visual Code Space"
 include ':app'
 include ':common'
 include ':common-res'
-include ':eventbus-events'
 include ':compiler'
 include ':emulatorview'
 include ':editor'

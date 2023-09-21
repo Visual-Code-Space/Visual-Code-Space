@@ -34,6 +34,9 @@
     <string name="open_in_browser">Open in Browser...</string>
     <string name="empty_folder">Empty folder</string>
     <string name="discard_changes">Are you sure you want to discard your changes?</string>
+    <string name="unsaved_files_title">Unsaved files</string>
+    <string name="unsaved_files_message">Your changes will be lost if you don\'t save them. unsaved files: %1$s</string>
+    <string name="save_and_close">Save &amp; Close</string>
 
     <!-- Menus Strings -->
     <string name="menu_format">Format</string>

@@ -27,6 +27,9 @@
     <string name="exit">Sair</string>
     <string name="empty_folder">Pasta vazia</string>
     <string name="discard_changes">Tem certeza que deseja descartar suas alterações?</string>
+    <string name="unsaved_files_title">Arquivos não salvos</string>
+    <string name="unsaved_files_message">Suas alterações serão perdidas se você não salvá-las. arquivos não salvos: %1$s</string>
+    <string name="save_and_close">Salvar &amp; Fechar</string>
 
     <!-- Menus Strings -->
     <string name="menu_format">Formatar</string>

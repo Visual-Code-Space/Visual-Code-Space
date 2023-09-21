@@ -177,7 +177,7 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
     updateTabs();
   }
 
-  private TabLayout.Tab createTabItem(Panel panel) {
+  protected TabLayout.Tab createTabItem(Panel panel) {
     var tab = binding.tabs.newTab();
     tab.setCustomView(R.layout.layout_tab_item);
     ((TextView) tab.getCustomView().findViewById(R.id.title)).setText(panel.getTitle());
@@ -201,7 +201,6 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
 
   public boolean removePanel(Panel panel) {
     if (panel != null && panels.contains(panel)) {
-      if (panel.isPinned()) return false;
       int index = panels.indexOf(panel);
 
       panels.remove(panel);

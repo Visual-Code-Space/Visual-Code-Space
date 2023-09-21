@@ -83,11 +83,11 @@ public class IDECodeEditor extends CodeEditor {
 
   @Override
   public void deleteText() {
-    if (removeSymbolPair()) return;
+    if (deleteSymbolPair()) return;
     super.deleteText();
   }
 
-  private boolean removeSymbolPair() {
+  private boolean deleteSymbolPair() {
     Cursor cursor = getCursor();
     if (cursor.isSelected()) return false;
     Content text = getText();
@@ -140,9 +140,7 @@ public class IDECodeEditor extends CodeEditor {
     Language language = getEditorLanguage();
     if (language instanceof VCSpaceTMLanguage) {
       var languageConfiguration = ((VCSpaceTMLanguage) language).getLanguageConfiguration();
-      if (languageConfiguration == null) {
-        return null;
-      }
+      if (languageConfiguration == null) return null;
       return languageConfiguration.getComments();
     }
     return null;

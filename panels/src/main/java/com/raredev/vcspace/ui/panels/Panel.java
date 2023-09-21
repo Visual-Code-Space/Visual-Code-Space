@@ -2,7 +2,11 @@ package com.raredev.vcspace.ui.panels;
 
 import android.content.Context;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+import com.google.android.material.tabs.TabLayout;
 import com.raredev.vcspace.events.PanelEvent;
+import com.raredev.vcspace.res.R;
 
 public abstract class Panel {
 

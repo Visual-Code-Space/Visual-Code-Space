@@ -41,10 +41,7 @@ public class SymbolInputAdapter extends RecyclerView.Adapter<SymbolInputAdapter.
 
   @Override
   public int getItemCount() {
-    if (symbolList == null) {
-      return 0;
-    }
-    return symbolList.size();
+    return symbolList == null ? 0 : symbolList.size();
   }
 
   private void insertSymbol(Symbol symbol) {
@@ -60,7 +57,6 @@ public class SymbolInputAdapter extends RecyclerView.Adapter<SymbolInputAdapter.
       for (int i = leftLine; i <= rightLine; i++) {
         text.insert(i, 0, identationString);
       }
-
       return;
     }
 

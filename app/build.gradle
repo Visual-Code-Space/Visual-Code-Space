@@ -101,7 +101,6 @@ dependencies {
   
   implementation project(path: ':common')
   implementation project(path: ':common-res')
-  implementation project(path: ':eventbus-events')
   implementation project(path: ':emulatorview')
   implementation project(path: ':compiler')
   implementation project(path: ':editor')

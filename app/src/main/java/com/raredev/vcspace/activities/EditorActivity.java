@@ -5,7 +5,6 @@ import static com.raredev.vcspace.res.R.string;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -28,14 +27,12 @@ import com.blankj.utilcode.util.UriUtils;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.ActivityEditorBinding;
 import com.raredev.vcspace.editor.completion.CompletionProvider;
-import com.raredev.vcspace.events.EditorContentChangedEvent;
 import com.raredev.vcspace.events.OnFileRenamedEvent;
 import com.raredev.vcspace.events.PreferenceChangedEvent;
 import com.raredev.vcspace.events.UpdateExecutePanelEvent;
 import com.raredev.vcspace.events.UpdateSearcherEvent;
 import com.raredev.vcspace.models.DocumentModel;
 import com.raredev.vcspace.models.FileModel;
-import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.ui.panels.Panel;
 import com.raredev.vcspace.ui.panels.PanelsManager;
 import com.raredev.vcspace.ui.panels.compiler.ExecutePanel;
@@ -89,15 +86,15 @@ public class EditorActivity extends BaseActivity
     KeyboardUtils.registerSoftInputChangedListener(this, (i) -> invalidateOptionsMenu());
 
     CompletionProvider.registerCompletionProviders();
-    
+    ThemeRegistry.getInstance().setTheme(Utils.isDarkMode() ? "darcula" : "quietlight");
     PreferencesUtils.getDefaultPrefs().registerOnSharedPreferenceChangeListener(this);
     registerResultActivity();
   }
 
   @Override
   public boolean onPrepareOptionsMenu(Menu menu) {
-    EditorPanel editorPanel = getSelectedEditorPanel();
-    WebViewPanel webViewPanel = getSelectedWebViewPanel();
+    EditorPanel editorPanel = panelsManager.getPanelArea().getSelectedEditorPanel();
+    WebViewPanel webViewPanel = panelsManager.getPanelArea().getSelectedWebViewPanel();
     if (editorPanel != null) {
       var document = editorPanel.getDocument();
       menu.findItem(R.id.menu_execute).setVisible(true);
@@ -108,7 +105,8 @@ public class EditorActivity extends BaseActivity
       menu.findItem(R.id.menu_redo).setEnabled(editorPanel.getEditor().canRedo());
       menu.findItem(R.id.menu_save).setEnabled(document.isModified());
       menu.findItem(R.id.menu_save_as).setEnabled(true);
-      menu.findItem(R.id.menu_save_all).setEnabled(getUnsavedDocumentsCount() > 0);
+      menu.findItem(R.id.menu_save_all)
+          .setEnabled(panelsManager.getPanelArea().getUnsavedDocumentsCount() > 0);
       menu.findItem(R.id.menu_reload).setEnabled(true);
     } else if (webViewPanel != null) {
       menu.findItem(R.id.menu_webview).setVisible(true);
@@ -130,8 +128,8 @@ public class EditorActivity extends BaseActivity
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     var id = item.getItemId();
-    EditorPanel editorPanel = getSelectedEditorPanel();
-    WebViewPanel webViewPanel = getSelectedWebViewPanel();
+    EditorPanel editorPanel = panelsManager.getPanelArea().getSelectedEditorPanel();
+    WebViewPanel webViewPanel = panelsManager.getPanelArea().getSelectedWebViewPanel();
     if (editorPanel != null) {
       var document = editorPanel.getDocument();
       if (id == R.id.menu_execute) executeDocument(document);
@@ -140,14 +138,16 @@ public class EditorActivity extends BaseActivity
       else if (id == R.id.menu_search) {
         panelsManager.addFloatingPanel(SearcherPanel.createFloating(this, binding.panelArea));
         panelsManager.sendEvent(new UpdateSearcherEvent(editorPanel.getEditor().getSearcher()));
-      } else if (id == R.id.menu_save) saveFile(true);
+      } else if (id == R.id.menu_save)
+        panelsManager.getPanelArea().saveFile(true, () -> invalidateOptionsMenu());
       else if (id == R.id.menu_save_as) {
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("text/*");
         intent.putExtra(Intent.EXTRA_TITLE, editorPanel.getDocument().getName());
         launcher.launch(intent);
-      } else if (id == R.id.menu_save_all) saveAllFiles(true);
+      } else if (id == R.id.menu_save_all)
+        panelsManager.getPanelArea().saveAllFiles(true, () -> invalidateOptionsMenu());
       else if (id == R.id.menu_reload) editorPanel.reloadFile();
 
     } else if (webViewPanel != null) {
@@ -187,7 +187,7 @@ public class EditorActivity extends BaseActivity
       binding.drawerLayout.closeDrawer(Gravity.START);
       return;
     }
-    WebViewPanel webViewPanel = getSelectedWebViewPanel();
+    WebViewPanel webViewPanel = panelsManager.getPanelArea().getSelectedWebViewPanel();
     if (webViewPanel != null && webViewPanel.getWebView().canGoBack()) {
       webViewPanel.getWebView().goBack();
       return;
@@ -233,6 +233,7 @@ public class EditorActivity extends BaseActivity
     PreferencesUtils.getDefaultPrefs().unregisterOnSharedPreferenceChangeListener(this);
     unregisterResultActivity();
     super.onDestroy();
+    panelsManager = null;
     binding = null;
   }
 
@@ -274,7 +275,7 @@ public class EditorActivity extends BaseActivity
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
               if (result.getResultCode() == RESULT_OK) {
-                EditorPanel editorPanel = getSelectedEditorPanel();
+                EditorPanel editorPanel = panelsManager.getPanelArea().getSelectedEditorPanel();
                 if (editorPanel != null) {
                   Uri uri = result.getData().getData();
                   try {
@@ -314,7 +315,7 @@ public class EditorActivity extends BaseActivity
   }
 
   private void executeDocument(DocumentModel document) {
-    saveAllFiles(false);
+    panelsManager.getPanelArea().saveAllFiles(false);
     if (document.getName().endsWith(".html")) {
       panelsManager.addWebViewPanel(document.getPath());
     } else {
@@ -338,7 +339,7 @@ public class EditorActivity extends BaseActivity
     if (binding.drawerLayout.isDrawerOpen(Gravity.START)) {
       binding.drawerLayout.closeDrawer(Gravity.START);
     }
-    int openedFileIndex = indexOfDocument(path);
+    int openedFileIndex = panelsManager.getPanelArea().indexOfFile(path);
     if (openedFileIndex != -1) {
       panelsManager.getPanelArea().setSelectedPanel(panelsManager.getPanel(openedFileIndex));
       return;
@@ -347,97 +348,6 @@ public class EditorActivity extends BaseActivity
     EditorPanel editorPanel =
         new EditorPanel(this, new DocumentModel(path, FileUtils.getFileName(path)));
     panelsManager.addPanel(editorPanel, true);
-  }
-
-  public int indexOfDocument(String path) {
-    for (int i = 0; i < panelsManager.getPanelAreaPanels().size(); i++) {
-      Panel panel = panelsManager.getPanel(i);
-      if (panel instanceof EditorPanel) {
-        EditorPanel editorPanel = (EditorPanel) panel;
-        if (editorPanel.getDocument().getPath().equals(path)) {
-          return i;
-        }
-      }
-    }
-    return -1;
-  }
-
-  public int getUnsavedDocumentsCount() {
-    int count = 0;
-    for (Panel panel : panelsManager.getPanelAreaPanels()) {
-      if (panel instanceof EditorPanel) {
-        EditorPanel editor = (EditorPanel) panel;
-        if (editor.getDocument().isModified()) {
-          count++;
-        }
-      }
-    }
-    return count;
-  }
-
-  // Document Savers
-
-  public void saveFile(boolean showMsg) {
-    if (!panelsManager.getPanelAreaPanels().isEmpty()) {
-      TaskExecutor.executeAsync(
-          () -> {
-            saveDocument(panelsManager.getSelectedPanel());
-            return null;
-          },
-          (result) -> {
-            if (showMsg) ToastUtils.showShort(getString(string.saved), ToastUtils.TYPE_SUCCESS);
-            invalidateOptionsMenu();
-          });
-    }
-  }
-
-  public void saveAllFiles(boolean showMsg) {
-    saveAllFiles(showMsg, () -> {});
-  }
-
-  public void saveAllFiles(boolean showMsg, Runnable post) {
-    if (!panelsManager.getPanelAreaPanels().isEmpty()) {
-      TaskExecutor.executeAsync(
-          () -> {
-            for (int i = 0; i < panelsManager.getPanelAreaPanels().size(); i++) {
-              Panel panel = panelsManager.getPanel(i);
-              if (panel instanceof EditorPanel) {
-                saveDocument(panel);
-              }
-            }
-            savePanels();
-            return null;
-          },
-          (result) -> {
-            if (showMsg)
-              ToastUtils.showShort(getString(string.saved_files), ToastUtils.TYPE_SUCCESS);
-            invalidateOptionsMenu();
-            post.run();
-          });
-    }
-  }
-
-  private void saveDocument(Panel panel) {
-    if (panel != null && panel instanceof EditorPanel) {
-      EditorPanel editorPanel = (EditorPanel) panel;
-      editorPanel.saveDocument();
-    }
-  }
-
-  public EditorPanel getSelectedEditorPanel() {
-    Panel panel = panelsManager.getSelectedPanel();
-    if (panel != null && panel instanceof EditorPanel) {
-      return (EditorPanel) panel;
-    }
-    return null;
-  }
-
-  public WebViewPanel getSelectedWebViewPanel() {
-    Panel panel = panelsManager.getSelectedPanel();
-    if (panel != null && panel instanceof WebViewPanel) {
-      return (WebViewPanel) panel;
-    }
-    return null;
   }
 
   public void updateCurrentPanel(Panel panel) {
@@ -456,7 +366,7 @@ public class EditorActivity extends BaseActivity
 
   @Subscribe(threadMode = ThreadMode.MAIN)
   public void onFileRenamed(OnFileRenamedEvent event) {
-    var index = indexOfDocument(event.oldFile.getPath());
+    var index = panelsManager.getPanelArea().indexOfFile(event.oldFile.getPath());
     if (index != -1 && index >= 0) {
       Panel panel = panelsManager.getPanel(index);
       if (panel instanceof EditorPanel) {
@@ -468,11 +378,6 @@ public class EditorActivity extends BaseActivity
       }
       updateCurrentPanel(panelsManager.getSelectedPanel());
     }
-  }
-
-  @Subscribe(threadMode = ThreadMode.MAIN)
-  public void onEditorContentChanged(EditorContentChangedEvent event) {
-    invalidateOptionsMenu();
   }
 
   public void savePanels() {

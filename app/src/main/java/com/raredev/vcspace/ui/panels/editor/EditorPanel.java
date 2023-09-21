@@ -3,12 +3,13 @@ package com.raredev.vcspace.ui.panels.editor;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
+import androidx.appcompat.app.AppCompatActivity;
 import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.raredev.vcspace.databinding.LayoutEditorPanelBinding;
 import com.raredev.vcspace.editor.IDECodeEditor;
-import com.raredev.vcspace.events.EditorContentChangedEvent;
 import com.raredev.vcspace.events.PanelEvent;
 import com.raredev.vcspace.events.PreferenceChangedEvent;
 import com.raredev.vcspace.models.DocumentModel;
@@ -25,7 +26,6 @@ import io.github.rosemoe.sora.langs.textmate.VCSpaceTMLanguage;
 import io.github.rosemoe.sora.langs.textmate.provider.TextMateProvider;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme;
-import org.greenrobot.eventbus.EventBus;
 
 public class EditorPanel extends Panel {
 
@@ -90,7 +90,9 @@ public class EditorPanel extends Panel {
   }
 
   @Override
-  public void unselected() {}
+  public void unselected() {
+    
+  }
 
   @Override
   public void selected() {
@@ -133,7 +135,8 @@ public class EditorPanel extends Panel {
               } else {
                 saveDocument();
               }
-              EventBus.getDefault().post(new EditorContentChangedEvent(document));
+
+              ((AppCompatActivity) getContext()).invalidateOptionsMenu();
             });
   }
 

@@ -6,7 +6,6 @@ import com.raredev.vcspace.editor.language.java.JavaLanguage;
 import com.raredev.vcspace.editor.language.json.JsonLanguage;
 import com.raredev.vcspace.editor.language.kotlin.KotlinLanguage;
 import com.raredev.vcspace.editor.language.lua.LuaLanguage;
-import com.raredev.vcspace.utils.Utils;
 import io.github.rosemoe.sora.langs.textmate.VCSpaceTMLanguage;
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;
@@ -31,8 +30,6 @@ public class TextMateProvider {
                       FileProviderRegistry.getInstance().tryGetInputStream(path), path, null),
                   name));
     }
-    
-    ThemeRegistry.getInstance().setTheme(Utils.isDarkMode() ? "darcula" : "quietlight");
   }
 
   public static VCSpaceTMLanguage createLanguage(IDECodeEditor editor, String fileName) {

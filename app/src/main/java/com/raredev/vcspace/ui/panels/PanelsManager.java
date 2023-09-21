@@ -8,6 +8,7 @@ import com.blankj.utilcode.util.KeyboardUtils;
 import com.raredev.vcspace.activities.EditorActivity;
 import com.raredev.vcspace.events.PanelEvent;
 import com.raredev.vcspace.res.R;
+import com.raredev.vcspace.ui.panels.editor.EditorPanelArea;
 import com.raredev.vcspace.ui.panels.file.FileExplorerPanel;
 import com.raredev.vcspace.ui.panels.web.WebViewPanel;
 import com.raredev.vcspace.ui.panels.welcome.WelcomePanel;
@@ -26,7 +27,7 @@ public class PanelsManager {
   private PanelArea workspaceArea;
 
   private FrameLayout parent;
-  private PanelArea panelArea;
+  private EditorPanelArea panelArea;
 
   public PanelsManager(EditorActivity activity, FrameLayout workspaceParent, FrameLayout parent) {
     this.activity = activity;
@@ -35,7 +36,7 @@ public class PanelsManager {
 
     workspaceArea = new PanelArea(activity, workspaceParent);
     workspaceArea.setFixedPanels(true);
-    panelArea = new PanelArea(activity, parent);
+    panelArea = new EditorPanelArea(activity, parent);
     panelArea.setPanelAreaListener(
         new PanelAreaListener() {
           @Override
@@ -146,7 +147,6 @@ public class PanelsManager {
   }
 
   public void removeAllPanels(PanelArea area) {
-    KeyboardUtils.hideSoftInput(activity);
     area.removeAllPanels();
   }
 
@@ -167,7 +167,7 @@ public class PanelsManager {
     return floatingPanels;
   }
 
-  public PanelArea getPanelArea() {
+  public EditorPanelArea getPanelArea() {
     return panelArea;
   }
 

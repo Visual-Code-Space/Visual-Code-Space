@@ -28,7 +28,6 @@ public class FloatingPanelArea extends PanelArea {
 
   private void init() {
     binding.getRoot().setClickable(true);
-    binding.getRoot().requestLayout();
     panel = new FloatingPanel(binding.getRoot());
 
     var layoutParams = panel.getLayoutParams();
