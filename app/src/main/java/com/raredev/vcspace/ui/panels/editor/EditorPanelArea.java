@@ -43,7 +43,8 @@ public class EditorPanelArea extends PanelArea {
   @Override
   public void removeOthers() {
     var unsavedDocuments = getUnsavedDocuments();
-    if (!unsavedDocuments.isEmpty()) {
+    if (!unsavedDocuments.isEmpty()
+        && !(unsavedDocuments.size() == 1 && unsavedDocuments.get(0).equals(selectedPanel))) {
       notifyUnsavedFiles(unsavedDocuments, () -> removeOthers());
       return;
     }

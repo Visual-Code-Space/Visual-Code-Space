@@ -13,7 +13,7 @@ public class TaskExecutor {
               try {
                 return callable.call();
               } catch (Throwable throwable) {
-                return false;
+                return null;
               }
             })
         .whenComplete(

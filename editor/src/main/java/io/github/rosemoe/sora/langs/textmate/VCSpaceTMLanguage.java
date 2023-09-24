@@ -4,8 +4,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.PathUtils;
-import com.raredev.vcspace.editor.completion.SimpleCompletionIconDrawer;
-import com.raredev.vcspace.editor.completion.SimpleCompletionItemKind;
 import com.raredev.vcspace.editor.completion.SimpleSnippetCompletionItem;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.utils.Logger;
@@ -34,7 +32,7 @@ import org.json.JSONObject;
 
 public class VCSpaceTMLanguage extends TextMateLanguage {
 
-  public static final String SNIPPETS_FOLDER_PATH =
+  public static final String SNIPPETS_DIR_PATH =
       PathUtils.getExternalAppDataPath() + "/files/snippets/";
 
   private final Logger logger = Logger.newInstance("VCSpaceTMLanguage");
@@ -77,7 +75,6 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
       @NonNull CharPosition position,
       @NonNull CompletionPublisher publisher,
       @NonNull Bundle extraArguments) {
-    super.requireAutoComplete(content, position, publisher, extraArguments);
     var prefix =
         CompletionHelper.computePrefix(content, position, MyCharacter::isJavaIdentifierPart);
     if (prefix.length() <= 0) {
@@ -90,8 +87,6 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
               new SimpleSnippetCompletionItem(
                   snippetPrefix, /* Label */
                   snippet.desc, /* Desc */
-                  "Snippet", /* Type */
-                  SimpleCompletionIconDrawer.draw(SimpleCompletionItemKind.SNIPPET),
                   new SnippetDescription(
                       prefix.length(), CodeSnippetParser.parse(snippet.body), true)));
         }
@@ -139,7 +134,7 @@ public class VCSpaceTMLanguage extends TextMateLanguage {
 
   private void readLanguageSnippets(String scopeName) {
     String fileExtension = LanguageScopeProvider.getFileExtensionByScope(scopeName);
-    File snippetsFile = new File(SNIPPETS_FOLDER_PATH + fileExtension + ".json");
+    File snippetsFile = new File(SNIPPETS_DIR_PATH + fileExtension + ".json");
 
     if (!snippetsFile.exists() || !snippetsFile.isFile()) {
       return;

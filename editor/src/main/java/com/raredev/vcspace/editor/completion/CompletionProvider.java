@@ -10,7 +10,7 @@ import java.util.Map;
 
 public abstract class CompletionProvider {
 
-  private static Map<Class<?>, CompletionProvider> providers = new HashMap<>();
+  private static final Map<Class<?>, CompletionProvider> providers = new HashMap<>();
 
   public abstract List<VCSpaceCompletionItem> getCompletions(CompletionParams params);
 

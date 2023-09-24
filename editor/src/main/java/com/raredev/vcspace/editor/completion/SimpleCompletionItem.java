@@ -2,7 +2,6 @@ package com.raredev.vcspace.editor.completion;
 
 import android.graphics.drawable.Drawable;
 import androidx.annotation.NonNull;
-import io.github.rosemoe.sora.lang.completion.CompletionItemKind;
 import io.github.rosemoe.sora.text.Content;
 import io.github.rosemoe.sora.widget.CodeEditor;
 
@@ -10,40 +9,18 @@ public class SimpleCompletionItem extends VCSpaceCompletionItem {
 
   public String commitText;
 
-  public SimpleCompletionItem(int prefixLength, String commitText) {
-    this(commitText, prefixLength, commitText);
-  }
-
-  public SimpleCompletionItem(CharSequence label, int prefixLength, String commitText) {
-    this(label, null, prefixLength, commitText);
-  }
-
   public SimpleCompletionItem(
       CharSequence label, CharSequence desc, int prefixLength, String commitText) {
-    this(label, desc, null, null, prefixLength, commitText);
+    this(label, desc, null, prefixLength, commitText);
   }
 
   public SimpleCompletionItem(
       CharSequence label,
       CharSequence desc,
-      CharSequence type,
+      CompletionItemKind completionKind,
       int prefixLength,
       String commitText) {
-    this(label, desc, type, null, prefixLength, commitText);
-  }
-
-  public SimpleCompletionItem(
-      CharSequence label,
-      CharSequence desc,
-      CharSequence type,
-      Drawable icon,
-      int prefixLength,
-      String commitText) {
-    super(
-        label,
-        desc,
-        type,
-        icon == null ? SimpleCompletionIconDrawer.draw(SimpleCompletionItemKind.UNKNOWN) : icon);
+    super(label, desc, completionKind == null ? CompletionItemKind.UNKNOWN : completionKind);
     this.commitText = commitText;
     this.prefixLength = prefixLength;
   }
@@ -63,12 +40,6 @@ public class SimpleCompletionItem extends VCSpaceCompletionItem {
   @Override
   public SimpleCompletionItem label(CharSequence label) {
     super.label(label);
-    return this;
-  }
-
-  @Override
-  public SimpleCompletionItem kind(CompletionItemKind kind) {
-    super.kind(kind);
     return this;
   }
 

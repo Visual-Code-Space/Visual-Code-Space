@@ -3,11 +3,10 @@ package com.raredev.vcspace.editor.language.html.completion;
 import com.blankj.utilcode.util.GsonUtils;
 import com.raredev.vcspace.BaseApp;
 import com.raredev.vcspace.editor.IDECodeEditor;
+import com.raredev.vcspace.editor.completion.CompletionItemKind;
 import com.raredev.vcspace.editor.completion.CompletionParams;
 import com.raredev.vcspace.editor.completion.CompletionProvider;
-import com.raredev.vcspace.editor.completion.SimpleCompletionIconDrawer;
 import com.raredev.vcspace.editor.completion.SimpleCompletionItem;
-import com.raredev.vcspace.editor.completion.SimpleCompletionItemKind;
 import com.raredev.vcspace.editor.completion.SimpleSnippetCompletionItem;
 import com.raredev.vcspace.editor.completion.VCSpaceCompletionItem;
 import com.raredev.vcspace.utils.FileUtil;
@@ -72,12 +71,7 @@ public class HtmlCompletionProvider extends CompletionProvider {
       }
       completions.add(
           new SimpleCompletionItem(
-              key,
-              tag.getDescription(),
-              "Tag",
-              SimpleCompletionIconDrawer.draw(SimpleCompletionItemKind.TAG),
-              prefix.length(),
-              tagString));
+              key, tag.getDescription(), CompletionItemKind.TAG, prefix.length(), tagString));
     }
   }
 
@@ -108,8 +102,7 @@ public class HtmlCompletionProvider extends CompletionProvider {
               new SimpleSnippetCompletionItem(
                   attr,
                   htmlTag.getDescription(),
-                  "Attribute",
-                  SimpleCompletionIconDrawer.draw(SimpleCompletionItemKind.ATTRIBUTE),
+                  CompletionItemKind.ATTRIBUTE,
                   new SnippetDescription(
                       prefix.length(), CodeSnippetParser.parse(attr + "=\"$0\""), true)));
         }
@@ -141,16 +134,11 @@ public class HtmlCompletionProvider extends CompletionProvider {
             continue;
           }
 
-          String type = attribute.getType();
-          if (type == null) {
-            type = "Value";
-          }
           completions.add(
               new SimpleCompletionItem(
                   value,
                   attribute.getDescription(),
-                  type,
-                  SimpleCompletionIconDrawer.draw(SimpleCompletionItemKind.VALUE),
+                  CompletionItemKind.VALUE,
                   prefix.length(),
                   valueInsert));
         }

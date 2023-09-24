@@ -76,7 +76,7 @@ public class EditorActivity extends BaseActivity
   }
 
   @Override
-  public void onCreate(Bundle savedInstanceState) {
+  protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setSupportActionBar(binding.toolbar);
     setupWorkspaceDrawer();

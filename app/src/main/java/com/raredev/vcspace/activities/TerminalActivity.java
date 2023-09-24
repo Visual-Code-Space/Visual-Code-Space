@@ -64,7 +64,7 @@ public class TerminalActivity extends BaseActivity
   }
 
   @Override
-  public void onCreate(Bundle savedInstanceState) {
+  protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     getWindow().setStatusBarColor(Color.BLACK);
     getWindow().setNavigationBarColor(Color.BLACK);

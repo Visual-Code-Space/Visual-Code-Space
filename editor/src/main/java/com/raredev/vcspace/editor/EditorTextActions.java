@@ -1,7 +1,6 @@
 package com.raredev.vcspace.editor;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.graphics.RectF;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
@@ -316,9 +315,8 @@ public class EditorTextActions extends EditorPopupWindow {
             editor.getContext(), com.google.android.material.R.attr.colorOutline, 0);
 
     GradientDrawable drawable = new GradientDrawable();
-    drawable.setShape(GradientDrawable.RECTANGLE);
-    drawable.setCornerRadius(SizeUtils.dp2px(20));
-    drawable.setColor(ColorStateList.valueOf(colorSurface));
+    drawable.setCornerRadius(SizeUtils.dp2px(25));
+    drawable.setColor(colorSurface);
     drawable.setStroke(2, colorOutline);
     root.setBackground(drawable);
   }

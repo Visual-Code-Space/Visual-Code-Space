@@ -26,7 +26,7 @@ public class CrashActivity extends BaseActivity {
   }
 
   @Override
-  public void onCreate(Bundle savedInstanceState) {
+  protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     binding = ActivityCrashBinding.inflate(getLayoutInflater());
 

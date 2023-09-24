@@ -1,5 +1,7 @@
 package com.raredev.vcspace.ui.panels.snippets;
 
+import static io.github.rosemoe.sora.langs.textmate.VCSpaceTMLanguage.SNIPPETS_DIR_PATH;
+
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -134,31 +136,30 @@ public class SnippetsPanel extends Panel implements SnippetFilesAdapter.SnippetF
   }
 
   private List<UserSnippetModel> getSnippetFiles() {
-    String SNIPPETS_FOLDER_PATH = VCSpaceTMLanguage.SNIPPETS_FOLDER_PATH;
     List<UserSnippetModel> files = new ArrayList<>();
-    files.add(new UserSnippetModel("Batch", new File(SNIPPETS_FOLDER_PATH + "/bat.json")));
-    files.add(new UserSnippetModel("C", new File(SNIPPETS_FOLDER_PATH + "/c.json")));
-    files.add(new UserSnippetModel("C++", new File(SNIPPETS_FOLDER_PATH + "/cpp.json")));
-    files.add(new UserSnippetModel("C#", new File(SNIPPETS_FOLDER_PATH + "/csharp.json")));
-    files.add(new UserSnippetModel("CSS", new File(SNIPPETS_FOLDER_PATH + "/css.json")));
-    files.add(new UserSnippetModel("Go", new File(SNIPPETS_FOLDER_PATH + "/go.json")));
-    files.add(new UserSnippetModel("Groovy", new File(SNIPPETS_FOLDER_PATH + "/groovy.json")));
-    files.add(new UserSnippetModel("HTML", new File(SNIPPETS_FOLDER_PATH + "/html.json")));
-    files.add(new UserSnippetModel("ini", new File(SNIPPETS_FOLDER_PATH + "/ini.json")));
-    files.add(new UserSnippetModel("Java", new File(SNIPPETS_FOLDER_PATH + "/java.json")));
-    files.add(new UserSnippetModel("JavaScript", new File(SNIPPETS_FOLDER_PATH + "/js.json")));
-    files.add(new UserSnippetModel("Json", new File(SNIPPETS_FOLDER_PATH + "/json.json")));
-    files.add(new UserSnippetModel("Julia", new File(SNIPPETS_FOLDER_PATH + "/ji.json")));
-    files.add(new UserSnippetModel("Kotlin", new File(SNIPPETS_FOLDER_PATH + "/kt.json")));
-    files.add(new UserSnippetModel("Lua", new File(SNIPPETS_FOLDER_PATH + "/lua.json")));
-    files.add(new UserSnippetModel("Markdown", new File(SNIPPETS_FOLDER_PATH + "/md.json")));
-    files.add(new UserSnippetModel("Php", new File(SNIPPETS_FOLDER_PATH + "/php.json")));
-    files.add(new UserSnippetModel("Python", new File(SNIPPETS_FOLDER_PATH + "/py.json")));
-    files.add(new UserSnippetModel("Shell Script", new File(SNIPPETS_FOLDER_PATH + "/sh.json")));
-    files.add(new UserSnippetModel("Smali", new File(SNIPPETS_FOLDER_PATH + "/smali.json")));
-    files.add(new UserSnippetModel("Type Script", new File(SNIPPETS_FOLDER_PATH + "/ts.json")));
-    files.add(new UserSnippetModel("XML", new File(SNIPPETS_FOLDER_PATH + "/xml.json")));
-    files.add(new UserSnippetModel("YAML", new File(SNIPPETS_FOLDER_PATH + "/yaml.json")));
+    files.add(new UserSnippetModel("Batch", new File(SNIPPETS_DIR_PATH + "/bat.json")));
+    files.add(new UserSnippetModel("C", new File(SNIPPETS_DIR_PATH + "/c.json")));
+    files.add(new UserSnippetModel("C++", new File(SNIPPETS_DIR_PATH + "/cpp.json")));
+    files.add(new UserSnippetModel("C#", new File(SNIPPETS_DIR_PATH + "/csharp.json")));
+    files.add(new UserSnippetModel("CSS", new File(SNIPPETS_DIR_PATH + "/css.json")));
+    files.add(new UserSnippetModel("Go", new File(SNIPPETS_DIR_PATH + "/go.json")));
+    files.add(new UserSnippetModel("Groovy", new File(SNIPPETS_DIR_PATH + "/groovy.json")));
+    files.add(new UserSnippetModel("HTML", new File(SNIPPETS_DIR_PATH + "/html.json")));
+    files.add(new UserSnippetModel("ini", new File(SNIPPETS_DIR_PATH + "/ini.json")));
+    files.add(new UserSnippetModel("Java", new File(SNIPPETS_DIR_PATH + "/java.json")));
+    files.add(new UserSnippetModel("JavaScript", new File(SNIPPETS_DIR_PATH + "/js.json")));
+    files.add(new UserSnippetModel("Json", new File(SNIPPETS_DIR_PATH + "/json.json")));
+    files.add(new UserSnippetModel("Julia", new File(SNIPPETS_DIR_PATH + "/ji.json")));
+    files.add(new UserSnippetModel("Kotlin", new File(SNIPPETS_DIR_PATH + "/kt.json")));
+    files.add(new UserSnippetModel("Lua", new File(SNIPPETS_DIR_PATH + "/lua.json")));
+    files.add(new UserSnippetModel("Markdown", new File(SNIPPETS_DIR_PATH + "/md.json")));
+    files.add(new UserSnippetModel("Php", new File(SNIPPETS_DIR_PATH + "/php.json")));
+    files.add(new UserSnippetModel("Python", new File(SNIPPETS_DIR_PATH + "/py.json")));
+    files.add(new UserSnippetModel("Shell Script", new File(SNIPPETS_DIR_PATH + "/sh.json")));
+    files.add(new UserSnippetModel("Smali", new File(SNIPPETS_DIR_PATH + "/smali.json")));
+    files.add(new UserSnippetModel("Type Script", new File(SNIPPETS_DIR_PATH + "/ts.json")));
+    files.add(new UserSnippetModel("XML", new File(SNIPPETS_DIR_PATH + "/xml.json")));
+    files.add(new UserSnippetModel("YAML", new File(SNIPPETS_DIR_PATH + "/yaml.json")));
     return files;
   }
 }

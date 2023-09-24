@@ -1,8 +1,6 @@
 package com.raredev.vcspace.editor.completion;
 
-import android.graphics.drawable.Drawable;
 import androidx.annotation.NonNull;
-import io.github.rosemoe.sora.lang.completion.CompletionItemKind;
 import io.github.rosemoe.sora.lang.completion.SnippetDescription;
 import io.github.rosemoe.sora.text.CharPosition;
 import io.github.rosemoe.sora.text.Content;
@@ -12,29 +10,15 @@ public class SimpleSnippetCompletionItem extends VCSpaceCompletionItem {
 
   private final SnippetDescription snippet;
 
-  public SimpleSnippetCompletionItem(CharSequence label, SnippetDescription snippet) {
-    this(label, null, snippet);
-  }
-
   public SimpleSnippetCompletionItem(
       CharSequence label, CharSequence desc, SnippetDescription snippet) {
-    this(label, desc, null, snippet);
+    this(label, desc, CompletionItemKind.SNIPPET, snippet);
   }
-
+  
   public SimpleSnippetCompletionItem(
-      CharSequence label, CharSequence desc, CharSequence type, SnippetDescription snippet) {
-    this(label, desc, type, null, snippet);
-  }
-
-  public SimpleSnippetCompletionItem(
-      CharSequence label,
-      CharSequence desc,
-      CharSequence type,
-      Drawable icon,
-      SnippetDescription snippet) {
-    super(label, desc, type, icon);
+      CharSequence label, CharSequence desc, CompletionItemKind completionKind, SnippetDescription snippet) {
+    super(label, desc, completionKind);
     this.snippet = snippet;
-    kind(CompletionItemKind.Snippet);
   }
 
   @Override

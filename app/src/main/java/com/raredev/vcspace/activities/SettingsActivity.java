@@ -18,7 +18,7 @@ public class SettingsActivity extends BaseActivity {
   }
 
   @Override
-  public void onCreate(Bundle savedInstanceState) {
+  protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setSupportActionBar(binding.toolbar);
     getSupportActionBar().setTitle(string.menu_settings);

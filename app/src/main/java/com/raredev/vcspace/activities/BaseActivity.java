@@ -19,7 +19,7 @@ public abstract class BaseActivity extends AppCompatActivity {
   protected abstract View getLayout();
 
   @Override
-  public void onCreate(Bundle savedInstanceState) {
+  protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     getWindow().setStatusBarColor(SurfaceColors.SURFACE_0.getColor(this));
     getWindow().setNavigationBarColor(SurfaceColors.SURFACE_0.getColor(this));

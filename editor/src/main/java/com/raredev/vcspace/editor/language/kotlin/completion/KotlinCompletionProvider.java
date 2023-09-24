@@ -1,10 +1,9 @@
 package com.raredev.vcspace.editor.language.kotlin.completion;
 
+import com.raredev.vcspace.editor.completion.CompletionItemKind;
 import com.raredev.vcspace.editor.completion.CompletionParams;
 import com.raredev.vcspace.editor.completion.CompletionProvider;
-import com.raredev.vcspace.editor.completion.SimpleCompletionIconDrawer;
 import com.raredev.vcspace.editor.completion.SimpleCompletionItem;
-import com.raredev.vcspace.editor.completion.SimpleCompletionItemKind;
 import com.raredev.vcspace.editor.completion.VCSpaceCompletionItem;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,12 +18,7 @@ public class KotlinCompletionProvider extends CompletionProvider {
       if (keyword.startsWith(prefix) && prefix.length() > 0) {
         completions.add(
             new SimpleCompletionItem(
-                keyword,
-                null,
-                "Keyword",
-                SimpleCompletionIconDrawer.draw(SimpleCompletionItemKind.KEYWORD),
-                prefix.length(),
-                keyword));
+                keyword, null, CompletionItemKind.KEYWORD, prefix.length(), keyword));
       }
     }
     return completions;
