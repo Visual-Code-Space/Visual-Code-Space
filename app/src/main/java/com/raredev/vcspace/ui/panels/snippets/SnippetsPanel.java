@@ -56,8 +56,7 @@ public class SnippetsPanel extends Panel implements SnippetFilesAdapter.SnippetF
   }
 
   public SnippetsPanel(Context context) {
-    super(context);
-    setTitle(getContext().getString(R.string.snippets));
+    super(context, R.string.snippets);
   }
 
   @Override

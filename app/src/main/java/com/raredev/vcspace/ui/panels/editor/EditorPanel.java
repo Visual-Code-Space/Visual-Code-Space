@@ -33,9 +33,8 @@ public class EditorPanel extends Panel {
   private DocumentModel document;
 
   public EditorPanel(Context context, DocumentModel document) {
-    super(context);
+    super(context, document.getName());
     this.document = document;
-    setTitle(document.getName());
   }
 
   @Override

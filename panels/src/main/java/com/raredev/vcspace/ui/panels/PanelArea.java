@@ -45,7 +45,6 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
 
   private void init() {
     binding = LayoutPanelAreaBinding.inflate(LayoutInflater.from(context));
-    binding.tabs.setTabIndicatorAnimationMode(TabLayout.INDICATOR_ANIMATION_MODE_LINEAR);
     binding.tabs.addOnTabSelectedListener(this);
 
     panel2PanelArea =
@@ -131,6 +130,7 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
   }
 
   public void setSelectedPanel(Panel panel) {
+    if (selectedPanel == panel) return;
     int position = panels.indexOf(panel);
     TabLayout.Tab tab = binding.tabs.getTabAt(position);
     if (tab != null && !tab.isSelected()) {
@@ -150,12 +150,7 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
     if (listener != null) {
       listener.selectedPanel(panel);
     }
-    logger.i(
-        "Panel: "
-            + panel.getClass().getSimpleName()
-            + ". in position: "
-            + position
-            + ". selected!");
+    logger.i("Panel: " + panel.getTitle() + ". in position: " + position + ". selected!");
     selectedPanel = panel;
   }
 
@@ -318,7 +313,7 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
     }
   }
 
-  private void updateTab(TabLayout.Tab tab, Panel panel) {
+  public void updateTab(TabLayout.Tab tab, Panel panel) {
     ImageView close = tab.getCustomView().findViewById(R.id.close);
     close.setImageResource(panel.isPinned() ? R.drawable.ic_pin : R.drawable.close);
     panel.updatePanelTab();

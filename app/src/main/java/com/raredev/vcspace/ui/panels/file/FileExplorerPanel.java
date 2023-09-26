@@ -34,8 +34,7 @@ public class FileExplorerPanel extends Panel implements FileAdapter.FileListener
   private FileModel currentDir = new FileModel(PathUtils.getRootPathExternalFirst(), "", false);
 
   public FileExplorerPanel(Context context) {
-    super(context);
-    setTitle("Explorer");
+    super(context, "Explorer");
   }
 
   @Override

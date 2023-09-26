@@ -6,7 +6,7 @@ import com.raredev.vcspace.ui.panels.Panel;
 public class RepoInfoPanel extends Panel {
 
   public RepoInfoPanel(Context context) {
-    super(context);
+    super(context, "");
   }
 
   @Override

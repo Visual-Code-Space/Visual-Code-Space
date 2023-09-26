@@ -32,11 +32,10 @@ public class WebViewPanel extends Panel {
   private String filePath;
 
   public WebViewPanel(Context context) {
-    super(context);
+    super(context, "WebView");
     supportZoom = true;
     desktopMode = false;
     filePath = "";
-    setTitle("WebView");
   }
 
   @Override

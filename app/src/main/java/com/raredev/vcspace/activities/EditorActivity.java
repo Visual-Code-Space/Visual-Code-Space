@@ -89,6 +89,17 @@ public class EditorActivity extends BaseActivity
     ThemeRegistry.getInstance().setTheme(Utils.isDarkMode() ? "darcula" : "quietlight");
     PreferencesUtils.getDefaultPrefs().registerOnSharedPreferenceChangeListener(this);
     registerResultActivity();
+
+    if (panelsManager.getPanelArea().getPanels().isEmpty()) {
+      openRecentPanels();
+      panelsManager.addDefaultPanels();
+    }
+
+    Uri fileUri = getIntent().getData();
+    if (fileUri != null) {
+      logger.i("Opening file from Uri: " + fileUri.toString());
+      openFile(UriUtils.uri2File(fileUri).getPath());
+    }
   }
 
   @Override
@@ -202,16 +213,6 @@ public class EditorActivity extends BaseActivity
     if (!EventBus.getDefault().isRegistered(this)) {
       EventBus.getDefault().register(this);
     }
-    if (panelsManager.getPanelArea().getPanels().isEmpty()) {
-      openRecentPanels();
-      panelsManager.addDefaultPanels();
-    }
-
-    Uri fileUri = getIntent().getData();
-    if (fileUri != null) {
-      logger.i("Opening file from Uri: " + fileUri.toString());
-      openFile(UriUtils.uri2File(fileUri).getPath());
-    }
   }
 
   @Override
@@ -318,12 +319,12 @@ public class EditorActivity extends BaseActivity
     panelsManager.getPanelArea().saveAllFiles(false);
     if (document.getName().endsWith(".html")) {
       panelsManager.addWebViewPanel(document.getPath());
-    } else {
-      panelsManager.addFloatingPanel(ExecutePanel.createFloating(this, binding.panelArea));
-      panelsManager.sendEvent(
-          new UpdateExecutePanelEvent(
-              document.getPath(), FileUtils.getFileExtension(document.getPath())));
+      return;
     }
+    panelsManager.addFloatingPanel(ExecutePanel.createFloating(this, binding.panelArea));
+    panelsManager.sendEvent(
+        new UpdateExecutePanelEvent(
+            document.getPath(), FileUtils.getFileExtension(document.getPath())));
   }
 
   // Document Opener

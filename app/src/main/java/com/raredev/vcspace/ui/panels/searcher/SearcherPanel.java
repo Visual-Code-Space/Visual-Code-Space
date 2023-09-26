@@ -32,16 +32,15 @@ public class SearcherPanel extends Panel implements View.OnClickListener {
   }
 
   public SearcherPanel(Context context) {
-    super(context);
-    setTitle(getContext().getString(R.string.search));
+    super(context, R.string.search);
   }
-  
+
   @Override
   public View createView() {
     binding = LayoutSearcherPanelBinding.inflate(LayoutInflater.from(getContext()));
     return binding.getRoot();
   }
-  
+
   @Override
   public void viewCreated(View view) {
     super.viewCreated(view);
@@ -86,7 +85,6 @@ public class SearcherPanel extends Panel implements View.OnClickListener {
     TooltipCompat.setTooltipText(binding.useRegex, getContext().getString(R.string.use_regex));
     updateSearchOptions();
   }
-  
 
   @Override
   public void onClick(View v) {

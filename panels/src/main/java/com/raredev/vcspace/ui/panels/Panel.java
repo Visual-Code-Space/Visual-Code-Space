@@ -2,11 +2,7 @@ package com.raredev.vcspace.ui.panels;
 
 import android.content.Context;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
-import com.google.android.material.tabs.TabLayout;
 import com.raredev.vcspace.events.PanelEvent;
-import com.raredev.vcspace.res.R;
 
 public abstract class Panel {
 
@@ -22,8 +18,13 @@ public abstract class Panel {
   boolean viewCreated;
   boolean destroyed;
 
-  public Panel(Context context) {
+  public Panel(Context context, int title) {
+    this(context, context.getString(title));
+  }
+
+  public Panel(Context context, String title) {
     this.context = context;
+    this.title = title;
 
     this.selected = false;
     this.pinned = false;
@@ -69,10 +70,6 @@ public abstract class Panel {
 
   public void updateTitle(String title) {
     panel2PanelArea.updateTitle(title, this);
-    setTitle(title);
-  }
-
-  public void setTitle(String title) {
     this.title = title;
   }
 

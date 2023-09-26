@@ -12,8 +12,12 @@ public class TextPanel extends Panel {
   private ScrollView scroll;
   private TextView text;
 
-  public TextPanel(Context context) {
-    super(context);
+  public TextPanel(Context context, int title) {
+    super(context, title);
+  }
+
+  public TextPanel(Context context, String title) {
+    super(context, title);
   }
 
   @Override

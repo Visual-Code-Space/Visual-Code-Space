@@ -13,8 +13,7 @@ public class WelcomePanel extends Panel {
   private LayoutWelcomePanelBinding binding;
 
   public WelcomePanel(Context context) {
-    super(context);
-    setTitle(getContext().getString(R.string.welcome));
+    super(context, R.string.welcome);
   }
 
   @Override
