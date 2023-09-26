@@ -1,6 +1,7 @@
 package com.raredev.vcspace.ui.panels;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import com.raredev.vcspace.events.PanelEvent;
 
@@ -50,9 +51,9 @@ public abstract class Panel {
     }
   }
 
-  void performCreateView() {
+  void performCreateView(LayoutInflater inflater) {
     if (!viewCreated) {
-      contentView = createView();
+      contentView = createView(inflater);
       viewCreated = true;
 
       viewCreated(contentView);
@@ -105,7 +106,7 @@ public abstract class Panel {
     panel2PanelArea.romoveThis(this);
   }
 
-  public View createView() {
+  public View createView(LayoutInflater inflater) {
     return null;
   }
 

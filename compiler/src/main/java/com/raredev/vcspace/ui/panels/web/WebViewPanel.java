@@ -39,8 +39,8 @@ public class WebViewPanel extends Panel {
   }
 
   @Override
-  public View createView() {
-    binding = LayoutWebviewPanelBinding.inflate(LayoutInflater.from(getContext()));
+  public View createView(LayoutInflater inflater) {
+    binding = LayoutWebviewPanelBinding.inflate(inflater);
     return binding.getRoot();
   }
 

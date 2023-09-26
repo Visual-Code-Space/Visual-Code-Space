@@ -49,8 +49,8 @@ public class ExecutePanel extends Panel {
   }
 
   @Override
-  public View createView() {
-    binding = LayoutExecutePanelBinding.inflate(LayoutInflater.from(getContext()));
+  public View createView(LayoutInflater inflater) {
+    binding = LayoutExecutePanelBinding.inflate(inflater);
     return binding.getRoot();
   }
 

@@ -35,6 +35,8 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
 
   protected Panel2PanelArea panel2PanelArea;
   protected PanelAreaListener listener;
+  
+  private LayoutInflater inflater;
 
   public PanelArea(Context context, FrameLayout parent) {
     this.context = context;
@@ -44,7 +46,8 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
   }
 
   private void init() {
-    binding = LayoutPanelAreaBinding.inflate(LayoutInflater.from(context));
+    inflater = LayoutInflater.from(context);
+    binding = LayoutPanelAreaBinding.inflate(inflater);
     binding.tabs.addOnTabSelectedListener(this);
 
     panel2PanelArea =
@@ -142,7 +145,7 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
       binding.panelContainer.removeView(lastSelectedPanel.getContentView());
       lastSelectedPanel.performUnselected();
     }
-    panel.performCreateView();
+    panel.performCreateView(inflater);
 
     binding.panelContainer.addView(panel.getContentView());
     panel.performSelected();
@@ -156,7 +159,7 @@ public class PanelArea implements TabLayout.OnTabSelectedListener {
 
   public void addPanel(Panel panel, boolean select) {
     panel.setPanel2PanelArea(panel2PanelArea);
-    panel.performCreateView();
+    panel.performCreateView(inflater);
 
     panels.add(panel);
     binding.tabs.addTab(createTabItem(panel));

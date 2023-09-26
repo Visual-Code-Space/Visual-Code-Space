@@ -36,8 +36,8 @@ public class SearcherPanel extends Panel implements View.OnClickListener {
   }
 
   @Override
-  public View createView() {
-    binding = LayoutSearcherPanelBinding.inflate(LayoutInflater.from(getContext()));
+  public View createView(LayoutInflater inflater) {
+    binding = LayoutSearcherPanelBinding.inflate(inflater);
     return binding.getRoot();
   }
 

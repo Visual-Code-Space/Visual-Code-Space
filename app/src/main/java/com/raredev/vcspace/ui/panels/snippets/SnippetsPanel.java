@@ -60,8 +60,8 @@ public class SnippetsPanel extends Panel implements SnippetFilesAdapter.SnippetF
   }
 
   @Override
-  public View createView() {
-    binding = LayoutSnippetsPanelBinding.inflate(LayoutInflater.from(getContext()));
+  public View createView(LayoutInflater inflater) {
+    binding = LayoutSnippetsPanelBinding.inflate(inflater);
     return binding.getRoot();
   }
 

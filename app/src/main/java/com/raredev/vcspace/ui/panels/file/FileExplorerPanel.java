@@ -38,8 +38,8 @@ public class FileExplorerPanel extends Panel implements FileAdapter.FileListener
   }
 
   @Override
-  public View createView() {
-    binding = LayoutFileExplorerPanelBinding.inflate(LayoutInflater.from(getContext()));
+  public View createView(LayoutInflater inflater) {
+    binding = LayoutFileExplorerPanelBinding.inflate(inflater);
     return binding.getRoot();
   }
 
