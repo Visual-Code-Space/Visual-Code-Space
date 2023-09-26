@@ -1,7 +1,7 @@
 ext {
   androidx = [
     annotation: 'androidx.annotation:annotation:1.6.0',
-    core: 'androidx.core:core:1.10.1',
+    core: 'androidx.core:core:1.12.0',
     core_ktx: 'androidx.core:core-ktx:1.10.0',
     appcompat: 'androidx.appcompat:appcompat:1.6.1',
     preference: 'androidx.preference:preference:1.2.1',
