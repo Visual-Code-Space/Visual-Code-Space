@@ -1,29 +1,48 @@
 {
   "bat": "source.batchfile",
+  "cmd": "source.batchfile",
+
+  "dart": "source.dart",
+
   "js": "source.js",
+
   "json": "source.json",
+
   "java": "source.java",
+
   "ji": "source.julia",
+
   "kt": "source.kotlin",
   "kts": "source.kotlin",
+
   "md": "text.html.markdown",
+
   "lua": "source.lua",
+
   "cs": "source.cs",
+
   "css": "source.css",
-  "c": "source.cpp",
+
+  "c": "source.c",
+  "i": "source.c",
+
   "cpp": "source.cpp",
   "h": "source.css",
   "hh": "source.css",
   "hpp": "source.cpp",
+
   "py": "source.python",
+
   "htm": "text.html.basic",
   "html": "text.html.basic",
   "xhtml": "text.html.basic",
   "xht": "text.html.basic",
+
   "xaml": "text.xml",
   "xdf": "text.xml",
   "xmpp": "text.xml",
   "xml": "text.xml",
+
   "sh": "source.shell",
   "ksh": "source.shell",
   "bsh": "source.shell",
@@ -31,17 +50,23 @@
   "tcsh": "source.shell",
   "zsh": "source.shell",
   "bash": "source.shell",
+
+  "gradle": "source.groovy",
   "groovy": "source.groovy",
   "gvy": "source.groovy",
   "gy": "source.groovy",
   "gsh": "source.groovy",
+
   "php": "source.php",
   "php3": "source.php",
   "php4": "source.php",
   "php5": "source.php",
   "phps": "source.php",
   "phtml": "source.php",
+
   "ts": "source.ts",
-  "gradle": "source.groovy",
-  "smali": "source.smali"
+  "cts": "source.ts",
+  "mts": "source.ts",
+
+  "swift": "source.swift"
 }

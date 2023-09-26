@@ -7,6 +7,12 @@
       "languageConfiguration": "editor/textmate/bat/language-configuration.json"
     },
     {
+      "grammar": "editor/textmate/cpp/syntaxes/c.tmLanguage.json",
+      "name": "c",
+      "scopeName": "source.c",
+      "languageConfiguration": "editor/textmate/cpp/language-configuration.json"
+    },
+    {
       "grammar": "editor/textmate/cpp/syntaxes/cpp.tmLanguage.json",
       "name": "cpp",
       "scopeName": "source.cpp",
@@ -23,6 +29,12 @@
       "name": "css",
       "scopeName": "source.css",
       "languageConfiguration": "editor/textmate/css/language-configuration.json"
+    },
+    {
+      "grammar": "editor/textmate/dart/syntaxes/dart.tmLanguage.json",
+      "name": "dart",
+      "scopeName": "source.dart",
+      "languageConfiguration": "editor/textmate/dart/language-configuration.json"
     },
     {
       "grammar": "editor/textmate/go/syntaxes/go.tmLanguage.json",
@@ -43,7 +55,8 @@
       "languageConfiguration": "editor/textmate/html/language-configuration.json",
       "embeddedLanguages": {
         "source.css": "css",
-        "source.js": "javascript"
+        "source.js": "javascript",
+        "source.python": "python"
       }
     },
     {
@@ -94,8 +107,10 @@
       "grammar": "editor/textmate/markdown/syntaxes/markdown.tmLanguage.json",
       "languageConfiguration": "editor/textmate/markdown/language-configuration.json",
       "embeddedLanguages": {
-        "meta.embedded.block.html": "html",
         "source.js": "javascript",
+        "source.css": "css",
+        "meta.embedded.block.frontmatter": "yaml",
+        "meta.embedded.block.html": "html",
         "meta.embedded.block.java": "java",
         "meta.embedded.block.xml": "xml",
         "meta.embedded.block.python": "python"
@@ -124,6 +139,12 @@
       "name": "ShellScript",
       "scopeName": "source.shell",
       "languageConfiguration": "editor/textmate/shellscript/language-configuration.json"
+    },
+    {
+      "grammar": "editor/textmate/swift/syntaxes/swift.tmLanguage.json",
+      "name": "swift",
+      "scopeName": "source.swift",
+      "languageConfiguration": "editor/textmate/swift/language-configuration.json"
     },
     {
       "grammar": "editor/textmate/typescript/syntaxes/TypeScript.tmLanguage.json",

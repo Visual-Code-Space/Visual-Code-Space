@@ -75,11 +75,11 @@ public class FileModel {
   }
 
   public static String[] TEXT_FILES = {
-    ".bat", ".txt", ".js", ".ji", ".json", ".java", ".kt", ".kts", ".md", ".lua", ".cs", ".css",
-    ".c", ".cpp", ".h", ".hpp", ".py", ".htm", ".html", ".xhtml", ".xht", ".xaml", ".xdf", ".xmpp",
-    ".xml", ".sh", ".ksh", ".bsh", ".csh", ".tcsh", ".zsh", ".bash", ".groovy", ".gvy", ".gy",
-    ".gsh", ".php", ".php3", ".php4", ".php5", ".phps", ".phtml", ".ts", ".log", ".yaml", ".yml",
-    ".toml", ".gradle", ".mts", ".cts", ".smali",
+    ".bat", ".cmd", ".dart", ".txt", ".js", ".ji", ".json", ".java", ".kt", ".kts", ".md", ".lua",
+    ".cs", ".css", ".c", ".i", ".cpp", ".h", ".hpp", ".py", ".htm", ".html", ".xhtml", ".xht",
+    ".xaml", ".xdf", ".xmpp", ".xml", ".sh", ".ksh", ".bsh", ".csh", ".tcsh", ".zsh", ".bash",
+    ".groovy", ".gvy", ".gy", ".gsh", ".php", ".php3", ".php4", ".php5", ".phps", ".phtml", ".ts",
+    ".cts", ".mts", ".log", ".yaml", ".yml", ".toml", ".gradle", ".mts", ".cts", ".swift"
   };
 
   public interface FileListResultListener {
