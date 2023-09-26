@@ -101,7 +101,7 @@ public class HtmlLanguage extends VCSpaceTMLanguage {
         return false;
       }
 
-      if (beforeText.trim().startsWith("<!") || beforeText.trim().endsWith("/>")) {
+      if (!isValidTag(beforeText.trim())) {
         return false;
       }
 
@@ -150,7 +150,7 @@ public class HtmlLanguage extends VCSpaceTMLanguage {
         return false;
       }
 
-      if (beforeText.trim().startsWith("<!") || beforeText.trim().endsWith("/>")) {
+      if (!isValidTag(beforeText.trim())) {
         return false;
       }
 
@@ -187,5 +187,10 @@ public class HtmlLanguage extends VCSpaceTMLanguage {
               .append(TextUtils.createIndent(count + tabSize, tabSize, useTab()));
       return new NewlineHandleResult(sb, 0);
     }
+  }
+
+  public static boolean isValidTag(String tag) {
+    return !tag.matches(
+        ".*<(?i)(!|area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr)\\b.*");
   }
 }
