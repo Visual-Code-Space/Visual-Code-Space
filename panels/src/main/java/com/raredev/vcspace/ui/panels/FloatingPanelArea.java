@@ -42,6 +42,7 @@ public class FloatingPanelArea extends PanelArea {
     addFloatingPanelTopBar();
     addEdgeViews();
 
+    setFixedPanels(true);
     applyBackground();
     show(true);
   }
