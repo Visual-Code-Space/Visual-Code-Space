@@ -39,23 +39,24 @@ public class PathListView extends RecyclerView {
   public void setFileExplorerPanel(FileExplorerPanel viewModel) {
     adapter.setFileExplorerPanel(viewModel);
   }
-  
+
   public void setColorScheme(EditorColorScheme colorScheme) {
     setBackgroundColor(colorScheme.getColor(EditorColorScheme.WHOLE_BACKGROUND));
     adapter.setColorScheme(colorScheme);
   }
 
   public void setPath(String path) {
-    if (enabled) {
-      if (path == null) {
-        adapter.setPath(null);
-        return;
-      }
-      adapter.setPath(new File(path));
-
-      scrollToPosition(adapter.getItemCount() - 1);
-    } else {
+    if (!enabled || path == null) {
       adapter.setPath(null);
+      return;
     }
+    if (path.startsWith("/data")) {
+      adapter.setPath(null);
+      return;
+    }
+
+    adapter.setPath(new File(path));
+
+    scrollToPosition(adapter.getItemCount() - 1);
   }
 }
