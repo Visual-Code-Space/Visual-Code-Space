@@ -33,6 +33,7 @@ import com.raredev.vcspace.events.UpdateExecutePanelEvent;
 import com.raredev.vcspace.events.UpdateSearcherEvent;
 import com.raredev.vcspace.models.DocumentModel;
 import com.raredev.vcspace.models.FileModel;
+import com.raredev.vcspace.models.Symbol;
 import com.raredev.vcspace.ui.panels.Panel;
 import com.raredev.vcspace.ui.panels.PanelsManager;
 import com.raredev.vcspace.ui.panels.compiler.ExecutePanel;
@@ -82,6 +83,7 @@ public class EditorActivity extends BaseActivity
     setupWorkspaceDrawer();
 
     panelsManager = new PanelsManager(this, binding.workspaceArea, binding.panelArea);
+    binding.symbolInput.setSymbols(Symbol.baseSymbols());
 
     KeyboardUtils.registerSoftInputChangedListener(this, (i) -> invalidateOptionsMenu());
 
@@ -323,8 +325,7 @@ public class EditorActivity extends BaseActivity
     }
     panelsManager.addFloatingPanel(ExecutePanel.createFloating(this, binding.panelArea));
     panelsManager.sendEvent(
-        new UpdateExecutePanelEvent(
-            document.getPath(), FileUtils.getFileExtension(document.getPath())));
+        new UpdateExecutePanelEvent(document.getPath(), document.getExtension()));
   }
 
   // Document Opener
@@ -351,16 +352,30 @@ public class EditorActivity extends BaseActivity
     panelsManager.addPanel(editorPanel, true);
   }
 
+  public void onPanelRemoved() {
+    var panels = panelsManager.getPanelAreaPanels();
+    if (panels.isEmpty()) {
+      binding.symbolInputContainer.setVisibility(View.GONE);
+      binding.symbolInput.bindEditor(null);
+      invalidateOptionsMenu();
+    }
+  }
+
   public void updateCurrentPanel(Panel panel) {
     if (panel instanceof EditorPanel) {
       EditorPanel editorPanel = (EditorPanel) panel;
       var editor = editorPanel.getEditor();
       var document = editorPanel.getDocument();
 
+      binding.symbolInputContainer.setVisibility(View.VISIBLE);
+      binding.symbolInput.bindEditor(editor);
+
       panelsManager.sendEvent(new UpdateSearcherEvent(editorPanel.getEditor().getSearcher()));
       panelsManager.sendEvent(
-          new UpdateExecutePanelEvent(
-              document.getPath(), FileUtils.getFileExtension(document.getPath())));
+          new UpdateExecutePanelEvent(document.getPath(), document.getExtension()));
+    } else {
+      binding.symbolInputContainer.setVisibility(View.GONE);
+      binding.symbolInput.bindEditor(null);
     }
     invalidateOptionsMenu();
   }

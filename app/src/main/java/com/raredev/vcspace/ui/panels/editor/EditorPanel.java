@@ -12,7 +12,6 @@ import com.raredev.vcspace.editor.IDECodeEditor;
 import com.raredev.vcspace.events.PanelEvent;
 import com.raredev.vcspace.events.PreferenceChangedEvent;
 import com.raredev.vcspace.models.DocumentModel;
-import com.raredev.vcspace.models.Symbol;
 import com.raredev.vcspace.res.R;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.ui.panels.Panel;
@@ -49,8 +48,6 @@ public class EditorPanel extends Panel {
     binding.editor.setDocument(document);
     binding.pathList.setEnabled(PreferencesUtils.showFilePath());
     binding.pathList.setColorScheme(getEditor().getColorScheme());
-    binding.symbolInput.setSymbols(Symbol.baseSymbols());
-    binding.symbolInput.bindEditor(getEditor());
 
     setLoading(true);
     TaskExecutor.executeAsync(

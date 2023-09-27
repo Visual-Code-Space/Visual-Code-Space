@@ -33,7 +33,7 @@
         android:layout_marginBottom="2dp"
         app:icon="@drawable/ic_file_add"
         android:layout_below="@id/app_name"
-        android:textAlignment="textStart"
+       android:textAlignment="textStart"
         style="@style/Widget.Material3.Button.TextButton.Icon"
         android:text="@string/menu_new_file"
         android:id="@+id/new_file"

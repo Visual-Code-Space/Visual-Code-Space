@@ -60,7 +60,7 @@ public class EditorPanelArea extends PanelArea {
     }
     super.removeAllPanels();
   }
-  
+
   public int indexOfFile(String path) {
     for (int i = 0; i < panels.size(); i++) {
       Panel panel = getPanel(i);
@@ -95,7 +95,7 @@ public class EditorPanelArea extends PanelArea {
           });
     }
   }
-  
+
   public void saveFile(boolean showMsg) {
     saveFile(showMsg, () -> {});
   }
@@ -110,7 +110,7 @@ public class EditorPanelArea extends PanelArea {
           (result) -> {
             if (showMsg)
               ToastUtils.showShort(context.getString(R.string.saved), ToastUtils.TYPE_SUCCESS);
-          post.run();
+            post.run();
           });
     }
   }

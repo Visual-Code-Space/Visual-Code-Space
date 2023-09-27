@@ -4,7 +4,6 @@
     android:layout_height="40dp"
     android:layout_width="48dp"
     android:gravity="center"
-    android:layout_centerVertical="true"
     android:textColor="?attr/colorControlNormal"
     style="@style/Widget.Material3.Button.TextButton"
     android:id="@+id/label" />

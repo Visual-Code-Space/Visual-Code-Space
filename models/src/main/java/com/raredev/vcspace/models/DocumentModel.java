@@ -1,5 +1,6 @@
 package com.raredev.vcspace.models;
 
+import com.blankj.utilcode.util.FileUtils;
 import java.io.File;
 
 public class DocumentModel {
@@ -85,10 +86,7 @@ public class DocumentModel {
   }
 
   public String getExtension() {
-    if (name == null || !name.contains(".")) {
-      return null;
-    }
-    return name.substring(name.lastIndexOf(".") + 1, name.length()).toLowerCase();
+    return FileUtils.getFileExtension(name);
   }
 
   public File toFile() {

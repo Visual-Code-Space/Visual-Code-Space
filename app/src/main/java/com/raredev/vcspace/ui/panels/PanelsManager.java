@@ -85,7 +85,7 @@ public class PanelsManager {
 
           @Override
           public void removedPanel(Panel panel) {
-            activity.invalidateOptionsMenu();
+            activity.onPanelRemoved();
           }
         });
   }

@@ -6,12 +6,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
+import com.blankj.utilcode.util.PathUtils;
 import com.google.android.material.R;
 import com.google.android.material.color.MaterialColors;
 import com.raredev.vcspace.databinding.LayoutPathItemBinding;
 import com.raredev.vcspace.models.FileModel;
 import com.raredev.vcspace.ui.FileTreePopupWindow;
 import com.raredev.vcspace.ui.panels.file.FileExplorerPanel;
+import com.raredev.vcspace.utils.Utils;
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme;
 import java.io.File;
 import java.util.ArrayList;
@@ -47,10 +49,12 @@ public class PathListAdapter extends RecyclerView.Adapter<PathListAdapter.VH> {
           colorScheme == null ? colorPrimary : colorScheme.getColor(EditorColorScheme.TEXT_NORMAL));
       holder.separator.setVisibility(View.GONE);
     } else {
-      holder.path.setTextColor(
+      var color =
           colorScheme == null
               ? colorControlNormal
-              : colorScheme.getColor(EditorColorScheme.TEXT_NORMAL));
+              : colorScheme.getColor(EditorColorScheme.TEXT_NORMAL);
+      holder.path.setTextColor(color);
+      Utils.updateImageTint(holder.separator, color);
       holder.separator.setVisibility(View.VISIBLE);
     }
 
@@ -88,11 +92,11 @@ public class PathListAdapter extends RecyclerView.Adapter<PathListAdapter.VH> {
     paths.clear();
 
     for (; path != null; ) {
-      if (path.getPath().equals("/storage/emulated")) {
+      if (path.getPath().equals(PathUtils.getRootPathExternalFirst())) {
         break;
       }
       var fileModel = FileModel.fileToFileModel(path);
-      if (fileModel.getPath().equals("/storage/emulated/0")) {
+      if (fileModel.getPath().equals(PathUtils.getRootPathExternalFirst())) {
         fileModel.setName("sdcard");
       }
       paths.add(fileModel);
@@ -107,11 +111,8 @@ public class PathListAdapter extends RecyclerView.Adapter<PathListAdapter.VH> {
     TextView path;
     ImageView separator;
 
-    LayoutPathItemBinding bind;
-
     public VH(LayoutPathItemBinding binding) {
       super(binding.getRoot());
-      bind = binding;
       path = binding.path;
       separator = binding.separator;
     }

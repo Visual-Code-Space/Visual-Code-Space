@@ -24,11 +24,38 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <FrameLayout
+        <LinearLayout
             android:layout_height="match_parent"
             android:layout_width="match_parent"
             app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-            android:id="@+id/panel_area" />
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:id="@+id/panel_area" />
+
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:id="@+id/symbol_input_container">
+
+                <View
+                    android:layout_height="0.5dp"
+                    android:layout_width="match_parent"
+                    android:background="?attr/colorOutline" />
+
+                <com.raredev.vcspace.ui.SymbolInputView
+                    android:layout_height="45dp"
+                    android:layout_width="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:id="@+id/symbol_input" />
+
+            </LinearLayout>
+
+        </LinearLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
