@@ -6,7 +6,7 @@ ext {
     appcompat: 'androidx.appcompat:appcompat:1.6.1',
     preference: 'androidx.preference:preference:1.2.1',
     swiperefreshlayout: 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0',
-    fragment: 'androidx.fragment:fragment:1.6.0-beta01',
+    fragment: 'androidx.fragment:fragment:1.6.1',
     splashscreen: 'androidx.core:core-splashscreen:1.0.1',
     security: 'androidx.security:security-crypto:1.0.0'
   ]
