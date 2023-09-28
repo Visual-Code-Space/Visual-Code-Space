@@ -6,15 +6,19 @@
     android:layout_width="match_parent"
     android:id="@+id/drawerLayout">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_height="match_parent"
         android:layout_width="match_parent"
+        android:fitsSystemWindows="true"
         android:id="@+id/root">
 
         <com.google.android.material.appbar.AppBarLayout
             android:layout_height="wrap_content"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             app:layout_behavior="com.google.android.material.appbar.AppBarLayout$Behavior"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             android:id="@+id/app_bar">
 
             <com.google.android.material.appbar.MaterialToolbar
@@ -24,40 +28,38 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
+        <FrameLayout
+            android:layout_height="0dp"
+            android:layout_width="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/symbol_input_container"
+            app:layout_constraintTop_toBottomOf="@+id/app_bar"
+            android:id="@+id/panel_area" />
+
         <LinearLayout
-            android:layout_height="match_parent"
-            android:layout_width="match_parent"
-            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/panel_area"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:id="@+id/symbol_input_container">
 
-            <FrameLayout
-                android:layout_height="match_parent"
+            <View
+                android:layout_height="0.5dp"
                 android:layout_width="match_parent"
-                android:layout_weight="1"
-                android:id="@+id/panel_area" />
+                android:background="?attr/colorOutline" />
 
-            <LinearLayout
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent"
-                android:orientation="vertical"
-                android:id="@+id/symbol_input_container">
-
-                <View
-                    android:layout_height="0.5dp"
-                    android:layout_width="match_parent"
-                    android:background="?attr/colorOutline" />
-
-                <com.raredev.vcspace.ui.SymbolInputView
-                    android:layout_height="45dp"
-                    android:layout_width="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:id="@+id/symbol_input" />
-
-            </LinearLayout>
+            <com.raredev.vcspace.ui.SymbolInputView
+                android:layout_height="45dp"
+                android:layout_width="wrap_content"
+                android:id="@+id/symbol_input" />
 
         </LinearLayout>
 
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.navigation.NavigationView
         android:layout_height="match_parent"

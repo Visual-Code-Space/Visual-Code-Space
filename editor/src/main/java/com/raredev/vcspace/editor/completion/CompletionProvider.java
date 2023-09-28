@@ -15,10 +15,12 @@ public abstract class CompletionProvider {
   public abstract List<VCSpaceCompletionItem> getCompletions(CompletionParams params);
 
   public static void registerCompletionProviders() {
-    providers.put(HtmlCompletionProvider.class, new HtmlCompletionProvider());
-    providers.put(JavaCompletionProvider.class, new JavaCompletionProvider());
-    providers.put(KotlinCompletionProvider.class, new KotlinCompletionProvider());
-    providers.put(LuaCompletionProvider.class, new LuaCompletionProvider());
+    if (providers.isEmpty()) {
+      providers.put(HtmlCompletionProvider.class, new HtmlCompletionProvider());
+      providers.put(JavaCompletionProvider.class, new JavaCompletionProvider());
+      providers.put(KotlinCompletionProvider.class, new KotlinCompletionProvider());
+      providers.put(LuaCompletionProvider.class, new LuaCompletionProvider());
+    }
   }
 
   public static CompletionProvider getCompletionProvider(Class<?> clss) {
