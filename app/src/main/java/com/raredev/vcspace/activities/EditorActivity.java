@@ -87,10 +87,11 @@ public class EditorActivity extends BaseActivity
 
     KeyboardUtils.registerSoftInputChangedListener(this, (i) -> invalidateOptionsMenu());
 
-    CompletionProvider.registerCompletionProviders();
     ThemeRegistry.getInstance().setTheme(Utils.isDarkMode() ? "darcula" : "quietlight");
     PreferencesUtils.getDefaultPrefs().registerOnSharedPreferenceChangeListener(this);
     registerResultActivity();
+
+    CompletionProvider.registerCompletionProviders();
 
     if (panelsManager.getPanelArea().getPanels().isEmpty()) {
       openRecentPanels();

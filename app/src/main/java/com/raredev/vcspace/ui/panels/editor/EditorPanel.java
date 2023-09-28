@@ -62,7 +62,7 @@ public class EditorPanel extends Panel {
         },
         (result) -> {
           binding.editor.setText((String) result, null);
-          postRead();
+          binding.editor.post(() -> postRead());
         });
   }
 
@@ -85,9 +85,7 @@ public class EditorPanel extends Panel {
   }
 
   @Override
-  public void unselected() {
-    
-  }
+  public void unselected() {}
 
   @Override
   public void selected() {
@@ -107,7 +105,6 @@ public class EditorPanel extends Panel {
   private void postRead() {
     binding.editor.setCursorPosition(document.getPositionLine(), document.getPositionColumn());
     binding.editor.setEditorLanguage(createLanguage());
-    binding.editor.configureEditor();
     subscribeContentChangeEvent();
     updatePathList();
     setLoading(false);

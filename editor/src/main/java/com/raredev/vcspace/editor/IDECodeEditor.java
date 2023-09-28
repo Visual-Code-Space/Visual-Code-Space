@@ -65,6 +65,8 @@ public class IDECodeEditor extends CodeEditor {
     getComponent(EditorTextActionWindow.class).setEnabled(false);
     getComponent(EditorAutoCompletion.class).setLayout(new CustomCompletionLayout());
     getComponent(EditorAutoCompletion.class).setAdapter(new CompletionItemAdapter());
+
+    configureEditor();
   }
 
   @Override
@@ -96,9 +98,9 @@ public class IDECodeEditor extends CodeEditor {
     if (startIndex - 1 >= 0) {
       char deleteChar = text.charAt(startIndex - 1);
       char afterChar = text.charAt(startIndex);
-      String deletePairOpen = ""+deleteChar;
-      String deletePairClose = ""+afterChar;
-      
+      String deletePairOpen = "" + deleteChar;
+      String deletePairClose = "" + afterChar;
+
       SymbolPairMatch.SymbolPair deletePair = null;
       SymbolPairMatch pairs = getEditorLanguage().getSymbolPairs();
 
