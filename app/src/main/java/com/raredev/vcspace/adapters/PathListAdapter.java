@@ -92,7 +92,7 @@ public class PathListAdapter extends RecyclerView.Adapter<PathListAdapter.VH> {
     paths.clear();
 
     for (; path != null; ) {
-      if (path.getPath().equals(PathUtils.getRootPathExternalFirst())) {
+      if (path.getPath().equals("/storage/emulated")) {
         break;
       }
       var fileModel = FileModel.fileToFileModel(path);

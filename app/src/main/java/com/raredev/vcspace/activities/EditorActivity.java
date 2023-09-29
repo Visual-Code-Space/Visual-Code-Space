@@ -258,7 +258,7 @@ public class EditorActivity extends BaseActivity
         new DrawerLayout.DrawerListener() {
           @Override
           public void onDrawerSlide(@NonNull View view, float v) {
-            float slideX = view.getWidth() * v;
+            float slideX = view.getWidth() * v / 2;
             binding.root.setTranslationX(slideX);
           }
 
