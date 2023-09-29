@@ -5,6 +5,8 @@ import android.graphics.drawable.GradientDrawable;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -17,33 +19,54 @@ public class FloatingPanelArea extends PanelArea {
 
   private FloatingPanel panel;
 
-  private boolean resizeable = true, isMoving = false, isResizing = false;
+  private boolean resizeable = true;
   private boolean showing = true;
 
+  private int minWidth;
+  private int minHeight;
+
+  private int initialWidth;
+  private int initialHeight;
+
   public FloatingPanelArea(Context context, FrameLayout parent) {
+    this(context, parent, SizeUtils.dp2px(390), SizeUtils.dp2px(210));
+  }
+
+  public FloatingPanelArea(
+      Context context, FrameLayout parent, int initialWidth, int initialHeight) {
     super(context, parent);
+    this.initialWidth = initialWidth;
+    this.initialHeight = initialHeight;
+
+    minWidth = SizeUtils.dp2px(40f);
+    minHeight = minWidth;
     init();
   }
 
   private void init() {
-    binding.getRoot().setClickable(true);
     panel = new FloatingPanel(binding.getRoot());
 
-    var layoutParams = panel.getLayoutParams();
-    if (layoutParams == null) {
-      layoutParams = new ViewGroup.LayoutParams(SizeUtils.dp2px(390), SizeUtils.dp2px(210));
-    } else {
-      layoutParams.width = SizeUtils.dp2px(390);
-      layoutParams.height = SizeUtils.dp2px(210);
-    }
-    panel.setLayoutParams(layoutParams);
+    binding
+        .getRoot()
+        .getViewTreeObserver()
+        .addOnGlobalLayoutListener(
+            new ViewTreeObserver.OnGlobalLayoutListener() {
+              @Override
+              public void onGlobalLayout() {
+                if (!isShowing()) {
+                  binding.getRoot().getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                  return;
+                }
+                updatePositionAndSize();
+              }
+            });
+    resizePanel(initialWidth, initialHeight);
 
     addFloatingPanelTopBar();
     addEdgeViews();
 
     setFixedPanels(true);
     applyBackground();
-    show(true);
   }
 
   @Override
@@ -53,25 +76,23 @@ public class FloatingPanelArea extends PanelArea {
     return removed;
   }
 
+  private void updatePositionAndSize() {
+    repositionPanel(panel.getX(), panel.getY());
+
+    int width = panel.getWidth() * panel.getX();
+    int height = panel.getHeight() * panel.getY();
+
+    resizePanel(width, height);
+  }
+
   public boolean isShowing() {
     return showing;
   }
 
   public void show() {
-    show(false);
-  }
-
-  public void show(boolean animate) {
     if (!isShowing()) {
       parent.addView(binding.getRoot());
       showing = true;
-
-      if (animate) {
-        binding.getRoot().setScaleX(0.5f);
-        binding.getRoot().setScaleY(0.5f);
-        binding.getRoot().setAlpha(0.0f);
-        binding.getRoot().animate().scaleX(1).scaleY(1).alpha(1).setDuration(100).start();
-      }
     }
   }
 
@@ -85,10 +106,10 @@ public class FloatingPanelArea extends PanelArea {
       binding
           .getRoot()
           .animate()
-          .scaleX(0.5f)
-          .scaleY(0.5f)
-          .alpha(0.0f)
-          .setDuration(100)
+          .scaleY(0f)
+          .alpha(0f)
+          .setDuration(150)
+          .setInterpolator(new AccelerateDecelerateInterpolator())
           .withEndAction(
               () -> {
                 removeAllPanels();
@@ -152,6 +173,7 @@ public class FloatingPanelArea extends PanelArea {
     drawable.setStroke(
         2, MaterialColors.getColor(context, com.google.android.material.R.attr.colorOutline, 0));
     binding.getRoot().setBackground(drawable);
+    binding.getRoot().setElevation(2.5f);
   }
 
   public View.OnTouchListener getRightEdgeTouchListener() {
@@ -161,13 +183,8 @@ public class FloatingPanelArea extends PanelArea {
 
       @Override
       public boolean onTouch(View v, MotionEvent event) {
-        if (isMoving) return false;
         switch (event.getAction()) {
-          case MotionEvent.ACTION_UP:
-            isResizing = false;
-            break;
           case MotionEvent.ACTION_DOWN:
-            isResizing = true;
             startX = event.getRawX();
             originalWidth = panel.getWidth();
             break;
@@ -176,11 +193,8 @@ public class FloatingPanelArea extends PanelArea {
             if (deltaX >= parent.getWidth()) break;
 
             int newWidth = (int) (originalWidth + deltaX);
-            if (newWidth < 100 || panel.currentX < 0) break;
 
-            ViewGroup.LayoutParams params = panel.getLayoutParams();
-            params.width = newWidth;
-            panel.setLayoutParams(params);
+            resizePanel(newWidth, panel.getHeight());
             break;
         }
         return true;
@@ -195,13 +209,8 @@ public class FloatingPanelArea extends PanelArea {
 
       @Override
       public boolean onTouch(View v, MotionEvent event) {
-        if (isMoving) return false;
         switch (event.getAction()) {
-          case MotionEvent.ACTION_UP:
-            isResizing = false;
-            break;
           case MotionEvent.ACTION_DOWN:
-            isResizing = true;
             startY = event.getRawY();
             originalHeight = panel.getHeight();
             break;
@@ -209,11 +218,8 @@ public class FloatingPanelArea extends PanelArea {
             float deltaY = event.getRawY() - startY;
 
             int newHeight = originalHeight + (int) deltaY;
-            if (newHeight < 100 || panel.currentY < 0) break;
 
-            ViewGroup.LayoutParams params = panel.getLayoutParams();
-            params.height = newHeight;
-            panel.setLayoutParams(params);
+            resizePanel(panel.getWidth(), newHeight);
             break;
         }
         return true;
@@ -227,32 +233,16 @@ public class FloatingPanelArea extends PanelArea {
 
       @Override
       public boolean onTouch(View v, MotionEvent event) {
-        if (isResizing) return false;
         switch (event.getAction()) {
-          case MotionEvent.ACTION_UP:
-            isMoving = false;
-            break;
           case MotionEvent.ACTION_DOWN:
-            isMoving = true;
-            dx = panel.currentX - event.getRawX();
-            dy = panel.currentY - event.getRawY();
+            dx = panel.getX() - event.getRawX();
+            dy = panel.getY() - event.getRawY();
             break;
           case MotionEvent.ACTION_MOVE:
             int newX = (int) (event.getRawX() + dx);
             int newY = (int) (event.getRawY() + dy);
 
-            int maxX = parent.getWidth() - panel.getWidth();
-            int maxY = parent.getHeight() - panel.getHeight();
-
-            if (newX < 0) newX = 0;
-            if (newX > maxX) newX = maxX;
-            if (newY < 0) newY = 0;
-            if (newY > maxY) newY = maxY;
-
-            panel.currentX = newX;
-            panel.currentY = newY;
-            panel.setX(newX);
-            panel.setY(newY);
+            repositionPanel(newX, newY);
             break;
         }
         return true;
@@ -260,8 +250,36 @@ public class FloatingPanelArea extends PanelArea {
     };
   }
 
+  private void resizePanel(int width, int height) {
+    int maxWidth = width + (parent.getWidth() - (panel.getX() + width));
+    int maxHeight = height + (parent.getHeight() - (panel.getY() + height));
+
+    if (width < minWidth) width = minWidth;
+    if (width > maxWidth) width = maxWidth;
+
+    if (height < minHeight) height = minHeight;
+    if (height > maxHeight) height = maxHeight;
+
+    ViewGroup.LayoutParams params = panel.getLayoutParams();
+    params.width = width;
+    params.height = height;
+    panel.setLayoutParams(params);
+  }
+
+  private void repositionPanel(int x, int y) {
+    int maxX = parent.getWidth() - panel.getWidth();
+    int maxY = parent.getHeight() - panel.getHeight();
+
+    if (x < 0) x = 0;
+    if (x > maxX) x = maxX;
+    if (y < 0) y = 0;
+    if (y > maxY) y = maxY;
+
+    panel.setX(x);
+    panel.setY(y);
+  }
+
   class FloatingPanel {
-    public int currentX, currentY;
     private View view;
 
     public FloatingPanel(View view) {
