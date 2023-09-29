@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.widget.FrameLayout;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.tabs.TabLayout;
+import com.raredev.vcspace.callback.PushCallback;
 import com.raredev.vcspace.res.R;
 import com.raredev.vcspace.task.TaskExecutor;
 import com.raredev.vcspace.ui.panels.Panel;
@@ -34,7 +35,7 @@ public class EditorPanelArea extends PanelArea {
   public boolean removePanel(Panel panel) {
     var editorPanel = getEditorPanel(panel);
     if (editorPanel != null && editorPanel.getDocument().isModified()) {
-      notifyUnsavedFile(editorPanel, () -> removePanel(panel));
+      notifyUnsavedFile(editorPanel, none -> removePanel(panel));
       return false;
     }
     return super.removePanel(panel);
@@ -45,7 +46,7 @@ public class EditorPanelArea extends PanelArea {
     var unsavedDocuments = getUnsavedDocuments();
     if (!unsavedDocuments.isEmpty()
         && !(unsavedDocuments.size() == 1 && unsavedDocuments.get(0).equals(selectedPanel))) {
-      notifyUnsavedFiles(unsavedDocuments, () -> removeOthers());
+      notifyUnsavedFiles(unsavedDocuments, none -> removeOthers());
       return;
     }
     super.removeOthers();
@@ -55,7 +56,7 @@ public class EditorPanelArea extends PanelArea {
   public void removeAllPanels() {
     var unsavedDocuments = getUnsavedDocuments();
     if (!unsavedDocuments.isEmpty()) {
-      notifyUnsavedFiles(unsavedDocuments, () -> removeAllPanels());
+      notifyUnsavedFiles(unsavedDocuments, none -> removeAllPanels());
       return;
     }
     super.removeAllPanels();
@@ -75,15 +76,15 @@ public class EditorPanelArea extends PanelArea {
   }
 
   public void saveAllFiles(boolean showMsg) {
-    saveAllFiles(showMsg, () -> {});
+    saveAllFiles(showMsg, none -> {});
   }
 
-  public void saveAllFiles(boolean showMsg, Runnable post) {
+  public void saveAllFiles(boolean showMsg, PushCallback<Void> callback) {
     if (!panels.isEmpty()) {
       TaskExecutor.executeAsync(
           () -> {
-            for (int i = 0; i < panels.size(); i++) {
-              saveDocument(getPanel(i));
+            for (Panel panel : panels) {
+              saveDocument(panel);
             }
             return null;
           },
@@ -91,16 +92,16 @@ public class EditorPanelArea extends PanelArea {
             if (showMsg)
               ToastUtils.showShort(
                   context.getString(R.string.saved_files), ToastUtils.TYPE_SUCCESS);
-            post.run();
+            callback.onComplete(null);
           });
     }
   }
 
   public void saveFile(boolean showMsg) {
-    saveFile(showMsg, () -> {});
+    saveFile(showMsg, none -> {});
   }
 
-  public void saveFile(boolean showMsg, Runnable post) {
+  public void saveFile(boolean showMsg, PushCallback<Void> callback) {
     if (!panels.isEmpty()) {
       TaskExecutor.executeAsync(
           () -> {
@@ -110,7 +111,7 @@ public class EditorPanelArea extends PanelArea {
           (result) -> {
             if (showMsg)
               ToastUtils.showShort(context.getString(R.string.saved), ToastUtils.TYPE_SUCCESS);
-            post.run();
+            callback.onComplete(null);
           });
     }
   }
@@ -168,20 +169,20 @@ public class EditorPanelArea extends PanelArea {
     return count;
   }
 
-  private void notifyUnsavedFile(EditorPanel unsavedPanel, Runnable post) {
+  private void notifyUnsavedFile(EditorPanel unsavedPanel, PushCallback<Void> callback) {
     showUnsavedFilesDialog(
         unsavedPanel.getDocument().getName(),
         (d, w) -> {
           saveDocument(unsavedPanel);
-          post.run();
+          callback.onComplete(null);
         },
         (d, w) -> {
           unsavedPanel.markUnmodifiedPanel();
-          post.run();
+          callback.onComplete(null);
         });
   }
 
-  private void notifyUnsavedFiles(List<EditorPanel> unsavedPanels, Runnable post) {
+  private void notifyUnsavedFiles(List<EditorPanel> unsavedPanels, PushCallback<Void> callback) {
     StringBuilder sb = new StringBuilder();
     for (EditorPanel panel : unsavedPanels) {
       sb.append(" " + panel.getDocument().getName());
@@ -189,13 +190,13 @@ public class EditorPanelArea extends PanelArea {
     showUnsavedFilesDialog(
         sb.toString(),
         (d, w) -> {
-          saveAllFiles(true, () -> post.run());
+          saveAllFiles(true, none -> callback.onComplete(null));
         },
         (d, w) -> {
           for (EditorPanel panel : unsavedPanels) {
             panel.markUnmodifiedPanel();
           }
-          post.run();
+          callback.onComplete(null);
         });
   }
 

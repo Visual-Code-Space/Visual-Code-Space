@@ -13,6 +13,8 @@ import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
+import com.raredev.vcspace.callback.MessageCallback;
+import com.raredev.vcspace.callback.PushCallback;
 import com.raredev.vcspace.git.CloneRepository;
 import com.raredev.vcspace.models.FileModel;
 import com.raredev.vcspace.progressdialog.ProgressDialog;
@@ -25,7 +27,7 @@ import java.util.List;
 public class FileManagerDialogs {
 
   @SuppressWarnings("deprecation")
-  public static void createNew(Context context, File file, Concluded concluded) {
+  public static void createNew(Context context, File file, PushCallback<File> callback) {
     LayoutTextinputBinding binding = LayoutTextinputBinding.inflate(LayoutInflater.from(context));
 
     AlertDialog dialog =
@@ -50,7 +52,7 @@ public class FileManagerDialogs {
                 File newFolder = new File(file, "/" + et_filename.getText().toString());
                 if (!newFolder.exists()) {
                   if (newFolder.mkdirs()) {
-                    concluded.concluded(newFolder);
+                    callback.onComplete(newFolder);
                   }
                 }
                 dialog.dismiss();
@@ -61,7 +63,7 @@ public class FileManagerDialogs {
                 File newFile = new File(file, "/" + et_filename.getText().toString());
                 if (!newFile.exists()) {
                   if (FileIOUtils.writeFileFromString(newFile, "")) {
-                    concluded.concluded(newFile);
+                    callback.onComplete(newFile);
                   }
                 }
                 dialog.dismiss();
@@ -71,7 +73,7 @@ public class FileManagerDialogs {
     dialog.show();
   }
 
-  public static void renameFile(Context context, File file, OnFileRenamed onFileRenamed) {
+  public static void renameFile(Context context, File file, PushCallback<File[]> callback) {
     LayoutTextinputBinding binding = LayoutTextinputBinding.inflate(LayoutInflater.from(context));
 
     AlertDialog dialog =
@@ -109,7 +111,7 @@ public class FileManagerDialogs {
                     ToastUtils.showShort(
                         context.getString(R.string.renamed_message, oldFileName, newFile.getName()),
                         ToastUtils.TYPE_SUCCESS);
-                    onFileRenamed.onFileRenamed(file, newFile);
+                    callback.onComplete(new File[] { file, newFile });
                   }
                 }
                 dialog.dismiss();
@@ -119,7 +121,7 @@ public class FileManagerDialogs {
   }
 
   public static void deleteFile(
-      Context context, List<FileModel> selectedFiles, File file, Concluded concluded) {
+      Context context, List<FileModel> selectedFiles, File file, PushCallback<File> callback) {
     new MaterialAlertDialogBuilder(context)
         .setTitle(selectedFiles.isEmpty() ? R.string.delete : R.string.delete_multi)
         .setMessage(
@@ -153,7 +155,7 @@ public class FileManagerDialogs {
                       ToastUtils.showShort(
                           context.getString(R.string.deleted_message), ToastUtils.TYPE_SUCCESS);
 
-                      concluded.concluded(file);
+                      callback.onComplete(file);
                     }
                   });
             })
@@ -162,25 +164,25 @@ public class FileManagerDialogs {
   }
 
   private static boolean deleteFiles(
-      List<FileModel> selectedFiles, File file, @NonNull final UpdateListener listener) {
+      List<FileModel> selectedFiles, File file, @NonNull final MessageCallback callback) {
     if (!selectedFiles.isEmpty()) {
       for (FileModel fileModel : selectedFiles) {
-        deleteFiles(fileModel.toFile(), listener);
+        deleteFiles(fileModel.toFile(), callback);
       }
       return true;
     }
 
-    return deleteFiles(file, listener);
+    return deleteFiles(file, callback);
   }
 
-  private static boolean deleteFiles(File file, @NonNull final UpdateListener listener) {
+  private static boolean deleteFiles(File file, @NonNull final MessageCallback callback) {
     if (!file.exists()) return false;
 
-    listener.onUpdate("Deleting " + file.getName());
+    callback.sendMessage("Deleting " + file.getName());
 
     if (file.isFile()) {
       if (file.delete()) {
-        listener.onUpdate(file.getName() + " deleted!");
+        callback.sendMessage(file.getName() + " deleted!");
         return true;
       }
       return false;
@@ -191,7 +193,7 @@ public class FileManagerDialogs {
     if (fileArr != null) {
       for (File subFile : fileArr) {
         if (subFile.isDirectory()) {
-          if (!deleteFiles(subFile, listener)) {
+          if (!deleteFiles(subFile, callback)) {
             return false; // Returns false if deletion fails in any subdirectories
           }
         }
@@ -200,13 +202,13 @@ public class FileManagerDialogs {
           if (!subFile.delete()) {
             return false; // Returns false if deletion fails on any file
           }
-          listener.onUpdate(subFile.getName() + " deleted!");
+          callback.sendMessage(subFile.getName() + " deleted!");
         }
       }
     }
 
     if (file.delete()) {
-      listener.onUpdate(file.getName() + " deleted!");
+      callback.sendMessage(file.getName() + " deleted!");
       return true;
     }
     return false;
@@ -242,7 +244,7 @@ public class FileManagerDialogs {
     builder.show();
   }
 
-  public static void cloneRepoDialog(Context context, File file, Concluded concluded) {
+  public static void cloneRepoDialog(Context context, File file, PushCallback<File> callback) {
     CloneRepository cloneRepo = new CloneRepository(context);
     cloneRepo.setDirectory(file);
     cloneRepo.cloneRepository();
@@ -251,7 +253,7 @@ public class FileManagerDialogs {
 
           @Override
           public void onCloneSuccess(File output) {
-            concluded.concluded(output);
+            callback.onComplete(output);
           }
 
           @Override
@@ -263,17 +265,5 @@ public class FileManagerDialogs {
                 .show();
           }
         });
-  }
-
-  public interface UpdateListener {
-    void onUpdate(String message);
-  }
-
-  public interface OnFileRenamed {
-    void onFileRenamed(File oldFile, File newFile);
-  }
-
-  public interface Concluded {
-    void concluded(File file);
   }
 }

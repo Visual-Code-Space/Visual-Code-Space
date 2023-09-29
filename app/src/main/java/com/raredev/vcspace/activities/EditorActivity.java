@@ -153,7 +153,7 @@ public class EditorActivity extends BaseActivity
         panelsManager.addFloatingPanel(SearcherPanel.createFloating(this, binding.panelArea));
         panelsManager.sendEvent(new UpdateSearcherEvent(editorPanel.getEditor().getSearcher()));
       } else if (id == R.id.menu_save)
-        panelsManager.getPanelArea().saveFile(true, () -> invalidateOptionsMenu());
+        panelsManager.getPanelArea().saveFile(true, none -> invalidateOptionsMenu());
       else if (id == R.id.menu_save_as) {
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -161,7 +161,7 @@ public class EditorActivity extends BaseActivity
         intent.putExtra(Intent.EXTRA_TITLE, editorPanel.getDocument().getName());
         launcher.launch(intent);
       } else if (id == R.id.menu_save_all)
-        panelsManager.getPanelArea().saveAllFiles(true, () -> invalidateOptionsMenu());
+        panelsManager.getPanelArea().saveAllFiles(true, none -> invalidateOptionsMenu());
       else if (id == R.id.menu_reload) editorPanel.reloadFile();
 
     } else if (webViewPanel != null) {

@@ -20,6 +20,7 @@ import com.raredev.vcspace.ui.panels.Panel;
 import com.raredev.vcspace.utils.FileManagerDialogs;
 import com.raredev.vcspace.utils.FileUtil;
 import com.raredev.vcspace.utils.PreferencesUtils;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -118,7 +119,10 @@ public class FileExplorerPanel extends Panel implements FileAdapter.FileListener
             FileManagerDialogs.renameFile(
                 getContext(),
                 file.toFile(),
-                (oldFile, newFile) -> {
+                (files) -> {
+                  File oldFile = files[0];
+                  File newFile = files[1];
+
                   EventBus.getDefault().post(new OnFileRenamedEvent(oldFile, newFile));
                   refreshFiles();
                 });

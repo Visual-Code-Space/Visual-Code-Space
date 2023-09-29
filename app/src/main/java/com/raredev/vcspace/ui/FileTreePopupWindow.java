@@ -13,6 +13,7 @@ import com.google.android.material.color.MaterialColors;
 import com.google.android.material.elevation.SurfaceColors;
 import com.raredev.vcspace.activities.EditorActivity;
 import com.raredev.vcspace.adapters.holder.FileTreeViewHolder;
+import com.raredev.vcspace.callback.PushCallback;
 import com.raredev.vcspace.databinding.LayoutTreeviewWindowBinding;
 import com.raredev.vcspace.models.FileModel;
 import com.raredev.vcspace.res.R;
@@ -84,7 +85,7 @@ public class FileTreePopupWindow
       setLoading(node, true);
       listNode(
           node,
-          () -> {
+          none -> {
             setLoading(node, false);
             expandNode(node);
           });
@@ -112,7 +113,7 @@ public class FileTreePopupWindow
     binding.loading.setVisibility(View.VISIBLE);
     listNode(
         mRoot,
-        () -> {
+        none -> {
           treeView = new AndroidTreeView(context, mRoot, R.drawable.ripple_effect);
           treeView.setUseAutoToggle(false);
           treeView.setDefaultNodeClickListener(this);
@@ -129,7 +130,7 @@ public class FileTreePopupWindow
         });
   }
 
-  public void listNode(TreeNode node, Runnable post) {
+  public void listNode(TreeNode node, PushCallback<Void> callback) {
     node.getChildren().clear();
     node.setExpanded(false);
     TaskExecutor.executeAsync(
@@ -148,7 +149,7 @@ public class FileTreePopupWindow
           return null;
         },
         (result) -> {
-          post.run();
+          callback.onComplete(null);
         });
   }
 
