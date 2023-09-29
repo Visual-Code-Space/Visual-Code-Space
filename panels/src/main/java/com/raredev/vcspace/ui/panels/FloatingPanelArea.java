@@ -77,12 +77,8 @@ public class FloatingPanelArea extends PanelArea {
   }
 
   private void updatePositionAndSize() {
+    //resizePanel(panel.getWidth(), panel.getHeight());
     repositionPanel(panel.getX(), panel.getY());
-
-    int width = panel.getWidth() * panel.getX();
-    int height = panel.getHeight() * panel.getY();
-
-    resizePanel(width, height);
   }
 
   public boolean isShowing() {
@@ -254,11 +250,8 @@ public class FloatingPanelArea extends PanelArea {
     int maxWidth = width + (parent.getWidth() - (panel.getX() + width));
     int maxHeight = height + (parent.getHeight() - (panel.getY() + height));
 
-    if (width < minWidth) width = minWidth;
-    if (width > maxWidth) width = maxWidth;
-
-    if (height < minHeight) height = minHeight;
-    if (height > maxHeight) height = maxHeight;
+    width = clamp(width, minWidth, maxWidth);
+    height = clamp(height, minHeight, maxHeight);
 
     ViewGroup.LayoutParams params = panel.getLayoutParams();
     params.width = width;
@@ -270,13 +263,15 @@ public class FloatingPanelArea extends PanelArea {
     int maxX = parent.getWidth() - panel.getWidth();
     int maxY = parent.getHeight() - panel.getHeight();
 
-    if (x < 0) x = 0;
-    if (x > maxX) x = maxX;
-    if (y < 0) y = 0;
-    if (y > maxY) y = maxY;
+    x = clamp(x, 0, maxX);
+    y = clamp(y, 0, maxY);
 
     panel.setX(x);
     panel.setY(y);
+  }
+
+  private int clamp(int value, int min, int max) {
+    return Math.max(min, Math.min(max, value));
   }
 
   class FloatingPanel {
