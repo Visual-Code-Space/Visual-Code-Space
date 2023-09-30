@@ -262,13 +262,10 @@ public class EditorActivity extends BaseActivity
             binding.root.setTranslationX(slideX);
           }
 
-          @Override
           public void onDrawerOpened(@NonNull View view) {}
 
-          @Override
           public void onDrawerClosed(@NonNull View view) {}
 
-          @Override
           public void onDrawerStateChanged(int i) {}
         });
   }

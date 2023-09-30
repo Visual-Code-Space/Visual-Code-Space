@@ -15,7 +15,7 @@ import com.raredev.vcspace.progressdialog.ProgressDialog;
 import com.raredev.vcspace.progressdialog.ProgressStyle;
 import com.raredev.vcspace.res.R;
 import com.raredev.vcspace.res.databinding.LayoutTextinputBinding;
-import com.raredev.vcspace.task.TaskExecutor;
+import com.raredev.vcspace.tasks.TaskExecutor;
 import com.raredev.vcspace.utils.PreferencesUtils;
 import com.raredev.vcspace.utils.SharedPreferencesKeys;
 import com.raredev.vcspace.utils.ToastUtils;
@@ -59,7 +59,8 @@ public class CloneRepository {
     dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
     dialog.setOnShowListener(
         (p1) -> {
-          TextInputEditText repoUrl = bind.etInput;
+          bind.inputLayout.setHint(R.string.clone_url_hint);
+          TextInputEditText repoUrl = bind.inputEdittext;
           Button positive = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
 
           repoUrl.requestFocus();
@@ -166,7 +167,7 @@ public class CloneRepository {
   private boolean verifyCredentials() {
     var prefs = PreferencesUtils.getDefaultPrefs();
     return prefs.getString(SharedPreferencesKeys.KEY_CREDENTIAL_USERNAME, "").isEmpty()
-        || prefs.getString(SharedPreferencesKeys.KEY_CREDENTIAL_USERNAME, "").isEmpty();
+        && prefs.getString(SharedPreferencesKeys.KEY_CREDENTIAL_PASSWORD, "").isEmpty();
   }
 
   public class CloneProgressMonitor implements ProgressMonitor {
@@ -209,7 +210,7 @@ public class CloneRepository {
     @Override
     public void showDuration(boolean arg0) {}
   }
-  
+
   public interface CloneListener {
     void onCloneSuccess(File output);
 

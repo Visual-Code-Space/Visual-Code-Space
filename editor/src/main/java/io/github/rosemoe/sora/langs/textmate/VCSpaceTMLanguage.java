@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.PathUtils;
 import com.raredev.vcspace.editor.completion.SimpleSnippetCompletionItem;
-import com.raredev.vcspace.task.TaskExecutor;
+import com.raredev.vcspace.tasks.TaskExecutor;
 import com.raredev.vcspace.utils.Logger;
 import com.raredev.vcspace.utils.PreferencesUtils;
 import io.github.rosemoe.sora.lang.completion.CompletionHelper;

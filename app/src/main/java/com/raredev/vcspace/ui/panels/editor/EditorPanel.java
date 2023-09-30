@@ -13,7 +13,7 @@ import com.raredev.vcspace.events.PanelEvent;
 import com.raredev.vcspace.events.PreferenceChangedEvent;
 import com.raredev.vcspace.models.DocumentModel;
 import com.raredev.vcspace.res.R;
-import com.raredev.vcspace.task.TaskExecutor;
+import com.raredev.vcspace.tasks.TaskExecutor;
 import com.raredev.vcspace.ui.panels.Panel;
 import com.raredev.vcspace.utils.PanelUtils;
 import com.raredev.vcspace.utils.PreferencesUtils;

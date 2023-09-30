@@ -15,7 +15,7 @@ import com.raredev.vcspace.fragments.sheets.OptionsBottomSheet;
 import com.raredev.vcspace.models.FileModel;
 import com.raredev.vcspace.models.OptionModel;
 import com.raredev.vcspace.res.R;
-import com.raredev.vcspace.task.TaskExecutor;
+import com.raredev.vcspace.tasks.TaskExecutor;
 import com.raredev.vcspace.ui.panels.Panel;
 import com.raredev.vcspace.utils.FileManagerDialogs;
 import com.raredev.vcspace.utils.FileUtil;
@@ -127,8 +127,11 @@ public class FileExplorerPanel extends Panel implements FileAdapter.FileListener
                   refreshFiles();
                 });
           } else if (option.getName().equals(getContext().getString(R.string.delete))) {
-            FileManagerDialogs.deleteFile(
-                getContext(), selectedFiles, file.toFile(), (deletedFile) -> refreshFiles());
+            var filesToDelete = new ArrayList<>(selectedFiles);
+            if (filesToDelete.isEmpty()) {
+              filesToDelete.add(file);
+            }
+            FileManagerDialogs.deleteFile(getContext(), filesToDelete, (files) -> refreshFiles());
           }
           optionsSheet.dismiss();
         });

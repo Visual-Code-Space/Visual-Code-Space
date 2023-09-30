@@ -1,13 +1,14 @@
-package com.raredev.vcspace.task;
+package com.raredev.vcspace.tasks;
 
 import com.blankj.utilcode.util.ThreadUtils;
+import com.raredev.vcspace.callback.PushCallback;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
 public class TaskExecutor {
 
-  public static <R> CompletableFuture executeAsync(Callable<R> callable, Callback callback) {
+  public static <R> CompletableFuture executeAsync(Callable<R> callable, PushCallback<R> callback) {
     return CompletableFuture.supplyAsync(
             () -> {
               try {
@@ -18,7 +19,7 @@ public class TaskExecutor {
             })
         .whenComplete(
             (result, throwable) -> {
-              ThreadUtils.runOnUiThread(() -> callback.complete(result));
+              ThreadUtils.runOnUiThread(() -> callback.onComplete(result));
             });
   }
 
@@ -40,10 +41,6 @@ public class TaskExecutor {
             (result, throwable) -> {
               ThreadUtils.runOnUiThread(() -> callback.complete(result, throwable));
             });
-  }
-
-  public interface Callback<R> {
-    void complete(R result);
   }
 
   public interface CallbackWithError<R> {

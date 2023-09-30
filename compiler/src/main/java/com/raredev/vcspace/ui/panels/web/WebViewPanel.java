@@ -168,8 +168,8 @@ public class WebViewPanel extends Panel {
     dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
     dialog.setOnShowListener(
         (p1) -> {
-          TextInputEditText editText = bind.etInput;
-          bind.tvInputLayout.setHint(message);
+          TextInputEditText editText = bind.inputEdittext;
+          bind.inputLayout.setHint(message);
           editText.setText(defaultValue);
           Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
           Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);

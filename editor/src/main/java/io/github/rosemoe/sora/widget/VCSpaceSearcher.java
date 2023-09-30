@@ -1,7 +1,7 @@
 package io.github.rosemoe.sora.widget;
 
 import com.raredev.vcspace.res.R;
-import com.raredev.vcspace.task.TaskExecutor;
+import com.raredev.vcspace.tasks.TaskExecutor;
 import com.raredev.vcspace.utils.DialogUtils;
 import com.raredev.vcspace.utils.ToastUtils;
 import io.github.rosemoe.sora.event.SelectionChangeEvent;

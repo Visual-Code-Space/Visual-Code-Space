@@ -7,20 +7,19 @@ import android.content.pm.PackageManager;
 import android.view.LayoutInflater;
 import android.view.WindowManager;
 import android.widget.Button;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
-import com.raredev.vcspace.callback.MessageCallback;
 import com.raredev.vcspace.callback.PushCallback;
 import com.raredev.vcspace.git.CloneRepository;
 import com.raredev.vcspace.models.FileModel;
 import com.raredev.vcspace.progressdialog.ProgressDialog;
 import com.raredev.vcspace.res.R;
 import com.raredev.vcspace.res.databinding.LayoutTextinputBinding;
-import com.raredev.vcspace.task.TaskExecutor;
+import com.raredev.vcspace.tasks.TaskExecutor;
+import com.raredev.vcspace.tasks.file.DeleteFilesTask;
 import java.io.File;
 import java.util.List;
 
@@ -43,8 +42,8 @@ public class FileManagerDialogs {
 
     dialog.setOnShowListener(
         (p1) -> {
-          TextInputEditText et_filename = binding.etInput;
-          binding.tvInputLayout.setHint(context.getString(R.string.file_name_hint));
+          TextInputEditText et_filename = binding.inputEdittext;
+          binding.inputLayout.setHint(context.getString(R.string.file_name_hint));
           et_filename.requestFocus();
           Button createFolder = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
           createFolder.setOnClickListener(
@@ -75,7 +74,6 @@ public class FileManagerDialogs {
 
   public static void renameFile(Context context, File file, PushCallback<File[]> callback) {
     LayoutTextinputBinding binding = LayoutTextinputBinding.inflate(LayoutInflater.from(context));
-
     AlertDialog dialog =
         new MaterialAlertDialogBuilder(context)
             .setView(binding.getRoot())
@@ -86,10 +84,10 @@ public class FileManagerDialogs {
     dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
     dialog.setOnShowListener(
         (p1) -> {
-          TextInputEditText et_filename = binding.etInput;
+          TextInputEditText et_filename = binding.inputEdittext;
           Button positive = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
 
-          binding.tvInputLayout.setHint(R.string.rename_hint);
+          binding.inputLayout.setHint(R.string.rename_hint);
 
           String oldFileName = file.getName();
 
@@ -121,97 +119,41 @@ public class FileManagerDialogs {
   }
 
   public static void deleteFile(
-      Context context, List<FileModel> selectedFiles, File file, PushCallback<File> callback) {
+      Context context, List<FileModel> files, PushCallback<List<FileModel>> callback) {
     new MaterialAlertDialogBuilder(context)
-        .setTitle(selectedFiles.isEmpty() ? R.string.delete : R.string.delete_multi)
+        .setTitle(files.size() == 1 ? R.string.delete : R.string.delete_multi)
         .setMessage(
-            selectedFiles.isEmpty()
-                ? context.getString(R.string.delete_message, file.getName())
-                : context.getString(R.string.delete_count_message, selectedFiles.size()))
+            files.size() == 1
+                ? context.getString(R.string.delete_message, files.get(0).getName())
+                : context.getString(R.string.delete_count_message, files.size()))
         .setPositiveButton(
             R.string.delete,
             (di, witch) -> {
-              ProgressDialog progress =
-                  DialogUtils.newProgressDialog(
-                      context,
-                      context.getString(R.string.deleting),
-                      context.getString(R.string.deleting_please_wait));
+              ProgressDialog builder =
+                  ProgressDialog.create(context)
+                      .setTitle(R.string.deleting)
+                      .setLoadingMessage(R.string.deleting_please_wait);
 
-              AlertDialog dialog = progress.create();
+              AlertDialog dialog = builder.create();
               dialog.setCancelable(false);
               dialog.show();
 
               TaskExecutor.executeAsyncProvideError(
-                  () -> {
-                    return deleteFiles(
-                        selectedFiles,
-                        file,
-                        message ->
-                            ThreadUtils.runOnUiThread(() -> progress.setLoadingMessage(message)));
-                  },
+                  new DeleteFilesTask(
+                      files,
+                      message ->
+                          ThreadUtils.runOnUiThread(() -> builder.setLoadingMessage(message))),
                   (result, error) -> {
                     dialog.cancel();
                     if (result) {
                       ToastUtils.showShort(
                           context.getString(R.string.deleted_message), ToastUtils.TYPE_SUCCESS);
-
-                      callback.onComplete(file);
                     }
+                    callback.onComplete(files);
                   });
             })
         .setNegativeButton(R.string.no, (di, witch) -> di.dismiss())
         .show();
-  }
-
-  private static boolean deleteFiles(
-      List<FileModel> selectedFiles, File file, @NonNull final MessageCallback callback) {
-    if (!selectedFiles.isEmpty()) {
-      for (FileModel fileModel : selectedFiles) {
-        deleteFiles(fileModel.toFile(), callback);
-      }
-      return true;
-    }
-
-    return deleteFiles(file, callback);
-  }
-
-  private static boolean deleteFiles(File file, @NonNull final MessageCallback callback) {
-    if (!file.exists()) return false;
-
-    callback.sendMessage("Deleting " + file.getName());
-
-    if (file.isFile()) {
-      if (file.delete()) {
-        callback.sendMessage(file.getName() + " deleted!");
-        return true;
-      }
-      return false;
-    }
-
-    File[] fileArr = file.listFiles();
-
-    if (fileArr != null) {
-      for (File subFile : fileArr) {
-        if (subFile.isDirectory()) {
-          if (!deleteFiles(subFile, callback)) {
-            return false; // Returns false if deletion fails in any subdirectories
-          }
-        }
-
-        if (subFile.isFile()) {
-          if (!subFile.delete()) {
-            return false; // Returns false if deletion fails on any file
-          }
-          callback.sendMessage(subFile.getName() + " deleted!");
-        }
-      }
-    }
-
-    if (file.delete()) {
-      callback.sendMessage(file.getName() + " deleted!");
-      return true;
-    }
-    return false;
   }
 
   public static void showApkInfoDialog(Context context, File file) {

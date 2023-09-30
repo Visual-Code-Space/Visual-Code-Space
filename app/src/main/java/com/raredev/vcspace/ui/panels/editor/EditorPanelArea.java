@@ -7,7 +7,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.tabs.TabLayout;
 import com.raredev.vcspace.callback.PushCallback;
 import com.raredev.vcspace.res.R;
-import com.raredev.vcspace.task.TaskExecutor;
+import com.raredev.vcspace.tasks.TaskExecutor;
 import com.raredev.vcspace.ui.panels.Panel;
 import com.raredev.vcspace.ui.panels.PanelArea;
 import com.raredev.vcspace.ui.panels.web.WebViewPanel;
