@@ -44,9 +44,6 @@
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".activities.MarkdownViewActivity"
-            android:parentActivityName=".activities.EditorActivity" />
-        <activity
             android:name=".activities.CrashActivity"
             android:exported="true" />
 

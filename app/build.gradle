@@ -1,6 +1,6 @@
 plugins {
   id 'com.android.application'
-  id 'org.jetbrains.kotlin.android'
+  id 'kotlin-android'
   id 'com.google.android.gms.oss-licenses-plugin'
 }
 
@@ -16,6 +16,10 @@ android {
 
     versionCode rootProject.ext.versionCode
     versionName rootProject.ext.versionName
+
+    vectorDrawables { 
+      useSupportLibrary true
+    }
   }
 
   signingConfigs {
@@ -26,10 +30,10 @@ android {
       storePassword "raredevKey"
     }
   }
-    
+
   buildTypes {
     release {
-      minifyEnabled false
+      minifyEnabled true
       proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
       signingConfig signingConfigs.global
     }
@@ -40,6 +44,7 @@ android {
   }
 
   compileOptions {
+    coreLibraryDesugaringEnabled true
     sourceCompatibility JavaVersion.VERSION_17
     targetCompatibility JavaVersion.VERSION_17
   }
@@ -77,7 +82,9 @@ dependencies {
   implementation "androidx.activity:activity-ktx:$activity_version"
   implementation 'androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version'
   implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version'
-  
+
+  coreLibraryDesugaring(androidx.desugar)
+
   implementation androidx.core
   implementation androidx.core_ktx
   implementation androidx.appcompat
@@ -89,15 +96,15 @@ dependencies {
   implementation google.oss_licenses
   implementation google.guava
   implementation google.gson
-  
+
   implementation common.utilcode
   implementation common.jgit
   implementation common.eventbus
-  
+
   implementation platform("io.github.Rosemoe.sora-editor:bom:0.22.1-497981c-SNAPSHOT")
   implementation "io.github.Rosemoe.sora-editor:editor"
   implementation "io.github.Rosemoe.sora-editor:language-textmate"
-  
+
   implementation project(path: ':common')
   implementation project(path: ':common-res')
   implementation project(path: ':emulatorview')
