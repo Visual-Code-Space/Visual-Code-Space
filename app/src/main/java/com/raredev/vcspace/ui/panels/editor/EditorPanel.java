@@ -23,6 +23,7 @@ import io.github.rosemoe.sora.langs.textmate.TextMateColorScheme;
 import io.github.rosemoe.sora.langs.textmate.VCSpaceTMLanguage;
 import io.github.rosemoe.sora.langs.textmate.provider.TextMateProvider;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
+import io.github.rosemoe.sora.text.LineSeparator;
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme;
 
 public class EditorPanel extends Panel {
@@ -44,8 +45,10 @@ public class EditorPanel extends Panel {
   @Override
   public void viewCreated(View view) {
     super.viewCreated(view);
-    binding.editor.setColorScheme(createColorScheme());
     binding.editor.setDocument(document);
+    binding.editor.setColorScheme(createColorScheme());
+    binding.editor.getProps().autoCompletionOnComposing = true;
+    binding.editor.setLineSeparator(LineSeparator.LF);
     binding.pathList.setEnabled(PreferencesUtils.showFilePath());
     binding.pathList.setColorScheme(getEditor().getColorScheme());
 
@@ -105,6 +108,7 @@ public class EditorPanel extends Panel {
   private void postRead() {
     binding.editor.setCursorPosition(document.getPositionLine(), document.getPositionColumn());
     binding.editor.setEditorLanguage(createLanguage());
+    binding.editor.requestFocus();
     subscribeContentChangeEvent();
     updatePathList();
     setLoading(false);
@@ -115,13 +119,6 @@ public class EditorPanel extends Panel {
         .subscribeEvent(
             ContentChangeEvent.class,
             (event, subscribe) -> {
-              if (document == null) {
-                return;
-              }
-              var cursor = binding.editor.getCursor();
-              document.setPositionLine(cursor.getRightLine());
-              document.setPositionColumn(cursor.getRightColumn());
-              document.setContent(getCode().getBytes());
               if (!PreferencesUtils.autoSave()) {
                 markModifiedPanel();
               } else {

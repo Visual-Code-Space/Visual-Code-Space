@@ -20,6 +20,7 @@ public class DeleteFilesTask implements Callable<Boolean> {
   public Boolean call() throws Exception {
     int count = 0;
     for (FileModel file : files) {
+      callback.sendMessage("Deleting: " + file.getName());
       if (FileUtils.delete(file.getPath())) {
         callback.sendMessage(file.getName() + " deleted!");
         count++;

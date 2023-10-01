@@ -32,7 +32,12 @@ public class PanelUtils {
       map.put("pinned", String.valueOf(panel.isPinned()));
 
       if (panel instanceof EditorPanel) {
-        map.put("document", gson.toJson(((EditorPanel) panel).getDocument()));
+        var editorPanel = (EditorPanel) panel;
+        var document = editorPanel.getDocument();
+        document.setContent(editorPanel.getCode().getBytes());
+        document.setPositionLine(editorPanel.getEditor().getCursor().getRightLine());
+        document.setPositionColumn(editorPanel.getEditor().getCursor().getRightColumn());
+        map.put("document", gson.toJson(document));
       }
 
       if (panel instanceof FileExplorerPanel) {
