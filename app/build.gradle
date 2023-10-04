@@ -73,7 +73,7 @@ android {
 
 dependencies {
   def lifecycle_version = "2.6.1"
-  def activity_version = "1.7.2"
+  def activity_version = "1.8.0"
 
   implementation fileTree(dir: 'libs', include: ['*.jar'])
   implementation "androidx.activity:activity:$activity_version"
