@@ -35,9 +35,9 @@ dependencies {
   implementation common.eventbus
   implementation common.jsoup
   
-  implementation platform("io.github.Rosemoe.sora-editor:bom:0.22.1-497981c-SNAPSHOT")
-  implementation "io.github.Rosemoe.sora-editor:editor"
-  implementation "io.github.Rosemoe.sora-editor:language-textmate"
+  implementation(platform("io.github.Rosemoe.sora-editor:bom:0.22.1-497981c-SNAPSHOT"))
+  implementation("io.github.Rosemoe.sora-editor:editor")
+  implementation("io.github.Rosemoe.sora-editor:language-textmate")
   
   implementation project(path: ':common')
   implementation project(path: ':common-res')

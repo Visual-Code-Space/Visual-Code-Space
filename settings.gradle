@@ -14,7 +14,7 @@ dependencyResolutionManagement {
     maven { url = uri("https://jitpack.io") }
   }
 }
-rootProject.name = "Visual Code Space"
+rootProject.name = "VCSpace"
 
 include ':app'
 include ':common'

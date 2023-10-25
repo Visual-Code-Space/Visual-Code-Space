@@ -72,17 +72,6 @@ android {
 }
 
 dependencies {
-  def lifecycle_version = "2.6.1"
-  def activity_version = "1.7.2"
-
-  implementation fileTree(dir: 'libs', include: ['*.jar'])
-  implementation "androidx.activity:activity:$activity_version"
-  implementation 'androidx.lifecycle:lifecycle-livedata:$lifecycle_version'
-  implementation 'androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version'
-  implementation "androidx.activity:activity-ktx:$activity_version"
-  implementation 'androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version'
-  implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version'
-
   coreLibraryDesugaring(androidx.desugar)
 
   implementation androidx.core
@@ -101,9 +90,9 @@ dependencies {
   implementation common.jgit
   implementation common.eventbus
 
-  implementation platform("io.github.Rosemoe.sora-editor:bom:0.22.1-497981c-SNAPSHOT")
-  implementation "io.github.Rosemoe.sora-editor:editor"
-  implementation "io.github.Rosemoe.sora-editor:language-textmate"
+  implementation(platform("io.github.Rosemoe.sora-editor:bom:0.22.1-497981c-SNAPSHOT"))
+  implementation("io.github.Rosemoe.sora-editor:editor")
+  implementation("io.github.Rosemoe.sora-editor:language-textmate")
 
   implementation project(path: ':common')
   implementation project(path: ':common-res')
