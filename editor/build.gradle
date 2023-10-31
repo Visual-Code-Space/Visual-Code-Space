@@ -28,6 +28,8 @@ android {
 dependencies {
   implementation fileTree(dir: 'libs', include: ['*.jar'])
   implementation androidx.appcompat
+  implementation androidx.webkit
+  implementation androidx.javascriptengine
   implementation google.material
   implementation google.gson
   implementation google.guava

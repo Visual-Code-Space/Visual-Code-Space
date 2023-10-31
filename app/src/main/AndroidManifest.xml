@@ -18,11 +18,12 @@
         android:requestLegacyExternalStorage="true"
         android:resizeableActivity="true"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:enableOnBackInvokedCallback="true">
 
         <activity
             android:name=".activities.EditorActivity"
-            android:configChanges="orientation|screenSize"
+            android:configChanges="orientation"
             android:windowSoftInputMode="adjustResize"
             android:exported="true">
             <intent-filter>

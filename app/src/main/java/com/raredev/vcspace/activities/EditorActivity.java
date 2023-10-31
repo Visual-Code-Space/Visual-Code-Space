@@ -26,6 +26,7 @@ import com.blankj.utilcode.util.PathUtils;
 import com.blankj.utilcode.util.UriUtils;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.databinding.ActivityEditorBinding;
+import com.raredev.vcspace.editor.ace.VCSpaceWebInterface;
 import com.raredev.vcspace.editor.completion.CompletionProvider;
 import com.raredev.vcspace.events.OnFileRenamedEvent;
 import com.raredev.vcspace.events.PreferenceChangedEvent;
@@ -37,8 +38,8 @@ import com.raredev.vcspace.models.Symbol;
 import com.raredev.vcspace.ui.panels.Panel;
 import com.raredev.vcspace.ui.panels.PanelsManager;
 import com.raredev.vcspace.ui.panels.compiler.ExecutePanel;
+import com.raredev.vcspace.ui.panels.editor.AceEditorPanel;
 import com.raredev.vcspace.ui.panels.editor.EditorPanel;
-import com.raredev.vcspace.ui.panels.searcher.SearcherPanel;
 import com.raredev.vcspace.ui.panels.snippets.SnippetsPanel;
 import com.raredev.vcspace.ui.panels.web.WebViewPanel;
 import com.raredev.vcspace.utils.Logger;
@@ -108,15 +109,16 @@ public class EditorActivity extends BaseActivity
   @Override
   public boolean onPrepareOptionsMenu(Menu menu) {
     EditorPanel editorPanel = panelsManager.getPanelArea().getSelectedEditorPanel();
+    AceEditorPanel aceEditorPanel = panelsManager.getPanelArea().getSelectedAceEditorPanel();
     WebViewPanel webViewPanel = panelsManager.getPanelArea().getSelectedWebViewPanel();
-    if (editorPanel != null) {
-      var document = editorPanel.getDocument();
+    if (aceEditorPanel != null) {
+      var document = aceEditorPanel.getDocument();
       menu.findItem(R.id.menu_execute).setVisible(true);
       menu.findItem(R.id.menu_editor).setVisible(!KeyboardUtils.isSoftInputVisible(this));
       menu.findItem(R.id.menu_undo).setVisible(KeyboardUtils.isSoftInputVisible(this));
       menu.findItem(R.id.menu_redo).setVisible(KeyboardUtils.isSoftInputVisible(this));
-      menu.findItem(R.id.menu_undo).setEnabled(editorPanel.getEditor().canUndo());
-      menu.findItem(R.id.menu_redo).setEnabled(editorPanel.getEditor().canRedo());
+      menu.findItem(R.id.menu_undo).setEnabled(VCSpaceWebInterface.hasUndo);
+      menu.findItem(R.id.menu_redo).setEnabled(VCSpaceWebInterface.hasRedo);
       menu.findItem(R.id.menu_save).setEnabled(document.isModified());
       menu.findItem(R.id.menu_save_as).setEnabled(true);
       menu.findItem(R.id.menu_save_all)
@@ -143,26 +145,27 @@ public class EditorActivity extends BaseActivity
   public boolean onOptionsItemSelected(MenuItem item) {
     var id = item.getItemId();
     EditorPanel editorPanel = panelsManager.getPanelArea().getSelectedEditorPanel();
+    AceEditorPanel aceEditorPanel = panelsManager.getPanelArea().getSelectedAceEditorPanel();
     WebViewPanel webViewPanel = panelsManager.getPanelArea().getSelectedWebViewPanel();
-    if (editorPanel != null) {
-      var document = editorPanel.getDocument();
+    if (aceEditorPanel != null) {
+      var document = aceEditorPanel.getDocument();
       if (id == R.id.menu_execute) executeDocument(document);
-      else if (id == R.id.menu_undo) editorPanel.undo();
-      else if (id == R.id.menu_redo) editorPanel.redo();
+      else if (id == R.id.menu_undo) aceEditorPanel.getEditor().undo();
+      else if (id == R.id.menu_redo) aceEditorPanel.getEditor().redo();
       else if (id == R.id.menu_search) {
-        panelsManager.addFloatingPanel(SearcherPanel.createFloating(this, binding.panelArea));
-        panelsManager.sendEvent(new UpdateSearcherEvent(editorPanel.getEditor().getSearcher()));
+//        panelsManager.addFloatingPanel(SearcherPanel.createFloating(this, binding.panelArea));
+//        panelsManager.sendEvent(new UpdateSearcherEvent(editorPanel.getEditor().getSearcher()));
       } else if (id == R.id.menu_save)
         panelsManager.getPanelArea().saveFile(true, none -> invalidateOptionsMenu());
       else if (id == R.id.menu_save_as) {
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("text/*");
-        intent.putExtra(Intent.EXTRA_TITLE, editorPanel.getDocument().getName());
+        intent.putExtra(Intent.EXTRA_TITLE, aceEditorPanel.getDocument().getName());
         launcher.launch(intent);
       } else if (id == R.id.menu_save_all)
         panelsManager.getPanelArea().saveAllFiles(true, none -> invalidateOptionsMenu());
-      else if (id == R.id.menu_reload) editorPanel.reloadFile();
+      else if (id == R.id.menu_reload) aceEditorPanel.reloadFile();
 
     } else if (webViewPanel != null) {
       WebView webView = webViewPanel.getWebView();
@@ -345,8 +348,8 @@ public class EditorActivity extends BaseActivity
       return;
     }
 
-    EditorPanel editorPanel =
-        new EditorPanel(this, new DocumentModel(path, FileUtils.getFileName(path)));
+    AceEditorPanel editorPanel =
+        new AceEditorPanel(this, new DocumentModel(path, FileUtils.getFileName(path)));
     panelsManager.addPanel(editorPanel, true);
   }
 

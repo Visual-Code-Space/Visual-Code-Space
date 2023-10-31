@@ -1,0 +1,29 @@
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2') format('woff2'),
+    url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff/JetBrainsMono-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+  overflow: hidden;
+}
+
+.ace_mobile-menu {
+  display: none;
+}
+
+#editor-container {
+  position: absolute;
+  display: inline-block;
+  font-family: 'JetBrains Mono';
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}

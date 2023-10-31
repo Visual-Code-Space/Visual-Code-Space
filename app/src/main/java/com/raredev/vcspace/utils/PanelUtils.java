@@ -7,6 +7,7 @@ import com.google.gson.reflect.TypeToken;
 import com.raredev.vcspace.models.DocumentModel;
 import com.raredev.vcspace.ui.panels.Panel;
 import com.raredev.vcspace.ui.panels.PanelArea;
+import com.raredev.vcspace.ui.panels.editor.AceEditorPanel;
 import com.raredev.vcspace.ui.panels.editor.EditorPanel;
 import com.raredev.vcspace.ui.panels.file.FileExplorerPanel;
 import com.raredev.vcspace.ui.panels.web.WebViewPanel;
@@ -101,6 +102,26 @@ public class PanelUtils {
           count++;
         }
         builder.addPath((EditorPanel) panel, doc.getPath());
+      }
+    }
+    if (count > 1) {
+      return builder.getShortPath(selectedPanel);
+    } else {
+      return selectedPanel.getDocument().getName();
+    }
+  }
+  
+  public static String getUniqueTabTitle(AceEditorPanel selectedPanel, List<Panel> panels) {
+    int count = 0;
+    UniqueNameBuilder<AceEditorPanel> builder = new UniqueNameBuilder<>("", "/");
+
+    for (Panel panel : panels) {
+      if (panel instanceof AceEditorPanel) {
+        var doc = ((AceEditorPanel) panel).getDocument();
+        if (doc.getName().equals(selectedPanel.getDocument().getName())) {
+          count++;
+        }
+        builder.addPath((AceEditorPanel) panel, doc.getPath());
       }
     }
     if (count > 1) {

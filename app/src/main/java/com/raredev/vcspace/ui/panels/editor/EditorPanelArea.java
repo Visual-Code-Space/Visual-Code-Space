@@ -6,6 +6,7 @@ import android.widget.FrameLayout;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.tabs.TabLayout;
 import com.raredev.vcspace.callback.PushCallback;
+import com.raredev.vcspace.editor.ace.VCSpaceWebInterface;
 import com.raredev.vcspace.res.R;
 import com.raredev.vcspace.tasks.TaskExecutor;
 import com.raredev.vcspace.ui.panels.Panel;
@@ -117,9 +118,9 @@ public class EditorPanelArea extends PanelArea {
   }
 
   private void saveDocument(Panel panel) {
-    if (panel != null && panel instanceof EditorPanel) {
-      EditorPanel editorPanel = (EditorPanel) panel;
-      editorPanel.saveDocument();
+    if (panel != null && panel instanceof AceEditorPanel) {
+      AceEditorPanel editorPanel = (AceEditorPanel) panel;
+      editorPanel.saveDocument(VCSpaceWebInterface.value);
     }
   }
 
@@ -130,6 +131,17 @@ public class EditorPanelArea extends PanelArea {
   public EditorPanel getEditorPanel(Panel panel) {
     if (panel instanceof EditorPanel) {
       return (EditorPanel) panel;
+    }
+    return null;
+  }
+  
+  public AceEditorPanel getSelectedAceEditorPanel() {
+    return getAceEditorPanel(selectedPanel);
+  }
+
+  public AceEditorPanel getAceEditorPanel(Panel panel) {
+    if (panel instanceof AceEditorPanel) {
+      return (AceEditorPanel) panel;
     }
     return null;
   }
