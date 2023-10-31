@@ -7,6 +7,7 @@
     <string name="close">Fechar</string>
     <string name="close_others">Fechar outros</string>
     <string name="close_all">Fechar tudo</string>
+    <string name="close_app">Fechar o aplicativo</string>
     <string name="pin">Fixar</string>
     <string name="unpin">Desafixar</string>
     <string name="comment_line">Linha de comentário</string>
@@ -17,7 +18,6 @@
     <string name="cut">Cortar</string>
     <string name="paste">Colar</string>
     <string name="no_file_opened">Nenhum arquivo aberto</string>
-    <string name="no_panels">Sem painéis</string>
     <string name="refresh">Atualizar</string>
     <string name="loading">Carregando..</string>
     <string name="empty">Vazio</string>
@@ -54,9 +54,7 @@
     <string name="saved_files">Arquivos salvos</string>
     <string name="existing_file">Arquivo já existente!</string>
     <string name="delete">Deletar</string>
-    <string name="delete_multi">Excluir vários arquivos</string>
     <string name="delete_message">Tem certeza que deseja deletar \"%1$s\"?</string>
-    <string name="delete_count_message">Tem certeza que deseja deletar %1$s arquivos?</string>
     <string name="deleted_message">Deletado</string>
     <string name="deleting">Apagando</string>
     <string name="deleting_please_wait">Apagando por favor aguarde.</string>
@@ -65,7 +63,7 @@
     <string name="file">Arquivo</string>
     <string name="folder">Pasta</string>
     <string name="rename">Renomear</string>
-    <string name="renamed_message">\"%1$s\" renomeado para \"%2$s\"</string>
+    <string name="renamed_message">Arquivo Renomeado</string>
     <string name="copy_path">Copiar caminho</string>
     <string name="rename_hint">Digite um novo nome:</string>
     <string name="open_folder">Abrir uma pasta</string>
@@ -91,7 +89,8 @@
     <string name="enter_language">Digite a linguagem</string>
     <string name="execute">Executar</string>
     <string name="output">Saída</string>
-    <string name="add_panel">Adicionar painel</string>
+    <string name="file_explorer">Explorador de Arquivos</string>
+    <string name="last_modified">Última modificação: %1$s</string>
 
     <!-- Git -->
     <string name="no_open_repository">Nenhum repositório aberto</string>
@@ -123,11 +122,11 @@
 
     <!-- - General -->
     <string name="general">Geral</string>
-    <string name="general_summary">Configuração geral da IDE</string>
+    <string name="general_summary">Configuração geral do aplicativo</string>
     <string name="aparence">Aparência</string>
 
     <string name="title_theme">Tema</string>
-    <string name="pref_theme_summary">Escolha o tema para o IDE</string>
+    <string name="pref_theme_summary">Escolha o tema para o aplicativo</string>
     <string name="pref_theme_system">Tema do sistema</string>
     <string name="pref_theme_dark">Tema escuro</string>
     <string name="pref_theme_light">Tema claro</string>
@@ -158,8 +157,8 @@
     <string name="pref_editor_wordwrap_summary">Se ativado, removerá a rolagem horizontal do editor.</string>
     <string name="pref_editor_linenumbers">Linha de números</string>
     <string name="pref_editor_linenumbers_summary">Exiba os números de linha à esquerda do editor de código.</string>
-    <string name="pref_editor_use_spaces">Usar espaços</string>
-    <string name="pref_editor_use_spaces_summary">Use espaços em vez de tabs(\\t)</string>
+    <string name="pref_editor_use_tab">Usar tabulação</string>
+    <string name="pref_editor_use_tab_summary">Usar tabulação(\\t) em vez de espaços</string>
     <string name="pref_editor_deleteemptylinefast">Apagar linha vazia rapidamente</string>
     <string name="pref_editor_deleteemptylinefast_summary">Se a linha atual tiver apenas espaços, ela será apagada rapidamente.</string>
     <string name="pref_editor_deletetabs">Apagar tabs</string>

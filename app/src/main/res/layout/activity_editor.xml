@@ -4,13 +4,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:id="@+id/drawerLayout">
+    android:id="@+id/drawer_layout">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:fitsSystemWindows="true"
-        android:id="@+id/root">
+        android:id="@+id/main">
 
         <com.google.android.material.appbar.AppBarLayout
             android:layout_height="wrap_content"
@@ -26,38 +25,53 @@
                 android:layout_width="match_parent"
                 android:id="@+id/toolbar" />
 
+            <com.google.android.material.tabs.TabLayout
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                app:tabMode="scrollable"
+                app:tabGravity="start"
+                android:id="@+id/tabs" />
+
         </com.google.android.material.appbar.AppBarLayout>
 
-        <FrameLayout
+        <ViewFlipper
             android:layout_height="0dp"
             android:layout_width="0dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/symbol_input_container"
+            app:layout_constraintBottom_toTopOf="@+id/symbol_input"
             app:layout_constraintTop_toBottomOf="@+id/app_bar"
-            android:id="@+id/panel_area" />
+            android:id="@+id/container" />
 
-        <LinearLayout
-            android:layout_height="wrap_content"
+        <com.raredev.vcspace.ui.SymbolInputView
+            android:layout_height="45dp"
             android:layout_width="0dp"
-            android:orientation="vertical"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/panel_area"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:id="@+id/symbol_input_container">
+            app:layout_constraintTop_toBottomOf="@id/container"
+            android:id="@+id/symbol_input" />
 
-            <View
-                android:layout_height="0.5dp"
-                android:layout_width="match_parent"
-                android:background="?attr/colorOutline" />
+        <View
+            android:layout_height="0.5dp"
+            android:layout_width="0dp"
+            android:background="?attr/colorOutline"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/symbol_input"
+            android:id="@+id/bottom_divider" />
 
-            <com.raredev.vcspace.ui.SymbolInputView
-                android:layout_height="45dp"
-                android:layout_width="wrap_content"
-                android:id="@+id/symbol_input" />
-
-        </LinearLayout>
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+            app:layout_constraintStart_toStartOf="parent"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="@string/no_file_opened"
+            android:id="@+id/no_files" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -66,29 +80,11 @@
         android:layout_width="match_parent"
         android:layout_gravity="start">
 
-        <LinearLayout
+        <androidx.fragment.app.FragmentContainerView
             android:layout_height="match_parent"
             android:layout_width="match_parent"
-            android:background="?attr/colorSurface"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_height="?actionBarSize"
-                android:layout_width="match_parent"
-                android:gravity="center_vertical"
-                android:padding="10dp"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:text="Workspace"
-                android:id="@+id/workspace_title" />
-
-            <FrameLayout
-                android:layout_height="match_parent"
-                android:layout_width="match_parent"
-                android:layout_gravity="start"
-                android:id="@+id/workspace_area" />
-
-        </LinearLayout>
+            android:name="com.raredev.vcspace.fragments.workspace.WorkspaceFragment"
+            android:id="@+id/fragment_file_explorer" />
 
     </com.google.android.material.navigation.NavigationView>
 

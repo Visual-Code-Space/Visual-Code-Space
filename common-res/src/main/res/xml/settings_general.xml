@@ -8,14 +8,14 @@
     app:title="@string/aparence">
 
     <Preference
-      app:icon="@drawable/theme_light_dark"
+      app:icon="@drawable/ic_theme"
       app:key="pref_theme"
       app:title="@string/title_theme"
       app:summary="@string/pref_theme_summary" />
 
     <SwitchPreferenceCompat
       app:defaultValue="true"
-      app:icon="@drawable/palette"
+      app:icon="@drawable/ic_palette"
       app:key="pref_dynamiccolors"
       app:title="@string/pref_materialyou"
       app:summary="@string/pref_materialyou_summary" />

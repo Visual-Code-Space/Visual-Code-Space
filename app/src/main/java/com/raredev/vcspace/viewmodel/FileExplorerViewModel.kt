@@ -1,0 +1,59 @@
+package com.raredev.vcspace.viewmodel
+
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.blankj.utilcode.util.PathUtils
+import com.raredev.vcspace.utils.FileUtil
+import java.io.File
+import java.util.Arrays
+import java.util.Comparator
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.launch
+
+class FileExplorerViewModel: ViewModel() {
+
+  private val _files = MutableLiveData<List<File>>(emptyList())
+  private val _currentPath = MutableLiveData<String>(PathUtils.getRootPathExternalFirst())
+
+  val files: LiveData<List<File>> = _files
+  val currentPath: LiveData<String> = _currentPath
+
+  fun backPath() {
+    if (_currentPath.value.equals(PathUtils.getRootPathExternalFirst())) {
+      return
+    }
+    setCurrentPath(FileUtil.getParentPath(_currentPath.value))
+  }
+
+  fun setCurrentPath(path: String) {
+    _currentPath.value = path
+    refreshFiles()
+  }
+
+  fun refreshFiles() {
+    viewModelScope.launch(Dispatchers.IO) {
+      val listFiles = File(_currentPath.value).listFiles()
+
+      val files: MutableList<File> = ArrayList()
+
+      if (listFiles != null) {
+        Arrays.sort(listFiles, FOLDER_FIRST_ORDER)
+        for (file in listFiles) {
+          files.add(file)
+        }
+      }
+      withContext(Dispatchers.Main) {
+        _files.value = files
+      }
+    }
+  }
+
+  companion object {
+    val FOLDER_FIRST_ORDER: Comparator<File> = compareBy<File> { file ->
+      if (file.isFile) 1 else 0
+    }.thenBy { it.name.lowercase() }
+  }
+}

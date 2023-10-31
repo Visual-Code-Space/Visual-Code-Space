@@ -38,7 +38,7 @@ public class GeneralSettingsFragment extends PreferenceFragmentCompat {
           var selectThemeBuilder = new MaterialAlertDialogBuilder(requireContext());
           selectThemeBuilder.setTitle(R.string.title_theme);
 
-          SharedPreferences prefs = PreferencesUtils.getDefaultPrefs();
+          SharedPreferences prefs = PreferencesUtils.INSTANCE.getPrefs();
 
           var selectedTheme = prefs.getString(SharedPreferencesKeys.KEY_THEME, "default");
           var i = 0;
@@ -53,29 +53,12 @@ public class GeneralSettingsFragment extends PreferenceFragmentCompat {
               (dlg, which) -> {
                 prefs.edit().putString(SharedPreferencesKeys.KEY_THEME, themeValues[which]).apply();
 
-                AppCompatDelegate.setDefaultNightMode(getTheme(themeValues[which]));
+                AppCompatDelegate.setDefaultNightMode(PreferencesUtils.INSTANCE.getAppTheme());
                 dlg.cancel();
               });
           selectThemeBuilder.setPositiveButton(android.R.string.cancel, null);
           selectThemeBuilder.show();
           return true;
         });
-  }
-
-  public static int getThemeFromPrefs() {
-    SharedPreferences prefs = PreferencesUtils.getDefaultPrefs();
-    String selectedTheme = prefs.getString(SharedPreferencesKeys.KEY_THEME, "default");
-    return getTheme(selectedTheme);
-  }
-
-  public static int getTheme(String selectedTheme) {
-    switch (selectedTheme) {
-      case "light":
-        return AppCompatDelegate.MODE_NIGHT_NO;
-      case "dark":
-        return AppCompatDelegate.MODE_NIGHT_YES;
-      default:
-        return AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
-    }
   }
 }

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:padding="5dp"
+    android:id="@+id/root">
+
+    <EditText
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:hint="@string/search"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@id/ignore_letter_case"
+        android:singleLine="true"
+        android:inputType="text"
+        android:id="@+id/search_text" />
+
+    <ImageView
+        android:layout_height="25dp"
+        android:layout_width="25dp"
+        android:src="@drawable/ic_format_letter_case"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_margin="3dp"
+        android:padding="2dp"
+        app:layout_constraintStart_toEndOf="@id/search_text"
+        app:layout_constraintEnd_toStartOf="@id/use_regex"
+        android:id="@+id/ignore_letter_case" />
+
+    <ImageView
+        android:layout_height="25dp"
+        android:layout_width="25dp"
+        android:src="@drawable/ic_regex"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_margin="3dp"
+        android:padding="2dp"
+        app:layout_constraintStart_toEndOf="@id/ignore_letter_case"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:id="@+id/use_regex" />
+
+    <EditText
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:hint="@string/replace"
+        app:layout_constraintStart_toStartOf="parent"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:singleLine="true"
+        app:layout_constraintTop_toBottomOf="@id/search_text"
+        android:inputType="text"
+        android:id="@+id/replace_text" />
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_margin="2dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/goto_next"
+        style="@style/Widget.Material3.Button.TextButton"
+        app:layout_constraintTop_toBottomOf="@id/replace_text"
+        android:id="@+id/goto_last"
+        android:text="PREV" />
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_margin="2dp"
+        app:layout_constraintStart_toEndOf="@id/goto_last"
+        app:layout_constraintEnd_toStartOf="@id/replace"
+        style="@style/Widget.Material3.Button.TextButton"
+        app:layout_constraintTop_toBottomOf="@id/replace_text"
+        android:layout_weight="1.0"
+        android:id="@+id/goto_next"
+        android:text="NEXT" />
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_margin="2dp"
+        app:layout_constraintStart_toEndOf="@id/goto_next"
+        app:layout_constraintEnd_toStartOf="@id/replace_all"
+        style="@style/Widget.Material3.Button.TextButton"
+        app:layout_constraintTop_toBottomOf="@id/replace_text"
+        android:id="@+id/replace"
+        android:text="REP" />
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_margin="2dp"
+        app:layout_constraintStart_toEndOf="@id/replace"
+        app:layout_constraintEnd_toEndOf="parent"
+        style="@style/Widget.Material3.Button.TextButton"
+        app:layout_constraintTop_toBottomOf="@id/replace_text"
+        android:id="@+id/replace_all"
+        android:text="REP ALL" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

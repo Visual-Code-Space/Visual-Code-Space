@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <com.google.android.material.navigationrail.NavigationRailView
+        android:layout_height="match_parent"
+        android:layout_width="58dp"
+        android:background="@drawable/workspace_nav_bg"
+        app:labelVisibilityMode="unlabeled"
+        app:menu="@menu/menu_workspace_nav"
+        app:elevation="1dp"
+        android:id="@+id/nav_rail" />
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_toEndOf="@id/nav_rail"
+        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+        android:ellipsize="end"
+        android:textSize="15sp"
+        android:layout_marginLeft="5dp"
+        android:singleLine="true"
+        android:paddingStart="5dp"
+        android:id="@+id/workspace_text"
+        android:text="Workspace"
+        android:paddingTop="8dp" />
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_toEndOf="@id/nav_rail"
+        android:layout_below="@id/workspace_text"
+        android:ellipsize="end"
+        android:textSize="12sp"
+        android:paddingBottom="8dp"
+        android:layout_marginLeft="5dp"
+        android:textColor="?attr/colorSecondaryVariant"
+        android:singleLine="true"
+        android:paddingStart="5dp"
+        android:id="@+id/title" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_toEndOf="@id/nav_rail"
+        android:layout_below="@id/title"
+        app:navGraph="@navigation/workspace_nav_graph"
+        app:defaultNavHost="true"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:id="@+id/nav_host_fragment" />
+
+</RelativeLayout>

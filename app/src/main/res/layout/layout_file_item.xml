@@ -1,27 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    android:gravity="center_vertical"
-    android:padding="10dp"
-    android:foreground="?attr/selectableItemBackground">
+    android:layout_margin="2dp"
+    android:foreground="@drawable/ripple_effect">
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:layout_height="28dp"
-        android:layout_width="28dp"
+    <ImageView
+        android:layout_height="25dp"
+        android:layout_width="25dp"
         android:layout_centerVertical="true"
-        android:id="@+id/img_icon" />
+        app:tint="?attr/colorSecondaryVariant"
+        android:layout_marginLeft="8dp"
+        android:id="@+id/icon" />
 
-    <com.google.android.material.textview.MaterialTextView
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:gravity="center_vertical"
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_toEndOf="@id/icon"
+        android:gravity="start"
+        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+        android:ellipsize="end"
         android:textSize="14sp"
         android:singleLine="true"
-        android:layout_marginStart="10dp"
-        android:layout_weight="1"
-        android:id="@+id/file_name" />
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="8dp"
+        android:id="@+id/name" />
 
-</LinearLayout>
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_toEndOf="@id/icon"
+        android:layout_marginBottom="8dp"
+        android:layout_below="@id/name"
+        android:gravity="start"
+        android:ellipsize="end"
+        android:textSize="10sp"
+        android:layout_marginLeft="5dp"
+        android:textColor="?attr/colorSecondaryVariant"
+        android:singleLine="true"
+        android:id="@+id/info" />
+
+</RelativeLayout>

@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
-import com.raredev.vcspace.BaseApp;
+import com.raredev.vcspace.app.BaseApplication;
 import com.raredev.vcspace.R;
 import com.raredev.vcspace.fragments.settings.EditorSettingsFragment;
 import com.raredev.vcspace.fragments.settings.FileSettingsFragment;
@@ -69,7 +69,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     Preference github = findPreference(SharedPreferencesKeys.KEY_GITHUB);
     github.setOnPreferenceClickListener(
         (pref) -> {
-          BaseApp.getInstance().openProjectRepo();
+          BaseApplication.Companion.getInstance().openProjectRepo();
           return true;
         });
     Preference licenses = findPreference(SharedPreferencesKeys.KEY_LICENSES);

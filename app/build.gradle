@@ -2,6 +2,7 @@ plugins {
   id 'com.android.application'
   id 'kotlin-android'
   id 'com.google.android.gms.oss-licenses-plugin'
+  id 'androidx.navigation.safeargs.kotlin'
 }
 
 android {
@@ -54,10 +55,9 @@ android {
   }
 
   packagingOptions {
-    resources.excludes.add("license/*")
-    exclude 'META-INF/eclipse.inf'
-    exclude 'about_files/LICENSE-2.0.txt'
-    exclude 'plugin.xml'
+    exclude 'META-INF/README.md'
+    exclude 'META-INF/CHANGES'
+    exclude 'bundle.properties'
     exclude 'plugin.properties'
   }
 
@@ -80,28 +80,28 @@ dependencies {
   implementation androidx.preference
   implementation androidx.fragment
   implementation androidx.splashscreen
+  implementation androidx.nav_fragment_ktx
+  implementation androidx.nav_ui_ktx
+  implementation androidx.nav_dynamic_features
 
   implementation google.material
   implementation google.oss_licenses
   implementation google.guava
   implementation google.gson
 
+  implementation common.editor
   implementation common.utilcode
   implementation common.jgit
   implementation common.eventbus
-
-  implementation(platform("io.github.Rosemoe.sora-editor:bom:0.22.1-497981c-SNAPSHOT"))
-  implementation("io.github.Rosemoe.sora-editor:editor")
-  implementation("io.github.Rosemoe.sora-editor:language-textmate")
+  implementation common.kotlin_coroutines_android
 
   implementation project(path: ':common')
   implementation project(path: ':common-res')
+  implementation project(path: ':editor-sora')
+  implementation project(path: ':editor-sora:lang-textmate')
+  implementation project(path: ':eventbus-events')
   implementation project(path: ':emulatorview')
-  implementation project(path: ':compiler')
-  implementation project(path: ':editor')
-  implementation project(path: ':panels')
   implementation project(path: ':models')
-  implementation project(path: ':treeview')
 
   debugImplementation common.leakcanary
 }

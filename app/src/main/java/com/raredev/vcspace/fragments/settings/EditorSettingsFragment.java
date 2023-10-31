@@ -31,10 +31,10 @@ public class EditorSettingsFragment extends PreferenceFragmentCompat {
               LayoutMaterialSliderBinding.inflate(getLayoutInflater());
           binding.slider.setValueFrom(8.0f);
           binding.slider.setValueTo(27.0f);
-          binding.slider.setValue(PreferencesUtils.getEditorTextSize());
+          binding.slider.setValue(PreferencesUtils.INSTANCE.getTextSize());
           binding.slider.setStepSize(1.0f);
 
-          var prefs = PreferencesUtils.getDefaultPrefs();
+          var prefs = PreferencesUtils.INSTANCE.getPrefs();
 
           new MaterialAlertDialogBuilder(requireContext())
               .setTitle(R.string.pref_editor_textsize)
@@ -57,33 +57,6 @@ public class EditorSettingsFragment extends PreferenceFragmentCompat {
           return true;
         });
 
-    Preference lineHeight = findPreference(SharedPreferencesKeys.KEY_EDITOR_LINEHEIGHT);
-    lineHeight.setOnPreferenceClickListener(
-        (pref) -> {
-          String[] heights = {"1", "2", "3", "4"};
-          var selectLineHeightBuilder = new MaterialAlertDialogBuilder(requireContext());
-          selectLineHeightBuilder.setTitle(R.string.pref_editor_lineheight);
-
-          var prefs = PreferencesUtils.getDefaultPrefs();
-          var selectedHeight = prefs.getInt(SharedPreferencesKeys.KEY_EDITOR_LINEHEIGHT, 3);
-
-          selectLineHeightBuilder.setSingleChoiceItems(
-              heights,
-              selectedHeight - 1,
-              (dlg, which) -> {
-                prefs
-                    .edit()
-                    .putInt(
-                        SharedPreferencesKeys.KEY_EDITOR_LINEHEIGHT,
-                        Integer.valueOf(heights[which]))
-                    .apply();
-                dlg.cancel();
-              });
-          selectLineHeightBuilder.setPositiveButton(android.R.string.cancel, null);
-          selectLineHeightBuilder.show();
-          return true;
-        });
-
     Preference tabSize = findPreference(SharedPreferencesKeys.KEY_EDITOR_TAB_SIZE);
     tabSize.setOnPreferenceClickListener(
         (pref) -> {
@@ -92,7 +65,7 @@ public class EditorSettingsFragment extends PreferenceFragmentCompat {
           var selectTabSizeBuilder = new MaterialAlertDialogBuilder(requireContext());
           selectTabSizeBuilder.setTitle(R.string.pref_editor_tabsize);
 
-          SharedPreferences prefs = PreferencesUtils.getDefaultPrefs();
+          SharedPreferences prefs = PreferencesUtils.INSTANCE.getPrefs();
 
           var selectedSize = prefs.getString(SharedPreferencesKeys.KEY_EDITOR_TAB_SIZE, "4");
           var i = 0;
@@ -129,7 +102,7 @@ public class EditorSettingsFragment extends PreferenceFragmentCompat {
           var selectFontBuilder = new MaterialAlertDialogBuilder(requireContext());
           selectFontBuilder.setTitle(R.string.pref_editor_font);
 
-          SharedPreferences prefs = PreferencesUtils.getDefaultPrefs();
+          SharedPreferences prefs = PreferencesUtils.INSTANCE.getPrefs();
 
           var selectedFont = prefs.getString(SharedPreferencesKeys.KEY_EDITOR_FONT, "firacode");
           var i = 0;

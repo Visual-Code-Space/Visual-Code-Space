@@ -1,0 +1,60 @@
+name: Android CI
+
+on:
+  push:
+    branches: [ "main" ]
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    branches: [ "main" ]
+    paths-ignore:
+      - '**.md'
+  workflow_dispatch:
+
+jobs:
+  build_debug:
+    name: Generate Debug APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Give permission to executable
+        run: chmod +x gradlew
+
+      - name: Generate Debug APK
+        run: ./gradlew assembleDebug
+
+      - uses: actions/upload-artifact@master
+        with:
+          name: app-debug
+          path: app/build/outputs/apk/debug/app-debug.apk
+  build_release:
+    name: Generate Release APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Give permission to executable
+        run: chmod +x gradlew
+
+      - name: Generate Release APK
+        run: ./gradlew assembleRelease
+
+      - uses: actions/upload-artifact@master
+        with:
+          name: app-release
+          path: app/build/outputs/apk/release/app-release.apk

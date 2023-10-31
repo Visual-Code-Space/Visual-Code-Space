@@ -4,27 +4,21 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
 import android.content.res.Configuration;
-import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Environment;
-import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
-import com.raredev.vcspace.BaseApp;
+import com.raredev.vcspace.app.BaseApplication;
 
 public class Utils {
 
-  public static void updateImageTint(ImageView image, int color) {
-    Drawable drawable = image.getDrawable();
-    ColorFilter colorFilter = new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN);
-    drawable.setTintList(ColorStateList.valueOf(color));
-    drawable.setColorFilter(colorFilter);
+  public static void setDrawableTint(Drawable drawable, int color) {
+    drawable.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN));
   }
 
   public static void setActivityTitle(Activity activity, String title) {
@@ -34,7 +28,7 @@ public class Utils {
       activity.getActionBar().setTitle(title);
     }
   }
-  
+
   public static boolean isPermissionGaranted(Context context) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
       return Environment.isExternalStorageManager();
@@ -50,7 +44,7 @@ public class Utils {
       return false;
 
     int uiMode =
-        BaseApp.getInstance().getResources().getConfiguration().uiMode
+        BaseApplication.Companion.getInstance().getResources().getConfiguration().uiMode
             & Configuration.UI_MODE_NIGHT_MASK;
     return uiMode == Configuration.UI_MODE_NIGHT_YES;
   }

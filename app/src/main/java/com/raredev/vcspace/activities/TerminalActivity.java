@@ -1,5 +1,6 @@
 package com.raredev.vcspace.activities;
 
+import com.blankj.utilcode.util.SizeUtils;
 import static com.raredev.vcspace.utils.Environment.getEnvironment;
 
 import android.content.Context;
@@ -95,8 +96,8 @@ public class TerminalActivity extends BaseActivity
     terminal.setTerminalViewClient(this);
     terminal.attachSession(createSession());
     terminal.setKeepScreenOn(true);
-    terminal.setTextSize(14);
-    terminal.setTypeface(ResourcesCompat.getFont(this, PreferencesUtils.getSelectedFont()));
+    terminal.setTextSize(SizeUtils.dp2px(14f));
+    terminal.setTypeface(ResourcesCompat.getFont(this, PreferencesUtils.INSTANCE.getSelectedFont()));
 
     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-1, 0);
     params.weight = 1f;
@@ -224,7 +225,7 @@ public class TerminalActivity extends BaseActivity
 
   @Override
   public float onScale(float scale) {
-    return 14;
+    return SizeUtils.dp2px(14f);
   }
 
   @Override

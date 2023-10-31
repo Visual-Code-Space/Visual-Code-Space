@@ -68,7 +68,7 @@ public class GitSettingsFragment extends PreferenceFragmentCompat {
     helper.setMovementMethod(LinkMovementMethod.getInstance());
     helper.setHighlightColor(Color.TRANSPARENT);
 
-    var prefs = PreferencesUtils.getDefaultPrefs();
+    var prefs = PreferencesUtils.INSTANCE.getPrefs();
     binding.etInputUsername.setText(
         prefs.getString(SharedPreferencesKeys.KEY_CREDENTIAL_USERNAME, ""));
     binding.etInputPassword.setText(

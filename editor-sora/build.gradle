@@ -1,0 +1,44 @@
+plugins {
+  id 'com.android.library'
+  id 'kotlin-android'
+}
+
+android {
+  namespace 'com.raredev.vcspace.editor'
+  compileSdk rootProject.ext.compileSdk
+  buildToolsVersion rootProject.ext.buildToolsVersion
+
+  defaultConfig {
+    minSdk rootProject.ext.minSdk
+    targetSdk rootProject.ext.targetSdk
+  }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_17
+    targetCompatibility JavaVersion.VERSION_17
+  }
+  buildFeatures {
+    viewBinding true
+  }
+}
+
+dependencies {
+  implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+  implementation androidx.appcompat
+
+  implementation google.material
+  implementation google.gson
+  implementation google.guava
+
+  implementation common.editor
+  implementation common.utilcode
+  implementation common.eventbus
+  implementation common.jsoup
+
+  implementation project(path: ':common')
+  implementation project(path: ':common-res')
+  implementation project(path: ':editor-sora:lang-textmate')
+  implementation project(path: ':eventbus-events')
+  implementation project(path: ':models')
+}

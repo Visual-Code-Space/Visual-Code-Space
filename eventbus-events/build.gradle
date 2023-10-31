@@ -1,0 +1,30 @@
+plugins {
+  id 'com.android.library'
+  id 'kotlin-android'
+}
+
+android {
+  namespace 'com.raredev.vcspace.events'
+  compileSdk rootProject.ext.compileSdk
+  buildToolsVersion rootProject.ext.buildToolsVersion
+
+  defaultConfig {
+    minSdk rootProject.ext.minSdk
+    targetSdk rootProject.ext.targetSdk
+  }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_17
+    targetCompatibility JavaVersion.VERSION_17
+  }
+}
+
+dependencies {
+  implementation androidx.appcompat
+  implementation androidx.preference
+  implementation google.material
+  implementation google.gson
+  implementation common.utilcode
+
+  implementation project(path: ':common-res')
+}

@@ -14,7 +14,7 @@
     <com.google.android.material.appbar.MaterialToolbar
       android:layout_height="wrap_content"
       android:layout_width="match_parent"
-      app:navigationIcon="@drawable/arrow_left"
+      app:navigationIcon="@drawable/ic_arrow_left"
       android:id="@+id/toolbar" />
 
   </com.google.android.material.appbar.AppBarLayout>

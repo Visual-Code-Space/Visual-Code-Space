@@ -1,0 +1,37 @@
+package com.raredev.vcspace.adapters
+
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.R
+import com.raredev.vcspace.databinding.LayoutSheetOptionItemBinding
+import com.raredev.vcspace.models.SheetOptionItem
+
+class SheetOptionsListAdapter(
+  val options: List<SheetOptionItem>,
+  val listener: (SheetOptionItem) -> Unit = {}
+): RecyclerView.Adapter<SheetOptionsListAdapter.VH>() {
+
+  inner class VH(internal val binding: LayoutSheetOptionItemBinding):
+    RecyclerView.ViewHolder(binding.root)
+
+  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
+    return VH(LayoutSheetOptionItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+  }
+
+  override fun onBindViewHolder(holder: VH, position: Int) {
+    holder.binding.apply {
+      val option = options[position]
+
+      icon.setImageResource(option.icon)
+      name.setText(option.name)
+
+      root.setOnClickListener { listener.invoke(option) }
+    }
+  }
+
+  override fun getItemCount(): Int {
+    return options.size
+  }
+}

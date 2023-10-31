@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name=".VCSpaceApplication"
+        android:name=".app.VCSpaceApplication"
         android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:largeHeap="true"
@@ -21,7 +21,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".activities.EditorActivity"
+            android:name=".activities.editor.EditorActivity"
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="adjustResize"
             android:exported="true">

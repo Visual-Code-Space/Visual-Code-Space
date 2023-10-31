@@ -37,7 +37,7 @@
         app:title="@string/about">
 
         <Preference
-            app:icon="@drawable/github"
+            app:icon="@drawable/ic_github"
             app:key="github"
             app:summary="@string/pref_github_summary"
             app:title="GitHub" />

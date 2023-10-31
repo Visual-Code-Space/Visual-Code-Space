@@ -8,19 +8,23 @@
     <TextView
         android:layout_height="25dp"
         android:layout_width="wrap_content"
-        android:gravity="center"
         android:paddingRight="6dp"
         android:layout_centerVertical="true"
+        android:ellipsize="marquee"
         android:textSize="14sp"
+        android:singleLine="true"
+        android:background="@drawable/ripple_effect"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.Material3.BodySmall"
         android:paddingLeft="6dp"
-        android:foreground="@drawable/ripple_effect"
-        android:id="@+id/path" />
+        android:maxWidth="150dp"
+        android:id="@+id/name" />
 
     <ImageView
         android:layout_height="25dp"
         android:layout_width="16dp"
-        android:layout_toEndOf="@id/path"
-        android:src="@drawable/chevron_right"
+        android:layout_toEndOf="@id/name"
+        android:src="@drawable/ic_chevron_right"
         android:layout_centerVertical="true"
         android:layout_marginLeft="4dp"
         android:id="@+id/separator" />

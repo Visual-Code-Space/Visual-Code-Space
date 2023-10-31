@@ -8,7 +8,7 @@
         app:title="@string/git">
 
         <Preference
-            app:icon="@drawable/key"
+            app:icon="@drawable/ic_key"
             app:key="pref_credential"
             app:summary="@string/pref_git_credentials_summary"
             app:title="@string/pref_git_credentials" />

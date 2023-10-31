@@ -4,10 +4,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.google.android.material.imageview.ShapeableImageView;
-import com.google.android.material.textview.MaterialTextView;
 import com.raredev.vcspace.databinding.LayoutFileItemBinding;
 import com.raredev.vcspace.models.UserSnippetModel;
 import com.raredev.vcspace.res.R;
@@ -41,7 +41,7 @@ public class SnippetFilesAdapter extends RecyclerView.Adapter<SnippetFilesAdapte
 
     holder.tv_name.setText(name + " (" + userSnippet.getLanguageName() + ")");
 
-    holder.img_icon.setImageResource(R.drawable.file_document_outline);
+    holder.img_icon.setImageResource(R.drawable.ic_file);
 
     holder.itemView.setOnClickListener(
         (v) -> {
@@ -94,14 +94,14 @@ public class SnippetFilesAdapter extends RecyclerView.Adapter<SnippetFilesAdapte
   }
 
   public class VH extends RecyclerView.ViewHolder {
-    ShapeableImageView img_icon;
-    MaterialTextView tv_name;
+    ImageView img_icon;
+    TextView tv_name;
 
     public VH(LayoutFileItemBinding binding) {
       super(binding.getRoot());
       binding.getRoot().setPadding(5, 5, 5, 5);
-      img_icon = binding.imgIcon;
-      tv_name = binding.fileName;
+      img_icon = binding.icon;
+      tv_name = binding.name;
     }
   }
 }

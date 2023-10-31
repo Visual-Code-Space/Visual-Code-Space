@@ -15,12 +15,6 @@
 
         <Preference
             app:iconSpaceReserved="false"
-            app:key="pref_lineheight"
-            app:title="@string/pref_editor_lineheight"
-            app:summary="@string/pref_editor_lineheight_summary" />
-
-        <Preference
-            app:iconSpaceReserved="false"
             app:key="pref_editortabsize"
             app:title="@string/pref_editor_tabsize"
             app:summary="@string/pref_editor_tabsize_summary" />
@@ -60,11 +54,11 @@
             app:summary="@string/pref_editor_linenumbers_summary" />
 
         <SwitchPreferenceCompat
-            app:defaultValue="true"
+            app:defaultValue="false"
             app:iconSpaceReserved="false"
-            app:key="pref_usespaces"
-            app:title="@string/pref_editor_use_spaces"
-            app:summary="@string/pref_editor_use_spaces_summary" />
+            app:key="pref_usetab"
+            app:title="@string/pref_editor_use_tab"
+            app:summary="@string/pref_editor_use_tab_summary" />
 
         <SwitchPreferenceCompat
             app:defaultValue="true"
@@ -80,12 +74,6 @@
             app:title="@string/pref_editor_deletetabs"
             app:summary="@string/pref_editor_deletetabs_summary" />
 
-        <SwitchPreferenceCompat
-            app:defaultValue="true"
-            app:iconSpaceReserved="false"
-            app:key="pref_file_path"
-            app:title="@string/pref_editor_file_path"
-            app:summary="@string/pref_editor_file_path_summary" />
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -95,6 +83,7 @@
         <SwitchPreferenceCompat
             app:defaultValue="false"
             app:iconSpaceReserved="false"
+            app:enabled="false"
             app:key="pref_auto_save"
             app:title="@string/pref_editor_auto_save"
             app:summary="@string/pref_editor_auto_save_summary" />
