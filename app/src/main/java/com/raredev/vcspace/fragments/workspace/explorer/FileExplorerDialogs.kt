@@ -113,6 +113,11 @@ class FileExplorerDialogs(
           val deleted = it ?: false
 
           if (deleted) {
+            
+            
+            
+            
+            
             showSuccessToast(context, context.getString(R.string.deleted_message))
           }
           viewModel.refreshFiles()

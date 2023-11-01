@@ -106,7 +106,7 @@
   {
     "name": "json",
     "scopeName": "source.json",
-    "grammar": "editor/textmate/json/syntaxes/json.tmLanguage.json",
+    "grammar": "editor/textmate/json/syntaxes/JSON.tmLanguage.json",
     "languageConfiguration": "editor/textmate/json/language-configuration.json",
     "fileExtensions": [
       "json", "webmanifest"

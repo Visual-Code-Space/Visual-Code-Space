@@ -41,6 +41,7 @@ class SoraEditorPanel(
     }
     binding.searcher.bindSearcher(editor.searcher)
 
+    setLoading(true)
     CoroutineScope(Dispatchers.IO).launch {
       val content = FileIOUtils.readFile2String(file)
       val language = createLanguage()
