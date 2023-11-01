@@ -34,7 +34,7 @@ android {
 
   buildTypes {
     release {
-      minifyEnabled true
+      minifyEnabled false
       proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
       signingConfig signingConfigs.global
     }
@@ -48,10 +48,6 @@ android {
     coreLibraryDesugaringEnabled true
     sourceCompatibility JavaVersion.VERSION_17
     targetCompatibility JavaVersion.VERSION_17
-  }
-
-  kotlinOptions {
-    jvmTarget = "17"
   }
 
   packagingOptions {
@@ -68,6 +64,12 @@ android {
   buildFeatures {
     viewBinding true
     buildConfig true
+  }
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+  kotlinOptions {
+    jvmTarget = "17"
   }
 }
 

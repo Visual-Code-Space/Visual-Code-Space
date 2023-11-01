@@ -54,7 +54,7 @@ open class BaseEditorActivity:
     setSupportActionBar(binding.toolbar)
     binding.tabs.addOnTabSelectedListener(this)
 
-    viewModel.files.observe(this) { files ->
+    viewModel.observeFiles(this) { files ->
       if (files.isEmpty()) {
         binding.noFiles.visibility = View.VISIBLE
         binding.tabs.visibility = View.GONE

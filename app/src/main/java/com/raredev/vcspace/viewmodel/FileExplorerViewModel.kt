@@ -38,7 +38,7 @@ class FileExplorerViewModel: ViewModel() {
     viewModelScope.launch(Dispatchers.IO) {
       val listFiles = File(_currentPath.value).listFiles()
 
-      val files: MutableList<File> = ArrayList()
+      val files = mutableListOf<File>()
 
       if (listFiles != null) {
         Arrays.sort(listFiles, FOLDER_FIRST_ORDER)
