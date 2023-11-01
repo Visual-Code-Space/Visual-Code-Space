@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.PathUtils
 import com.raredev.vcspace.utils.FileUtil
+import com.raredev.vcspace.utils.PreferencesUtils
 import java.io.File
 import java.util.Arrays
 import java.util.Comparator
@@ -42,6 +43,9 @@ class FileExplorerViewModel: ViewModel() {
       if (listFiles != null) {
         Arrays.sort(listFiles, FOLDER_FIRST_ORDER)
         for (file in listFiles) {
+          if (file.isHidden && !PreferencesUtils.showHiddenFiles) {
+            continue
+          }
           files.add(file)
         }
       }

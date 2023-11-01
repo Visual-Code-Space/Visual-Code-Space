@@ -4,14 +4,25 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.view.menu.MenuBuilder
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import com.blankj.utilcode.util.KeyboardUtils
 import com.raredev.vcspace.R
 import com.raredev.vcspace.res.R.string
 
 class EditorActivity: BaseEditorActivity() {
+
+  private val onBackPressedCallback: OnBackPressedCallback =
+    object : OnBackPressedCallback(true) {
+      override fun handleOnBackPressed() {
+        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+          binding.drawerLayout.closeDrawer(GravityCompat.START)
+        }
+      }
+    }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -19,6 +30,8 @@ class EditorActivity: BaseEditorActivity() {
 
     KeyboardUtils.registerSoftInputChangedListener(this) { invalidateOptionsMenu() }
     configureDrawer()
+
+    onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
   }
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -30,15 +43,15 @@ class EditorActivity: BaseEditorActivity() {
   }
 
   override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-    val editor = getSelectedEditor()
+    val editor = getSelectedEditorPanel()
     if (editor != null) {
       menu.findItem(R.id.menu_execute).isVisible = true
       menu.findItem(R.id.menu_editor).isVisible = true
       menu.findItem(R.id.menu_undo).isVisible = KeyboardUtils.isSoftInputVisible(this)
       menu.findItem(R.id.menu_redo).isVisible = KeyboardUtils.isSoftInputVisible(this)
-      menu.findItem(R.id.menu_undo).isEnabled = editor.editor.canUndo()
-      menu.findItem(R.id.menu_redo).isEnabled = editor.editor.canRedo()
-      menu.findItem(R.id.menu_save).isEnabled = editor.modified
+      menu.findItem(R.id.menu_undo).isEnabled = editor.canUndo()
+      menu.findItem(R.id.menu_redo).isEnabled = editor.canRedo()
+      menu.findItem(R.id.menu_save).isEnabled = editor.isModified()
       menu.findItem(R.id.menu_save_as).isEnabled = true
       menu.findItem(R.id.menu_save_all).isEnabled = getUnsavedFilesCount() > 0
       menu.findItem(R.id.menu_reload).isEnabled = true
@@ -47,11 +60,12 @@ class EditorActivity: BaseEditorActivity() {
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
-    val editor = getSelectedEditor()
+    val editor = getSelectedEditorPanel()
     when (item.itemId) {
       R.id.menu_execute -> {}
-      R.id.menu_undo -> editor?.editor?.undo()
-      R.id.menu_redo -> editor?.editor?.redo()
+      R.id.menu_search -> editor?.beginSearcher()
+      R.id.menu_undo -> editor?.undo()
+      R.id.menu_redo -> editor?.redo()
       R.id.menu_save -> saveFile(true)
       R.id.menu_save_all -> saveAll(true)
     }
@@ -73,11 +87,11 @@ class EditorActivity: BaseEditorActivity() {
       override fun onDrawerOpened(view: View) {}
     })
   }
-  
+
   private fun getUnsavedFilesCount(): Int {
     var count = 0
     for (i in 0 until viewModel.getOpenedFiles().size) {
-      if (getEditorAt(i)?.modified ?: false) count++
+      if (getEditorPanelAt(i)?.isModified() ?: false) count++
     }
     return count
   }

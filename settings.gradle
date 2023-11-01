@@ -19,6 +19,7 @@ rootProject.name = "VCSpace"
 include ':app'
 include ':common'
 include ':common-res'
+include ':editor-ace'
 include ':editor-sora'
 include ':editor-sora:lang-textmate'
 include ':eventbus-events'

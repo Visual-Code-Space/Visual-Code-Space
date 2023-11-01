@@ -70,11 +70,7 @@ public class TextMateLanguage extends EmptyLanguage {
 
   private void createAnalyzerAndNewlineHandler(
       IGrammar grammar, LanguageConfiguration languageConfiguration) {
-    var old = textMateAnalyzer;
-    if (old != null) {
-      old.setReceiver(null);
-      old.destroy();
-    }
+    destroy();
     try {
       textMateAnalyzer = new TextMateAnalyzer(this, grammar, languageConfiguration);
     } catch (Exception e) {

@@ -97,6 +97,7 @@ dependencies {
 
   implementation project(path: ':common')
   implementation project(path: ':common-res')
+  implementation project(path: ':editor-ace')
   implementation project(path: ':editor-sora')
   implementation project(path: ':editor-sora:lang-textmate')
   implementation project(path: ':eventbus-events')

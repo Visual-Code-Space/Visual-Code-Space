@@ -1,5 +1,7 @@
 package com.raredev.vcspace.activities.editor
 
+import android.content.DialogInterface
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
@@ -7,18 +9,23 @@ import android.util.SparseArray
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.util.forEach
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
 import com.raredev.vcspace.R.*
 import com.raredev.vcspace.res.R
 import com.raredev.vcspace.activities.BaseActivity
 import com.raredev.vcspace.databinding.ActivityEditorBinding
 import com.raredev.vcspace.events.OnContentChangeEvent
+import com.raredev.vcspace.events.OnPreferenceChangeEvent
+import com.raredev.vcspace.editor.AceEditorPanel
+import com.raredev.vcspace.editor.SoraEditorPanel
+import com.raredev.vcspace.interfaces.IEditorPanel
 import com.raredev.vcspace.tasks.TaskExecutor.executeAsync
-import com.raredev.vcspace.ui.CodeEditorView
 import com.raredev.vcspace.tasks.TaskExecutor.executeAsyncProvideError
 import com.raredev.vcspace.utils.showSuccessToast
 import com.raredev.vcspace.utils.Utils
 import com.raredev.vcspace.utils.UniqueNameBuilder
+import com.raredev.vcspace.utils.PreferencesUtils
 import com.raredev.vcspace.viewmodel.EditorViewModel
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
@@ -27,7 +34,8 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-open class BaseEditorActivity: BaseActivity(), TabLayout.OnTabSelectedListener {
+open class BaseEditorActivity:
+  BaseActivity(), TabLayout.OnTabSelectedListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
   private var _binding: ActivityEditorBinding? = null
 
@@ -68,7 +76,7 @@ open class BaseEditorActivity: BaseActivity(), TabLayout.OnTabSelectedListener {
         if (tab != null && !tab.isSelected) {
           tab.select()
         }
-        binding.symbolInput.bindEditor(getEditorAt(position)?.editor)
+        binding.symbolInput.bindEditor(getEditorPanelAt(position))
         binding.container.displayedChild = position
         invalidateOptionsMenu()
       } else {
@@ -76,13 +84,20 @@ open class BaseEditorActivity: BaseActivity(), TabLayout.OnTabSelectedListener {
       }
     }
 
+    PreferencesUtils.prefs.registerOnSharedPreferenceChangeListener(this)
     ThemeRegistry.getInstance().setTheme(if (Utils.isDarkMode()) "darcula" else "quietlight")
     EventBus.getDefault().register(this)
+  }
+
+  override fun onSharedPreferenceChanged(prefs: SharedPreferences, prefKey: String?) {
+    if (prefKey != null) EventBus.getDefault().post(OnPreferenceChangeEvent(prefKey))
   }
 
   override fun onDestroy() {
     super.onDestroy()
     closeAll()
+
+    PreferencesUtils.prefs.unregisterOnSharedPreferenceChangeListener(this)
 
     EventBus.getDefault().unregister(this)
     GrammarRegistry.getInstance().dispose()
@@ -124,8 +139,14 @@ open class BaseEditorActivity: BaseActivity(), TabLayout.OnTabSelectedListener {
 
     val position = viewModel.getFileCount()
 
+    val editorView = if (PreferencesUtils.useAceEditor) {
+      AceEditorPanel(this, file)
+    } else {
+      SoraEditorPanel(this, file)
+    }
+
     viewModel.addFile(file)
-    binding.container.addView(CodeEditorView(this, file))
+    binding.container.addView(editorView)
     binding.tabs.addTab(binding.tabs.newTab())
 
     viewModel.setSelectedFile(position)
@@ -134,7 +155,15 @@ open class BaseEditorActivity: BaseActivity(), TabLayout.OnTabSelectedListener {
 
   fun closeFile(position: Int) {
     if (position >= 0 && position < viewModel.getFileCount()) {
-      getEditorAt(position)?.release()
+      val editor = getEditorPanelAt(position)
+      if (editor == null) return
+
+      val file = editor.getFile()
+      if (editor.isModified() && file != null) {
+        notifyUnsavedFile(file) { closeFile(position) }
+        return
+      }
+      editor.release()
 
       viewModel.removeFile(position)
       binding.apply {
@@ -151,22 +180,34 @@ open class BaseEditorActivity: BaseActivity(), TabLayout.OnTabSelectedListener {
       return
     }
 
+    val unsavedFiles = getUnsavedFiles()
+    if (unsavedFiles.size > 0) {
+      notifyUnsavedFiles(unsavedFiles) { closeOthers() }
+      return
+    }
+
     var pos: Int = 0
     while (viewModel.getFileCount() != 1) {
-      val editor = getEditorAt(pos)
+      val editor = getEditorPanelAt(pos)
       if (editor != null) {
-        if (file != editor.file) {
+        if (file != editor.getFile()) {
           closeFile(pos)
         } else {
           pos = 1
         }
       }
     }
+    viewModel.setSelectedFile(0)
   }
 
   fun closeAll() {
+    val unsavedFiles = getUnsavedFiles()
+    if (unsavedFiles.size > 0) {
+      notifyUnsavedFiles(unsavedFiles) { closeAll() }
+      return
+    }
     for (i in 0 until viewModel.getFileCount()) {
-      getEditorAt(i)?.release()
+      getEditorPanelAt(i)?.release()
     }
 
     viewModel.removeAllFiles()
@@ -177,13 +218,13 @@ open class BaseEditorActivity: BaseActivity(), TabLayout.OnTabSelectedListener {
     }
   }
 
-  fun saveAll(showMsg: Boolean) {
-    val selectedEditor = getSelectedEditor()
+  fun saveAll(showMsg: Boolean, post: Runnable? = null) {
+    val selectedEditor = getSelectedEditorPanel()
     selectedEditor?.setLoading(true)
 
     executeAsync({
       for (i in 0 until viewModel.getFileCount()) {
-        getEditorAt(i)?.saveFile()
+        getEditorPanelAt(i)?.saveFile()
       }
     }) { _ ->
       selectedEditor?.setLoading(false)
@@ -191,11 +232,13 @@ open class BaseEditorActivity: BaseActivity(), TabLayout.OnTabSelectedListener {
       updateTabs()
       if (showMsg)
         showSuccessToast(this, getString(R.string.saved_files))
+
+      post?.run()
     }
   }
 
-  fun saveFile(showMsg: Boolean) {
-    val editor = getSelectedEditor()
+  fun saveFile(showMsg: Boolean, post: Runnable? = null) {
+    val editor = getSelectedEditorPanel()
     editor?.setLoading(true)
     executeAsync({ editor?.saveFile() }) { _ ->
       editor?.setLoading(false)
@@ -203,17 +246,19 @@ open class BaseEditorActivity: BaseActivity(), TabLayout.OnTabSelectedListener {
       updateTabs()
       if (showMsg)
         showSuccessToast(this, getString(R.string.saved))
+
+      post?.run()
     }
   }
 
-  fun getSelectedEditor(): CodeEditorView? {
+  fun getSelectedEditorPanel(): IEditorPanel? {
     return if (viewModel.getSelectedFilePos() >= 0) {
-      getEditorAt(viewModel.getSelectedFilePos())
+      getEditorPanelAt(viewModel.getSelectedFilePos())
     } else null
   }
 
-  fun getEditorAt(position: Int): CodeEditorView? {
-    return binding.container.getChildAt(position) as? CodeEditorView
+  fun getEditorPanelAt(position: Int): IEditorPanel? {
+    return binding.container.getChildAt(position) as? IEditorPanel
   }
 
   fun findPositionAtFile(file: File?): Int {
@@ -260,14 +305,13 @@ open class BaseEditorActivity: BaseActivity(), TabLayout.OnTabSelectedListener {
       for (i in 0 until binding.tabs.tabCount) {
         val file = files[i]
         val count = dupliCount[file.name] ?: 0
-        val isModified = getEditorAt(i)?.modified ?: false
+        val isModified = getEditorPanelAt(i)?.isModified() ?: false
         val name = if (count > 1) nameBuilder.getShortPath(file) else file.name
         names[i] = if (isModified) "*$name" else name
       }
       names
     }) { result, error ->
       if (result == null || error != null) {
-        //log.error("Failed to compute names for file tabs", error)
         return@executeAsyncProvideError
       }
 
@@ -277,5 +321,62 @@ open class BaseEditorActivity: BaseActivity(), TabLayout.OnTabSelectedListener {
         }
       }
     }
+  }
+
+  private fun notifyUnsavedFile(unsavedFile: File, callback: Runnable) {
+    showUnsavedFilesAlert(unsavedFile.name,
+      { _, _ ->
+        val position = findPositionAtFile(unsavedFile)
+        if (position != -1) {
+          getEditorPanelAt(position)?.saveFile()
+        }
+        callback.run()
+      }, { _, _ ->
+        val position = findPositionAtFile(unsavedFile)
+        if (position != -1) {
+          getEditorPanelAt(position)?.setModified(false)
+        }
+        callback.run()
+      })
+  }
+
+  private fun notifyUnsavedFiles(unsavedFiles: List<File>, callback: Runnable) {
+    val sb = StringBuilder()
+    for (file in unsavedFiles) {
+      sb.append(" " + file.name)
+    }
+
+    showUnsavedFilesAlert(sb.toString(),
+      { _, _ -> saveAll(true) { callback.run() } },
+      { _, _ ->
+        for (i in 0 until viewModel.getFileCount()) {
+          getEditorPanelAt(i)?.setModified(false)
+        }
+        callback.run()
+    })
+  }
+
+  private fun showUnsavedFilesAlert(unsavedFileName: String, positive: DialogInterface.OnClickListener, negative: DialogInterface.OnClickListener) {
+    MaterialAlertDialogBuilder(this)
+      .setTitle(R.string.unsaved_files_title)
+      .setMessage(getString(R.string.unsaved_files_message, unsavedFileName))
+      .setPositiveButton(R.string.save_and_close, positive)
+      .setNegativeButton(R.string.close, negative)
+      .setNeutralButton(R.string.cancel, null)
+      .show()
+  }
+
+  private fun getUnsavedFiles(): List<File> {
+    val unsavedFiles = mutableListOf<File>()
+    for (i in 0 until viewModel.getFileCount()) {
+      val editor = getEditorPanelAt(i)
+      if (editor == null) continue
+
+      val file = editor.getFile()
+      if (file != null && editor.isModified()) {
+        unsavedFiles.add(file)
+      }
+    }
+    return unsavedFiles
   }
 }

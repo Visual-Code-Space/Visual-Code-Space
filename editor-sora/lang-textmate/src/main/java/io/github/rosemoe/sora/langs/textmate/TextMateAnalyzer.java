@@ -29,6 +29,7 @@ import android.graphics.Color;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import io.github.rosemoe.sora.lang.brackets.OnlineBracketsMatcher;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
@@ -36,7 +37,6 @@ import java.util.Objects;
 
 import io.github.rosemoe.sora.lang.analysis.AsyncIncrementalAnalyzeManager;
 import io.github.rosemoe.sora.lang.brackets.BracketsProvider;
-import io.github.rosemoe.sora.lang.brackets.OnlineBracketsMatcher;
 import io.github.rosemoe.sora.lang.styling.CodeBlock;
 import io.github.rosemoe.sora.lang.styling.Span;
 import io.github.rosemoe.sora.lang.styling.TextStyle;
@@ -63,18 +63,21 @@ import io.github.rosemoe.sora.widget.schemes.EditorColorScheme;
 
 public class TextMateAnalyzer extends AsyncIncrementalAnalyzeManager<MyState, Span> implements FoldingHelper, ThemeRegistry.ThemeChangeListener {
 
-    private final IGrammar grammar;
-    private Theme theme;
-  
     @NonNull
     private final TextMateLanguage language;
 
     @NonNull
+    private final IGrammar grammar;
+
+    @NonNull
     private final ThemeRegistry themeRegistry;
+
+    @Nullable
+    private BracketsProvider bracketsProvider;
 
     private OnigRegExp cachedRegExp;
     private boolean foldingOffside;
-    private BracketsProvider bracketsProvider;
+    private Theme theme;
 
     public TextMateAnalyzer(TextMateLanguage language, IGrammar grammar, LanguageConfiguration languageConfiguration) {
         this.language = language;

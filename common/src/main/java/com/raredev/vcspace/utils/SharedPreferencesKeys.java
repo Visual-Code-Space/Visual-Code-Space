@@ -21,6 +21,8 @@ public class SharedPreferencesKeys {
   public static final String KEY_DELETETABS = "pref_deletetabs";
   public static final String KEY_AUTO_SAVE = "pref_auto_save";
 
+  public static final String KEY_USE_ACE_EDITOR = "pref_use_ace_editor";
+
   // File
   public static final String KEY_FILE = "pref_file";
   public static final String KEY_SHOW_HIDDEN_FILES = "pref_show_hidden_files";

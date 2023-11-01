@@ -4,14 +4,18 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.raredev.vcspace.databinding.LayoutSymbolItemBinding
+import com.raredev.vcspace.interfaces.IEditorPanel
+import com.raredev.vcspace.editor.AceCodeEditor
 import com.raredev.vcspace.editor.VCSpaceEditor
+import com.raredev.vcspace.editor.AceEditorPanel
+import com.raredev.vcspace.editor.SoraEditorPanel
 import com.raredev.vcspace.models.Symbol
 import com.raredev.vcspace.utils.PreferencesUtils
 
 class SymbolInputAdapter: RecyclerView.Adapter<SymbolInputAdapter.VH>() {
 
   private val symbols: Array<Symbol> = getDefaultSymbols()
-  private var editor: VCSpaceEditor? = null
+  private var editor: IEditorPanel? = null
 
   inner class VH(internal val binding: LayoutSymbolItemBinding):
     RecyclerView.ViewHolder(binding.root)
@@ -36,33 +40,48 @@ class SymbolInputAdapter: RecyclerView.Adapter<SymbolInputAdapter.VH>() {
   }
 
   private fun insertSymbol(symbol: Symbol) {
-    if (editor == null) {
-      return
+    if (editor != null) {
+      if (editor is SoraEditorPanel) {
+        insertSymbolSoraEditor((editor as SoraEditorPanel).editor, symbol)
+      } else if (editor is AceEditorPanel) {
+        insertSymbolAceEditor((editor as AceEditorPanel).editor, symbol)
+      }
     }
-    if (!editor!!.isEditable()) {
+  }
+
+  private fun insertSymbolSoraEditor(editor: VCSpaceEditor, symbol: Symbol) {
+    if (!editor.isEditable()) {
       return
     }
 
-    val controller = editor!!.getSnippetController()
+    val controller = editor.getSnippetController()
     if ("→".equals(symbol.label) && controller.isInSnippet()) {
       controller.shiftToNextTabStop()
       return
     }
 
     if ("→".equals(symbol.label)) {
-      editor!!.commitText(PreferencesUtils.identationString)
+      editor.commitText(PreferencesUtils.identationString)
       return
     }
 
     val insertText = symbol.insert
     if (insertText.length == 2) {
-      editor!!.insertText(insertText, 1)
+      editor.insertText(insertText, 1)
     } else {
-      editor!!.commitText(insertText, false)
+      editor.commitText(insertText, false)
     }
   }
 
-  fun bindEditor(editor: VCSpaceEditor?) {
+  private fun insertSymbolAceEditor(editor: AceCodeEditor, symbol: Symbol) {
+    if ("→".equals(symbol.label)) {
+      editor.insert(PreferencesUtils.identationString)
+      return
+    }
+    editor.insert(symbol.insert[0].toString())
+  }
+
+  fun bindEditor(editor: IEditorPanel?) {
     this.editor = editor
   }
 

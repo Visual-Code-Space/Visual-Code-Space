@@ -14,6 +14,7 @@ import java.io.File;
  * href="https://github.com/tyron12233/CodeAssist/blob/main/app/src/main/java/com/tyron/code/util/ApkInstaller.java">ApkInstaller.java</a>
  */
 public class ApkInstaller {
+  
 
   public static void installApplication(Context context, File file) {
     Intent intent = new Intent(Intent.ACTION_VIEW);

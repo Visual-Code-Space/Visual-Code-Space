@@ -26,19 +26,15 @@ package io.github.rosemoe.sora.langs.textmate;
 import org.eclipse.tm4e.core.grammar.IStateStack;
 import org.eclipse.tm4e.core.internal.oniguruma.OnigResult;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class MyState {
 
-    public MyState(IStateStack tokenizeState, OnigResult foldingCache, int indent) {
-        this.tokenizeState = tokenizeState;
-        this.foldingCache = foldingCache;
-        this.indent = indent;
-    }
+  public MyState(IStateStack tokenizeState, OnigResult foldingCache, int indent) {
+    this.tokenizeState = tokenizeState;
+    this.foldingCache = foldingCache;
+    this.indent = indent;
+  }
 
-    public IStateStack tokenizeState;
-    public OnigResult foldingCache;
-    public int indent;
-
+  public IStateStack tokenizeState;
+  public OnigResult foldingCache;
+  public int indent;
 }

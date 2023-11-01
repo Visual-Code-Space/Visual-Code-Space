@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.raredev.vcspace.adapters.SymbolInputAdapter
-import com.raredev.vcspace.editor.VCSpaceEditor
+import com.raredev.vcspace.interfaces.IEditorPanel
 
 class SymbolInputView: RecyclerView {
 
@@ -21,7 +21,7 @@ class SymbolInputView: RecyclerView {
     setAdapter(adapter)
   }
 
-  fun bindEditor(editor: VCSpaceEditor?) {
+  fun bindEditor(editor: IEditorPanel?) {
     adapter.bindEditor(editor)
   }
 }

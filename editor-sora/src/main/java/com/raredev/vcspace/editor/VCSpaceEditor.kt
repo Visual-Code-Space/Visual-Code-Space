@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableSet
 import com.raredev.vcspace.adapters.CompletionListAdapter
 import com.raredev.vcspace.editor.completion.CustomCompletionLayout
 import com.raredev.vcspace.events.OnContentChangeEvent
+import com.raredev.vcspace.events.OnPreferenceChangeEvent
 import com.raredev.vcspace.utils.PreferencesUtils
 import com.raredev.vcspace.utils.SharedPreferencesKeys
 import io.github.rosemoe.sora.event.ContentChangeEvent
@@ -22,6 +23,8 @@ import io.github.rosemoe.sora.widget.component.EditorTextActionWindow
 import java.io.File
 import org.eclipse.tm4e.languageconfiguration.model.CommentRule
 import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 class VCSpaceEditor: CodeEditor {
 
@@ -41,7 +44,7 @@ class VCSpaceEditor: CodeEditor {
     getComponent(EditorAutoCompletion::class.java).setAdapter(CompletionListAdapter())
     configureEditor()
 
-   // EventBus.getDefault().register(this)
+    EventBus.getDefault().register(this)
   }
 
   override fun hideEditorWindows() {
@@ -56,16 +59,12 @@ class VCSpaceEditor: CodeEditor {
     }
   }
 
-  /*override fun getSearcher(): EditorSearcher {
-    return searcher
-  }*/
-
   override fun release() {
     super.release()
     textActions = null
     file = null
 
-    //EventBus.getDefault().unregister(this)
+    EventBus.getDefault().unregister(this)
   }
   
   fun subscribeEvents() {
@@ -80,8 +79,9 @@ class VCSpaceEditor: CodeEditor {
     return (editorLanguage as? VCSpaceTMLanguage)?.languageConfiguration?.comments
   }
 
-  fun onSharedPreferenceChanged(prefKey: String) {
-    when (prefKey) {
+  @Subscribe(threadMode = ThreadMode.MAIN)
+  fun onSharedPreferenceChanged(event: OnPreferenceChangeEvent) {
+    when (event.prefKey) {
       SharedPreferencesKeys.KEY_EDITOR_TEXT_SIZE -> updateTextSize()
       SharedPreferencesKeys.KEY_EDITOR_TAB_SIZE -> updateTABSize()
       SharedPreferencesKeys.KEY_STICKYSCROLL -> updateStickyScroll()
@@ -94,7 +94,7 @@ class VCSpaceEditor: CodeEditor {
     }
   }
 
-  fun configureEditor() {
+  private fun configureEditor() {
     updateEditorFont()
     updateTextSize()
     updateTABSize()

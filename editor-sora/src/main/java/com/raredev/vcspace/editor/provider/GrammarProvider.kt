@@ -20,7 +20,7 @@ import java.nio.charset.Charset
 /**
  * Class to register and provide TextMate grammars
  *
- * @author Felipe Teixeira(@raredeveloper)
+ * @author Felipe Teixeira
  */
 object GrammarProvider {
 
