@@ -25,19 +25,10 @@
 - [Bogdan Melnychuk](https://github.com/bmelnychuk) for [AndroidTreeView](https://github.com/bmelnychuk/AndroidTreeView)
 - [Akash Yadav](https://github.com/itsaky) for the awesome [AndroidIDE](https://github.com/AndroidIDEOfficial/AndroidIDE)
 
-## How to contribute to this project:
-
-When you're working on this project, please make sure your code follows these guidelines:
-
-- Use a 2-space indent for everything.
-- For Java code, follow the `GoogleStyle` formatting guidelines. You can either use the `google-java-format` tool or import the code style from [this link](https://raw.githubusercontent.com/google/styleguide/gh-pages/intellij-java-google-style.xml) to your IDE.
-- For XML code, use the default formatting guidelines for either Android Studio or AndroidIDE, and also use a 2-space indent.
-
-Thank you for your contributions! We're excited to work with you.
-
-<br>
-
-![Banner](./images/banner.png "app_banner")
+## To contribute
+- Read this file to learn how to contribute to the project [CONTRIBUTE.md](https://github.com/Visual-Code-Space/Visual-Code-Space/blob/main/CONTRIBUTING.md)
 
 ## Community
 [![](https://dcbadge.vercel.app/api/server/4uTBTZeAgS)](https://discord.gg/4uTBTZeAgS)
+
+![Banner](./images/banner.png "app_banner")
