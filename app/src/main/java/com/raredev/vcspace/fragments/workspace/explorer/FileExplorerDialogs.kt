@@ -22,6 +22,7 @@ class FileExplorerDialogs(
   val viewModel: FileExplorerViewModel
 ) {
 
+  @Suppress("DEPRECATION")
   fun showCreateFileDialog(path: String) {
     val binding = LayoutTextinputBinding.inflate(LayoutInflater.from(context))
     val dialog = MaterialAlertDialogBuilder(context)
@@ -61,6 +62,7 @@ class FileExplorerDialogs(
     dialog.show()
   }
   
+  @Suppress("DEPRECATION")
   fun showRenameFileDialog(file: File) {
     val binding = LayoutTextinputBinding.inflate(LayoutInflater.from(context))
     val dialog = MaterialAlertDialogBuilder(context)

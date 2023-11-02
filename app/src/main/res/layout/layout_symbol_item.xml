@@ -7,4 +7,5 @@
     android:textSize="12sp"
     android:textColor="?attr/colorControlNormal"
     style="@style/Widget.Material3.Button.TextButton"
-    android:id="@+id/label" />
+    android:id="@+id/label"
+    android:fontFamily="@font/jetbrains_mono" />

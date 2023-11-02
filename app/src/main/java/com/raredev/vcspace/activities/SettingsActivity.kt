@@ -19,7 +19,7 @@ class SettingsActivity: BaseActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setSupportActionBar(binding.toolbar)
-    binding.toolbar.setNavigationOnClickListener { onBackPressed() }
+    binding.toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
     if (supportFragmentManager.findFragmentByTag(SettingsFragment.TAG) == null) {
       supportFragmentManager

@@ -2,6 +2,7 @@ package com.raredev.vcspace.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.raredev.vcspace.databinding.LayoutSymbolItemBinding
 import com.raredev.vcspace.interfaces.IEditorPanel
@@ -10,6 +11,7 @@ import com.raredev.vcspace.editor.VCSpaceEditor
 import com.raredev.vcspace.editor.AceEditorPanel
 import com.raredev.vcspace.editor.SoraEditorPanel
 import com.raredev.vcspace.models.Symbol
+import com.raredev.vcspace.res.R
 import com.raredev.vcspace.utils.PreferencesUtils
 
 class SymbolInputAdapter: RecyclerView.Adapter<SymbolInputAdapter.VH>() {
@@ -28,6 +30,8 @@ class SymbolInputAdapter: RecyclerView.Adapter<SymbolInputAdapter.VH>() {
     holder.binding.apply {
       val symbol = symbols[position]
       label.text = symbol.label
+      val typeface = ResourcesCompat.getFont(label.context, R.font.jetbrains_mono)
+      label.typeface = typeface
 
       root.setOnClickListener {
         insertSymbol(symbol)

@@ -28,8 +28,8 @@ class AceEditorPanel(
     get() = binding.editor
 
   init {
-    binding.editor.setOnEditorLoadedListener(this)
-    binding.editor.setFile(file)
+    binding.editor.onEditorLoadedListener = this
+    binding.editor.file = file
     addView(binding.root)
   }
 
@@ -76,7 +76,7 @@ class AceEditorPanel(
     if (!isModified()) {
       return
     }
-    if (FileIOUtils.writeFileFromString(getFile(), editor.text)) {
+    if (FileIOUtils.writeFileFromString(getFile(), editor.getText())) {
       editor.isModified = false
     }
   }

@@ -21,6 +21,6 @@ public class VCSpaceWebViewClient extends WebViewClientCompat {
   @Override
   public void onPageFinished(WebView view, String url) {
     editor.loadOptions();
-    if (editor.onEditorLoadedListener != null) editor.onEditorLoadedListener.onLoaded(view);
+    if (editor.getOnEditorLoadedListener() != null) editor.getOnEditorLoadedListener().onLoaded(view);
   }
 }
