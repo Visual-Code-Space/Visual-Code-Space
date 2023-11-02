@@ -10,7 +10,7 @@ ext {
     swiperefreshlayout: 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0',
     splashscreen: 'androidx.core:core-splashscreen:1.0.1',
     security: 'androidx.security:security-crypto:1.0.0',
-    nav_fragment_ktx: 'androidx.navigation:navigation-fragment-ktx:2.5.3',
+    nav_fragment_ktx: 'androidx.navigation:navigation-fragment-ktx:2.7.5',
     nav_ui_ktx: 'androidx.navigation:navigation-ui-ktx:2.5.3',
     nav_dynamic_features: 'androidx.navigation:navigation-dynamic-features-fragment:2.5.3',
     webkit: 'androidx.webkit:webkit:1.8.0',
