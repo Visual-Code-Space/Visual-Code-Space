@@ -4,16 +4,11 @@
 
 <h2 align="center"><b>Visual Code Space</b></h2>
 
-<p align="center">
+<div align="center">
     
-[![Debug Build](https://github.com/raredeveloperofc/Visual-Code-Space/actions/workflows/debug_build.yml/badge.svg)](https://github.com/raredeveloperofc/Visual-Code-Space/actions/workflows/debug_build.yml)
-</p>
+[![Build](https://github.com/raredeveloperofc/Visual-Code-Space/actions/workflows/build.yml/badge.svg)](https://github.com/raredeveloperofc/Visual-Code-Space/actions/workflows/build.yml) <img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License"></p>
 
-<p align="center">
-<!-- License -->
-<img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License"></p>
-
-</p>
+</div>
 
 ## TODO
 - [ ] Git integration: Manage your source code with Git integration, including support for branching, merging, and committing changes.
