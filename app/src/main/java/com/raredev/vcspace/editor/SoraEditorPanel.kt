@@ -7,8 +7,8 @@ import androidx.core.view.isVisible
 import com.blankj.utilcode.util.FileIOUtils
 import com.raredev.vcspace.databinding.LayoutSoraEditorPanelBinding
 import com.raredev.vcspace.editor.VCSpaceEditor
-import com.raredev.vcspace.editor.provider.GrammarProvider
 import com.raredev.vcspace.interfaces.IEditorPanel
+import com.raredev.vcspace.providers.GrammarProvider
 import com.raredev.vcspace.tasks.TaskExecutor.executeAsync
 import io.github.rosemoe.sora.lang.EmptyLanguage
 import io.github.rosemoe.sora.lang.Language

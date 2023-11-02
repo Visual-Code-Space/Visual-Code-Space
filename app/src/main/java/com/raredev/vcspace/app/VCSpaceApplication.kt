@@ -6,7 +6,7 @@ import androidx.appcompat.widget.PopupMenu
 import com.blankj.utilcode.util.ThrowableUtils
 import com.google.android.material.color.DynamicColors
 import com.raredev.vcspace.activities.CrashActivity
-import com.raredev.vcspace.editor.provider.GrammarProvider
+import com.raredev.vcspace.providers.GrammarProvider
 import com.raredev.vcspace.utils.PreferencesUtils
 import com.raredev.vcspace.utils.Utils
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry
@@ -39,7 +39,7 @@ class VCSpaceApplication: BaseApplication() {
     val themes = arrayOf("darcula", "quietlight")
     val themeRegistry = ThemeRegistry.getInstance()
     themes.forEach { name ->
-      val path = "editor/scheme/$name.json"
+      val path = "editor/sora-editor/schemes/$name.json"
       themeRegistry.loadTheme(
         ThemeModel(
           IThemeSource.fromInputStream(

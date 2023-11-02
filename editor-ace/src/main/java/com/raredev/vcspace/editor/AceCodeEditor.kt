@@ -45,7 +45,7 @@ class AceCodeEditor : WebView {
     webViewClient = VCSpaceWebViewClient(this)
     
     settings.javaScriptEnabled = true
-    loadUrl("file:///android_asset/ace-editor/editor.html")
+    loadUrl("file:///android_asset/editor/ace-editor/editor.html")
   }
 
   fun release() {

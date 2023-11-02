@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.raredev.vcspace.res.R
 import com.raredev.vcspace.databinding.LayoutFileItemBinding
+import com.raredev.vcspace.providers.FileIconProvider
 import java.io.File
 import java.text.SimpleDateFormat
 
@@ -15,6 +16,10 @@ class FileListAdapter(
 ): RecyclerView.Adapter<FileListAdapter.VH>() {
 
   private var files: List<File> = emptyList()
+
+  init {
+    FileIconProvider.initialize()
+  }
 
   inner class VH(internal val binding: LayoutFileItemBinding):
     RecyclerView.ViewHolder(binding.root)
@@ -27,7 +32,13 @@ class FileListAdapter(
     holder.binding.apply {
       val file = files[position]
 
-      icon.setImageResource(getIconForFile(file))
+      val iconId = if (file.isFile) {
+        FileIconProvider.findFileIconResource(file)
+      } else {
+        R.drawable.ic_folder
+      }
+
+      icon.setImageResource(iconId)
       name.text = file.name
       info.text = root.context.getString(R.string.last_modified, SimpleDateFormat("yy/MM/dd").format(file.lastModified()))
 
@@ -44,18 +55,6 @@ class FileListAdapter(
     val diffResult = DiffUtil.calculateDiff(FileDiffCallback(this.files, newFiles))
     this.files = newFiles
     diffResult.dispatchUpdatesTo(this)
-  }
-
-  private fun getIconForFile(file: File): Int {
-    if (file.isFile) {
-      /*for (extension in FileModel.TEXT_FILES) {
-        if (file.name.endsWith(extension)) {
-          return R.drawable.file_document_outline
-        }
-      }*/
-      return R.drawable.ic_file
-    }
-    return R.drawable.ic_folder
   }
 
   interface OnFileClickListener {

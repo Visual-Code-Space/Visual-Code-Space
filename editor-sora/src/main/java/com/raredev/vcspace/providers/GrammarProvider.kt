@@ -1,4 +1,4 @@
-package com.raredev.vcspace.editor.provider
+package com.raredev.vcspace.providers
 
 import android.content.Context
 import com.google.gson.Gson
@@ -24,14 +24,14 @@ import java.nio.charset.Charset
  */
 object GrammarProvider {
 
-  private var grammars: List<GrammarModel>? = null
+  private var grammars: List<GrammarModel> = mutableListOf()
 
   fun initialize(context: Context) {
-    if (grammars != null) {
+    if (grammars.isNotEmpty()) {
       return
     }
 
-    val grammarsJson = FileUtil.readFromAsset(context, "editor/textmate/grammars.json")
+    val grammarsJson = FileUtil.readFromAsset(context, "editor/sora-editor/textmate/grammars.json")
 
     grammars = Gson().fromJson(grammarsJson, object: TypeToken<List<GrammarModel>>() {})
 
@@ -95,33 +95,9 @@ object GrammarProvider {
     }
   }
 
-  fun findGrammarByFileExtension(extension: String?): GrammarModel? {
-    if (grammars == null) {
-      return null
-    }
+  fun findGrammarByFileExtension(extension: String?):
+    GrammarModel? = grammars.find { it.fileExtensions.contains(extension) }
 
-    if (extension == null) {
-      return null
-    }
-
-    for (grammar in grammars!!) {
-      if (grammar.fileExtensions.contains(extension)) {
-        return grammar
-      }
-    }
-    return null
-  }
-
-  fun findGrammarByScope(scopeName: String): GrammarModel? {
-    if (grammars == null) {
-      return null
-    }
-
-    for (grammar in grammars!!) {
-      if (grammar.scopeName == scopeName) {
-        return grammar
-      }
-    }
-    return null
-  }
+  fun findGrammarByScope(scopeName: String):
+    GrammarModel? = grammars.find { it.scopeName == scopeName }
 }
