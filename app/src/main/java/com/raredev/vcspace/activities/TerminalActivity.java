@@ -1,8 +1,5 @@
 package com.raredev.vcspace.activities;
 
-import com.blankj.utilcode.util.SizeUtils;
-import static com.raredev.vcspace.utils.Environment.getEnvironment;
-
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -14,10 +11,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
-import androidx.core.content.res.ResourcesCompat;
 import com.blankj.utilcode.util.ClipboardUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.PathUtils;
+import com.blankj.utilcode.util.SizeUtils;
 import com.raredev.terminal.TerminalEmulator;
 import com.raredev.terminal.TerminalSession;
 import com.raredev.terminal.TerminalSessionClient;
@@ -31,8 +28,6 @@ import com.raredev.vcspace.ui.virtualkeys.VirtualKeysConstants;
 import com.raredev.vcspace.ui.virtualkeys.VirtualKeysInfo;
 import com.raredev.vcspace.ui.virtualkeys.VirtualKeysView;
 import com.raredev.vcspace.utils.Logger;
-import com.raredev.vcspace.utils.PreferencesUtils;
-import java.util.Map;
 import org.json.JSONException;
 
 /*
@@ -43,7 +38,6 @@ public class TerminalActivity extends BaseActivity
     implements TerminalViewClient, TerminalSessionClient {
 
   public static final String KEY_WORKING_DIRECTORY = "terminal_workingDirectory";
-  public static final String KEY_EXECUTE_SH = "terminal_executeSh";
   
   private final Logger logger = Logger.newInstance("TerminalActivity");
   private ActivityTerminalBinding binding;
@@ -97,7 +91,6 @@ public class TerminalActivity extends BaseActivity
     terminal.attachSession(createSession());
     terminal.setKeepScreenOn(true);
     terminal.setTextSize(SizeUtils.dp2px(14f));
-    terminal.setTypeface(ResourcesCompat.getFont(this, PreferencesUtils.INSTANCE.getSelectedFont()));
 
     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-1, 0);
     params.weight = 1f;
@@ -117,19 +110,12 @@ public class TerminalActivity extends BaseActivity
   }
 
   private TerminalSession createSession() {
-    final Map<String, String> environment = getEnvironment();
-    final String[] env = new String[environment.size()];
-    int i = 0;
-    for (Map.Entry<String, String> entry : environment.entrySet()) {
-      env[i] = entry.getKey() + "=" + entry.getValue();
-      i++;
-    }
     session =
         new TerminalSession(
             "/system/bin/sh",
             getWorkingDirectory(),
             new String[] {},
-            env,
+            new String[] {},
             TerminalEmulator.DEFAULT_TERMINAL_TRANSCRIPT_ROWS,
             this);
     return session;

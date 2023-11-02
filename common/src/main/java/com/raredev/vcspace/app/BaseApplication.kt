@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import androidx.preference.PreferenceManager
-import com.raredev.vcspace.utils.Environment
 
 open class BaseApplication: Application() {
 
@@ -26,7 +25,6 @@ open class BaseApplication: Application() {
     super.onCreate()
 
     prefs = PreferenceManager.getDefaultSharedPreferences(this)
-    Environment.init()
   }
 
   fun getPrefs(): SharedPreferences {
