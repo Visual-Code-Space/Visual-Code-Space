@@ -2,7 +2,6 @@ package com.raredev.vcspace.activities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -11,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import com.blankj.utilcode.util.ClipboardUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.PathUtils;
@@ -38,7 +38,7 @@ public class TerminalActivity extends BaseActivity
     implements TerminalViewClient, TerminalSessionClient {
 
   public static final String KEY_WORKING_DIRECTORY = "terminal_workingDirectory";
-  
+
   private final Logger logger = Logger.newInstance("TerminalActivity");
   private ActivityTerminalBinding binding;
 
@@ -60,9 +60,8 @@ public class TerminalActivity extends BaseActivity
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+    getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
     super.onCreate(savedInstanceState);
-    getWindow().setStatusBarColor(Color.BLACK);
-    getWindow().setNavigationBarColor(Color.BLACK);
     setupTerminalView();
   }
 
@@ -83,6 +82,16 @@ public class TerminalActivity extends BaseActivity
   protected void onDestroy() {
     super.onDestroy();
     binding = null;
+  }
+
+  @Override
+  public int getNavigationBarColor() {
+    return ContextCompat.getColor(this, android.R.color.black);
+  }
+
+  @Override
+  public int getStatusBarColor() {
+    return ContextCompat.getColor(this, android.R.color.black);
   }
 
   private void setupTerminalView() {

@@ -28,6 +28,7 @@
     <item name="colorPrimaryInverse">@color/dark_inversePrimary</item>
     
     <item name="android:windowLightStatusBar">false</item>
+    <item name="android:windowLightNavigationBar" tools:targetApi="27">false</item>
     <item name="android:fontFamily">@font/josefin_sans</item>
     <item name="switchPreferenceCompatStyle">@style/AppTheme.SwitchPreference</item>
     <item name="dialogCornerRadius">28dp</item>
@@ -36,8 +37,6 @@
   <style name="AppTheme.Licence" parent="AppTheme">
     <item name="android:statusBarColor">?attr/colorSurface</item>
     <item name="android:navigationBarColor">?attr/colorSurface</item>
-    <item name="android:windowLightStatusBar">false</item>
-    <item name="android:windowLightNavigationBar" tools:targetApi="27">false</item>
   </style>
 
   <style name="AppTheme.SwitchPreference" parent="Preference.SwitchPreference.Material">
