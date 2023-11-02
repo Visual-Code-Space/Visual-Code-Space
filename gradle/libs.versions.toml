@@ -1,5 +1,5 @@
 [versions]
-editor = "0.22.1-b6a381e-SNAPSHOT"
+editor = "0.22.1"
 androidx-navigation = "2.5.3"
 
 jgit = "6.7.0.202309050840-r"
