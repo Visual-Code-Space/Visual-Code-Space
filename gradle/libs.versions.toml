@@ -11,7 +11,7 @@ androidx-annotation = { module = "androidx.annotation:annotation", version = "1.
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version = "1.6.1" }
 androidx-core = { module = "androidx.core:core", version = "1.10.1" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version = "1.12.0" }
-androidx-desugar = { module = "com.android.tools:desugar_jdk_libs", version ="2.0.3" }
+androidx-desugar = { module = "com.android.tools:desugar_jdk_libs", version ="2.0.4" }
 androidx-fragment_ktx = { module = "androidx.fragment:fragment-ktx", version = "1.5.7" }
 androidx-preference = { module = "androidx.preference:preference", version = "1.2.1" }
 androidx-nav-fragment = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "androidx-navigation" }
