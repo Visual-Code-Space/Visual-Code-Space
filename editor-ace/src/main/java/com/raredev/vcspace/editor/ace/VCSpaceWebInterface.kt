@@ -3,18 +3,13 @@ package com.raredev.vcspace.editor.ace
 import android.webkit.JavascriptInterface
 import android.widget.Toast
 import com.raredev.vcspace.editor.AceCodeEditor
-import com.raredev.vcspace.editor.ace.Point
-import com.raredev.vcspace.editor.ace.Range
 import com.raredev.vcspace.events.OnContentChangeEvent
 import org.greenrobot.eventbus.EventBus
 
 class VCSpaceWebInterface(private val editor: AceCodeEditor) {
-  @set:JavascriptInterface
-  var hasUndo = false
-  @set:JavascriptInterface
-  var hasRedo = false
-  @set:JavascriptInterface
-  var value = ""
+  @set:JavascriptInterface var hasUndo = false
+  @set:JavascriptInterface var hasRedo = false
+  @set:JavascriptInterface var value = ""
   var range: Range? = null
   var cursorPosition: Point? = null
 
@@ -32,7 +27,7 @@ class VCSpaceWebInterface(private val editor: AceCodeEditor) {
   fun setRange(startRow: Int, startColumn: Int, endRow: Int, endColumn: Int) {
     range = Range(Point(startRow, startColumn), Point(endRow, endColumn))
   }
-  
+
   @JavascriptInterface
   fun setCursorPosition(row: Int, column: Int) {
     this.cursorPosition = Point(row, column)

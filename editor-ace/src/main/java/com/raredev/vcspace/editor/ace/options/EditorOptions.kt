@@ -56,13 +56,33 @@ class EditorOptions {
     this.printMarginColumn = printMarginColumn
   }
 
-  enum class CursorStyle { ACE, SLIM, SMOOTH, WIDE }
+  enum class CursorStyle {
+    ACE,
+    SLIM,
+    SMOOTH,
+    WIDE
+  }
 
-  enum class SelectionStyle { LINE, TEXT }
+  enum class SelectionStyle {
+    LINE,
+    TEXT
+  }
 
-  enum class NewLineMode { AUTO, UNIX, WINDOWS }
+  enum class NewLineMode {
+    AUTO,
+    UNIX,
+    WINDOWS
+  }
 
-  enum class FoldStyle { MARKBEGIN, MARKBEGINEND, MANUAL }
+  enum class FoldStyle {
+    MARKBEGIN,
+    MARKBEGINEND,
+    MANUAL
+  }
 
-  enum class MergeUndoDeltas { ALWAYS, NEVER, TIMED }
+  enum class MergeUndoDeltas {
+    ALWAYS,
+    NEVER,
+    TIMED
+  }
 }
