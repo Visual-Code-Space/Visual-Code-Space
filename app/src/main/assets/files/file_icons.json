@@ -1,5 +1,4 @@
 [
-  // Language icons
   {
     "drawableName": "ic_language_c",
     "fileExtensions": [
@@ -84,7 +83,6 @@
       "xml"
     ]
   },
-  // Languages for which I didn't find an icon
   {
     "drawableName": "ic_file_document",
     "fileExtensions": [
@@ -93,7 +91,6 @@
       "properties", "md", "bat"
     ]
   },
-  // Others
   {
     "drawableName": "ic_apk_document",
     "fileExtensions": [
