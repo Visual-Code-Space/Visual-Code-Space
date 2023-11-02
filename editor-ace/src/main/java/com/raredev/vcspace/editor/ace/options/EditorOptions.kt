@@ -2,7 +2,7 @@ package com.raredev.vcspace.editor.ace.options
 
 import com.raredev.vcspace.editor.ace.VCSpaceEditorLanguage
 import com.raredev.vcspace.editor.ace.VCSpaceEditorTheme
-import com.raredev.vcspace.utils.PreferencesUtils
+import com.raredev.vcspace.utils.PreferencesUtils as settings
 
 class EditorOptions {
   companion object {
@@ -33,19 +33,19 @@ class EditorOptions {
   var showPrintMargin = true
   var fadeFoldWidgets = false
   var showFoldWidgets = true
-  var showLineNumbers = PreferencesUtils.lineNumbers
+  var showLineNumbers = settings.lineNumbers
   var showGutter = true
   var displayIndentGuides = true
   var fixedWidthGutter = false
   var useSvgGutterIcons = false
-  var useSoftTabs = PreferencesUtils.useTab
+  var useSoftTabs = !settings.useTab
   var enableEmmet = false
   var useElasticTabstops = false
 
   var firstLineNumber = 1
-  var fontSize = PreferencesUtils.textSize
+  var fontSize = settings.textSize
   var printMarginColumn = 80
-  var tabSize = PreferencesUtils.tabSize
+  var tabSize = settings.tabSize
   var maxLines = 0
   var minLines = 0
 

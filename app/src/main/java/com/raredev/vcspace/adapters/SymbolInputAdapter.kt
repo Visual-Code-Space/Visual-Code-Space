@@ -1,5 +1,6 @@
 package com.raredev.vcspace.adapters
 
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
@@ -79,7 +80,7 @@ class SymbolInputAdapter: RecyclerView.Adapter<SymbolInputAdapter.VH>() {
 
   private fun insertSymbolAceEditor(editor: AceCodeEditor, symbol: Symbol) {
     if ("→".equals(symbol.label)) {
-      editor.insert(PreferencesUtils.identationString)
+      editor.dispatchKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_TAB))
       return
     }
     editor.insert(symbol.insert[0].toString())
