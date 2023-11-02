@@ -1,10 +1,16 @@
+@file:Suppress("UnstableApiUsage")
+
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 pluginManagement {
+  includeBuild("build-logic")
   repositories {
     gradlePluginPortal()
     google()
     mavenCentral()
   }
 }
+
 dependencyResolutionManagement {
   repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
   repositories {
@@ -14,14 +20,17 @@ dependencyResolutionManagement {
     maven { url = uri("https://jitpack.io") }
   }
 }
+
 rootProject.name = "VCSpace"
 
-include ':app'
-include ':common'
-include ':common-res'
-include ':editor-ace'
-include ':editor-sora'
-include ':editor-sora:lang-textmate'
-include ':eventbus-events'
-include ':emulatorview'
-include ':models'
+include(
+  ":app",
+  ":common",
+  ":common-res",
+  ":editor-ace",
+  ":editor-sora",
+  ":editor-sora:lang-textmate",
+  ":eventbus-events",
+  ":emulatorview",
+  ":models"
+)

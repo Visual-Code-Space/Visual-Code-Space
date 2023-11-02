@@ -1,0 +1,42 @@
+[versions]
+editor = "0.22.1-b6a381e-SNAPSHOT"
+androidx-navigation = "2.5.3"
+
+jgit = "6.7.0.202309050840-r"
+
+[libraries]
+
+# AndroidX
+androidx-annotation = { module = "androidx.annotation:annotation", version = "1.7.0" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version = "1.6.1" }
+androidx-core = { module = "androidx.core:core", version = "1.10.1" }
+androidx-core-ktx = { module = "androidx.core:core-ktx", version = "1.12.0" }
+androidx-desugar = { module = "com.android.tools:desugar_jdk_libs", version ="2.0.3" }
+androidx-fragment_ktx = { module = "androidx.fragment:fragment-ktx", version = "1.5.7" }
+androidx-preference = { module = "androidx.preference:preference", version = "1.2.1" }
+androidx-nav-fragment = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "androidx-navigation" }
+androidx-nav-ui = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "androidx-navigation" }
+androidx-nav-dynamic_features = { module = "androidx.navigation:navigation-dynamic-features-fragment", version.ref = "androidx-navigation" }
+androidx-webkit = { module = "androidx.webkit:webkit", version = "1.8.0" }
+androidx-javascriptengine = { module = "androidx.javascriptengine:javascriptengine", version = "1.0.0-beta01" }
+
+# Google
+google-guava = { module = "com.google.guava:guava", version = "32.1.2-jre" }
+google-gson = { module = "com.google.code.gson:gson", version = "2.10.1" }
+google-material = { module = "com.google.android.material:material", version = "1.9.0" }
+google-oss-licenses = { module = "com.google.android.gms:play-services-oss-licenses", version = "17.0.1" }
+
+# Common
+common-editor = { module = "io.github.Rosemoe.sora-editor:editor", version.ref = "editor" }
+common-eventbus = { module = "org.greenrobot:eventbus", version = "3.3.1" }
+common-jdt-annotation = { module = "org.eclipse.jdt:org.eclipse.jdt.annotation", version = "2.2.700" }
+common-jsoup = { module = "org.jsoup:jsoup", version = "1.16.1" }
+common-jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit" }
+common-leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version = "2.12" }
+common-utilcode = { module = "com.blankj:utilcodex", version = "1.31.1" }
+common-android-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version = "1.7.3" }
+
+[plugins]
+android-application = { id = "com.android.application", version = "8.1.1" }
+android-library = { id = "com.android.library", version = "8.1.1" }
+kotlin = { id = "org.jetbrains.kotlin.android", version = "1.9.10" }
