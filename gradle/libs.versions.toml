@@ -1,6 +1,6 @@
 [versions]
 editor = "0.22.1-b6a381e-SNAPSHOT"
-androidx-navigation = "2.5.3"
+androidx-navigation = "2.7.5"
 
 jgit = "6.7.0.202309050840-r"
 
