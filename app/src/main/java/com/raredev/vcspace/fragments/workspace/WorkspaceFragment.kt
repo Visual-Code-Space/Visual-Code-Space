@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
@@ -15,8 +16,12 @@ import com.raredev.vcspace.R
 import com.raredev.vcspace.activities.SettingsActivity
 import com.raredev.vcspace.activities.TerminalActivity
 import com.raredev.vcspace.databinding.FragmentWorkspaceBinding
+import com.raredev.vcspace.viewmodel.FileExplorerViewModel
 
 class WorkspaceFragment: Fragment(), NavController.OnDestinationChangedListener {
+
+  private val fileViewModel by viewModels<FileExplorerViewModel>(
+    ownerProducer = { requireActivity() } )
 
   private var _binding: FragmentWorkspaceBinding? = null
   private val binding: FragmentWorkspaceBinding
@@ -41,7 +46,7 @@ class WorkspaceFragment: Fragment(), NavController.OnDestinationChangedListener 
     navController.addOnDestinationChangedListener(this)
     binding.navRail.setOnItemSelectedListener { item ->
       when (item.itemId) {
-        R.id.menu_terminal -> startActivity(Intent(requireContext(), TerminalActivity::class.java))
+        R.id.menu_terminal -> TerminalActivity.startTerminalWithDir(requireContext(), fileViewModel.currentPath.value)
         R.id.menu_settings -> startActivity(Intent(requireContext(), SettingsActivity::class.java))
       }
       false
