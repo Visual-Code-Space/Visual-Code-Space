@@ -125,7 +125,7 @@ class SearcherLayout: LinearLayout, View.OnClickListener {
   private fun replace() {
     try {
       val replaceText = binding.replaceText.toString()
-      if (replaceText.length > 0)
+      if (replaceText.length > 0) {
         searcher?.replaceThis(replaceText)
       }
     } catch (e: IllegalStateException) {
@@ -134,9 +134,13 @@ class SearcherLayout: LinearLayout, View.OnClickListener {
   }
 
   private fun replaceAll() {
+    val replaceText = binding.replaceText.toString()
+    if (replaceText.length <= 0) {
+      return
+    }
     try {
       val replaceText = binding.replaceText.toString()
-      if (replaceText.length > 0)
+      if (replaceText.length > 0) {
         searcher?.replaceAll(replaceText)
       }
     } catch (e: IllegalStateException) {
