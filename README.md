@@ -26,7 +26,7 @@
 - [Akash Yadav](https://github.com/itsaky) for the awesome [AndroidIDE](https://github.com/AndroidIDEOfficial/AndroidIDE)
 
 ## To contribute
-- Read this file to learn how to contribute to the project [CONTRIBUTE.md](https://github.com/Visual-Code-Space/Visual-Code-Space/blob/main/CONTRIBUTING.md)
+- Read this file to learn how to contribute to the project [CONTRIBUTING.md](https://github.com/Visual-Code-Space/Visual-Code-Space/blob/main/CONTRIBUTING.md)
 
 ## Community
 [![](https://dcbadge.vercel.app/api/server/4uTBTZeAgS)](https://discord.gg/4uTBTZeAgS)
