@@ -134,6 +134,10 @@ public class TextMateLanguage extends EmptyLanguage {
     this.useTab = useTab;
   }
 
+  public void setSymbolPairMatchEnabled(boolean enabled) {
+    symbolPairMatch.setEnabled(enabled);
+  }
+
   public TextMateNewlineHandler getNewlineHandler() {
     return newlineHandler;
   }

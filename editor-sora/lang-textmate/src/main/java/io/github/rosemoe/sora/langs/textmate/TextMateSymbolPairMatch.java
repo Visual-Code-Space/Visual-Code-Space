@@ -23,237 +23,222 @@
  */
 package io.github.rosemoe.sora.langs.textmate;
 
-import org.eclipse.tm4e.core.internal.grammar.tokenattrs.EncodedTokenAttributes;
-import org.eclipse.tm4e.core.internal.grammar.tokenattrs.StandardTokenType;
-import org.eclipse.tm4e.languageconfiguration.model.AutoClosingPairConditional;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import io.github.rosemoe.sora.lang.styling.Span;
 import io.github.rosemoe.sora.text.Content;
 import io.github.rosemoe.sora.text.ContentLine;
 import io.github.rosemoe.sora.widget.CodeEditor;
 import io.github.rosemoe.sora.widget.SymbolPairMatch;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import org.eclipse.tm4e.core.internal.grammar.tokenattrs.StandardTokenType;
+import org.eclipse.tm4e.languageconfiguration.model.AutoClosingPairConditional;
 
 public class TextMateSymbolPairMatch extends SymbolPairMatch {
 
-    private static final String surroundingPairFlag = "surroundingPair";
+  private static final String surroundingPairFlag = "surroundingPair";
 
-    private static final List<String> surroundingPairFlagWithList = List.of(surroundingPairFlag);
+  private static final List<String> surroundingPairFlagWithList = List.of(surroundingPairFlag);
 
-    private final TextMateLanguage language;
+  private final TextMateLanguage language;
 
-    private boolean enabled;
+  private boolean enabled;
 
-    public TextMateSymbolPairMatch(TextMateLanguage language) {
-        super(new SymbolPairMatch.DefaultSymbolPairs());
-        this.language = language;
+  public TextMateSymbolPairMatch(TextMateLanguage language) {
+    super(null);
+    this.language = language;
 
-        setEnabled(true);
+    setEnabled(true);
+  }
+
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
+    if (!enabled) {
+      removeAllPairs();
+    } else {
+      updatePair();
+    }
+  }
+
+  public void updatePair() {
+    if (!enabled) {
+      return;
+    }
+    removeAllPairs();
+    var languageConfiguration = language.languageConfiguration;
+    if (languageConfiguration == null) {
+      return;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-        if (!enabled) {
-            removeAllPairs();
-        } else {
-            updatePair();
-        }
+    var mergePairs = new LinkedHashMap<String, AutoClosingPairConditional>();
+
+    var autoClosingPairs = languageConfiguration.getAutoClosingPairs();
+
+    if (autoClosingPairs != null) {
+      for (var autoClosingPair : autoClosingPairs) {
+        mergePairs.put(autoClosingPair.open, autoClosingPair);
+      }
     }
 
+    var surroundingPairs = languageConfiguration.getSurroundingPairs();
 
-    public void updatePair() {
+    if (surroundingPairs != null) {
+      for (var surroundingPair : surroundingPairs) {
+        if (mergePairs.containsKey(surroundingPair.open)) {
+          var mergePair = mergePairs.get(surroundingPair.open);
 
-        if (!enabled) {
-            return;
+          if (mergePair.notIn == null) {
+            mergePair.notIn = surroundingPairFlagWithList;
+          } else {
+            mergePair.notIn.add(surroundingPairFlag);
+          }
+
+          mergePairs.put(mergePair.open, mergePair);
+          continue;
         }
-
-        var languageConfiguration = language.languageConfiguration;
-
-        if (languageConfiguration == null) {
-            return;
-        }
-
-        removeAllPairs();
-
-
-        var surroundingPairs = languageConfiguration.getSurroundingPairs();
-
-        var autoClosingPairs = languageConfiguration.getAutoClosingPairs();
-
-        var mergePairs = new ArrayList<AutoClosingPairConditional>();
-
-        if (autoClosingPairs != null) {
-            mergePairs.addAll(autoClosingPairs);
-        }
-
-
-        if (surroundingPairs != null) {
-
-            for (var surroundingPair : surroundingPairs) {
-
-                var newPair = new AutoClosingPairConditional(surroundingPair.open, surroundingPair.close,
-                        surroundingPairFlagWithList);
-
-                var mergePairIndex = mergePairs.indexOf(newPair);
-
-                if (mergePairIndex >= 0) {
-                    var mergePair = mergePairs.get(mergePairIndex);
-
-                    if (mergePair.notIn == null || mergePair.notIn.isEmpty()) {
-                        mergePairs.add(newPair);
-                        continue;
-                    }
-
-                    mergePair.notIn.add(surroundingPairFlag);
-
-                }
-                mergePairs.add(newPair);
-
-            }
-        }
-
-        for (var pair : mergePairs) {
-            putPair(pair.open, new SymbolPair(pair.open, pair.close, new SymbolPairEx(pair)));
-        }
-
+        mergePairs.put(
+            surroundingPair.open,
+            new AutoClosingPairConditional(
+                surroundingPair.open, surroundingPair.close, surroundingPairFlagWithList));
+      }
     }
 
-    static class SymbolPairEx implements SymbolPair.SymbolPairEx {
+    for (Map.Entry<String, AutoClosingPairConditional> entry : mergePairs.entrySet()) {
+      AutoClosingPairConditional pair = entry.getValue();
 
-        int[] notInTokenTypeArray;
+      SymbolPair symbol = null;
+      if (pair.notIn == null || pair.notIn.isEmpty()) {
+        symbol = new SymbolPair(pair.open, pair.close);
+      } else {
+        symbol = new SymbolPair(pair.open, pair.close, new SymbolPairEx(pair));
+      }
+      putPair(pair.open, symbol);
+    }
+  }
 
-        boolean isSurroundingPair = false;
+  static class SymbolPairEx implements SymbolPair.SymbolPairEx {
 
-        public SymbolPairEx(AutoClosingPairConditional pair) {
+    private boolean isSurroundingPair = false;
+    private int[] notInTokenTypeArray;
 
-            var notInList = pair.notIn;
+    public SymbolPairEx(AutoClosingPairConditional pair) {
+      var notInList = pair.notIn;
 
-            if (notInList == null || notInList.isEmpty()) {
-                notInTokenTypeArray = null;
-                return;
-            }
+      if (notInList.contains(surroundingPairFlag)) {
+        isSurroundingPair = true;
+      }
 
-            if (notInList.contains(surroundingPairFlag)) {
-                //
-                isSurroundingPair = true;
-                if (notInList == surroundingPairFlagWithList) {
-                    return;
-                } else {
-                    notInList.remove(surroundingPairFlag);
-                }
-            }
+      if (notInList == surroundingPairFlagWithList) {
+        return;
+      } else {
+        notInList.remove(surroundingPairFlag);
+      }
 
-            notInTokenTypeArray = new int[notInList.size()];
+      ensureNotInTokenTypeArray(notInList);
+    }
 
-            for (int i = 0; i < notInTokenTypeArray.length; i++) {
-                var notInValue = notInList.get(i).toLowerCase();
+    private void ensureNotInTokenTypeArray(List<String> notInList) {
+      notInTokenTypeArray = new int[notInList.size()];
 
-                var notInTokenType = StandardTokenType.String;
+      for (int i = 0; i < notInTokenTypeArray.length; i++) {
+        var notInValue = notInList.get(i).toLowerCase();
 
-                switch (notInValue) {
-                    case "string":
-                        break;
-                    case "comment":
-                        notInTokenType = StandardTokenType.Comment;
-                        break;
-                    case "regex":
-                        notInTokenType = StandardTokenType.RegEx;
-                        break;
-                }
+        int notInTokenType = StandardTokenType.Other;
 
-                notInTokenTypeArray[i] = notInTokenType;
-            }
-
-            Arrays.sort(notInTokenTypeArray);
-
+        switch (notInValue) {
+          case "string":
+            notInTokenType = StandardTokenType.String;
+            break;
+          case "comment":
+            notInTokenType = StandardTokenType.Comment;
+            break;
+          case "regex":
+            notInTokenType = StandardTokenType.RegEx;
+            break;
         }
 
-        @Override
-        public boolean shouldDoReplace(CodeEditor editor, ContentLine contentLine, int leftColumn) {
+        notInTokenTypeArray[i] = notInTokenType;
+      }
 
-            if (editor.getCursor().isSelected()) {
-                return true;
-            }
+      Arrays.sort(notInTokenTypeArray);
+    }
 
-            if (notInTokenTypeArray == null) {
-                return true;
-            }
+    @Override
+    public boolean shouldDoReplace(CodeEditor editor, ContentLine contentLine, int leftColumn) {
 
-            var cursor = editor.getCursor();
+      if (editor.getCursor().isSelected()) {
+        return true;
+      }
 
-            var currentLine = cursor.getLeftLine();
-            var currentColumn = cursor.getLeftColumn();
+      if (notInTokenTypeArray == null) {
+        return true;
+      }
 
-            var spansOnCurrentLine = editor.getSpansForLine(currentLine);
+      var cursor = editor.getCursor();
 
-            var currentSpan = binarySearchSpan(spansOnCurrentLine, currentColumn);
+      var currentLine = cursor.getLeftLine();
+      var currentColumn = cursor.getLeftColumn();
 
+      var spansOnCurrentLine = editor.getSpansForLine(currentLine);
 
-            var extra = currentSpan.extra;
+      var currentSpan = binarySearchSpan(spansOnCurrentLine, currentColumn);
 
+      var extra = currentSpan.extra;
 
-            if (extra instanceof Integer) {
-                var index = Arrays.binarySearch(notInTokenTypeArray, (Integer) extra);
-                return index < 0;
-            }
+      if (extra instanceof Integer) {
+        var index = Arrays.binarySearch(notInTokenTypeArray, (Integer) extra);
+        return index < 0;
+      }
 
-            return true;
+      return true;
+    }
+
+    private int checkIndex(int index, int max) {
+      return Math.max(Math.min(index, max), 0);
+    }
+
+    private Span binarySearchSpan(List<Span> spanList, int column) {
+      int start = 0, end = spanList.size() - 1, middle, size = spanList.size() - 1;
+
+      Span currentSpan = null;
+
+      while (start <= end) {
+        middle = (start + end) / 2;
+
+        currentSpan = spanList.get(middle);
+        if (currentSpan.column == column) {
+          break;
         }
 
-        private int checkIndex(int index, int max) {
-            return Math.max(Math.min(index, max), 0);
-        }
+        if (currentSpan.column < column) {
+          var nextSpan = spanList.get(checkIndex(middle + 1, size));
 
-        private Span binarySearchSpan(List<Span> spanList, int column) {
-            int start = 0, end = spanList.size() - 1, middle, size = spanList.size() - 1;
-
-            Span currentSpan = null;
-
-            while (start <= end) {
-                middle = (start + end) / 2;
-
-                currentSpan = spanList.get(middle);
-                if (currentSpan.column == column) {
-                    break;
-                }
-
-                if (currentSpan.column < column) {
-                    var nextSpan = spanList.get(checkIndex(middle + 1, size));
-
-                    if (nextSpan.column > column) {
-                        return currentSpan;
-                    }
-
-                    start++;
-
-                    continue;
-
-                }
-
-                // if (currentSpan.column > column)
-                var previousSpan = spanList.get(checkIndex(middle - 1, size));
-
-                if (previousSpan.column < column) {
-                    return currentSpan;
-                }
-
-                end--;
-
-            }
-
+          if (nextSpan.column > column) {
             return currentSpan;
+          }
 
+          start++;
+
+          continue;
         }
 
-        @Override
-        public boolean shouldDoAutoSurround(Content content) {
-            return isSurroundingPair && content.getCursor().isSelected();
+        // if (currentSpan.column > column)
+        var previousSpan = spanList.get(checkIndex(middle - 1, size));
+
+        if (previousSpan.column < column) {
+          return currentSpan;
         }
+
+        end--;
+      }
+
+      return currentSpan;
     }
+
+    @Override
+    public boolean shouldDoAutoSurround(Content content) {
+      return isSurroundingPair && content.getCursor().isSelected();
+    }
+  }
 }
