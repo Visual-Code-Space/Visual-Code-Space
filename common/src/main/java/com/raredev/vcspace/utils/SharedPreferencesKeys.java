@@ -16,7 +16,7 @@ public class SharedPreferencesKeys {
   public static final String KEY_FONTLIGATURES = "pref_fontligatures";
   public static final String KEY_WORDWRAP = "pref_wordwrap";
   public static final String KEY_LINENUMBERS = "pref_linenumbers";
-  public static final String KEY_USE_TAB = "pref_use_tab";
+  public static final String KEY_USE_TAB = "pref_usetab";
   public static final String KEY_DELETE_EMPTY_LINE_FAST = "pref_deleteemptylinefast";
   public static final String KEY_DELETETABS = "pref_deletetabs";
   public static final String KEY_AUTO_SAVE = "pref_auto_save";
