@@ -96,7 +96,7 @@ class SoraEditorPanel(
   }
 
   override fun beginSearcher() {
-    
+    binding.searcher.beginSearchMode()
   }
 
   override fun setLoading(loading: Boolean) {

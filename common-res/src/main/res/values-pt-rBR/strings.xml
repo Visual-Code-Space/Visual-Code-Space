@@ -74,7 +74,10 @@
     <string name="folder_name_hint">Nome da pasta:</string>
     <string name="search">Pesquisar</string>
     <string name="reset">Resetar</string>
+    <string name="previous">Anterior</string>
+    <string name="next">Próximo</string>
     <string name="replace">Substituir</string>
+    <string name="btn_close">Fechar</string>
     <string name="replace_all">Substituir tudo</string>
     <string name="replacing_texts">Substituindo textos…</string>
     <string name="ignore_letter_case">Ignorar maiúsculas/minúsculas</string>

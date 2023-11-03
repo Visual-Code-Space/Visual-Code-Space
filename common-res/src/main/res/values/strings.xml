@@ -82,8 +82,11 @@
     <string name="folder_name_hint">Folder name:</string>
     <string name="search">Search</string>
     <string name="reset">Reset</string>
+    <string name="previous">Previous</string>
+    <string name="next">Next</string>
     <string name="replace">Replace</string>
     <string name="replace_all">Replace all</string>
+    <string name="btn_close">Close</string>
     <string name="replacing_texts">Replacing texts…</string>
     <string name="ignore_letter_case">Ignore letter case</string>
     <string name="use_regex">Use regex</string>

@@ -2,19 +2,17 @@ package com.raredev.vcspace.ui
 
 import android.content.Context
 import android.text.Editable
-import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
-import androidx.appcompat.widget.TooltipCompat
-import com.google.android.material.color.MaterialColors
+import androidx.appcompat.widget.PopupMenu
 import com.raredev.vcspace.res.R
 import com.raredev.vcspace.databinding.LayoutSearcherBinding
-import com.raredev.vcspace.utils.PreferencesUtils.prefs
 import com.raredev.vcspace.utils.Utils
 import io.github.rosemoe.sora.widget.EditorSearcher
+import io.github.rosemoe.sora.widget.EditorSearcher.SearchOptions
 
 class SearcherLayout: LinearLayout, View.OnClickListener {
 
@@ -24,10 +22,10 @@ class SearcherLayout: LinearLayout, View.OnClickListener {
     super(context, attrs, defStyleAttr)
 
   private val binding = LayoutSearcherBinding.inflate(LayoutInflater.from(context))
+  private val optionsMenu: PopupMenu
 
-  private var searchOptions: EditorSearcher.SearchOptions? = null
+  private var searchOptions = SearchOptions(true, false)
   private var searcher: EditorSearcher? = null
-
   private var isSearching = false
 
   init {
@@ -40,54 +38,61 @@ class SearcherLayout: LinearLayout, View.OnClickListener {
       override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
     })
 
-    binding.ignoreLetterCase.setOnClickListener {
-      val ignoreCase = prefs.getBoolean(KEY_SEARCH_IGNORE_LETTER_CASE, true)
-      prefs.edit().putBoolean(KEY_SEARCH_IGNORE_LETTER_CASE, !ignoreCase).commit()
-      updateSearchOptions()
+    optionsMenu = PopupMenu(context, binding.searchOptions)
+    optionsMenu.menu.add(0, 0, 0, R.string.ignore_letter_case).apply {
+      isCheckable = true
+      isChecked = true
     }
-    binding.useRegex.setOnClickListener {
-      val useRegex = prefs.getBoolean(KEY_SEARCH_USE_REGEX, false)
-      prefs.edit().putBoolean(KEY_SEARCH_USE_REGEX, !useRegex).commit()
-      updateSearchOptions()
+    optionsMenu.menu.add(0, 1, 0, R.string.use_regex).apply {
+      isCheckable = true
+      isChecked = false
     }
+
+    optionsMenu.setOnMenuItemClickListener { item ->
+      item.isChecked = !item.isChecked
+
+      var ignoreCase = searchOptions.ignoreCase
+      var useRegex = searchOptions.type == EditorSearcher.SearchOptions.TYPE_REGULAR_EXPRESSION
+      when (item.itemId) {
+        0 -> ignoreCase = item.isChecked
+        1 -> useRegex = item.isChecked
+      }
+      searchOptions = SearchOptions(ignoreCase, useRegex)
+      search(binding.searchText.text.toString())
+      true
+    }
+    binding.searchOptions.setOnClickListener(this)
     binding.gotoLast.setOnClickListener(this)
     binding.gotoNext.setOnClickListener(this)
     binding.replace.setOnClickListener(this)
     binding.replaceAll.setOnClickListener(this)
+    binding.close.setOnClickListener(this)
 
-    TooltipCompat.setTooltipText(binding.ignoreLetterCase, context.getString(R.string.ignore_letter_case))
-    TooltipCompat.setTooltipText(binding.useRegex, context.getString(R.string.use_regex))
     addView(binding.root, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
 
-    visibility = View.GONE
+    binding.root.visibility = View.GONE
   }
 
-  override fun onClick(v: View) {
-    if (searchOptions == null || searcher == null) {
-      return
-    }
-    val id = v.id
-    if (id == binding.gotoLast.id) {
-      gotoLast()
-    } else if (id == binding.gotoNext.id) {
-      gotoNext()
-    } else if (id == binding.replace.id) {
-      replace()
-    } else if (id == binding.replaceAll.id) {
-      replaceAll()
+  override fun onClick(view: View) {
+    when (view.id) {
+      binding.searchOptions.id -> optionsMenu.show()
+      binding.gotoLast.id -> gotoLast()
+      binding.gotoNext.id -> gotoNext()
+      binding.replace.id -> replace()
+      binding.replaceAll.id -> replaceAll()
+      binding.close.id -> {
+        if (isSearching) {
+          binding.root.visibility = View.GONE
+          isSearching = false
+        }
+      }
     }
   }
 
   fun beginSearchMode() {
-    isSearching = !isSearching
-    if (isSearching) {
-      visibility = View.VISIBLE
-      updateSearchOptions()
-
-      search(binding.searchText.text.toString())
-    } else {
-      searcher?.stopSearch()
-      visibility = View.GONE
+    if (!isSearching) {
+      binding.root.visibility = View.VISIBLE
+      isSearching = true
     }
   }
 
@@ -96,27 +101,9 @@ class SearcherLayout: LinearLayout, View.OnClickListener {
   }
 
   fun search(text: String) {
-    if (searchOptions == null || searcher == null) {
-      return
-    }
-    if (TextUtils.isEmpty(text)) {
-      searcher!!.stopSearch()
-      return
-    }
-    searcher!!.search(text, searchOptions!!)
-  }
-
-  fun updateSearchOptions() {
-    val ignoreCase = prefs.getBoolean(KEY_SEARCH_IGNORE_LETTER_CASE, true)
-    val useRegex = prefs.getBoolean(KEY_SEARCH_USE_REGEX, false)
-
-    var colorPrimary = MaterialColors.getColor(this, com.google.android.material.R.attr.colorPrimary)
-    var colorControlNormal = MaterialColors.getColor(this, com.google.android.material.R.attr.colorControlNormal)
-
-    Utils.setDrawableTint(binding.ignoreLetterCase.drawable, if (ignoreCase) colorPrimary else colorControlNormal)
-    Utils.setDrawableTint(binding.useRegex.drawable, if (useRegex) colorPrimary else colorControlNormal)
-
-    searchOptions = EditorSearcher.SearchOptions(ignoreCase, useRegex)
+    if (text.length > 0) {
+      searcher?.search(text, searchOptions)
+    } else searcher?.stopSearch()
   }
 
   private fun gotoLast() {
@@ -137,7 +124,10 @@ class SearcherLayout: LinearLayout, View.OnClickListener {
 
   private fun replace() {
     try {
-      searcher?.replaceThis(binding.replaceText.text.toString());
+      val replaceText = binding.replaceText.toString()
+      if (replaceText.length > 0)
+        searcher?.replaceThis(replaceText)
+      }
     } catch (e: IllegalStateException) {
       e.printStackTrace()
     }
@@ -145,14 +135,12 @@ class SearcherLayout: LinearLayout, View.OnClickListener {
 
   private fun replaceAll() {
     try {
-      searcher?.replaceAll(binding.replaceText.text.toString())
+      val replaceText = binding.replaceText.toString()
+      if (replaceText.length > 0)
+        searcher?.replaceAll(replaceText)
+      }
     } catch (e: IllegalStateException) {
       e.printStackTrace()
     }
-  }
-
-  companion object {
-    const val KEY_SEARCH_IGNORE_LETTER_CASE = "searcher_ignoreLetterCase"
-    const val KEY_SEARCH_USE_REGEX = "searcher_useRegex"
   }
 }

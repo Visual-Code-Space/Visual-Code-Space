@@ -17,7 +17,6 @@ import io.github.rosemoe.sora.lang.Language
 import io.github.rosemoe.sora.langs.textmate.VCSpaceTMLanguage
 import io.github.rosemoe.sora.widget.CodeEditor
 import io.github.rosemoe.sora.widget.EditorSearcher
-import io.github.rosemoe.sora.widget.VCSpaceSearcher
 import io.github.rosemoe.sora.widget.component.EditorAutoCompletion
 import io.github.rosemoe.sora.widget.component.EditorTextActionWindow
 import java.io.File
