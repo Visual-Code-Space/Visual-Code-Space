@@ -16,7 +16,7 @@ import com.raredev.vcspace.res.R.string
 class EditorActivity: BaseEditorActivity() {
 
   private val onBackPressedCallback: OnBackPressedCallback =
-    object : OnBackPressedCallback(true) {
+    object : OnBackPressedCallback(false) {
       override fun handleOnBackPressed() {
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
           binding.drawerLayout.closeDrawer(GravityCompat.START)
@@ -83,8 +83,12 @@ class EditorActivity: BaseEditorActivity() {
         binding.main.setTranslationX(view.getWidth() * slideOffset / 2)
       }
       override fun onDrawerStateChanged(state: Int) {}
-      override fun onDrawerClosed(view: View) {}
-      override fun onDrawerOpened(view: View) {}
+      override fun onDrawerClosed(view: View) {
+        onBackPressedCallback.isEnabled = false
+      }
+      override fun onDrawerOpened(view: View) {
+        onBackPressedCallback.isEnabled = true
+      }
     })
   }
 
