@@ -155,7 +155,10 @@ class AceCodeEditor : WebView {
       loadJs(
           "editor.insert(\"${text.replace("\n", "\\n").replace("\r", "\\r").replace("'", "\\'")}\");")
 
-  fun setLanguageFromFile(filePath: String?) = loadJs("setLanguageFromFile(\"$filePath\");")
+  fun setLanguageFromFile(filePath: String?) {
+    if (filePath?.endsWith(".gradle") ?: false) setLanguage(VCSpaceEditorLanguage.GROOVY)
+    else loadJs("setLanguageFromFile(\"$filePath\");")
+  }
 
   fun undo() = loadJs("editor.session.getUndoManager().undo()")
 
