@@ -24,18 +24,15 @@
 package io.github.rosemoe.sora.langs.textmate;
 
 import android.graphics.Color;
-
-import java.util.List;
-
-import org.eclipse.tm4e.core.internal.theme.IRawTheme;
-import org.eclipse.tm4e.core.internal.theme.Theme;
-import org.eclipse.tm4e.core.internal.theme.ThemeRaw;
-import org.eclipse.tm4e.core.registry.IThemeSource;
-
+import androidx.annotation.NonNull;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.model.ThemeModel;
 import io.github.rosemoe.sora.widget.CodeEditor;
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme;
+import java.util.List;
+import org.eclipse.tm4e.core.internal.theme.IRawTheme;
+import org.eclipse.tm4e.core.internal.theme.Theme;
+import org.eclipse.tm4e.core.internal.theme.ThemeRaw;
 
 public class TextMateColorScheme extends EditorColorScheme
     implements ThemeRegistry.ThemeChangeListener {
@@ -44,19 +41,17 @@ public class TextMateColorScheme extends EditorColorScheme
 
   private IRawTheme rawTheme;
 
-  @Deprecated private IThemeSource themeSource;
-
   private ThemeModel currentTheme;
 
-  private final ThemeRegistry themeRegistry;
+  @NonNull private final ThemeRegistry themeRegistry;
 
-  public TextMateColorScheme(ThemeRegistry themeRegistry, ThemeModel themeModel) throws Exception {
+  private TextMateColorScheme(@NonNull ThemeRegistry themeRegistry, ThemeModel themeModel)
+      throws Exception {
     this.themeRegistry = themeRegistry;
-
-    currentTheme = themeModel;
+    this.currentTheme = themeModel;
   }
 
-  public static TextMateColorScheme create(ThemeRegistry themeRegistry) throws Exception {
+  public static TextMateColorScheme create(@NonNull ThemeRegistry themeRegistry) throws Exception {
     return new TextMateColorScheme(themeRegistry, themeRegistry.getCurrentThemeModel());
   }
 
@@ -65,7 +60,6 @@ public class TextMateColorScheme extends EditorColorScheme
     super.colors.clear();
     this.rawTheme = themeModel.getRawTheme();
     this.theme = themeModel.getTheme();
-    this.themeSource = themeModel.getThemeSource();
     applyDefault();
   }
 
@@ -77,10 +71,6 @@ public class TextMateColorScheme extends EditorColorScheme
   @Override
   public void applyDefault() {
     super.applyDefault();
-
-    if (themeRegistry != null && !themeRegistry.hasListener(this)) {
-      themeRegistry.addListener(this);
-    }
 
     if (rawTheme == null) {
       return;
@@ -209,10 +199,6 @@ public class TextMateColorScheme extends EditorColorScheme
 
   @Override
   public boolean isDark() {
-    /*var superIsDark = super.isDark();
-    if (superIsDark) {
-      return true;
-    }*/
     if (currentTheme != null) {
       return currentTheme.isDark();
     }
@@ -270,37 +256,42 @@ public class TextMateColorScheme extends EditorColorScheme
 
   @Override
   public int getColor(int type) {
-    if (type >= 255) {
-      // Cache colors in super class
-      var superColor = super.getColor(type);
-      if (superColor == 0) {
-        if (theme != null) {
-          String color = theme.getColor(type - 255);
-          var newColor = color != null ? Color.parseColor(color) : super.getColor(TEXT_NORMAL);
-          super.colors.put(type, newColor);
-          return newColor;
-        }
-        return super.getColor(TEXT_NORMAL);
+    int color = super.getColor(type);
+    if (type >= 255 && color == 0) {
+      if (theme != null) {
+        String themeColor = theme.getColor(type - 255);
+
+        color = themeColor != null ? Color.parseColor(themeColor) : super.getColor(TEXT_NORMAL);
+        super.colors.put(type, color);
       } else {
-        return superColor;
+        color = super.getColor(TEXT_NORMAL);
       }
     }
-    return super.getColor(type);
+
+    return color;
   }
 
   @Override
   public void detachEditor(CodeEditor editor) {
     super.detachEditor(editor);
-    themeRegistry.removeListener(this);
+
+    if (themeRegistry.hasListener(this)) {
+      themeRegistry.removeListener(this);
+    }
   }
 
   @Override
   public void attachEditor(CodeEditor editor) {
     super.attachEditor(editor);
+
+    if (!themeRegistry.hasListener(this)) {
+      themeRegistry.addListener(this);
+    }
+
     try {
       themeRegistry.loadTheme(currentTheme);
     } catch (Exception e) {
-      // throw new RuntimeException(e);
+      e.printStackTrace();
     }
     setTheme(currentTheme);
   }
@@ -308,10 +299,5 @@ public class TextMateColorScheme extends EditorColorScheme
   @Deprecated
   public IRawTheme getRawTheme() {
     return rawTheme;
-  }
-
-  @Deprecated
-  public IThemeSource getThemeSource() {
-    return themeSource;
   }
 }
