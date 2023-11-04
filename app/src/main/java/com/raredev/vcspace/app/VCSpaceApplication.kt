@@ -48,7 +48,6 @@ class VCSpaceApplication: BaseApplication() {
         ).setDark(name == "darcula")
       )
     }
-   // themeRegistry.setTheme(if (Utils.isDarkMode()) "darcula" else "quietlight")
   }
 
   fun uncaughtException(thread: Thread, th: Throwable) {
