@@ -91,6 +91,7 @@ dependencies {
   implementation(projects.eventbusEvents)
   implementation(projects.emulatorview)
   implementation(projects.models)
+  implementation(projects.pluginSystem)
 
   debugImplementation(libs.common.leakcanary)
 }

@@ -32,5 +32,6 @@ include(
   ":editor-sora:lang-textmate",
   ":eventbus-events",
   ":emulatorview",
-  ":models"
+  ":models",
+  ":plugin-system"
 )
