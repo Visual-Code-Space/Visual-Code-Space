@@ -1,4 +1,4 @@
-package com.vcspace.plugin;
+package com.raredev.vcspace.plugin;
 
 import org.pf4j.CompoundPluginDescriptorFinder;
 import org.pf4j.JarPluginManager;

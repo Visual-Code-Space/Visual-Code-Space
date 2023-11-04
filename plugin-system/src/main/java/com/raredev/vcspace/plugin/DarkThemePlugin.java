@@ -1,4 +1,4 @@
-package com.vcspace.plugin;
+package com.raredev.vcspace.plugin;
 
 import android.content.Context;
 import android.widget.Toast;
