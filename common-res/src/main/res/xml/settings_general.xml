@@ -13,12 +13,12 @@
       app:title="@string/title_theme"
       app:summary="@string/pref_theme_summary" />
 
-    <SwitchPreferenceCompat
+    <!-- <SwitchPreferenceCompat
       app:defaultValue="true"
       app:icon="@drawable/ic_palette"
       app:key="pref_dynamiccolors"
       app:title="@string/pref_materialyou"
-      app:summary="@string/pref_materialyou_summary" />
+      app:summary="@string/pref_materialyou_summary" /> -->
   </PreferenceCategory>
 
 </PreferenceScreen>

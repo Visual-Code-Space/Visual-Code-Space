@@ -24,9 +24,9 @@ class VCSpaceApplication: BaseApplication() {
     Thread.setDefaultUncaughtExceptionHandler(::uncaughtException)
     super.onCreate()
 
-    if (PreferencesUtils.dynamicColors) {
-      // DynamicColors.applyToActivitiesIfAvailable(this)
-    }
+    // if (PreferencesUtils.dynamicColors) {
+    //   DynamicColors.applyToActivitiesIfAvailable(this)
+    // }
     AppCompatDelegate.setDefaultNightMode(PreferencesUtils.appTheme)
     GrammarProvider.initialize(this)
     loadDefaultThemes()
