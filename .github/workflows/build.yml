@@ -19,12 +19,13 @@ jobs:
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
-          submodules: 'true'
           java-version: '17'
           distribution: 'temurin'
 
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          submodules: 'true'
         
       - name: Give permission to executable
         run: chmod +x gradlew
