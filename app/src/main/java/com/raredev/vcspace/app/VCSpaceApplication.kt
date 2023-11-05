@@ -25,7 +25,7 @@ class VCSpaceApplication: BaseApplication() {
     super.onCreate()
 
     if (PreferencesUtils.dynamicColors) {
-      DynamicColors.applyToActivitiesIfAvailable(this)
+      // DynamicColors.applyToActivitiesIfAvailable(this)
     }
     AppCompatDelegate.setDefaultNightMode(PreferencesUtils.appTheme)
     GrammarProvider.initialize(this)

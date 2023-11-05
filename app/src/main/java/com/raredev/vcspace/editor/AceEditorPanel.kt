@@ -85,6 +85,6 @@ class AceEditorPanel(
 
   override fun setLoading(loading: Boolean) {
     binding.progress.isVisible = loading
-    //editor.isEditable = !loading
+    editor.setReadOnly(loading)
   }
 }
