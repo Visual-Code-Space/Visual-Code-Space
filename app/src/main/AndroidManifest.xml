@@ -39,7 +39,9 @@
                 <data android:scheme="content" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.SettingsActivity" />
+        <activity
+            android:name=".activities.SettingsActivity"
+            android:label="@string/menu_settings"/>
         <activity
             android:name=".activities.TerminalActivity"
             android:configChanges="orientation|screenSize"

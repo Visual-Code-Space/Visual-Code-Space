@@ -2,6 +2,8 @@ package com.raredev.vcspace.activities
 
 import android.os.Bundle
 import android.view.View
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.NavigationUI
 import com.raredev.vcspace.databinding.ActivitySettingsBinding
 import com.raredev.vcspace.fragments.SettingsFragment
 
@@ -19,14 +21,11 @@ class SettingsActivity: BaseActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setSupportActionBar(binding.toolbar)
-    binding.toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
-    if (supportFragmentManager.findFragmentByTag(SettingsFragment.TAG) == null) {
-      supportFragmentManager
-          .beginTransaction()
-          .add(binding.settingsContainer.id, SettingsFragment(), SettingsFragment.TAG)
-          .commit()
-    }
+    val navHostFragment = supportFragmentManager.findFragmentById(binding.navHostFragment.id) as NavHostFragment
+    NavigationUI.setupWithNavController(
+      binding.toolbar, navHostFragment.navController
+    )
   }
 
   override fun onDestroy() {
