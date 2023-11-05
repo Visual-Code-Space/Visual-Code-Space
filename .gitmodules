@@ -1,4 +1,3 @@
-[submodule "ace-editor"]
+[submodule "editor-ace/src/main/assets/editor/ace-editor"]
 	path = editor-ace/src/main/assets/editor/ace-editor
 	url = https://github.com/Visual-Code-Space/vcspace-ace-editor.git
-	shallow = true
