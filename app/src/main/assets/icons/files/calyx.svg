@@ -1,0 +1,40 @@
+<!--
+  - The MIT License (MIT)
+  -
+  -  Copyright (c) 2015-2022 Elior "Mallowigi" Boukhobza
+  -
+  -  Permission is hereby granted, free of charge, to any person obtaining a copy
+  -  of this software and associated documentation files (the "Software"), to deal
+  -  in the Software without restriction, including without limitation the rights
+  -  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  -  copies of the Software, and to permit persons to whom the Software is
+  -  furnished to do so, subject to the following conditions:
+  -
+  -  The above copyright notice and this permission notice shall be included in all
+  -  copies or substantial portions of the Software.
+  -
+  -  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  -  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  -  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  -  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  -  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  -  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  -  SOFTWARE.
+  -->
+
+<svg big="true" viewBox="0 0 50 50" width="16px" height="16px" xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <g fill="#9eb764" iconColor="Calyx">
+        <g transform="matrix(2.17255 0 0 2.17255 -84.8722 -30.7166)">
+            <path stroke-miterlimit="4" stroke-linejoin="round" stroke-width="0.13229"
+                  d="m50.57288,15.76715l3.70417,3.43958l-3.70417,1.85208l0,-5.29166z"/>
+            <path stroke-miterlimit="4" stroke-linejoin="round" stroke-width="0.13229"
+                  d="m50.57288,15.76715l-3.70416,3.43958l3.70416,1.85208l0,-5.29166z"/>
+            <path stroke-linejoin="round" stroke-width="0.26458px"
+                  d="m50.57288,21.05881l0,5.29167l10.58334,-10.58333l-10.58334,5.29166z"/>
+            <path stroke-linejoin="round" stroke-width="0.26458px"
+                  d="m50.57288,21.05881l-10.58333,-5.29166l10.58333,10.58333l0,-5.29167z"/>
+        </g>
+        <rect stroke-miterlimit="5" y="25.55459" x="24.03475" height="20.90702" width="0.96526"/>
+        <rect stroke-miterlimit="5" y="25.55459" x="25" height="20.90702" width="0.96526"/>
+    </g>
+</svg>

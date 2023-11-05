@@ -1,0 +1,34 @@
+<!--
+  - The MIT License (MIT)
+  -
+  - Copyright (c) 2015-2022 Elior "Mallowigi" Boukhobza
+  -
+  - Permission is hereby granted, free of charge, to any person obtaining a copy
+  - of this software and associated documentation files (the "Software"), to deal
+  - in the Software without restriction, including without limitation the rights
+  - to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  - copies of the Software, and to permit persons to whom the Software is
+  - furnished to do so, subject to the following conditions:
+  -
+  - The above copyright notice and this permission notice shall be included in all
+  - copies or substantial portions of the Software.
+  -
+  - THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  - IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  - FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  - AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  - LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  - OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  - SOFTWARE.
+  -
+  -
+  -->
+
+<svg big="true" clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="1.4142" version="1.1"
+     viewBox="0 0 24 24" width="16px" height="16px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+    <path fill="#0288d1" folderColor="ViewModels"
+          d="M20,18H4V8H20M20,6H12L10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8C22,6.89 21.1,6 20,6Z"/>
+    <g transform="translate(0.04352833,-0.20009314)" fill="#b3e5fc" folderIconColor="ViewModels">
+        <path d="m 18.180408,18.851137 v -0.934885 l 1.783255,-1.035259 -1.783255,-1.034795 v -0.935343 l 2.775494,1.661134 v 0.618008 z m -0.693872,9.19e-4 -2.775494,-1.668533 v -0.604596 l 2.775494,-1.668997 v 0.935804 l -1.770766,1.035259 1.770766,1.035722 z M 13.770472,8.9103931 c -0.748456,-3.123e-4 -1.355294,0.5710553 -1.355,1.2757999 v 10.201 c -0.0014,0.705487 0.605755,1.278014 1.355,1.2777 h 8.1259 c 0.749245,3.14e-4 1.35641,-0.572213 1.355,-1.2777 v -10.201 c 2.94e-4,-0.7047446 -0.606544,-1.2761122 -1.355,-1.2757999 z m 8.126,8.9269999 v 2.5498 h -8.1259 v -2.5497 l -10e-5,-1.274 v -3.1887 h 8.1259 v 3.1887 z"/>
+    </g>
+</svg>

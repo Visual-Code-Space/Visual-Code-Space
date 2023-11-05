@@ -1,0 +1,31 @@
+<!--
+  - The MIT License (MIT)
+  -
+  -  Copyright (c) 2015-2022 Elior "Mallowigi" Boukhobza
+  -
+  -  Permission is hereby granted, free of charge, to any person obtaining a copy
+  -  of this software and associated documentation files (the "Software"), to deal
+  -  in the Software without restriction, including without limitation the rights
+  -  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  -  copies of the Software, and to permit persons to whom the Software is
+  -  furnished to do so, subject to the following conditions:
+  -
+  -  The above copyright notice and this permission notice shall be included in all
+  -  copies or substantial portions of the Software.
+  -
+  -  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  -  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  -  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  -  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  -  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  -  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  -  SOFTWARE.
+  -->
+
+<svg big="true" xmlns="http://www.w3.org/2000/svg" clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round"
+     stroke-miterlimit="1.414" viewBox="0 0 24 24" width="16px" height="16px">
+    <path fill="#D81B60" folderColor="Math"
+          d="M20,18H4V8H20M20,6H12L10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8C22,6.89 21.1,6 20,6Z"/>
+    <path fill="#F8BBD0" folderIconColor="Math" transform="scale(0.7) translate(12 12)"
+          d="M15.6,5.29C14.5,5.19 13.53,6 13.43,7.11L13.18,10H16V12H13L12.56,17.07C12.37,19.27 10.43,20.9 8.23,20.7C6.92,20.59 5.82,19.86 5.17,18.83L6.67,17.33C6.91,18.07 7.57,18.64 8.4,18.71C9.5,18.81 10.47,18 10.57,16.89L11,12H8V10H11.17L11.44,6.93C11.63,4.73 13.57,3.1 15.77,3.3C17.08,3.41 18.18,4.14 18.83,5.17L17.33,6.67C17.09,5.93 16.43,5.36 15.6,5.29Z"/>
+</svg>

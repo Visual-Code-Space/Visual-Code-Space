@@ -1,0 +1,30 @@
+<!--
+  - The MIT License (MIT)
+  -
+  - Copyright (c) 2015-2022 Elior "Mallowigi" Boukhobza
+  -
+  - Permission is hereby granted, free of charge, to any person obtaining a copy
+  - of this software and associated documentation files (the "Software"), to deal
+  - in the Software without restriction, including without limitation the rights
+  - to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  - copies of the Software, and to permit persons to whom the Software is
+  - furnished to do so, subject to the following conditions:
+  -
+  - The above copyright notice and this permission notice shall be included in all
+  - copies or substantial portions of the Software.
+  -
+  - THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  - IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  - FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  - AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  - LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  - OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  - SOFTWARE.
+  -
+  -
+  -->
+
+<svg big="true" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 479 512" width="16px" height="16px">
+    <path fill="#59DE00" iconColor="OpenEdge ABL"
+          d="m120.23678 481.19554v-138.12325l-120.23678 69.55848zm128.18632-478.95972c-4.96847-2.9810945-12.91801-2.9810945-17.88647 0l-124.21154 71.545831 239.47986 138.12325v277.24017l124.21153-71.54583c4.96848-2.98109 8.94324-9.93695 8.94324-15.8991v-266.30955zm-137.12955 146.07277-111.29355 63.59631 172.90248 100.36293v199.73217l111.29354-63.5963c4.96846-2.98109 8.94323-9.93695 8.94323-15.8991v-189.79523l-163.95924-94.40078c-4.96846-2.98108-12.918-2.98108-17.88646 0z"/>
+</svg>

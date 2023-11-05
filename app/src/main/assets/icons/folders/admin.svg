@@ -1,0 +1,33 @@
+<!--
+  - The MIT License (MIT)
+  -
+  - Copyright (c) 2015-2022 Elior "Mallowigi" Boukhobza
+  -
+  - Permission is hereby granted, free of charge, to any person obtaining a copy
+  - of this software and associated documentation files (the "Software"), to deal
+  - in the Software without restriction, including without limitation the rights
+  - to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  - copies of the Software, and to permit persons to whom the Software is
+  - furnished to do so, subject to the following conditions:
+  -
+  - The above copyright notice and this permission notice shall be included in all
+  - copies or substantial portions of the Software.
+  -
+  - THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  - IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  - FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  - AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  - LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  - OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  - SOFTWARE.
+  -
+  -
+  -->
+
+<svg big="true" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" fill-rule="evenodd"
+     clip-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="1.4142" width="16px" height="16px">
+    <path d="M6.67,2.67H2.67c-.73,0-1.33,.6-1.33,1.33V12c0,.73,.6,1.33,1.33,1.33H13.33c.73,0,1.33-.6,1.33-1.33V5.33c0-.73-.6-1.33-1.33-1.33h-5.33l-1.33-1.33Z" fill="#04a29f"
+          fill-rule="nonzero" folderColor="Netlify"/>
+    <path d="M15.91,9.54l-.14-.14h0l-3.78-3.78-.14-.14-.16-.06h-.75l-.16,.06-.14,.14-3.77,3.78-.14,.14-.06,.16v.75l.06,.16,.14,.14,3.78,3.78,.14,.14,.16,.06h.75l.16-.06,.14-.14,3.78-3.78,.14-.14,.06-.16v-.75l-.06-.16Zm-4.93-3.25l.05-.05h.58l.05,.05v1.81l-.05,.05h-.58l-.05-.05v-1.81Zm-3.64,4.06v-.58l.05-.05h2.04l.05,.05v.58l-.05,.05h-2.04l-.05-.05Zm2.65,1.62l-.53,.53h-.08l-.39-.39v-.08l.53-.53h.42l.06,.06v.42Zm0-3.37l-.06,.06h-.42l-.53-.53v-.08l.39-.39h.08l.53,.53v.42Zm1.66,5.25l-.05,.05h-.58l-.05-.05v-1.81l.05-.05h.58l.05,.05v1.81Zm.8-2.61l-.05,.05h0s-.58,0-.58,0l-.05-.05v-1.35c0-.24-.09-.42-.38-.43-.15,0-.32,0-.5,0l-.03,.03v1.75l-.05,.05h-.58l-.05-.05v-2.31l.05-.05h1.3c.51,0,.91,.41,.91,.91v1.44Zm2.85-.87l-.05,.05h-2.04l-.05-.05v-.58l.05-.05h2.04l.05,.05v.58Z"
+          fill="#defffe" fill-rule="nonzero" folderIconColor="Netlify"/>
+</svg>

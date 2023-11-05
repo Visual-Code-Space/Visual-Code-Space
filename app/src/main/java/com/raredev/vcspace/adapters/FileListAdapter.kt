@@ -1,19 +1,20 @@
 package com.raredev.vcspace.adapters
 
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.raredev.vcspace.res.R
 import com.raredev.vcspace.databinding.LayoutFileItemBinding
 import com.raredev.vcspace.providers.FileIconProvider
+import com.raredev.vcspace.res.R
+import com.raredev.vcspace.utils.Utils
 import java.io.File
 import java.text.SimpleDateFormat
 
-class FileListAdapter(
-  private val listener: OnFileClickListener
-): RecyclerView.Adapter<FileListAdapter.VH>() {
+class FileListAdapter(private val listener: OnFileClickListener) :
+    RecyclerView.Adapter<FileListAdapter.VH>() {
 
   private var files: List<File> = emptyList()
 
@@ -21,8 +22,8 @@ class FileListAdapter(
     FileIconProvider.initialize()
   }
 
-  inner class VH(internal val binding: LayoutFileItemBinding):
-    RecyclerView.ViewHolder(binding.root)
+  inner class VH(internal val binding: LayoutFileItemBinding) :
+      RecyclerView.ViewHolder(binding.root)
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
     return VH(LayoutFileItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -32,15 +33,20 @@ class FileListAdapter(
     holder.binding.apply {
       val file = files[position]
 
-      val iconId = if (file.isFile) {
-        FileIconProvider.findFileIconResource(file)
-      } else {
-        R.drawable.ic_folder
-      }
+      val iconDrawable: Drawable =
+          if (file.isFile) {
+            FileIconProvider.findFileIconDrawable(file)
+                ?: Utils.getDrawableFromSvg("icons/files/text.svg")
+          } else {
+            FileIconProvider.findFolderIconDrawable(file)
+                ?: Utils.getDrawableFromSvg("icons/folders/folder.svg")
+          }
 
-      icon.setImageResource(iconId)
+      icon.setImageDrawable(iconDrawable)
       name.text = file.name
-      info.text = root.context.getString(R.string.last_modified, SimpleDateFormat("yy/MM/dd").format(file.lastModified()))
+      info.text =
+          root.context.getString(
+              R.string.last_modified, SimpleDateFormat("yy/MM/dd").format(file.lastModified()))
 
       root.setOnClickListener { listener.onFileClickListener(file) }
       root.setOnLongClickListener { listener.onFileLongClickListener(file, it) }
@@ -63,10 +69,8 @@ class FileListAdapter(
     fun onFileLongClickListener(file: File, view: View): Boolean
   }
 
-  inner class FileDiffCallback(
-    private val oldList: List<File>,
-    private val newList: List<File>
-  ): DiffUtil.Callback() {
+  inner class FileDiffCallback(private val oldList: List<File>, private val newList: List<File>) :
+      DiffUtil.Callback() {
     override fun getOldListSize(): Int {
       return oldList.size
     }

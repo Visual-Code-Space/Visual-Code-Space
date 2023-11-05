@@ -1,0 +1,35 @@
+<!--
+  - The MIT License (MIT)
+  -
+  - Copyright (c) 2015-2022 Elior "Mallowigi" Boukhobza
+  -
+  - Permission is hereby granted, free of charge, to any person obtaining a copy
+  - of this software and associated documentation files (the "Software"), to deal
+  - in the Software without restriction, including without limitation the rights
+  - to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  - copies of the Software, and to permit persons to whom the Software is
+  - furnished to do so, subject to the following conditions:
+  -
+  - The above copyright notice and this permission notice shall be included in all
+  - copies or substantial portions of the Software.
+  -
+  - THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  - IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  - FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  - AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  - LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  - OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  - SOFTWARE.
+  -
+  -
+  -->
+
+<svg big="true" clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="1.4142" version="1.1"
+     viewBox="0 0 24 24" width="16px" height="16px" xml:space="preserve"
+     xmlns="http://www.w3.org/2000/svg">
+    <path fill="#009688" folderColor="CNAB"
+          d="M20,18H4V8H20M20,6H12L10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8C22,6.89 21.1,6 20,6Z"/>
+
+    <path fill="#B2DFDB" transform="scale(0.03) translate(300 300)" folderIconColor="CNAB"
+          d="M244.2695465,287.0512085h165.6064606v165.6064758H244.2695465V287.0512085z M414.0161743,59.3422852H269.1105347V171.12677L202.8679199,38.6414795L99.3638916,245.6495972h207.0080566l-20.7008057-41.4016113h128.3450317V59.3422852z M151.8059235,59.3423195L59.3423195,238.7493286V59.3423195H151.8059235z M0,0v144.9056549h20.7008095V20.7008095h124.2048492V0H0z M324.3126831,0v20.7008095h124.204834v124.2048492h20.7008057V0H324.3126831z M448.5175171,367.0943298v124.2048645h-124.204834V512h144.9056396V367.0943298H448.5175171z M197.2507019,400.9657898c39.6477509-68.671936-10.2898254-155.0406952-89.671875-155.0906677S-21.6319771,332.131134,18.102335,400.8529968S157.602951,469.6376953,197.2507019,400.9657898z"/>
+</svg>

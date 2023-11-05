@@ -1,0 +1,48 @@
+<!--
+  - The MIT License (MIT)
+  -
+  - Copyright (c) 2015-2023 Elior "Mallowigi" Boukhobza
+  -
+  - Permission is hereby granted, free of charge, to any person obtaining a copy
+  - of this software and associated documentation files (the "Software"), to deal
+  - in the Software without restriction, including without limitation the rights
+  - to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  - copies of the Software, and to permit persons to whom the Software is
+  - furnished to do so, subject to the following conditions:
+  -
+  - The above copyright notice and this permission notice shall be included in all
+  - copies or substantial portions of the Software.
+  -
+  - THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  - IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  - FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  - AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  - LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  - OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  - SOFTWARE.
+  -
+  -->
+
+<svg big="true" xmlns="http://www.w3.org/2000/svg" viewBox="200 60 100 185" width="16px" height="16px">
+    <g fill="#f4dd4b" iconColor="NVM">
+        <polygon points="157.25 103.31 149.5 103.31 154.06 111.19 161.8 111.19 157.25 103.31 157.25 103.31"/>
+        <polygon
+                points="214.34 127.93 212.63 124.82 207.44 115.92 201.71 115.99 203.28 118.69 188.68 118.77 185.48 113.26 174.73 113.34 232.67 204.42 254.4 165.61 236.96 135.68 235.19 132.63 231.13 125.66 231.13 125.66 214.34 127.93"/>
+        <path d="M268.23,119.22c4.58-7.89,9.16-15.77,13.66-23.7,.98-1.72,2.23-2.43,4.2-2.42,13.38,.05,26.76,.02,40.14,.03,3.81,0,4.75,1.48,3.21,4.98-4.18,7.09-8.45,14.13-12.29,21.42-4.49,7.66-9,15.3-13.45,22.98-9.94,17.16-19.75,34.4-29.83,51.48-4.85,8.22-9.69,16.45-15.26,24.22-1.21,1.68-2.45,3.37-3.86,4.88-3.58,3.82-6.63,3.77-10.23-.05-1.73-1.83-7.16-9.79-4.26-5.13-4.72-7.4-10.39-15.82-15.07-23.23,1.52-3.53,17.99-33.3,22.31-40.75,.34-.58,14.44-23.88,20.72-34.71Z"/>
+        <g>
+            <polygon
+                    points="180.24 89.96 173.84 90.09 177.74 96.53 180.03 96.48 183.66 102.48 194.15 102.26 187.76 91.72 181.39 91.85 180.24 89.96 180.24 89.96"/>
+            <polygon points="179.33 59.07 173.09 59.2 176.89 65.47 183.13 65.34 179.33 59.07 179.33 59.07"/>
+            <polygon points="168.13 67.93 162.87 68.04 166.07 73.32 171.33 73.21 168.13 67.93 168.13 67.93"/>
+            <polygon points="190.58 48.38 186.17 48.47 188.48 52.28 192.89 52.19 190.58 48.38 190.58 48.38"/>
+            <polygon points="180.34 77.12 174.8 77.24 177.7 82.03 183.24 81.91 180.34 77.12 180.34 77.12"/>
+            <polygon
+                    points="207.51 80.18 198.55 80.37 197.11 78 188.99 78.17 193.23 85.18 198.79 85.07 203 92.02 214.54 91.78 207.51 80.18 207.51 80.18"/>
+            <polygon points="198.05 64.59 190.22 64.76 194.32 71.54 202.16 71.37 198.05 64.59 198.05 64.59"/>
+            <polygon points="163.54 50.26 159.93 50.34 161.82 53.46 165.43 53.38 163.54 50.26 163.54 50.26"/>
+            <polygon
+                    points="222.99 104.24 208.67 104.55 211.51 109.23 215.89 109.14 218.53 113.48 228.46 113.27 222.99 104.24 222.99 104.24"/>
+        </g>
+        <polygon points="166.88 79.77 162.46 79.86 164.77 83.67 169.18 83.58 166.88 79.77 166.88 79.77"/>
+    </g>
+</svg>

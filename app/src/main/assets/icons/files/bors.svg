@@ -1,0 +1,30 @@
+<!--
+  - The MIT License (MIT)
+  -
+  - Copyright (c) 2015-2022 Elior "Mallowigi" Boukhobza
+  -
+  - Permission is hereby granted, free of charge, to any person obtaining a copy
+  - of this software and associated documentation files (the "Software"), to deal
+  - in the Software without restriction, including without limitation the rights
+  - to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  - copies of the Software, and to permit persons to whom the Software is
+  - furnished to do so, subject to the following conditions:
+  -
+  - The above copyright notice and this permission notice shall be included in all
+  - copies or substantial portions of the Software.
+  -
+  - THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  - IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  - FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  - AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  - LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  - OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  - SOFTWARE.
+  -
+  -
+  -->
+
+<svg big="true" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512" width="16px" height="16px">
+    <path fill="#BDBDBD" iconColor="Bors"
+          d="M416.8676758,312.4821167H284.0777283c42.48703-32.0568237,35.2312317-87.4985657-1.9818115-112.9704742h134.771759C490.3536072,203.6092682,491.8284302,308.5311584,416.8676758,312.4821167z M63.4221344,199.5116425h144.0222168c-37.3805389,25.3323364-43.4914703,82.7314606-1.3209991,112.9704742H63.4221344C-12.412528,309.1796875-10.3579712,202.4508667,63.4221344,199.5116425z M279.4544983,229.2422028c0,17.4803925-19.0535278,28.4649506-34.2140198,19.724762c-15.1605072-8.7401886-15.1605072-30.7093353,0-39.4495239C260.4009705,200.7772369,279.4544983,211.761795,279.4544983,229.2422028z M479.6289978,256c0-196.3383179-200.4769592-319.7160034-359.9924316-221.5468445s-159.5154114,344.9245605,0.000061,443.093689S479.6289978,452.3383179,479.6289978,256z"/>
+</svg>

@@ -1,0 +1,30 @@
+<!--
+  - The MIT License (MIT)
+  -
+  - Copyright (c) 2015-2022 Elior "Mallowigi" Boukhobza
+  -
+  - Permission is hereby granted, free of charge, to any person obtaining a copy
+  - of this software and associated documentation files (the "Software"), to deal
+  - in the Software without restriction, including without limitation the rights
+  - to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  - copies of the Software, and to permit persons to whom the Software is
+  - furnished to do so, subject to the following conditions:
+  -
+  - The above copyright notice and this permission notice shall be included in all
+  - copies or substantial portions of the Software.
+  -
+  - THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  - IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  - FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  - AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  - LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  - OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  - SOFTWARE.
+  -
+  -
+  -->
+
+<svg big="true" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="16px" height="16px">
+    <path fill="#359adc" iconColor="Pytest"
+          d="M47.2890472,47.8176079V0h80.312355v47.8176079H47.2890472z M353.2745361,47.8176079V0h-80.3123779v47.8176079H353.2745361z M240.4380341,47.8176079V0h-80.3125v47.8176079H240.4380341z M489.4819336,63.1054382H22.5796967c-30.1062622,0.0000305-30.1062622,45.0886841,0,45.0886536h466.9022217C519.5060425,108.1940918,519.5060425,63.1054382,489.4819336,63.1054382z M466.111145,47.8176079V0h-80.3123474v47.8176079H466.111145z M385.7987976,123.4819183v117.1345367h80.3123474V123.4819183H385.7987976z M272.9621582,123.4819183v201.8516083h80.3123779V123.4819183H272.9621582z M160.1255341,123.4819183v311.2155762h80.3125V123.4819183H160.1255341z M47.2890472,123.4819183V512h80.312355V123.4819183H47.2890472z"/>
+</svg>

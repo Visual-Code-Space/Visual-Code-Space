@@ -1,0 +1,30 @@
+<!--
+  - The MIT License (MIT)
+  -
+  - Copyright (c) 2015-2022 Elior "Mallowigi" Boukhobza
+  -
+  - Permission is hereby granted, free of charge, to any person obtaining a copy
+  - of this software and associated documentation files (the "Software"), to deal
+  - in the Software without restriction, including without limitation the rights
+  - to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  - copies of the Software, and to permit persons to whom the Software is
+  - furnished to do so, subject to the following conditions:
+  -
+  - The above copyright notice and this permission notice shall be included in all
+  - copies or substantial portions of the Software.
+  -
+  - THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  - IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  - FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  - AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  - LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  - OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  - SOFTWARE.
+  -
+  -
+  -->
+
+<svg big="true" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 341 512" width="16px" height="16px">
+    <path fill="#7986CB" iconColor="Fancy"
+          d="M242.2748413,0L66.0381165,98.2427216L0,341.5119019L101.9018402,512l173.1153107-95.180603l65.7870483-245.0799713L242.2748413,0z M177.9246826,164.1259003l-63.7584381-50.9958954l91.6190948-51.0737267L177.9246826,164.1259003z M241.0783691,71.1351318l49.4759521,86.2351837l-77.2027893,15.3433228L241.0783691,71.1351318z M91.9179535,141.9930267l75.55336,60.4293365l-27.1729431,99.5503845l-95.7743835,14.6087036L91.9179535,141.9930267z M102.213562,441.4989319l-53.0555115-88.7647705l80.6425934-12.3022156L102.213562,441.4989319z M164.8649902,350.3463745l62.2423401,51.2349548l-89.6869812,49.3092957L164.8649902,350.3463745z M249.1744995,372.5541382l-73.7913818-60.7415771l27.2463074-99.8178711l94.6955566-18.8210754L249.1744995,372.5541382z" />
+</svg>

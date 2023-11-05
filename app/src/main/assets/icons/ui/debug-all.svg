@@ -1,0 +1,35 @@
+<!--
+  - The MIT License (MIT)
+  -
+  - Copyright (c) 2015-2022 Elior "Mallowigi" Boukhobza
+  -
+  - Permission is hereby granted, free of charge, to any person obtaining a copy
+  - of this software and associated documentation files (the "Software"), to deal
+  - in the Software without restriction, including without limitation the rights
+  - to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  - copies of the Software, and to permit persons to whom the Software is
+  - furnished to do so, subject to the following conditions:
+  -
+  - The above copyright notice and this permission notice shall be included in all
+  - copies or substantial portions of the Software.
+  -
+  - THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  - IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  - FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  - AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  - LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  - OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  - SOFTWARE.
+  -
+  -
+  -->
+
+
+<svg big="true" xmlns="http://www.w3.org/2000/svg" version="1.1" width="16px" height="16px" viewBox="0 0 24 24">
+    <g fill="#FF5370" transform="matrix(1, 0, 0, 1, -1.812496, -1.499999)">
+        <path d="M 14 10 L 10 10 L 10 12 L 14 12 Z M 14 14 L 10 14 L 10 16 L 14 16 Z M 20 10 L 17.91 10 C 17.96 10.33 18 10.66 18 11 L 18 12 L 20 12 L 20 14 L 18 14 L 18 14.507 C 14.556 14.67 11.814 17.513 11.812 20.997 C 9.671 20.931 7.821 19.739 6.81 18 L 4 18 L 4 16 L 6.09 16 C 6.04 15.67 6 15.34 6 15 L 6 14 L 4 14 L 4 12 L 6 12 L 6 11 C 6 10.66 6.04 10.33 6.09 10 L 4 10 L 4 8 L 6.81 8 C 7.26 7.22 7.88 6.55 8.62 6.04 L 7 4.41 L 8.41 3 L 10.59 5.17 C 11.04 5.06 11.5 5 12 5 C 12.5 5 12.96 5.06 13.42 5.17 L 15.59 3 L 17 4.41 L 15.37 6.04 C 16.12 6.55 16.74 7.22 17.19 8 L 20 8 Z"></path>
+        <path d="M 19.984 16.5 L 19.984 24.5 L 25.812 20.5 M 13.812 24.5 L 19.64 20.5 L 13.812 16.5 L 13.812 24.5 Z" />
+    </g>
+
+
+</svg>

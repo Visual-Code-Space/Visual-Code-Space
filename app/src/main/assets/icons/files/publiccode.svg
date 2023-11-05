@@ -1,0 +1,54 @@
+<!--
+  - The MIT License (MIT)
+  -
+  -  Copyright (c) 2015-2022 Elior "Mallowigi" Boukhobza
+  -
+  -  Permission is hereby granted, free of charge, to any person obtaining a copy
+  -  of this software and associated documentation files (the "Software"), to deal
+  -  in the Software without restriction, including without limitation the rights
+  -  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  -  copies of the Software, and to permit persons to whom the Software is
+  -  furnished to do so, subject to the following conditions:
+  -
+  -  The above copyright notice and this permission notice shall be included in all
+  -  copies or substantial portions of the Software.
+  -
+  -  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  -  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  -  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  -  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  -  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  -  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  -  SOFTWARE.
+  -->
+
+<svg big="true" width="16px" height="16px" viewBox="0 0 903 1042"
+     xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <mask id="Mask">
+            <path fill="white" id="Polygon"
+                  d="M451.015 0L902.03 260.394V781.181L451.015 1041.57L0 781.181V260.394L451.015 0Z"
+            />
+            <g id="Union" fill="black">
+                <path d="M757.013 781.321L830.013 739.115V427L757.013 469.206V781.321Z" fill="black" />
+                <path d="M703.013 812.543L631.013 854.171V542.056L703.013 500.428V812.543Z" fill="black" />
+                <path d="M505.013 927.021V614.905L577.013 573.277V885.393L505.013 927.021Z" fill="black" />
+                <path fill-rule="evenodd" clip-rule="evenodd"
+                      d="M451.015 0L902.03 260.394V781.181L451.015 1041.57L0 781.181V260.394L451.015 0ZM451.013 21L884.025 271H675.59L451.013 521L18.0001 271L451.013 21ZM18 333L18.0001 771L451.013 1021L884.025 771L884.025 333L451.013 583L18 333Z"
+                />
+            </g>
+        </mask>
+    </defs>
+    <g id="mark" mask="url(#Mask)" fill="#90A4AE" iconColor="Public Code">
+        <path id="Polygon" d="M451.015 0L902.03 260.394V781.181L451.015 1041.57L0 781.181V260.394L451.015 0Z"
+        />
+        <g id="Union">
+            <path d="M757.013 781.321L830.013 739.115V427L757.013 469.206V781.321Z" />
+            <path d="M703.013 812.543L631.013 854.171V542.056L703.013 500.428V812.543Z" />
+            <path d="M505.013 927.021V614.905L577.013 573.277V885.393L505.013 927.021Z" />
+            <path fill-rule="evenodd" clip-rule="evenodd"
+                  d="M451.015 0L902.03 260.394V781.181L451.015 1041.57L0 781.181V260.394L451.015 0ZM451.013 21L884.025 271H675.59L451.013 521L18.0001 271L451.013 21ZM18 333L18.0001 771L451.013 1021L884.025 771L884.025 333L451.013 583L18 333Z"
+            />
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,30 @@
+<!--
+  - The MIT License (MIT)
+  -
+  - Copyright (c) 2015-2022 Elior "Mallowigi" Boukhobza
+  -
+  - Permission is hereby granted, free of charge, to any person obtaining a copy
+  - of this software and associated documentation files (the "Software"), to deal
+  - in the Software without restriction, including without limitation the rights
+  - to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  - copies of the Software, and to permit persons to whom the Software is
+  - furnished to do so, subject to the following conditions:
+  -
+  - The above copyright notice and this permission notice shall be included in all
+  - copies or substantial portions of the Software.
+  -
+  - THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  - IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  - FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  - AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  - LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  - OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  - SOFTWARE.
+  -
+  -
+  -->
+
+<svg big="true" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="16px" height="16px">
+    <path fill="#bb262c" iconColor="MarkdownLint"
+          d="M342.1774292,285.7508545L473.1215515,154.808136L512,190.743576L341.1293335,360.5756226L237.5744019,255.9628601l38.4361877-36.3778076L342.1774292,285.7508545z M276.4831543,185.2120361l-74.1472015,70.1766968l112.9732208,114.1272888H26.1086788C11.8056488,369.5160217,0,357.7103577,0,343.1803589V168.5926666c0-14.3030243,11.8056488-26.1086731,26.1086788-26.1086731h290.7789001c14.3029175,0,25.5173035,11.8056488,25.2902222,26.1086731l-0.0003662,82.3126221L276.4831543,185.2120361z M195.8570862,184.8557281h-46.0302429l-34.5227051,46.0302429l-34.5227127-46.0302429H34.7511864v138.0908356h46.0302391v-69.0454102l34.5227127,44.1890259l34.5227051-44.1890259v69.0454102h46.0302429V184.8557281z"/>
+</svg>

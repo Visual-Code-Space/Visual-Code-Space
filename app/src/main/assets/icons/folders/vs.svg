@@ -1,0 +1,33 @@
+<!--
+  - The MIT License (MIT)
+  -
+  - Copyright (c) 2015-2022 Elior "Mallowigi" Boukhobza
+  -
+  - Permission is hereby granted, free of charge, to any person obtaining a copy
+  - of this software and associated documentation files (the "Software"), to deal
+  - in the Software without restriction, including without limitation the rights
+  - to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  - copies of the Software, and to permit persons to whom the Software is
+  - furnished to do so, subject to the following conditions:
+  -
+  - The above copyright notice and this permission notice shall be included in all
+  - copies or substantial portions of the Software.
+  -
+  - THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  - IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  - FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  - AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  - LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  - OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  - SOFTWARE.
+  -
+  -
+  -->
+
+<svg big="true" style="enable-background:new 0 0 24 24" version="1.1" viewBox="0 0 24 24" xml:space="preserve"
+     xmlns="http://www.w3.org/2000/svg" width="16px" height="16px">
+    <path d="m10 4h-6c-1.11 0-2 0.89-2 2v12c0 1.097 0.903 2 2 2h16c1.097 0 2-0.903 2-2v-10c0-1.11-0.9-2-2-2h-8l-2-2z"
+          fill="#9C27B0" fill-rule="nonzero" folderColor="VisualStudio"/>
+    <path fill="#E1BEE7" transform="scale(0.03) translate(280 280)" folderIconColor="VisualStudio"
+          d="M181.3904114,200.8379517L51.3018875,101.9018707L0,127.5528183v256.5320435l51.3018761,25.6509094l129.3895874-99.6637268L386.643158,512l124.6097412-50.2151794V49.8529205L385.9187317,0L181.3904114,200.8379517z M384.5906677,358.4338989L253.9510803,254.7207947L384.2283936,153.565979L384.5906677,358.4338989z M130.0885162,255.8301392l-77.8660965,73.3078003V182.5449677L130.0885162,255.8301392z"/>
+</svg>

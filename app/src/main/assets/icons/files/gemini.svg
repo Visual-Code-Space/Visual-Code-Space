@@ -1,0 +1,31 @@
+<!--
+  - The MIT License (MIT)
+  -
+  -  Copyright (c) 2015-2022 Elior "Mallowigi" Boukhobza
+  -
+  -  Permission is hereby granted, free of charge, to any person obtaining a copy
+  -  of this software and associated documentation files (the "Software"), to deal
+  -  in the Software without restriction, including without limitation the rights
+  -  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  -  copies of the Software, and to permit persons to whom the Software is
+  -  furnished to do so, subject to the following conditions:
+  -
+  -  The above copyright notice and this permission notice shall be included in all
+  -  copies or substantial portions of the Software.
+  -
+  -  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  -  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  -  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  -  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  -  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  -  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  -  SOFTWARE.
+  -->
+
+
+<svg big="true" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" id="Layer_1"
+     x="0px" y="0px" viewBox="0 0 64 64" xml:space="preserve" width="16px" height="16px">
+    <path fill="#00dcfa" iconColor="Gemini"
+          d="M 41.825881,2.0000002e-6 C 30.569411,2.0000002e-6 21.007058,8.6588229 19.802353,19.802351 8.658823,21.007057 0,30.569411 0,41.825881 c 0,12.235294 9.938823,22.174117 22.174117,22.174117 11.25647,0 20.856469,-8.658823 22.02353,-19.802353 C 55.341175,42.992941 64,33.430587 64,22.174117 64,9.9388233 54.061175,0 41.825881,2.0000002e-6 Z M 58.804705,24.658824 c -1.091765,7.416469 -7.04,13.364707 -14.45647,14.456468 V 24.658824 Z M 5.195294,39.341174 C 6.287058,31.887058 12.235293,25.938824 19.651765,24.847058 V 39.303527 H 5.195294 Z m 33.957645,5.007059 c -1.242352,8.395294 -8.432941,14.644706 -16.978822,14.644706 -8.545881,0 -15.73647,-6.249412 -16.978823,-14.644706 z M 39.341185,24.658824 V 39.303527 H 24.658824 V 24.658824 Z m 19.46352,-5.007058 H 24.847056 C 26.089411,11.25647 33.28,5.007059 41.825881,5.007059 c 8.545881,0 15.736472,6.249411 16.978824,14.644707 z"
+    />
+</svg>

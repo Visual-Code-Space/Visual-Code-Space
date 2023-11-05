@@ -1,0 +1,33 @@
+<!--
+  - The MIT License (MIT)
+  -
+  - Copyright (c) 2015-2022 Elior "Mallowigi" Boukhobza
+  -
+  - Permission is hereby granted, free of charge, to any person obtaining a copy
+  - of this software and associated documentation files (the "Software"), to deal
+  - in the Software without restriction, including without limitation the rights
+  - to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  - copies of the Software, and to permit persons to whom the Software is
+  - furnished to do so, subject to the following conditions:
+  -
+  - The above copyright notice and this permission notice shall be included in all
+  - copies or substantial portions of the Software.
+  -
+  - THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  - IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  - FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  - AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  - LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  - OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  - SOFTWARE.
+  -
+  -
+  -->
+
+<svg big="true" clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="1.4142" version="1.1"
+     viewBox="0 0 24 24" width="16px" height="16px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+    <path d="m10 4h-6c-1.11 0-2 .89-2 2v12c0 1.097.903 2 2 2h16c1.097 0 2-.903 2-2v-10c0-1.11-.9-2-2-2h-8l-2-2z"
+          fill="#00796B" fill-rule="nonzero" folderColor="Plugins"/>
+    <path d="m12.276 14.245h.92216v-2.4591c0-.6824.5533-1.2295 1.2295-1.2295h2.4591v-.92216a1.5369 1.5369 0 0 1 1.5369 -1.5369 1.5369 1.5369 0 0 1 1.5369 1.5369v.92216h2.4591a1.2295 1.2295 0 0 1 1.2295 1.2295v2.3361h-.92216c-.92216 0-1.6599.73773-1.6599 1.6599 0 .92216.73773 1.6599 1.6599 1.6599h.92216v2.3361a1.2295 1.2295 0 0 1 -1.2295 1.2295h-2.3361v-.92216c0-.92216-.73773-1.6599-1.6599-1.6599-.92216 0-1.6599.73773-1.6599 1.6599v.92216h-2.3361a1.2295 1.2295 0 0 1 -1.2295 -1.2295v-2.4591h-.92216a1.5369 1.5369 0 0 1 -1.5369 -1.5369 1.5369 1.5369 0 0 1 1.5369 -1.5369z"
+          fill="#80CBC4" folderIconColor="Plugins"/>
+</svg>

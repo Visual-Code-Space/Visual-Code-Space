@@ -1,0 +1,43 @@
+<!--
+  - The MIT License (MIT)
+  -
+  - Copyright (c) 2015-2023 Elior "Mallowigi" Boukhobza
+  -
+  - Permission is hereby granted, free of charge, to any person obtaining a copy
+  - of this software and associated documentation files (the "Software"), to deal
+  - in the Software without restriction, including without limitation the rights
+  - to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  - copies of the Software, and to permit persons to whom the Software is
+  - furnished to do so, subject to the following conditions:
+  -
+  - The above copyright notice and this permission notice shall be included in all
+  - copies or substantial portions of the Software.
+  -
+  - THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  - IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  - FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  - AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  - LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  - OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  - SOFTWARE.
+  -->
+
+<svg big="true" version="1.1" viewBox="0 0 24 24" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" width="16px" height="16px">
+  <defs>
+    <mask id="Mask">
+      <circle cx="30.125" cy="-29" r="110.12" fill="white" stroke-width="1.0244"/>
+      <circle cx="-79.266" cy="80.375" r="110.12" fill="white" stroke-width="1.0244"/>
+      <path
+          d="m30.875-29.75-55.437-0.0014-55.437 0.0014 27.624 27.624-57.45 57.45 56.063 56.063 57.45-57.45 27.188 27.188v-55.439z"
+          fill="black"/>
+    </mask>
+  </defs>
+
+  <g transform="matrix(.061526 0 0 .061526 13.512 10.42)" mask="url(#Mask)" fill="#00bfa5" iconColor="SPWN">
+    <circle cx="30.125" cy="-29" r="110.12" stroke-width="1.0244"/>
+    <circle cx="-79.266" cy="80.375" r="110.12" stroke-width="1.0244"/>
+    <path
+        d="m30.875-29.75-55.437-0.0014-55.437 0.0014 27.624 27.624-57.45 57.45 56.063 56.063 57.45-57.45 27.188 27.188v-55.439z"
+        fill="white"/>
+  </g>
+</svg>

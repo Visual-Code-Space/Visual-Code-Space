@@ -1,0 +1,44 @@
+<!--
+  - The MIT License (MIT)
+  -
+  - Copyright (c) 2015-2022 Elior "Mallowigi" Boukhobza
+  -
+  - Permission is hereby granted, free of charge, to any person obtaining a copy
+  - of this software and associated documentation files (the "Software"), to deal
+  - in the Software without restriction, including without limitation the rights
+  - to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  - copies of the Software, and to permit persons to whom the Software is
+  - furnished to do so, subject to the following conditions:
+  -
+  - The above copyright notice and this permission notice shall be included in all
+  - copies or substantial portions of the Software.
+  -
+  - THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  - IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  - FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  - AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  - LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  - OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  - SOFTWARE.
+  -
+  -
+  -->
+
+<svg big="true" version="1.1" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" width="16px" height="16px">
+    <g transform="translate(0,3)" fill="#0288d1" iconColor="Velocity">
+        <g transform="translate(-.00014751 .00011708)">
+            <path d="m150 58.553a88.446 88.446 0 0 0 -88.447 88.447 88.446 88.446 0 0 0 88.447 88.446 88.446 88.446 0 0 0 88.446 -88.446 88.446 88.446 0 0 0 -88.446 -88.447zm.0114 25.082a63.353 63.353 0 0 1 63.353 63.353 63.353 63.353 0 0 1 -63.353 63.353 63.353 63.353 0 0 1 -63.353 -63.353 63.353 63.353 0 0 1 63.353 -63.353z"
+                  style="paint-order:fill markers stroke"/>
+            <path transform="matrix(.26458 0 0 .26458 0 -3)"
+                  d="m170.11 729.82-123.95 123.95 123.95 123.95v-76.521h396.82v-94.859h-396.82z"
+                  style="stroke-width:15.81"/>
+            <path transform="matrix(.26458 0 0 .26458 0 -3)"
+                  d="m280.02 46.154-123.95 123.95h76.521v396.82h94.861v-396.82h76.52z" style="stroke-width:15.81"/>
+            <path transform="matrix(.26458 0 0 .26458 0 -3)"
+                  d="m963.75 156.11v76.521h-396.82v94.859h396.82v76.521l123.95-123.95z" style="stroke-width:15.81"/>
+            <path transform="matrix(.26458 0 0 .26458 0 -3)"
+                  d="m806.26 566.93v396.82h-76.52l123.95 123.95 123.95-123.95h-76.521v-396.82z"
+                  style="stroke-width:15.81"/>
+        </g>
+    </g>
+</svg>

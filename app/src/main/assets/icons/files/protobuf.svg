@@ -1,0 +1,40 @@
+<!--
+  - The MIT License (MIT)
+  -
+  - Copyright (c) 2015-2022 Elior "Mallowigi" Boukhobza
+  -
+  - Permission is hereby granted, free of charge, to any person obtaining a copy
+  - of this software and associated documentation files (the "Software"), to deal
+  - in the Software without restriction, including without limitation the rights
+  - to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  - copies of the Software, and to permit persons to whom the Software is
+  - furnished to do so, subject to the following conditions:
+  -
+  - The above copyright notice and this permission notice shall be included in all
+  - copies or substantial portions of the Software.
+  -
+  - THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  - IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  - FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  - AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  - LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  - OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  - SOFTWARE.
+  -
+  -
+  -->
+
+<svg big="true" width="16px" height="16px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+    <g transform="matrix(0.20299377110908937,0,0,0.20299377110908937,0.643549342643837,245.0408342001066)">
+        <polygon fill="#FFC107"
+                 points="148.20355224609375,-1044.7132647037506 164.1935577392578,-1072.4329912662506 143.2635498046875,-1108.7130205631256 106.34346771240234,-1044.7132647037506 "/>
+        <path fill="#0F9D58"
+              d="m181.653483,-1102.713632c2.14,-3.71 2.14,-8.28 0,-11.99l-33.46,-58l-41.85,0l57.85,100.28c0,0 17.46,-30.29 17.46,-30.29z"/>
+    </g>
+    <polygon fill="#DB4437"
+             points="9.234954833984375,6.987378314137459 5.9890851974487305,12.614361003041267 10.23774242401123,19.978985980153084 17.732267379760742,6.987378314137459 "/>
+    <g transform="matrix(0.20299377110908937,0,0,0.20299377110908937,0.643549342643837,245.0408342001066)">
+        <path fill="#4285F4" iconColor="Protobuf"
+              d="m8.873483,-1114.713632c-2.14,3.71 -2.14,8.28 0,11.99l33.46,58l41.85,0l-57.85,-100.27l-17.46,30.28z"/>
+    </g>
+</svg>

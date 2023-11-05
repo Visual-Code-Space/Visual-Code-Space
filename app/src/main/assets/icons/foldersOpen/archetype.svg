@@ -1,0 +1,32 @@
+<!--
+  - The MIT License (MIT)
+  -
+  -  Copyright (c) 2015-2022 Elior "Mallowigi" Boukhobza
+  -
+  -  Permission is hereby granted, free of charge, to any person obtaining a copy
+  -  of this software and associated documentation files (the "Software"), to deal
+  -  in the Software without restriction, including without limitation the rights
+  -  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  -  copies of the Software, and to permit persons to whom the Software is
+  -  furnished to do so, subject to the following conditions:
+  -
+  -  The above copyright notice and this permission notice shall be included in all
+  -  copies or substantial portions of the Software.
+  -
+  -  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  -  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  -  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  -  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  -  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  -  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  -  SOFTWARE.
+  -->
+
+<svg big="true" clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="1.4142" version="1.1"
+     viewBox="0 0 24 24" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" width="16px" height="16px">
+    <path fill="#f06292" folderColor="Archetype"
+          d="M20,18H4V8H20M20,6H12L10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8C22,6.89 21.1,6 20,6Z"/>
+
+    <path d="m23.419 20.708v1.5094l-1.2816-0.83304-3.4105-6.408c0.46992-0.14952 0.89712-0.3916 1.2674-0.712l3.4247 6.4436m-3.56-9.1706a2.136 2.136 0 0 1-2.136 2.136h-0.31328l-4.1011 7.711-1.2816 0.83304v-1.5094l4.1225-7.7466c-0.7832-0.87576-0.712-2.2286 0.17088-3.0189 0.38448-0.34176 0.88288-0.54112 1.4026-0.54112v-1.424a0.712 0.712 0 0 1 0.712 0.712v0.84016c0.8544 0.29904 1.424 1.1036 1.424 2.0078m-1.424 0a0.712 0.712 0 0 0-0.712-0.712 0.712 0.712 0 0 0-0.712 0.712 0.712 0.712 0 0 0 0.712 0.712 0.712 0.712 0 0 0 0.712-0.712z"
+          folderIconColor="Archetype" fill="#f8bbd0" stroke-width=".712"/>
+</svg>

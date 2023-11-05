@@ -1,0 +1,31 @@
+<!--
+  - The MIT License (MIT)
+  -
+  - Copyright (c) 2015-2022 Elior "Mallowigi" Boukhobza
+  -
+  - Permission is hereby granted, free of charge, to any person obtaining a copy
+  - of this software and associated documentation files (the "Software"), to deal
+  - in the Software without restriction, including without limitation the rights
+  - to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  - copies of the Software, and to permit persons to whom the Software is
+  - furnished to do so, subject to the following conditions:
+  -
+  - The above copyright notice and this permission notice shall be included in all
+  - copies or substantial portions of the Software.
+  -
+  - THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  - IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  - FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  - AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  - LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  - OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  - SOFTWARE.
+  -
+  -
+  -->
+
+<svg big="true" xmlns="http://www.w3.org/2000/svg" version="1.1" x="0px" y="0px" viewBox="0 0 512 512" width="16px"
+     height="16px">
+    <path fill="#F44336" iconColor="Apache Conf"
+          d="M89.1997452,357.7596741c-12.6379776-37.4828491,49.8277206-114.3637085,158.1045837-211.7445068c56.2535248-50.5926514,150.2545624-96.1661911,207.2540131-113.4011841c0,0-2.1613464,18.7400208-4.4837646,27.8700638c5.8764343-12.3593178,12.6523438-30.4322891,12.6523438-30.4322891c27.710083-7.5280724,39.6018066-8.4597569,44.042572-1.4433136c9.9403381,29.1548805,5.5353699,55.595108-11.7063599,79.6059799c-7.0857239-10.8916092-17.4862061-19.0926514-29.1503601-26.2678528c17.6063538,13.927536,20.9141846,19.0250854,22.7554932,33.8047638c-56.4257812,52.0451279-128.365448,82.1956406-180.4693604,135.8181152C172.1289368,391.6051636,170.3092651,331.2571106,99.1447372,363.8609314c-25.842804,30.1723633-47.9732666,60.9492493-66.7910233,92.2657776l-30.91222,32.0336609L0,486.8790588C22.9918365,446.7670288,54.5576897,402.9313965,89.1997452,357.7596741z" />
+</svg>

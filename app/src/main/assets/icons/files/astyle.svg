@@ -1,0 +1,30 @@
+<!--
+  - The MIT License (MIT)
+  -
+  - Copyright (c) 2015-2022 Elior "Mallowigi" Boukhobza
+  -
+  - Permission is hereby granted, free of charge, to any person obtaining a copy
+  - of this software and associated documentation files (the "Software"), to deal
+  - in the Software without restriction, including without limitation the rights
+  - to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  - copies of the Software, and to permit persons to whom the Software is
+  - furnished to do so, subject to the following conditions:
+  -
+  - The above copyright notice and this permission notice shall be included in all
+  - copies or substantial portions of the Software.
+  -
+  - THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  - IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  - FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  - AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  - LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  - OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  - SOFTWARE.
+  -
+  -
+  -->
+
+<svg big="true" version="1.1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16px" height="16px">
+    <path d="m8.2032 5.4473-2.3737 1.3293 1.3293-2.3737-1.3293-2.3737 2.3737 1.3293 2.3737-1.3293-1.3293 2.3737 1.3293 2.3737-2.3737-1.3293m11.394 9.3051 2.3737-1.3293-1.3293 2.3737 1.3293 2.3737-2.3737-1.3293-2.3737 1.3293 1.3293-2.3737-1.3293-2.3737 2.3737 1.3293m2.3737-12.723-1.3293 2.3737 1.3293 2.3737-2.3737-1.3293-2.3737 1.3293 1.3293-2.3737-1.3293-2.3737 2.3737 1.3293 2.3737-1.3293m-8.2227 10.236 2.3168-2.3168-2.0129-2.0129-2.3168 2.3168 2.0129 2.0129m0.97798-5.2127 2.2218 2.2218c0.3703 0.35131 0.3703 0.96849 0 1.3388l-11.081 11.081c-0.3703 0.3703-0.98748 0.3703-1.3388 0l-2.2218-2.2218c-0.3703-0.35131-0.3703-0.96849 0-1.3388l11.081-11.081c0.3703-0.3703 0.98748-0.3703 1.3388 0z"
+          fill="#9FA8DA" iconColor="Artistic Style" stroke-width=".9495"/>
+</svg>
