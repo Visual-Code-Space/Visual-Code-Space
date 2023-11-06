@@ -1,28 +1,40 @@
 package com.raredev.vcspace.activities.editor
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.blankj.utilcode.util.KeyboardUtils
+import com.blankj.utilcode.util.UriUtils
 import com.raredev.vcspace.R
 import com.raredev.vcspace.res.R.string
 
-class EditorActivity: BaseEditorActivity() {
+class EditorActivity : BaseEditorActivity() {
 
   private val onBackPressedCallback: OnBackPressedCallback =
-    object : OnBackPressedCallback(false) {
-      override fun handleOnBackPressed() {
-        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-          binding.drawerLayout.closeDrawer(GravityCompat.START)
+      object : OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() {
+          if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+          }
         }
       }
-    }
+
+  private val createFile =
+      registerForActivityResult(ActivityResultContracts.CreateDocument()) { uri ->
+        if (uri != null) openFile(UriUtils.uri2File(uri))
+      }
+  private val openFile =
+      registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        if (uri != null) openFile(UriUtils.uri2File(uri))
+      }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -32,6 +44,9 @@ class EditorActivity: BaseEditorActivity() {
     configureDrawer()
 
     onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+
+    val fileUri: Uri? = intent.data
+    if (fileUri != null) openFile(UriUtils.uri2File(fileUri))
   }
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -68,28 +83,35 @@ class EditorActivity: BaseEditorActivity() {
       R.id.menu_redo -> editor?.redo()
       R.id.menu_save -> saveFile(true)
       R.id.menu_save_all -> saveAll(true)
+      R.id.menu_new_file -> createFile.launch("filename.txt")
+      R.id.menu_open_file -> openFile.launch(arrayOf("text/*"))
     }
     return true
   }
 
   fun configureDrawer() {
-    val drawerToggle = ActionBarDrawerToggle(
-      this, binding.drawerLayout, binding.toolbar, string.open, string.close)
+    val drawerToggle =
+        ActionBarDrawerToggle(
+            this, binding.drawerLayout, binding.toolbar, string.open, string.close)
     binding.drawerLayout.addDrawerListener(drawerToggle)
     drawerToggle.syncState()
 
-    binding.drawerLayout.addDrawerListener(object: DrawerLayout.SimpleDrawerListener() {
-      override fun onDrawerSlide(view: View, slideOffset: Float) {
-        binding.main.setTranslationX(view.getWidth() * slideOffset / 2)
-      }
-      override fun onDrawerStateChanged(state: Int) {}
-      override fun onDrawerClosed(view: View) {
-        onBackPressedCallback.isEnabled = false
-      }
-      override fun onDrawerOpened(view: View) {
-        onBackPressedCallback.isEnabled = true
-      }
-    })
+    binding.drawerLayout.addDrawerListener(
+        object : DrawerLayout.SimpleDrawerListener() {
+          override fun onDrawerSlide(view: View, slideOffset: Float) {
+            binding.main.setTranslationX(view.getWidth() * slideOffset / 2)
+          }
+
+          override fun onDrawerStateChanged(state: Int) {}
+
+          override fun onDrawerClosed(view: View) {
+            onBackPressedCallback.isEnabled = false
+          }
+
+          override fun onDrawerOpened(view: View) {
+            onBackPressedCallback.isEnabled = true
+          }
+        })
   }
 
   private fun getUnsavedFilesCount(): Int {
