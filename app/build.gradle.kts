@@ -62,6 +62,8 @@ android {
 }
 
 dependencies {
+  implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+
   coreLibraryDesugaring(libs.androidx.desugar)
   implementation(libs.androidx.annotation)
   implementation(libs.androidx.appcompat)

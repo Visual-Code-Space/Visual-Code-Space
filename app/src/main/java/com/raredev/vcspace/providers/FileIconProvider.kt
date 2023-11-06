@@ -54,7 +54,16 @@ object FileIconProvider {
             "kts" to "gradlekts",
             "sh" to "shell", // or "shell2"
             "gitmodules" to "gitignore",
-            "keystore" to "key"
+            "keystore" to "key",
+            "txt" to "text",
+            "zip" to "archive2",
+            "rar" to "archive2",
+            "gz" to "archive2",
+            "tgz" to "archive2",
+            "mp3" to "audio2",
+            "mp4" to "video2",
+            "jar" to "java",
+            "jpeg" to "jpg"
             // ...
             )
 
@@ -63,7 +72,7 @@ object FileIconProvider {
   }
 
   fun findFolderIconDrawable(file: File): Drawable? {
-    val name = file.name.lowercase();
+    val name = file.name.lowercase()
     val folderName = if (name.startsWith(".")) name.replaceFirst(".", "") else name
     return Utils.getDrawableFromSvg("icons/folders/$folderName.svg")
   }

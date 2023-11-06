@@ -93,7 +93,7 @@
             app:iconSpaceReserved="false"
             app:key="pref_use_ace_editor"
             app:title="Use Ace Editor"
-            app:summary="Instead of using Sora Editor use the Ace Editor" />
+            app:summary="Instead of using Sora Editor use the Ace Editor (experimental)" />
 
     </PreferenceCategory>
 

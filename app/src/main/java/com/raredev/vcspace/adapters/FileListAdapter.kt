@@ -36,7 +36,7 @@ class FileListAdapter(private val listener: OnFileClickListener) :
       val iconDrawable: Drawable =
           if (file.isFile) {
             FileIconProvider.findFileIconDrawable(file)
-                ?: Utils.getDrawableFromSvg("icons/files/text.svg")
+                ?: Utils.getDrawableFromSvg("icons/files/blank.svg")
           } else {
             FileIconProvider.findFolderIconDrawable(file)
                 ?: Utils.getDrawableFromSvg("icons/folders/folder.svg")
