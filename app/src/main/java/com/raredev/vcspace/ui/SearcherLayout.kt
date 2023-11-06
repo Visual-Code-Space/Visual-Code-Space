@@ -8,18 +8,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
 import androidx.appcompat.widget.PopupMenu
-import com.raredev.vcspace.res.R
 import com.raredev.vcspace.databinding.LayoutSearcherBinding
-import com.raredev.vcspace.utils.Utils
+import com.raredev.vcspace.res.R
 import io.github.rosemoe.sora.widget.EditorSearcher
 import io.github.rosemoe.sora.widget.EditorSearcher.SearchOptions
 
-class SearcherLayout: LinearLayout, View.OnClickListener {
+class SearcherLayout : LinearLayout, View.OnClickListener {
 
-  constructor(context: Context): super(context)
-  constructor(context: Context, attrs: AttributeSet?): super(context, attrs)
-  constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
-    super(context, attrs, defStyleAttr)
+  constructor(context: Context) : super(context)
+
+  constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+
+  constructor(
+      context: Context,
+      attrs: AttributeSet?,
+      defStyleAttr: Int
+  ) : super(context, attrs, defStyleAttr)
 
   private val binding = LayoutSearcherBinding.inflate(LayoutInflater.from(context))
   private val optionsMenu: PopupMenu
@@ -29,14 +33,16 @@ class SearcherLayout: LinearLayout, View.OnClickListener {
   private var isSearching = false
 
   init {
-    binding.searchText.addTextChangedListener(object: TextWatcher {
-      override fun afterTextChanged(editable: Editable) {
-        search(editable.toString())
-      }
+    binding.searchText.addTextChangedListener(
+        object : TextWatcher {
+          override fun afterTextChanged(editable: Editable) {
+            search(editable.toString())
+          }
 
-      override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
-      override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
-    })
+          override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
+
+          override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
+        })
 
     optionsMenu = PopupMenu(context, binding.searchOptions)
     optionsMenu.menu.add(0, 0, 0, R.string.ignore_letter_case).apply {
@@ -116,7 +122,7 @@ class SearcherLayout: LinearLayout, View.OnClickListener {
 
   private fun gotoNext() {
     try {
-      searcher?.gotoNext();
+      searcher?.gotoNext()
     } catch (e: IllegalStateException) {
       e.printStackTrace()
     }
@@ -124,7 +130,7 @@ class SearcherLayout: LinearLayout, View.OnClickListener {
 
   private fun replace() {
     try {
-      val replaceText = binding.replaceText.toString()
+      val replaceText = binding.replaceText.text.toString()
       if (replaceText.length > 0) {
         searcher?.replaceThis(replaceText)
       }
@@ -134,12 +140,8 @@ class SearcherLayout: LinearLayout, View.OnClickListener {
   }
 
   private fun replaceAll() {
-    val replaceText = binding.replaceText.toString()
-    if (replaceText.length <= 0) {
-      return
-    }
     try {
-      val replaceText = binding.replaceText.toString()
+      val replaceText = binding.replaceText.text.toString()
       if (replaceText.length > 0) {
         searcher?.replaceAll(replaceText)
       }
