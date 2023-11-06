@@ -113,12 +113,4 @@ class EditorActivity : BaseEditorActivity() {
           }
         })
   }
-
-  private fun getUnsavedFilesCount(): Int {
-    var count = 0
-    for (i in 0 until viewModel.getOpenedFiles().size) {
-      if (getEditorPanelAt(i)?.isModified() ?: false) count++
-    }
-    return count
-  }
 }

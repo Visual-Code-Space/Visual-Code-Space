@@ -41,7 +41,7 @@ android {
   }
 
   packaging {
-    resources.pickFirsts.addAll(
+    resources.excludes.addAll(
       arrayOf(
         "META-INF/README.md",
         "META-INF/CHANGES",
