@@ -29,7 +29,7 @@ import io.github.rosemoe.sora.text.ContentLine;
 import io.github.rosemoe.sora.widget.CodeEditor;
 import io.github.rosemoe.sora.widget.SymbolPairMatch;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.tm4e.core.internal.grammar.tokenattrs.StandardTokenType;
@@ -71,7 +71,7 @@ public class TextMateSymbolPairMatch extends SymbolPairMatch {
       return;
     }
 
-    var mergePairs = new LinkedHashMap<String, AutoClosingPairConditional>();
+    var mergePairs = new HashMap<String, AutoClosingPairConditional>();
 
     var autoClosingPairs = languageConfiguration.getAutoClosingPairs();
 
