@@ -15,6 +15,7 @@ import com.blankj.utilcode.util.KeyboardUtils
 import com.blankj.utilcode.util.UriUtils
 import com.raredev.vcspace.R
 import com.raredev.vcspace.res.R.string
+import com.raredev.vcspace.utils.PreferencesUtils
 
 class EditorActivity : BaseEditorActivity() {
 
@@ -28,7 +29,7 @@ class EditorActivity : BaseEditorActivity() {
       }
 
   private val createFile =
-      registerForActivityResult(ActivityResultContracts.CreateDocument()) { uri ->
+      registerForActivityResult(ActivityResultContracts.CreateDocument("text/*")) { uri ->
         if (uri != null) openFile(UriUtils.uri2File(uri))
       }
   private val openFile =
@@ -66,7 +67,7 @@ class EditorActivity : BaseEditorActivity() {
       menu.findItem(R.id.menu_redo).isVisible = KeyboardUtils.isSoftInputVisible(this)
       menu.findItem(R.id.menu_undo).isEnabled = editor.canUndo()
       menu.findItem(R.id.menu_redo).isEnabled = editor.canRedo()
-      menu.findItem(R.id.menu_save).isEnabled = editor.isModified()
+      menu.findItem(R.id.menu_save).isEnabled = editor.isModified() && !PreferencesUtils.autoSave
       menu.findItem(R.id.menu_save_as).isEnabled = true
       menu.findItem(R.id.menu_save_all).isEnabled = getUnsavedFilesCount() > 0
       menu.findItem(R.id.menu_reload).isEnabled = true
@@ -81,10 +82,10 @@ class EditorActivity : BaseEditorActivity() {
       R.id.menu_search -> editor?.beginSearcher()
       R.id.menu_undo -> editor?.undo()
       R.id.menu_redo -> editor?.redo()
-      R.id.menu_save -> saveFile(true)
-      R.id.menu_save_all -> saveAll(true)
       R.id.menu_new_file -> createFile.launch("filename.txt")
       R.id.menu_open_file -> openFile.launch(arrayOf("text/*"))
+      R.id.menu_save -> saveFileAsync(true, viewModel.getSelectedFilePos())
+      R.id.menu_save_all -> saveAllFilesAsync(true)
     }
     return true
   }

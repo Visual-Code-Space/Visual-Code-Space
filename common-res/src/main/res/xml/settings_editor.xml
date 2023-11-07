@@ -83,7 +83,6 @@
         <SwitchPreferenceCompat
             app:defaultValue="false"
             app:iconSpaceReserved="false"
-            app:enabled="false"
             app:key="pref_auto_save"
             app:title="@string/pref_editor_auto_save"
             app:summary="@string/pref_editor_auto_save_summary" />

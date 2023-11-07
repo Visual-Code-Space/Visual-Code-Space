@@ -19,7 +19,6 @@ import com.raredev.vcspace.events.OnContentChangeEvent
 import com.raredev.vcspace.events.OnPreferenceChangeEvent
 import com.raredev.vcspace.interfaces.IEditorPanel
 import com.raredev.vcspace.res.R
-import com.raredev.vcspace.tasks.TaskExecutor.executeAsync
 import com.raredev.vcspace.tasks.TaskExecutor.executeAsyncProvideError
 import com.raredev.vcspace.utils.PreferencesUtils
 import com.raredev.vcspace.utils.UniqueNameBuilder
@@ -29,6 +28,10 @@ import com.raredev.vcspace.viewmodel.EditorViewModel
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 import java.io.File
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -41,7 +44,10 @@ open class BaseEditorActivity :
   private var _binding: ActivityEditorBinding? = null
 
   private var optionsMenuInvalidator: Runnable? = null
+  private var autoSave: Runnable? = null
 
+  protected val mainHandler = ThreadUtils.getMainHandler()
+  protected val backroundCoroutineScope = CoroutineScope(Dispatchers.Default)
   protected val viewModel by viewModels<EditorViewModel>()
 
   protected val binding: ActivityEditorBinding
@@ -49,6 +55,7 @@ open class BaseEditorActivity :
 
   companion object {
     private const val OPTIONS_MENU_INVALIDATION_DELAY = 150L
+    private const val AUTO_SAVE_DELAY = 220L
   }
 
   override fun getLayout(): View {
@@ -59,7 +66,9 @@ open class BaseEditorActivity :
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setSupportActionBar(binding.toolbar)
+
     optionsMenuInvalidator = Runnable { super.invalidateOptionsMenu() }
+    autoSave = Runnable { saveFileAsync(false, viewModel.getSelectedFilePos()) }
 
     binding.tabs.addOnTabSelectedListener(this)
     viewModel.observeFiles(this) { files ->
@@ -101,7 +110,6 @@ open class BaseEditorActivity :
   }
 
   override fun invalidateOptionsMenu() {
-    val mainHandler = ThreadUtils.getMainHandler()
     optionsMenuInvalidator?.also {
       mainHandler.removeCallbacks(it)
       mainHandler.postDelayed(it, OPTIONS_MENU_INVALIDATION_DELAY)
@@ -122,6 +130,7 @@ open class BaseEditorActivity :
     GrammarRegistry.getInstance().dispose()
 
     optionsMenuInvalidator = null
+    autoSave = null
     _binding = null
   }
 
@@ -203,8 +212,7 @@ open class BaseEditorActivity :
       return
     }
 
-    val unsavedFilesCount = getUnsavedFilesCount()
-    if (unsavedFilesCount > 0) {
+    if (getUnsavedFilesCount() > 0) {
       notifyUnsavedFiles(getUnsavedFiles()) { closeOthers() }
       return
     }
@@ -220,12 +228,11 @@ open class BaseEditorActivity :
         }
       }
     }
-    viewModel.setSelectedFile(0)
+    viewModel.setSelectedFile(findPositionAtFile(file))
   }
 
   fun closeAll() {
-    val unsavedFilesCount = getUnsavedFilesCount()
-    if (unsavedFilesCount > 0) {
+    if (getUnsavedFilesCount() > 0) {
       notifyUnsavedFiles(getUnsavedFiles()) { closeAll() }
       return
     }
@@ -241,34 +248,37 @@ open class BaseEditorActivity :
     }
   }
 
-  fun saveAll(showMsg: Boolean, post: Runnable? = null) {
-    val selectedEditor = getSelectedEditorPanel()
-    selectedEditor?.setLoading(true)
-
-    executeAsync({
+  fun saveAllFilesAsync(notify: Boolean, whenSave: Runnable? = null) {
+    backroundCoroutineScope.launch {
       for (i in 0 until viewModel.getFileCount()) {
-        getEditorPanelAt(i)?.saveFile()
+        saveFile(i, null)
       }
-    }) { _ ->
-      selectedEditor?.setLoading(false)
-      invalidateOptionsMenu()
-      updateTabs()
-      if (showMsg) showShortToast(this, getString(R.string.saved_files))
 
-      post?.run()
+      withContext(Dispatchers.Main) {
+        if (notify) showShortToast(this@BaseEditorActivity, getString(R.string.saved_files))
+        whenSave?.run()
+      }
     }
   }
 
-  fun saveFile(showMsg: Boolean, post: Runnable? = null) {
-    val editor = getSelectedEditorPanel()
-    editor?.setLoading(true)
-    executeAsync({ editor?.saveFile() }) { _ ->
-      editor?.setLoading(false)
-      invalidateOptionsMenu()
-      updateTabs()
-      if (showMsg) showShortToast(this, getString(R.string.saved))
+  fun saveFileAsync(notify: Boolean, position: Int, whenSave: Runnable? = null) {
+    backroundCoroutineScope.launch {
+      saveFile(position) {
+        if (notify) showShortToast(this@BaseEditorActivity, getString(R.string.saved))
+        whenSave?.run()
+      }
+    }
+  }
 
-      post?.run()
+  private suspend fun saveFile(position: Int, whenSave: Runnable?) {
+    getEditorPanelAt(position)?.saveFile()
+
+    withContext(Dispatchers.Main) {
+      val tab = binding.tabs.getTabAt(position) ?: return@withContext
+      if (tab.text!!.startsWith("*")) {
+        tab.text = tab.text!!.substring(startIndex = 1)
+      }
+      whenSave?.run()
     }
   }
 
@@ -322,6 +332,13 @@ open class BaseEditorActivity :
       return
     }
 
+    if (PreferencesUtils.autoSave) {
+      autoSave?.also {
+        mainHandler.removeCallbacks(it)
+        mainHandler.postDelayed(it, AUTO_SAVE_DELAY)
+      }
+    }
+
     val tab = binding.tabs.getTabAt(position)
     if (tab?.text?.startsWith("*") ?: true) {
       return
@@ -361,26 +378,17 @@ open class BaseEditorActivity :
     }
   }
 
-  private fun notifyUnsavedFile(unsavedFile: File, callback: Runnable) {
+  private fun notifyUnsavedFile(unsavedFile: File, runAfter: Runnable) {
     showUnsavedFilesAlert(
         unsavedFile.name,
+        { _, _ -> saveFileAsync(true, findPositionAtFile(unsavedFile)) { runAfter.run() } },
         { _, _ ->
-          val position = findPositionAtFile(unsavedFile)
-          if (position != -1) {
-            getEditorPanelAt(position)?.saveFile()
-          }
-          callback.run()
-        },
-        { _, _ ->
-          val position = findPositionAtFile(unsavedFile)
-          if (position != -1) {
-            getEditorPanelAt(position)?.setModified(false)
-          }
-          callback.run()
+          getEditorPanelAt(findPositionAtFile(unsavedFile))?.setModified(false)
+          runAfter.run()
         })
   }
 
-  private fun notifyUnsavedFiles(unsavedFiles: List<File>, callback: Runnable) {
+  private fun notifyUnsavedFiles(unsavedFiles: List<File>, runAfter: Runnable) {
     val sb = StringBuilder()
     for (file in unsavedFiles) {
       sb.append(" " + file.name)
@@ -388,12 +396,12 @@ open class BaseEditorActivity :
 
     showUnsavedFilesAlert(
         sb.toString(),
-        { _, _ -> saveAll(true) { callback.run() } },
+        { _, _ -> saveAllFilesAsync(true) { runAfter.run() } },
         { _, _ ->
           for (i in 0 until viewModel.getFileCount()) {
             getEditorPanelAt(i)?.setModified(false)
           }
-          callback.run()
+          runAfter.run()
         })
   }
 
