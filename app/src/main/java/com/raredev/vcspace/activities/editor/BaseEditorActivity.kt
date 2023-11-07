@@ -51,7 +51,7 @@ open class BaseEditorActivity :
   protected val viewModel by viewModels<EditorViewModel>()
 
   protected val binding: ActivityEditorBinding
-    get() = _binding!!
+    get() = checkNotNull(_binding) { "Activity has been destroyed" }
 
   companion object {
     private const val OPTIONS_MENU_INVALIDATION_DELAY = 150L
