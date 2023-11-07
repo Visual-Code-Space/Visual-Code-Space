@@ -45,7 +45,7 @@ open class BaseEditorActivity :
   protected val viewModel by viewModels<EditorViewModel>()
 
   protected val binding: ActivityEditorBinding
-    get() = checkNotNull(_binding)
+    get() = _binding!!
 
   companion object {
     private const val OPTIONS_MENU_INVALIDATION_DELAY = 150L
