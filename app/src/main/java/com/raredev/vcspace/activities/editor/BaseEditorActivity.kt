@@ -8,9 +8,9 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.util.forEach
+import com.blankj.utilcode.util.ThreadUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
-import com.raredev.vcspace.R.*
 import com.raredev.vcspace.activities.BaseActivity
 import com.raredev.vcspace.databinding.ActivityEditorBinding
 import com.raredev.vcspace.editor.AceEditorPanel
@@ -40,10 +40,16 @@ open class BaseEditorActivity :
 
   private var _binding: ActivityEditorBinding? = null
 
+  private var optionsMenuInvalidator: Runnable? = null
+
   protected val viewModel by viewModels<EditorViewModel>()
 
   protected val binding: ActivityEditorBinding
     get() = checkNotNull(_binding)
+
+  companion object {
+    private const val OPTIONS_MENU_INVALIDATION_DELAY = 150L
+  }
 
   override fun getLayout(): View {
     _binding = ActivityEditorBinding.inflate(layoutInflater)
@@ -53,8 +59,9 @@ open class BaseEditorActivity :
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setSupportActionBar(binding.toolbar)
-    binding.tabs.addOnTabSelectedListener(this)
+    optionsMenuInvalidator = Runnable { super.invalidateOptionsMenu() }
 
+    binding.tabs.addOnTabSelectedListener(this)
     viewModel.observeFiles(this) { files ->
       if (files.isEmpty()) {
         binding.noFiles.visibility = View.VISIBLE
@@ -62,6 +69,9 @@ open class BaseEditorActivity :
         binding.container.visibility = View.GONE
         binding.symbolInput.visibility = View.GONE
         binding.bottomDivider.visibility = View.GONE
+
+        // Updates the menu only if there are no files open,
+        // Because the menu is already updated every time a file is selected.
         invalidateOptionsMenu()
       } else {
         binding.noFiles.visibility = View.GONE
@@ -90,6 +100,14 @@ open class BaseEditorActivity :
     EventBus.getDefault().register(this)
   }
 
+  override fun invalidateOptionsMenu() {
+    val mainHandler = ThreadUtils.getMainHandler()
+    optionsMenuInvalidator?.also {
+      mainHandler.removeCallbacks(it)
+      mainHandler.postDelayed(it, OPTIONS_MENU_INVALIDATION_DELAY)
+    }
+  }
+
   override fun onSharedPreferenceChanged(prefs: SharedPreferences, prefKey: String?) {
     if (prefKey != null) EventBus.getDefault().post(OnPreferenceChangeEvent(prefKey))
   }
@@ -103,18 +121,21 @@ open class BaseEditorActivity :
     EventBus.getDefault().unregister(this)
     GrammarRegistry.getInstance().dispose()
 
+    optionsMenuInvalidator = null
     _binding = null
   }
 
   override fun onTabReselected(tab: TabLayout.Tab) {
     val pm = PopupMenu(this, tab.view)
-    menuInflater.inflate(menu.menu_file_tab, pm.menu)
+    pm.menu.add(0, 0, 0, R.string.close)
+    pm.menu.add(0, 1, 0, R.string.close_others)
+    pm.menu.add(0, 2, 0, R.string.close_all)
 
     pm.setOnMenuItemClickListener { item ->
       when (item.itemId) {
-        id.menu_close -> closeFile(tab.position)
-        id.menu_close_others -> closeOthers()
-        id.menu_close_all -> closeAll()
+        0 -> closeFile(tab.position)
+        1 -> closeOthers()
+        2 -> closeAll()
       }
       true
     }
@@ -334,7 +355,9 @@ open class BaseEditorActivity :
         return@executeAsyncProvideError
       }
 
-      runOnUiThread { result.forEach { index, name -> binding.tabs.getTabAt(index)?.text = name } }
+      ThreadUtils.runOnUiThread {
+        result.forEach { index, name -> binding.tabs.getTabAt(index)?.text = name }
+      }
     }
   }
 

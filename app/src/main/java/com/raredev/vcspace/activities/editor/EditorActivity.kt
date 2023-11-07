@@ -114,3 +114,36 @@ class EditorActivity : BaseEditorActivity() {
         })
   }
 }
+
+/*
+Para evitar a inflação repetida ao chamar o método `invalidateOptionsMenu` no seu código, você pode adicionar uma verificação para garantir que o método só seja chamado quando necessário. Uma abordagem comum é armazenar uma variável de controle que indica se o menu precisa ser atualizado ou não. Aqui está um exemplo de como você pode fazer isso:
+
+class EditorActivity : BaseEditorActivity() {
+
+  private var menuNeedsUpdate: Boolean = false // Variável de controle
+
+  // ... restante do seu código
+
+  override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+    if (menuNeedsUpdate) { // Verifica se o menu precisa ser atualizado
+      val editor = getSelectedEditorPanel()
+      if (editor != null) {
+        // ... seu código existente para atualização do menu
+
+        menuNeedsUpdate = false // Define a variável de controle como false após a atualização
+      }
+    }
+    return super.onPrepareOptionsMenu(menu)
+  }
+
+  // ... restante do seu código
+
+  // Em algum lugar do seu código onde você precisa atualizar o menu
+  fun updateOptionsMenu() {
+    menuNeedsUpdate = true // Define a variável de controle como true
+    invalidateOptionsMenu() // Chama o método para atualizar o menu
+  }
+}
+
+Agora, em vez de chamar `invalidateOptionsMenu` diretamente, você chama o método `updateOptionsMenu`. Isso define a variável de controle como `true`, indicando que o menu precisa ser atualizado na próxima vez que o método `onPrepareOptionsMenu` for chamado. Isso evita inflações repetidas e mantém o menu atualizado apenas quando necessário. Certifique-se de chamar `updateOptionsMenu` nos locais apropriados do seu código onde as atualizações do menu são necessárias.
+*/
