@@ -1,0 +1,205 @@
+<resources> 
+    <!-- Hindi Language -->
+    <string name="welcome">Welcome</string> 
+    <string name="open">खोलें </string> 
+    <string name="remove">हटाएं</string> 
+    <string name="info">जानकारी</string> 
+    <string name="close">इसे बंद करें</string> 
+    <string name="close_others">दूसरों को बंद करें</string> 
+    <string name="close_all">सब बंद करें</string> 
+    <string name="close_app">ऐप बंद करें</string> 
+    <string name="pin">Pin करें</string> 
+    <string name="unpin">Unpin करें </string> 
+    <string name="comment_line">लाइन को कॉमेंट करे</string> 
+    <string name="uncomment_line">लाइन को अनकमेंट करे</string> 
+    <string name="long_select">लंबा सेलेक्ट करें</string> 
+    <string name="select_all">सभी सेलेक्ट करे</string> 
+    <string name="unselect_all">सभी को अनसलेक्ट करें</string> 
+    <string name="copy">कॉपी</string> 
+    <string name="cut">काटें</string> 
+    <string name="paste">पेस्ट करें</string> 
+    <string name="no_file_opened">कोई फ़ाइल नहीं खुली</string> 
+    <string name="refresh">रिफ्रेश करें</string> 
+    <string name="loading">लोड हो रहा है...</string> 
+    <string name="empty">खाली</string> 
+    <string name="yes">हाँ</string> 
+    <string name="no">नहीं</string> 
+    <string name="url_copied">URL क्लिपबोर्ड पर कॉपी किया गया।</string> 
+    <string name="exit">बाहर निकलें </string> 
+    <string name="back">पीछे</string> 
+    <string name="forward">आगे</string> 
+    <string name="zooming">ज़ूम</string> 
+    <string name="desktop_mode">डेस्कटॉप मोड</string> 
+    <string name="open_in_browser">ब्राउज़र में खोलें...</string> 
+    <string name="empty_folder">खाली फोल्डर</string> 
+    <string name="discard_changes">क्या आप वाकई अपने परिवर्तन त्यागना चाहते हैं?</string> 
+    <string name="unsaved_files_title">Save नहीं  की गई फ़ाइलें</string> 
+    <string name="unsaved_files_message">यदि आप अपने परिवर्तन Save नहीं कर पाते हैं तो वे खो जाएंगे। Save नहीं  की गई फ़ाइलें: %1$s</string> 
+    <string name="save_and_close">Save करें &amp; बंद करें</string> 
+    <string name="terminal">टर्मिनल</string> 
+ 
+    <!-- Menus Strings --> 
+    <string name="menu_format">फॉर्मेट</string> 
+    <string name="menu_search">खोज</string> 
+    <string name="menu_reload">पुनः लोड करें</string> 
+    <string name="menu_settings">Settings</string> 
+    <string name="menu_undo">Undo</string> 
+    <string name="menu_redo">Redo</string> 
+    <string name="menu_edit">एडिट करें</string> 
+    <string name="menu_new_file">नई फ़ाइल</string> 
+    <string name="menu_open_file">फाइल खोलें</string> 
+    <string name="menu_save">Save</string> 
+    <string name="menu_save_as">के रूप save करें..</string> 
+    <string name="menu_save_all">सब को save करें</string> 
+    <string name="menu_open_drawer">drawer खोलें</string> 
+ 
+    <!-- Errors Strings --> 
+    <string name="error">एरर</string> 
+ 
+    <!-- Buttons And Titles --> 
+    <string name="saved">Saved</string> 
+    <string name="saved_files">Save की गई फ़ाइलें</string> 
+    <string name="existing_file">मौजूदा फ़ाइल!</string> 
+    <string name="delete">मिटाएं</string> 
+    <string name="delete_message">क्या आप वाकई \"%1$s\" को हटाना चाहते हैं?</string> 
+    <string name="deleted_message">हटाए गए</string> 
+    <string name="deleting">हटाया जा रहा है...</string> 
+    <string name="deleting_please_wait">हटाया जा रहा है कृपया प्रतीक्षा करें.</string> 
+    <string name="create">बनाएं</string> 
+    <string name="cancel">रद्द करें</string> 
+    <string name="file">फ़ाइल</string> 
+    <string name="folder">फ़ोल्डर</string> 
+    <string name="rename">नाम बदलें</string> 
+    <string name="renamed_message">फ़ाइल का नाम बदला गया</string> 
+    <string name="copy_path">पथ कॉपी करें</string> 
+    <string name="rename_hint">नया नाम दर्ज करें:</string> 
+    <string name="password_hint">पासवर्ड (टोकन)</string> 
+    <string name="username_hint">उपयोगकर्ता नाम</string> 
+    <string name="open_folder">फोल्डर खोलें</string> 
+    <string name="open_recent">हाल ही वाला खोलें</string> 
+    <string name="file_name_hint">फ़ाइल का नाम:</string> 
+    <string name="folder_name_hint">फ़ोल्डर का नाम:</string> 
+    <string name="search">खोजें </string> 
+    <string name="reset">रीसेट करें</string> 
+    <string name="previous">पीछे</string> 
+    <string name="next">आगे</string> 
+    <string name="replace">रिप्लेस करें</string> 
+    <string name="replace_all">सबको रिप्लेस करें</string> 
+    <string name="btn_close">बंद करें </string> 
+    <string name="replacing_texts">Text को रिप्लेस किया जा रहा है...</string> 
+    <string name="ignore_letter_case">Letter case को नजरअंदाज करें</string> 
+    <string name="use_regex">Regex का प्रयोग करें</string> 
+    <string name="new_file_title">नई फ़ाइल</string> 
+    <string name="new_folder_title">नया फ़ोल्डर</string> 
+    <string name="file_access_title">फ़ाइल एक्सेस अनुमति</string> 
+    <string name="file_access_message">इस ऐप को ठीक से काम करने के लिए आपके डिवाइस के स्टोरेज में फ़ाइलों तक पहुंचने की अनुमति की आवश्यकता है। कृपया जारी रखने की अनुमति दें.</string> 
+    <string name="grant_permission">अनुमति दें </string> 
+    <string name="snippets">स्निपेट्स</string> 
+    <string name="enter_input">इनपुट दर्ज करें</string> 
+    <string name="enter_language">भाषा दर्ज करें</string> 
+    <string name="execute">एक्जिक्यूट करें </string> 
+    <string name="output">Output</string> 
+    <string name="file_explorer">फाइल एक्सप्लोरर </string> 
+    <string name="last_modified">अंतिम बार मोडिफाइड: %1$s</string> 
+ 
+    <!-- Git --> 
+    <string name="git">Git</string> 
+    <string name="create_token_message">एक GitHub टोकन बनाएं.</string> 
+    <string name="github_token">GitHub टोकन</string> 
+    <string name="initialize_repo">रेपो initialize करें</string> 
+    <string name="no_open_repository">कोई खुला repository नहीं</string> 
+    <string name="clone">क्लोन</string> 
+    <string name="clone_repo">क्लोन repository</string> 
+    <string name="clone_to_path">Path पर क्लोन करें</string> 
+    <string name="clone_url_hint">Repository URL</string> 
+    <string name="successfully_cloned">सफलतापूर्वक क्लोन किया गया</string> 
+    <string name="clone_error_empty_url">Repository URL खाली नहीं हो सकता</string> 
+ 
+    <string name="branch_name">Branch का नाम</string> 
+    <string name="remote_name">Remote का नाम</string> 
+    <string name="remote">Remote</string> 
+    <string name="branch">Branch</string> 
+    <string name="merge_changes_from">Merge changes from</string> 
+    <string name="into">into</string> 
+    <string name="description">विवरण</string> 
+    <string name="title">शीर्षक</string> 
+    <string name="pull_request_description">पुल रिक्वेस्ट विवरण</string> 
+    <string name="create_as_draft">ड्राफ्ट के रूप में बनाएं</string> 
+    <string name="initializing">प्रारंभ किया जा रहा है...</string> 
+    <string name="initializing_message">Git रिपॉजिटरी प्रारंभ किया जा रहा है। कृपया प्रतीक्षा करें।</string> 
+ 
+    <!-- Settings String --> 
+    <string name="configure">कॉन्फ़िगर</string> 
+ 
+    <!-- General --> 
+    <string name="general">सामान्य</string> 
+    <string name="general_summary">सामान्य ऐप सेटिंग्स</string> 
+    <string name="aparence">दिखावट</string> 
+ 
+    <string name="title_theme">थीम</string> 
+    <string name="pref_theme_summary">ऐप के लिए थीम चुनें</string> 
+    <string name="pref_theme_system">सिस्टम थीम</string> 
+    <string name="pref_theme_dark">डार्क थीम</string> 
+    <string name="pref_theme_light">लाइट थीम</string> 
+ 
+    <string name="pref_materialyou">Material You</string> 
+    <string name="pref_materialyou_summary">सक्रिय होने पर, एप्लिकेशन डिवाइस की डायनेमिक थीम का उपयोग करेगा।</string> 
+ 
+    <!-- Editor --> 
+    <string name="editor">Editor</string> 
+    <string name="editor_summary">Editor कॉन्फ़िगर करें</string> 
+ 
+    <string name="pref_editor_textsize">फ़ॉन्ट आकार</string> 
+    <string name="pref_editor_textsize_summary">Editor का फ़ॉन्ट आकार.</string> 
+    <string name="pref_editor_lineheight">लाईन की ऊंचाई</string> 
+    <string name="pref_editor_lineheight_summary">Editor की लाइन की ऊँचाई सेट करें।</string> 
+    <string name="pref_editor_tabsize">टैब का आकार</string> 
+    <string name="pref_editor_tabsize_summary">TAB के लिए space का आकार सेट करें।</string> 
+    <string name="pref_editor_font">Editor फ़ॉन्ट</string> 
+    <string name="pref_editor_font_summary">Editor और शॉर्टकट बार का फ़ॉन्ट बदलें।</string> 
+    <string name="pref_font_firacode">Fira Code Regular</string> 
+    <string name="pref_font_jetbrains">JetBrains Mono</string> 
+    <string name="pref_editor_stickyscroll">Sticky scroll</string> 
+    <string name="pref_editor_stickyscroll_summary">Editor के शीर्ष पर स्क्रॉल के दौरान नेस्टेड वर्तमान स्कोप दिखाता है।</string> 
+    <string name="pref_editor_fontligatures">फ़ॉन्ट संयुक्ताक्षर</string> 
+    <string name="pref_editor_fontligatures_summary">विशेष वर्णों पर संयुक्ताक्षर सक्षम करें.</string> 
+    <string name="pref_editor_wordwrap">वर्ड रैप</string> 
+    <string name="pref_editor_wordwrap_summary">सक्रिय होने पर, यह संपादक की क्षैतिज स्क्रॉल को हटा देगा।</string> 
+    <string name="pref_editor_linenumbers">पंक्ति संख्याएँ</string> 
+    <string name="pref_editor_linenumbers_summary">कोड एडिटर के बाईं ओर पंक्ति संख्याएँ प्रदर्शित करें।</string> 
+    <string name="pref_editor_use_tab">टैब का प्रयोग करें</string> 
+    <string name="pref_editor_use_tab_summary">Space के स्थान पर tabs(\\t) का उपयोग करें</string> 
+    <string name="pref_editor_deleteemptylinefast">बैकस्पेस पर खाली लाइनें हटाएं</string> 
+    <string name="pref_editor_deleteemptylinefast_summary">यदि वर्तमान पंक्ति में केवल रिक्त स्थान हैं तो इसे तुरंत हटा दिया जाएगा।</string> 
+    <string name="pref_editor_deletetabs">बैकस्पेस पर टैब हटाएँ</string> 
+    <string name="pref_editor_deletetabs_summary">सक्षम होने पर टैब शीघ्रता से हट जाता है।</string> 
+    <string name="pref_editor_file_path">फाइल पाथ </string> 
+    <string name="pref_editor_file_path_summary">टैब के नीचे सिलेक्टेड फ़ाइल पथ दिखाएँ।</string> 
+    <string name="pref_editor_auto_save">स्वतः save करें </string> 
+    <string name="pref_editor_auto_save_summary">डेटा हानि को रोकने और समय की बचत करते हुए, आपके काम को स्वचालित रूप से save करता है।</string> 
+ 
+    <string name="tabs">टैब</string> 
+ 
+    <!-- File Settings --> 
+    <string name="file_summary">कॉन्फ़िगर करें कि फ़ाइलें कैसे प्रबंधित की जाती हैं</string> 
+ 
+    <string name="codification">कोडिफ़ीकेशन</string> 
+ 
+    <string name="pref_encoding_for_opening">फ़ाइल खोलने के लिए एन्कोडिंग</string> 
+    <string name="pref_encoding_for_opening_summary">किसी फ़ाइल को खोलने के लिए आवश्यक एन्कोडिंग निर्दिष्ट करता है।</string> 
+ 
+    <string name="file_manager">फ़ाइल मैनेजर</string> 
+ 
+    <string name="pref_show_hidden_files">छिपी फ़ाइलें देखें</string> 
+    <string name="pref_show_hidden_files_summary">बिंदु से प्रारंभ होने वाली फ़ाइलें और फ़ोल्डर दिखाई देंगे.</string> 
+ 
+    <string name="git_summary">Git कॉन्फ़िगर करें</string> 
+ 
+    <string name="pref_git_credentials">Credentials</string> 
+    <string name="pref_git_credentials_summary">अपना GitHub क्रेडेंशियल सेट करें</string> 
+ 
+    <string name="about">बारे में</string> 
+ 
+    <string name="pref_github_summary">VCSpace open source है!</string> 
+</resources> 
+
