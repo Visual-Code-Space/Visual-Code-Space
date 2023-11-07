@@ -29,6 +29,5 @@
 - Read this file to learn how to contribute to the project [CONTRIBUTING.md](https://github.com/Visual-Code-Space/Visual-Code-Space/blob/main/CONTRIBUTING.md)
 
 ## Community
-[![](https://dcbadge.vercel.app/api/server/4uTBTZeAgS)](https://discord.gg/4uTBTZeAgS)
+[![Telegram](https://img.shields.io/badge/Join-Telegram-blue)](https://t.me/+OR7KoFI-zpk2Zjkx)
 
-![Banner](./images/banner.png "app_banner")
