@@ -90,6 +90,8 @@ class SearcherLayout : LinearLayout, View.OnClickListener {
         if (isSearching) {
           binding.root.visibility = View.GONE
           isSearching = false
+
+          searcher?.stopSearch()
         }
       }
     }
@@ -99,6 +101,8 @@ class SearcherLayout : LinearLayout, View.OnClickListener {
     if (!isSearching) {
       binding.root.visibility = View.VISIBLE
       isSearching = true
+
+      search(binding.searchText.text.toString())
     }
   }
 
