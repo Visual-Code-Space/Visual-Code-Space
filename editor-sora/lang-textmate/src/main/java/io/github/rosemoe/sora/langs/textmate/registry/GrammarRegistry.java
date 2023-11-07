@@ -233,7 +233,7 @@ public class GrammarRegistry {
     return grammarName == null ? name : grammarName;
   }
 
-  public boolean constainsGrammarByFileName(String fileName) {
+  public boolean containsGrammarByFileName(String fileName) {
     return grammarFileName2ScopeName.containsKey(fileName);
   }
 

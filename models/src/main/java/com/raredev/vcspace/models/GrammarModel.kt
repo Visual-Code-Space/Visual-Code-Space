@@ -5,6 +5,6 @@ class GrammarModel(
   val scopeName: String,
   val grammar: String,
   val languageConfiguration: String? = null,
-  val fileExtensions: Array<String>,
-  val embeddedLanguages: Map<String, String>? = null
+  val embeddedLanguages: Map<String, String>? = null,
+  val fileExtensions: Array<String>? = null
 )

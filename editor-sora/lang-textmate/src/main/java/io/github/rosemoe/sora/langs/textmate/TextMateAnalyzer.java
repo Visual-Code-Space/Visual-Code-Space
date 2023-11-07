@@ -46,6 +46,8 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.eclipse.tm4e.core.grammar.IGrammar;
 import org.eclipse.tm4e.core.internal.grammar.tokenattrs.EncodedTokenAttributes;
 import org.eclipse.tm4e.core.internal.oniguruma.OnigRegExp;
@@ -246,7 +248,6 @@ public class TextMateAnalyzer extends AsyncIncrementalAnalyzeManager<MyState, Sp
           span.underlineColor = Color.parseColor(color);
         }
       }
-
       tokens.add(span);
     }
 

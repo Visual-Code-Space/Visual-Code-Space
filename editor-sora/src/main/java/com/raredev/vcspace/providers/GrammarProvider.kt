@@ -44,7 +44,7 @@ object GrammarProvider {
     if (grammar == null) {
       return null
     }
-    if (!GrammarRegistry.getInstance().constainsGrammarByFileName(grammar.name)) {
+    if (!GrammarRegistry.getInstance().containsGrammarByFileName(grammar.name)) {
       registerGrammar(grammar)
     }
     return grammar.scopeName
@@ -62,7 +62,7 @@ object GrammarProvider {
   fun registerGrammar(grammar: GrammarModel) {
     val grammarRegistry = GrammarRegistry.getInstance()
 
-    if (!grammarRegistry.constainsGrammarByFileName(grammar.name)) {
+    if (!grammarRegistry.containsGrammarByFileName(grammar.name)) {
       if (grammar.embeddedLanguages != null) {
         registerEmbeddedLanguagesGrammar(grammar)
       }
@@ -87,8 +87,8 @@ object GrammarProvider {
       return
     }
 
-    for ((scopeName, _) in embeddedLanguages) {
-      val embeddedGrammar = findGrammarByScope(scopeName)
+    for ((_, name) in embeddedLanguages) {
+      val embeddedGrammar = findGrammarByName(name)
       if (embeddedGrammar != null) {
         registerGrammar(embeddedGrammar)
       }
@@ -96,7 +96,10 @@ object GrammarProvider {
   }
 
   fun findGrammarByFileExtension(extension: String?):
-    GrammarModel? = grammars.find { it.fileExtensions.contains(extension) }
+    GrammarModel? = grammars.find { it.fileExtensions?.contains(extension) ?: false }
+
+  fun findGrammarByName(name: String):
+    GrammarModel? = grammars.find { it.name == name }
 
   fun findGrammarByScope(scopeName: String):
     GrammarModel? = grammars.find { it.scopeName == scopeName }
