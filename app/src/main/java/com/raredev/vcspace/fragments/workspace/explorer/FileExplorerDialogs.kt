@@ -11,7 +11,7 @@ import com.raredev.vcspace.progressdialog.ProgressDialog
 import com.raredev.vcspace.res.R
 import com.raredev.vcspace.res.databinding.LayoutTextinputBinding
 import com.raredev.vcspace.tasks.TaskExecutor.executeAsync
-import com.raredev.vcspace.utils.showSuccessToast
+import com.raredev.vcspace.utils.showShortToast
 import com.raredev.vcspace.viewmodel.FileExplorerViewModel
 import java.io.File
 import java.io.IOException
@@ -81,7 +81,7 @@ class FileExplorerDialogs(
           val renamed = it ?: false
 
           if (renamed) {
-            showSuccessToast(context, context.getString(R.string.renamed_message))
+            showShortToast(context, context.getString(R.string.renamed_message))
 
             EventBus.getDefault().post(OnRenameFileEvent(file, newFile))
             viewModel.refreshFiles()
@@ -115,12 +115,7 @@ class FileExplorerDialogs(
           val deleted = it ?: false
 
           if (deleted) {
-            
-            
-            
-            
-            
-            showSuccessToast(context, context.getString(R.string.deleted_message))
+            showShortToast(context, context.getString(R.string.deleted_message))
           }
           viewModel.refreshFiles()
           dialog.cancel()

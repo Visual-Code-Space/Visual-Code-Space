@@ -24,7 +24,7 @@ import com.raredev.vcspace.tasks.TaskExecutor.executeAsyncProvideError
 import com.raredev.vcspace.utils.PreferencesUtils
 import com.raredev.vcspace.utils.UniqueNameBuilder
 import com.raredev.vcspace.utils.Utils
-import com.raredev.vcspace.utils.showSuccessToast
+import com.raredev.vcspace.utils.showShortToast
 import com.raredev.vcspace.viewmodel.EditorViewModel
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
@@ -253,7 +253,7 @@ open class BaseEditorActivity :
       selectedEditor?.setLoading(false)
       invalidateOptionsMenu()
       updateTabs()
-      if (showMsg) showSuccessToast(this, getString(R.string.saved_files))
+      if (showMsg) showShortToast(this, getString(R.string.saved_files))
 
       post?.run()
     }
@@ -266,7 +266,7 @@ open class BaseEditorActivity :
       editor?.setLoading(false)
       invalidateOptionsMenu()
       updateTabs()
-      if (showMsg) showSuccessToast(this, getString(R.string.saved))
+      if (showMsg) showShortToast(this, getString(R.string.saved))
 
       post?.run()
     }
