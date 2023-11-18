@@ -9,7 +9,7 @@ object Versions {
     } else version
   }
 
-  const val buildToolsVersion = "34.0.4"
+  const val buildToolsVersion = "34.0.0"
   const val compileSdkVersion = 34
   const val minSdkVersion = 26
   const val targetSdkVersion = 34
