@@ -6,25 +6,25 @@ import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.raredev.vcspace.databinding.LayoutSymbolItemBinding
-import com.raredev.vcspace.interfaces.IEditorPanel
 import com.raredev.vcspace.editor.AceCodeEditor
-import com.raredev.vcspace.editor.VCSpaceEditor
 import com.raredev.vcspace.editor.AceEditorPanel
 import com.raredev.vcspace.editor.SoraEditorPanel
+import com.raredev.vcspace.editor.VCSpaceEditor
+import com.raredev.vcspace.interfaces.IEditorPanel
 import com.raredev.vcspace.models.Symbol
 import com.raredev.vcspace.res.R
 import com.raredev.vcspace.utils.PreferencesUtils
 
-class SymbolInputAdapter: RecyclerView.Adapter<SymbolInputAdapter.VH>() {
+class SymbolInputAdapter : RecyclerView.Adapter<SymbolInputAdapter.VH>() {
 
   private val symbols: Array<Symbol> = getDefaultSymbols()
   private var editor: IEditorPanel? = null
 
-  inner class VH(internal val binding: LayoutSymbolItemBinding):
-    RecyclerView.ViewHolder(binding.root)
+  inner class VH(internal val binding: LayoutSymbolItemBinding) :
+      RecyclerView.ViewHolder(binding.root)
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
-    return VH(LayoutSymbolItemBinding.inflate(LayoutInflater.from(parent.context), parent, false));
+    return VH(LayoutSymbolItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
   }
 
   override fun onBindViewHolder(holder: VH, position: Int) {
@@ -34,9 +34,7 @@ class SymbolInputAdapter: RecyclerView.Adapter<SymbolInputAdapter.VH>() {
       val typeface = ResourcesCompat.getFont(label.context, R.font.jetbrains_mono)
       label.typeface = typeface
 
-      root.setOnClickListener {
-        insertSymbol(symbol)
-      }
+      root.setOnClickListener { insertSymbol(symbol) }
     }
   }
 
@@ -91,10 +89,32 @@ class SymbolInputAdapter: RecyclerView.Adapter<SymbolInputAdapter.VH>() {
   }
 
   fun getDefaultSymbols(): Array<Symbol> {
-    val baseSymbols = arrayOf(
-      "→", "()", ")", "{}", "}", ";", "\"\"", "''", ":", "[]", "]", "=", "+", "-", "*", "/", "%", "&",
-      "|", "^", "!", "?", "<", ">"
-    )
+    val baseSymbols =
+        arrayOf(
+            "→",
+            "()",
+            ")",
+            "{}",
+            "}",
+            ";",
+            "\"\"",
+            "''",
+            ":",
+            "[]",
+            "]",
+            "=",
+            "+",
+            "-",
+            "*",
+            "/",
+            "%",
+            "&",
+            "|",
+            "^",
+            "!",
+            "?",
+            "<",
+            ">")
     return baseSymbols.map { Symbol(it[0].toString(), it) }.toTypedArray()
   }
 }

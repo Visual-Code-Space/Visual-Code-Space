@@ -6,24 +6,26 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.blankj.utilcode.util.ClipboardUtils
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.raredev.vcspace.activities.editor.EditorActivity
 import com.raredev.vcspace.adapters.FileListAdapter
+import com.raredev.vcspace.app.BaseApplication
 import com.raredev.vcspace.databinding.FragmentFileExplorerBinding
+import com.raredev.vcspace.edit
 import com.raredev.vcspace.fragments.sheets.OptionsListBottomSheet
 import com.raredev.vcspace.models.SheetOptionItem
 import com.raredev.vcspace.res.R
-import com.raredev.vcspace.utils.FileUtil
 import com.raredev.vcspace.utils.ApkInstaller
+import com.raredev.vcspace.utils.FileUtil
 import com.raredev.vcspace.viewmodel.FileExplorerViewModel
 import java.io.File
-import org.greenrobot.eventbus.EventBus
 
-class FileExplorerFragment: Fragment(), FileListAdapter.OnFileClickListener {
+class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
 
-  private val viewModel by viewModels<FileExplorerViewModel>(
-    ownerProducer = { requireActivity() } )
+  private val viewModel by viewModels<FileExplorerViewModel>(ownerProducer = { requireActivity() })
 
   private var _binding: FragmentFileExplorerBinding? = null
   private val binding: FragmentFileExplorerBinding
@@ -32,14 +34,22 @@ class FileExplorerFragment: Fragment(), FileListAdapter.OnFileClickListener {
   private val dialogs by lazy { FileExplorerDialogs(requireContext(), viewModel) }
   private val adapter by lazy { FileListAdapter(this) }
 
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+  override fun onCreateView(
+      inflater: LayoutInflater,
+      container: ViewGroup?,
+      savedInstanceState: Bundle?
+  ): View {
     _binding = FragmentFileExplorerBinding.inflate(inflater, container, false)
-    return binding.root;
+    return binding.root
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
+    setCurrentPath(
+        checkNotNull(
+            arguments?.getString("folderPath")
+                ?: BaseApplication.getInstance().getPrefs().getString("openedFolder", "")))
     viewModel.files.observe(viewLifecycleOwner) { files ->
       if (files.isEmpty()) {
         binding.emptyFolder.visibility = View.VISIBLE
@@ -49,14 +59,24 @@ class FileExplorerFragment: Fragment(), FileListAdapter.OnFileClickListener {
       adapter.submitList(files)
     }
 
-    viewModel.currentPath.observe(viewLifecycleOwner) { path ->
-      binding.pathList.setPath(path)
-    }
+    viewModel.currentPath.observe(viewLifecycleOwner) { path -> binding.pathList.setPath(path) }
     binding.pathList.setFileExplorerViewModel(viewModel)
 
     binding.navigationSpace.addItem(R.string.refresh, R.drawable.ic_refresh) { refreshFiles() }
     binding.navigationSpace.addItem(R.string.create, R.drawable.ic_add) {
       dialogs.showCreateFileDialog(viewModel.currentPath.value!!)
+    }
+    binding.navigationSpace.addItem(R.string.close, R.drawable.ic_close) {
+      MaterialAlertDialogBuilder(requireContext()).apply {
+        setTitle("Close folder?")
+        setMessage("Do you want to close this folder?")
+        setPositiveButton(android.R.string.ok) { dialog, which ->
+          findNavController().navigate(FileExplorerFragmentDirections.actionGoToNoFolder())
+          BaseApplication.getInstance().getPrefs().edit { putString("openedFolder", "") }
+        }
+        setNegativeButton(android.R.string.cancel) { dialog, which -> dialog.dismiss() }
+        show()
+      }
     }
 
     binding.rvFiles.layoutManager = LinearLayoutManager(requireContext())

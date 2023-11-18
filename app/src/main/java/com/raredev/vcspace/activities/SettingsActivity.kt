@@ -5,9 +5,8 @@ import android.view.View
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import com.raredev.vcspace.databinding.ActivitySettingsBinding
-import com.raredev.vcspace.fragments.SettingsFragment
 
-class SettingsActivity: BaseActivity() {
+class SettingsActivity : BaseActivity() {
 
   private var _binding: ActivitySettingsBinding? = null
   private val binding: ActivitySettingsBinding
@@ -22,10 +21,9 @@ class SettingsActivity: BaseActivity() {
     super.onCreate(savedInstanceState)
     setSupportActionBar(binding.toolbar)
 
-    val navHostFragment = supportFragmentManager.findFragmentById(binding.navHostFragment.id) as NavHostFragment
-    NavigationUI.setupWithNavController(
-      binding.toolbar, navHostFragment.navController
-    )
+    val navHostFragment =
+        supportFragmentManager.findFragmentById(binding.navHostFragment.id) as NavHostFragment
+    NavigationUI.setupWithNavController(binding.toolbar, navHostFragment.navController)
   }
 
   override fun onDestroy() {
