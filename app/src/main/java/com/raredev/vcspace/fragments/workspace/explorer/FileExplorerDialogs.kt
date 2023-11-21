@@ -1,3 +1,17 @@
+/**
+ * This file is part of Visual Code Space.
+ *
+ * Visual Code Space is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU General Public License as published by the Free Software Foundation, either version 3 of
+ * the License, or (at your option) any later version.
+ *
+ * Visual Code Space is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with Visual Code Space.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.raredev.vcspace.fragments.workspace.explorer
 
 import android.content.Context
@@ -7,17 +21,22 @@ import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.SizeUtils.dp2px
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.raredev.vcspace.events.OnRenameFileEvent
-import com.raredev.vcspace.progressdialog.ProgressDialog
+import com.raredev.vcspace.extensions.launchWithProgressDialog
 import com.raredev.vcspace.res.R
 import com.raredev.vcspace.res.databinding.LayoutTextinputBinding
-import com.raredev.vcspace.tasks.TaskExecutor.executeAsync
 import com.raredev.vcspace.utils.showShortToast
 import com.raredev.vcspace.viewmodel.FileExplorerViewModel
 import java.io.File
 import java.io.IOException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 
-class FileExplorerDialogs(val context: Context, val viewModel: FileExplorerViewModel) {
+class FileExplorerDialogs(
+    val explorerFragment: FileExplorerFragment,
+    val context: Context,
+    val viewModel: FileExplorerViewModel
+) {
 
   @Suppress("DEPRECATION")
   fun showCreateFileDialog(path: String) {
@@ -76,23 +95,25 @@ class FileExplorerDialogs(val context: Context, val viewModel: FileExplorerViewM
             .setPositiveButton(
                 R.string.rename,
                 { _, _ ->
-                  val name = binding.inputEdittext.text.toString().trim()
+                  explorerFragment.explorerScope.launchWithProgressDialog(
+                      configureDialog = { builder ->
+                        builder.setMessage(R.string.please_wait)
+                        builder.setCancelable(false)
+                      },
+                      action = { _ ->
+                        val name = binding.inputEdittext.text.toString().trim()
+                        val newFile = File(file.parentFile, name)
+                        val renamed = file.renameTo(newFile)
 
-                  if (file.name.equals(name)) {
-                    return@setPositiveButton
-                  }
-
-                  val newFile = File(file.parentFile, name)
-                  executeAsync({ file.renameTo(newFile) }) {
-                    val renamed = it ?: false
-
-                    if (renamed) {
-                      showShortToast(context, context.getString(R.string.renamed_message))
-
-                      EventBus.getDefault().post(OnRenameFileEvent(file, newFile))
-                      viewModel.refreshFiles()
-                    }
-                  }
+                        withContext(Dispatchers.Main) {
+                          if (!renamed) {
+                            return@withContext
+                          }
+                          showShortToast(context, context.getString(R.string.renamed_message))
+                          viewModel.refreshFiles()
+                        }
+                        EventBus.getDefault().post(OnRenameFileEvent(file, newFile))
+                      })
                 })
             .create()
     dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
@@ -112,24 +133,20 @@ class FileExplorerDialogs(val context: Context, val viewModel: FileExplorerViewM
         .setPositiveButton(
             R.string.delete,
             { _, _ ->
-              val builder =
-                  ProgressDialog.create(context)
-                      .setTitle(R.string.deleting)
-                      .setLoadingMessage(R.string.deleting_please_wait)
-
-              val dialog = builder.create()
-              dialog.setCancelable(false)
-              dialog.show()
-
-              executeAsync({ FileUtils.delete(file) }) {
-                val deleted = it ?: false
-
-                if (deleted) {
-                  showShortToast(context, context.getString(R.string.deleted_message))
-                }
-                viewModel.refreshFiles()
-                dialog.cancel()
-              }
+              explorerFragment.explorerScope.launchWithProgressDialog(
+                  configureDialog = { builder ->
+                    builder.setMessage(R.string.please_wait)
+                    builder.setCancelable(false)
+                  },
+                  action = { _ ->
+                    val deleted = FileUtils.delete(file)
+                    withContext(Dispatchers.Main) {
+                      if (deleted) {
+                        showShortToast(context, context.getString(R.string.deleted_message))
+                      }
+                      viewModel.refreshFiles()
+                    }
+                  })
             })
         .show()
   }

@@ -10,18 +10,18 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.material.R.attr
-import com.google.android.material.color.MaterialColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.raredev.vcspace.extensions.getAttrColor
 import com.raredev.vcspace.res.R
 import com.raredev.vcspace.utils.Utils
 
 abstract class BaseActivity : AppCompatActivity() {
 
   open val navigationBarColor: Int
-    get() = MaterialColors.getColor(this, attr.colorSurface, 0)
+    get() = getAttrColor(attr.colorSurface)
 
   open val statusBarColor: Int
-    get() = MaterialColors.getColor(this, attr.colorSurface, 0)
+    get() = getAttrColor(attr.colorSurface)
 
   protected abstract fun getLayout(): View
 

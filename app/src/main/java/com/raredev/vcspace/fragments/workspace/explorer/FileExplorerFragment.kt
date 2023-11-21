@@ -1,3 +1,17 @@
+/**
+ * This file is part of Visual Code Space.
+ *
+ * Visual Code Space is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU General Public License as published by the Free Software Foundation, either version 3 of
+ * the License, or (at your option) any later version.
+ *
+ * Visual Code Space is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with Visual Code Space.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
 package com.raredev.vcspace.fragments.workspace.explorer
 
 import android.os.Bundle
@@ -18,6 +32,8 @@ import com.raredev.vcspace.utils.ApkInstaller
 import com.raredev.vcspace.utils.FileUtil
 import com.raredev.vcspace.viewmodel.FileExplorerViewModel
 import java.io.File
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 
 class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
 
@@ -27,7 +43,8 @@ class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
   private val binding: FragmentFileExplorerBinding
     get() = checkNotNull(_binding)
 
-  private val dialogs by lazy { FileExplorerDialogs(requireContext(), viewModel) }
+  internal val explorerScope = CoroutineScope(Dispatchers.Default)
+  private val dialogs by lazy { FileExplorerDialogs(this, requireContext(), viewModel) }
   private val adapter by lazy { FileListAdapter(this) }
 
   override fun onCreateView(

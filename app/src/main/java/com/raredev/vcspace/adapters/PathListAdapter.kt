@@ -5,8 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.R
-import com.google.android.material.color.MaterialColors
 import com.raredev.vcspace.databinding.LayoutPathItemBinding
+import com.raredev.vcspace.extensions.getAttrColor
 import com.raredev.vcspace.viewmodel.FileExplorerViewModel
 import java.io.File
 import java.util.Collections
@@ -28,8 +28,8 @@ class PathListAdapter : RecyclerView.Adapter<PathListAdapter.VH>() {
     holder.binding.apply {
       val file = paths[position]
 
-      val colorPrimary = MaterialColors.getColor(root.context, R.attr.colorPrimary, 0)
-      val colorControlNormal = MaterialColors.getColor(root.context, R.attr.colorControlNormal, 0)
+      val colorPrimary = root.context.getAttrColor(R.attr.colorPrimary)
+      val colorControlNormal = root.context.getAttrColor(R.attr.colorControlNormal)
 
       name.text = file.name
       if (position == getItemCount() - 1) {

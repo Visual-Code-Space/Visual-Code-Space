@@ -30,6 +30,7 @@
     <string name="unsaved_files_title">Arquivos não salvos</string>
     <string name="unsaved_files_message">Suas alterações serão perdidas se você não salvá-las. arquivos não salvos: %1$s</string>
     <string name="save_and_close">Salvar &amp; Fechar</string>
+    <string name="please_wait">Por favor, aguarde.</string>
 
     <!-- Menus Strings -->
     <string name="menu_format">Formatar</string>
@@ -57,7 +58,6 @@
     <string name="delete_message">Tem certeza que deseja deletar \"%1$s\"?</string>
     <string name="deleted_message">Deletado</string>
     <string name="deleting">Apagando</string>
-    <string name="deleting_please_wait">Apagando por favor aguarde.</string>
     <string name="create">Criar</string>
     <string name="cancel">Cancelar</string>
     <string name="file">Arquivo</string>

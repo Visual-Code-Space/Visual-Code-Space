@@ -1,46 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:app="http://schemas.android.com/apk/res-auto"
-  android:layout_width="match_parent"
-  android:layout_height="wrap_content"
-  android:orientation="vertical"
-  android:padding="20dp">
-
-  <LinearLayout
-    android:layout_width="match_parent"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:gravity="center_vertical">
+    android:layout_width="match_parent"
+    android:padding="?dialogPreferredPadding">
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
-      android:id="@+id/circularProgressIndicator"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:indeterminate="true" />
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:indeterminate="true"
+        android:id="@+id/indicator" />
 
     <TextView
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:textSize="16sp"
-      android:id="@+id/loadingMessage"
-      android:text="Loading..." />
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_toEndOf="@id/indicator"
+        android:layout_centerVertical="true"
+        android:textSize="16sp"
+        android:layout_marginStart="5dp"
+        android:id="@+id/message" />
 
-    <TextView
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:paddingLeft="5dp"
-      android:textSize="16sp"
-      android:text="(__PERCENTAGE__%)"
-      android:id="@+id/percent" />
-
-  </LinearLayout>
-
-  <com.google.android.material.progressindicator.LinearProgressIndicator
-    android:id="@+id/linearProgressIndicator"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:indeterminate="true"
-    android:paddingTop="20dp" />
-
-</LinearLayout>
+</RelativeLayout>

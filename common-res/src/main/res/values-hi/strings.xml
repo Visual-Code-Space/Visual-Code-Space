@@ -64,7 +64,6 @@
     <string name="delete_message">क्या आप वाकई \"%1$s\" को हटाना चाहते हैं?</string> 
     <string name="deleted_message">हटाए गए</string> 
     <string name="deleting">हटाया जा रहा है...</string> 
-    <string name="deleting_please_wait">हटाया जा रहा है कृपया प्रतीक्षा करें.</string> 
     <string name="create">बनाएं</string> 
     <string name="cancel">रद्द करें</string> 
     <string name="file">फ़ाइल</string> 

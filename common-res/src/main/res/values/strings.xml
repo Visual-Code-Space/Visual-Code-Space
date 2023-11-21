@@ -38,6 +38,7 @@
     <string name="unsaved_files_message">Your changes will be lost if you don\'t save them. unsaved files: %1$s</string>
     <string name="save_and_close">Save &amp; Close</string>
     <string name="terminal">Terminal</string>
+    <string name="please_wait">Please wait.</string>
 
     <!-- Menus Strings -->
     <string name="menu_format">Format</string>
@@ -65,7 +66,6 @@
     <string name="delete_message">Are you sure you want to delete \"%1$s\"?</string>
     <string name="deleted_message">Deleted</string>
     <string name="deleting">Deleting...</string>
-    <string name="deleting_please_wait">Deleting please wait.</string>
     <string name="create">Create</string>
     <string name="cancel">Cancel</string>
     <string name="file">File</string>

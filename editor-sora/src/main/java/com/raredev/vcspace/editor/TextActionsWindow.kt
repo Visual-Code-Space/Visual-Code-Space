@@ -8,8 +8,8 @@ import android.widget.RelativeLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.SizeUtils
-import com.google.android.material.color.MaterialColors
 import com.raredev.vcspace.adapters.TextActionListAdapter
+import com.raredev.vcspace.extensions.getAttrColor
 import com.raredev.vcspace.models.TextAction
 import com.raredev.vcspace.res.R
 import io.github.rosemoe.sora.event.HandleStateChangeEvent
@@ -44,12 +44,8 @@ class TextActionsWindow(editor: VCSpaceEditor) :
     rootView.background =
         GradientDrawable().apply {
           setStroke(
-              2,
-              MaterialColors.getColor(
-                  recyclerView, com.google.android.material.R.attr.colorOutline))
-          setColor(
-              MaterialColors.getColor(
-                  recyclerView, com.google.android.material.R.attr.colorSurface))
+              2, rootView.context.getAttrColor(com.google.android.material.R.attr.colorOutline))
+          setColor(rootView.context.getAttrColor(com.google.android.material.R.attr.colorSurface))
           setCornerRadius(25f)
         }
     rootView.addView(recyclerView)
