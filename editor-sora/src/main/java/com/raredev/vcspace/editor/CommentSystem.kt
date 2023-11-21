@@ -1,6 +1,5 @@
 package com.raredev.vcspace.editor
 
-import android.text.TextUtils
 import io.github.rosemoe.sora.text.Content
 import org.eclipse.tm4e.languageconfiguration.model.CommentRule
 
@@ -11,9 +10,7 @@ object CommentSystem {
     if (commentRule == null) return
     val comment = commentRule.lineComment
 
-    comment?.let {
-      text.insert(text.cursor.leftLine, 0, it)
-    }
+    comment?.let { text.insert(text.cursor.leftLine, 0, it) }
   }
 
   @JvmStatic

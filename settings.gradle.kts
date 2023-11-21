@@ -24,14 +24,13 @@ dependencyResolutionManagement {
 rootProject.name = "VCSpace"
 
 include(
-  ":app",
-  ":common",
-  ":common-res",
-  ":editor-ace",
-  ":editor-sora",
-  ":editor-sora:lang-textmate",
-  ":eventbus-events",
-  ":emulatorview",
-  ":models",
-  ":plugin-system"
-)
+    ":app",
+    ":common",
+    ":common-res",
+    ":editor-ace",
+    ":editor-sora",
+    ":editor-sora:lang-textmate",
+    ":eventbus-events",
+    ":emulatorview",
+    ":models",
+    ":plugin-system")

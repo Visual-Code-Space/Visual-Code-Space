@@ -36,24 +36,14 @@ android {
     }
   }
 
-  compileOptions {
-    isCoreLibraryDesugaringEnabled = true
-  }
+  compileOptions { isCoreLibraryDesugaringEnabled = true }
 
   packaging {
     resources.excludes.addAll(
-      arrayOf(
-        "META-INF/README.md",
-        "META-INF/CHANGES",
-        "bundle.properties",
-        "plugin.properties"
-      )
-    )
+        arrayOf("META-INF/README.md", "META-INF/CHANGES", "bundle.properties", "plugin.properties"))
   }
 
-  lint {
-    abortOnError = false
-  }
+  lint { abortOnError = false }
 
   buildFeatures {
     viewBinding = true

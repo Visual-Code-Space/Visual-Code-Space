@@ -14,6 +14,4 @@ android {
   }
 }
 
-dependencies {
-  implementation(libs.common.eventbus)
-}
+dependencies { implementation(libs.common.eventbus) }

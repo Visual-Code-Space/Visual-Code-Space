@@ -10,21 +10,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.SizeUtils
 import com.google.android.material.color.MaterialColors
 import com.raredev.vcspace.adapters.TextActionListAdapter
-import com.raredev.vcspace.editor.databinding.LayoutTextActionItemBinding
 import com.raredev.vcspace.models.TextAction
 import com.raredev.vcspace.res.R
 import io.github.rosemoe.sora.event.HandleStateChangeEvent
-import io.github.rosemoe.sora.event.InterceptTarget
 import io.github.rosemoe.sora.event.ScrollEvent
 import io.github.rosemoe.sora.event.SelectionChangeEvent
-import io.github.rosemoe.sora.widget.EditorTouchEventHandler
 import io.github.rosemoe.sora.widget.base.EditorPopupWindow
-import kotlin.math.min
 import kotlin.math.max
+import kotlin.math.min
 
-class TextActionsWindow(
-  editor: VCSpaceEditor
-): EditorPopupWindow(editor, FEATURE_SHOW_OUTSIDE_VIEW_ALLOWED) {
+class TextActionsWindow(editor: VCSpaceEditor) :
+    EditorPopupWindow(editor, FEATURE_SHOW_OUTSIDE_VIEW_ALLOWED) {
 
   companion object {
     const val DELAY: Long = 200
@@ -45,11 +41,17 @@ class TextActionsWindow(
       adapter = actionsAdapter
     }
 
-    rootView.background = GradientDrawable().apply {
-      setStroke(2, MaterialColors.getColor(recyclerView, com.google.android.material.R.attr.colorOutline))
-      setColor(MaterialColors.getColor(recyclerView, com.google.android.material.R.attr.colorSurface))
-      setCornerRadius(25f)
-    }
+    rootView.background =
+        GradientDrawable().apply {
+          setStroke(
+              2,
+              MaterialColors.getColor(
+                  recyclerView, com.google.android.material.R.attr.colorOutline))
+          setColor(
+              MaterialColors.getColor(
+                  recyclerView, com.google.android.material.R.attr.colorSurface))
+          setCornerRadius(25f)
+        }
     rootView.addView(recyclerView)
 
     popup.contentView = rootView
@@ -126,20 +128,20 @@ class TextActionsWindow(
     if (!editor.cursor.isSelected) {
       return
     }
-    editor.postDelayedInLifecycle(object: Runnable {
-      override fun run() {
-        if (
-          !eventHandler.hasAnyHeldHandle() &&
-          !editor.snippetController.isInSnippet() &&
-          System.currentTimeMillis() - lastScroll > DELAY &&
-          eventHandler.scroller.isFinished
-        ) {
-          displayWindow()
-        } else {
-          editor.postDelayedInLifecycle(this, DELAY)
-        }
-      }
-    }, DELAY)
+    editor.postDelayedInLifecycle(
+        object : Runnable {
+          override fun run() {
+            if (!eventHandler.hasAnyHeldHandle() &&
+                !editor.snippetController.isInSnippet() &&
+                System.currentTimeMillis() - lastScroll > DELAY &&
+                eventHandler.scroller.isFinished) {
+              displayWindow()
+            } else {
+              editor.postDelayedInLifecycle(this, DELAY)
+            }
+          }
+        },
+        DELAY)
   }
 
   fun onSelectionChanged(event: SelectionChangeEvent) {
@@ -152,22 +154,21 @@ class TextActionsWindow(
       lastPosition = -1
     } else {
       var show = false
-      if (
-        event.cause == SelectionChangeEvent.CAUSE_TAP &&
-        event.left.index == lastPosition &&
-        !isShowing &&
-        !editor.text.isInBatchEdit
-      ) {
+      if (event.cause == SelectionChangeEvent.CAUSE_TAP &&
+          event.left.index == lastPosition &&
+          !isShowing &&
+          !editor.text.isInBatchEdit) {
         editor.postInLifecycle { displayWindow() }
         show = true
       } else {
         dismiss()
       }
-      lastPosition = if (event.cause == SelectionChangeEvent.CAUSE_TAP && !show) {
-        event.left.index
-      } else {
-        -1
-      }
+      lastPosition =
+          if (event.cause == SelectionChangeEvent.CAUSE_TAP && !show) {
+            event.left.index
+          } else {
+            -1
+          }
     }
   }
 
@@ -185,15 +186,16 @@ class TextActionsWindow(
 
     var top: Int
     val cursor = editor.cursor
-    top = if (cursor.isSelected) {
-      val leftRect = editor.leftHandleDescriptor.position
-      val rightRect = editor.rightHandleDescriptor.position
-      val top1 = selectTop(leftRect)
-      val top2 = selectTop(rightRect)
-      min(top1, top2)
-    } else {
-      selectTop(editor.insertHandleDescriptor.position)
-    }
+    top =
+        if (cursor.isSelected) {
+          val leftRect = editor.leftHandleDescriptor.position
+          val rightRect = editor.rightHandleDescriptor.position
+          val top1 = selectTop(leftRect)
+          val top2 = selectTop(rightRect)
+          min(top1, top2)
+        } else {
+          selectTop(editor.insertHandleDescriptor.position)
+        }
     top = max(0, min(top, editor.height - height - 5))
     val handleLeftX = editor.getOffset(editor.cursor.leftLine, editor.cursor.leftColumn)
     val handleRightX = editor.getOffset(editor.cursor.rightLine, editor.cursor.rightColumn)
@@ -233,9 +235,9 @@ class TextActionsWindow(
     val dp8 = SizeUtils.dp2px(8f)
     val dp16 = dp8 * 2
     rootView.measure(
-      View.MeasureSpec.makeMeasureSpec(editor.width - dp16 * 2, View.MeasureSpec.AT_MOST),
-      View.MeasureSpec.makeMeasureSpec((260 * editor.dpUnit).toInt() - dp16 * 2, View.MeasureSpec.AT_MOST)
-    )
+        View.MeasureSpec.makeMeasureSpec(editor.width - dp16 * 2, View.MeasureSpec.AT_MOST),
+        View.MeasureSpec.makeMeasureSpec(
+            (260 * editor.dpUnit).toInt() - dp16 * 2, View.MeasureSpec.AT_MOST))
     setSize(rootView.measuredWidth, height)
   }
 

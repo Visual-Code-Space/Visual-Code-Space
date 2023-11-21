@@ -12,7 +12,7 @@ import com.raredev.vcspace.res.R
 import java.util.Calendar
 import java.util.Date
 
-class CrashActivity: BaseActivity() {
+class CrashActivity : BaseActivity() {
 
   companion object {
     const val KEY_EXTRA_ERROR = "error"
@@ -45,10 +45,10 @@ class CrashActivity: BaseActivity() {
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
     val close = menu.add(R.string.close_app)
-    close.setIcon(R.drawable.ic_close);
+    close.setIcon(R.drawable.ic_close)
     close.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
 
-    return super.onCreateOptionsMenu(menu);
+    return super.onCreateOptionsMenu(menu)
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {

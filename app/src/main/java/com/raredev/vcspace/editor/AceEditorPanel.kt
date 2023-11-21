@@ -7,9 +7,7 @@ import android.widget.LinearLayout
 import androidx.core.view.isVisible
 import com.blankj.utilcode.util.FileIOUtils
 import com.raredev.vcspace.databinding.LayoutAceEditorPanelBinding
-import com.raredev.vcspace.editor.AceCodeEditor
 import com.raredev.vcspace.editor.ace.OnEditorLoadedListener
-import com.raredev.vcspace.editor.ace.VCSpaceWebInterface
 import com.raredev.vcspace.interfaces.IEditorPanel
 import java.io.File
 import kotlinx.coroutines.CoroutineScope
@@ -17,10 +15,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class AceEditorPanel(
-  context: Context,
-  file: File
-): LinearLayout(context), OnEditorLoadedListener, IEditorPanel {
+class AceEditorPanel(context: Context, file: File) :
+    LinearLayout(context), OnEditorLoadedListener, IEditorPanel {
 
   private val binding = LayoutAceEditorPanelBinding.inflate(LayoutInflater.from(context))
 

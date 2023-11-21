@@ -8,9 +8,8 @@ import com.raredev.vcspace.editor.databinding.LayoutTextActionItemBinding
 import com.raredev.vcspace.models.TextAction
 import com.raredev.vcspace.res.R
 
-class TextActionListAdapter(
-  val textActions: TextActionsWindow
-): RecyclerView.Adapter<TextActionListAdapter.TextActionViewHolder>() {
+class TextActionListAdapter(val textActions: TextActionsWindow) :
+    RecyclerView.Adapter<TextActionListAdapter.TextActionViewHolder>() {
 
   private val actions: MutableList<TextAction> = ArrayList()
   private val visibleActions: MutableList<TextAction> = ArrayList()
@@ -19,14 +18,12 @@ class TextActionListAdapter(
     ensureActions()
   }
 
-  class TextActionViewHolder(
-    internal val binding: LayoutTextActionItemBinding
-  ): RecyclerView.ViewHolder(binding.root)
+  class TextActionViewHolder(internal val binding: LayoutTextActionItemBinding) :
+      RecyclerView.ViewHolder(binding.root)
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TextActionViewHolder {
-    return TextActionViewHolder(LayoutTextActionItemBinding.inflate(
-      LayoutInflater.from(parent.context), parent, false
-    ))
+    return TextActionViewHolder(
+        LayoutTextActionItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
   }
 
   override fun onBindViewHolder(holder: TextActionViewHolder, position: Int) {
@@ -38,9 +35,7 @@ class TextActionListAdapter(
       isClickable = action.clickable
       tooltipText = context.getString(action.text)
 
-      setOnClickListener {
-        textActions.executeTextAction(action)
-      }
+      setOnClickListener { textActions.executeTextAction(action) }
     }
   }
 

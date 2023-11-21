@@ -10,15 +10,14 @@ import com.raredev.vcspace.utils.PreferencesUtils
 import com.raredev.vcspace.utils.PreferencesUtils.prefs
 import com.raredev.vcspace.utils.SharedPreferencesKeys
 
-class GeneralSettingsFragment: PreferenceFragmentCompat() {
+class GeneralSettingsFragment : PreferenceFragmentCompat() {
 
   private val themes by lazy {
-      arrayOf(
+    arrayOf(
         getString(R.string.pref_theme_system),
         getString(R.string.pref_theme_dark),
-        getString(R.string.pref_theme_light)
-      )
-    }
+        getString(R.string.pref_theme_light))
+  }
 
   private val themeValues by lazy { arrayOf("default", "dark", "light") }
 
@@ -28,17 +27,17 @@ class GeneralSettingsFragment: PreferenceFragmentCompat() {
     findPreference<Preference>(SharedPreferencesKeys.KEY_THEME)?.setOnPreferenceClickListener { _ ->
       val selectedThemeValue = prefs.getString(SharedPreferencesKeys.KEY_THEME, "default")
       MaterialAlertDialogBuilder(requireContext())
-        .setTitle(R.string.title_theme)
-        .setSingleChoiceItems(themes, themeValues.indexOf(selectedThemeValue), { d, w ->
-          prefs.edit().putString(
-            SharedPreferencesKeys.KEY_THEME,
-            themeValues[w]
-          ).apply()
-          AppCompatDelegate.setDefaultNightMode(PreferencesUtils.appTheme)
-          d.dismiss()
-        })
-        .setPositiveButton(android.R.string.cancel, null)
-        .show()
+          .setTitle(R.string.title_theme)
+          .setSingleChoiceItems(
+              themes,
+              themeValues.indexOf(selectedThemeValue),
+              { d, w ->
+                prefs.edit().putString(SharedPreferencesKeys.KEY_THEME, themeValues[w]).apply()
+                AppCompatDelegate.setDefaultNightMode(PreferencesUtils.appTheme)
+                d.dismiss()
+              })
+          .setPositiveButton(android.R.string.cancel, null)
+          .show()
       true
     }
   }

@@ -6,7 +6,7 @@ import android.content.SharedPreferences
 import android.net.Uri
 import androidx.preference.PreferenceManager
 
-open class BaseApplication: Application() {
+open class BaseApplication : Application() {
 
   companion object {
     const val REPO_URL = "https://github.com/Visual-Code-Space/Visual-Code-Space"

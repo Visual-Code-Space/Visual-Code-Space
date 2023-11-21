@@ -5,7 +5,6 @@ import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.inputmethod.EditorInfo
 import androidx.core.content.res.ResourcesCompat
-import com.google.common.collect.ImmutableSet
 import com.raredev.vcspace.adapters.CompletionListAdapter
 import com.raredev.vcspace.editor.completion.CustomCompletionLayout
 import com.raredev.vcspace.events.OnContentChangeEvent
@@ -13,10 +12,8 @@ import com.raredev.vcspace.events.OnPreferenceChangeEvent
 import com.raredev.vcspace.utils.PreferencesUtils
 import com.raredev.vcspace.utils.SharedPreferencesKeys
 import io.github.rosemoe.sora.event.ContentChangeEvent
-import io.github.rosemoe.sora.lang.Language
 import io.github.rosemoe.sora.langs.textmate.VCSpaceTMLanguage
 import io.github.rosemoe.sora.widget.CodeEditor
-import io.github.rosemoe.sora.widget.EditorSearcher
 import io.github.rosemoe.sora.widget.component.EditorAutoCompletion
 import io.github.rosemoe.sora.widget.component.EditorTextActionWindow
 import java.io.File
@@ -25,12 +22,17 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-class VCSpaceEditor: CodeEditor {
+class VCSpaceEditor : CodeEditor {
 
-  constructor(context: Context): super(context)
-  constructor(context: Context, attrs: AttributeSet?): super(context, attrs)
-  constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
-    super(context, attrs, defStyleAttr)
+  constructor(context: Context) : super(context)
+
+  constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+
+  constructor(
+      context: Context,
+      attrs: AttributeSet?,
+      defStyleAttr: Int
+  ) : super(context, attrs, defStyleAttr)
 
   private var textActions: TextActionsWindow? = TextActionsWindow(this)
 
@@ -52,7 +54,7 @@ class VCSpaceEditor: CodeEditor {
   }
 
   override fun onFocusChanged(gainFocus: Boolean, direction: Int, previouslyFocusedRect: Rect?) {
-    super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
+    super.onFocusChanged(gainFocus, direction, previouslyFocusedRect)
     if (!gainFocus) {
       hideEditorWindows()
     }
@@ -65,7 +67,7 @@ class VCSpaceEditor: CodeEditor {
 
     EventBus.getDefault().unregister(this)
   }
-  
+
   fun subscribeEvents() {
     subscribeEvent(ContentChangeEvent::class.java) { _, _ ->
       modified = true
@@ -85,7 +87,7 @@ class VCSpaceEditor: CodeEditor {
       SharedPreferencesKeys.KEY_EDITOR_TAB_SIZE -> updateTABSize()
       SharedPreferencesKeys.KEY_STICKYSCROLL -> updateStickyScroll()
       SharedPreferencesKeys.KEY_FONTLIGATURES -> updateFontLigatures()
-      SharedPreferencesKeys.KEY_WORDWRAP ->  updateWordWrap()
+      SharedPreferencesKeys.KEY_WORDWRAP -> updateWordWrap()
       SharedPreferencesKeys.KEY_DELETE_EMPTY_LINE_FAST -> updateDeleteEmptyLineFast()
       SharedPreferencesKeys.KEY_EDITOR_FONT -> updateEditorFont()
       SharedPreferencesKeys.KEY_LINENUMBERS -> updateLineNumbers()
@@ -148,7 +150,8 @@ class VCSpaceEditor: CodeEditor {
   companion object {
 
     fun createInputTypeFlags(): Int {
-      return EditorInfo.TYPE_CLASS_TEXT or EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE or
+      return EditorInfo.TYPE_CLASS_TEXT or
+          EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE or
           EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS
     }
   }

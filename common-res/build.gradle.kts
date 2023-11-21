@@ -13,10 +13,9 @@ android {
     }
   }
 
-  buildFeatures {
-    viewBinding = true
-  }
+  buildFeatures { viewBinding = true }
 }
+
 dependencies {
   implementation(libs.androidx.appcompat)
   implementation(libs.androidx.preference)

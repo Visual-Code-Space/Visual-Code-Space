@@ -1,4 +1,4 @@
-package com.raredev.vcspace.adapters;
+package com.raredev.vcspace.adapters
 
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -9,15 +9,16 @@ import com.raredev.vcspace.editor.completion.VCSpaceCompletionItem
 import com.raredev.vcspace.editor.databinding.LayoutCompletionItemBinding
 import io.github.rosemoe.sora.widget.component.EditorCompletionAdapter
 
-class CompletionListAdapter: EditorCompletionAdapter() {
+class CompletionListAdapter : EditorCompletionAdapter() {
 
   override fun getItemHeight(): Int {
     return SizeUtils.dp2px(50f)
   }
 
   override fun getView(pos: Int, v: View?, parent: ViewGroup?, isSelected: Boolean): View {
-    val binding = v?.let { LayoutCompletionItemBinding.bind(it) }
-      ?: LayoutCompletionItemBinding.inflate(LayoutInflater.from(context), parent, false)
+    val binding =
+        v?.let { LayoutCompletionItemBinding.bind(it) }
+            ?: LayoutCompletionItemBinding.inflate(LayoutInflater.from(context), parent, false)
 
     val item = getItem(pos) as VCSpaceCompletionItem
 
@@ -28,12 +29,12 @@ class CompletionListAdapter: EditorCompletionAdapter() {
 
     if (!TextUtils.isEmpty(item.label)) {
       binding.itemLabel.text = item.label
-      binding.itemDesc.text  = item.label
+      binding.itemDesc.text = item.label
     }
 
     if (!TextUtils.isEmpty(item.desc)) {
       binding.itemDesc.text = item.desc
     }
-    return binding.root;
+    return binding.root
   }
 }

@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.blankj.utilcode.util.PathUtils
 import com.google.android.material.R
 import com.google.android.material.color.MaterialColors
 import com.raredev.vcspace.databinding.LayoutPathItemBinding
@@ -12,14 +11,14 @@ import com.raredev.vcspace.viewmodel.FileExplorerViewModel
 import java.io.File
 import java.util.Collections
 
-class PathListAdapter: RecyclerView.Adapter<PathListAdapter.VH>() {
+class PathListAdapter : RecyclerView.Adapter<PathListAdapter.VH>() {
 
   private val paths: MutableList<File> = ArrayList()
 
   private var viewModel: FileExplorerViewModel? = null
 
-  inner class VH(internal val binding: LayoutPathItemBinding):
-    RecyclerView.ViewHolder(binding.root)
+  inner class VH(internal val binding: LayoutPathItemBinding) :
+      RecyclerView.ViewHolder(binding.root)
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
     return VH(LayoutPathItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -35,14 +34,12 @@ class PathListAdapter: RecyclerView.Adapter<PathListAdapter.VH>() {
       name.text = file.name
       if (position == getItemCount() - 1) {
         name.setTextColor(colorPrimary)
-        separator.visibility =View.GONE
+        separator.visibility = View.GONE
       } else {
         name.setTextColor(colorControlNormal)
         separator.visibility = View.VISIBLE
       }
-      name.setOnClickListener {
-        viewModel?.setCurrentPath(file.absolutePath)
-      }
+      name.setOnClickListener { viewModel?.setCurrentPath(file.absolutePath) }
     }
   }
 

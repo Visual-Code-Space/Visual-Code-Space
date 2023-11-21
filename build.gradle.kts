@@ -1,6 +1,4 @@
 import com.android.build.gradle.BaseExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
-import org.jetbrains.kotlin.gradle.model.KotlinAndroidExtension
 
 plugins {
   id("build-logic.root-project")
@@ -40,6 +38,4 @@ subprojects {
   plugins.withId("com.android.library") { configureBaseExtension() }
 }
 
-tasks.register<Delete>("clean") {
-  delete(rootProject.buildDir)
-}
+tasks.register<Delete>("clean") { delete(rootProject.buildDir) }

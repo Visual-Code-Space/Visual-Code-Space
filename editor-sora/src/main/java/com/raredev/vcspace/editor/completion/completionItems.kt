@@ -7,34 +7,33 @@ import io.github.rosemoe.sora.text.Content
 import io.github.rosemoe.sora.widget.CodeEditor
 
 abstract class VCSpaceCompletionItem(
-  val completionKind: CompletionItemKind,
-  label: CharSequence,
-  desc: CharSequence
-): CompletionItem(label, desc, null)
-
+    val completionKind: CompletionItemKind,
+    label: CharSequence,
+    desc: CharSequence
+) : CompletionItem(label, desc, null)
 
 class SimpleCompletionItem(
-  completionKind: CompletionItemKind,
-  label: CharSequence,
-  desc: CharSequence,
-  val prefixLength: Int,
-  val commitText: String
-): VCSpaceCompletionItem(completionKind, label, desc) {
+    completionKind: CompletionItemKind,
+    label: CharSequence,
+    desc: CharSequence,
+    val prefixLength: Int,
+    val commitText: String
+) : VCSpaceCompletionItem(completionKind, label, desc) {
 
   override fun performCompletion(editor: CodeEditor, text: Content, line: Int, column: Int) {
     if (prefixLength == 0) {
       text.insert(line, column, commitText)
-      return;
+      return
     }
     text.replace(line, column - prefixLength, line, column, commitText)
   }
 }
 
 class SimpleSnippetCompletionItem(
-  label: CharSequence,
-  desc: CharSequence,
-  val snippet: SnippetDescription
-): VCSpaceCompletionItem(CompletionItemKind.SNIPPET, label, desc) {
+    label: CharSequence,
+    desc: CharSequence,
+    val snippet: SnippetDescription
+) : VCSpaceCompletionItem(CompletionItemKind.SNIPPET, label, desc) {
 
   override fun performCompletion(editor: CodeEditor, text: Content, position: CharPosition) {
     val prefixLength = snippet.selectedLength
@@ -48,7 +47,7 @@ class SimpleSnippetCompletionItem(
     }
     editor.snippetController.startSnippet(actionIndex, snippet.snippet, selectedText)
   }
-  
+
   override fun performCompletion(editor: CodeEditor, text: Content, line: Int, column: Int) {
     // do nothing
   }

@@ -1,8 +1,4 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
-plugins {
-  `kotlin-dsl`
-}
+plugins { `kotlin-dsl` }
 
 repositories {
   google()
@@ -15,6 +11,4 @@ java {
   sourceCompatibility = JavaVersion.VERSION_17
 }
 
-kotlin {
-  jvmToolchain(17)
-}
+kotlin { jvmToolchain(17) }

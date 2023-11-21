@@ -1,4 +1,4 @@
-package com.raredev.vcspace.utils;
+package com.raredev.vcspace.utils
 
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
@@ -12,11 +12,12 @@ object PreferencesUtils {
 
   // General
   val appTheme: Int
-    get() = when (prefs.getString(SharedPreferencesKeys.KEY_THEME, "")) {
-      "light" -> AppCompatDelegate.MODE_NIGHT_NO
-      "dark" -> AppCompatDelegate.MODE_NIGHT_YES
-      else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-    }
+    get() =
+        when (prefs.getString(SharedPreferencesKeys.KEY_THEME, "")) {
+          "light" -> AppCompatDelegate.MODE_NIGHT_NO
+          "dark" -> AppCompatDelegate.MODE_NIGHT_YES
+          else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+        }
 
   val dynamicColors: Boolean
     get() = prefs.getBoolean(SharedPreferencesKeys.KEY_DYNAMIC_COLORS, true)
@@ -29,11 +30,12 @@ object PreferencesUtils {
     get() = prefs.getString(SharedPreferencesKeys.KEY_EDITOR_TAB_SIZE, "4")!!.toInt()
 
   val selectedFont: Int
-    get() = when (prefs.getString(SharedPreferencesKeys.KEY_EDITOR_FONT, "firacode")) {
-      "firacode" -> R.font.firacode_regular
-      "jetbrains" -> R.font.jetbrains_mono
-      else -> R.font.firacode_regular
-    }
+    get() =
+        when (prefs.getString(SharedPreferencesKeys.KEY_EDITOR_FONT, "firacode")) {
+          "firacode" -> R.font.firacode_regular
+          "jetbrains" -> R.font.jetbrains_mono
+          else -> R.font.firacode_regular
+        }
 
   val stickyScroll: Boolean
     get() = prefs.getBoolean(SharedPreferencesKeys.KEY_STICKYSCROLL, false)

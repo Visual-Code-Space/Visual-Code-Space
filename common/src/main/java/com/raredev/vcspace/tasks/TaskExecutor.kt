@@ -12,37 +12,37 @@ object TaskExecutor {
   @JvmOverloads
   @JvmStatic
   fun <R> executeAsync(
-    callable: Callable<R>,
-    callback: Callback<R>? = null
+      callable: Callable<R>,
+      callback: Callback<R>? = null
   ): CompletableFuture<R?> {
     return CompletableFuture.supplyAsync {
-        try {
-          return@supplyAsync callable.call()
-        } catch (th: Throwable) {
-          log.e("An error occurred while executing Callable in background thread.", th)
-          return@supplyAsync null
+          try {
+            return@supplyAsync callable.call()
+          } catch (th: Throwable) {
+            log.e("An error occurred while executing Callable in background thread.", th)
+            return@supplyAsync null
+          }
         }
-      }
-      .whenComplete { result, _ -> ThreadUtils.runOnUiThread { callback?.complete(result) } }
+        .whenComplete { result, _ -> ThreadUtils.runOnUiThread { callback?.complete(result) } }
   }
 
   @JvmOverloads
   @JvmStatic
   fun <R> executeAsyncProvideError(
-    callable: Callable<R>,
-    callback: CallbackWithError<R>? = null
+      callable: Callable<R>,
+      callback: CallbackWithError<R>? = null
   ): CompletableFuture<R?> {
     return CompletableFuture.supplyAsync {
-        try {
-          return@supplyAsync callable.call()
-        } catch (th: Throwable) {
-          log.e("An error occurred while executing Callable in background thread.", th)
-          throw CompletionException(th)
+          try {
+            return@supplyAsync callable.call()
+          } catch (th: Throwable) {
+            log.e("An error occurred while executing Callable in background thread.", th)
+            throw CompletionException(th)
+          }
         }
-      }
-      .whenComplete { result, throwable ->
-        ThreadUtils.runOnUiThread { callback?.complete(result, throwable) }
-      }
+        .whenComplete { result, throwable ->
+          ThreadUtils.runOnUiThread { callback?.complete(result, throwable) }
+        }
   }
 
   fun interface Callback<R> {

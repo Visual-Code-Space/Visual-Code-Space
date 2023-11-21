@@ -6,10 +6,8 @@ import android.widget.LinearLayout
 import androidx.core.view.isVisible
 import com.blankj.utilcode.util.FileIOUtils
 import com.raredev.vcspace.databinding.LayoutSoraEditorPanelBinding
-import com.raredev.vcspace.editor.VCSpaceEditor
 import com.raredev.vcspace.interfaces.IEditorPanel
 import com.raredev.vcspace.providers.GrammarProvider
-import com.raredev.vcspace.tasks.TaskExecutor.executeAsync
 import io.github.rosemoe.sora.lang.EmptyLanguage
 import io.github.rosemoe.sora.lang.Language
 import io.github.rosemoe.sora.langs.textmate.TextMateColorScheme
@@ -23,10 +21,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class SoraEditorPanel(
-  context: Context,
-  file: File
-): LinearLayout(context), IEditorPanel {
+class SoraEditorPanel(context: Context, file: File) : LinearLayout(context), IEditorPanel {
 
   private val binding = LayoutSoraEditorPanelBinding.inflate(LayoutInflater.from(context))
 
@@ -51,9 +46,7 @@ class SoraEditorPanel(
         postRead(language)
       }
     }
-    addView(binding.root, LayoutParams(
-      LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT
-    ))
+    addView(binding.root, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
   }
 
   fun postRead(language: Language) {
