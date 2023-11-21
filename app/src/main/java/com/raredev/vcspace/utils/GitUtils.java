@@ -1,6 +1,5 @@
 package com.raredev.vcspace.utils;
 
-import androidx.loader.content.Loader;
 import com.blankj.utilcode.util.FileIOUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -16,7 +15,6 @@ import org.eclipse.jgit.api.DiffCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.MergeCommand;
 import org.eclipse.jgit.api.PushCommand;
-import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
@@ -43,7 +41,7 @@ import org.eclipse.jgit.treewalk.EmptyTreeIterator;
 import org.eclipse.jgit.treewalk.TreeWalk;
 
 public class GitUtils {
-
+  
   private Git git;
   private File repoPath;
 
@@ -63,29 +61,13 @@ public class GitUtils {
     open(repoPath);
   }
 
-  public static void init(File path) throws GitAPIException {
-    Git.init().setDirectory(path).call();
+  public void init() throws GitAPIException {
+    Git.init().setDirectory(repoPath.getParentFile()).call();
   }
 
   private void open(File repoPath) throws IOException {
     Repository repo = new FileRepositoryBuilder().setGitDir(repoPath).build();
     git = new Git(repo);
-  }
-
-  public static boolean repositoryExists(File directory) {
-    FileRepositoryBuilder repositoryBuilder = new FileRepositoryBuilder();
-    repositoryBuilder.findGitDir(directory);
-    return repositoryBuilder.getGitDir() != null;
-  }
-
-  public void createInitialCommit(String repoUrl) throws GitAPIException , URISyntaxException {
-    add(".");
-    commitChanges("Initial commit");
-    addRemoteOrigin(repoUrl);
-  }
-  
-  public void hardReset() throws GitAPIException {
-  	git.reset().setMode(ResetCommand.ResetType.HARD).call();
   }
 
   /**
@@ -224,7 +206,7 @@ public class GitUtils {
    * @param remoteName The name of the remote repository to push to
    * @throws GitAPIException
    */
-  public void push(String remoteName, String username, String password) throws GitAPIException {
+  public void push(String remoteName) throws GitAPIException {
     git.push().setRemote(remoteName).call();
   }
 
@@ -235,7 +217,7 @@ public class GitUtils {
    * @param branch The name of the branch
    * @throws GitAPIException
    */
-  public void push(String remote, String branch, String username, String password) throws GitAPIException {
+  public void push(String remote, String branch) throws GitAPIException {
     git.push().setRemote(remote).setRefSpecs(new RefSpec(branch)).call();
   }
 
@@ -268,10 +250,10 @@ public class GitUtils {
    */
   public void add(String fileOrDirPath) throws GitAPIException {
     git.add().addFilepattern(fileOrDirPath).call();
-//    Set<String> addedFiles = git.status().call().getAdded();
-//    for (String file : addedFiles) {
-//      // ILogger.debug(LOG_TAG, "Added file: " + file);
-//    }
+    Set<String> addedFiles = git.status().call().getAdded();
+    for (String file : addedFiles) {
+      //ILogger.debug(LOG_TAG, "Added file: " + file);
+    }
   }
 
   /**
@@ -300,7 +282,7 @@ public class GitUtils {
    * @return A string representation of the repository status
    * @throws GitAPIException
    */
-  public String getStatusAsString() throws GitAPIException, IOException {
+  public String getStatusAsString() throws GitAPIException {
     Status status = git.status().call();
     StringBuilder sb = new StringBuilder();
     sb.append("Added: " + status.getAdded() + "\n");
@@ -312,8 +294,6 @@ public class GitUtils {
     sb.append("Removed: " + status.getRemoved() + "\n");
     sb.append("Untracked: " + status.getUntracked() + "\n");
     sb.append("UntrackedFolders: " + status.getUntrackedFolders() + "\n");
-    sb.append("UncommittedChanges: " + status.getUncommittedChanges() + "\n");
-    // sb.append("toString: " + getUncommittedChangesAsString() + "\n");
     return sb.toString();
   }
 
@@ -432,7 +412,7 @@ public class GitUtils {
       throws GitAPIException {
     PushCommand pushCmd = git.push();
     pushCmd
-//        .setRemote("origin")
+        .setRemote("origin")
         .setRefSpecs(new RefSpec("refs/heads/" + branchName))
         .setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, password))
         .setPushAll();

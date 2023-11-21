@@ -18,15 +18,15 @@
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:layout_toEndOf="@id/nav_rail"
-        android:textAppearance="?textAppearanceTitleLarge"
+        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
         android:ellipsize="end"
+        android:textSize="15sp"
         android:layout_marginLeft="5dp"
         android:singleLine="true"
         android:paddingStart="5dp"
         android:id="@+id/workspace_text"
         android:text="Workspace"
-        android:paddingTop="8dp"
-        android:textColor="?colorTertiary" />
+        android:paddingTop="8dp" />
 
     <TextView
         android:layout_height="wrap_content"
@@ -34,7 +34,7 @@
         android:layout_toEndOf="@id/nav_rail"
         android:layout_below="@id/workspace_text"
         android:ellipsize="end"
-        android:textAppearance="?textAppearanceTitleMedium"
+        android:textSize="12sp"
         android:paddingBottom="8dp"
         android:layout_marginLeft="5dp"
         android:textColor="?attr/colorSecondaryVariant"

@@ -11,18 +11,14 @@ import com.raredev.vcspace.databinding.LayoutSheetDialogBinding
 import com.raredev.vcspace.models.SheetOptionItem
 import java.util.ArrayList
 
-class OptionsListBottomSheet : BottomSheetDialogFragment() {
+class OptionsListBottomSheet: BottomSheetDialogFragment() {
 
   private val options: MutableList<SheetOptionItem> = ArrayList()
   private var listener: (SheetOptionItem) -> Unit = {}
 
   private var binding: LayoutSheetDialogBinding? = null
 
-  override fun onCreateView(
-      inflater: LayoutInflater,
-      container: ViewGroup?,
-      savedInstanceState: Bundle?
-  ): View {
+  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
     binding = LayoutSheetDialogBinding.inflate(inflater, container, false)
     return binding!!.root
   }

@@ -7,24 +7,26 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.raredev.vcspace.app.BaseApplication
-import com.raredev.vcspace.res.R
+import com.raredev.vcspace.fragments.settings.EditorSettingsFragment
+import com.raredev.vcspace.fragments.settings.FileSettingsFragment
+import com.raredev.vcspace.fragments.settings.GeneralSettingsFragment
+import com.raredev.vcspace.fragments.settings.GitSettingsFragment
 import com.raredev.vcspace.utils.SharedPreferencesKeys
+import com.raredev.vcspace.res.R
 
-class SettingsFragment : PreferenceFragmentCompat() {
+class SettingsFragment: PreferenceFragmentCompat() {
 
   override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
     setPreferencesFromResource(R.xml.settings, rootKey)
 
     val controller = findNavController()
 
-    findPreference<Preference>(SharedPreferencesKeys.KEY_GENERAL)?.setOnPreferenceClickListener { _
-      ->
+    findPreference<Preference>(SharedPreferencesKeys.KEY_GENERAL)?.setOnPreferenceClickListener { _ ->
       controller.navigate(SettingsFragmentDirections.actionGoToGeneralSettings())
       true
     }
 
-    findPreference<Preference>(SharedPreferencesKeys.KEY_EDITOR)?.setOnPreferenceClickListener { _
-      ->
+    findPreference<Preference>(SharedPreferencesKeys.KEY_EDITOR)?.setOnPreferenceClickListener { _ ->
       controller.navigate(SettingsFragmentDirections.actionGoToEditorSettings())
       true
     }
@@ -39,13 +41,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
       true
     }
 
-    findPreference<Preference>(SharedPreferencesKeys.KEY_GITHUB)?.setOnPreferenceClickListener { _
-      ->
+    findPreference<Preference>(SharedPreferencesKeys.KEY_GITHUB)?.setOnPreferenceClickListener { _ ->
       BaseApplication.getInstance().openProjectRepo()
       true
     }
-    findPreference<Preference>(SharedPreferencesKeys.KEY_LICENSES)?.setOnPreferenceClickListener { _
-      ->
+    findPreference<Preference>(SharedPreferencesKeys.KEY_LICENSES)?.setOnPreferenceClickListener { _ ->
       startActivity(Intent(requireContext(), OssLicensesMenuActivity::class.java))
       true
     }

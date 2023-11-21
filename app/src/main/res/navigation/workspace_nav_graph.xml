@@ -2,68 +2,9 @@
 <navigation
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    app:startDestination="@id/fragmentNoOpenedFolder">
-    <fragment
-        android:id="@+id/fragmentNoOpenedFolder"
-        android:name="com.raredev.vcspace.fragments.workspace.explorer.NoOpenedFolderFragment"
-        android:label="@string/file_explorer">
-        <action
-            android:id="@+id/action_go_to_file_explorer"
-            app:destination="@id/fragmentExplorer"
-            app:enterAnim="@android:anim/fade_in"
-            app:exitAnim="@android:anim/fade_out" />
-    </fragment>
-
+    app:startDestination="@id/fragmentExplorer">
     <fragment
         android:id="@+id/fragmentExplorer"
         android:name="com.raredev.vcspace.fragments.workspace.explorer.FileExplorerFragment"
-        android:label="@string/file_explorer">
-        <action
-            android:id="@+id/action_go_to_no_folder"
-            app:destination="@id/fragmentNoOpenedFolder"
-            app:enterAnim="@android:anim/fade_in"
-            app:exitAnim="@android:anim/fade_out" />
-        <action
-            android:id="@+id/action_go_to_git_manager"
-            app:destination="@id/fragmentGit"
-            app:enterAnim="@android:anim/fade_in"
-            app:exitAnim="@android:anim/fade_out" />
-        <action
-            android:id="@+id/action_go_to_git_control"
-            app:destination="@id/fragmentGitControl"
-            app:enterAnim="@android:anim/fade_in"
-            app:exitAnim="@android:anim/fade_out" />
-    </fragment>
-    
-    <fragment
-        android:id="@+id/fragmentGit"
-        android:name="com.raredev.vcspace.fragments.workspace.git.GitManagerFragment"
-        android:label="Git">
-        <action
-            android:id="@+id/action_go_to_explorer"
-            app:destination="@id/fragmentExplorer"
-            app:enterAnim="@android:anim/fade_in"
-            app:exitAnim="@android:anim/fade_out" />
-        <action
-            android:id="@+id/action_go_to_git_control"
-            app:destination="@id/fragmentGitControl"
-            app:enterAnim="@android:anim/fade_in"
-            app:exitAnim="@android:anim/fade_out" />
-    </fragment>
-    
-    <fragment
-        android:id="@+id/fragmentGitControl"
-        android:name="com.raredev.vcspace.fragments.workspace.git.GitControlFragment"
-        android:label="Git">
-        <action
-            android:id="@+id/action_go_to_explorer"
-            app:destination="@id/fragmentExplorer"
-            app:enterAnim="@android:anim/fade_in"
-            app:exitAnim="@android:anim/fade_out" />
-        <action
-            android:id="@+id/action_go_to_git_manager"
-            app:destination="@id/fragmentGit"
-            app:enterAnim="@android:anim/fade_in"
-            app:exitAnim="@android:anim/fade_out" />
-    </fragment>
+        android:label="@string/file_explorer" />
 </navigation>

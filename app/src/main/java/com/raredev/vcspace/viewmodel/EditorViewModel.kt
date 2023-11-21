@@ -3,11 +3,12 @@ package com.raredev.vcspace.viewmodel
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.Observer
 import java.io.File
 
-class EditorViewModel : ViewModel() {
+class EditorViewModel: ViewModel() {
 
   private val files = MutableLiveData<MutableList<File>>(ArrayList())
   private val _selectedFilePosition = MutableLiveData<Int>(-1)

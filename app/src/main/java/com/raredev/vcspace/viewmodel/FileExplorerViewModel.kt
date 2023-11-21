@@ -11,10 +11,10 @@ import java.io.File
 import java.util.Arrays
 import java.util.Comparator
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.launch
 
-class FileExplorerViewModel : ViewModel() {
+class FileExplorerViewModel: ViewModel() {
 
   private val _files = MutableLiveData<List<File>>(emptyList())
   private val _currentPath = MutableLiveData<String>(PathUtils.getRootPathExternalFirst())
@@ -50,12 +50,15 @@ class FileExplorerViewModel : ViewModel() {
           files.add(file)
         }
       }
-      withContext(Dispatchers.Main) { _files.value = files }
+      withContext(Dispatchers.Main) {
+        _files.value = files
+      }
     }
   }
 
   companion object {
-    val FOLDER_FIRST_ORDER: Comparator<File> =
-        compareBy<File> { file -> if (file.isFile) 1 else 0 }.thenBy { it.name.lowercase() }
+    val FOLDER_FIRST_ORDER: Comparator<File> = compareBy<File> { file ->
+      if (file.isFile) 1 else 0
+    }.thenBy { it.name.lowercase() }
   }
 }

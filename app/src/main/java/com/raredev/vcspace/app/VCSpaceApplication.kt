@@ -2,17 +2,20 @@ package com.raredev.vcspace.app
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.PopupMenu
 import com.blankj.utilcode.util.ThrowableUtils
+import com.google.android.material.color.DynamicColors
 import com.raredev.vcspace.activities.CrashActivity
 import com.raredev.vcspace.providers.GrammarProvider
 import com.raredev.vcspace.utils.PreferencesUtils
+import com.raredev.vcspace.utils.Utils
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.model.ThemeModel
 import io.github.rosemoe.sora.langs.textmate.registry.provider.AssetsFileResolver
 import org.eclipse.tm4e.core.registry.IThemeSource
 
-class VCSpaceApplication : BaseApplication() {
+class VCSpaceApplication: BaseApplication() {
 
   private var uncaughtException: Thread.UncaughtExceptionHandler? = null
 
@@ -38,11 +41,12 @@ class VCSpaceApplication : BaseApplication() {
     themes.forEach { name ->
       val path = "editor/sora-editor/schemes/$name.json"
       themeRegistry.loadTheme(
-          ThemeModel(
-                  IThemeSource.fromInputStream(
-                      FileProviderRegistry.getInstance().tryGetInputStream(path), path, null),
-                  name)
-              .setDark(name == "darcula"))
+        ThemeModel(
+          IThemeSource.fromInputStream(
+            FileProviderRegistry.getInstance().tryGetInputStream(path), path, null
+          ), name
+        ).setDark(name == "darcula")
+      )
     }
   }
 

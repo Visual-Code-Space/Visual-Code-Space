@@ -84,7 +84,6 @@ dependencies {
   implementation(libs.common.jgit)
   implementation(libs.common.eventbus)
   implementation(libs.common.android.coroutines)
-  implementation(libs.common.kotlinx.serialization)
 
   implementation(projects.common)
   implementation(projects.commonRes)

@@ -4,21 +4,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.blankj.utilcode.util.PathUtils
 import com.google.android.material.R
 import com.google.android.material.color.MaterialColors
-import com.raredev.vcspace.app.BaseApplication
 import com.raredev.vcspace.databinding.LayoutPathItemBinding
 import com.raredev.vcspace.viewmodel.FileExplorerViewModel
 import java.io.File
+import java.util.Collections
 
-class PathListAdapter : RecyclerView.Adapter<PathListAdapter.VH>() {
+class PathListAdapter: RecyclerView.Adapter<PathListAdapter.VH>() {
 
   private val paths: MutableList<File> = ArrayList()
 
   private var viewModel: FileExplorerViewModel? = null
 
-  inner class VH(internal val binding: LayoutPathItemBinding) :
-      RecyclerView.ViewHolder(binding.root)
+  inner class VH(internal val binding: LayoutPathItemBinding):
+    RecyclerView.ViewHolder(binding.root)
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
     return VH(LayoutPathItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -34,12 +35,14 @@ class PathListAdapter : RecyclerView.Adapter<PathListAdapter.VH>() {
       name.text = file.name
       if (position == getItemCount() - 1) {
         name.setTextColor(colorPrimary)
-        separator.visibility = View.GONE
+        separator.visibility =View.GONE
       } else {
         name.setTextColor(colorControlNormal)
         separator.visibility = View.VISIBLE
       }
-      name.setOnClickListener { viewModel?.setCurrentPath(file.absolutePath) }
+      name.setOnClickListener {
+        viewModel?.setCurrentPath(file.absolutePath)
+      }
     }
   }
 
@@ -52,19 +55,18 @@ class PathListAdapter : RecyclerView.Adapter<PathListAdapter.VH>() {
   }
 
   fun setPath(path: File?) {
-    path?.let {
-      paths.clear()
-      var temp: File? = it
-      val openedFolderPath = BaseApplication.getInstance().getPrefs().getString("openedFolder", "")
-      while (temp != null) {
-        if (temp.absolutePath == "/storage/emulated") {
-          break
-        }
-        paths.add(temp)
-        if (openedFolderPath == temp.absolutePath) temp = null else temp = temp.parentFile
+    paths.clear()
+
+    var temp: File? = path
+    while (temp != null) {
+      if (temp.absolutePath.equals("/storage/emulated")) {
+        break
       }
-      paths.reverse()
-      notifyDataSetChanged()
+      paths.add(temp)
+      temp = temp.parentFile
     }
+
+    Collections.reverse(paths)
+    notifyDataSetChanged()
   }
 }

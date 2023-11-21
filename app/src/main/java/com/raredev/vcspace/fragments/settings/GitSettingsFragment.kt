@@ -1,5 +1,6 @@
 package com.raredev.vcspace.fragments.settings
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.text.SpannableString
@@ -14,19 +15,19 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.raredev.vcspace.app.BaseApplication
 import com.raredev.vcspace.databinding.LayoutCredentialBinding
 import com.raredev.vcspace.res.R
+import com.raredev.vcspace.utils.PreferencesUtils
 import com.raredev.vcspace.utils.PreferencesUtils.prefs
 import com.raredev.vcspace.utils.SharedPreferencesKeys
 
-class GitSettingsFragment : PreferenceFragmentCompat() {
+class GitSettingsFragment: PreferenceFragmentCompat() {
 
   override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
     setPreferencesFromResource(R.xml.settings_git, rootKey)
 
-    findPreference<Preference>(SharedPreferencesKeys.KEY_CREDENTIAL)
-        ?.setOnPreferenceClickListener { _ ->
-          showCredentialDialog()
-          true
-        }
+    findPreference<Preference>(SharedPreferencesKeys.KEY_CREDENTIAL)?.setOnPreferenceClickListener { _ ->
+      showCredentialDialog()
+      true
+    }
   }
 
   fun showCredentialDialog() {
@@ -38,41 +39,39 @@ class GitSettingsFragment : PreferenceFragmentCompat() {
     val endIndex = startIndex + linkText.length
 
     val spannableString = SpannableString(content)
-    spannableString.setSpan(
-        object : ClickableSpan() {
-          override fun onClick(textView: View) {
-            val url = "https://github.com/settings/tokens"
-            BaseApplication.getInstance().openUrl(url)
-          }
-        },
-        startIndex,
-        endIndex,
-        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+    spannableString.setSpan(object: ClickableSpan() {
+        override fun onClick(textView: View) {
+          val url = "https://github.com/settings/tokens"
+          BaseApplication.getInstance().openUrl(url)
+        }
+      },
+      startIndex,
+      endIndex,
+      Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+    )
 
     helper.text = spannableString
     helper.movementMethod = LinkMovementMethod.getInstance()
     helper.highlightColor = Color.TRANSPARENT
 
-    binding.etInputUsername.setText(
-        prefs.getString(SharedPreferencesKeys.KEY_CREDENTIAL_USERNAME, ""))
-    binding.etInputPassword.setText(
-        prefs.getString(SharedPreferencesKeys.KEY_CREDENTIAL_PASSWORD, ""))
+    binding.etInputUsername.setText(prefs.getString(SharedPreferencesKeys.KEY_CREDENTIAL_USERNAME, ""))
+    binding.etInputPassword.setText(prefs.getString(SharedPreferencesKeys.KEY_CREDENTIAL_PASSWORD, ""))
 
     MaterialAlertDialogBuilder(requireContext())
-        .setTitle(R.string.pref_git_credentials)
-        .setPositiveButton(
-            android.R.string.ok,
-            { _, _ ->
-              val editor = prefs.edit()
-              editor.putString(
-                  SharedPreferencesKeys.KEY_CREDENTIAL_USERNAME,
-                  binding.etInputUsername.text.toString())
-              editor.putString(
-                  SharedPreferencesKeys.KEY_CREDENTIAL_PASSWORD,
-                  binding.etInputPassword.text.toString())
-              editor.apply()
-            })
-        .setView(binding.root)
-        .show()
+      .setTitle(R.string.pref_git_credentials)
+      .setPositiveButton(android.R.string.ok, { _, _ ->
+        val editor = prefs.edit()
+        editor.putString(
+          SharedPreferencesKeys.KEY_CREDENTIAL_USERNAME,
+          binding.etInputUsername.text.toString()
+        )
+        editor.putString(
+          SharedPreferencesKeys.KEY_CREDENTIAL_PASSWORD,
+          binding.etInputPassword.text.toString()
+        )
+        editor.apply()
+      })
+      .setView(binding.root)
+      .show()
   }
 }
