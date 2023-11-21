@@ -20,7 +20,6 @@ dependencies {
   implementation(libs.google.material)
   implementation(libs.google.gson)
   implementation(libs.common.utilcode)
-  implementation(libs.common.androidsvg)
 
   implementation(projects.commonRes)
 }

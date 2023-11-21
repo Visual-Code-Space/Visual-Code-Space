@@ -8,16 +8,12 @@ import android.content.res.Configuration;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.PictureDrawable;
 import android.os.Build;
 import android.os.Environment;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
-import com.caverock.androidsvg.SVG;
-import com.caverock.androidsvg.SVGParseException;
 import com.raredev.vcspace.app.BaseApplication;
-import java.io.IOException;
 
 public class Utils {
 
@@ -51,15 +47,5 @@ public class Utils {
         BaseApplication.Companion.getInstance().getResources().getConfiguration().uiMode
             & Configuration.UI_MODE_NIGHT_MASK;
     return uiMode == Configuration.UI_MODE_NIGHT_YES;
-  }
-
-  public static Drawable getDrawableFromSvg(String assetsPath) {
-    try {
-      var svg = SVG.getFromAsset(BaseApplication.Companion.getInstance().getAssets(), assetsPath);
-      return new PictureDrawable(svg.renderToPicture());
-    } catch (SVGParseException | IOException err) {
-      err.printStackTrace();
-      return null;
-    }
   }
 }

@@ -1,9 +1,0 @@
-<svg viewBox="0 0 24 24" width="16px" height="16px" xmlns="http://www.w3.org/2000/svg">
-    <g fill="#C792EA">
-        <path
-                d="M 12.8 16 L 12.8 22 L 11.2 22 L 11.2 16 L 6 16 L 6 14 L 8 12 L 8 7.121 L 16.879 16 Z M 17 2 L 17 4 L 16 4 L 16 10.879 L 7.121 2 Z"
-        />
-        <rect x="2.7" width="27" height="2"
-              transform="matrix(0.707106, 0.707107, -0.707107, 0.707106, 0.919241, -0.909189)" />
-    </g>
-</svg>

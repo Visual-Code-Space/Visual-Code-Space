@@ -1,6 +1,5 @@
 package com.raredev.vcspace.adapters
 
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.raredev.vcspace.databinding.LayoutFileItemBinding
 import com.raredev.vcspace.providers.FileIconProvider
 import com.raredev.vcspace.res.R
-import com.raredev.vcspace.utils.Utils
 import java.io.File
 import java.text.SimpleDateFormat
 
@@ -17,10 +15,6 @@ class FileListAdapter(private val listener: OnFileClickListener) :
     RecyclerView.Adapter<FileListAdapter.VH>() {
 
   private var files: List<File> = emptyList()
-
-  init {
-    FileIconProvider.initialize()
-  }
 
   inner class VH(internal val binding: LayoutFileItemBinding) :
       RecyclerView.ViewHolder(binding.root)
@@ -33,16 +27,12 @@ class FileListAdapter(private val listener: OnFileClickListener) :
     holder.binding.apply {
       val file = files[position]
 
-      val iconDrawable: Drawable =
+      val iconRes: Int =
           if (file.isFile) {
-            FileIconProvider.findFileIconDrawable(file)
-                ?: Utils.getDrawableFromSvg("icons/files/blank.svg")
-          } else {
-            FileIconProvider.findFolderIconDrawable(file)
-                ?: Utils.getDrawableFromSvg("icons/folders/folder.svg")
-          }
+            FileIconProvider.findFileIconResource(file)
+          } else R.drawable.ic_folder
 
-      icon.setImageDrawable(iconDrawable)
+      icon.setImageResource(iconRes)
       name.text = file.name
       info.text =
           root.context.getString(
