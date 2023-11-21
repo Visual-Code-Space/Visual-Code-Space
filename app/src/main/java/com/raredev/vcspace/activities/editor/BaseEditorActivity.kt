@@ -13,11 +13,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
 import com.raredev.vcspace.activities.BaseActivity
 import com.raredev.vcspace.databinding.ActivityEditorBinding
-import com.raredev.vcspace.editor.AceEditorPanel
-import com.raredev.vcspace.editor.SoraEditorPanel
+import com.raredev.vcspace.editor.CodeEditorView
 import com.raredev.vcspace.events.OnContentChangeEvent
 import com.raredev.vcspace.events.OnPreferenceChangeEvent
-import com.raredev.vcspace.interfaces.IEditorPanel
 import com.raredev.vcspace.res.R
 import com.raredev.vcspace.tasks.TaskExecutor.executeAsyncProvideError
 import com.raredev.vcspace.utils.PreferencesUtils
@@ -96,7 +94,7 @@ open class BaseEditorActivity :
         if (tab != null && !tab.isSelected) {
           tab.select()
         }
-        binding.symbolInput.bindEditor(getEditorPanelAt(position))
+        binding.symbolInput.bindEditor(getEditorAt(position)?.editor)
         binding.container.displayedChild = position
         invalidateOptionsMenu()
       } else {
@@ -170,12 +168,7 @@ open class BaseEditorActivity :
 
     val position = viewModel.getFileCount()
 
-    val editorView =
-        if (PreferencesUtils.useAceEditor) {
-          AceEditorPanel(this, file)
-        } else {
-          SoraEditorPanel(this, file)
-        }
+    val editorView = CodeEditorView(this, file)
 
     viewModel.addFile(file)
     binding.container.addView(editorView)
@@ -187,11 +180,11 @@ open class BaseEditorActivity :
 
   fun closeFile(position: Int) {
     if (position >= 0 && position < viewModel.getFileCount()) {
-      val editor = getEditorPanelAt(position)
+      val editor = getEditorAt(position)
       if (editor == null) return
 
-      val file = editor.getFile()
-      if (editor.isModified() && file != null) {
+      val file = editor.file
+      if (editor.modified && file != null) {
         notifyUnsavedFile(file) { closeFile(position) }
         return
       }
@@ -219,9 +212,9 @@ open class BaseEditorActivity :
 
     var pos: Int = 0
     while (viewModel.getFileCount() != 1) {
-      val editor = getEditorPanelAt(pos)
+      val editor = getEditorAt(pos)
       if (editor != null) {
-        if (file != editor.getFile()) {
+        if (file != editor.file) {
           closeFile(pos)
         } else {
           pos = 1
@@ -237,7 +230,7 @@ open class BaseEditorActivity :
       return
     }
     for (i in 0 until viewModel.getFileCount()) {
-      getEditorPanelAt(i)?.release()
+      getEditorAt(i)?.release()
     }
 
     viewModel.removeAllFiles()
@@ -271,7 +264,7 @@ open class BaseEditorActivity :
   }
 
   private suspend fun saveFile(position: Int, whenSave: Runnable?) {
-    getEditorPanelAt(position)?.saveFile()
+    getEditorAt(position)?.saveFile()
 
     withContext(Dispatchers.Main) {
       val tab = binding.tabs.getTabAt(position) ?: return@withContext
@@ -282,14 +275,14 @@ open class BaseEditorActivity :
     }
   }
 
-  fun getSelectedEditorPanel(): IEditorPanel? {
+  fun getSelectedEditor(): CodeEditorView? {
     return if (viewModel.getSelectedFilePos() >= 0) {
-      getEditorPanelAt(viewModel.getSelectedFilePos())
+      getEditorAt(viewModel.getSelectedFilePos())
     } else null
   }
 
-  fun getEditorPanelAt(position: Int): IEditorPanel? {
-    return binding.container.getChildAt(position) as? IEditorPanel
+  fun getEditorAt(position: Int): CodeEditorView? {
+    return binding.container.getChildAt(position) as? CodeEditorView
   }
 
   fun findPositionAtFile(file: File?): Int {
@@ -305,7 +298,7 @@ open class BaseEditorActivity :
   fun getUnsavedFilesCount(): Int {
     var count = 0
     for (i in 0 until viewModel.getOpenedFiles().size) {
-      if (getEditorPanelAt(i)?.isModified() ?: false) count++
+      if (getEditorAt(i)?.modified ?: false) count++
     }
     return count
   }
@@ -313,11 +306,11 @@ open class BaseEditorActivity :
   fun getUnsavedFiles(): List<File> {
     val unsavedFiles = mutableListOf<File>()
     for (i in 0 until viewModel.getFileCount()) {
-      val editor = getEditorPanelAt(i)
+      val editor = getEditorAt(i)
       if (editor == null) continue
 
-      val file = editor.getFile()
-      if (file != null && editor.isModified()) {
+      val file = editor.file
+      if (file != null && editor.modified) {
         unsavedFiles.add(file)
       }
     }
@@ -362,7 +355,7 @@ open class BaseEditorActivity :
       for (i in 0 until binding.tabs.tabCount) {
         val file = files[i]
         val count = dupliCount[file.name] ?: 0
-        val isModified = getEditorPanelAt(i)?.isModified() ?: false
+        val isModified = getEditorAt(i)?.modified ?: false
         val name = if (count > 1) nameBuilder.getShortPath(file) else file.name
         names[i] = if (isModified) "*$name" else name
       }
@@ -383,7 +376,7 @@ open class BaseEditorActivity :
         unsavedFile.name,
         { _, _ -> saveFileAsync(true, findPositionAtFile(unsavedFile)) { runAfter.run() } },
         { _, _ ->
-          getEditorPanelAt(findPositionAtFile(unsavedFile))?.setModified(false)
+          getEditorAt(findPositionAtFile(unsavedFile))?.setModified(false)
           runAfter.run()
         })
   }
@@ -399,7 +392,7 @@ open class BaseEditorActivity :
         { _, _ -> saveAllFilesAsync(true) { runAfter.run() } },
         { _, _ ->
           for (i in 0 until viewModel.getFileCount()) {
-            getEditorPanelAt(i)?.setModified(false)
+            getEditorAt(i)?.setModified(false)
           }
           runAfter.run()
         })

@@ -19,9 +19,18 @@ import com.raredev.vcspace.dialogs.ProgressDialogBuilder
 import com.raredev.vcspace.utils.withActivity
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+
+fun CoroutineScope.cancelIfActive(message: String, cause: Throwable? = null) =
+    cancelIfActive(CancellationException(message, cause))
+
+fun CoroutineScope.cancelIfActive(exception: CancellationException? = null) {
+  val job = coroutineContext[Job]
+  job?.cancel(exception)
+}
 
 inline fun CoroutineScope.launchWithProgressDialog(
     context: CoroutineContext = EmptyCoroutineContext,

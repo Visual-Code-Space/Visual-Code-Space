@@ -77,9 +77,8 @@ dependencies {
 
   implementation(projects.common)
   implementation(projects.commonRes)
-  implementation(projects.editorAce)
-  implementation(projects.editorSora)
-  implementation(projects.editorSora.langTextmate)
+  implementation(projects.editor)
+  implementation(projects.editor.langTextmate)
   implementation(projects.eventbusEvents)
   implementation(projects.emulatorview)
   implementation(projects.models)

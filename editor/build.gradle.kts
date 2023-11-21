@@ -28,7 +28,7 @@ dependencies {
 
   implementation(projects.common)
   implementation(projects.commonRes)
-  implementation(projects.editorSora.langTextmate)
+  implementation(projects.editor.langTextmate)
   implementation(projects.eventbusEvents)
   implementation(projects.models)
 }

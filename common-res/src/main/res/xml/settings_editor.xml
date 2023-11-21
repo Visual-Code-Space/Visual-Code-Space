@@ -87,13 +87,6 @@
             app:title="@string/pref_editor_auto_save"
             app:summary="@string/pref_editor_auto_save_summary" />
 
-        <SwitchPreferenceCompat
-            app:defaultValue="false"
-            app:iconSpaceReserved="false"
-            app:key="pref_use_ace_editor"
-            app:title="Use Ace Editor"
-            app:summary="Instead of using Sora Editor use the Ace Editor (experimental)" />
-
     </PreferenceCategory>
 
 </PreferenceScreen>

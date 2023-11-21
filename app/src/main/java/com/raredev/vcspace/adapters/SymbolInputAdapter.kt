@@ -1,22 +1,17 @@
 package com.raredev.vcspace.adapters
 
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.raredev.vcspace.databinding.LayoutSymbolItemBinding
-import com.raredev.vcspace.editor.AceCodeEditor
-import com.raredev.vcspace.editor.AceEditorPanel
-import com.raredev.vcspace.editor.SoraEditorPanel
 import com.raredev.vcspace.editor.VCSpaceEditor
-import com.raredev.vcspace.interfaces.IEditorPanel
 import com.raredev.vcspace.models.Symbol
 import com.raredev.vcspace.utils.PreferencesUtils
 
 class SymbolInputAdapter : RecyclerView.Adapter<SymbolInputAdapter.VH>() {
 
   private val symbols: Array<Symbol> = getDefaultSymbols()
-  private var editor: IEditorPanel? = null
+  private var editor: VCSpaceEditor? = null
 
   inner class VH(internal val binding: LayoutSymbolItemBinding) :
       RecyclerView.ViewHolder(binding.root)
@@ -39,17 +34,8 @@ class SymbolInputAdapter : RecyclerView.Adapter<SymbolInputAdapter.VH>() {
   }
 
   private fun insertSymbol(symbol: Symbol) {
-    if (editor != null) {
-      if (editor is SoraEditorPanel) {
-        insertSymbolSoraEditor((editor as SoraEditorPanel).editor, symbol)
-      } else if (editor is AceEditorPanel) {
-        insertSymbolAceEditor((editor as AceEditorPanel).editor, symbol)
-      }
-    }
-  }
-
-  private fun insertSymbolSoraEditor(editor: VCSpaceEditor, symbol: Symbol) {
-    if (!editor.isEditable()) {
+    val editor = editor ?: return
+    if (!editor.isEditable) {
       return
     }
 
@@ -72,15 +58,7 @@ class SymbolInputAdapter : RecyclerView.Adapter<SymbolInputAdapter.VH>() {
     }
   }
 
-  private fun insertSymbolAceEditor(editor: AceCodeEditor, symbol: Symbol) {
-    if ("→".equals(symbol.label)) {
-      editor.dispatchKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_TAB))
-      return
-    }
-    editor.insert(symbol.insert[0].toString())
-  }
-
-  fun bindEditor(editor: IEditorPanel?) {
+  fun bindEditor(editor: VCSpaceEditor?) {
     this.editor = editor
   }
 

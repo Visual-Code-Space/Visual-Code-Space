@@ -64,9 +64,6 @@ object PreferencesUtils {
   val autoSave: Boolean
     get() = prefs.getBoolean(SharedPreferencesKeys.KEY_AUTO_SAVE, false)
 
-  val useAceEditor: Boolean
-    get() = prefs.getBoolean(SharedPreferencesKeys.KEY_USE_ACE_EDITOR, false)
-
   // File
   val showHiddenFiles: Boolean
     get() = prefs.getBoolean(SharedPreferencesKeys.KEY_SHOW_HIDDEN_FILES, true)

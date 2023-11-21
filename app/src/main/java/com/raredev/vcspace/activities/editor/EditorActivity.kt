@@ -59,7 +59,7 @@ class EditorActivity : BaseEditorActivity() {
   }
 
   override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-    val editor = getSelectedEditorPanel()
+    val editor = getSelectedEditor()
     if (editor != null) {
       menu.findItem(R.id.menu_execute).isVisible = true
       menu.findItem(R.id.menu_editor).isVisible = true
@@ -67,7 +67,7 @@ class EditorActivity : BaseEditorActivity() {
       menu.findItem(R.id.menu_redo).isVisible = KeyboardUtils.isSoftInputVisible(this)
       menu.findItem(R.id.menu_undo).isEnabled = editor.canUndo()
       menu.findItem(R.id.menu_redo).isEnabled = editor.canRedo()
-      menu.findItem(R.id.menu_save).isEnabled = editor.isModified() && !PreferencesUtils.autoSave
+      menu.findItem(R.id.menu_save).isEnabled = editor.modified && !PreferencesUtils.autoSave
       menu.findItem(R.id.menu_save_as).isEnabled = true
       menu.findItem(R.id.menu_save_all).isEnabled = getUnsavedFilesCount() > 0
       menu.findItem(R.id.menu_reload).isEnabled = true
@@ -76,10 +76,10 @@ class EditorActivity : BaseEditorActivity() {
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
-    val editor = getSelectedEditorPanel()
+    val editor = getSelectedEditor()
     when (item.itemId) {
       R.id.menu_execute -> {}
-      R.id.menu_search -> editor?.beginSearcher()
+      R.id.menu_search -> editor?.beginSearchMode()
       R.id.menu_undo -> editor?.undo()
       R.id.menu_redo -> editor?.redo()
       R.id.menu_new_file -> createFile.launch("filename.txt")

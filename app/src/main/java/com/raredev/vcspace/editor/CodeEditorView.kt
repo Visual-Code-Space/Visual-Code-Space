@@ -5,8 +5,8 @@ import android.view.LayoutInflater
 import android.widget.LinearLayout
 import androidx.core.view.isVisible
 import com.blankj.utilcode.util.FileIOUtils
-import com.raredev.vcspace.databinding.LayoutSoraEditorPanelBinding
-import com.raredev.vcspace.interfaces.IEditorPanel
+import com.raredev.vcspace.databinding.LayoutCodeEditorBinding
+import com.raredev.vcspace.extensions.cancelIfActive
 import com.raredev.vcspace.providers.GrammarProvider
 import io.github.rosemoe.sora.lang.EmptyLanguage
 import io.github.rosemoe.sora.lang.Language
@@ -21,12 +21,20 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class SoraEditorPanel(context: Context, file: File) : LinearLayout(context), IEditorPanel {
+class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
 
-  private val binding = LayoutSoraEditorPanelBinding.inflate(LayoutInflater.from(context))
+  private val binding = LayoutCodeEditorBinding.inflate(LayoutInflater.from(context))
+
+  private val editorScope = CoroutineScope(Dispatchers.Default)
 
   val editor: VCSpaceEditor
     get() = binding.editor
+
+  val modified: Boolean
+    get() = editor.modified
+
+  val file: File?
+    get() = editor.file
 
   init {
     binding.editor.apply {
@@ -37,7 +45,7 @@ class SoraEditorPanel(context: Context, file: File) : LinearLayout(context), IEd
     binding.searcher.bindSearcher(editor.searcher)
 
     setLoading(true)
-    CoroutineScope(Dispatchers.IO).launch {
+    editorScope.launch {
       val content = FileIOUtils.readFile2String(file)
       val language = createLanguage()
 
@@ -49,50 +57,48 @@ class SoraEditorPanel(context: Context, file: File) : LinearLayout(context), IEd
     addView(binding.root, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
   }
 
-  fun postRead(language: Language) {
+  private fun postRead(language: Language) {
     editor.setEditorLanguage(language)
     editor.subscribeEvents()
     setLoading(false)
   }
 
-  override fun setModified(modified: Boolean) {
+  fun undo() = editor.undo()
+
+  fun redo() = editor.redo()
+
+  fun canUndo() = editor.canUndo()
+
+  fun canRedo() = editor.canRedo()
+
+  fun setModified(modified: Boolean) {
     editor.modified = modified
   }
 
-  override fun isModified(): Boolean = editor.modified
-
-  override fun undo() = editor.undo()
-
-  override fun redo() = editor.redo()
-
-  override fun canUndo() = editor.canUndo()
-
-  override fun canRedo() = editor.canRedo()
-
-  override fun getFile(): File? = editor.file ?: File("")
-
-  override fun setFile(file: File) {
+  fun setFile(file: File) {
     editor.file = file
   }
 
-  override fun release() {
+  fun release() {
+    editorScope.cancelIfActive("Editor released")
     binding.editor.release()
   }
 
-  override fun saveFile() {
-    if (!isModified()) {
-      return
+  suspend fun saveFile(): Boolean {
+    if (!modified) {
+      return false
     }
-    if (FileIOUtils.writeFileFromString(getFile(), editor.text.toString())) {
-      editor.modified = false
-    }
+    return if (FileIOUtils.writeFileFromString(file, editor.text.toString())) {
+      setModified(false)
+      true
+    } else false
   }
 
-  override fun beginSearcher() {
+  fun beginSearchMode() {
     binding.searcher.beginSearchMode()
   }
 
-  override fun setLoading(loading: Boolean) {
+  fun setLoading(loading: Boolean) {
     binding.progress.isVisible = loading
     editor.isEditable = !loading
   }
@@ -106,7 +112,7 @@ class SoraEditorPanel(context: Context, file: File) : LinearLayout(context), IEd
   }
 
   private fun createLanguage(): Language {
-    val scopeName: String? = GrammarProvider.findScopeByFileExtension(getFile()?.extension)
+    val scopeName: String? = GrammarProvider.findScopeByFileExtension(file?.extension)
 
     return if (scopeName != null) {
       VCSpaceTMLanguage.create(scopeName)
