@@ -48,13 +48,6 @@ jobs:
     name: Generate Release APK
     runs-on: ubuntu-latest
     steps:
-      - name: Notify the commit on Telegram
-        uses: EverythingSuckz/github-telegram-notify@main
-        with:
-          bot_token: '${{ secrets.BOT_TOKEN }}'
-          chat_id: '${{ secrets.CHAT_ID }}'
-          topic_id: '${{ secrets.TOPIC_ID }}'
-      
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
