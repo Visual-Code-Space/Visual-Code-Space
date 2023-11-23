@@ -41,4 +41,4 @@ common-kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-seriali
 [plugins]
 android-application = { id = "com.android.application", version = "8.1.1" }
 android-library = { id = "com.android.library", version = "8.1.1" }
-kotlin = { id = "org.jetbrains.kotlin.android", version = "1.9.10" }
+kotlin = { id = "org.jetbrains.kotlin.android", version = "1.9.21" }
