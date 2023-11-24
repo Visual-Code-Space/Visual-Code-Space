@@ -30,4 +30,3 @@
 
 ## Community
 [![Telegram](https://img.shields.io/badge/Join-Telegram-blue)](https://t.me/+OR7KoFI-zpk2Zjkx)
-
