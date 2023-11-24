@@ -1,37 +1,36 @@
-package com.raredev.vcspace.utils;
+package com.raredev.vcspace.utils
 
-public class SharedPreferencesKeys {
-
+object SharedPreferencesKeys {
   // General
-  public static final String KEY_GENERAL = "pref_general";
-  public static final String KEY_THEME = "pref_theme";
-  public static final String KEY_DYNAMIC_COLORS = "pref_dynamiccolors";
+  const val KEY_GENERAL = "pref_general"
+  const val KEY_THEME = "pref_theme"
+  const val KEY_DYNAMIC_COLORS = "pref_dynamiccolors"
 
   // Editor
-  public static final String KEY_EDITOR = "pref_editor";
-  public static final String KEY_EDITOR_TEXT_SIZE = "pref_font_size";
-  public static final String KEY_EDITOR_TAB_SIZE = "pref_editortabsize";
-  public static final String KEY_EDITOR_FONT = "pref_editorfont";
-  public static final String KEY_STICKYSCROLL = "pref_stickyscroll";
-  public static final String KEY_FONTLIGATURES = "pref_fontligatures";
-  public static final String KEY_WORDWRAP = "pref_wordwrap";
-  public static final String KEY_LINENUMBERS = "pref_linenumbers";
-  public static final String KEY_USE_TAB = "pref_usetab";
-  public static final String KEY_DELETE_EMPTY_LINE_FAST = "pref_deleteemptylinefast";
-  public static final String KEY_DELETETABS = "pref_deletetabs";
-  public static final String KEY_AUTO_SAVE = "pref_auto_save";
+  const val KEY_EDITOR = "pref_editor"
+  const val KEY_EDITOR_TEXT_SIZE = "pref_font_size"
+  const val KEY_EDITOR_TAB_SIZE = "pref_editortabsize"
+  const val KEY_EDITOR_FONT = "pref_editorfont"
+  const val KEY_STICKYSCROLL = "pref_stickyscroll"
+  const val KEY_FONTLIGATURES = "pref_fontligatures"
+  const val KEY_WORDWRAP = "pref_wordwrap"
+  const val KEY_LINENUMBERS = "pref_linenumbers"
+  const val KEY_USE_TAB = "pref_usetab"
+  const val KEY_DELETE_EMPTY_LINE_FAST = "pref_deleteemptylinefast"
+  const val KEY_DELETETABS = "pref_deletetabs"
+  const val KEY_AUTO_SAVE = "pref_auto_save"
 
   // File
-  public static final String KEY_FILE = "pref_file";
-  public static final String KEY_SHOW_HIDDEN_FILES = "pref_show_hidden_files";
+  const val KEY_FILE = "pref_file"
+  const val KEY_SHOW_HIDDEN_FILES = "pref_show_hidden_files"
 
   // Git
-  public static final String KEY_GIT = "pref_git";
-  public static final String KEY_CREDENTIAL = "pref_credential";
-  public static final String KEY_CREDENTIAL_USERNAME = "credential_username";
-  public static final String KEY_CREDENTIAL_PASSWORD = "credential_password";
+  const val KEY_GIT = "pref_git"
+  const val KEY_CREDENTIAL = "pref_credential"
+  const val KEY_CREDENTIAL_USERNAME = "credential_username"
+  const val KEY_CREDENTIAL_PASSWORD = "credential_password"
 
   // Others
-  public static final String KEY_GITHUB = "github";
-  public static final String KEY_LICENSES = "licenses";
+  const val KEY_GITHUB = "github"
+  const val KEY_LICENSES = "licenses"
 }

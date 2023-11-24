@@ -1,38 +1,35 @@
-package com.raredev.vcspace.utils;
+package com.raredev.vcspace.utils
 
-import android.content.ActivityNotFoundException;
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
-import androidx.core.content.FileProvider;
-import com.raredev.vcspace.BuildConfig;
-import java.io.File;
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import androidx.core.content.FileProvider
+import com.raredev.vcspace.BuildConfig
+import java.io.File
 
 /**
- * Adopted from: <a
- * href="https://github.com/tyron12233/CodeAssist/blob/main/app/src/main/java/com/tyron/code/util/ApkInstaller.java">ApkInstaller.java</a>
+ * Adopted from: [ApkInstaller.java](https://github.com/tyron12233/CodeAssist/blob/main/app/src/main/java/com/tyron/code/util/ApkInstaller.java)
  */
-public class ApkInstaller {
-  
-
-  public static void installApplication(Context context, File file) {
-    Intent intent = new Intent(Intent.ACTION_VIEW);
-    intent.setDataAndType(uriFromFile(context, file), "application/vnd.android.package-archive");
-    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-    try {
-      context.startActivity(intent);
-    } catch (ActivityNotFoundException e) {
-      e.printStackTrace();
+object ApkInstaller {
+    fun installApplication(context: Context, file: File?) {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.setDataAndType(uriFromFile(context, file), "application/vnd.android.package-archive")
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        try {
+            context.startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            e.printStackTrace()
+        }
     }
-  }
 
-  public static Uri uriFromFile(Context context, File file) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-      return FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", file);
-    } else {
-      return Uri.fromFile(file);
+    fun uriFromFile(context: Context?, file: File?): Uri {
+        return FileProvider.getUriForFile(
+            context!!,
+            BuildConfig.APPLICATION_ID + ".provider",
+            file!!
+        )
     }
-  }
 }

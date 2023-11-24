@@ -22,7 +22,7 @@ class SymbolInputView : RecyclerView {
   private val adapter = SymbolInputAdapter()
 
   init {
-    setLayoutManager(LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false))
+      layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
     setAdapter(adapter)
   }
 

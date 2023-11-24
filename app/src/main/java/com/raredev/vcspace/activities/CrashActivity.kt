@@ -36,11 +36,11 @@ class CrashActivity : BaseActivity() {
     error.append("Device: ${DeviceUtils.getModel()}\n")
     error.append("${getSoftwareInfo()}\n")
     error.append("${getDate()}\n\n")
-    error.append(getIntent().getStringExtra(KEY_EXTRA_ERROR))
+    error.append(intent.getStringExtra(KEY_EXTRA_ERROR))
 
-    binding.result.setText(error.toString())
+    binding.result.text = error.toString()
 
-    binding.fab.setOnClickListener { ClipboardUtils.copyText(binding.result.getText()) }
+    binding.fab.setOnClickListener { ClipboardUtils.copyText(binding.result.text) }
   }
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -59,6 +59,7 @@ class CrashActivity : BaseActivity() {
   }
 
   override fun onBackPressed() {
+    super.onBackPressed()
     finishAffinity()
   }
 
@@ -69,18 +70,18 @@ class CrashActivity : BaseActivity() {
 
   private fun getSoftwareInfo(): String {
     return StringBuilder("SDK: ")
-        .append(Build.VERSION.SDK_INT)
-        .append("\n")
-        .append("Android: ")
-        .append(Build.VERSION.RELEASE)
-        .append("\n")
-        .append("Model: ")
-        .append(Build.VERSION.INCREMENTAL)
-        .append("\n")
-        .toString()
+      .append(Build.VERSION.SDK_INT)
+      .append("\n")
+      .append("Android: ")
+      .append(Build.VERSION.RELEASE)
+      .append("\n")
+      .append("Model: ")
+      .append(Build.VERSION.INCREMENTAL)
+      .append("\n")
+      .toString()
   }
 
   private fun getDate(): Date {
-    return Calendar.getInstance().getTime()
+    return Calendar.getInstance().time
   }
 }

@@ -10,11 +10,11 @@ import com.raredev.vcspace.utils.PreferencesUtils
 
 class SymbolInputAdapter : RecyclerView.Adapter<SymbolInputAdapter.VH>() {
 
-  private val symbols: Array<Symbol> = getDefaultSymbols()
+  private val symbols: Array<Symbol> = defaultSymbols
   private var editor: VCSpaceEditor? = null
 
   inner class VH(internal val binding: LayoutSymbolItemBinding) :
-      RecyclerView.ViewHolder(binding.root)
+    RecyclerView.ViewHolder(binding.root)
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
     return VH(LayoutSymbolItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -39,13 +39,13 @@ class SymbolInputAdapter : RecyclerView.Adapter<SymbolInputAdapter.VH>() {
       return
     }
 
-    val controller = editor.getSnippetController()
-    if ("→".equals(symbol.label) && controller.isInSnippet()) {
+    val controller = editor.snippetController
+    if ("→" == symbol.label && controller.isInSnippet()) {
       controller.shiftToNextTabStop()
       return
     }
 
-    if ("→".equals(symbol.label)) {
+    if ("→" == symbol.label) {
       editor.commitText(PreferencesUtils.identationString)
       return
     }
@@ -62,33 +62,35 @@ class SymbolInputAdapter : RecyclerView.Adapter<SymbolInputAdapter.VH>() {
     this.editor = editor
   }
 
-  fun getDefaultSymbols(): Array<Symbol> {
-    val baseSymbols =
+  val defaultSymbols: Array<Symbol>
+    get() {
+      val baseSymbols =
         arrayOf(
-            "→",
-            "()",
-            ")",
-            "{}",
-            "}",
-            ";",
-            "\"\"",
-            "''",
-            ":",
-            "[]",
-            "]",
-            "=",
-            "+",
-            "-",
-            "*",
-            "/",
-            "%",
-            "&",
-            "|",
-            "^",
-            "!",
-            "?",
-            "<",
-            ">")
-    return baseSymbols.map { Symbol(it[0].toString(), it) }.toTypedArray()
-  }
+          "→",
+          "()",
+          ")",
+          "{}",
+          "}",
+          ";",
+          "\"\"",
+          "''",
+          ":",
+          "[]",
+          "]",
+          "=",
+          "+",
+          "-",
+          "*",
+          "/",
+          "%",
+          "&",
+          "|",
+          "^",
+          "!",
+          "?",
+          "<",
+          ">"
+        )
+      return baseSymbols.map { Symbol(it[0].toString(), it) }.toTypedArray()
+    }
 }

@@ -25,7 +25,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 fun CoroutineScope.cancelIfActive(message: String, cause: Throwable? = null) =
-    cancelIfActive(CancellationException(message, cause))
+  cancelIfActive(CancellationException(message, cause))
 
 fun CoroutineScope.cancelIfActive(exception: CancellationException? = null) {
   val job = coroutineContext[Job]
@@ -33,10 +33,10 @@ fun CoroutineScope.cancelIfActive(exception: CancellationException? = null) {
 }
 
 inline fun CoroutineScope.launchWithProgressDialog(
-    context: CoroutineContext = EmptyCoroutineContext,
-    configureDialog: (builder: ProgressDialogBuilder) -> Unit = {},
-    crossinline invokeOnCompletion: (throwable: Throwable?) -> Unit = {},
-    crossinline action: suspend CoroutineScope.(builder: ProgressDialogBuilder) -> Unit
+  context: CoroutineContext = EmptyCoroutineContext,
+  configureDialog: (builder: ProgressDialogBuilder) -> Unit = {},
+  crossinline invokeOnCompletion: (throwable: Throwable?) -> Unit = {},
+  crossinline action: suspend CoroutineScope.(builder: ProgressDialogBuilder) -> Unit
 ): Job? {
 
   val builder = withActivity { ProgressDialogBuilder(this) }
@@ -44,10 +44,10 @@ inline fun CoroutineScope.launchWithProgressDialog(
 
   val dialog = builder.show()
   return launch(context) { action(builder) }
-      .also { job ->
-        job.invokeOnCompletion { throwable ->
-          runOnUiThread { dialog.dismiss() }
-          invokeOnCompletion(throwable)
-        }
+    .also { job ->
+      job.invokeOnCompletion { throwable ->
+        runOnUiThread { dialog.dismiss() }
+        invokeOnCompletion(throwable)
       }
+    }
 }

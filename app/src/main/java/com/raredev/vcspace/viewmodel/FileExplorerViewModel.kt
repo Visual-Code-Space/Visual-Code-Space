@@ -34,10 +34,9 @@ class FileExplorerViewModel : ViewModel() {
     refreshFiles()
   }
 
-  @Suppress("TYPE_MISMATCH_WARNING")
   fun refreshFiles() {
     viewModelScope.launch(Dispatchers.IO) {
-      val listFiles = File(_currentPath.value).listFiles()
+      val listFiles = _currentPath.value?.let { File(it).listFiles() }
 
       val files = mutableListOf<File>()
 

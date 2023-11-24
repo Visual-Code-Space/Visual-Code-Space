@@ -7,16 +7,17 @@ import com.raredev.vcspace.databinding.LayoutSheetOptionItemBinding
 import com.raredev.vcspace.models.SheetOptionItem
 
 class SheetOptionsListAdapter(
-    val options: List<SheetOptionItem>,
-    val listener: (SheetOptionItem) -> Unit = {}
+  private val options: List<SheetOptionItem>,
+  private val listener: (SheetOptionItem) -> Unit = {}
 ) : RecyclerView.Adapter<SheetOptionsListAdapter.VH>() {
 
   inner class VH(internal val binding: LayoutSheetOptionItemBinding) :
-      RecyclerView.ViewHolder(binding.root)
+    RecyclerView.ViewHolder(binding.root)
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
     return VH(
-        LayoutSheetOptionItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+      LayoutSheetOptionItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+    )
   }
 
   override fun onBindViewHolder(holder: VH, position: Int) {
@@ -24,7 +25,7 @@ class SheetOptionsListAdapter(
       val option = options[position]
 
       icon.setImageResource(option.icon)
-      name.setText(option.name)
+      name.text = option.name
 
       root.setOnClickListener { listener.invoke(option) }
     }

@@ -14,21 +14,21 @@ class NavigationSpace : LinearLayout {
   constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
   constructor(
-      context: Context,
-      attrs: AttributeSet?,
-      defStyleAttr: Int
+    context: Context,
+    attrs: AttributeSet?,
+    defStyleAttr: Int
   ) : super(context, attrs, defStyleAttr)
 
-  fun addItem(title: Int, icon: Int, listener: View.OnClickListener) {
+  fun addItem(title: Int, icon: Int, listener: OnClickListener) {
     addItem(context.getString(title), icon, listener)
   }
 
-  fun addItem(title: CharSequence, icon: Int, listener: View.OnClickListener) {
+  private fun addItem(title: CharSequence, icon: Int, listener: OnClickListener) {
     val binding = LayoutNavigationItemBinding.inflate(LayoutInflater.from(context))
     binding.root.setOnClickListener(listener)
-    binding.root.setTooltipText(title)
+    binding.root.tooltipText = title
     binding.icon.setImageResource(icon)
-    binding.title.setText(title)
+    binding.title.text = title
     addView(binding.root, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, 1f))
   }
 }

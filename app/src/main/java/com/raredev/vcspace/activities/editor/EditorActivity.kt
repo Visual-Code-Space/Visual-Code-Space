@@ -1,5 +1,6 @@
 package com.raredev.vcspace.activities.editor
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
@@ -20,22 +21,22 @@ import com.raredev.vcspace.utils.PreferencesUtils
 class EditorActivity : BaseEditorActivity() {
 
   private val onBackPressedCallback: OnBackPressedCallback =
-      object : OnBackPressedCallback(false) {
-        override fun handleOnBackPressed() {
-          if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            binding.drawerLayout.closeDrawer(GravityCompat.START)
-          }
+    object : OnBackPressedCallback(false) {
+      override fun handleOnBackPressed() {
+        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+          binding.drawerLayout.closeDrawer(GravityCompat.START)
         }
       }
+    }
 
   private val createFile =
-      registerForActivityResult(ActivityResultContracts.CreateDocument("text/*")) { uri ->
-        if (uri != null) openFile(UriUtils.uri2File(uri))
-      }
+    registerForActivityResult(ActivityResultContracts.CreateDocument("text/*")) { uri ->
+      if (uri != null) openFile(UriUtils.uri2File(uri))
+    }
   private val openFile =
-      registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-        if (uri != null) openFile(UriUtils.uri2File(uri))
-      }
+    registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+      if (uri != null) openFile(UriUtils.uri2File(uri))
+    }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -50,6 +51,7 @@ class EditorActivity : BaseEditorActivity() {
     if (fileUri != null) openFile(UriUtils.uri2File(fileUri))
   }
 
+  @SuppressLint("RestrictedApi")
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
     menuInflater.inflate(R.menu.menu_editor_activity, menu)
     if (menu is MenuBuilder) {
@@ -90,28 +92,29 @@ class EditorActivity : BaseEditorActivity() {
     return true
   }
 
-  fun configureDrawer() {
+  private fun configureDrawer() {
     val drawerToggle =
-        ActionBarDrawerToggle(
-            this, binding.drawerLayout, binding.toolbar, string.open, string.close)
+      ActionBarDrawerToggle(
+        this, binding.drawerLayout, binding.toolbar, string.open, string.close
+      )
     binding.drawerLayout.addDrawerListener(drawerToggle)
     drawerToggle.syncState()
 
     binding.drawerLayout.addDrawerListener(
-        object : DrawerLayout.SimpleDrawerListener() {
-          override fun onDrawerSlide(view: View, slideOffset: Float) {
-            binding.main.setTranslationX(view.getWidth() * slideOffset / 2)
-          }
+      object : DrawerLayout.SimpleDrawerListener() {
+        override fun onDrawerSlide(view: View, slideOffset: Float) {
+          binding.main.translationX = view.width * slideOffset / 2
+        }
 
-          override fun onDrawerStateChanged(state: Int) {}
+        override fun onDrawerStateChanged(state: Int) {}
 
-          override fun onDrawerClosed(view: View) {
-            onBackPressedCallback.isEnabled = false
-          }
+        override fun onDrawerClosed(view: View) {
+          onBackPressedCallback.isEnabled = false
+        }
 
-          override fun onDrawerOpened(view: View) {
-            onBackPressedCallback.isEnabled = true
-          }
-        })
+        override fun onDrawerOpened(view: View) {
+          onBackPressedCallback.isEnabled = true
+        }
+      })
   }
 }

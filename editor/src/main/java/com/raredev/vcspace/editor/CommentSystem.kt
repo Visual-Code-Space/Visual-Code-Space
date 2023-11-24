@@ -31,10 +31,10 @@ object CommentSystem {
       }
 
       // Insert multi-line comment at the beginning of the start line
-      text.insert(cursor.getLeftLine(), cursor.getLeftColumn(), openPrefix)
+      text.insert(cursor.leftLine, cursor.leftColumn, openPrefix)
 
       // Insert multi-line comment end at the end of the end line
-      text.insert(cursor.getRightLine(), cursor.getRightColumn(), closePrefix)
+      text.insert(cursor.rightLine, cursor.rightColumn, closePrefix)
     }
   }
 }

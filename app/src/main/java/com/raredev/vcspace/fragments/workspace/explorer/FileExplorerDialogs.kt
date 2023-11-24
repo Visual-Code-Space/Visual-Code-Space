@@ -14,6 +14,7 @@
  */
 package com.raredev.vcspace.fragments.workspace.explorer
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.WindowManager
@@ -33,49 +34,50 @@ import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 
 class FileExplorerDialogs(
-    val explorerFragment: FileExplorerFragment,
-    val context: Context,
-    val viewModel: FileExplorerViewModel
+  private val explorerFragment: FileExplorerFragment,
+  val context: Context,
+  private val viewModel: FileExplorerViewModel
 ) {
 
+  @SuppressLint("RestrictedApi")
   @Suppress("DEPRECATION")
   fun showCreateFileDialog(path: String) {
     val binding = LayoutTextinputBinding.inflate(LayoutInflater.from(context))
     val dialog =
-        MaterialAlertDialogBuilder(context)
-            .setView(binding.root, dp2px(20f), dp2px(15f), dp2px(20f), dp2px(15f))
-            .setTitle(R.string.create)
-            .setNeutralButton(R.string.cancel, null)
-            .setNegativeButton(
-                R.string.file,
-                { _, _ ->
-                  val name = binding.inputEdittext.text.toString().trim()
-                  val newFile = File(path, name)
-                  if (newFile.exists()) {
-                    return@setNegativeButton
-                  }
-                  try {
-                    if (newFile.createNewFile()) {
-                      viewModel.refreshFiles()
-                    }
-                  } catch (e: IOException) {
-                    e.printStackTrace()
-                  }
-                })
-            .setPositiveButton(
-                R.string.folder,
-                { _, _ ->
-                  val name = binding.inputEdittext.text.toString().trim()
-                  val folder = File(path, name)
-                  if (folder.exists()) {
-                    return@setPositiveButton
-                  }
+      MaterialAlertDialogBuilder(context)
+        .setView(binding.root, dp2px(20f), dp2px(15f), dp2px(20f), dp2px(15f))
+        .setTitle(R.string.create)
+        .setNeutralButton(R.string.cancel, null)
+        .setNegativeButton(
+          R.string.file
+        ) { _, _ ->
+          val name = binding.inputEdittext.text.toString().trim()
+          val newFile = File(path, name)
+          if (newFile.exists()) {
+            return@setNegativeButton
+          }
+          try {
+            if (newFile.createNewFile()) {
+              viewModel.refreshFiles()
+            }
+          } catch (e: IOException) {
+            e.printStackTrace()
+          }
+        }
+        .setPositiveButton(
+          R.string.folder
+        ) { _, _ ->
+          val name = binding.inputEdittext.text.toString().trim()
+          val folder = File(path, name)
+          if (folder.exists()) {
+            return@setPositiveButton
+          }
 
-                  if (folder.mkdirs()) {
-                    viewModel.refreshFiles()
-                  }
-                })
-            .create()
+          if (folder.mkdirs()) {
+            viewModel.refreshFiles()
+          }
+        }
+        .create()
     dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
     dialog.setOnShowListener {
       binding.inputLayout.setHint(R.string.file_name_hint)
@@ -84,38 +86,39 @@ class FileExplorerDialogs(
     dialog.show()
   }
 
+  @SuppressLint("RestrictedApi")
   @Suppress("DEPRECATION")
   fun showRenameFileDialog(file: File) {
     val binding = LayoutTextinputBinding.inflate(LayoutInflater.from(context))
     val dialog =
-        MaterialAlertDialogBuilder(context)
-            .setView(binding.root, dp2px(20f), dp2px(15f), dp2px(20f), dp2px(15f))
-            .setTitle(R.string.rename)
-            .setNegativeButton(R.string.cancel, null)
-            .setPositiveButton(
-                R.string.rename,
-                { _, _ ->
-                  explorerFragment.explorerScope.launchWithProgressDialog(
-                      configureDialog = { builder ->
-                        builder.setMessage(R.string.please_wait)
-                        builder.setCancelable(false)
-                      },
-                      action = { _ ->
-                        val name = binding.inputEdittext.text.toString().trim()
-                        val newFile = File(file.parentFile, name)
-                        val renamed = file.renameTo(newFile)
+      MaterialAlertDialogBuilder(context)
+        .setView(binding.root, dp2px(20f), dp2px(15f), dp2px(20f), dp2px(15f))
+        .setTitle(R.string.rename)
+        .setNegativeButton(R.string.cancel, null)
+        .setPositiveButton(
+          R.string.rename
+        ) { _, _ ->
+          explorerFragment.explorerScope.launchWithProgressDialog(
+            configureDialog = { builder ->
+              builder.setMessage(R.string.please_wait)
+              builder.setCancelable(false)
+            },
+            action = { _ ->
+              val name = binding.inputEdittext.text.toString().trim()
+              val newFile = File(file.parentFile, name)
+              val renamed = file.renameTo(newFile)
 
-                        withContext(Dispatchers.Main) {
-                          if (!renamed) {
-                            return@withContext
-                          }
-                          showShortToast(context, context.getString(R.string.renamed_message))
-                          viewModel.refreshFiles()
-                        }
-                        EventBus.getDefault().post(OnRenameFileEvent(file, newFile))
-                      })
-                })
-            .create()
+              withContext(Dispatchers.Main) {
+                if (!renamed) {
+                  return@withContext
+                }
+                showShortToast(context, context.getString(R.string.renamed_message))
+                viewModel.refreshFiles()
+              }
+              EventBus.getDefault().post(OnRenameFileEvent(file, newFile))
+            })
+        }
+        .create()
     dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
     dialog.setOnShowListener {
       binding.inputLayout.setHint(R.string.rename_hint)
@@ -127,27 +130,27 @@ class FileExplorerDialogs(
 
   fun showDeleteFileDialog(file: File) {
     MaterialAlertDialogBuilder(context)
-        .setTitle(R.string.delete)
-        .setMessage(context.getString(R.string.delete_message, file.name))
-        .setNegativeButton(R.string.no, null)
-        .setPositiveButton(
-            R.string.delete,
-            { _, _ ->
-              explorerFragment.explorerScope.launchWithProgressDialog(
-                  configureDialog = { builder ->
-                    builder.setMessage(R.string.please_wait)
-                    builder.setCancelable(false)
-                  },
-                  action = { _ ->
-                    val deleted = FileUtils.delete(file)
-                    withContext(Dispatchers.Main) {
-                      if (deleted) {
-                        showShortToast(context, context.getString(R.string.deleted_message))
-                      }
-                      viewModel.refreshFiles()
-                    }
-                  })
-            })
-        .show()
+      .setTitle(R.string.delete)
+      .setMessage(context.getString(R.string.delete_message, file.name))
+      .setNegativeButton(R.string.no, null)
+      .setPositiveButton(
+        R.string.delete
+      ) { _, _ ->
+        explorerFragment.explorerScope.launchWithProgressDialog(
+          configureDialog = { builder ->
+            builder.setMessage(R.string.please_wait)
+            builder.setCancelable(false)
+          },
+          action = { _ ->
+            val deleted = FileUtils.delete(file)
+            withContext(Dispatchers.Main) {
+              if (deleted) {
+                showShortToast(context, context.getString(R.string.deleted_message))
+              }
+              viewModel.refreshFiles()
+            }
+          })
+      }
+      .show()
   }
 }

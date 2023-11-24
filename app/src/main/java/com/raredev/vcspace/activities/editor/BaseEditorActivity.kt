@@ -103,7 +103,7 @@ open class BaseEditorActivity :
     }
 
     PreferencesUtils.prefs.registerOnSharedPreferenceChangeListener(this)
-    ThemeRegistry.getInstance().setTheme(if (Utils.isDarkMode()) "darcula" else "quietlight")
+    ThemeRegistry.getInstance().setTheme(if (Utils.isDarkMode) "darcula" else "quietlight")
     EventBus.getDefault().register(this)
   }
 
@@ -180,8 +180,7 @@ open class BaseEditorActivity :
 
   fun closeFile(position: Int) {
     if (position >= 0 && position < viewModel.getFileCount()) {
-      val editor = getEditorAt(position)
-      if (editor == null) return
+      val editor = getEditorAt(position) ?: return
 
       val file = editor.file
       if (editor.modified && file != null) {
@@ -200,10 +199,7 @@ open class BaseEditorActivity :
   }
 
   fun closeOthers() {
-    val file = viewModel.getSelectedFile()
-    if (file == null) {
-      return
-    }
+    val file = viewModel.getSelectedFile() ?: return
 
     if (getUnsavedFilesCount() > 0) {
       notifyUnsavedFiles(getUnsavedFiles()) { closeOthers() }
@@ -298,7 +294,7 @@ open class BaseEditorActivity :
   fun getUnsavedFilesCount(): Int {
     var count = 0
     for (i in 0 until viewModel.getOpenedFiles().size) {
-      if (getEditorAt(i)?.modified ?: false) count++
+      if (getEditorAt(i)?.modified == true) count++
     }
     return count
   }
@@ -306,8 +302,7 @@ open class BaseEditorActivity :
   fun getUnsavedFiles(): List<File> {
     val unsavedFiles = mutableListOf<File>()
     for (i in 0 until viewModel.getFileCount()) {
-      val editor = getEditorAt(i)
-      if (editor == null) continue
+      val editor = getEditorAt(i) ?: continue
 
       val file = editor.file
       if (file != null && editor.modified) {
@@ -333,10 +328,10 @@ open class BaseEditorActivity :
     }
 
     val tab = binding.tabs.getTabAt(position)
-    if (tab?.text?.startsWith("*") ?: true) {
+    if (tab?.text?.startsWith("*") != false) {
       return
     }
-    tab?.text = "*${tab?.text}"
+    tab.text = "*${tab.text}"
   }
 
   /** from AndroidIDE com.itsaky.androidide.activities.editor.EditorHandlerActivity */

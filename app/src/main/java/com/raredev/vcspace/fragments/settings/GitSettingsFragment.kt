@@ -23,10 +23,10 @@ class GitSettingsFragment : PreferenceFragmentCompat() {
     setPreferencesFromResource(R.xml.settings_git, rootKey)
 
     findPreference<Preference>(SharedPreferencesKeys.KEY_CREDENTIAL)
-        ?.setOnPreferenceClickListener { _ ->
-          showCredentialDialog()
-          true
-        }
+      ?.setOnPreferenceClickListener { _ ->
+        showCredentialDialog()
+        true
+      }
   }
 
   fun showCredentialDialog() {
@@ -39,40 +39,45 @@ class GitSettingsFragment : PreferenceFragmentCompat() {
 
     val spannableString = SpannableString(content)
     spannableString.setSpan(
-        object : ClickableSpan() {
-          override fun onClick(textView: View) {
-            val url = "https://github.com/settings/tokens"
-            BaseApplication.getInstance().openUrl(url)
-          }
-        },
-        startIndex,
-        endIndex,
-        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+      object : ClickableSpan() {
+        override fun onClick(textView: View) {
+          val url = "https://github.com/settings/tokens"
+          BaseApplication.getInstance().openUrl(url)
+        }
+      },
+      startIndex,
+      endIndex,
+      Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+    )
 
     helper.text = spannableString
     helper.movementMethod = LinkMovementMethod.getInstance()
     helper.highlightColor = Color.TRANSPARENT
 
     binding.etInputUsername.setText(
-        prefs.getString(SharedPreferencesKeys.KEY_CREDENTIAL_USERNAME, ""))
+      prefs.getString(SharedPreferencesKeys.KEY_CREDENTIAL_USERNAME, "")
+    )
     binding.etInputPassword.setText(
-        prefs.getString(SharedPreferencesKeys.KEY_CREDENTIAL_PASSWORD, ""))
+      prefs.getString(SharedPreferencesKeys.KEY_CREDENTIAL_PASSWORD, "")
+    )
 
     MaterialAlertDialogBuilder(requireContext())
-        .setTitle(R.string.pref_git_credentials)
-        .setPositiveButton(
-            android.R.string.ok,
-            { _, _ ->
-              val editor = prefs.edit()
-              editor.putString(
-                  SharedPreferencesKeys.KEY_CREDENTIAL_USERNAME,
-                  binding.etInputUsername.text.toString())
-              editor.putString(
-                  SharedPreferencesKeys.KEY_CREDENTIAL_PASSWORD,
-                  binding.etInputPassword.text.toString())
-              editor.apply()
-            })
-        .setView(binding.root)
-        .show()
+      .setTitle(R.string.pref_git_credentials)
+      .setPositiveButton(
+        android.R.string.ok
+      ) { _, _ ->
+        val editor = prefs.edit()
+        editor.putString(
+          SharedPreferencesKeys.KEY_CREDENTIAL_USERNAME,
+          binding.etInputUsername.text.toString()
+        )
+        editor.putString(
+          SharedPreferencesKeys.KEY_CREDENTIAL_PASSWORD,
+          binding.etInputPassword.text.toString()
+        )
+        editor.apply()
+      }
+      .setView(binding.root)
+      .show()
   }
 }

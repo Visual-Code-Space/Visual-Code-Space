@@ -24,16 +24,17 @@ class CompletionListAdapter : EditorCompletionAdapter() {
 
     val kind = item.completionKind.toString()
 
-    binding.itemIcon.text = kind[0].toString()
-    binding.itemType.text = kind
+    binding.apply {
+      itemIcon.text = kind[0].toString()
+      itemType.text = kind
 
-    if (!TextUtils.isEmpty(item.label)) {
-      binding.itemLabel.text = item.label
-      binding.itemDesc.text = item.label
-    }
-
-    if (!TextUtils.isEmpty(item.desc)) {
-      binding.itemDesc.text = item.desc
+      if (!TextUtils.isEmpty(item.label)) {
+        itemLabel.text = item.label
+        itemDesc.text = item.label
+      }
+      if (!TextUtils.isEmpty(item.desc)) {
+        itemDesc.text = item.desc
+      }
     }
     return binding.root
   }

@@ -38,8 +38,8 @@ open class BaseApplication : Application() {
   fun openUrl(url: String) {
     try {
       val intent = Intent()
-      intent.setAction(Intent.ACTION_VIEW)
-      intent.setData(Uri.parse(url))
+      intent.action = Intent.ACTION_VIEW
+      intent.data = Uri.parse(url)
       intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
       startActivity(intent)
     } catch (th: Throwable) {

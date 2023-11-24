@@ -1,5 +1,6 @@
 package com.raredev.vcspace.adapters
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +19,7 @@ class PathListAdapter : RecyclerView.Adapter<PathListAdapter.VH>() {
   private var viewModel: FileExplorerViewModel? = null
 
   inner class VH(internal val binding: LayoutPathItemBinding) :
-      RecyclerView.ViewHolder(binding.root)
+    RecyclerView.ViewHolder(binding.root)
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
     return VH(LayoutPathItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -32,7 +33,7 @@ class PathListAdapter : RecyclerView.Adapter<PathListAdapter.VH>() {
       val colorControlNormal = root.context.getAttrColor(R.attr.colorControlNormal)
 
       name.text = file.name
-      if (position == getItemCount() - 1) {
+      if (position == itemCount - 1) {
         name.setTextColor(colorPrimary)
         separator.visibility = View.GONE
       } else {
@@ -51,6 +52,7 @@ class PathListAdapter : RecyclerView.Adapter<PathListAdapter.VH>() {
     this.viewModel = viewModel
   }
 
+  @SuppressLint("NotifyDataSetChanged")
   fun setPath(path: File?) {
     paths.clear()
 
@@ -63,7 +65,7 @@ class PathListAdapter : RecyclerView.Adapter<PathListAdapter.VH>() {
       temp = temp.parentFile
     }
 
-    Collections.reverse(paths)
+    paths.reverse()
     notifyDataSetChanged()
   }
 }

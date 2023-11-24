@@ -15,15 +15,15 @@ class PathListView : RecyclerView {
   constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
   constructor(
-      context: Context,
-      attrs: AttributeSet?,
-      defStyleAttr: Int
+    context: Context,
+    attrs: AttributeSet?,
+    defStyleAttr: Int
   ) : super(context, attrs, defStyleAttr)
 
   private val adapter = PathListAdapter()
 
   init {
-    setLayoutManager(LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false))
+    layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
     setAdapter(adapter)
   }
 
@@ -39,6 +39,6 @@ class PathListView : RecyclerView {
 
     adapter.setPath(File(path))
 
-    scrollToPosition(adapter.getItemCount() - 1)
+    scrollToPosition(adapter.itemCount - 1)
   }
 }

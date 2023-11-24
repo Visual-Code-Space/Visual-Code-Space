@@ -1,5 +1,6 @@
 package com.raredev.vcspace.editor
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.widget.LinearLayout
@@ -21,6 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+@SuppressLint("ViewConstructor")
 class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
 
   private val binding = LayoutCodeEditorBinding.inflate(LayoutInflater.from(context))

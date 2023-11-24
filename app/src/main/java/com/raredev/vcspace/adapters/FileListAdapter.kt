@@ -1,5 +1,6 @@
 package com.raredev.vcspace.adapters
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,31 +13,33 @@ import java.io.File
 import java.text.SimpleDateFormat
 
 class FileListAdapter(private val listener: OnFileClickListener) :
-    RecyclerView.Adapter<FileListAdapter.VH>() {
+  RecyclerView.Adapter<FileListAdapter.VH>() {
 
   private var files: List<File> = emptyList()
 
   inner class VH(internal val binding: LayoutFileItemBinding) :
-      RecyclerView.ViewHolder(binding.root)
+    RecyclerView.ViewHolder(binding.root)
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
     return VH(LayoutFileItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
   }
 
+  @SuppressLint("SimpleDateFormat")
   override fun onBindViewHolder(holder: VH, position: Int) {
     holder.binding.apply {
       val file = files[position]
 
       val iconRes: Int =
-          if (file.isFile) {
-            FileIconProvider.findFileIconResource(file)
-          } else R.drawable.ic_folder
+        if (file.isFile) {
+          FileIconProvider.findFileIconResource(file)
+        } else R.drawable.ic_folder
 
       icon.setImageResource(iconRes)
       name.text = file.name
       info.text =
-          root.context.getString(
-              R.string.last_modified, SimpleDateFormat("yy/MM/dd").format(file.lastModified()))
+        root.context.getString(
+          R.string.last_modified, SimpleDateFormat("yy/MM/dd").format(file.lastModified())
+        )
 
       root.setOnClickListener { listener.onFileClickListener(file) }
       root.setOnLongClickListener { listener.onFileLongClickListener(file, it) }
@@ -60,7 +63,7 @@ class FileListAdapter(private val listener: OnFileClickListener) :
   }
 
   inner class FileDiffCallback(private val oldList: List<File>, private val newList: List<File>) :
-      DiffUtil.Callback() {
+    DiffUtil.Callback() {
     override fun getOldListSize(): Int {
       return oldList.size
     }
