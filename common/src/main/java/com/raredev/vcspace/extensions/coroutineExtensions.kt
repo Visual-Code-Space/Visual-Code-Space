@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of Visual Code Space.
  *
  * Visual Code Space is free software: you can redistribute it and/or modify it under the terms of
@@ -12,6 +12,7 @@
  * You should have received a copy of the GNU General Public License along with Visual Code Space.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+
 package com.raredev.vcspace.extensions
 
 import com.blankj.utilcode.util.ThreadUtils.runOnUiThread

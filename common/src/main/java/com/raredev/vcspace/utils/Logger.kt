@@ -1,77 +1,85 @@
-package com.raredev.vcspace.utils;
+/*
+ * This file is part of Visual Code Space.
+ *
+ * Visual Code Space is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU General Public License as published by the Free Software Foundation, either version 3 of
+ * the License, or (at your option) any later version.
+ *
+ * Visual Code Space is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with Visual Code Space.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.raredev.vcspace.utils
 
-import android.util.Log;
-import java.util.Map;
-import java.util.WeakHashMap;
+import android.util.Log
+import java.util.WeakHashMap
 
-public class Logger {
-
-  private static final Map<String, Logger> map = new WeakHashMap<>();
-  private final String tag;
-
-  private Logger(String tag) {
-    this.tag = tag;
+class Logger private constructor(private val tag: String) {
+  fun d(message: String) {
+    log(Priority.DEBUG, tag, message)
   }
 
-  public static synchronized Logger newInstance(String tag) {
-    var logger = map.get(tag);
-    if (logger == null) {
-      logger = new Logger(tag);
-      map.put(tag, logger);
-    }
-    return logger;
+  fun w(message: String) {
+    log(Priority.WARNING, tag, message)
   }
 
-  public void d(String message) {
-    log(Priority.DEBUG, tag, message);
+  fun e(message: String, e: Throwable?) {
+    log(
+      Priority.ERROR, tag, """
+   $message
+   ${Log.getStackTraceString(e)}
+   """.trimIndent()
+    )
   }
 
-  public void w(String message) {
-    log(Priority.WARNING, tag, message);
+  fun e(e: Throwable?) {
+    log(Priority.ERROR, tag, Log.getStackTraceString(e))
   }
 
-  public void e(String message, Throwable e) {
-    log(Priority.ERROR, tag, message + "\n" + Log.getStackTraceString(e));
+  fun e(message: String) {
+    log(Priority.ERROR, tag, message)
   }
 
-  public void e(Throwable e) {
-    log(Priority.ERROR, tag, Log.getStackTraceString(e));
+  fun i(message: String) {
+    log(Priority.INFO, tag, message)
   }
 
-  public void e(String message) {
-    log(Priority.ERROR, tag, message);
+  fun v(message: String) {
+    log(Priority.VERBOSE, tag, message)
   }
 
-  public void i(String message) {
-    log(Priority.INFO, tag, message);
-  }
-
-  public void v(String message) {
-    log(Priority.VERBOSE, tag, message);
-  }
-
-  private void log(Priority priority, String tag, String message) {
-    switch (priority) {
-      case DEBUG:
-        Log.d(tag, message);
-        break;
-      case WARNING:
-        Log.w(tag, message);
-        break;
-      case ERROR:
-        Log.e(tag, message);
-        break;
-      case VERBOSE:
-        Log.v(tag, message);
-        break;
+  private fun log(priority: Priority, tag: String, message: String) {
+    when (priority) {
+      Priority.DEBUG -> Log.d(tag, message)
+      Priority.WARNING -> Log.w(tag, message)
+      Priority.ERROR -> Log.e(tag, message)
+      Priority.VERBOSE -> Log.v(tag, message)
+      Priority.INFO -> Log.i(tag, message)
     }
   }
 
-  public enum Priority {
+  enum class Priority {
     DEBUG,
     WARNING,
     ERROR,
     INFO,
     VERBOSE
+  }
+
+  companion object {
+    private val map: MutableMap<String, Logger> = WeakHashMap()
+
+    @Synchronized
+    fun newInstance(tag: String): Logger {
+      var logger = map[tag]
+      if (logger == null) {
+        logger = Logger(tag)
+        map[tag] = logger
+      }
+      return logger
+    }
   }
 }

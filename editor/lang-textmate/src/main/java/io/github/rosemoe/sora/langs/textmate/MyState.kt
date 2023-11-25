@@ -21,20 +21,9 @@
  *     Please contact Rosemoe by email 2073412493@qq.com if you need
  *     additional information or have any questions
  */
-package io.github.rosemoe.sora.langs.textmate;
+package io.github.rosemoe.sora.langs.textmate
 
-import org.eclipse.tm4e.core.grammar.IStateStack;
-import org.eclipse.tm4e.core.internal.oniguruma.OnigResult;
+import org.eclipse.tm4e.core.grammar.IStateStack
+import org.eclipse.tm4e.core.internal.oniguruma.OnigResult
 
-public class MyState {
-
-  public MyState(IStateStack tokenizeState, OnigResult foldingCache, int indent) {
-    this.tokenizeState = tokenizeState;
-    this.foldingCache = foldingCache;
-    this.indent = indent;
-  }
-
-  public IStateStack tokenizeState;
-  public OnigResult foldingCache;
-  public int indent;
-}
+class MyState(@JvmField var tokenizeState: IStateStack, @JvmField var foldingCache: OnigResult, @JvmField var indent: Int)
