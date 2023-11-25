@@ -26,7 +26,7 @@ class FileExplorerViewModel : ViewModel() {
     if (_currentPath.value.equals(PathUtils.getRootPathExternalFirst())) {
       return
     }
-    setCurrentPath(FileUtil.getParentPath(_currentPath.value))
+    FileUtil.getParentPath(_currentPath.value!!)?.let { setCurrentPath(it) }
   }
 
   fun setCurrentPath(path: String) {
