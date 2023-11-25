@@ -18,10 +18,8 @@ class VCSpaceTMLanguage(iGrammar: IGrammar, languageConfiguration: LanguageConfi
     fun create(scope: String): VCSpaceTMLanguage {
       val grammarRegistry = GrammarRegistry.getInstance()
       val iGrammar = grammarRegistry.findGrammar(scope)
+        ?: throw IllegalArgumentException("Language with $scope scope name not found")
 
-      if (iGrammar == null) {
-        throw IllegalArgumentException("Language with $scope scope name not found")
-      }
       return VCSpaceTMLanguage(iGrammar, grammarRegistry.findLanguageConfiguration(scope))
     }
   }

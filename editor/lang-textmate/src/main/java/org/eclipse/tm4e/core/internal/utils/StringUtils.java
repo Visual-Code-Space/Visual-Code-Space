@@ -38,13 +38,9 @@ public final class StringUtils {
 			return true;
 		}
 
-		if (RGBA.matcher(hex).matches()) {
-			// #rgba
-			return true;
-		}
-
-		return false;
-	}
+        // #rgba
+        return RGBA.matcher(hex).matches();
+    }
 
 	public static int strcmp(final String a, final String b) {
 		final int result = a.compareTo(b);

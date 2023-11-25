@@ -100,7 +100,7 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
     binding.searcher.beginSearchMode()
   }
 
-  fun setLoading(loading: Boolean) {
+  private fun setLoading(loading: Boolean) {
     binding.progress.isVisible = loading
     editor.isEditable = !loading
   }

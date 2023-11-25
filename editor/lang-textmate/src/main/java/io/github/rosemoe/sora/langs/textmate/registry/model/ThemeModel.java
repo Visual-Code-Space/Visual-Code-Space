@@ -34,13 +34,13 @@ import io.github.rosemoe.sora.langs.textmate.utils.StringUtils;
 public class ThemeModel {
 
   public static final ThemeModel EMPTY = new ThemeModel("EMPTY");
-  private IThemeSource themeSource;
+  private final IThemeSource themeSource;
 
   private IRawTheme rawTheme;
 
   private Theme theme;
 
-  private String name;
+  private final String name;
 
   private boolean isDark;
 

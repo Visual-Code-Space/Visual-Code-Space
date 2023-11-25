@@ -76,7 +76,7 @@ class TextActionsWindow(editor: VCSpaceEditor) :
     when (action.text) {
       R.string.comment_line -> {
         val commentRule = (editor as VCSpaceEditor).getCommentRule()
-        if (!editor.cursor.isSelected()) {
+        if (!editor.cursor.isSelected) {
           CommentSystem.addSingleComment(commentRule, editor.text)
         } else {
           CommentSystem.addBlockComment(commentRule, editor.text)

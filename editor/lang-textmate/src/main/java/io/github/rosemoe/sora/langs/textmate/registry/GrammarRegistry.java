@@ -88,10 +88,7 @@ public class GrammarRegistry {
 
     var grammar = registry.grammarForScopeName(scopeName);
 
-    if (grammar != null) {
       return grammar;
-    }
-    return null;
   }
 
   /**
@@ -114,10 +111,7 @@ public class GrammarRegistry {
   public LanguageConfiguration findLanguageConfiguration(String scopeName) {
     var languageConfiguration = languageConfigurationMap.get(scopeName);
 
-    if (languageConfiguration != null) {
       return languageConfiguration;
-    }
-    return null;
   }
 
   public Pair<IGrammar, LanguageConfiguration> loadLanguageAndLanguageConfiguration(

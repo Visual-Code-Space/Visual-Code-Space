@@ -1,6 +1,5 @@
 package com.raredev.vcspace.activities
 
-import android.R
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -45,6 +44,7 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
+    @Suppress("DEPRECATION")
     window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
     super.onCreate(savedInstanceState)
     setupTerminalView()
@@ -67,9 +67,9 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
   }
 
   override val navigationBarColor: Int
-    get() = ContextCompat.getColor(this, R.color.black)
+    get() = ContextCompat.getColor(this, android.R.color.black)
   override val statusBarColor: Int
-    get() = ContextCompat.getColor(this, R.color.black)
+    get() = ContextCompat.getColor(this, android.R.color.black)
 
   private fun setupTerminalView() {
     terminal = TerminalView(this, null)

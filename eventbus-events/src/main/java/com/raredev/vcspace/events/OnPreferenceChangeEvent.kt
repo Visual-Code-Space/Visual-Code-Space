@@ -1,3 +1,3 @@
 package com.raredev.vcspace.events
 
-class OnPreferenceChangeEvent(val prefKey: String)
+data class OnPreferenceChangeEvent(val prefKey: String)

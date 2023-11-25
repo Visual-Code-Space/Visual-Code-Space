@@ -58,7 +58,7 @@ class SearcherLayout : LinearLayout, View.OnClickListener {
       item.isChecked = !item.isChecked
 
       var ignoreCase = searchOptions.ignoreCase
-      var useRegex = searchOptions.type == EditorSearcher.SearchOptions.TYPE_REGULAR_EXPRESSION
+      var useRegex = searchOptions.type == SearchOptions.TYPE_REGULAR_EXPRESSION
       when (item.itemId) {
         0 -> ignoreCase = item.isChecked
         1 -> useRegex = item.isChecked

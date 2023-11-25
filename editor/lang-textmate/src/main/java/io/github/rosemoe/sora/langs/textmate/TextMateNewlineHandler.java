@@ -65,7 +65,7 @@ public class TextMateNewlineHandler implements NewlineHandler {
 
     private Pair<String, String> indentForEnter;
 
-    private LanguageConfiguration languageConfiguration;
+    private final LanguageConfiguration languageConfiguration;
 
     public TextMateNewlineHandler(TextMateLanguage language) {
         this.language = language;

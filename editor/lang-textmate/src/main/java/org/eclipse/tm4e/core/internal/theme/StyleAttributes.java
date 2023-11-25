@@ -47,10 +47,8 @@ public class StyleAttributes {
 			return false;
 		if (fontStyle != other.fontStyle)
 			return false;
-		if (foregroundId != other.foregroundId)
-			return false;
-		return true;
-	}
+        return foregroundId == other.foregroundId;
+    }
 
 	@Override
 	public int hashCode() {

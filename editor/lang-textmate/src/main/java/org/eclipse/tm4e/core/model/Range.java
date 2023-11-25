@@ -48,10 +48,8 @@ public class Range {
 		final Range other = (Range) obj;
 		if (fromLineNumber != other.fromLineNumber)
 			return false;
-		if (toLineNumber != other.toLineNumber)
-			return false;
-		return true;
-	}
+        return toLineNumber == other.toLineNumber;
+    }
 
 	@Override
 	public int hashCode() {

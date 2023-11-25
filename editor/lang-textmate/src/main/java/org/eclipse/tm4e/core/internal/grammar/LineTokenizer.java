@@ -547,8 +547,7 @@ final class LineTokenizer {
         final var whileRules = new ArrayList<WhileStack>();
         for (StateStack node = stack; node != null; node = node.pop()) {
             final Rule nodeRule = node.getRule(grammar);
-            if (nodeRule instanceof  BeginWhileRule) {
-                final var beginWhileRule = (BeginWhileRule) nodeRule;
+            if (nodeRule instanceof BeginWhileRule beginWhileRule) {
                 whileRules.add(new WhileStack(node, beginWhileRule));
             }
         }

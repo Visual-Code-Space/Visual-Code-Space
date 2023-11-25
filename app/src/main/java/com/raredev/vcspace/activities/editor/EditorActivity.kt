@@ -30,12 +30,12 @@ class EditorActivity : BaseEditorActivity() {
     }
 
   private val createFile =
-    registerForActivityResult(ActivityResultContracts.CreateDocument("text/*")) { uri ->
-      if (uri != null) openFile(UriUtils.uri2File(uri))
+    registerForActivityResult(ActivityResultContracts.CreateDocument("text/*")) {
+      if (it != null) openFile(UriUtils.uri2File(it))
     }
   private val openFile =
-    registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-      if (uri != null) openFile(UriUtils.uri2File(uri))
+    registerForActivityResult(ActivityResultContracts.OpenDocument()) {
+      if (it != null) openFile(UriUtils.uri2File(it))
     }
 
   override fun onCreate(savedInstanceState: Bundle?) {

@@ -123,8 +123,7 @@ public class ScopeDependencyProcessor {
 
         if (reference instanceof TopLevelRuleReference) {
             collectExternalReferencesInTopLevelRule(new Context(baseGrammar, selfGrammar), result);
-        } else if (reference instanceof TopLevelRepositoryRuleReference) {
-            var ref = (TopLevelRepositoryRuleReference) reference;
+        } else if (reference instanceof TopLevelRepositoryRuleReference ref) {
             collectExternalReferencesInTopLevelRepositoryRule(
                     ref.ruleName,
                     new ContextWithRepository(baseGrammar, selfGrammar, selfGrammar.getRepository()),

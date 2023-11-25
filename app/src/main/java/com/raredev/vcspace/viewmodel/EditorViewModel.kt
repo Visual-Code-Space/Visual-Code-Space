@@ -50,8 +50,8 @@ class EditorViewModel : ViewModel() {
     return selectedFilePosition.value ?: -1
   }
 
-  fun getSelectedFile(): File? {
-    return getOpenedFiles().get(getSelectedFilePos())
+  fun getSelectedFile(): File {
+    return getOpenedFiles()[getSelectedFilePos()]
   }
 
   fun observeFiles(lifecycleOwner: LifecycleOwner, observer: Observer<MutableList<File>>) {

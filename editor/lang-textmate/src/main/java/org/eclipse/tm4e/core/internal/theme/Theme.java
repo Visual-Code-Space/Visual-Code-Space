@@ -172,8 +172,7 @@ public final class Theme {
 
             int fontStyle = FontStyle.NotSet;
             final var settingsFontStyle = entrySetting.getFontStyle();
-            if (settingsFontStyle instanceof String) {
-                final var style = (String) settingsFontStyle;
+            if (settingsFontStyle instanceof String style) {
                 fontStyle = FontStyle.None;
 
                 final var segments = BY_SPACE_SPLITTER.split(style);

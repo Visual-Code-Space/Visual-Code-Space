@@ -72,6 +72,6 @@ public class Logger {
     WARNING,
     ERROR,
     INFO,
-    VERBOSE;
+    VERBOSE
   }
 }

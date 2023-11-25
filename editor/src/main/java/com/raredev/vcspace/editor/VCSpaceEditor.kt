@@ -40,7 +40,7 @@ class VCSpaceEditor : CodeEditor {
   var modified = false
 
   init {
-    getComponent(EditorTextActionWindow::class.java).setEnabled(false)
+    getComponent(EditorTextActionWindow::class.java).isEnabled = false
     getComponent(EditorAutoCompletion::class.java).setLayout(CustomCompletionLayout())
     getComponent(EditorAutoCompletion::class.java).setAdapter(CompletionListAdapter())
     configureEditor()
@@ -106,7 +106,7 @@ class VCSpaceEditor : CodeEditor {
     updateDeleteEmptyLineFast()
     updateDeleteTabs()
 
-    setInputType(createInputTypeFlags())
+    inputType = createInputTypeFlags()
   }
 
   private fun updateTextSize() {
@@ -114,13 +114,13 @@ class VCSpaceEditor : CodeEditor {
   }
 
   private fun updateTABSize() {
-    setTabWidth(PreferencesUtils.tabSize)
+    tabWidth = PreferencesUtils.tabSize
   }
 
   private fun updateEditorFont() {
     val font = PreferencesUtils.selectedFont
-    setTypefaceText(ResourcesCompat.getFont(getContext(), font))
-    setTypefaceLineNumber(ResourcesCompat.getFont(getContext(), font))
+    typefaceText = ResourcesCompat.getFont(context, font)
+    typefaceLineNumber = ResourcesCompat.getFont(context, font)
   }
 
   private fun updateStickyScroll() {
@@ -128,15 +128,15 @@ class VCSpaceEditor : CodeEditor {
   }
 
   private fun updateFontLigatures() {
-    setLigatureEnabled(PreferencesUtils.fontLigatures)
+    isLigatureEnabled = PreferencesUtils.fontLigatures
   }
 
   private fun updateWordWrap() {
-    setWordwrap(PreferencesUtils.wordWrap)
+    isWordwrap = PreferencesUtils.wordWrap
   }
 
   private fun updateLineNumbers() {
-    setLineNumberEnabled(PreferencesUtils.lineNumbers)
+    isLineNumberEnabled = PreferencesUtils.lineNumbers
   }
 
   private fun updateDeleteEmptyLineFast() {

@@ -94,7 +94,7 @@ class ProgressDialogBuilder(val context: Context) {
   }
 
   fun setMessage(message: String): ProgressDialogBuilder {
-    binding.message.setText(message)
+    binding.message.text = message
     return this
   }
 

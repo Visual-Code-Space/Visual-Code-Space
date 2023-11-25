@@ -199,7 +199,7 @@ open class BaseEditorActivity :
   }
 
   fun closeOthers() {
-    val file = viewModel.getSelectedFile() ?: return
+    val file = viewModel.getSelectedFile()
 
     if (getUnsavedFilesCount() > 0) {
       notifyUnsavedFiles(getUnsavedFiles()) { closeOthers() }

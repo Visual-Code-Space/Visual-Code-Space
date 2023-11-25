@@ -14,7 +14,7 @@ package org.eclipse.tm4e.core.internal.parser;
 
 public interface PropertySettable<V> {
 
-	public interface Factory<I> {
+	interface Factory<I> {
 		PropertySettable<?> create(I args);
 	}
 

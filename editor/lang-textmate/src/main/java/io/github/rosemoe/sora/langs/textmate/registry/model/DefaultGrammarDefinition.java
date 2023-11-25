@@ -33,11 +33,11 @@ import io.github.rosemoe.sora.langs.textmate.utils.StringUtils;
 
 public class DefaultGrammarDefinition implements GrammarDefinition {
 
-    private String name;
+    private final String name;
 
-    private String languageConfigurationPath;
+    private final String languageConfigurationPath;
 
-    private IGrammarSource grammarSource;
+    private final IGrammarSource grammarSource;
 
     private String scopeName = null;
 

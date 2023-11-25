@@ -232,19 +232,16 @@ public final class RuleFactory {
 				}
 				boolean skipRule = false;
 
-				if (rule instanceof IncludeOnlyRule) {
-					var ior = (IncludeOnlyRule) rule;
-					if (ior.hasMissingPatterns && ior.patterns.length == 0) {
+				if (rule instanceof IncludeOnlyRule ior) {
+                    if (ior.hasMissingPatterns && ior.patterns.length == 0) {
 						skipRule = true;
 					}
-				} else if (rule instanceof  BeginEndRule ) {
-					var ber = (BeginEndRule) rule;
-					if (ber.hasMissingPatterns && ber.patterns.length == 0) {
+				} else if (rule instanceof BeginEndRule ber) {
+                    if (ber.hasMissingPatterns && ber.patterns.length == 0) {
 						skipRule = true;
 					}
-				} else if (rule instanceof  BeginWhileRule) {
-					var bwr = (BeginWhileRule) rule;
-					if (bwr.hasMissingPatterns && bwr.patterns.length == 0) {
+				} else if (rule instanceof BeginWhileRule bwr) {
+                    if (bwr.hasMissingPatterns && bwr.patterns.length == 0) {
 						skipRule = true;
 					}
 				}

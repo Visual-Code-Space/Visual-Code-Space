@@ -55,8 +55,8 @@ public class EnterAction {
 		 * Insert new line and outdent once (relative to the previous line's
 		 * indentation).
 		 */
-		Outdent;
-	}
+		Outdent
+    }
 
 	/**
 	 * Describe what to do with the indentation.

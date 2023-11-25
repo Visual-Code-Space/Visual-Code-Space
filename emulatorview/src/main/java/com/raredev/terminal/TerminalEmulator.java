@@ -428,7 +428,7 @@ public final class TerminalEmulator {
 
   public boolean shouldCursorBeVisible() {
     if (!isCursorEnabled()) return false;
-    else return mCursorBlinkingEnabled ? mCursorBlinkState : true;
+    else return !mCursorBlinkingEnabled || mCursorBlinkState;
   }
 
   public boolean isCursorEnabled() {
@@ -1266,7 +1266,7 @@ public final class TerminalEmulator {
                 for (int i = 0; i < part.length(); i += 2) {
                   char c =
                       (char)
-                          Long.decode("0x" + part.charAt(i) + "" + part.charAt(i + 1)).longValue();
+                          Long.decode("0x" + part.charAt(i) + part.charAt(i + 1)).longValue();
                   transBuffer.append(c);
                 }
                 String trans = transBuffer.toString();
@@ -2380,7 +2380,7 @@ public final class TerminalEmulator {
           mSession.onCopyTextToClipboard(clipboardText);
         } catch (Exception e) {
           mClient.logError(
-              LOG_TAG, "OSC Manipulate selection, invalid string '" + textParameter + "");
+              LOG_TAG, "OSC Manipulate selection, invalid string '" + textParameter);
         }
         break;
       case 104:
