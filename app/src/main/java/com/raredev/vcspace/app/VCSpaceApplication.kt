@@ -3,6 +3,7 @@ package com.raredev.vcspace.app
 import android.content.Intent
 import androidx.appcompat.app.AppCompatDelegate
 import com.blankj.utilcode.util.ThrowableUtils
+import com.google.android.material.color.DynamicColors
 import com.raredev.vcspace.activities.CrashActivity
 import com.raredev.vcspace.providers.GrammarProvider
 import com.raredev.vcspace.utils.PreferencesUtils
@@ -11,6 +12,7 @@ import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.model.ThemeModel
 import io.github.rosemoe.sora.langs.textmate.registry.provider.AssetsFileResolver
 import org.eclipse.tm4e.core.registry.IThemeSource
+import kotlin.system.exitProcess
 
 class VCSpaceApplication : BaseApplication() {
 
@@ -21,9 +23,9 @@ class VCSpaceApplication : BaseApplication() {
     Thread.setDefaultUncaughtExceptionHandler(::uncaughtException)
     super.onCreate()
 
-    // if (PreferencesUtils.dynamicColors) {
-    //   DynamicColors.applyToActivitiesIfAvailable(this)
-    // }
+     if (PreferencesUtils.dynamicColors) {
+       DynamicColors.applyToActivitiesIfAvailable(this)
+     }
     AppCompatDelegate.setDefaultNightMode(PreferencesUtils.appTheme)
     GrammarProvider.initialize(this)
     loadDefaultThemes()
@@ -46,7 +48,7 @@ class VCSpaceApplication : BaseApplication() {
     }
   }
 
-  fun uncaughtException(thread: Thread, th: Throwable) {
+  private fun uncaughtException(thread: Thread, th: Throwable) {
     try {
       val intent = Intent(this, CrashActivity::class.java)
 
@@ -57,7 +59,7 @@ class VCSpaceApplication : BaseApplication() {
       startActivity(intent)
 
       uncaughtException?.uncaughtException(thread, th)
-      System.exit(1)
+      exitProcess(1)
     } catch (e: Throwable) {
       e.printStackTrace()
     }

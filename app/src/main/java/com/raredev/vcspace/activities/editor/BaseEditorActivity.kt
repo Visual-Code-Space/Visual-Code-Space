@@ -16,6 +16,7 @@ import com.raredev.vcspace.databinding.ActivityEditorBinding
 import com.raredev.vcspace.editor.CodeEditorView
 import com.raredev.vcspace.events.OnContentChangeEvent
 import com.raredev.vcspace.events.OnPreferenceChangeEvent
+import com.raredev.vcspace.events.OnRenameFileEvent
 import com.raredev.vcspace.res.R
 import com.raredev.vcspace.tasks.TaskExecutor.executeAsyncProvideError
 import com.raredev.vcspace.utils.PreferencesUtils
@@ -44,8 +45,8 @@ open class BaseEditorActivity :
   private var optionsMenuInvalidator: Runnable? = null
   private var autoSave: Runnable? = null
 
-  protected val mainHandler = ThreadUtils.getMainHandler()
-  protected val backroundCoroutineScope = CoroutineScope(Dispatchers.Default)
+  private val mainHandler = ThreadUtils.getMainHandler()
+  private val backroundCoroutineScope = CoroutineScope(Dispatchers.Default)
   protected val viewModel by viewModels<EditorViewModel>()
 
   protected val binding: ActivityEditorBinding
@@ -332,6 +333,18 @@ open class BaseEditorActivity :
       return
     }
     tab.text = "*${tab.text}"
+  }
+
+  @Subscribe(threadMode = ThreadMode.MAIN)
+  fun onFileRenamed(event: OnRenameFileEvent): Unit {
+    invalidateOptionsMenu()
+    val position = findPositionAtFile(event.oldFile)
+    if (position == -1) {
+      return
+    }
+
+    closeFile(position)
+    openFile(event.newFile)
   }
 
   /** from AndroidIDE com.itsaky.androidide.activities.editor.EditorHandlerActivity */
