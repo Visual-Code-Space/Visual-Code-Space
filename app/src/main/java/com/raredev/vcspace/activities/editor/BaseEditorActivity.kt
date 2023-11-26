@@ -15,6 +15,7 @@ import com.raredev.vcspace.activities.BaseActivity
 import com.raredev.vcspace.databinding.ActivityEditorBinding
 import com.raredev.vcspace.editor.CodeEditorView
 import com.raredev.vcspace.events.OnContentChangeEvent
+import com.raredev.vcspace.events.OnDeleteFileEvent
 import com.raredev.vcspace.events.OnPreferenceChangeEvent
 import com.raredev.vcspace.events.OnRenameFileEvent
 import com.raredev.vcspace.res.R
@@ -336,15 +337,20 @@ open class BaseEditorActivity :
   }
 
   @Subscribe(threadMode = ThreadMode.MAIN)
-  fun onFileRenamed(event: OnRenameFileEvent): Unit {
+  fun onFileRenamed(event: OnRenameFileEvent) {
     invalidateOptionsMenu()
     val position = findPositionAtFile(event.oldFile)
-    if (position == -1) {
-      return
-    }
-
+    if (position == -1) return
     closeFile(position)
     openFile(event.newFile)
+  }
+
+  @Subscribe(threadMode = ThreadMode.MAIN)
+  fun onFileDeleted(event: OnDeleteFileEvent) {
+    invalidateOptionsMenu()
+    val position = findPositionAtFile(event.file)
+    if (position == -1) return
+    closeFile(position)
   }
 
   /** from AndroidIDE com.itsaky.androidide.activities.editor.EditorHandlerActivity */

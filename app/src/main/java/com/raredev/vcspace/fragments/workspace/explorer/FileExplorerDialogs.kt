@@ -21,6 +21,7 @@ import android.view.WindowManager
 import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.SizeUtils.dp2px
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.raredev.vcspace.events.OnDeleteFileEvent
 import com.raredev.vcspace.events.OnRenameFileEvent
 import com.raredev.vcspace.extensions.launchWithProgressDialog
 import com.raredev.vcspace.res.R
@@ -146,6 +147,7 @@ class FileExplorerDialogs(
             withContext(Dispatchers.Main) {
               if (deleted) {
                 showShortToast(context, context.getString(R.string.deleted_message))
+                EventBus.getDefault().post(OnDeleteFileEvent(file))
               }
               viewModel.refreshFiles()
             }

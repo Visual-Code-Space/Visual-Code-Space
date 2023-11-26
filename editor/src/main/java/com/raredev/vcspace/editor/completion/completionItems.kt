@@ -28,11 +28,11 @@ abstract class VCSpaceCompletionItem(
 ) : CompletionItem(label, desc, null)
 
 class SimpleCompletionItem(
-    completionKind: CompletionItemKind,
-    label: CharSequence,
-    desc: CharSequence,
-    val prefixLength: Int,
-    val commitText: String
+  completionKind: CompletionItemKind,
+  label: CharSequence,
+  desc: CharSequence,
+  val prefixLength: Int,
+  private val commitText: String
 ) : VCSpaceCompletionItem(completionKind, label, desc) {
 
   override fun performCompletion(editor: CodeEditor, text: Content, line: Int, column: Int) {
