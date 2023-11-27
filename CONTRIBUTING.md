@@ -1,28 +1,6 @@
 # Contributing to Visual Code Space
 
-This file explains the modules, assets, and the steps to be followed to contribute to the project.
-
-## Modules:
-
-- **app:** Main module of the project, containing the central logic of the application. 
-- **common:** Module that stores frequently used classes throughout the application, providing a reusable code base. 
-- **common-res:** Contains all application resources such as images, styles, strings and other essential resources. 
-- **editor-ace:** Module that integrates the ACE editor. 
-- **editor-sora:** Module that integrates the Sora editor. 
-- **eventbus-events:** Module that contains events destined for the eventbus library, facilitating communication between different parts of the application. 
-- **models:** Contains model classes that represent application data, helping with data organization and manipulation. 
-- **editor-sora:lang-textmate:** Module that handles support for the TextMate language in the Sora editor. 
-
-## Assets Folder
-
-- **assets/files**: Assets for the file explorer.
-  - Contains assets used by the file explorer.
-
-- **assets/editor/ace-editor**: Assets for Ace Editor.
-  - Includes assets specific to the Ace Editor.
-
-- **assets/editor/sora-editor**: Assets for Sora Editor.
-  - Contains assets related to the Sora Editor.
+Steps to be followed to contribute to the project.
 
 ## How to Contribute to This Project:
 
