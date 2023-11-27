@@ -31,17 +31,37 @@
     <fragment
         android:id="@+id/fragmentGeneralSettings"
         android:name="com.raredev.vcspace.fragments.settings.GeneralSettingsFragment"
-        android:label="@string/general" />
+        android:label="@string/general" >
+        <action
+          android:id="@+id/action_fragmentGeneralSettings_pop"
+          app:popUpTo="@id/fragmentGeneralSettings"
+          app:popUpToInclusive="true" />
+    </fragment>
     <fragment
         android:id="@+id/fragmentEditorSettings"
         android:name="com.raredev.vcspace.fragments.settings.EditorSettingsFragment"
-        android:label="@string/editor" />
+        android:label="@string/editor" >
+        <action
+          android:id="@+id/action_fragmentEditorSettings_pop"
+          app:popUpTo="@id/fragmentEditorSettings"
+          app:popUpToInclusive="true" />
+    </fragment>
     <fragment
         android:id="@+id/fragmentFileSettings"
         android:name="com.raredev.vcspace.fragments.settings.FileSettingsFragment"
-        android:label="@string/file" />
+        android:label="@string/file" >
+        <action
+          android:id="@+id/action_fragmentFileSettings_pop"
+          app:popUpTo="@id/fragmentFileSettings"
+          app:popUpToInclusive="true" />
+    </fragment>
     <fragment
         android:id="@+id/fragmentGitSettings"
         android:name="com.raredev.vcspace.fragments.settings.GitSettingsFragment"
-        android:label="@string/git" />
+        android:label="@string/git" >
+        <action
+          android:id="@+id/action_fragmentGitSettings_pop"
+          app:popUpTo="@id/fragmentGitSettings"
+          app:popUpToInclusive="true" />
+    </fragment>
 </navigation>

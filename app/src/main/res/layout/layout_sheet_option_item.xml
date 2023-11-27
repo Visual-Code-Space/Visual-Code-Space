@@ -1,30 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/root"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:background="@drawable/ripple_effect"
+  android:gravity="center_vertical"
+  android:padding="15dp">
+
+  <ImageView
+    android:id="@+id/icon"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_width="match_parent"
-    android:gravity="center_vertical"
-    android:background="@drawable/ripple_effect"
-    android:padding="15dp">
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:srcCompat="@drawable/ic_add"
+    tools:ignore="ContentDescription" />
 
-    <ImageView
-        android:layout_height="25dp"
-        android:layout_width="25dp"
-        android:scaleType="center"
-        android:layout_centerVertical="true"
-        app:tint="?attr/colorOnSurface"
-        android:id="@+id/icon" />
-
-    <TextView
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_toEndOf="@id/icon"
-        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-        android:layout_centerVertical="true"
-        android:ellipsize="end"
-        android:textSize="16sp"
-        android:layout_marginLeft="8dp"
-        android:id="@+id/name" />
-
-</RelativeLayout>
+  <TextView
+    android:id="@+id/name"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="20dp"
+    android:text="TextView"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintStart_toEndOf="@+id/icon"
+    app:layout_constraintTop_toTopOf="parent"
+    tools:ignore="HardcodedText" />
+</androidx.constraintlayout.widget.ConstraintLayout>

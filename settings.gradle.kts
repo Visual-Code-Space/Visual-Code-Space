@@ -1,5 +1,8 @@
 @file:Suppress("UnstableApiUsage")
 
+include(":plugin-system")
+
+
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
@@ -31,5 +34,4 @@ include(
     ":editor:lang-textmate",
     ":eventbus-events",
     ":emulatorview",
-    ":models",
-    ":plugin-system")
+    ":models")

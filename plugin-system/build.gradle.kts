@@ -4,8 +4,7 @@ plugins {
 }
 
 android {
-  namespace = "com.raredev.vcspace.plugin"
-
+  namespace = "com.raredev.vcspace.pluginsystem"
   buildTypes {
     release {
       isMinifyEnabled = false
@@ -15,11 +14,16 @@ android {
 }
 
 dependencies {
+  implementation(libs.androidx.core.ktx)
   implementation(libs.androidx.appcompat)
-  implementation(libs.common.eventbus)
-  implementation(libs.common.utilcode)
+  implementation(libs.google.material)
   implementation(libs.common.pf4j)
+  implementation(libs.common.eventbus)
 
   implementation(projects.common)
   implementation(projects.eventbusEvents)
+
+  testImplementation(libs.junit)
+  androidTestImplementation(libs.androidx.junit)
+  androidTestImplementation(libs.androidx.espresso.core)
 }

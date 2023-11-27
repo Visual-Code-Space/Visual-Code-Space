@@ -7,6 +7,7 @@ import android.widget.LinearLayout
 import androidx.core.view.isVisible
 import com.blankj.utilcode.util.FileIOUtils
 import com.raredev.vcspace.databinding.LayoutCodeEditorBinding
+import com.raredev.vcspace.editor.schemes.SchemeVCSpace
 import com.raredev.vcspace.extensions.cancelIfActive
 import com.raredev.vcspace.providers.GrammarProvider
 import io.github.rosemoe.sora.lang.EmptyLanguage
@@ -108,6 +109,7 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
   private fun createColorScheme(): EditorColorScheme {
     return try {
       TextMateColorScheme.create(ThemeRegistry.getInstance())
+//      SchemeVCSpace()
     } catch (e: Exception) {
       EditorColorScheme()
     }

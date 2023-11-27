@@ -38,7 +38,7 @@ class CrashActivity : BaseActivity() {
     error.append("${getDate()}\n\n")
     error.append(intent.getStringExtra(KEY_EXTRA_ERROR))
 
-    binding.result.text = error.toString()
+    error.toString().also { binding.result.text = it }
 
     binding.fab.setOnClickListener { ClipboardUtils.copyText(binding.result.text) }
   }

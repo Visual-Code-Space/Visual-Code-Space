@@ -36,10 +36,8 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-open class BaseEditorActivity :
-    BaseActivity(),
-    TabLayout.OnTabSelectedListener,
-    SharedPreferences.OnSharedPreferenceChangeListener {
+open class BaseEditorActivity : BaseActivity(), TabLayout.OnTabSelectedListener,
+  SharedPreferences.OnSharedPreferenceChangeListener {
 
   private var _binding: ActivityEditorBinding? = null
 
@@ -72,23 +70,17 @@ open class BaseEditorActivity :
 
     binding.tabs.addOnTabSelectedListener(this)
     viewModel.observeFiles(this) { files ->
-      if (files.isEmpty()) {
-        binding.noFiles.visibility = View.VISIBLE
-        binding.tabs.visibility = View.GONE
-        binding.container.visibility = View.GONE
-        binding.symbolInput.visibility = View.GONE
-        binding.bottomDivider.visibility = View.GONE
+      val visibility = if (files.isEmpty()) View.GONE else View.VISIBLE
 
-        // Updates the menu only if there are no files open,
-        // Because the menu is already updated every time a file is selected.
-        invalidateOptionsMenu()
-      } else {
-        binding.noFiles.visibility = View.GONE
-        binding.tabs.visibility = View.VISIBLE
-        binding.container.visibility = View.VISIBLE
-        binding.symbolInput.visibility = View.VISIBLE
-        binding.bottomDivider.visibility = View.VISIBLE
+      with(binding) {
+        listOf(noFiles, tabs, container, symbolInput, bottomDivider).forEachIndexed { index, it ->
+          if (index == 0) it.visibility = if (files.isNotEmpty()) View.GONE else View.VISIBLE
+          else it.visibility = visibility
+        }
+
+        if (files.isEmpty()) invalidateOptionsMenu()
       }
+
     }
     viewModel.selectedFilePosition.observe(this) { position ->
       if (position >= 0) {
@@ -285,7 +277,7 @@ open class BaseEditorActivity :
 
   fun findPositionAtFile(file: File?): Int {
     val files = viewModel.getOpenedFiles()
-    for (i in 0 until files.size) {
+    for (i in files.indices) {
       if (files[i] == file) {
         return i
       }
@@ -386,13 +378,12 @@ open class BaseEditorActivity :
   }
 
   private fun notifyUnsavedFile(unsavedFile: File, runAfter: Runnable) {
-    showUnsavedFilesAlert(
-        unsavedFile.name,
-        { _, _ -> saveFileAsync(true, findPositionAtFile(unsavedFile)) { runAfter.run() } },
-        { _, _ ->
-          getEditorAt(findPositionAtFile(unsavedFile))?.setModified(false)
-          runAfter.run()
-        })
+    showUnsavedFilesAlert(unsavedFile.name,
+      { _, _ -> saveFileAsync(true, findPositionAtFile(unsavedFile)) { runAfter.run() } },
+      { _, _ ->
+        getEditorAt(findPositionAtFile(unsavedFile))?.setModified(false)
+        runAfter.run()
+      })
   }
 
   private fun notifyUnsavedFiles(unsavedFiles: List<File>, runAfter: Runnable) {
@@ -401,28 +392,24 @@ open class BaseEditorActivity :
       sb.append(" " + file.name)
     }
 
-    showUnsavedFilesAlert(
-        sb.toString(),
-        { _, _ -> saveAllFilesAsync(true) { runAfter.run() } },
-        { _, _ ->
-          for (i in 0 until viewModel.getFileCount()) {
-            getEditorAt(i)?.setModified(false)
-          }
-          runAfter.run()
-        })
+    showUnsavedFilesAlert(sb.toString(),
+      { _, _ -> saveAllFilesAsync(true) { runAfter.run() } },
+      { _, _ ->
+        for (i in 0 until viewModel.getFileCount()) {
+          getEditorAt(i)?.setModified(false)
+        }
+        runAfter.run()
+      })
   }
 
   private fun showUnsavedFilesAlert(
-      unsavedFileName: String,
-      positive: DialogInterface.OnClickListener,
-      negative: DialogInterface.OnClickListener
+    unsavedFileName: String,
+    positive: DialogInterface.OnClickListener,
+    negative: DialogInterface.OnClickListener
   ) {
-    MaterialAlertDialogBuilder(this)
-        .setTitle(R.string.unsaved_files_title)
-        .setMessage(getString(R.string.unsaved_files_message, unsavedFileName))
-        .setPositiveButton(R.string.save_and_close, positive)
-        .setNegativeButton(R.string.close, negative)
-        .setNeutralButton(R.string.cancel, null)
-        .show()
+    MaterialAlertDialogBuilder(this).setTitle(R.string.unsaved_files_title)
+      .setMessage(getString(R.string.unsaved_files_message, unsavedFileName))
+      .setPositiveButton(R.string.save_and_close, positive)
+      .setNegativeButton(R.string.close, negative).setNeutralButton(R.string.cancel, null).show()
   }
 }

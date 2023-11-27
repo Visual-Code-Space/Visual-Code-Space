@@ -29,7 +29,7 @@ import com.raredev.vcspace.ui.virtualkeys.VirtualKeysView.IVirtualKeysView
 import com.raredev.vcspace.utils.Logger
 import org.json.JSONException
 
-/*
+/**
  *  @see <a href="https://github.com/AndroidIDEOfficial/AndroidIDE/blob/dev/app/src/main/java/com/itsaky/androidide/activities/TerminalActivity.java">TerminalActivity</a>
  */
 class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClient {
