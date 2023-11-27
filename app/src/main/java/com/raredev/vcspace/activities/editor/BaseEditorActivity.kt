@@ -18,6 +18,7 @@ import com.raredev.vcspace.events.OnContentChangeEvent
 import com.raredev.vcspace.events.OnDeleteFileEvent
 import com.raredev.vcspace.events.OnPreferenceChangeEvent
 import com.raredev.vcspace.events.OnRenameFileEvent
+import com.raredev.vcspace.extensions.cancelIfActive
 import com.raredev.vcspace.res.R
 import com.raredev.vcspace.tasks.TaskExecutor.executeAsyncProvideError
 import com.raredev.vcspace.utils.PreferencesUtils
@@ -36,7 +37,9 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-open class BaseEditorActivity : BaseActivity(), TabLayout.OnTabSelectedListener,
+open class BaseEditorActivity :
+  BaseActivity(),
+  TabLayout.OnTabSelectedListener,
   SharedPreferences.OnSharedPreferenceChangeListener {
 
   private var _binding: ActivityEditorBinding? = null
@@ -47,6 +50,7 @@ open class BaseEditorActivity : BaseActivity(), TabLayout.OnTabSelectedListener,
   private val mainHandler = ThreadUtils.getMainHandler()
   private val backroundCoroutineScope = CoroutineScope(Dispatchers.Default)
   protected val viewModel by viewModels<EditorViewModel>()
+  protected var isDestroying = false
 
   protected val binding: ActivityEditorBinding
     get() = checkNotNull(_binding) { "Activity has been destroyed" }
@@ -80,7 +84,6 @@ open class BaseEditorActivity : BaseActivity(), TabLayout.OnTabSelectedListener,
 
         if (files.isEmpty()) invalidateOptionsMenu()
       }
-
     }
     viewModel.selectedFilePosition.observe(this) { position ->
       if (position >= 0) {
@@ -113,13 +116,15 @@ open class BaseEditorActivity : BaseActivity(), TabLayout.OnTabSelectedListener,
   }
 
   override fun onDestroy() {
+    isDestroying = true
     super.onDestroy()
-    closeAll()
-
     PreferencesUtils.prefs.unregisterOnSharedPreferenceChangeListener(this)
 
     EventBus.getDefault().unregister(this)
     GrammarRegistry.getInstance().dispose()
+    closeAll()
+
+    backroundCoroutineScope.cancelIfActive("Activity has been destroyed!")
 
     optionsMenuInvalidator = null
     autoSave = null
@@ -215,7 +220,7 @@ open class BaseEditorActivity : BaseActivity(), TabLayout.OnTabSelectedListener,
   }
 
   fun closeAll() {
-    if (getUnsavedFilesCount() > 0) {
+    if (getUnsavedFilesCount() > 0 && !isDestroying) {
       notifyUnsavedFiles(getUnsavedFiles()) { closeAll() }
       return
     }
@@ -381,12 +386,14 @@ open class BaseEditorActivity : BaseActivity(), TabLayout.OnTabSelectedListener,
   }
 
   private fun notifyUnsavedFile(unsavedFile: File, runAfter: Runnable) {
-    showUnsavedFilesAlert(unsavedFile.name,
+    showUnsavedFilesAlert(
+      unsavedFile.name,
       { _, _ -> saveFileAsync(true, findPositionAtFile(unsavedFile)) { runAfter.run() } },
       { _, _ ->
         getEditorAt(findPositionAtFile(unsavedFile))?.setModified(false)
         runAfter.run()
-      })
+      }
+    )
   }
 
   private fun notifyUnsavedFiles(unsavedFiles: List<File>, runAfter: Runnable) {
@@ -395,14 +402,16 @@ open class BaseEditorActivity : BaseActivity(), TabLayout.OnTabSelectedListener,
       sb.append(" " + file.name)
     }
 
-    showUnsavedFilesAlert(sb.toString(),
+    showUnsavedFilesAlert(
+      sb.toString(),
       { _, _ -> saveAllFilesAsync(true) { runAfter.run() } },
       { _, _ ->
         for (i in 0 until viewModel.getFileCount()) {
           getEditorAt(i)?.setModified(false)
         }
         runAfter.run()
-      })
+      }
+    )
   }
 
   private fun showUnsavedFilesAlert(
@@ -410,9 +419,12 @@ open class BaseEditorActivity : BaseActivity(), TabLayout.OnTabSelectedListener,
     positive: DialogInterface.OnClickListener,
     negative: DialogInterface.OnClickListener
   ) {
-    MaterialAlertDialogBuilder(this).setTitle(R.string.unsaved_files_title)
+    MaterialAlertDialogBuilder(this)
+      .setTitle(R.string.unsaved_files_title)
       .setMessage(getString(R.string.unsaved_files_message, unsavedFileName))
       .setPositiveButton(R.string.save_and_close, positive)
-      .setNegativeButton(R.string.close, negative).setNeutralButton(R.string.cancel, null).show()
+      .setNegativeButton(R.string.close, negative)
+      .setNeutralButton(R.string.cancel, null)
+      .show()
   }
 }
