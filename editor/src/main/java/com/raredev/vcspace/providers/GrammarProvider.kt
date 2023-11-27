@@ -33,7 +33,7 @@ import org.eclipse.tm4e.core.registry.IGrammarSource
  */
 object GrammarProvider {
 
-  private var grammars: List<GrammarModel> = mutableListOf()
+  public var grammars: List<GrammarModel> = mutableListOf()
 
   fun initialize(context: Context) {
     if (grammars.isNotEmpty()) {

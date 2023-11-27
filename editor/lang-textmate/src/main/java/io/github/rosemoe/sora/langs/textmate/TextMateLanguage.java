@@ -41,7 +41,6 @@ import io.github.rosemoe.sora.widget.SymbolPairMatch;
 public class TextMateLanguage extends EmptyLanguage {
 
   private int tabSize = 4;
-
   private boolean useTab = false;
 
   TextMateAnalyzer textMateAnalyzer;
@@ -64,13 +63,18 @@ public class TextMateLanguage extends EmptyLanguage {
     this.grammarRegistry = grammarRegistry;
 
     symbolPairMatch = new TextMateSymbolPairMatch(this);
+    newlineHandlers = new TextMateNewlineHandler[1];
 
     createAnalyzerAndNewlineHandler(grammar, languageConfiguration);
   }
 
   private void createAnalyzerAndNewlineHandler(
       IGrammar grammar, LanguageConfiguration languageConfiguration) {
-    destroy();
+    var lastAnalyzer = textMateAnalyzer;
+    if (lastAnalyzer != null) {
+      lastAnalyzer.setReceiver(null);
+      lastAnalyzer.destroy();
+    }
     try {
       textMateAnalyzer = new TextMateAnalyzer(this, grammar, languageConfiguration);
     } catch (Exception e) {
@@ -78,7 +82,7 @@ public class TextMateLanguage extends EmptyLanguage {
     }
     this.languageConfiguration = languageConfiguration;
     newlineHandler = new TextMateNewlineHandler(this);
-    newlineHandlers = new TextMateNewlineHandler[] {newlineHandler};
+    newlineHandlers[0] = newlineHandler;
     if (languageConfiguration != null) {
       // because the editor will only get the symbol pair matcher once
       // (caching object to stop repeated new object created),
@@ -109,11 +113,7 @@ public class TextMateLanguage extends EmptyLanguage {
 
   @Override
   public void destroy() {
-    if (textMateAnalyzer == null) {
-      return;
-    }
-    textMateAnalyzer.setReceiver(null);
-    textMateAnalyzer.destroy();
+    
   }
 
   /** Set tab size. The tab size is used to compute code blocks. */

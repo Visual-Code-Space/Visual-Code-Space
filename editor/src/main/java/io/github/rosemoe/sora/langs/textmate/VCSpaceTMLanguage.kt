@@ -23,19 +23,22 @@ import org.eclipse.tm4e.languageconfiguration.model.LanguageConfiguration
 class VCSpaceTMLanguage(iGrammar: IGrammar, languageConfiguration: LanguageConfiguration?) :
     TextMateLanguage(iGrammar, languageConfiguration, GrammarRegistry.getInstance()) {
 
-  init {
-    tabSize = PreferencesUtils.tabSize
-    useTab(PreferencesUtils.useTab)
+  override fun getTabSize(): Int {
+    return PreferencesUtils.tabSize
+  }
+
+  override fun useTab(): Boolean {
+    return PreferencesUtils.useTab
   }
 
   companion object {
 
-    fun create(scope: String): VCSpaceTMLanguage {
+    fun create(scopeName: String): VCSpaceTMLanguage {
       val grammarRegistry = GrammarRegistry.getInstance()
-      val iGrammar = grammarRegistry.findGrammar(scope)
-        ?: throw IllegalArgumentException("Language with $scope scope name not found")
+      val iGrammar = grammarRegistry.findGrammar(scopeName)
+        ?: throw IllegalArgumentException("Language with scopeName scope name not found")
 
-      return VCSpaceTMLanguage(iGrammar, grammarRegistry.findLanguageConfiguration(scope))
+      return VCSpaceTMLanguage(iGrammar, grammarRegistry.findLanguageConfiguration(scopeName))
     }
   }
 }

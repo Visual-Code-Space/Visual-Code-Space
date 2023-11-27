@@ -109,7 +109,6 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
   private fun createColorScheme(): EditorColorScheme {
     return try {
       TextMateColorScheme.create(ThemeRegistry.getInstance())
-//      SchemeVCSpace()
     } catch (e: Exception) {
       EditorColorScheme()
     }

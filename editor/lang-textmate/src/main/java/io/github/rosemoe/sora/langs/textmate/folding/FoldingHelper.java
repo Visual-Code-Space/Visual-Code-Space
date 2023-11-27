@@ -27,8 +27,7 @@ import org.eclipse.tm4e.core.internal.oniguruma.OnigResult;
 
 public interface FoldingHelper {
 
-    OnigResult getResultFor(int line);
+  OnigResult getResultFor(int line);
 
-    int getIndentFor(int line);
-
+  int getIndentFor(int line);
 }

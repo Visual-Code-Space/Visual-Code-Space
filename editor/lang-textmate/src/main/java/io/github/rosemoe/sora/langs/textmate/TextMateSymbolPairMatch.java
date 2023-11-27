@@ -35,7 +35,7 @@ import java.util.Map;
 import org.eclipse.tm4e.core.internal.grammar.tokenattrs.StandardTokenType;
 import org.eclipse.tm4e.languageconfiguration.model.AutoClosingPairConditional;
 
-public class TextMateSymbolPairMatch extends SymbolPairMatch {
+public final class TextMateSymbolPairMatch extends SymbolPairMatch {
 
   private static final String surroundingPairFlag = "surroundingPair";
 

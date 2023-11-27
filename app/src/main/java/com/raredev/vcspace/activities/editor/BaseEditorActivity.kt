@@ -288,7 +288,7 @@ open class BaseEditorActivity : BaseActivity(), TabLayout.OnTabSelectedListener,
   fun getUnsavedFilesCount(): Int {
     var count = 0
     for (i in 0 until viewModel.getOpenedFiles().size) {
-      if (getEditorAt(i)?.modified == true) count++
+      if (getEditorAt(i)?.modified ?: false) count++
     }
     return count
   }
@@ -322,19 +322,22 @@ open class BaseEditorActivity : BaseActivity(), TabLayout.OnTabSelectedListener,
     }
 
     val tab = binding.tabs.getTabAt(position)
-    if (tab?.text?.startsWith("*") != false) {
+    if (tab?.text?.startsWith("*") ?: true) {
       return
     }
-    tab.text = "*${tab.text}"
+    tab?.text = "*${tab?.text}"
   }
 
   @Subscribe(threadMode = ThreadMode.MAIN)
   fun onFileRenamed(event: OnRenameFileEvent) {
     invalidateOptionsMenu()
     val position = findPositionAtFile(event.oldFile)
-    if (position == -1) return
-    closeFile(position)
-    openFile(event.newFile)
+    // If the position is -1 it will not find any editor and will return.
+    val editor = getEditorAt(position) ?: return
+    viewModel.updateFile(position, event.newFile)
+    editor.setFile(event.newFile)
+
+    updateTabs()
   }
 
   @Subscribe(threadMode = ThreadMode.MAIN)

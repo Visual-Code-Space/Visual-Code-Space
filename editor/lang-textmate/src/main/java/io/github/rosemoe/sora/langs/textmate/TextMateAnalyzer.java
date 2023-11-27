@@ -46,8 +46,6 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.eclipse.tm4e.core.grammar.IGrammar;
 import org.eclipse.tm4e.core.internal.grammar.tokenattrs.EncodedTokenAttributes;
 import org.eclipse.tm4e.core.internal.oniguruma.OnigRegExp;
@@ -57,7 +55,7 @@ import org.eclipse.tm4e.core.internal.theme.FontStyle;
 import org.eclipse.tm4e.core.internal.theme.Theme;
 import org.eclipse.tm4e.languageconfiguration.model.LanguageConfiguration;
 
-public class TextMateAnalyzer extends AsyncIncrementalAnalyzeManager<MyState, Span>
+public final class TextMateAnalyzer extends AsyncIncrementalAnalyzeManager<LineState, Span>
     implements FoldingHelper, ThemeRegistry.ThemeChangeListener {
 
   @NonNull private final TextMateLanguage language;
@@ -65,12 +63,14 @@ public class TextMateAnalyzer extends AsyncIncrementalAnalyzeManager<MyState, Sp
   @NonNull private final IGrammar grammar;
 
   @NonNull private final ThemeRegistry themeRegistry;
+  
+  @NonNull private Theme theme;
 
   @Nullable private BracketsProvider bracketsProvider;
 
-  private OnigRegExp cachedRegExp;
+  @Nullable private OnigRegExp cachedRegExp;
+
   private boolean foldingOffside;
-  private Theme theme;
 
   public TextMateAnalyzer(
       TextMateLanguage language, IGrammar grammar, LanguageConfiguration languageConfiguration) {
@@ -86,11 +86,11 @@ public class TextMateAnalyzer extends AsyncIncrementalAnalyzeManager<MyState, Sp
       themeRegistry.addListener(this);
     }
 
-    ensureBracketsProvider(languageConfiguration);
+    createBracketsProvider(languageConfiguration);
     createFoldingExp(languageConfiguration);
   }
 
-  private void ensureBracketsProvider(LanguageConfiguration languageConfiguration) {
+  private void createBracketsProvider(LanguageConfiguration languageConfiguration) {
     if (languageConfiguration != null) {
       var pairs = languageConfiguration.getBrackets();
       if (pairs == null) return;
@@ -130,12 +130,12 @@ public class TextMateAnalyzer extends AsyncIncrementalAnalyzeManager<MyState, Sp
   }
 
   @Override
-  public MyState getInitialState() {
+  public LineState getInitialState() {
     return null;
   }
 
   @Override
-  public boolean stateEquals(MyState state, MyState another) {
+  public boolean stateEquals(LineState state, LineState another) {
     if (state == null && another == null) {
       return true;
     }
@@ -182,7 +182,7 @@ public class TextMateAnalyzer extends AsyncIncrementalAnalyzeManager<MyState, Sp
         int endLine = foldingRegions.getEndLineNumber(i);
 
         if (startLine != endLine) {
-          CodeBlock codeBlock = new CodeBlock();
+          var codeBlock = new CodeBlock();
           codeBlock.toBottomOfEndLine = true;
           codeBlock.startLine = startLine;
           codeBlock.endLine = endLine;
@@ -208,8 +208,8 @@ public class TextMateAnalyzer extends AsyncIncrementalAnalyzeManager<MyState, Sp
 
   @Override
   @SuppressLint("NewApi")
-  public synchronized LineTokenizeResult<MyState, Span> tokenizeLine(
-      CharSequence lineC, MyState state, int lineIndex) {
+  public synchronized LineTokenizeResult<LineState, Span> tokenizeLine(
+      CharSequence lineC, LineState state, int lineIndex) {
     String line = ((ContentLine) lineC).toStringWithNewline();
     List<Span> tokens = new ArrayList<>();
     boolean surrogate = StringUtils.checkSurrogate(line);
@@ -254,7 +254,7 @@ public class TextMateAnalyzer extends AsyncIncrementalAnalyzeManager<MyState, Sp
     var onigResult = cachedRegExp != null ? cachedRegExp.search(OnigString.of(line), 0) : null;
 
     var newState =
-        new MyState(
+        new LineState(
             lineTokens.getRuleStack(),
             onigResult,
             IndentRange.computeIndentLevel(
@@ -270,7 +270,7 @@ public class TextMateAnalyzer extends AsyncIncrementalAnalyzeManager<MyState, Sp
   }
 
   @Override
-  public List<Span> generateSpansForLine(LineTokenizeResult<MyState, Span> tokens) {
+  public List<Span> generateSpansForLine(LineTokenizeResult<LineState, Span> tokens) {
     return null;
   }
 

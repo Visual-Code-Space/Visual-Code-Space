@@ -109,14 +109,16 @@ class FileExplorerDialogs(
               val newFile = File(file.parentFile, name)
               val renamed = file.renameTo(newFile)
 
+              if (!renamed) {
+                return@launchWithProgressDialog
+              }
+
+              EventBus.getDefault().post(OnRenameFileEvent(file, newFile))
+
               withContext(Dispatchers.Main) {
-                if (!renamed) {
-                  return@withContext
-                }
                 showShortToast(context, context.getString(R.string.renamed_message))
                 viewModel.refreshFiles()
               }
-              EventBus.getDefault().post(OnRenameFileEvent(file, newFile))
             })
         }
         .create()
@@ -144,11 +146,15 @@ class FileExplorerDialogs(
           },
           action = { _ ->
             val deleted = FileUtils.delete(file)
+
+            if (!deleted) {
+              return@launchWithProgressDialog
+            }
+
+            EventBus.getDefault().post(OnDeleteFileEvent(file))
+
             withContext(Dispatchers.Main) {
-              if (deleted) {
-                showShortToast(context, context.getString(R.string.deleted_message))
-                EventBus.getDefault().post(OnDeleteFileEvent(file))
-              }
+              showShortToast(context, context.getString(R.string.deleted_message))
               viewModel.refreshFiles()
             }
           })

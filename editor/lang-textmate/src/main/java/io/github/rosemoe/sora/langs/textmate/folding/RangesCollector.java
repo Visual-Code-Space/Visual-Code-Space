@@ -28,43 +28,45 @@ import android.util.SparseIntArray;
 import io.github.rosemoe.sora.text.Content;
 
 public class RangesCollector {
-    private final SparseIntArray _startIndexes;
-    private final SparseIntArray _endIndexes;
-    //private final SparseIntArray _indentOccurrences;
-    private int _length;
-    //private final int tabSize;
+  private final SparseIntArray _startIndexes;
+  private final SparseIntArray _endIndexes;
+  // private final SparseIntArray _indentOccurrences;
+  private int _length;
 
-    public RangesCollector(/*int tabSize*/) {
-        //this.tabSize = tabSize;
-        this._startIndexes = new SparseIntArray();
-        this._endIndexes = new SparseIntArray();
-        //this._indentOccurrences = new SparseIntArray();
-        this._length = 0;
-    }
+  // private final int tabSize;
 
-    public void insertFirst(int startLineNumber, int endLineNumber, int indent) {
-        if (startLineNumber > IndentRange.MAX_LINE_NUMBER || endLineNumber > IndentRange.MAX_LINE_NUMBER) {
-            return;
-        }
-        int index = this._length;
-        this._startIndexes.put(index, startLineNumber);
-        this._endIndexes.put(index, endLineNumber);
-        this._length++;
-        /*if (indent < 1000) {
-            this._indentOccurrences.put(indent, (this._indentOccurrences.get(indent)) + 1);
-        }*/
-    }
+  public RangesCollector(/*int tabSize*/ ) {
+    // this.tabSize = tabSize;
+    this._startIndexes = new SparseIntArray();
+    this._endIndexes = new SparseIntArray();
+    // this._indentOccurrences = new SparseIntArray();
+    this._length = 0;
+  }
 
-    public FoldingRegions toIndentRanges(Content model) throws Exception {
-        return new FoldingRegions(_startIndexes, _endIndexes);
-        /*
-        // reverse and create arrays of the exact length
-        SparseIntArray startIndexes = new SparseIntArray(this._length);
-        SparseIntArray endIndexes = new SparseIntArray(this._length);
-        for (int i = this._length - 1, k = 0; i >= 0; i--, k++) {
-            startIndexes.put(k, this._startIndexes.get(i));
-            endIndexes.put(k, this._endIndexes.get(i));
-        }
-        return new FoldingRegions(startIndexes, endIndexes);*/
+  public void insertFirst(int startLineNumber, int endLineNumber, int indent) {
+    if (startLineNumber > IndentRange.MAX_LINE_NUMBER
+        || endLineNumber > IndentRange.MAX_LINE_NUMBER) {
+      return;
     }
+    int index = this._length;
+    this._startIndexes.put(index, startLineNumber);
+    this._endIndexes.put(index, endLineNumber);
+    this._length++;
+    /*if (indent < 1000) {
+        this._indentOccurrences.put(indent, (this._indentOccurrences.get(indent)) + 1);
+    }*/
+  }
+
+  public FoldingRegions toIndentRanges(Content model) throws Exception {
+    return new FoldingRegions(_startIndexes, _endIndexes);
+    /*
+    // reverse and create arrays of the exact length
+    SparseIntArray startIndexes = new SparseIntArray(this._length);
+    SparseIntArray endIndexes = new SparseIntArray(this._length);
+    for (int i = this._length - 1, k = 0; i >= 0; i--, k++) {
+        startIndexes.put(k, this._startIndexes.get(i));
+        endIndexes.put(k, this._endIndexes.get(i));
+    }
+    return new FoldingRegions(startIndexes, endIndexes);*/
+  }
 }

@@ -85,10 +85,7 @@ public class GrammarRegistry {
 
   @Nullable
   public IGrammar findGrammar(String scopeName) {
-
-    var grammar = registry.grammarForScopeName(scopeName);
-
-      return grammar;
+    return registry.grammarForScopeName(scopeName);
   }
 
   /**
@@ -111,7 +108,7 @@ public class GrammarRegistry {
   public LanguageConfiguration findLanguageConfiguration(String scopeName) {
     var languageConfiguration = languageConfigurationMap.get(scopeName);
 
-      return languageConfiguration;
+    return languageConfiguration;
   }
 
   public Pair<IGrammar, LanguageConfiguration> loadLanguageAndLanguageConfiguration(
@@ -160,7 +157,7 @@ public class GrammarRegistry {
       }
     }
 
-    IGrammar grammar;
+    final IGrammar grammar;
 
     if (!grammarDefinition.getEmbeddedLanguages().isEmpty()) {
       grammar = registry.addGrammar(grammarDefinition.getGrammar());
