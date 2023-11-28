@@ -20,9 +20,9 @@ import kotlin.system.exitProcess
 
 abstract class BaseActivity : AppCompatActivity() {
 
-  val permissionLauncher =
+  private val permissionLauncher =
     registerForActivityResult(StartActivityForResult()) {
-      if (!Environment.isExternalStorageManager()) showRequestPermissionDialog()
+      if (it.resultCode == RESULT_CODE_STORAGE && !Utils.isPermissionGaranted(this)) showRequestPermissionDialog()
     }
 
   open val navigationBarColor: Int
@@ -47,10 +47,10 @@ abstract class BaseActivity : AppCompatActivity() {
   override fun onRequestPermissionsResult(
     requestCode: Int,
     permissions: Array<String>,
-    grantResults: IntArray
+    grantResults: IntArray,
   ) {
     super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    if (requestCode == REQCODE_STORAGE) {
+    if (requestCode == RESULT_CODE_STORAGE) {
       if (!Utils.isPermissionGaranted(this)) showRequestPermissionDialog()
     }
   }
@@ -61,36 +61,38 @@ abstract class BaseActivity : AppCompatActivity() {
       .setTitle(R.string.file_access_title)
       .setMessage(R.string.file_access_message)
       .setPositiveButton(
-        R.string.grant_permission,
-        { _, _ ->
-          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        R.string.grant_permission
+      ) { _, _ ->
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+          if (Environment.isExternalStorageManager()) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.MANAGE_EXTERNAL_STORAGE), RESULT_CODE_STORAGE)
+          } else {
             val uri = Uri.parse("package:$packageName")
             permissionLauncher.launch(
               Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri)
             )
-          } else {
-            ActivityCompat.requestPermissions(
-              this,
-              arrayOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-              ),
-              REQCODE_STORAGE
-            )
           }
+        } else {
+          ActivityCompat.requestPermissions(
+            this,
+            arrayOf(
+              Manifest.permission.READ_EXTERNAL_STORAGE,
+              Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ),
+            RESULT_CODE_STORAGE
+          )
         }
-      )
+      }
       .setNegativeButton(
-        R.string.exit,
-        { _, _ ->
-          finishAffinity()
-          exitProcess(0)
-        }
-      )
+        R.string.exit
+      ) { _, _ ->
+        finishAffinity()
+        exitProcess(0)
+      }
       .show()
   }
 
   companion object {
-    const val REQCODE_STORAGE = 1009
+    const val RESULT_CODE_STORAGE = 1009
   }
 }
