@@ -22,26 +22,20 @@ import org.eclipse.tm4e.languageconfiguration.model.CommentRule
 object CommentSystem {
 
   fun addSingleComment(commentRule: CommentRule?, text: Content) {
-    commentRule ?: return
-    val comment = commentRule.lineComment ?: return
-
-    text.insert(text.cursor.leftLine, 0, comment)
+    text.insert(text.cursor.leftLine, 0, commentRule?.lineComment)
   }
 
   fun addBlockComment(commentRule: CommentRule?, text: Content) {
-    commentRule ?: return
-    val blockComment = commentRule.blockComment ?: return
-    val openPrefix = blockComment.open ?: return
-    val closePrefix = blockComment.close ?: return
+    val blockComment = commentRule?.blockComment
 
     val cursor = text.cursor
     if (cursor.isSelected) {
       text.batchEdit {
         // Insert multi-line comment at the beginning of the start line
-        it.insert(cursor.leftLine, cursor.leftColumn, openPrefix)
+        it.insert(cursor.leftLine, cursor.leftColumn, blockComment?.open)
 
         // Insert multi-line comment end at the end of the end line
-        it.insert(cursor.rightLine, cursor.rightColumn, closePrefix)
+        it.insert(cursor.rightLine, cursor.rightColumn, blockComment?.close)
       }
     }
   }
