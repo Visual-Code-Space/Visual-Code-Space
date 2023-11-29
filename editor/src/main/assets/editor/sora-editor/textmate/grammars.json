@@ -80,7 +80,8 @@
     "grammar": "editor/sora-editor/textmate/ini/syntaxes/ini.tmLanguage.json",
     "languageConfiguration": "editor/sora-editor/textmate/ini/ini.language-configuration.json",
     "fileExtensions": [
-      "ini"
+      "ini", "properties", "gitattributes",
+      "gitconfig", "gitmodules"
     ]
   },
   {
