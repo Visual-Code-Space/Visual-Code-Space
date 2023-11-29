@@ -1,92 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory
-        app:iconSpaceReserved="false"
-        app:title="@string/editor">
+  <PreferenceCategory
+    app:iconSpaceReserved="false"
+    app:title="@string/editor">
 
-        <Preference
-            app:iconSpaceReserved="false"
-            app:key="pref_font_size"
-            app:title="@string/pref_editor_textsize"
-            app:summary="@string/pref_editor_textsize_summary" />
+    <Preference
+      app:iconSpaceReserved="false"
+      app:key="pref_font_size"
+      app:title="@string/pref_editor_textsize"
+      app:summary="@string/pref_editor_textsize_summary" />
 
-        <Preference
-            app:iconSpaceReserved="false"
-            app:key="pref_editortabsize"
-            app:title="@string/pref_editor_tabsize"
-            app:summary="@string/pref_editor_tabsize_summary" />
+    <Preference
+      app:iconSpaceReserved="false"
+      app:key="pref_editortabsize"
+      app:title="@string/pref_editor_tabsize"
+      app:summary="@string/pref_editor_tabsize_summary" />
 
-        <Preference
-            app:iconSpaceReserved="false"
-            app:key="pref_editorfont"
-            app:title="@string/pref_editor_font"
-            app:summary="@string/pref_editor_font_summary" />
+    <Preference
+      app:iconSpaceReserved="false"
+      app:key="pref_editorfont"
+      app:title="@string/pref_editor_font"
+      app:summary="@string/pref_editor_font_summary" />
 
-        <SwitchPreferenceCompat
-            app:defaultValue="false"
-            app:iconSpaceReserved="false"
-            app:key="pref_stickyscroll"
-            app:title="@string/pref_editor_stickyscroll"
-            app:summary="@string/pref_editor_stickyscroll_summary" />
+    <SwitchPreferenceCompat
+      app:defaultValue="false"
+      app:iconSpaceReserved="false"
+      app:key="pref_stickyscroll"
+      app:title="@string/pref_editor_stickyscroll"
+      app:summary="@string/pref_editor_stickyscroll_summary" />
 
-        <SwitchPreferenceCompat
-            app:defaultValue="true"
-            app:iconSpaceReserved="false"
-            app:key="pref_fontligatures"
-            app:title="@string/pref_editor_fontligatures"
-            app:summary="@string/pref_editor_fontligatures_summary" />
+    <SwitchPreferenceCompat
+      app:defaultValue="true"
+      app:iconSpaceReserved="false"
+      app:key="pref_fontligatures"
+      app:title="@string/pref_editor_fontligatures"
+      app:summary="@string/pref_editor_fontligatures_summary" />
 
-        <SwitchPreferenceCompat
-            app:defaultValue="false"
-            app:iconSpaceReserved="false"
-            app:key="pref_wordwrap"
-            app:title="@string/pref_editor_wordwrap"
-            app:summary="@string/pref_editor_wordwrap_summary" />
+    <SwitchPreferenceCompat
+      app:defaultValue="false"
+      app:iconSpaceReserved="false"
+      app:key="pref_wordwrap"
+      app:title="@string/pref_editor_wordwrap"
+      app:summary="@string/pref_editor_wordwrap_summary" />
 
-        <SwitchPreferenceCompat
-            app:defaultValue="true"
-            app:iconSpaceReserved="false"
-            app:key="pref_linenumbers"
-            app:title="@string/pref_editor_linenumbers"
-            app:summary="@string/pref_editor_linenumbers_summary" />
+    <SwitchPreferenceCompat
+      app:defaultValue="true"
+      app:iconSpaceReserved="false"
+      app:key="pref_linenumbers"
+      app:title="@string/pref_editor_linenumbers"
+      app:summary="@string/pref_editor_linenumbers_summary" />
 
-        <SwitchPreferenceCompat
-            app:defaultValue="false"
-            app:iconSpaceReserved="false"
-            app:key="pref_usetab"
-            app:title="@string/pref_editor_use_tab"
-            app:summary="@string/pref_editor_use_tab_summary" />
+    <SwitchPreferenceCompat
+      app:defaultValue="false"
+      app:iconSpaceReserved="false"
+      app:key="pref_usetab"
+      app:title="@string/pref_editor_use_tab"
+      app:summary="@string/pref_editor_use_tab_summary" />
 
-        <SwitchPreferenceCompat
-            app:defaultValue="true"
-            app:iconSpaceReserved="false"
-            app:key="pref_deleteemptylinefast"
-            app:title="@string/pref_editor_deleteemptylinefast"
-            app:summary="@string/pref_editor_deleteemptylinefast_summary" />
+    <SwitchPreferenceCompat
+      app:defaultValue="true"
+      app:iconSpaceReserved="false"
+      app:key="pref_deleteemptylinefast"
+      app:title="@string/pref_editor_deleteemptylinefast"
+      app:summary="@string/pref_editor_deleteemptylinefast_summary" />
 
-        <SwitchPreferenceCompat
-            app:defaultValue="true"
-            app:iconSpaceReserved="false"
-            app:key="pref_deletetabs"
-            app:title="@string/pref_editor_deletetabs"
-            app:summary="@string/pref_editor_deletetabs_summary" />
+    <SwitchPreferenceCompat
+      app:defaultValue="true"
+      app:iconSpaceReserved="false"
+      app:key="pref_deletetabs"
+      app:title="@string/pref_editor_deletetabs"
+      app:summary="@string/pref_editor_deletetabs_summary" />
 
-    </PreferenceCategory>
+  </PreferenceCategory>
 
-    <PreferenceCategory
-        app:iconSpaceReserved="false"
-        app:title="@string/tabs">
+  <PreferenceCategory
+    app:iconSpaceReserved="false"
+    app:title="@string/tabs">
 
-        <SwitchPreferenceCompat
-            app:defaultValue="false"
-            app:iconSpaceReserved="false"
-            app:key="pref_auto_save"
-            app:title="@string/pref_editor_auto_save"
-            app:summary="@string/pref_editor_auto_save_summary" />
+    <SwitchPreferenceCompat
+      app:defaultValue="false"
+      app:iconSpaceReserved="false"
+      app:key="pref_auto_save"
+      app:title="@string/pref_editor_auto_save"
+      app:summary="@string/pref_editor_auto_save_summary" />
 
-    </PreferenceCategory>
+  </PreferenceCategory>
 
 </PreferenceScreen>

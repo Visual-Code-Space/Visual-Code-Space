@@ -1,137 +1,137 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content">
+
+  <View
+    android:id="@+id/top_divider"
+    android:layout_width="0dp"
+    android:layout_height="0.5px"
+    android:background="?attr/colorOutline"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent" />
+
+  <EditText
+    android:id="@+id/search_text"
+    android:layout_width="0dp"
     android:layout_height="wrap_content"
-    android:layout_width="match_parent">
+    android:layout_marginEnd="2dp"
+    android:hint="@string/search"
+    android:singleLine="true"
+    android:layout_marginStart="2dp"
+    android:inputType="text"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toStartOf="@+id/search_options"
+    app:layout_constraintTop_toBottomOf="@+id/top_divider" />
 
-    <View
-        android:layout_height="0.5px"
-        android:layout_width="0dp"
-        android:background="?attr/colorOutline"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:id="@+id/top_divider" />
+  <androidx.appcompat.widget.AppCompatImageButton
+    android:id="@+id/search_options"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:src="@drawable/ic_menu"
+    android:layout_marginEnd="2dp"
+    android:background="?attr/selectableItemBackgroundBorderless"
+    android:padding="3dp"
+    android:layout_marginStart="2dp"
+    app:layout_constraintTop_toTopOf="@+id/search_text"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintBottom_toBottomOf="@+id/search_text" />
 
-    <EditText
-        android:layout_height="wrap_content"
-        android:layout_width="0dp"
-        android:layout_marginEnd="2dp"
-        android:hint="@string/search"
-        app:layout_constraintStart_toStartOf="parent"
-        android:singleLine="true"
-        app:layout_constraintEnd_toStartOf="@+id/search_options"
+  <EditText
+    android:id="@+id/replace_text"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="2dp"
+    android:hint="@string/replace"
+    android:singleLine="true"
+    android:layout_marginStart="2dp"
+    android:inputType="text"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/search_text" />
+
+  <View
+    android:id="@+id/bottom_divider"
+    android:layout_width="0dp"
+    android:layout_height="0.5px"
+    android:layout_marginEnd="5dp"
+    android:background="?attr/colorOutline"
+    android:layout_marginStart="5dp"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/replace_text" />
+
+  <HorizontalScrollView
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:scrollbars="none"
+    android:layout_marginEnd="2dp"
+    android:layout_marginStart="2dp"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/bottom_divider">
+
+    <LinearLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal">
+
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/goto_last"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:textAllCaps="true"
         android:layout_marginStart="2dp"
-        app:layout_constraintTop_toBottomOf="@+id/top_divider"
-        android:inputType="text"
-        android:id="@+id/search_text" />
+        android:layout_weight="1.0"
+        android:text="@string/previous"
+        style="@style/Widget.Material3.Button.TextButton" />
 
-    <androidx.appcompat.widget.AppCompatImageButton
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:src="@drawable/ic_menu"
-        android:layout_marginEnd="2dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        app:layout_constraintTop_toTopOf="@+id/search_text"
-        android:padding="3dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="@+id/search_text"
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/goto_next"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:textAllCaps="true"
         android:layout_marginStart="2dp"
-        android:id="@+id/search_options" />
+        android:layout_weight="1.0"
+        android:text="@string/next"
+        style="@style/Widget.Material3.Button.TextButton" />
 
-    <EditText
-        android:layout_height="wrap_content"
-        android:layout_width="0dp"
-        android:layout_marginEnd="2dp"
-        android:hint="@string/replace"
-        app:layout_constraintStart_toStartOf="parent"
-        android:singleLine="true"
-        app:layout_constraintEnd_toEndOf="parent"
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/replace"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:textAllCaps="true"
         android:layout_marginStart="2dp"
-        app:layout_constraintTop_toBottomOf="@+id/search_text"
-        android:inputType="text"
-        android:id="@+id/replace_text" />
+        android:layout_weight="1.0"
+        android:text="@string/replace"
+        style="@style/Widget.Material3.Button.TextButton" />
 
-    <View
-        android:layout_height="0.5px"
-        android:layout_width="0dp"
-        android:layout_marginEnd="5dp"
-        android:background="?attr/colorOutline"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="5dp"
-        app:layout_constraintTop_toBottomOf="@+id/replace_text"
-        android:id="@+id/bottom_divider" />
-
-    <HorizontalScrollView
-        android:layout_height="wrap_content"
-        android:layout_width="0dp"
-        android:scrollbars="none"
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/replace_all"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
         android:layout_marginEnd="2dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textAllCaps="true"
         android:layout_marginStart="2dp"
-        app:layout_constraintTop_toBottomOf="@+id/bottom_divider">
+        android:layout_weight="1.0"
+        android:text="@string/replace_all"
+        style="@style/Widget.Material3.Button.TextButton" />
 
-        <LinearLayout
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:orientation="horizontal">
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/close"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:textAllCaps="true"
+        android:layout_marginStart="2dp"
+        android:layout_weight="1.0"
+        android:text="@string/btn_close"
+        style="@style/Widget.Material3.Button.TextButton" />
 
-            <com.google.android.material.button.MaterialButton
-                android:layout_height="45dp"
-                android:layout_width="match_parent"
-                android:textAllCaps="true"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_marginStart="2dp"
-                android:layout_weight="1.0"
-                android:id="@+id/goto_last"
-                android:text="@string/previous" />
+    </LinearLayout>
 
-            <com.google.android.material.button.MaterialButton
-                android:layout_height="45dp"
-                android:layout_width="match_parent"
-                android:textAllCaps="true"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_marginStart="2dp"
-                android:layout_weight="1.0"
-                android:id="@+id/goto_next"
-                android:text="@string/next" />
-
-            <com.google.android.material.button.MaterialButton
-                android:layout_height="45dp"
-                android:layout_width="match_parent"
-                android:textAllCaps="true"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_marginStart="2dp"
-                android:layout_weight="1.0"
-                android:id="@+id/replace"
-                android:text="@string/replace" />
-
-            <com.google.android.material.button.MaterialButton
-                android:layout_height="45dp"
-                android:layout_width="match_parent"
-                android:layout_marginEnd="2dp"
-                android:textAllCaps="true"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_marginStart="2dp"
-                android:layout_weight="1.0"
-                android:id="@+id/replace_all"
-                android:text="@string/replace_all" />
-
-            <com.google.android.material.button.MaterialButton
-                android:layout_height="45dp"
-                android:layout_width="match_parent"
-                android:textAllCaps="true"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_marginStart="2dp"
-                android:layout_weight="1.0"
-                android:id="@+id/close"
-                android:text="@string/btn_close" />
-
-        </LinearLayout>
-
-    </HorizontalScrollView>
+  </HorizontalScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

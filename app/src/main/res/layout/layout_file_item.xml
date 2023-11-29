@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
   android:layout_margin="2dp"
-  android:foreground="@drawable/border_ripple_effect">
+  android:foreground="@drawable/ripple_effect">
 
   <ImageView
     android:id="@+id/icon"
@@ -13,8 +14,8 @@
     android:layout_height="25dp"
     android:layout_centerVertical="true"
     android:layout_marginStart="8dp"
-    app:tint="?attr/colorSecondaryVariant"
-    android:importantForAccessibility="no" />
+    android:importantForAccessibility="no"
+    app:tint="?attr/colorSecondaryVariant" />
 
   <TextView
     android:id="@+id/name"

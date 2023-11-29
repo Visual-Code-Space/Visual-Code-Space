@@ -1,51 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory
-        app:iconSpaceReserved="false"
-        app:title="@string/configure">
+  <PreferenceCategory
+    app:iconSpaceReserved="false"
+    app:title="@string/configure">
 
-        <Preference
-            app:key="pref_general"
-            app:title="@string/general"
-            app:summary="@string/general_summary"
-            app:iconSpaceReserved="false" />
+    <Preference
+      app:key="pref_general"
+      app:title="@string/general"
+      app:summary="@string/general_summary"
+      app:iconSpaceReserved="false" />
 
-        <Preference
-            app:key="pref_editor"
-            app:title="@string/editor"
-            app:summary="@string/editor_summary"
-            app:iconSpaceReserved="false" />
+    <Preference
+      app:key="pref_editor"
+      app:title="@string/editor"
+      app:summary="@string/editor_summary"
+      app:iconSpaceReserved="false" />
 
-        <Preference
-            app:key="pref_file"
-            app:title="@string/file"
-            app:summary="@string/file_summary"
-            app:iconSpaceReserved="false" />
+    <Preference
+      app:key="pref_file"
+      app:title="@string/file"
+      app:summary="@string/file_summary"
+      app:iconSpaceReserved="false" />
 
-        <Preference
-            app:key="pref_git"
-            app:title="@string/git"
-            app:summary="@string/git_summary"
-            app:iconSpaceReserved="false" />
-    </PreferenceCategory>
+    <Preference
+      app:key="pref_git"
+      app:title="@string/git"
+      app:summary="@string/git_summary"
+      app:iconSpaceReserved="false" />
 
-    <PreferenceCategory
-        app:iconSpaceReserved="false"
-        app:title="@string/about">
+  </PreferenceCategory>
 
-        <Preference
-            app:icon="@drawable/ic_github"
-            app:key="github"
-            app:summary="@string/pref_github_summary"
-            app:title="GitHub" />
+  <PreferenceCategory
+    app:iconSpaceReserved="false"
+    app:title="@string/about">
 
-        <Preference
-            app:icon="@drawable/ic_license"
-            app:key="licenses"
-            app:title="Open source licenses" />
-    </PreferenceCategory>
+    <Preference
+      app:icon="@drawable/ic_github"
+      app:key="github"
+      app:summary="@string/pref_github_summary"
+      app:title="GitHub" />
+
+    <Preference
+      app:icon="@drawable/ic_license"
+      app:key="licenses"
+      app:title="Open source licenses" />
+
+  </PreferenceCategory>
 
 </PreferenceScreen>

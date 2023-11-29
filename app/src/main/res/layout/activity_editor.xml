@@ -1,91 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.drawerlayout.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_height="match_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:id="@+id/drawer_layout"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+
+  <androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/main"
     android:layout_width="match_parent"
-    android:id="@+id/drawer_layout">
+    android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_height="match_parent"
+    <com.google.android.material.appbar.AppBarLayout
+      android:id="@+id/app_bar"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      app:layout_behavior="com.google.android.material.appbar.AppBarLayout$Behavior"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintEnd_toEndOf="parent">
+
+      <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:id="@+id/main">
+        android:layout_height="wrap_content" />
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:layout_height="wrap_content"
-            android:layout_width="0dp"
-            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$Behavior"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:id="@+id/app_bar">
-
-            <com.google.android.material.appbar.MaterialToolbar
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent"
-                android:id="@+id/toolbar" />
-
-            <com.google.android.material.tabs.TabLayout
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent"
-                app:tabMode="scrollable"
-                app:tabGravity="start"
-                android:id="@+id/tabs" />
-
-        </com.google.android.material.appbar.AppBarLayout>
-
-        <ViewFlipper
-            android:layout_height="0dp"
-            android:layout_width="0dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/symbol_input"
-            app:layout_constraintTop_toBottomOf="@+id/app_bar"
-            android:id="@+id/container" />
-
-        <com.raredev.vcspace.ui.SymbolInputView
-            android:layout_height="45dp"
-            android:layout_width="0dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/container"
-            android:id="@+id/symbol_input" />
-
-        <View
-            android:layout_height="0.5dp"
-            android:layout_width="0dp"
-            android:background="?attr/colorOutline"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/symbol_input"
-            android:id="@+id/bottom_divider" />
-
-        <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-            app:layout_constraintStart_toStartOf="parent"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:text="@string/no_file_opened"
-            android:id="@+id/no_files" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <com.google.android.material.navigation.NavigationView
-        android:layout_height="match_parent"
+      <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabs"
         android:layout_width="match_parent"
-        android:layout_gravity="start">
+        android:layout_height="wrap_content"
+        app:tabMode="scrollable"
+        app:tabGravity="start" />
 
-        <androidx.fragment.app.FragmentContainerView
-            android:layout_height="match_parent"
-            android:layout_width="match_parent"
-            android:name="com.raredev.vcspace.fragments.workspace.WorkspaceFragment"
-            android:id="@+id/fragment_file_explorer" />
+    </com.google.android.material.appbar.AppBarLayout>
 
-    </com.google.android.material.navigation.NavigationView>
+    <ViewFlipper
+      android:id="@+id/container"
+      android:layout_width="0dp"
+      android:layout_height="0dp"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintBottom_toTopOf="@+id/symbol_input"
+      app:layout_constraintTop_toBottomOf="@+id/app_bar" />
+
+    <com.raredev.vcspace.ui.SymbolInputView
+      android:id="@+id/symbol_input"
+      android:layout_width="0dp"
+      android:layout_height="45dp"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/container" />
+
+    <View
+      android:id="@+id/bottom_divider"
+      android:layout_width="0dp"
+      android:layout_height="0.5dp"
+      android:background="?attr/colorOutline"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintBottom_toTopOf="@id/symbol_input" />
+
+    <TextView
+      android:id="@+id/no_files"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+      android:textSize="14sp"
+      android:text="@string/no_file_opened"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintBottom_toBottomOf="parent" />
+
+  </androidx.constraintlayout.widget.ConstraintLayout>
+
+  <com.google.android.material.navigation.NavigationView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="start">
+
+    <androidx.fragment.app.FragmentContainerView
+      android:id="@+id/fragment_file_explorer"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:name="com.raredev.vcspace.fragments.workspace.WorkspaceFragment" />
+
+  </com.google.android.material.navigation.NavigationView>
 
 </androidx.drawerlayout.widget.DrawerLayout>

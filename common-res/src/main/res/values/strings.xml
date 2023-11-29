@@ -1,205 +1,205 @@
 <resources>
-    <!-- English Language -->
-    <string name="app_name">Visual Code Space</string>
-    <string name="welcome">Welcome</string>
-    <string name="open">Open</string>
-    <string name="remove">Remove</string>
-    <string name="info">Info</string>
-    <string name="close">Close this</string>
-    <string name="close_others">Close others</string>
-    <string name="close_all">Close all</string>
-    <string name="close_app">Close App</string>
-    <string name="pin">Pin</string>
-    <string name="unpin">Unpin</string>
-    <string name="comment_line">Comment line</string>
-    <string name="uncomment_line">Uncomment line</string>
-    <string name="long_select">Long select</string>
-    <string name="select_all">Select all</string>
-    <string name="unselect_all">Unselect all</string>
-    <string name="copy">Copy</string>
-    <string name="cut">Cut</string>
-    <string name="paste">Paste</string>
-    <string name="no_file_opened">No file opened</string>
-    <string name="refresh">Refresh</string>
-    <string name="loading">Loading...</string>
-    <string name="empty">Empty</string>
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
-    <string name="url_copied">URL copied to clipboard.</string>
-    <string name="exit">Exit</string>
-    <string name="back">Back</string>
-    <string name="forward">Forward</string>
-    <string name="zooming">Zooming</string>
-    <string name="desktop_mode">Desktop mode</string>
-    <string name="open_in_browser">Open in Browser...</string>
-    <string name="empty_folder">Empty folder</string>
-    <string name="discard_changes">Are you sure you want to discard your changes?</string>
-    <string name="unsaved_files_title">Unsaved files</string>
-    <string name="unsaved_files_message">Your changes will be lost if you don\'t save them. unsaved files: %1$s</string>
-    <string name="save_and_close">Save &amp; Close</string>
-    <string name="terminal">Terminal</string>
-    <string name="please_wait">Please wait.</string>
+  <!-- English Language -->
+  <string name="app_name">Visual Code Space</string>
+  <string name="welcome">Welcome</string>
+  <string name="open">Open</string>
+  <string name="remove">Remove</string>
+  <string name="info">Info</string>
+  <string name="close">Close this</string>
+  <string name="close_others">Close others</string>
+  <string name="close_all">Close all</string>
+  <string name="close_app">Close App</string>
+  <string name="pin">Pin</string>
+  <string name="unpin">Unpin</string>
+  <string name="comment_line">Comment line</string>
+  <string name="uncomment_line">Uncomment line</string>
+  <string name="long_select">Long select</string>
+  <string name="select_all">Select all</string>
+  <string name="unselect_all">Unselect all</string>
+  <string name="copy">Copy</string>
+  <string name="cut">Cut</string>
+  <string name="paste">Paste</string>
+  <string name="no_file_opened">No file opened</string>
+  <string name="refresh">Refresh</string>
+  <string name="loading">Loading...</string>
+  <string name="empty">Empty</string>
+  <string name="yes">Yes</string>
+  <string name="no">No</string>
+  <string name="url_copied">URL copied to clipboard.</string>
+  <string name="exit">Exit</string>
+  <string name="back">Back</string>
+  <string name="forward">Forward</string>
+  <string name="zooming">Zooming</string>
+  <string name="desktop_mode">Desktop mode</string>
+  <string name="open_in_browser">Open in Browser...</string>
+  <string name="empty_folder">Empty folder</string>
+  <string name="discard_changes">Are you sure you want to discard your changes?</string>
+  <string name="unsaved_files_title">Unsaved files</string>
+  <string name="unsaved_files_message">Your changes will be lost if you don\'t save them. unsaved files: %1$s</string>
+  <string name="save_and_close">Save &amp; Close</string>
+  <string name="terminal">Terminal</string>
+  <string name="please_wait">Please wait.</string>
 
-    <!-- Menus Strings -->
-    <string name="menu_format">Format</string>
-    <string name="menu_search">Search</string>
-    <string name="menu_reload">Reload</string>
-    <string name="menu_settings">Settings</string>
-    <string name="menu_undo">Undo</string>
-    <string name="menu_redo">Redo</string>
-    <string name="menu_edit">Edit</string>
-    <string name="menu_new_file">New file</string>
-    <string name="menu_open_file">Open file</string>
-    <string name="menu_save">Save</string>
-    <string name="menu_save_as">Save as</string>
-    <string name="menu_save_all">Save all</string>
-    <string name="menu_open_drawer">Open Drawer</string>
+  <!-- Menus Strings -->
+  <string name="menu_format">Format</string>
+  <string name="menu_search">Search</string>
+  <string name="menu_reload">Reload</string>
+  <string name="menu_settings">Settings</string>
+  <string name="menu_undo">Undo</string>
+  <string name="menu_redo">Redo</string>
+  <string name="menu_edit">Edit</string>
+  <string name="menu_new_file">New file</string>
+  <string name="menu_open_file">Open file</string>
+  <string name="menu_save">Save</string>
+  <string name="menu_save_as">Save as</string>
+  <string name="menu_save_all">Save all</string>
+  <string name="menu_open_drawer">Open Drawer</string>
 
-    <!-- Errors Strings -->
-    <string name="error">Error</string>
+  <!-- Errors Strings -->
+  <string name="error">Error</string>
 
-    <!-- Buttons And Titles -->
-    <string name="saved">Saved</string>
-    <string name="saved_files">Saved files</string>
-    <string name="existing_file">Existing file!</string>
-    <string name="delete">Delete</string>
-    <string name="delete_message">Are you sure you want to delete \"%1$s\"?</string>
-    <string name="deleted_message">Deleted</string>
-    <string name="deleting">Deleting...</string>
-    <string name="create">Create</string>
-    <string name="cancel">Cancel</string>
-    <string name="file">File</string>
-    <string name="folder">Folder</string>
-    <string name="rename">Rename</string>
-    <string name="renamed_message">File Renamed</string>
-    <string name="copy_path">Copy path</string>
-    <string name="rename_hint">Enter a new name:</string>
-    <string name="password_hint">Password (Token)</string>
-    <string name="username_hint">Username</string>
-    <string name="open_folder">Open folder</string>
-    <string name="open_recent">Open recent</string>
-    <string name="file_name_hint">File name:</string>
-    <string name="folder_name_hint">Folder name:</string>
-    <string name="search">Search</string>
-    <string name="reset">Reset</string>
-    <string name="previous">Previous</string>
-    <string name="next">Next</string>
-    <string name="replace">Replace</string>
-    <string name="replace_all">Replace all</string>
-    <string name="btn_close">Close</string>
-    <string name="replacing_texts">Replacing texts…</string>
-    <string name="ignore_letter_case">Ignore letter case</string>
-    <string name="use_regex">Use regex</string>
-    <string name="new_file_title">New file</string>
-    <string name="new_folder_title">New folder</string>
-    <string name="file_access_title">File Access Permission</string>
-    <string name="file_access_message">This app needs permission to access files in your device\'s storage to function properly. Please grant permission to continue.</string>
-    <string name="grant_permission">Grant Permission</string>
-    <string name="snippets">Snippets</string>
-    <string name="enter_input">Enter input</string>
-    <string name="enter_language">Enter language</string>
-    <string name="execute">Execute</string>
-    <string name="output">Output</string>
-    <string name="file_explorer">File Explorer</string>
-    <string name="last_modified">Last modified: %1$s</string>
+  <!-- Buttons And Titles -->
+  <string name="saved">Saved</string>
+  <string name="saved_files">Saved files</string>
+  <string name="existing_file">Existing file!</string>
+  <string name="delete">Delete</string>
+  <string name="delete_message">Are you sure you want to delete \"%1$s\"?</string>
+  <string name="deleted_message">Deleted</string>
+  <string name="deleting">Deleting...</string>
+  <string name="create">Create</string>
+  <string name="cancel">Cancel</string>
+  <string name="file">File</string>
+  <string name="folder">Folder</string>
+  <string name="rename">Rename</string>
+  <string name="renamed_message">File Renamed</string>
+  <string name="copy_path">Copy path</string>
+  <string name="rename_hint">Enter a new name:</string>
+  <string name="password_hint">Password (Token)</string>
+  <string name="username_hint">Username</string>
+  <string name="open_folder">Open folder</string>
+  <string name="open_recent">Open recent</string>
+  <string name="file_name_hint">File name:</string>
+  <string name="folder_name_hint">Folder name:</string>
+  <string name="search">Search</string>
+  <string name="reset">Reset</string>
+  <string name="previous">Previous</string>
+  <string name="next">Next</string>
+  <string name="replace">Replace</string>
+  <string name="replace_all">Replace all</string>
+  <string name="btn_close">Close</string>
+  <string name="replacing_texts">Replacing texts…</string>
+  <string name="ignore_letter_case">Ignore letter case</string>
+  <string name="use_regex">Use regex</string>
+  <string name="new_file_title">New file</string>
+  <string name="new_folder_title">New folder</string>
+  <string name="file_access_title">File Access Permission</string>
+  <string name="file_access_message">This app needs permission to access files in your device\'s storage to function properly. Please grant permission to continue.</string>
+  <string name="grant_permission">Grant Permission</string>
+  <string name="snippets">Snippets</string>
+  <string name="enter_input">Enter input</string>
+  <string name="enter_language">Enter language</string>
+  <string name="execute">Execute</string>
+  <string name="output">Output</string>
+  <string name="file_explorer">File Explorer</string>
+  <string name="last_modified">Last modified: %1$s</string>
 
-    <!-- Git -->
-    <string name="git">Git</string>
-    <string name="create_token_message">Create a GitHub token.</string>
-    <string name="github_token">GitHub token</string>
-    <string name="initialize_repo">Initialize Repo</string>
-    <string name="no_open_repository">No open repository</string>
-    <string name="clone">Clone</string>
-    <string name="clone_repo">Clone repository</string>
-    <string name="clone_to_path">Clone to path</string>
-    <string name="clone_url_hint">Repository URL</string>
-    <string name="successfully_cloned">Successfully cloned</string>
-    <string name="clone_error_empty_url">Repository URL cannot be empty</string>
+  <!-- Git -->
+  <string name="git">Git</string>
+  <string name="create_token_message">Create a GitHub token.</string>
+  <string name="github_token">GitHub token</string>
+  <string name="initialize_repo">Initialize Repo</string>
+  <string name="no_open_repository">No open repository</string>
+  <string name="clone">Clone</string>
+  <string name="clone_repo">Clone repository</string>
+  <string name="clone_to_path">Clone to path</string>
+  <string name="clone_url_hint">Repository URL</string>
+  <string name="successfully_cloned">Successfully cloned</string>
+  <string name="clone_error_empty_url">Repository URL cannot be empty</string>
 
-    <string name="branch_name">BRANCH NAME</string>
-    <string name="remote_name">REMOTE NAME</string>
-    <string name="remote">REMOTE</string>
-    <string name="branch">BRANCH</string>
-    <string name="merge_changes_from">MERGE CHANGES FROM</string>
-    <string name="into">INTO</string>
-    <string name="description">DESCRIPTION</string>
-    <string name="title">TITLE</string>
-    <string name="pull_request_description">Pull Request Description</string>
-    <string name="create_as_draft">Create as draft</string>
-    <string name="initializing">Initializing...</string>
-    <string name="initializing_message">Initializing git repository please wait.</string>
+  <string name="branch_name">BRANCH NAME</string>
+  <string name="remote_name">REMOTE NAME</string>
+  <string name="remote">REMOTE</string>
+  <string name="branch">BRANCH</string>
+  <string name="merge_changes_from">MERGE CHANGES FROM</string>
+  <string name="into">INTO</string>
+  <string name="description">DESCRIPTION</string>
+  <string name="title">TITLE</string>
+  <string name="pull_request_description">Pull Request Description</string>
+  <string name="create_as_draft">Create as draft</string>
+  <string name="initializing">Initializing...</string>
+  <string name="initializing_message">Initializing git repository please wait.</string>
 
-    <!-- Settings String -->
-    <string name="configure">Configure</string>
+  <!-- Settings String -->
+  <string name="configure">Configure</string>
 
-    <!-- General -->
-    <string name="general">General</string>
-    <string name="general_summary">General app settings</string>
-    <string name="aparence">Aparence</string>
+  <!-- General -->
+  <string name="general">General</string>
+  <string name="general_summary">General app settings</string>
+  <string name="aparence">Aparence</string>
 
-    <string name="title_theme">Theme</string>
-    <string name="pref_theme_summary">Choose theme for app</string>
-    <string name="pref_theme_system">System theme</string>
-    <string name="pref_theme_dark">Dark theme</string>
-    <string name="pref_theme_light">Light theme</string>
+  <string name="title_theme">Theme</string>
+  <string name="pref_theme_summary">Choose theme for app</string>
+  <string name="pref_theme_system">System theme</string>
+  <string name="pref_theme_dark">Dark theme</string>
+  <string name="pref_theme_light">Light theme</string>
 
-    <string name="pref_materialyou">Material You</string>
-    <string name="pref_materialyou_summary">If activated, the application will follow the dynamic theme of the device.</string>
+  <string name="pref_materialyou">Material You</string>
+  <string name="pref_materialyou_summary">If activated, the application will follow the dynamic theme of the device.</string>
 
-    <!-- Editor -->
-    <string name="editor">Editor</string>
-    <string name="editor_summary">Configure Editor</string>
+  <!-- Editor -->
+  <string name="editor">Editor</string>
+  <string name="editor_summary">Configure Editor</string>
 
-    <string name="pref_editor_textsize">Font Size</string>
-    <string name="pref_editor_textsize_summary">Font size of the editor.</string>
-    <string name="pref_editor_lineheight">Line height</string>
-    <string name="pref_editor_lineheight_summary">Sets the height of the editor line.</string>
-    <string name="pref_editor_tabsize">TAB Size</string>
-    <string name="pref_editor_tabsize_summary">Specifies the space size for TAB</string>
-    <string name="pref_editor_font">Editor font</string>
-    <string name="pref_editor_font_summary">Change font of editor and shortcut bar.</string>
-    <string name="pref_font_firacode">Fira Code Regular</string>
-    <string name="pref_font_jetbrains">JetBrains Mono</string>
-    <string name="pref_editor_stickyscroll">Sticky scroll</string>
-    <string name="pref_editor_stickyscroll_summary">Shows the nested current scopes during the scroll at the top of the editor.</string>
-    <string name="pref_editor_fontligatures">Font ligatures</string>
-    <string name="pref_editor_fontligatures_summary">Enable ligatures on special characters.</string>
-    <string name="pref_editor_wordwrap">Word wrap</string>
-    <string name="pref_editor_wordwrap_summary">If activated, it will remove the horizontal scroll of the editor.</string>
-    <string name="pref_editor_linenumbers">Line Numbers</string>
-    <string name="pref_editor_linenumbers_summary">Display the line numbers to the left of the code editor.</string>
-    <string name="pref_editor_use_tab">Use tab</string>
-    <string name="pref_editor_use_tab_summary">Use tabs(\\t) instead of spaces</string>
-    <string name="pref_editor_deleteemptylinefast">Delete empty lines on backspace</string>
-    <string name="pref_editor_deleteemptylinefast_summary">If the current line has only spaces it will be deleted quickly.</string>
-    <string name="pref_editor_deletetabs">Delete tabs on backspace</string>
-    <string name="pref_editor_deletetabs_summary">If enabled deletes tabs quickly.</string>
-    <string name="pref_editor_file_path">File path</string>
-    <string name="pref_editor_file_path_summary">Show selected file path below tab.</string>
-    <string name="pref_editor_auto_save">Auto save</string>
-    <string name="pref_editor_auto_save_summary">Automatically saves your work, preventing data loss and saving time.</string>
+  <string name="pref_editor_textsize">Font Size</string>
+  <string name="pref_editor_textsize_summary">Font size of the editor.</string>
+  <string name="pref_editor_lineheight">Line height</string>
+  <string name="pref_editor_lineheight_summary">Sets the height of the editor line.</string>
+  <string name="pref_editor_tabsize">TAB Size</string>
+  <string name="pref_editor_tabsize_summary">Specifies the space size for TAB</string>
+  <string name="pref_editor_font">Editor font</string>
+  <string name="pref_editor_font_summary">Change font of editor and shortcut bar.</string>
+  <string name="pref_font_firacode">Fira Code Regular</string>
+  <string name="pref_font_jetbrains">JetBrains Mono</string>
+  <string name="pref_editor_stickyscroll">Sticky scroll</string>
+  <string name="pref_editor_stickyscroll_summary">Shows the nested current scopes during the scroll at the top of the editor.</string>
+  <string name="pref_editor_fontligatures">Font ligatures</string>
+  <string name="pref_editor_fontligatures_summary">Enable ligatures on special characters.</string>
+  <string name="pref_editor_wordwrap">Word wrap</string>
+  <string name="pref_editor_wordwrap_summary">If activated, it will remove the horizontal scroll of the editor.</string>
+  <string name="pref_editor_linenumbers">Line Numbers</string>
+  <string name="pref_editor_linenumbers_summary">Display the line numbers to the left of the code editor.</string>
+  <string name="pref_editor_use_tab">Use tab</string>
+  <string name="pref_editor_use_tab_summary">Use tabs(\\t) instead of spaces</string>
+  <string name="pref_editor_deleteemptylinefast">Delete empty lines on backspace</string>
+  <string name="pref_editor_deleteemptylinefast_summary">If the current line has only spaces it will be deleted quickly.</string>
+  <string name="pref_editor_deletetabs">Delete tabs on backspace</string>
+  <string name="pref_editor_deletetabs_summary">If enabled deletes tabs quickly.</string>
+  <string name="pref_editor_file_path">File path</string>
+  <string name="pref_editor_file_path_summary">Show selected file path below tab.</string>
+  <string name="pref_editor_auto_save">Auto save</string>
+  <string name="pref_editor_auto_save_summary">Automatically saves your work, preventing data loss and saving time.</string>
 
-    <string name="tabs">Tabs</string>
+  <string name="tabs">Tabs</string>
 
-    <!-- File Settings -->
-    <string name="file_summary">Configure how files are handled</string>
+  <!-- File Settings -->
+  <string name="file_summary">Configure how files are handled</string>
 
-    <string name="codification">Codification</string>
+  <string name="codification">Codification</string>
 
-    <string name="pref_encoding_for_opening">Encoding to open file</string>
-    <string name="pref_encoding_for_opening_summary">Specifies the encoding a file needs to be in order to open it.</string>
+  <string name="pref_encoding_for_opening">Encoding to open file</string>
+  <string name="pref_encoding_for_opening_summary">Specifies the encoding a file needs to be in order to open it.</string>
 
-    <string name="file_manager">File Manager</string>
+  <string name="file_manager">File Manager</string>
 
-    <string name="pref_show_hidden_files">Show hidden files</string>
-    <string name="pref_show_hidden_files_summary">Files and folders that start with a dot will appear.</string>
+  <string name="pref_show_hidden_files">Show hidden files</string>
+  <string name="pref_show_hidden_files_summary">Files and folders that start with a dot will appear.</string>
 
-    <string name="git_summary">Configure Git</string>
+  <string name="git_summary">Configure Git</string>
 
-    <string name="pref_git_credentials">Credentials</string>
-    <string name="pref_git_credentials_summary">Set up your GitHub credentials</string>
+  <string name="pref_git_credentials">Credentials</string>
+  <string name="pref_git_credentials_summary">Set up your GitHub credentials</string>
 
-    <string name="about">About</string>
+  <string name="about">About</string>
 
-    <string name="pref_github_summary">VCSpace is open source!</string>
+  <string name="pref_github_summary">VCSpace is open source!</string>
 </resources>
