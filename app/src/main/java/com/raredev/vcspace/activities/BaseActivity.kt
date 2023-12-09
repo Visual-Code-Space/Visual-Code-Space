@@ -22,7 +22,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
   private val permissionLauncher =
     registerForActivityResult(StartActivityForResult()) {
-      if (it.resultCode == RESULT_CODE_STORAGE && !Utils.isPermissionGaranted(this)) showRequestPermissionDialog()
+      if (!Environment.isExternalStorageManager()) showRequestPermissionDialog()
     }
 
   open val navigationBarColor: Int
@@ -50,7 +50,7 @@ abstract class BaseActivity : AppCompatActivity() {
     grantResults: IntArray
   ) {
     super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    if (requestCode == RESULT_CODE_STORAGE) {
+    if (requestCode == REQCODE_STORAGE) {
       if (!Utils.isPermissionGaranted(this)) showRequestPermissionDialog()
     }
   }
@@ -64,22 +64,18 @@ abstract class BaseActivity : AppCompatActivity() {
         R.string.grant_permission
       ) { _, _ ->
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-          if (Environment.isExternalStorageManager()) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.MANAGE_EXTERNAL_STORAGE), RESULT_CODE_STORAGE)
-          } else {
-            val uri = Uri.parse("package:$packageName")
-            permissionLauncher.launch(
-              Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri)
-            )
-          }
+          val uri = Uri.parse("package:$packageName")
+          permissionLauncher.launch(
+            Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri)
+          )
         } else {
           ActivityCompat.requestPermissions(
             this,
             arrayOf(
               Manifest.permission.READ_EXTERNAL_STORAGE,
-              Manifest.permission.WRITE_EXTERNAL_STORAGE
+              Manifest.permission.MANAGE_EXTERNAL_STORAGE
             ),
-            RESULT_CODE_STORAGE
+            REQCODE_STORAGE
           )
         }
       }
@@ -93,6 +89,6 @@ abstract class BaseActivity : AppCompatActivity() {
   }
 
   companion object {
-    const val RESULT_CODE_STORAGE = 1009
+    const val REQCODE_STORAGE = 1009
   }
 }

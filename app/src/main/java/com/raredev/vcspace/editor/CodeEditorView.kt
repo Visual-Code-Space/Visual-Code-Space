@@ -7,13 +7,12 @@ import android.widget.LinearLayout
 import androidx.core.view.isVisible
 import com.blankj.utilcode.util.FileIOUtils
 import com.raredev.vcspace.databinding.LayoutCodeEditorBinding
-import com.raredev.vcspace.editor.schemes.SchemeVCSpace
+import com.raredev.vcspace.editor.langs.VCSpaceTMLanguage
 import com.raredev.vcspace.extensions.cancelIfActive
 import com.raredev.vcspace.providers.GrammarProvider
 import io.github.rosemoe.sora.lang.EmptyLanguage
 import io.github.rosemoe.sora.lang.Language
 import io.github.rosemoe.sora.langs.textmate.TextMateColorScheme
-import io.github.rosemoe.sora.langs.textmate.VCSpaceTMLanguage
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 import io.github.rosemoe.sora.text.LineSeparator
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme

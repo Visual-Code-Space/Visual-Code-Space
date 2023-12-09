@@ -20,15 +20,13 @@ abstract class CompletionProvider {
 
   companion object {
     private val providers: Map<Class<*>, CompletionProvider> = HashMap()
-    fun registerCompletionProviders() {
-      if (providers.isEmpty()) {
 
-      }
+    fun registerCompletionProviders() {
+      if (providers.isEmpty()) {}
     }
 
     fun getCompletionProvider(clss: Class<*>): CompletionProvider? {
       return providers[clss]
-
     }
   }
 }

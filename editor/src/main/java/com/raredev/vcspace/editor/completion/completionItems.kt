@@ -22,9 +22,9 @@ import io.github.rosemoe.sora.text.Content
 import io.github.rosemoe.sora.widget.CodeEditor
 
 abstract class VCSpaceCompletionItem(
-    val completionKind: CompletionItemKind,
-    label: CharSequence,
-    desc: CharSequence
+  val completionKind: CompletionItemKind,
+  label: CharSequence,
+  desc: CharSequence
 ) : CompletionItem(label, desc, null)
 
 class SimpleCompletionItem(
@@ -45,9 +45,9 @@ class SimpleCompletionItem(
 }
 
 class SimpleSnippetCompletionItem(
-    label: CharSequence,
-    desc: CharSequence,
-    val snippet: SnippetDescription
+  label: CharSequence,
+  desc: CharSequence,
+  val snippet: SnippetDescription
 ) : VCSpaceCompletionItem(CompletionItemKind.SNIPPET, label, desc) {
 
   override fun performCompletion(editor: CodeEditor, text: Content, position: CharPosition) {

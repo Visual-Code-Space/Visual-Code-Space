@@ -31,7 +31,8 @@ include(
     ":common",
     ":common-res",
     ":editor",
-    ":editor:lang-textmate",
+    ":editor-textmate",
     ":eventbus-events",
     ":emulatorview",
-    ":models")
+    ":models",
+    ":subprojects:tm4e")

@@ -22,12 +22,12 @@ import android.view.inputmethod.EditorInfo
 import androidx.core.content.res.ResourcesCompat
 import com.raredev.vcspace.adapters.CompletionListAdapter
 import com.raredev.vcspace.editor.completion.CustomCompletionLayout
+import com.raredev.vcspace.editor.langs.VCSpaceTMLanguage
 import com.raredev.vcspace.events.OnContentChangeEvent
 import com.raredev.vcspace.events.OnPreferenceChangeEvent
 import com.raredev.vcspace.utils.PreferencesUtils
 import com.raredev.vcspace.utils.SharedPreferencesKeys
 import io.github.rosemoe.sora.event.ContentChangeEvent
-import io.github.rosemoe.sora.langs.textmate.VCSpaceTMLanguage
 import io.github.rosemoe.sora.widget.CodeEditor
 import io.github.rosemoe.sora.widget.component.EditorAutoCompletion
 import io.github.rosemoe.sora.widget.component.EditorTextActionWindow
@@ -44,9 +44,9 @@ class VCSpaceEditor : CodeEditor {
   constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
   constructor(
-      context: Context,
-      attrs: AttributeSet?,
-      defStyleAttr: Int
+    context: Context,
+    attrs: AttributeSet?,
+    defStyleAttr: Int
   ) : super(context, attrs, defStyleAttr)
 
   private var textActions: TextActionsWindow? = TextActionsWindow(this)
@@ -166,8 +166,8 @@ class VCSpaceEditor : CodeEditor {
 
     fun createInputTypeFlags(): Int {
       return EditorInfo.TYPE_CLASS_TEXT or
-          EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE or
-          EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS
+        EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE or
+        EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS
     }
   }
 }

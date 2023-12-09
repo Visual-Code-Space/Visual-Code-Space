@@ -28,7 +28,8 @@ dependencies {
 
   implementation(projects.common)
   implementation(projects.commonRes)
-  implementation(projects.editor.langTextmate)
+  implementation(projects.editorTextmate)
+  implementation(projects.subprojects.tm4e)
   implementation(projects.eventbusEvents)
   implementation(projects.models)
 }

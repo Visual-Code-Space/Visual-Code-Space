@@ -18,37 +18,53 @@ import android.util.Log
 import java.util.WeakHashMap
 
 class Logger private constructor(private val tag: String) {
+
   fun d(message: String) {
     log(Priority.DEBUG, tag, message)
+  }
+
+  fun d(message: String, vararg format: Any) {
+    log(Priority.DEBUG, tag, String.format(message, *format))
   }
 
   fun w(message: String) {
     log(Priority.WARNING, tag, message)
   }
-
-  fun e(message: String, e: Throwable?) {
-    log(
-      Priority.ERROR, tag, """
-   $message
-   ${Log.getStackTraceString(e)}
-   """.trimIndent()
-    )
-  }
-
-  fun e(e: Throwable?) {
-    log(Priority.ERROR, tag, Log.getStackTraceString(e))
+  
+  fun w(message: String, vararg format: Any) {
+    log(Priority.WARNING, tag, String.format(message, *format))
   }
 
   fun e(message: String) {
     log(Priority.ERROR, tag, message)
   }
 
+  fun e(message: String, vararg format: Any) {
+    log(Priority.ERROR, tag, String.format(message, *format))
+  }
+
+  fun e(message: String, e: Throwable) {
+    log(Priority.ERROR, tag, "$message\n${Log.getStackTraceString(e)}")
+  }
+
+  fun e(e: Throwable) {
+    log(Priority.ERROR, tag, Log.getStackTraceString(e))
+  }
+
   fun i(message: String) {
     log(Priority.INFO, tag, message)
   }
 
+  fun i(message: String, vararg format: Any) {
+    log(Priority.INFO, tag, String.format(message, *format))
+  }
+
   fun v(message: String) {
     log(Priority.VERBOSE, tag, message)
+  }
+
+  fun v(message: String, vararg format: Any) {
+    log(Priority.VERBOSE, tag, String.format(message, *format))
   }
 
   private fun log(priority: Priority, tag: String, message: String) {

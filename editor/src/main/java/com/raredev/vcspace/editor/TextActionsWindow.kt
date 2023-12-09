@@ -35,7 +35,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 class TextActionsWindow(editor: VCSpaceEditor) :
-    EditorPopupWindow(editor, FEATURE_SHOW_OUTSIDE_VIEW_ALLOWED) {
+  EditorPopupWindow(editor, FEATURE_SHOW_OUTSIDE_VIEW_ALLOWED) {
 
   companion object {
     const val DELAY: Long = 200
@@ -57,12 +57,11 @@ class TextActionsWindow(editor: VCSpaceEditor) :
     }
 
     rootView.background =
-        GradientDrawable().apply {
-          setStroke(
-              2, rootView.context.getAttrColor(com.google.android.material.R.attr.colorOutline))
-          setColor(rootView.context.getAttrColor(com.google.android.material.R.attr.colorSurface))
-          setCornerRadius(25f)
-        }
+      GradientDrawable().apply {
+        setStroke(2, rootView.context.getAttrColor(com.google.android.material.R.attr.colorOutline))
+        setColor(rootView.context.getAttrColor(com.google.android.material.R.attr.colorSurface))
+        setCornerRadius(25f)
+      }
     rootView.addView(recyclerView)
 
     popup.contentView = rootView
@@ -92,9 +91,9 @@ class TextActionsWindow(editor: VCSpaceEditor) :
       R.string.comment_line -> {
         val commentRule = (editor as VCSpaceEditor).getCommentRule()
         if (!editor.cursor.isSelected) {
-          CommentSystem.addSingleComment(commentRule, editor.text)
+          addSingleComment(commentRule, editor.text)
         } else {
-          CommentSystem.addBlockComment(commentRule, editor.text)
+          addBlockComment(commentRule, editor.text)
         }
         editor.setSelection(editor.cursor.rightLine, editor.cursor.rightColumn)
       }
@@ -140,19 +139,22 @@ class TextActionsWindow(editor: VCSpaceEditor) :
       return
     }
     editor.postDelayedInLifecycle(
-        object : Runnable {
-          override fun run() {
-            if (!eventHandler.hasAnyHeldHandle() &&
-                !editor.snippetController.isInSnippet() &&
-                System.currentTimeMillis() - lastScroll > DELAY &&
-                eventHandler.scroller.isFinished) {
-              displayWindow()
-            } else {
-              editor.postDelayedInLifecycle(this, DELAY)
-            }
+      object : Runnable {
+        override fun run() {
+          if (
+            !eventHandler.hasAnyHeldHandle() &&
+              !editor.snippetController.isInSnippet() &&
+              System.currentTimeMillis() - lastScroll > DELAY &&
+              eventHandler.scroller.isFinished
+          ) {
+            displayWindow()
+          } else {
+            editor.postDelayedInLifecycle(this, DELAY)
           }
-        },
-        DELAY)
+        }
+      },
+      DELAY
+    )
   }
 
   fun onSelectionChanged(event: SelectionChangeEvent) {
@@ -165,21 +167,23 @@ class TextActionsWindow(editor: VCSpaceEditor) :
       lastPosition = -1
     } else {
       var show = false
-      if (event.cause == SelectionChangeEvent.CAUSE_TAP &&
+      if (
+        event.cause == SelectionChangeEvent.CAUSE_TAP &&
           event.left.index == lastPosition &&
           !isShowing &&
-          !editor.text.isInBatchEdit) {
+          !editor.text.isInBatchEdit
+      ) {
         editor.postInLifecycle { displayWindow() }
         show = true
       } else {
         dismiss()
       }
       lastPosition =
-          if (event.cause == SelectionChangeEvent.CAUSE_TAP && !show) {
-            event.left.index
-          } else {
-            -1
-          }
+        if (event.cause == SelectionChangeEvent.CAUSE_TAP && !show) {
+          event.left.index
+        } else {
+          -1
+        }
     }
   }
 
@@ -198,15 +202,15 @@ class TextActionsWindow(editor: VCSpaceEditor) :
     var top: Int
     val cursor = editor.cursor
     top =
-        if (cursor.isSelected) {
-          val leftRect = editor.leftHandleDescriptor.position
-          val rightRect = editor.rightHandleDescriptor.position
-          val top1 = selectTop(leftRect)
-          val top2 = selectTop(rightRect)
-          min(top1, top2)
-        } else {
-          selectTop(editor.insertHandleDescriptor.position)
-        }
+      if (cursor.isSelected) {
+        val leftRect = editor.leftHandleDescriptor.position
+        val rightRect = editor.rightHandleDescriptor.position
+        val top1 = selectTop(leftRect)
+        val top2 = selectTop(rightRect)
+        min(top1, top2)
+      } else {
+        selectTop(editor.insertHandleDescriptor.position)
+      }
     top = max(0, min(top, editor.height - height - 5))
     val handleLeftX = editor.getOffset(editor.cursor.leftLine, editor.cursor.leftColumn)
     val handleRightX = editor.getOffset(editor.cursor.rightLine, editor.cursor.rightColumn)
@@ -246,9 +250,12 @@ class TextActionsWindow(editor: VCSpaceEditor) :
     val dp8 = SizeUtils.dp2px(8f)
     val dp16 = dp8 * 2
     rootView.measure(
-        View.MeasureSpec.makeMeasureSpec(editor.width - dp16 * 2, View.MeasureSpec.AT_MOST),
-        View.MeasureSpec.makeMeasureSpec(
-            (260 * editor.dpUnit).toInt() - dp16 * 2, View.MeasureSpec.AT_MOST))
+      View.MeasureSpec.makeMeasureSpec(editor.width - dp16 * 2, View.MeasureSpec.AT_MOST),
+      View.MeasureSpec.makeMeasureSpec(
+        (260 * editor.dpUnit).toInt() - dp16 * 2,
+        View.MeasureSpec.AT_MOST
+      )
+    )
     setSize(rootView.measuredWidth, height)
   }
 

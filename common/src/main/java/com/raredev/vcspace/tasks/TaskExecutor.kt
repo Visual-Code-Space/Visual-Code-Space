@@ -1,16 +1,18 @@
 /*
- * This file is part of Visual Code Space.
+ *  This file is part of AndroidIDE.
  *
- * Visual Code Space is free software: you can redistribute it and/or modify it under the terms of
- * the GNU General Public License as published by the Free Software Foundation, either version 3 of
- * the License, or (at your option) any later version.
+ *  AndroidIDE is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
  *
- * Visual Code Space is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ *  AndroidIDE is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along with Visual Code Space.
- * If not, see <https://www.gnu.org/licenses/>.
+ *  You should have received a copy of the GNU General Public License
+ *   along with AndroidIDE.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package com.raredev.vcspace.tasks
@@ -28,7 +30,7 @@ object TaskExecutor {
   @JvmStatic
   fun <R> executeAsync(
     callable: Callable<R>,
-    callback: Callback<R>? = null
+    callback: (result: R?) -> Unit = {}
   ): CompletableFuture<R?> {
     return CompletableFuture.supplyAsync {
       try {
@@ -38,14 +40,14 @@ object TaskExecutor {
         return@supplyAsync null
       }
     }
-      .whenComplete { result, _ -> ThreadUtils.runOnUiThread { callback?.complete(result) } }
+      .whenComplete { result, _ -> ThreadUtils.runOnUiThread { callback(result) } }
   }
 
   @JvmOverloads
   @JvmStatic
   fun <R> executeAsyncProvideError(
     callable: Callable<R>,
-    callback: CallbackWithError<R>? = null
+    callback: (result: R?, error: Throwable?) -> Unit = { _, _ -> }
   ): CompletableFuture<R?> {
     return CompletableFuture.supplyAsync {
       try {
@@ -56,15 +58,7 @@ object TaskExecutor {
       }
     }
       .whenComplete { result, throwable ->
-        ThreadUtils.runOnUiThread { callback?.complete(result, throwable) }
+        ThreadUtils.runOnUiThread { callback(result, throwable) }
       }
-  }
-
-  fun interface Callback<R> {
-    fun complete(result: R?)
-  }
-
-  fun interface CallbackWithError<R> {
-    fun complete(result: R?, error: Throwable?)
   }
 }
