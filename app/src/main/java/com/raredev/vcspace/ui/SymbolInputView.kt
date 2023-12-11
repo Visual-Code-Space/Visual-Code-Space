@@ -14,15 +14,15 @@ class SymbolInputView : RecyclerView {
   constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
   constructor(
-      context: Context,
-      attrs: AttributeSet?,
-      defStyleAttr: Int
+    context: Context,
+    attrs: AttributeSet?,
+    defStyleAttr: Int
   ) : super(context, attrs, defStyleAttr)
 
   private val adapter = SymbolInputAdapter()
 
   init {
-      layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+    layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
     setAdapter(adapter)
   }
 

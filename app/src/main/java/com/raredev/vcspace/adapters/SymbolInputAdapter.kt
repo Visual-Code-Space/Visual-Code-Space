@@ -62,7 +62,7 @@ class SymbolInputAdapter : RecyclerView.Adapter<SymbolInputAdapter.VH>() {
     this.editor = editor
   }
 
-  val defaultSymbols: Array<Symbol>
+  private val defaultSymbols: Array<Symbol>
     get() {
       val baseSymbols =
         arrayOf(

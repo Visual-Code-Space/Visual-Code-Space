@@ -39,8 +39,7 @@ object TaskExecutor {
         log.e("An error occurred while executing Callable in background thread.", th)
         return@supplyAsync null
       }
-    }
-      .whenComplete { result, _ -> ThreadUtils.runOnUiThread { callback(result) } }
+    }.whenComplete { result, _ -> ThreadUtils.runOnUiThread { callback(result) } }
   }
 
   @JvmOverloads
@@ -56,9 +55,8 @@ object TaskExecutor {
         log.e("An error occurred while executing Callable in background thread.", th)
         throw CompletionException(th)
       }
+    }.whenComplete { result, throwable ->
+      ThreadUtils.runOnUiThread { callback(result, throwable) }
     }
-      .whenComplete { result, throwable ->
-        ThreadUtils.runOnUiThread { callback(result, throwable) }
-      }
   }
 }

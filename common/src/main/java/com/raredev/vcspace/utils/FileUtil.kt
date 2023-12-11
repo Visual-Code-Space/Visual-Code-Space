@@ -33,7 +33,7 @@ object FileUtil {
   }
 
   fun delete(path: String?): Boolean {
-    return delete(File(path))
+    return delete(File(path.toString()))
   }
 
   fun delete(file: File): Boolean {

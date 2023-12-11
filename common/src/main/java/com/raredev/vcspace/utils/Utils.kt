@@ -50,8 +50,7 @@ object Utils {
       (ContextCompat.checkSelfPermission(
         context!!,
         Manifest.permission.READ_EXTERNAL_STORAGE
-      )
-          == PackageManager.PERMISSION_GRANTED)
+      ) == PackageManager.PERMISSION_GRANTED)
     }
   }
 
@@ -59,7 +58,7 @@ object Utils {
     get() {
       if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) return true else if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO) return false
       val uiMode = (getInstance().resources.configuration.uiMode
-          and Configuration.UI_MODE_NIGHT_MASK)
+        and Configuration.UI_MODE_NIGHT_MASK)
       return uiMode == Configuration.UI_MODE_NIGHT_YES
     }
 }

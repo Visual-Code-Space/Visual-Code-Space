@@ -43,8 +43,7 @@ class EditorSettingsFragment : PreferenceFragmentCompat() {
               .putInt(
                 SharedPreferencesKeys.KEY_EDITOR_TEXT_SIZE,
                 binding.slider.value.toInt()
-              )
-              .apply()
+              ).apply()
           }
           .setNegativeButton(android.R.string.cancel, null)
           .setNeutralButton(

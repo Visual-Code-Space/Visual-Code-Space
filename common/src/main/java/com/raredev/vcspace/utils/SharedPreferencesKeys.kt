@@ -26,13 +26,13 @@ object SharedPreferencesKeys {
   const val KEY_EDITOR_TEXT_SIZE = "pref_font_size"
   const val KEY_EDITOR_TAB_SIZE = "pref_editortabsize"
   const val KEY_EDITOR_FONT = "pref_editorfont"
-  const val KEY_STICKYSCROLL = "pref_stickyscroll"
-  const val KEY_FONTLIGATURES = "pref_fontligatures"
+  const val KEY_STICKY_SCROLL = "pref_stickyscroll"
+  const val KEY_FONT_LIGATURES = "pref_fontligatures"
   const val KEY_WORDWRAP = "pref_wordwrap"
-  const val KEY_LINENUMBERS = "pref_linenumbers"
+  const val KEY_LINE_NUMBERS = "pref_linenumbers"
   const val KEY_USE_TAB = "pref_usetab"
   const val KEY_DELETE_EMPTY_LINE_FAST = "pref_deleteemptylinefast"
-  const val KEY_DELETETABS = "pref_deletetabs"
+  const val KEY_DELETE_TABS = "pref_deletetabs"
   const val KEY_AUTO_SAVE = "pref_auto_save"
 
   // File

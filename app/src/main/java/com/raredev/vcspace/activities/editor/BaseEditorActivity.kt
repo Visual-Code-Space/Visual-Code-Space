@@ -28,7 +28,6 @@ import com.raredev.vcspace.utils.showShortToast
 import com.raredev.vcspace.viewmodel.EditorViewModel
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
-import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -36,6 +35,7 @@ import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.io.File
 
 open class BaseEditorActivity :
   BaseActivity(),
@@ -293,7 +293,7 @@ open class BaseEditorActivity :
   fun getUnsavedFilesCount(): Int {
     var count = 0
     for (i in 0 until viewModel.getOpenedFiles().size) {
-      if (getEditorAt(i)?.modified ?: false) count++
+      if (getEditorAt(i)?.modified == true) count++
     }
     return count
   }
@@ -327,10 +327,10 @@ open class BaseEditorActivity :
     }
 
     val tab = binding.tabs.getTabAt(position)
-    if (tab?.text?.startsWith("*") ?: true) {
+    if (tab?.text?.startsWith("*") != false) {
       return
     }
-    tab?.text = "*${tab?.text}"
+    tab.text = "*${tab.text}"
   }
 
   @Subscribe(threadMode = ThreadMode.MAIN)

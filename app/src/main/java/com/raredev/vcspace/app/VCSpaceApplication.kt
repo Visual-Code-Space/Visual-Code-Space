@@ -40,23 +40,25 @@ class VCSpaceApplication : BaseApplication() {
     themes.forEach { name ->
       val path = "editor/sora-editor/schemes/$name.json"
       themeRegistry.loadTheme(
-          ThemeModel(
-                  IThemeSource.fromInputStream(
-                      FileProviderRegistry.getInstance().tryGetInputStream(path), path, null),
-                  name)
-              .setDark(name == "darcula"))
+        ThemeModel(
+          IThemeSource.fromInputStream(
+            FileProviderRegistry.getInstance().tryGetInputStream(path), path, null
+          ),
+          name
+        ).setDark(name == "darcula")
+      )
     }
   }
 
   private fun uncaughtException(thread: Thread, th: Throwable) {
     try {
-      val intent = Intent(this, CrashActivity::class.java)
-
-      // Add the error message
-      intent.putExtra(CrashActivity.KEY_EXTRA_ERROR, ThrowableUtils.getFullStackTrace(th))
-      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-      // Start the crash activity
-      startActivity(intent)
+      val intent = Intent(this, CrashActivity::class.java).apply {
+        // Add the error message
+        putExtra(CrashActivity.KEY_EXTRA_ERROR, ThrowableUtils.getFullStackTrace(th))
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        // Start the crash activity
+        startActivity(this)
+      }
 
       uncaughtException?.uncaughtException(thread, th)
       exitProcess(1)

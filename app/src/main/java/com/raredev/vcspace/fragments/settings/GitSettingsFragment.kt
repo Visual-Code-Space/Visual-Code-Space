@@ -29,7 +29,7 @@ class GitSettingsFragment : PreferenceFragmentCompat() {
       }
   }
 
-  fun showCredentialDialog() {
+  private fun showCredentialDialog() {
     val binding = LayoutCredentialBinding.inflate(LayoutInflater.from(requireContext()))
     val helper = binding.helper
     val content = helper.text.toString()

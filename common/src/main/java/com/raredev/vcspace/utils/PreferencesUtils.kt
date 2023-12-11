@@ -51,16 +51,16 @@ object PreferencesUtils {
     }
 
   val stickyScroll: Boolean
-    get() = prefs.getBoolean(SharedPreferencesKeys.KEY_STICKYSCROLL, false)
+    get() = prefs.getBoolean(SharedPreferencesKeys.KEY_STICKY_SCROLL, false)
 
   val fontLigatures: Boolean
-    get() = prefs.getBoolean(SharedPreferencesKeys.KEY_FONTLIGATURES, true)
+    get() = prefs.getBoolean(SharedPreferencesKeys.KEY_FONT_LIGATURES, true)
 
   val wordWrap: Boolean
     get() = prefs.getBoolean(SharedPreferencesKeys.KEY_WORDWRAP, false)
 
   val lineNumbers: Boolean
-    get() = prefs.getBoolean(SharedPreferencesKeys.KEY_LINENUMBERS, true)
+    get() = prefs.getBoolean(SharedPreferencesKeys.KEY_LINE_NUMBERS, true)
 
   val useTab: Boolean
     get() = prefs.getBoolean(SharedPreferencesKeys.KEY_USE_TAB, false)
@@ -68,7 +68,7 @@ object PreferencesUtils {
   val deleteEmptyLineFast: Boolean
     get() = prefs.getBoolean(SharedPreferencesKeys.KEY_DELETE_EMPTY_LINE_FAST, true)
 
-  val deleteMultiSpaces: Boolean = prefs.getBoolean(SharedPreferencesKeys.KEY_DELETETABS, true)
+  val deleteMultiSpaces: Boolean = prefs.getBoolean(SharedPreferencesKeys.KEY_DELETE_TABS, true)
 
   val identationString: String
     get() = if (useTab) "\t" else " ".repeat(tabSize)

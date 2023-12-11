@@ -1,11 +1,11 @@
 package com.raredev.vcspace.activities
 
-import android.Manifest
+import android.Manifest.permission
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.provider.Settings
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
@@ -22,7 +22,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
   private val permissionLauncher =
     registerForActivityResult(StartActivityForResult()) {
-      if (!Environment.isExternalStorageManager()) showRequestPermissionDialog()
+      if (!Utils.isPermissionGaranted(this)) showRequestPermissionDialog()
     }
 
   open val navigationBarColor: Int
@@ -55,6 +55,7 @@ abstract class BaseActivity : AppCompatActivity() {
     }
   }
 
+  @SuppressLint("ObsoleteSdkInt")
   private fun showRequestPermissionDialog() {
     MaterialAlertDialogBuilder(this)
       .setCancelable(false)
@@ -71,9 +72,13 @@ abstract class BaseActivity : AppCompatActivity() {
         } else {
           ActivityCompat.requestPermissions(
             this,
-            arrayOf(
-              Manifest.permission.READ_EXTERNAL_STORAGE,
-              Manifest.permission.MANAGE_EXTERNAL_STORAGE
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+              arrayOf(
+                permission.MANAGE_EXTERNAL_STORAGE
+              )
+            } else arrayOf(
+              permission.READ_EXTERNAL_STORAGE,
+              permission.WRITE_EXTERNAL_STORAGE
             ),
             REQCODE_STORAGE
           )

@@ -15,6 +15,7 @@
 
 package com.raredev.vcspace.adapters
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -65,6 +66,7 @@ class TextActionListAdapter(val textActions: TextActionsWindow) :
     }
   }
 
+  @SuppressLint("NotifyDataSetChanged")
   fun refreshActions() {
     visibleActions.clear()
     for (action in actions) {

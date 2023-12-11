@@ -100,13 +100,13 @@ class VCSpaceEditor : CodeEditor {
     when (event.prefKey) {
       SharedPreferencesKeys.KEY_EDITOR_TEXT_SIZE -> updateTextSize()
       SharedPreferencesKeys.KEY_EDITOR_TAB_SIZE -> updateTABSize()
-      SharedPreferencesKeys.KEY_STICKYSCROLL -> updateStickyScroll()
-      SharedPreferencesKeys.KEY_FONTLIGATURES -> updateFontLigatures()
+      SharedPreferencesKeys.KEY_STICKY_SCROLL -> updateStickyScroll()
+      SharedPreferencesKeys.KEY_FONT_LIGATURES -> updateFontLigatures()
       SharedPreferencesKeys.KEY_WORDWRAP -> updateWordWrap()
       SharedPreferencesKeys.KEY_DELETE_EMPTY_LINE_FAST -> updateDeleteEmptyLineFast()
       SharedPreferencesKeys.KEY_EDITOR_FONT -> updateEditorFont()
-      SharedPreferencesKeys.KEY_LINENUMBERS -> updateLineNumbers()
-      SharedPreferencesKeys.KEY_DELETETABS -> updateDeleteTabs()
+      SharedPreferencesKeys.KEY_LINE_NUMBERS -> updateLineNumbers()
+      SharedPreferencesKeys.KEY_DELETE_TABS -> updateDeleteTabs()
     }
   }
 

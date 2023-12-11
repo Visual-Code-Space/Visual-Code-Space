@@ -20,9 +20,9 @@ class SearcherLayout : LinearLayout, View.OnClickListener {
   constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
   constructor(
-      context: Context,
-      attrs: AttributeSet?,
-      defStyleAttr: Int
+    context: Context,
+    attrs: AttributeSet?,
+    defStyleAttr: Int
   ) : super(context, attrs, defStyleAttr)
 
   private val binding = LayoutSearcherBinding.inflate(LayoutInflater.from(context))
@@ -34,15 +34,15 @@ class SearcherLayout : LinearLayout, View.OnClickListener {
 
   init {
     binding.searchText.addTextChangedListener(
-        object : TextWatcher {
-          override fun afterTextChanged(editable: Editable) {
-            search(editable.toString())
-          }
+      object : TextWatcher {
+        override fun afterTextChanged(editable: Editable) {
+          search(editable.toString())
+        }
 
-          override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
+        override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
 
-          override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
-        })
+        override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
+      })
 
     optionsMenu = PopupMenu(context, binding.searchOptions)
     optionsMenu.menu.add(0, 0, 0, R.string.ignore_letter_case).apply {
@@ -111,7 +111,7 @@ class SearcherLayout : LinearLayout, View.OnClickListener {
   }
 
   fun search(text: String) {
-    if (text.length > 0) {
+    if (text.isNotEmpty()) {
       searcher?.search(text, searchOptions)
     } else searcher?.stopSearch()
   }

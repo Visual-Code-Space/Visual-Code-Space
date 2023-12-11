@@ -17,7 +17,7 @@ import kotlinx.coroutines.withContext
 class FileExplorerViewModel : ViewModel() {
 
   private val _files = MutableLiveData<List<File>>(emptyList())
-  private val _currentPath = MutableLiveData<String>(PathUtils.getRootPathExternalFirst())
+  private val _currentPath = MutableLiveData(PathUtils.getRootPathExternalFirst())
 
   val files: LiveData<List<File>> = _files
   val currentPath: LiveData<String> = _currentPath

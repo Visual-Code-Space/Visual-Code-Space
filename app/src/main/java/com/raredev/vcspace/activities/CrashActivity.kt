@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import com.blankj.utilcode.util.ClipboardUtils
 import com.blankj.utilcode.util.DeviceUtils
 import com.raredev.vcspace.databinding.ActivityCrashBinding
@@ -16,6 +17,12 @@ class CrashActivity : BaseActivity() {
 
   companion object {
     const val KEY_EXTRA_ERROR = "error"
+  }
+
+  private val onBackPressedCallback = object : OnBackPressedCallback(true) {
+    override fun handleOnBackPressed() {
+      finishAffinity()
+    }
   }
 
   private var _binding: ActivityCrashBinding? = null
@@ -41,6 +48,8 @@ class CrashActivity : BaseActivity() {
     error.toString().also { binding.result.text = it }
 
     binding.fab.setOnClickListener { ClipboardUtils.copyText(binding.result.text) }
+
+    onBackPressedDispatcher.addCallback(onBackPressedCallback)
   }
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -56,11 +65,6 @@ class CrashActivity : BaseActivity() {
       getString(R.string.close_app) -> finishAffinity()
     }
     return true
-  }
-
-  override fun onBackPressed() {
-    super.onBackPressed()
-    finishAffinity()
   }
 
   override fun onDestroy() {
