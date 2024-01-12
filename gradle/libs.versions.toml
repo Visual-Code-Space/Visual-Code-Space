@@ -6,6 +6,8 @@ jgit = "6.7.0.202309050840-r"
 junit = "4.13.2"
 androidx-junit = "1.1.5"
 espresso-core = "3.5.1"
+termux = "v0.118.0"
+p7zip = "v1.7.2"
 
 [libraries]
 
@@ -42,6 +44,11 @@ common-kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-seriali
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-junit" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
+common-p7zip = { module = "com.github.hzy3774:AndroidP7zip", version.ref = "p7zip" }
+
+# Termux
+terminal-view = { module = "com.github.termux.termux-app:terminal-view", version.ref = "termux" }
+terminal-emulator = { module = "com.github.termux.termux-app:terminal-emulator", version.ref = "termux" }
 
 [plugins]
 android-application = { id = "com.android.application", version = "8.1.1" }

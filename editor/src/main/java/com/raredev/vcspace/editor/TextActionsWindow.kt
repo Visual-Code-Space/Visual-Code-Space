@@ -157,7 +157,7 @@ class TextActionsWindow(editor: VCSpaceEditor) :
     )
   }
 
-  fun onSelectionChanged(event: SelectionChangeEvent) {
+  private fun onSelectionChanged(event: SelectionChangeEvent) {
     if (eventHandler.hasAnyHeldHandle()) {
       return
     }

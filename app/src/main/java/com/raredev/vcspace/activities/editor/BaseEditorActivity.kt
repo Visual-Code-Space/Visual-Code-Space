@@ -427,4 +427,6 @@ open class BaseEditorActivity :
       .setNeutralButton(R.string.cancel, null)
       .show()
   }
+
+  fun isPythonFile(file: File?) = file?.absolutePath?.endsWith(".py")
 }

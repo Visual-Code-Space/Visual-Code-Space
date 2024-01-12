@@ -1,3 +1,5 @@
+import com.android.build.api.dsl.Packaging
+
 plugins {
   id("com.android.application")
   id("kotlin-android")
@@ -41,6 +43,10 @@ android {
   packaging {
     resources.excludes.addAll(
         arrayOf("META-INF/README.md", "META-INF/CHANGES", "bundle.properties", "plugin.properties"))
+
+    jniLibs {
+      useLegacyPackaging = true
+    }
   }
 
   lint { abortOnError = false }
@@ -74,6 +80,10 @@ dependencies {
   implementation(libs.common.jgit)
   implementation(libs.common.eventbus)
   implementation(libs.common.android.coroutines)
+  implementation(libs.common.p7zip)
+
+  implementation(libs.terminal.view)
+  implementation(libs.terminal.emulator)
 
   implementation(projects.common)
   implementation(projects.commonRes)

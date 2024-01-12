@@ -1,8 +1,10 @@
 package com.raredev.vcspace.activities.editor
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -14,14 +16,24 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.blankj.utilcode.util.KeyboardUtils
 import com.blankj.utilcode.util.UriUtils
+import com.hzy.libp7zip.P7ZipApi
 import com.raredev.vcspace.R
+import com.raredev.vcspace.activities.TerminalActivity
+import com.raredev.vcspace.dialogs.ProgressDialogBuilder
 import com.raredev.vcspace.res.R.string
 import com.raredev.vcspace.utils.PreferencesUtils
+import com.raredev.vcspace.utils.SharedPreferencesKeys
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 
 class EditorActivity : BaseEditorActivity() {
 
   private val onBackPressedCallback: OnBackPressedCallback =
-    object : OnBackPressedCallback(false) {
+    object : OnBackPressedCallback(true) {
       override fun handleOnBackPressed() {
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
           binding.drawerLayout.closeDrawer(GravityCompat.START)
@@ -80,7 +92,25 @@ class EditorActivity : BaseEditorActivity() {
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     val editor = getSelectedEditor()
     when (item.itemId) {
-      R.id.menu_execute -> {}
+      R.id.menu_execute -> {
+        if (isPythonFile(editor?.file) == true) {
+          extractPythonFile {
+            startActivity(
+              Intent(
+                this,
+                TerminalActivity::class.java
+              ).putExtra(
+                TerminalActivity.KEY_PYTHON_FILE_PATH,
+                editor?.file?.absolutePath
+              ).putExtra(
+                TerminalActivity.KEY_CONTAINS_PYTHON_FILE,
+                true
+              )
+            )
+          }
+        }
+      }
+
       R.id.menu_search -> editor?.beginSearchMode()
       R.id.menu_undo -> editor?.undo()
       R.id.menu_redo -> editor?.redo()
@@ -116,5 +146,37 @@ class EditorActivity : BaseEditorActivity() {
           onBackPressedCallback.isEnabled = true
         }
       })
+  }
+
+  private fun extractPythonFile(whenExtractingDone: () -> Unit) {
+    if (PreferencesUtils.isPythonFileExtracted) {
+      whenExtractingDone()
+    } else {
+      val dialog = ProgressDialogBuilder(this)
+        .setCancelable(false)
+        .setTitle("Extracting files...")
+        .setMessage("Please wait")
+        .create()
+
+      dialog.setOnDismissListener {
+        PreferencesUtils.prefs.edit()
+          .putBoolean(SharedPreferencesKeys.KEY_PYTHON_FILE_EXTRACTED, true).apply()
+        whenExtractingDone()
+      }
+      dialog.show()
+
+      CoroutineScope(Dispatchers.IO).launch {
+        val temp7zStream = assets.open("python/python.7z")
+        val file = File("${filesDir.absolutePath}/python.7z")
+        file.createNewFile()
+        Files.copy(temp7zStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING)
+        val exitCode =
+          P7ZipApi.executeCommand("7z x ${file.absolutePath} -o${filesDir.absolutePath}")
+        Log.d("EditorActivity", "extractFiles: $exitCode")
+        file.delete()
+        temp7zStream.close()
+        dialog.dismiss()
+      }
+    }
   }
 }

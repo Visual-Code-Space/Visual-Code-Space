@@ -79,4 +79,7 @@ object PreferencesUtils {
   // File
   val showHiddenFiles: Boolean
     get() = prefs.getBoolean(SharedPreferencesKeys.KEY_SHOW_HIDDEN_FILES, true)
+
+  val isPythonFileExtracted: Boolean
+    get() = prefs.getBoolean(SharedPreferencesKeys.KEY_PYTHON_FILE_EXTRACTED, false)
 }

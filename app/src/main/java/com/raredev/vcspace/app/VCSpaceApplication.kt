@@ -20,7 +20,7 @@ class VCSpaceApplication : BaseApplication() {
 
   override fun onCreate() {
     uncaughtException = Thread.getDefaultUncaughtExceptionHandler()
-    Thread.setDefaultUncaughtExceptionHandler(::uncaughtException)
+    Thread.setDefaultUncaughtExceptionHandler(this::uncaughtException)
     super.onCreate()
 
     if (PreferencesUtils.dynamicColors) {

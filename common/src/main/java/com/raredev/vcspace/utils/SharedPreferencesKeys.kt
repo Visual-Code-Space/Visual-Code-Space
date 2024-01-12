@@ -48,4 +48,5 @@ object SharedPreferencesKeys {
   // Others
   const val KEY_GITHUB = "github"
   const val KEY_LICENSES = "licenses"
+  const val KEY_PYTHON_FILE_EXTRACTED = "python_file_extracted"
 }

@@ -3,6 +3,7 @@ package com.raredev.vcspace.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
@@ -14,19 +15,24 @@ import com.blankj.utilcode.util.ClipboardUtils
 import com.blankj.utilcode.util.KeyboardUtils
 import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.SizeUtils
-import com.raredev.terminal.TerminalEmulator
-import com.raredev.terminal.TerminalSession
-import com.raredev.terminal.TerminalSessionClient
-import com.raredev.terminal.TextStyle
-import com.raredev.terminal.view.TerminalView
-import com.raredev.terminal.view.TerminalViewClient
 import com.raredev.vcspace.databinding.ActivityTerminalBinding
+import com.raredev.vcspace.dialogs.ProgressDialogBuilder
 import com.raredev.vcspace.ui.virtualkeys.SpecialButton
 import com.raredev.vcspace.ui.virtualkeys.VirtualKeyButton
 import com.raredev.vcspace.ui.virtualkeys.VirtualKeysConstants
 import com.raredev.vcspace.ui.virtualkeys.VirtualKeysInfo
 import com.raredev.vcspace.ui.virtualkeys.VirtualKeysView.IVirtualKeysView
 import com.raredev.vcspace.utils.Logger
+import com.raredev.vcspace.utils.TerminalPythonCommands
+import com.termux.terminal.TerminalEmulator
+import com.termux.terminal.TerminalSession
+import com.termux.terminal.TerminalSessionClient
+import com.termux.terminal.TextStyle
+import com.termux.view.TerminalView
+import com.termux.view.TerminalViewClient
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.json.JSONException
 
 /**
@@ -36,7 +42,7 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
   private val logger = Logger.newInstance("TerminalActivity")
   private var binding: ActivityTerminalBinding? = null
   private var session: TerminalSession? = null
-  private var terminal: TerminalView? = null
+  private lateinit var terminal: TerminalView
   private var listener: KeyListener? = null
   override fun getLayout(): View {
     binding = ActivityTerminalBinding.inflate(layoutInflater)
@@ -48,6 +54,24 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
     window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
     super.onCreate(savedInstanceState)
     setupTerminalView()
+
+    if (intent.getBooleanExtra(KEY_CONTAINS_PYTHON_FILE, false)) {
+      val pyFilePath = intent.getStringExtra(KEY_PYTHON_FILE_PATH)
+      if (pyFilePath != null) {
+        val command = TerminalPythonCommands.getInterpreterCommand(this, pyFilePath)
+        val dialog = ProgressDialogBuilder(this)
+          .setCancelable(false)
+          .setTitle("Compiling...")
+          .setMessage("Please wait")
+          .create()
+        dialog.show()
+
+        CoroutineScope(Dispatchers.Main).launch {
+          terminal.mTermSession.write("$command\r")
+          dialog.dismiss()
+        }
+      }
+    }
   }
 
   override fun onResume() {
@@ -73,10 +97,10 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
 
   private fun setupTerminalView() {
     terminal = TerminalView(this, null)
-    terminal!!.setTerminalViewClient(this)
-    terminal!!.attachSession(createSession())
-    terminal!!.keepScreenOn = true
-    terminal!!.setTextSize(SizeUtils.dp2px(14f))
+    terminal.setTerminalViewClient(this)
+    terminal.attachSession(createSession())
+    terminal.keepScreenOn = true
+    terminal.setTextSize(SizeUtils.dp2px(14f))
     val params = LinearLayout.LayoutParams(-1, 0)
     params.weight = 1f
     binding!!.root.addView(terminal, 0, params)
@@ -119,12 +143,12 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
     }
 
   override fun onTextChanged(changedSession: TerminalSession) {
-    terminal!!.onScreenUpdated()
+    terminal.onScreenUpdated()
   }
 
   override fun onTitleChanged(changedSession: TerminalSession) {}
   override fun onSessionFinished(finishedSession: TerminalSession) {
-    // finish();
+     finish()
   }
 
   override fun onCopyTextToClipboard(session: TerminalSession, text: String) {
@@ -133,8 +157,8 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
 
   override fun onPasteTextFromClipboard(session: TerminalSession) {
     val clip = ClipboardUtils.getText().toString()
-    if (clip.trim { it <= ' ' }.isNotEmpty() && terminal!!.mEmulator != null) {
-      terminal!!.mEmulator.paste(clip)
+    if (clip.trim { it <= ' ' }.isNotEmpty() && terminal.mEmulator != null) {
+      terminal.mEmulator.paste(clip)
     }
   }
 
@@ -142,7 +166,11 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
   override fun onColorsChanged(session: TerminalSession) {}
   override fun onTerminalCursorStateChange(state: Boolean) {}
   override fun getTerminalCursorStyle(): Int {
-    return TerminalEmulator.DEFAULT_TERMINAL_CURSOR_STYLE
+    return if (intent.getBooleanExtra(KEY_CONTAINS_PYTHON_FILE, false)) {
+      TerminalEmulator.TERMINAL_CURSOR_STYLE_UNDERLINE
+    } else {
+      TerminalEmulator.DEFAULT_TERMINAL_CURSOR_STYLE
+    }
   }
 
   override fun logError(tag: String, message: String) {
@@ -248,14 +276,14 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
   }
 
   private fun setTerminalCursorBlinkingState(start: Boolean) {
-    if (terminal!!.mEmulator != null) {
-      terminal!!.setTerminalCursorBlinkerState(start, true)
+    if (terminal.mEmulator != null) {
+      terminal.setTerminalCursorBlinkerState(start, true)
     }
   }
 
   private fun showSoftInput() {
-    terminal!!.requestFocus()
-    KeyboardUtils.showSoftInput(terminal!!)
+    terminal.requestFocus()
+    KeyboardUtils.showSoftInput(terminal)
   }
 
   private class KeyListener(private val terminal: TerminalView?) : IVirtualKeysView {
@@ -344,6 +372,9 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
 
   companion object {
     const val KEY_WORKING_DIRECTORY = "terminal_workingDirectory"
+    const val KEY_CONTAINS_PYTHON_FILE = "contains_py_file"
+    const val KEY_PYTHON_FILE_PATH = "py_file_path"
+
     fun startTerminalWithDir(context: Context, path: String?) {
       val it = Intent(context, TerminalActivity::class.java)
       it.putExtra(KEY_WORKING_DIRECTORY, path)
