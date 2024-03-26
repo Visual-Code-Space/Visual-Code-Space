@@ -1,4 +1,4 @@
-package com.raredev.vcspace.events
+package com.raredev.vcspace.editor.events
 
 import java.io.File
 

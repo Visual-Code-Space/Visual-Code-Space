@@ -1,5 +1,3 @@
-import com.android.build.api.dsl.Packaging
-
 plugins {
   id("com.android.application")
   id("kotlin-android")
@@ -42,11 +40,10 @@ android {
 
   packaging {
     resources.excludes.addAll(
-        arrayOf("META-INF/README.md", "META-INF/CHANGES", "bundle.properties", "plugin.properties"))
+      arrayOf("META-INF/README.md", "META-INF/CHANGES", "bundle.properties", "plugin.properties")
+    )
 
-    jniLibs {
-      useLegacyPackaging = true
-    }
+    jniLibs { useLegacyPackaging = true }
   }
 
   lint { abortOnError = false }
@@ -89,10 +86,7 @@ dependencies {
   implementation(projects.commonRes)
   implementation(projects.editor)
   implementation(projects.editorTextmate)
-  implementation(projects.subprojects.tm4e)
-  implementation(projects.eventbusEvents)
   implementation(projects.emulatorview)
-  implementation(projects.models)
   implementation(projects.pluginSystem)
 
   debugImplementation(libs.common.leakcanary)

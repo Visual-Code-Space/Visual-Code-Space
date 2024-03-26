@@ -47,18 +47,18 @@ object Utils {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
       Environment.isExternalStorageManager()
     } else {
-      (ContextCompat.checkSelfPermission(
-        context!!,
-        Manifest.permission.READ_EXTERNAL_STORAGE
-      ) == PackageManager.PERMISSION_GRANTED)
+      (ContextCompat.checkSelfPermission(context!!, Manifest.permission.READ_EXTERNAL_STORAGE) ==
+        PackageManager.PERMISSION_GRANTED)
     }
   }
 
   val isDarkMode: Boolean
     get() {
-      if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) return true else if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO) return false
-      val uiMode = (getInstance().resources.configuration.uiMode
-        and Configuration.UI_MODE_NIGHT_MASK)
+      if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) return true
+      else if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO)
+        return false
+      val uiMode =
+        (getInstance().resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK)
       return uiMode == Configuration.UI_MODE_NIGHT_YES
     }
 }

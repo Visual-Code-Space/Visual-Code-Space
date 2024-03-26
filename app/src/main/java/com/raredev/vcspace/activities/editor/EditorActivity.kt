@@ -23,12 +23,12 @@ import com.raredev.vcspace.dialogs.ProgressDialogBuilder
 import com.raredev.vcspace.res.R.string
 import com.raredev.vcspace.utils.PreferencesUtils
 import com.raredev.vcspace.utils.SharedPreferencesKeys
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class EditorActivity : BaseEditorActivity() {
 
@@ -96,21 +96,13 @@ class EditorActivity : BaseEditorActivity() {
         if (isPythonFile(editor?.file) == true) {
           extractPythonFile {
             startActivity(
-              Intent(
-                this,
-                TerminalActivity::class.java
-              ).putExtra(
-                TerminalActivity.KEY_PYTHON_FILE_PATH,
-                editor?.file?.absolutePath
-              ).putExtra(
-                TerminalActivity.KEY_CONTAINS_PYTHON_FILE,
-                true
-              )
+              Intent(this, TerminalActivity::class.java)
+                .putExtra(TerminalActivity.KEY_PYTHON_FILE_PATH, editor?.file?.absolutePath)
+                .putExtra(TerminalActivity.KEY_CONTAINS_PYTHON_FILE, true)
             )
           }
         }
       }
-
       R.id.menu_search -> editor?.beginSearchMode()
       R.id.menu_undo -> editor?.undo()
       R.id.menu_redo -> editor?.redo()
@@ -124,9 +116,7 @@ class EditorActivity : BaseEditorActivity() {
 
   private fun configureDrawer() {
     val drawerToggle =
-      ActionBarDrawerToggle(
-        this, binding.drawerLayout, binding.toolbar, string.open, string.close
-      )
+      ActionBarDrawerToggle(this, binding.drawerLayout, binding.toolbar, string.open, string.close)
     binding.drawerLayout.addDrawerListener(drawerToggle)
     drawerToggle.syncState()
 
@@ -145,22 +135,26 @@ class EditorActivity : BaseEditorActivity() {
         override fun onDrawerOpened(view: View) {
           onBackPressedCallback.isEnabled = true
         }
-      })
+      }
+    )
   }
 
   private fun extractPythonFile(whenExtractingDone: () -> Unit) {
     if (PreferencesUtils.isPythonFileExtracted) {
       whenExtractingDone()
     } else {
-      val dialog = ProgressDialogBuilder(this)
-        .setCancelable(false)
-        .setTitle("Extracting files...")
-        .setMessage("Please wait")
-        .create()
+      val dialog =
+        ProgressDialogBuilder(this)
+          .setCancelable(false)
+          .setTitle("Extracting files...")
+          .setMessage("Please wait")
+          .create()
 
       dialog.setOnDismissListener {
-        PreferencesUtils.prefs.edit()
-          .putBoolean(SharedPreferencesKeys.KEY_PYTHON_FILE_EXTRACTED, true).apply()
+        PreferencesUtils.prefs
+          .edit()
+          .putBoolean(SharedPreferencesKeys.KEY_PYTHON_FILE_EXTRACTED, true)
+          .apply()
         whenExtractingDone()
       }
       dialog.show()

@@ -55,6 +55,6 @@ class FileExplorerViewModel : ViewModel() {
 
   companion object {
     val FOLDER_FIRST_ORDER: Comparator<File> =
-        compareBy<File> { file -> if (file.isFile) 1 else 0 }.thenBy { it.name.lowercase() }
+      compareBy<File> { file -> if (file.isFile) 1 else 0 }.thenBy { it.name.lowercase() }
   }
 }

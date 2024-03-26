@@ -14,7 +14,7 @@ import com.google.android.material.tabs.TabLayout
 import com.raredev.vcspace.activities.BaseActivity
 import com.raredev.vcspace.databinding.ActivityEditorBinding
 import com.raredev.vcspace.editor.CodeEditorView
-import com.raredev.vcspace.events.OnContentChangeEvent
+import com.raredev.vcspace.editor.events.OnContentChangeEvent
 import com.raredev.vcspace.events.OnDeleteFileEvent
 import com.raredev.vcspace.events.OnPreferenceChangeEvent
 import com.raredev.vcspace.events.OnRenameFileEvent
@@ -28,6 +28,7 @@ import com.raredev.vcspace.utils.showShortToast
 import com.raredev.vcspace.viewmodel.EditorViewModel
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
+import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -35,7 +36,6 @@ import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.io.File
 
 open class BaseEditorActivity :
   BaseActivity(),

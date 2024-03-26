@@ -10,7 +10,6 @@ import com.raredev.vcspace.databinding.LayoutPathItemBinding
 import com.raredev.vcspace.extensions.getAttrColor
 import com.raredev.vcspace.viewmodel.FileExplorerViewModel
 import java.io.File
-import java.util.Collections
 
 class PathListAdapter : RecyclerView.Adapter<PathListAdapter.VH>() {
 

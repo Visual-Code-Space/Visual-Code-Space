@@ -2,7 +2,6 @@
 
 include(":plugin-system")
 
-
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
@@ -26,13 +25,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "VCSpace"
 
-include(
-    ":app",
-    ":common",
-    ":common-res",
-    ":editor",
-    ":editor-textmate",
-    ":eventbus-events",
-    ":emulatorview",
-    ":models",
-    ":subprojects:tm4e")
+include(":app", ":common", ":common-res", ":editor", ":editor-textmate", ":emulatorview")

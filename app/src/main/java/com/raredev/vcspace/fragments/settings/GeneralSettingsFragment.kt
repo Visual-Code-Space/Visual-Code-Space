@@ -29,10 +29,7 @@ class GeneralSettingsFragment : PreferenceFragmentCompat() {
       val selectedThemeValue = prefs.getString(SharedPreferencesKeys.KEY_THEME, "default")
       MaterialAlertDialogBuilder(requireContext())
         .setTitle(R.string.title_theme)
-        .setSingleChoiceItems(
-          themes,
-          themeValues.indexOf(selectedThemeValue)
-        ) { d, w ->
+        .setSingleChoiceItems(themes, themeValues.indexOf(selectedThemeValue)) { d, w ->
           prefs.edit().putString(SharedPreferencesKeys.KEY_THEME, themeValues[w]).apply()
           AppCompatDelegate.setDefaultNightMode(PreferencesUtils.appTheme)
           d.dismiss()

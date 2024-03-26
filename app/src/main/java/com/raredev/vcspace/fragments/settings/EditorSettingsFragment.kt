@@ -35,20 +35,14 @@ class EditorSettingsFragment : PreferenceFragmentCompat() {
 
         MaterialAlertDialogBuilder(requireContext())
           .setTitle(R.string.pref_editor_textsize)
-          .setPositiveButton(
-            android.R.string.ok
-          ) { _, _ ->
+          .setPositiveButton(android.R.string.ok) { _, _ ->
             prefs
               .edit()
-              .putInt(
-                SharedPreferencesKeys.KEY_EDITOR_TEXT_SIZE,
-                binding.slider.value.toInt()
-              ).apply()
+              .putInt(SharedPreferencesKeys.KEY_EDITOR_TEXT_SIZE, binding.slider.value.toInt())
+              .apply()
           }
           .setNegativeButton(android.R.string.cancel, null)
-          .setNeutralButton(
-            R.string.reset
-          ) { _, _ ->
+          .setNeutralButton(R.string.reset) { _, _ ->
             prefs.edit().putInt(SharedPreferencesKeys.KEY_EDITOR_TEXT_SIZE, 14).apply()
           }
           .setView(binding.root)
@@ -67,14 +61,8 @@ class EditorSettingsFragment : PreferenceFragmentCompat() {
           }
         MaterialAlertDialogBuilder(requireContext())
           .setTitle(R.string.pref_editor_tabsize)
-          .setSingleChoiceItems(
-            tabSizes,
-            selectedSizePos
-          ) { d, w ->
-            prefs
-              .edit()
-              .putString(SharedPreferencesKeys.KEY_EDITOR_TAB_SIZE, tabSizes[w])
-              .apply()
+          .setSingleChoiceItems(tabSizes, selectedSizePos) { d, w ->
+            prefs.edit().putString(SharedPreferencesKeys.KEY_EDITOR_TAB_SIZE, tabSizes[w]).apply()
             d.dismiss()
           }
           .setPositiveButton(android.R.string.cancel, null)
@@ -87,14 +75,8 @@ class EditorSettingsFragment : PreferenceFragmentCompat() {
         val selectedFontName = prefs.getString(SharedPreferencesKeys.KEY_EDITOR_FONT, "firacode")
         MaterialAlertDialogBuilder(requireContext())
           .setTitle(R.string.pref_editor_font)
-          .setSingleChoiceItems(
-            fonts,
-            fontValues.indexOf(selectedFontName)
-          ) { d, w ->
-            prefs
-              .edit()
-              .putString(SharedPreferencesKeys.KEY_EDITOR_FONT, fontValues[w])
-              .apply()
+          .setSingleChoiceItems(fonts, fontValues.indexOf(selectedFontName)) { d, w ->
+            prefs.edit().putString(SharedPreferencesKeys.KEY_EDITOR_FONT, fontValues[w]).apply()
             d.dismiss()
           }
           .setPositiveButton(android.R.string.cancel, null)

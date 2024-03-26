@@ -38,7 +38,8 @@ class FileListAdapter(private val listener: OnFileClickListener) :
       name.text = file.name
       info.text =
         root.context.getString(
-          R.string.last_modified, SimpleDateFormat("yy/MM/dd").format(file.lastModified())
+          R.string.last_modified,
+          SimpleDateFormat("yy/MM/dd").format(file.lastModified())
         )
 
       root.setOnClickListener { listener.onFileClickListener(file) }

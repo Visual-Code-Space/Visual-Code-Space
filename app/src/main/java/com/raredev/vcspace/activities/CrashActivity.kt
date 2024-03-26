@@ -19,11 +19,12 @@ class CrashActivity : BaseActivity() {
     const val KEY_EXTRA_ERROR = "error"
   }
 
-  private val onBackPressedCallback = object : OnBackPressedCallback(true) {
-    override fun handleOnBackPressed() {
-      finishAffinity()
+  private val onBackPressedCallback =
+    object : OnBackPressedCallback(true) {
+      override fun handleOnBackPressed() {
+        finishAffinity()
+      }
     }
-  }
 
   private var _binding: ActivityCrashBinding? = null
   private val binding: ActivityCrashBinding

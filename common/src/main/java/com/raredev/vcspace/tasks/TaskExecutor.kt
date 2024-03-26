@@ -33,13 +33,14 @@ object TaskExecutor {
     callback: (result: R?) -> Unit = {}
   ): CompletableFuture<R?> {
     return CompletableFuture.supplyAsync {
-      try {
-        return@supplyAsync callable.call()
-      } catch (th: Throwable) {
-        log.e("An error occurred while executing Callable in background thread.", th)
-        return@supplyAsync null
+        try {
+          return@supplyAsync callable.call()
+        } catch (th: Throwable) {
+          log.e("An error occurred while executing Callable in background thread.", th)
+          return@supplyAsync null
+        }
       }
-    }.whenComplete { result, _ -> ThreadUtils.runOnUiThread { callback(result) } }
+      .whenComplete { result, _ -> ThreadUtils.runOnUiThread { callback(result) } }
   }
 
   @JvmOverloads
@@ -49,14 +50,15 @@ object TaskExecutor {
     callback: (result: R?, error: Throwable?) -> Unit = { _, _ -> }
   ): CompletableFuture<R?> {
     return CompletableFuture.supplyAsync {
-      try {
-        return@supplyAsync callable.call()
-      } catch (th: Throwable) {
-        log.e("An error occurred while executing Callable in background thread.", th)
-        throw CompletionException(th)
+        try {
+          return@supplyAsync callable.call()
+        } catch (th: Throwable) {
+          log.e("An error occurred while executing Callable in background thread.", th)
+          throw CompletionException(th)
+        }
       }
-    }.whenComplete { result, throwable ->
-      ThreadUtils.runOnUiThread { callback(result, throwable) }
-    }
+      .whenComplete { result, throwable ->
+        ThreadUtils.runOnUiThread { callback(result, throwable) }
+      }
   }
 }

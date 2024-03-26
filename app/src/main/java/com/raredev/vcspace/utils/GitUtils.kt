@@ -1,8 +1,12 @@
 package com.raredev.vcspace.utils
 
 import android.os.Build
-import androidx.annotation.RequiresApi
 import com.blankj.utilcode.util.FileIOUtils
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.IOException
+import java.net.URISyntaxException
+import java.nio.charset.StandardCharsets
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.Status
 import org.eclipse.jgit.api.errors.GitAPIException
@@ -24,11 +28,6 @@ import org.eclipse.jgit.treewalk.AbstractTreeIterator
 import org.eclipse.jgit.treewalk.CanonicalTreeParser
 import org.eclipse.jgit.treewalk.EmptyTreeIterator
 import org.eclipse.jgit.treewalk.TreeWalk
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.IOException
-import java.net.URISyntaxException
-import java.nio.charset.StandardCharsets
 
 class GitUtils {
   private var git: Git? = null
@@ -165,10 +164,7 @@ class GitUtils {
     }
   }
 
-  @get:Throws(
-    GitAPIException::class,
-    IOException::class
-  )
+  @get:Throws(GitAPIException::class, IOException::class)
   val diff: String
     /**
      * Get the diff between the current commit and the previous commit
@@ -311,13 +307,11 @@ class GitUtils {
                  Untracked: ${status.untracked}
                  UntrackedFolders: ${status.untrackedFolders}
                  
-                 """.trimIndent()
+                 """
+        .trimIndent()
     }
 
-  @get:Throws(
-    GitAPIException::class,
-    IOException::class
-  )
+  @get:Throws(GitAPIException::class, IOException::class)
   val uncommittedChanges: List<DiffEntry>
     /**
      * Get the list of uncommitted changes in the repository
@@ -337,15 +331,10 @@ class GitUtils {
           treeWalk.isRecursive = true
           while (treeWalk.next()) {
             diffs.addAll(
-              git!!.diff()
+              git!!
+                .diff()
                 .setOldTree(EmptyTreeIterator())
-                .setNewTree(
-                  CanonicalTreeParser(
-                    null,
-                    reader,
-                    treeWalk.getObjectId(0)
-                  )
-                )
+                .setNewTree(CanonicalTreeParser(null, reader, treeWalk.getObjectId(0)))
                 .call()
             )
           }
@@ -354,10 +343,7 @@ class GitUtils {
       return diffs
     }
 
-  @get:Throws(
-    GitAPIException::class,
-    IOException::class
-  )
+  @get:Throws(GitAPIException::class, IOException::class)
   val uncommittedChangesAsString: String
     /**
      * Get the list of uncommitted changes in the repository as a string
@@ -404,10 +390,7 @@ class GitUtils {
       return commits
     }
 
-  @get:Throws(
-    GitAPIException::class,
-    IOException::class
-  )
+  @get:Throws(GitAPIException::class, IOException::class)
   val commitsForCurrentBranchAsString: String
     /**
      * Get the list of commits on the current branch as a string
@@ -525,7 +508,8 @@ class GitUtils {
     $title
     
     $description
-    """.trimIndent()
+    """
+        .trimIndent()
     )
     mergeCommand.call()
 
@@ -544,18 +528,17 @@ class GitUtils {
     pushCommand.call()
   }
 
-  @get:Throws(
-    GitAPIException::class,
-    IOException::class
-  )
+  @get:Throws(GitAPIException::class, IOException::class)
   val statusLikeTerminal: String
     get() {
       var result = ""
-      result += """
+      result +=
+        """
         On branch ${git!!.repository.branch}
         
         
-        """.trimIndent()
+        """
+          .trimIndent()
       result += "Changes to be committed:\n"
       result += "  (use \"git reset HEAD <file>...\" to unstage)\n\n"
       result += formatFileList(status.added, "new file")
@@ -585,7 +568,8 @@ class GitUtils {
 
   companion object {
     fun createGitIgnore(path: File?) {
-      val gitIgnore = """
+      val gitIgnore =
+        """
       # Built application files
       /*.apk
       /*.ap_
@@ -619,7 +603,8 @@ class GitUtils {
       *.iws
       *.ipr
        
-       """.trimIndent()
+       """
+          .trimIndent()
       FileIOUtils.writeFileFromString(path, gitIgnore)
     }
   }

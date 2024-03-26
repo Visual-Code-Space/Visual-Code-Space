@@ -48,9 +48,9 @@ class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
   private val adapter by lazy { FileListAdapter(this) }
 
   override fun onCreateView(
-      inflater: LayoutInflater,
-      container: ViewGroup?,
-      savedInstanceState: Bundle?
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
   ): View {
     _binding = FragmentFileExplorerBinding.inflate(inflater, container, false)
     return binding.root

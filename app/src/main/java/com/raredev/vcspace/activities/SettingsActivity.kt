@@ -22,7 +22,7 @@ class SettingsActivity : BaseActivity() {
     setSupportActionBar(binding.toolbar)
 
     val navHostFragment =
-        supportFragmentManager.findFragmentById(binding.navHostFragment.id) as NavHostFragment
+      supportFragmentManager.findFragmentById(binding.navHostFragment.id) as NavHostFragment
     NavigationUI.setupWithNavController(binding.toolbar, navHostFragment.navController)
   }
 

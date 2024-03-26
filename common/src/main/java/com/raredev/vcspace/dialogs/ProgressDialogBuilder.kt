@@ -33,48 +33,48 @@ class ProgressDialogBuilder(val context: Context) {
   }
 
   fun setPositiveButton(
-      text: String,
-      listener: DialogInterface.OnClickListener
+    text: String,
+    listener: DialogInterface.OnClickListener
   ): ProgressDialogBuilder {
     builder.setPositiveButton(text, listener)
     return this
   }
 
   fun setPositiveButton(
-      @StringRes text: Int,
-      listener: DialogInterface.OnClickListener
+    @StringRes text: Int,
+    listener: DialogInterface.OnClickListener
   ): ProgressDialogBuilder {
     builder.setPositiveButton(text, listener)
     return this
   }
 
   fun setNegativeButton(
-      text: String,
-      listener: DialogInterface.OnClickListener
+    text: String,
+    listener: DialogInterface.OnClickListener
   ): ProgressDialogBuilder {
     builder.setNegativeButton(text, listener)
     return this
   }
 
   fun setNegativeButton(
-      @StringRes text: Int,
-      listener: DialogInterface.OnClickListener
+    @StringRes text: Int,
+    listener: DialogInterface.OnClickListener
   ): ProgressDialogBuilder {
     builder.setNegativeButton(text, listener)
     return this
   }
 
   fun setNeutralButton(
-      text: String,
-      listener: DialogInterface.OnClickListener
+    text: String,
+    listener: DialogInterface.OnClickListener
   ): ProgressDialogBuilder {
     builder.setNeutralButton(text, listener)
     return this
   }
 
   fun setNeutralButton(
-      @StringRes text: Int,
-      listener: DialogInterface.OnClickListener
+    @StringRes text: Int,
+    listener: DialogInterface.OnClickListener
   ): ProgressDialogBuilder {
     builder.setNeutralButton(text, listener)
     return this

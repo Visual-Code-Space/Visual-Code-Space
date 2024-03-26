@@ -11,8 +11,8 @@ import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.model.ThemeModel
 import io.github.rosemoe.sora.langs.textmate.registry.provider.AssetsFileResolver
-import org.eclipse.tm4e.core.registry.IThemeSource
 import kotlin.system.exitProcess
+import org.eclipse.tm4e.core.registry.IThemeSource
 
 class VCSpaceApplication : BaseApplication() {
 
@@ -41,24 +41,28 @@ class VCSpaceApplication : BaseApplication() {
       val path = "editor/sora-editor/schemes/$name.json"
       themeRegistry.loadTheme(
         ThemeModel(
-          IThemeSource.fromInputStream(
-            FileProviderRegistry.getInstance().tryGetInputStream(path), path, null
-          ),
-          name
-        ).setDark(name == "darcula")
+            IThemeSource.fromInputStream(
+              FileProviderRegistry.getInstance().tryGetInputStream(path),
+              path,
+              null
+            ),
+            name
+          )
+          .setDark(name == "darcula")
       )
     }
   }
 
   private fun uncaughtException(thread: Thread, th: Throwable) {
     try {
-      val intent = Intent(this, CrashActivity::class.java).apply {
-        // Add the error message
-        putExtra(CrashActivity.KEY_EXTRA_ERROR, ThrowableUtils.getFullStackTrace(th))
-        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        // Start the crash activity
-        startActivity(this)
-      }
+      // Start the crash activity
+      startActivity(
+        Intent(this, CrashActivity::class.java).apply {
+          // Add the error message
+          putExtra(CrashActivity.KEY_EXTRA_ERROR, ThrowableUtils.getFullStackTrace(th))
+          addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+      )
 
       uncaughtException?.uncaughtException(thread, th)
       exitProcess(1)

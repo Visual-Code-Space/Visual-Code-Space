@@ -17,7 +17,7 @@ object CI {
   /** Name of the current branch. */
   val branchName by lazy {
     System.getenv("GITHUB_REF_NAME")
-        ?: cmdOutput("git", "rev-parse", "--abbrev-ref", "HEAD") // by default, 'main'
+      ?: cmdOutput("git", "rev-parse", "--abbrev-ref", "HEAD") // by default, 'main'
   }
 
   /** Whether the current build is a CI build. */
@@ -25,12 +25,12 @@ object CI {
 
   private fun cmdOutput(vararg args: String): String {
     return ProcessBuilder(*args)
-        .directory(File("."))
-        .redirectErrorStream(true)
-        .start()
-        .inputStream
-        .bufferedReader()
-        .readText()
-        .trim()
+      .directory(File("."))
+      .redirectErrorStream(true)
+      .start()
+      .inputStream
+      .bufferedReader()
+      .readText()
+      .trim()
   }
 }

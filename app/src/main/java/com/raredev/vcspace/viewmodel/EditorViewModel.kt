@@ -19,7 +19,7 @@ class EditorViewModel : ViewModel() {
     files.add(file)
     this.files.value = files
   }
-  
+
   fun updateFile(position: Int, file: File) {
     val files = this.files.value ?: mutableListOf()
     files[position] = file

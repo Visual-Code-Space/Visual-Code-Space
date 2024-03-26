@@ -13,14 +13,13 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.raredev.vcspace.adapters
+package com.raredev.vcspace.editor.completion;
 
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.blankj.utilcode.util.SizeUtils
-import com.raredev.vcspace.editor.completion.VCSpaceCompletionItem
 import com.raredev.vcspace.editor.databinding.LayoutCompletionItemBinding
 import io.github.rosemoe.sora.widget.component.EditorCompletionAdapter
 
@@ -32,8 +31,8 @@ class CompletionListAdapter : EditorCompletionAdapter() {
 
   override fun getView(pos: Int, v: View?, parent: ViewGroup?, isSelected: Boolean): View {
     val binding =
-        v?.let { LayoutCompletionItemBinding.bind(it) }
-            ?: LayoutCompletionItemBinding.inflate(LayoutInflater.from(context), parent, false)
+      v?.let { LayoutCompletionItemBinding.bind(it) }
+        ?: LayoutCompletionItemBinding.inflate(LayoutInflater.from(context), parent, false)
 
     val item = getItem(pos) as VCSpaceCompletionItem
 

@@ -21,7 +21,8 @@ import java.io.File
 object FileUtil {
   fun isValidTextFile(filename: String): Boolean {
     return !filename.matches(
-      ".*\\.(bin|ttf|png|jpe?g|bmp|mp4|mp3|m4a|iso|so|zip|rar|jar|dex|odex|vdex|7z|apk|apks|xapk)$".toRegex()
+      ".*\\.(bin|ttf|png|jpe?g|bmp|mp4|mp3|m4a|iso|so|zip|rar|jar|dex|odex|vdex|7z|apk|apks|xapk)$"
+        .toRegex()
     )
   }
 

@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import androidx.core.view.isVisible
+import androidx.core.content.res.ResourcesCompat
 import com.blankj.utilcode.util.FileIOUtils
 import com.raredev.vcspace.databinding.LayoutCodeEditorBinding
 import com.raredev.vcspace.editor.langs.VCSpaceTMLanguage
@@ -15,12 +16,18 @@ import io.github.rosemoe.sora.lang.Language
 import io.github.rosemoe.sora.langs.textmate.TextMateColorScheme
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 import io.github.rosemoe.sora.text.LineSeparator
+import com.raredev.vcspace.utils.SharedPreferencesKeys
+import com.raredev.vcspace.utils.PreferencesUtils
+import com.raredev.vcspace.events.OnPreferenceChangeEvent
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme
 import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 @SuppressLint("ViewConstructor")
 class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
@@ -39,6 +46,7 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
     get() = editor.file
 
   init {
+    EventBus.getDefault().register(this)
     binding.editor.apply {
       colorScheme = createColorScheme()
       lineSeparator = LineSeparator.LF
@@ -57,6 +65,7 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
       }
     }
     addView(binding.root, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
+    configureEditor()
   }
 
   private fun postRead(language: Language) {
@@ -82,8 +91,10 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
   }
 
   fun release() {
-    editorScope.cancelIfActive("Editor released")
-    binding.editor.release()
+    editorScope.cancelIfActive("Editor has been released")
+    editor.release()
+
+    EventBus.getDefault().unregister(this)
   }
 
   suspend fun saveFile(): Boolean {
@@ -98,6 +109,71 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
 
   fun beginSearchMode() {
     binding.searcher.beginSearchMode()
+  }
+
+  @Subscribe(threadMode = ThreadMode.MAIN)
+  fun onSharedPreferenceChanged(event: OnPreferenceChangeEvent) {
+    when (event.prefKey) {
+      SharedPreferencesKeys.KEY_EDITOR_TEXT_SIZE -> updateTextSize()
+      SharedPreferencesKeys.KEY_EDITOR_TAB_SIZE -> updateTABSize()
+      SharedPreferencesKeys.KEY_STICKY_SCROLL -> updateStickyScroll()
+      SharedPreferencesKeys.KEY_FONT_LIGATURES -> updateFontLigatures()
+      SharedPreferencesKeys.KEY_WORDWRAP -> updateWordWrap()
+      SharedPreferencesKeys.KEY_DELETE_EMPTY_LINE_FAST -> updateDeleteEmptyLineFast()
+      SharedPreferencesKeys.KEY_EDITOR_FONT -> updateEditorFont()
+      SharedPreferencesKeys.KEY_LINE_NUMBERS -> updateLineNumbers()
+      SharedPreferencesKeys.KEY_DELETE_TABS -> updateDeleteTabs()
+    }
+  }
+
+  private fun configureEditor() {
+    updateEditorFont()
+    updateTextSize()
+    updateTABSize()
+    updateStickyScroll()
+    updateFontLigatures()
+    updateWordWrap()
+    updateLineNumbers()
+    updateDeleteEmptyLineFast()
+    updateDeleteTabs()
+  }
+
+  private fun updateTextSize() {
+    editor.setTextSize(PreferencesUtils.textSize.toFloat())
+  }
+
+  private fun updateTABSize() {
+    editor.tabWidth = PreferencesUtils.tabSize
+  }
+
+  private fun updateEditorFont() {
+    val font = PreferencesUtils.selectedFont
+    editor.typefaceText = ResourcesCompat.getFont(context, font)
+    editor.typefaceLineNumber = ResourcesCompat.getFont(context, font)
+  }
+
+  private fun updateStickyScroll() {
+    editor.props.stickyScroll = PreferencesUtils.stickyScroll
+  }
+
+  private fun updateFontLigatures() {
+    editor.isLigatureEnabled = PreferencesUtils.fontLigatures
+  }
+
+  private fun updateWordWrap() {
+    editor.isWordwrap = PreferencesUtils.wordWrap
+  }
+
+  private fun updateLineNumbers() {
+    editor.isLineNumberEnabled = PreferencesUtils.lineNumbers
+  }
+
+  private fun updateDeleteEmptyLineFast() {
+    editor.props.deleteEmptyLineFast = PreferencesUtils.deleteEmptyLineFast
+  }
+
+  private fun updateDeleteTabs() {
+    editor.props.deleteMultiSpaces = if (PreferencesUtils.deleteMultiSpaces) -1 else 1
   }
 
   private fun setLoading(loading: Boolean) {

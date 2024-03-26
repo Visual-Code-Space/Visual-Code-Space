@@ -18,7 +18,6 @@ package com.raredev.vcspace.providers
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.raredev.vcspace.models.GrammarModel
 import com.raredev.vcspace.utils.FileUtil
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry
@@ -33,16 +32,19 @@ import org.eclipse.tm4e.core.registry.IGrammarSource
  */
 object GrammarProvider {
 
-  public var grammars: List<GrammarModel> = mutableListOf()
+  private var _grammars: List<GrammarModel> = mutableListOf()
+
+  val grammars: List<GrammarModel>
+    get() = _grammars
 
   fun initialize(context: Context) {
-    if (grammars.isNotEmpty()) {
+    if (_grammars.isNotEmpty()) {
       return
     }
 
     val grammarsJson = FileUtil.readFromAsset(context, "editor/sora-editor/textmate/grammars.json")
 
-    grammars = Gson().fromJson(grammarsJson, object : TypeToken<List<GrammarModel>>() {})
+    _grammars = Gson().fromJson(grammarsJson, object : TypeToken<List<GrammarModel>>() {})
 
     // Create GrammarRegistry instance
     GrammarRegistry.getInstance()
@@ -70,15 +72,21 @@ object GrammarProvider {
       }
 
       val grammarSource =
-          IGrammarSource.fromInputStream(
-              FileProviderRegistry.getInstance().tryGetInputStream(grammar.grammar),
-              grammar.grammar,
-              Charset.defaultCharset())
+        IGrammarSource.fromInputStream(
+          FileProviderRegistry.getInstance().tryGetInputStream(grammar.grammar),
+          grammar.grammar,
+          Charset.defaultCharset()
+        )
 
       grammarRegistry.loadGrammar(
-          DefaultGrammarDefinition.withLanguageConfiguration(
-                  grammarSource, grammar.languageConfiguration, grammar.name, grammar.scopeName)
-              .withEmbeddedLanguages(grammar.embeddedLanguages))
+        DefaultGrammarDefinition.withLanguageConfiguration(
+            grammarSource,
+            grammar.languageConfiguration,
+            grammar.name,
+            grammar.scopeName
+          )
+          .withEmbeddedLanguages(grammar.embeddedLanguages)
+      )
     }
   }
 
@@ -94,10 +102,19 @@ object GrammarProvider {
   }
 
   fun findGrammarByFileExtension(extension: String?): GrammarModel? =
-      grammars.find { it.fileExtensions?.contains(extension) ?: false }
+    _grammars.find { it.fileExtensions?.contains(extension) ?: false }
 
-  fun findGrammarByName(name: String): GrammarModel? = grammars.find { it.name == name }
+  fun findGrammarByName(name: String): GrammarModel? = _grammars.find { it.name == name }
 
   fun findGrammarByScope(scopeName: String): GrammarModel? =
-      grammars.find { it.scopeName == scopeName }
+    _grammars.find { it.scopeName == scopeName }
+
+  class GrammarModel(
+    val name: String,
+    val scopeName: String,
+    val grammar: String,
+    val languageConfiguration: String? = null,
+    val embeddedLanguages: Map<String, String>? = null,
+    val fileExtensions: Array<String>? = null
+  )
 }

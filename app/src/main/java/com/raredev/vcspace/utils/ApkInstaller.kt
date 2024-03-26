@@ -9,7 +9,8 @@ import com.raredev.vcspace.BuildConfig
 import java.io.File
 
 /**
- * Adopted from: [ApkInstaller.java](https://github.com/tyron12233/CodeAssist/blob/main/app/src/main/java/com/tyron/code/util/ApkInstaller.java)
+ * Adopted from:
+ * [ApkInstaller.java](https://github.com/tyron12233/CodeAssist/blob/main/app/src/main/java/com/tyron/code/util/ApkInstaller.java)
  */
 object ApkInstaller {
   fun installApplication(context: Context, file: File) {
@@ -25,10 +26,6 @@ object ApkInstaller {
   }
 
   private fun uriFromFile(context: Context, file: File): Uri {
-    return FileProvider.getUriForFile(
-      context,
-      BuildConfig.APPLICATION_ID + ".provider",
-      file
-    )
+    return FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", file)
   }
 }

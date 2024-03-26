@@ -49,9 +49,7 @@ class FileExplorerDialogs(
         .setView(binding.root, dp2px(20f), dp2px(15f), dp2px(20f), dp2px(15f))
         .setTitle(R.string.create)
         .setNeutralButton(R.string.cancel, null)
-        .setNegativeButton(
-          R.string.file
-        ) { _, _ ->
+        .setNegativeButton(R.string.file) { _, _ ->
           val name = binding.inputEdittext.text.toString().trim()
           val newFile = File(path, name)
           if (newFile.exists()) {
@@ -65,9 +63,7 @@ class FileExplorerDialogs(
             e.printStackTrace()
           }
         }
-        .setPositiveButton(
-          R.string.folder
-        ) { _, _ ->
+        .setPositiveButton(R.string.folder) { _, _ ->
           val name = binding.inputEdittext.text.toString().trim()
           val folder = File(path, name)
           if (folder.exists()) {
@@ -96,9 +92,7 @@ class FileExplorerDialogs(
         .setView(binding.root, dp2px(20f), dp2px(15f), dp2px(20f), dp2px(15f))
         .setTitle(R.string.rename)
         .setNegativeButton(R.string.cancel, null)
-        .setPositiveButton(
-          R.string.rename
-        ) { _, _ ->
+        .setPositiveButton(R.string.rename) { _, _ ->
           explorerFragment.explorerScope.launchWithProgressDialog(
             configureDialog = { builder ->
               builder.setMessage(R.string.please_wait)
@@ -119,7 +113,8 @@ class FileExplorerDialogs(
                 showShortToast(context, context.getString(R.string.renamed_message))
                 viewModel.refreshFiles()
               }
-            })
+            }
+          )
         }
         .create()
     dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
@@ -136,9 +131,7 @@ class FileExplorerDialogs(
       .setTitle(R.string.delete)
       .setMessage(context.getString(R.string.delete_message, file.name))
       .setNegativeButton(R.string.no, null)
-      .setPositiveButton(
-        R.string.delete
-      ) { _, _ ->
+      .setPositiveButton(R.string.delete) { _, _ ->
         explorerFragment.explorerScope.launchWithProgressDialog(
           configureDialog = { builder ->
             builder.setMessage(R.string.please_wait)
@@ -157,7 +150,8 @@ class FileExplorerDialogs(
               showShortToast(context, context.getString(R.string.deleted_message))
               viewModel.refreshFiles()
             }
-          })
+          }
+        )
       }
       .show()
   }

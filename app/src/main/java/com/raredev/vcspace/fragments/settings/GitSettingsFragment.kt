@@ -63,9 +63,7 @@ class GitSettingsFragment : PreferenceFragmentCompat() {
 
     MaterialAlertDialogBuilder(requireContext())
       .setTitle(R.string.pref_git_credentials)
-      .setPositiveButton(
-        android.R.string.ok
-      ) { _, _ ->
+      .setPositiveButton(android.R.string.ok) { _, _ ->
         val editor = prefs.edit()
         editor.putString(
           SharedPreferencesKeys.KEY_CREDENTIAL_USERNAME,

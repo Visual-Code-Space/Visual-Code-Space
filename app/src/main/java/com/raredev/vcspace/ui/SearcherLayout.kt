@@ -42,7 +42,8 @@ class SearcherLayout : LinearLayout, View.OnClickListener {
         override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
 
         override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
-      })
+      }
+    )
 
     optionsMenu = PopupMenu(context, binding.searchOptions)
     optionsMenu.menu.add(0, 0, 0, R.string.ignore_letter_case).apply {

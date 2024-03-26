@@ -3,7 +3,6 @@ package com.raredev.vcspace.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
@@ -36,7 +35,8 @@ import kotlinx.coroutines.launch
 import org.json.JSONException
 
 /**
- *  @see <a href="https://github.com/AndroidIDEOfficial/AndroidIDE/blob/dev/app/src/main/java/com/itsaky/androidide/activities/TerminalActivity.java">TerminalActivity</a>
+ * @see <a
+ *   href="https://github.com/AndroidIDEOfficial/AndroidIDE/blob/dev/app/src/main/java/com/itsaky/androidide/activities/TerminalActivity.java">TerminalActivity</a>
  */
 class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClient {
   private val logger = Logger.newInstance("TerminalActivity")
@@ -44,6 +44,7 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
   private var session: TerminalSession? = null
   private lateinit var terminal: TerminalView
   private var listener: KeyListener? = null
+
   override fun getLayout(): View {
     binding = ActivityTerminalBinding.inflate(layoutInflater)
     return binding!!.root
@@ -59,11 +60,12 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
       val pyFilePath = intent.getStringExtra(KEY_PYTHON_FILE_PATH)
       if (pyFilePath != null) {
         val command = TerminalPythonCommands.getInterpreterCommand(this, pyFilePath)
-        val dialog = ProgressDialogBuilder(this)
-          .setCancelable(false)
-          .setTitle("Compiling...")
-          .setMessage("Please wait")
-          .create()
+        val dialog =
+          ProgressDialogBuilder(this)
+            .setCancelable(false)
+            .setTitle("Compiling...")
+            .setMessage("Please wait")
+            .create()
         dialog.show()
 
         CoroutineScope(Dispatchers.Main).launch {
@@ -92,6 +94,7 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
 
   override val navigationBarColor: Int
     get() = ContextCompat.getColor(this, android.R.color.black)
+
   override val statusBarColor: Int
     get() = ContextCompat.getColor(this, android.R.color.black)
 
@@ -106,26 +109,27 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
     binding!!.root.addView(terminal, 0, params)
     try {
       binding!!.virtualKeys.virtualKeysViewClient = keyListener
-      binding!!.virtualKeys.reload(
-        VirtualKeysInfo(VIRTUAL_KEYS, "", VirtualKeysConstants.CONTROL_CHARS_ALIASES)
-      )
+      binding!!
+        .virtualKeys
+        .reload(VirtualKeysInfo(VIRTUAL_KEYS, "", VirtualKeysConstants.CONTROL_CHARS_ALIASES))
     } catch (e: JSONException) {
       logger.e("Unable to parse terminal virtual keys json data", e)
     }
   }
 
   private val keyListener: KeyListener
-    get() = if (listener == null) KeyListener(terminal).also {
-      listener = it
-    } else listener!!
+    get() = if (listener == null) KeyListener(terminal).also { listener = it } else listener!!
 
   private fun createSession(): TerminalSession {
-    session = TerminalSession(
-      "/system/bin/sh",
-      workingDirectory, arrayOf(), arrayOf(),
-      TerminalEmulator.DEFAULT_TERMINAL_TRANSCRIPT_ROWS,
-      this
-    )
+    session =
+      TerminalSession(
+        "/system/bin/sh",
+        workingDirectory,
+        arrayOf(),
+        arrayOf(),
+        TerminalEmulator.DEFAULT_TERMINAL_TRANSCRIPT_ROWS,
+        this
+      )
     return session!!
   }
 
@@ -147,8 +151,9 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
   }
 
   override fun onTitleChanged(changedSession: TerminalSession) {}
+
   override fun onSessionFinished(finishedSession: TerminalSession) {
-     finish()
+    finish()
   }
 
   override fun onCopyTextToClipboard(session: TerminalSession, text: String) {
@@ -163,8 +168,11 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
   }
 
   override fun onBell(session: TerminalSession) {}
+
   override fun onColorsChanged(session: TerminalSession) {}
+
   override fun onTerminalCursorStateChange(state: Boolean) {}
+
   override fun getTerminalCursorStyle(): Int {
     return if (intent.getBooleanExtra(KEY_CONTAINS_PYTHON_FILE, false)) {
       TerminalEmulator.TERMINAL_CURSOR_STYLE_UNDERLINE
@@ -226,6 +234,7 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
   }
 
   override fun copyModeChanged(copyMode: Boolean) {}
+
   override fun onKeyDown(keyCode: Int, e: KeyEvent, session: TerminalSession): Boolean {
     if (keyCode == KeyEvent.KEYCODE_ENTER && !session.isRunning) {
       finish()
@@ -287,17 +296,12 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
   }
 
   private class KeyListener(private val terminal: TerminalView?) : IVirtualKeysView {
-    override fun onVirtualKeyButtonClick(
-      view: View,
-      buttonInfo: VirtualKeyButton,
-      button: Button
-    ) {
+    override fun onVirtualKeyButtonClick(view: View, buttonInfo: VirtualKeyButton, button: Button) {
       if (terminal == null) {
         return
       }
       if (buttonInfo.isMacro) {
-        val keys = buttonInfo.key.split(" ".toRegex()).dropLastWhile { it.isEmpty() }
-          .toTypedArray()
+        val keys = buttonInfo.key.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         var ctrlDown = false
         var altDown = false
         var shiftDown = false
@@ -331,7 +335,11 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
     }
 
     private fun onTerminalExtraKeyButtonClick(
-      key: String, ctrlDown: Boolean, altDown: Boolean, shiftDown: Boolean, fnDown: Boolean
+      key: String,
+      ctrlDown: Boolean,
+      altDown: Boolean,
+      shiftDown: Boolean,
+      fnDown: Boolean
     ) {
       if (VirtualKeysConstants.PRIMARY_KEY_CODES_FOR_STRINGS.containsKey(key)) {
         val keyCode = VirtualKeysConstants.PRIMARY_KEY_CODES_FOR_STRINGS[key] ?: return
@@ -362,7 +370,9 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
     }
 
     override fun performVirtualKeyButtonHapticFeedback(
-      view: View, buttonInfo: VirtualKeyButton, button: Button
+      view: View,
+      buttonInfo: VirtualKeyButton,
+      button: Button
     ): Boolean {
       // No need to handle this
       // VirtualKeysView will take care of performing haptic feedback
@@ -381,31 +391,32 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
       context.startActivity(it)
     }
 
-    const val VIRTUAL_KEYS = ("["
-        + "\n  ["
-        + "\n    \"ESC\","
-        + "\n    {"
-        + "\n      \"key\": \"/\","
-        + "\n      \"popup\": \"\\\\\""
-        + "\n    },"
-        + "\n    {"
-        + "\n      \"key\": \"-\","
-        + "\n      \"popup\": \"|\""
-        + "\n    },"
-        + "\n    \"HOME\","
-        + "\n    \"UP\","
-        + "\n    \"END\","
-        + "\n    \"PGUP\""
-        + "\n  ],"
-        + "\n  ["
-        + "\n    \"TAB\","
-        + "\n    \"CTRL\","
-        + "\n    \"ALT\","
-        + "\n    \"LEFT\","
-        + "\n    \"DOWN\","
-        + "\n    \"RIGHT\","
-        + "\n    \"PGDN\""
-        + "\n  ]"
-        + "\n]")
+    const val VIRTUAL_KEYS =
+      ("[" +
+        "\n  [" +
+        "\n    \"ESC\"," +
+        "\n    {" +
+        "\n      \"key\": \"/\"," +
+        "\n      \"popup\": \"\\\\\"" +
+        "\n    }," +
+        "\n    {" +
+        "\n      \"key\": \"-\"," +
+        "\n      \"popup\": \"|\"" +
+        "\n    }," +
+        "\n    \"HOME\"," +
+        "\n    \"UP\"," +
+        "\n    \"END\"," +
+        "\n    \"PGUP\"" +
+        "\n  ]," +
+        "\n  [" +
+        "\n    \"TAB\"," +
+        "\n    \"CTRL\"," +
+        "\n    \"ALT\"," +
+        "\n    \"LEFT\"," +
+        "\n    \"DOWN\"," +
+        "\n    \"RIGHT\"," +
+        "\n    \"PGDN\"" +
+        "\n  ]" +
+        "\n]")
   }
 }

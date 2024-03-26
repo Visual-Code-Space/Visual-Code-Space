@@ -21,9 +21,8 @@ dependencies {
   implementation(libs.common.eventbus)
 
   implementation(projects.common)
-  implementation(projects.eventbusEvents)
 
-  testImplementation(libs.junit)
+  testImplementation(libs.common.junit)
   androidTestImplementation(libs.androidx.junit)
   androidTestImplementation(libs.androidx.espresso.core)
 }

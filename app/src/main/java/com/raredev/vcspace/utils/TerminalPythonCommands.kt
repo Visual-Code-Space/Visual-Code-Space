@@ -17,7 +17,8 @@ package com.raredev.vcspace.utils
 
 import android.content.Context
 
-// From https://github.com/PsiCodes/KtxPy/blob/master/app/src/main/java/github/psicodes/ktxpy/utils/Commands.kt
+// From
+// https://github.com/PsiCodes/KtxPy/blob/master/app/src/main/java/github/psicodes/ktxpy/utils/Commands.kt
 object TerminalPythonCommands {
   fun getBasicCommand(context: Context): String {
     val appLibDirPath = context.applicationInfo.nativeLibraryDir

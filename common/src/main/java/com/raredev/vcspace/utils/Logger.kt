@@ -30,7 +30,7 @@ class Logger private constructor(private val tag: String) {
   fun w(message: String) {
     log(Priority.WARNING, tag, message)
   }
-  
+
   fun w(message: String, vararg format: Any) {
     log(Priority.WARNING, tag, String.format(message, *format))
   }

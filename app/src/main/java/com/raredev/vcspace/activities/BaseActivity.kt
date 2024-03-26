@@ -61,9 +61,7 @@ abstract class BaseActivity : AppCompatActivity() {
       .setCancelable(false)
       .setTitle(R.string.file_access_title)
       .setMessage(R.string.file_access_message)
-      .setPositiveButton(
-        R.string.grant_permission
-      ) { _, _ ->
+      .setPositiveButton(R.string.grant_permission) { _, _ ->
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
           val uri = Uri.parse("package:$packageName")
           permissionLauncher.launch(
@@ -73,20 +71,13 @@ abstract class BaseActivity : AppCompatActivity() {
           ActivityCompat.requestPermissions(
             this,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-              arrayOf(
-                permission.MANAGE_EXTERNAL_STORAGE
-              )
-            } else arrayOf(
-              permission.READ_EXTERNAL_STORAGE,
-              permission.WRITE_EXTERNAL_STORAGE
-            ),
+              arrayOf(permission.MANAGE_EXTERNAL_STORAGE)
+            } else arrayOf(permission.READ_EXTERNAL_STORAGE, permission.WRITE_EXTERNAL_STORAGE),
             REQCODE_STORAGE
           )
         }
       }
-      .setNegativeButton(
-        R.string.exit
-      ) { _, _ ->
+      .setNegativeButton(R.string.exit) { _, _ ->
         finishAffinity()
         exitProcess(0)
       }

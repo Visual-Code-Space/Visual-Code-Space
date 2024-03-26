@@ -19,14 +19,10 @@ import android.content.Context
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.inputmethod.EditorInfo
-import androidx.core.content.res.ResourcesCompat
-import com.raredev.vcspace.adapters.CompletionListAdapter
+import com.raredev.vcspace.editor.completion.CompletionListAdapter
 import com.raredev.vcspace.editor.completion.CustomCompletionLayout
 import com.raredev.vcspace.editor.langs.VCSpaceTMLanguage
-import com.raredev.vcspace.events.OnContentChangeEvent
-import com.raredev.vcspace.events.OnPreferenceChangeEvent
-import com.raredev.vcspace.utils.PreferencesUtils
-import com.raredev.vcspace.utils.SharedPreferencesKeys
+import com.raredev.vcspace.editor.events.OnContentChangeEvent
 import io.github.rosemoe.sora.event.ContentChangeEvent
 import io.github.rosemoe.sora.widget.CodeEditor
 import io.github.rosemoe.sora.widget.component.EditorAutoCompletion
@@ -34,8 +30,6 @@ import io.github.rosemoe.sora.widget.component.EditorTextActionWindow
 import java.io.File
 import org.eclipse.tm4e.languageconfiguration.model.CommentRule
 import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 
 class VCSpaceEditor : CodeEditor {
 
@@ -52,15 +46,13 @@ class VCSpaceEditor : CodeEditor {
   private var textActions: TextActionsWindow? = TextActionsWindow(this)
 
   var file: File? = null
-  var modified = false
+  var modified: Boolean = false
 
   init {
     getComponent(EditorTextActionWindow::class.java).isEnabled = false
     getComponent(EditorAutoCompletion::class.java).setLayout(CustomCompletionLayout())
     getComponent(EditorAutoCompletion::class.java).setAdapter(CompletionListAdapter())
-    configureEditor()
-
-    EventBus.getDefault().register(this)
+    inputType = createInputTypeFlags()
   }
 
   override fun hideEditorWindows() {
@@ -70,17 +62,13 @@ class VCSpaceEditor : CodeEditor {
 
   override fun onFocusChanged(gainFocus: Boolean, direction: Int, previouslyFocusedRect: Rect?) {
     super.onFocusChanged(gainFocus, direction, previouslyFocusedRect)
-    if (!gainFocus) {
-      hideEditorWindows()
-    }
+    if (!gainFocus) hideEditorWindows()
   }
 
   override fun release() {
     super.release()
     textActions = null
     file = null
-
-    EventBus.getDefault().unregister(this)
   }
 
   fun subscribeEvents() {
@@ -93,73 +81,6 @@ class VCSpaceEditor : CodeEditor {
 
   fun getCommentRule(): CommentRule? {
     return (editorLanguage as? VCSpaceTMLanguage)?.languageConfiguration?.comments
-  }
-
-  @Subscribe(threadMode = ThreadMode.MAIN)
-  fun onSharedPreferenceChanged(event: OnPreferenceChangeEvent) {
-    when (event.prefKey) {
-      SharedPreferencesKeys.KEY_EDITOR_TEXT_SIZE -> updateTextSize()
-      SharedPreferencesKeys.KEY_EDITOR_TAB_SIZE -> updateTABSize()
-      SharedPreferencesKeys.KEY_STICKY_SCROLL -> updateStickyScroll()
-      SharedPreferencesKeys.KEY_FONT_LIGATURES -> updateFontLigatures()
-      SharedPreferencesKeys.KEY_WORDWRAP -> updateWordWrap()
-      SharedPreferencesKeys.KEY_DELETE_EMPTY_LINE_FAST -> updateDeleteEmptyLineFast()
-      SharedPreferencesKeys.KEY_EDITOR_FONT -> updateEditorFont()
-      SharedPreferencesKeys.KEY_LINE_NUMBERS -> updateLineNumbers()
-      SharedPreferencesKeys.KEY_DELETE_TABS -> updateDeleteTabs()
-    }
-  }
-
-  private fun configureEditor() {
-    updateEditorFont()
-    updateTextSize()
-    updateTABSize()
-    updateStickyScroll()
-    updateFontLigatures()
-    updateWordWrap()
-    updateLineNumbers()
-    updateDeleteEmptyLineFast()
-    updateDeleteTabs()
-
-    inputType = createInputTypeFlags()
-  }
-
-  private fun updateTextSize() {
-    setTextSize(PreferencesUtils.textSize.toFloat())
-  }
-
-  private fun updateTABSize() {
-    tabWidth = PreferencesUtils.tabSize
-  }
-
-  private fun updateEditorFont() {
-    val font = PreferencesUtils.selectedFont
-    typefaceText = ResourcesCompat.getFont(context, font)
-    typefaceLineNumber = ResourcesCompat.getFont(context, font)
-  }
-
-  private fun updateStickyScroll() {
-    props.stickyScroll = PreferencesUtils.stickyScroll
-  }
-
-  private fun updateFontLigatures() {
-    isLigatureEnabled = PreferencesUtils.fontLigatures
-  }
-
-  private fun updateWordWrap() {
-    isWordwrap = PreferencesUtils.wordWrap
-  }
-
-  private fun updateLineNumbers() {
-    isLineNumberEnabled = PreferencesUtils.lineNumbers
-  }
-
-  private fun updateDeleteEmptyLineFast() {
-    props.deleteEmptyLineFast = PreferencesUtils.deleteEmptyLineFast
-  }
-
-  private fun updateDeleteTabs() {
-    props.deleteMultiSpaces = if (PreferencesUtils.deleteMultiSpaces) -1 else 1
   }
 
   companion object {
