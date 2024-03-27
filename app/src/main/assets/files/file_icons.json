@@ -72,6 +72,12 @@
     ]
   },
   {
+    "drawableName": "ic_language_python",
+    "fileExtensions": [
+      "py"
+    ]
+  },
+  {
     "drawableName": "ic_language_typescript",
     "fileExtensions": [
       "ts"
