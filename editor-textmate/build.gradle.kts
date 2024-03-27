@@ -19,7 +19,6 @@ dependencies {
   implementation("org.jruby.jcodings:jcodings:1.0.58")
   implementation("org.jruby.joni:joni:2.2.1")
   implementation("org.yaml:snakeyaml:2.2")
-  implementation(libs.androidx.annotation)
   implementation(libs.google.guava)
   implementation(libs.google.gson)
   implementation(libs.common.editor)

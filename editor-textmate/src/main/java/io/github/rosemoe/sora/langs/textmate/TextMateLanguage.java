@@ -23,14 +23,15 @@
  */
 package io.github.rosemoe.sora.langs.textmate;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+
 import io.github.rosemoe.sora.lang.EmptyLanguage;
 import io.github.rosemoe.sora.lang.analysis.AnalyzeManager;
 import io.github.rosemoe.sora.lang.smartEnter.NewlineHandler;
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.model.GrammarDefinition;
 import io.github.rosemoe.sora.widget.SymbolPairMatch;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.tm4e.core.grammar.IGrammar;
 import org.eclipse.tm4e.languageconfiguration.model.LanguageConfiguration;
 import java.util.Objects;
@@ -100,9 +101,6 @@ public class TextMateLanguage extends EmptyLanguage {
   public AnalyzeManager getAnalyzeManager() {
     return Objects.requireNonNullElse(textMateAnalyzer, EmptyAnalyzeManager.INSTANCE);
   }
-
-  @Override
-  public void destroy() {}
 
   /** Set tab size. The tab size is used to compute code blocks. */
   public void setTabSize(int tabSize) {

@@ -24,12 +24,12 @@
 package io.github.rosemoe.sora.langs.textmate;
 
 import android.graphics.Color;
-import androidx.annotation.NonNull;
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry;
 import io.github.rosemoe.sora.langs.textmate.registry.model.ThemeModel;
 import io.github.rosemoe.sora.widget.CodeEditor;
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme;
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.tm4e.core.internal.theme.IRawTheme;
 import org.eclipse.tm4e.core.internal.theme.Theme;
 import org.eclipse.tm4e.core.internal.theme.ThemeRaw;

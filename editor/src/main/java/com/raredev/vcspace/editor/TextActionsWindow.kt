@@ -64,6 +64,9 @@ class TextActionsWindow(editor: VCSpaceEditor) :
         setColor(rootView.context.getAttrColor(com.google.android.material.R.attr.colorSurface))
         setCornerRadius(25f)
       }
+    rootView.setLayoutTransition(LayoutTransition().apply {
+      enableTransitionType(LayoutTransition.CHANGING)
+    })
     rootView.addView(recyclerView)
 
     popup.contentView = rootView
@@ -85,7 +88,6 @@ class TextActionsWindow(editor: VCSpaceEditor) :
         postDisplay()
       }
     }
-    setupAnimation()
   }
 
   fun executeTextAction(action: TextAction) {
@@ -261,29 +263,9 @@ class TextActionsWindow(editor: VCSpaceEditor) :
     setSize(rootView.measuredWidth, height)
   }
 
-  private fun setupAnimation() {
-    rootView.setLayoutTransition(LayoutTransition().apply {
-      enableTransitionType(LayoutTransition.CHANGING)
-    })
-  }
-
   class TextActionListAdapter(val textActions: TextActionsWindow) :
     RecyclerView.Adapter<TextActionListAdapter.TextActionViewHolder>() {
-
-    private val actions: MutableList<TextAction> = ArrayList()
-    private val visibleActions: MutableList<TextAction> = ArrayList()
-
-    init {
-      actions.apply {
-        add(TextAction(R.drawable.ic_comment_text_outline, R.string.comment_line))
-        add(TextAction(R.drawable.ic_select_all, R.string.select_all))
-        add(TextAction(R.drawable.ic_text_select_start, R.string.long_select))
-        add(TextAction(R.drawable.ic_copy, R.string.copy))
-        add(TextAction(R.drawable.ic_paste, R.string.paste))
-        add(TextAction(R.drawable.ic_cut, R.string.cut))
-        add(TextAction(R.drawable.ic_format_align_left, R.string.menu_format))
-      }
-    }
+    private val visibleActions = mutableListOf<TextAction>()
 
     inner class TextActionViewHolder(internal val binding: LayoutTextActionItemBinding) :
       RecyclerView.ViewHolder(binding.root)
@@ -327,6 +309,18 @@ class TextActionsWindow(editor: VCSpaceEditor) :
         }
       }
       notifyDataSetChanged()
+    }
+    
+    companion object {
+      private val actions = listOf(
+        TextAction(R.drawable.ic_comment_text_outline, R.string.comment_line), // Comment Action
+        TextAction(R.drawable.ic_select_all, R.string.select_all), // Select All Text Action
+        TextAction(R.drawable.ic_text_select_start, R.string.long_select), // Long Select Action
+        TextAction(R.drawable.ic_copy, R.string.copy), // Copy Text Action
+        TextAction(R.drawable.ic_paste, R.string.paste), // Paste Text Action
+        TextAction(R.drawable.ic_cut, R.string.cut), // Cut Text Action
+        TextAction(R.drawable.ic_format_align_left, R.string.menu_format) // Format Text Action
+      )
     }
   }
 

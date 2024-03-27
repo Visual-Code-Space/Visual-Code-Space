@@ -1,7 +1,7 @@
 /*
  *    sora-editor - the awesome code editor for Android
  *    https://github.com/Rosemoe/sora-editor
- *    Copyright (C) 2020-2023  Rosemoe
+ *    Copyright (C) 2020-2024  Rosemoe
  *
  *     This library is free software; you can redistribute it and/or
  *     modify it under the terms of the GNU Lesser General Public
@@ -112,7 +112,7 @@ public class IndentRange {
     for (line = model.getLineCount() - 1; line >= 0 && delegate.isNotCancelled(); line--) {
       int indent =
           helper.getIndentFor(
-              line); // computeIndentLevel(model.getLine(line).getRawData(),
+              line); // computeIndentLevel(model.getLine(line).getBackingCharArray(),
                      // model.getColumnCount(line), tabSize);
       PreviousRegion previous = previousRegions.get(previousRegions.size() - 1);
       if (indent == -1) {

@@ -42,9 +42,7 @@ public class FileProviderRegistry {
     return fileProviderRegistry;
   }
 
-  private FileProviderRegistry() {
-    allFileResolvers.add(FileResolver.DEFAULT);
-  }
+  private FileProviderRegistry() {}
 
   public synchronized void addFileProvider(FileResolver fileResolver) {
     if (fileResolver != FileResolver.DEFAULT) {
@@ -66,7 +64,7 @@ public class FileProviderRegistry {
         return stream;
       }
     }
-    return null;
+    return FileResolver.DEFAULT.resolveStreamByPath(path);
   }
 
   public void dispose() {

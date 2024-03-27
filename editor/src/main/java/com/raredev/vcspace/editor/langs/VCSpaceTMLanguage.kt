@@ -21,7 +21,7 @@ import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry
 import org.eclipse.tm4e.core.grammar.IGrammar
 import org.eclipse.tm4e.languageconfiguration.model.LanguageConfiguration
 
-class VCSpaceTMLanguage(iGrammar: IGrammar, languageConfiguration: LanguageConfiguration?) :
+class VCSpaceTMLanguage private constructor(iGrammar: IGrammar, languageConfiguration: LanguageConfiguration?) :
   TextMateLanguage(iGrammar, languageConfiguration) {
 
   override fun getTabSize(): Int {

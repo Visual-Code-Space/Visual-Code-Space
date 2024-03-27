@@ -24,14 +24,14 @@
 package io.github.rosemoe.sora.langs.textmate;
 
 import android.util.Pair;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import io.github.rosemoe.sora.lang.smartEnter.NewlineHandleResult;
 import io.github.rosemoe.sora.lang.smartEnter.NewlineHandler;
 import io.github.rosemoe.sora.lang.styling.Styles;
 import io.github.rosemoe.sora.text.CharPosition;
 import io.github.rosemoe.sora.text.Content;
 import java.util.Arrays;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.tm4e.languageconfiguration.model.CompleteEnterAction;
 import org.eclipse.tm4e.languageconfiguration.model.EnterAction;
 import org.eclipse.tm4e.languageconfiguration.model.LanguageConfiguration;

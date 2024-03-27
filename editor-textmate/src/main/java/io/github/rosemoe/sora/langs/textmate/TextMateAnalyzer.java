@@ -25,8 +25,6 @@ package io.github.rosemoe.sora.langs.textmate;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import io.github.rosemoe.sora.lang.analysis.AsyncIncrementalAnalyzeManager;
 import io.github.rosemoe.sora.lang.brackets.BracketsProvider;
 import io.github.rosemoe.sora.lang.brackets.OnlineBracketsMatcher;
@@ -46,6 +44,8 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.tm4e.core.grammar.IGrammar;
 import org.eclipse.tm4e.core.internal.grammar.tokenattrs.EncodedTokenAttributes;
 import org.eclipse.tm4e.core.internal.oniguruma.OnigRegExp;
@@ -76,14 +76,11 @@ public final class TextMateAnalyzer extends AsyncIncrementalAnalyzeManager<LineS
     this.language = language;
 
     this.themeRegistry = ThemeRegistry.getInstance();
+    this.themeRegistry.addListener(this);
 
     this.theme = themeRegistry.getCurrentThemeModel().getTheme();
 
     this.grammar = grammar;
-
-    if (!themeRegistry.hasListener(this)) {
-      themeRegistry.addListener(this);
-    }
 
     createBracketsProvider(language.languageConfiguration);
     createFoldingExp(language.languageConfiguration);
@@ -239,12 +236,12 @@ public final class TextMateAnalyzer extends AsyncIncrementalAnalyzeManager<LineS
               (fontStyle & FontStyle.Italic) != 0,
               false);
       Span span = Span.obtain(startIndex, style);
-      span.extra = tokenType;
+      span.setExtra(tokenType);
 
       if ((fontStyle & FontStyle.Underline) != 0) {
         String color = theme.getColor(foreground);
         if (color != null) {
-          span.underlineColor = Color.parseColor(color);
+          span.setUnderlineColor(Color.parseColor(color));
         }
       }
       tokens.add(span);

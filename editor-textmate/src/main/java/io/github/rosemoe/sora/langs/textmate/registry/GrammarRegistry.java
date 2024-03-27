@@ -45,8 +45,6 @@ public class GrammarRegistry {
 
   private static GrammarRegistry instance;
 
-  private Registry registry = new Registry();
-
   private final Map</* scopeName */ String, LanguageConfiguration> languageConfigurationMap =
       new LinkedHashMap<>();
 
@@ -56,6 +54,8 @@ public class GrammarRegistry {
       new LinkedHashMap<>();
 
   private final Map<String, GrammarDefinition> scopeName2GrammarDefinition = new LinkedHashMap<>();
+
+  private Registry registry = new Registry();
 
   public static synchronized GrammarRegistry getInstance() {
     if (instance == null) {

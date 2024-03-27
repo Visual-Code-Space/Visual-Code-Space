@@ -13,17 +13,12 @@ import com.raredev.vcspace.res.R
 import io.github.rosemoe.sora.widget.EditorSearcher
 import io.github.rosemoe.sora.widget.EditorSearcher.SearchOptions
 
-class SearcherLayout : LinearLayout, View.OnClickListener {
-
-  constructor(context: Context) : super(context)
-
-  constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
-
-  constructor(
-    context: Context,
-    attrs: AttributeSet?,
-    defStyleAttr: Int
-  ) : super(context, attrs, defStyleAttr)
+class SearcherLayout  @JvmOverloads constructor(
+  context: Context,
+  attrs: AttributeSet? = null,
+  defStyleAttr: Int = 0,
+  defStyleRes: Int = 0,
+) : LinearLayout(context, attrs, defStyleAttr,defStyleRes), View.OnClickListener {
 
   private val binding = LayoutSearcherBinding.inflate(LayoutInflater.from(context))
   private val optionsMenu: PopupMenu
@@ -58,8 +53,8 @@ class SearcherLayout : LinearLayout, View.OnClickListener {
     optionsMenu.setOnMenuItemClickListener { item ->
       item.isChecked = !item.isChecked
 
-      var ignoreCase = searchOptions.ignoreCase
-      var useRegex = searchOptions.type == SearchOptions.TYPE_REGULAR_EXPRESSION
+      var ignoreCase: Boolean = searchOptions.caseInsensitive
+      var useRegex: Boolean = searchOptions.type == SearchOptions.TYPE_REGULAR_EXPRESSION
       when (item.itemId) {
         0 -> ignoreCase = item.isChecked
         1 -> useRegex = item.isChecked
