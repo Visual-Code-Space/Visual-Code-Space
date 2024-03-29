@@ -46,7 +46,7 @@ class SymbolInputAdapter : RecyclerView.Adapter<SymbolInputAdapter.VH>() {
     }
 
     if ("→" == symbol.label) {
-      editor.commitText(PreferencesUtils.identationString)
+      editor.indentOrCommitTab();
       return
     }
 

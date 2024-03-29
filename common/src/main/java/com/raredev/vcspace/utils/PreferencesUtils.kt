@@ -72,9 +72,6 @@ object PreferencesUtils {
 
   val deleteMultiSpaces: Boolean = prefs.getBoolean(SharedPreferencesKeys.KEY_DELETE_TABS, true)
 
-  val identationString: String
-    get() = if (useTab) "\t" else " ".repeat(tabSize)
-
   val autoSave: Boolean
     get() = prefs.getBoolean(SharedPreferencesKeys.KEY_AUTO_SAVE, false)
 
