@@ -3,7 +3,7 @@ package com.raredev.vcspace.providers
 import android.annotation.SuppressLint
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.raredev.vcspace.app.BaseApplication.Companion.getInstance
+import com.raredev.vcspace.app.BaseApplication.Companion.instance as app
 import com.raredev.vcspace.models.FileIcon
 import com.raredev.vcspace.res.R
 import com.raredev.vcspace.utils.FileUtil
@@ -19,17 +19,14 @@ object FileIconProvider {
   private var fileIcons: List<FileIcon> = mutableListOf()
 
   init {
-    val fileIconsJson = FileUtil.readFromAsset(getInstance(), "files/file_icons.json")
+    val fileIconsJson = FileUtil.readFromAsset(app, "files/file_icons.json")
     fileIcons = Gson().fromJson(fileIconsJson, object : TypeToken<List<FileIcon>>() {})
   }
 
   @SuppressLint("DiscouragedApi")
   fun findFileIconResource(file: File): Int {
     val fileIcon = findFileIconByExtension(file.extension) ?: return R.drawable.ic_file
-    val resId =
-      getInstance()
-        .resources
-        .getIdentifier(fileIcon.drawableName, "drawable", getInstance().packageName)
+    val resId = app.resources.getIdentifier(fileIcon.drawableName, "drawable", app.packageName)
     return if (resId == 0) R.drawable.ic_file else resId
   }
 

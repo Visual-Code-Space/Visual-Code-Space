@@ -13,7 +13,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.raredev.vcspace.editor.completion;
+package com.raredev.vcspace.editor.completion
 
 import android.text.TextUtils
 import android.view.LayoutInflater

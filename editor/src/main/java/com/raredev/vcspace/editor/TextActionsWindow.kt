@@ -64,9 +64,9 @@ class TextActionsWindow(editor: VCSpaceEditor) :
         setColor(rootView.context.getAttrColor(com.google.android.material.R.attr.colorSurface))
         setCornerRadius(25f)
       }
-    rootView.setLayoutTransition(LayoutTransition().apply {
-      enableTransitionType(LayoutTransition.CHANGING)
-    })
+    rootView.setLayoutTransition(
+      LayoutTransition().apply { enableTransitionType(LayoutTransition.CHANGING) }
+    )
     rootView.addView(recyclerView)
 
     popup.contentView = rootView
@@ -310,17 +310,18 @@ class TextActionsWindow(editor: VCSpaceEditor) :
       }
       notifyDataSetChanged()
     }
-    
+
     companion object {
-      private val actions = listOf(
-        TextAction(R.drawable.ic_comment_text_outline, R.string.comment_line), // Comment Action
-        TextAction(R.drawable.ic_select_all, R.string.select_all), // Select All Text Action
-        TextAction(R.drawable.ic_text_select_start, R.string.long_select), // Long Select Action
-        TextAction(R.drawable.ic_copy, R.string.copy), // Copy Text Action
-        TextAction(R.drawable.ic_paste, R.string.paste), // Paste Text Action
-        TextAction(R.drawable.ic_cut, R.string.cut), // Cut Text Action
-        TextAction(R.drawable.ic_format_align_left, R.string.menu_format) // Format Text Action
-      )
+      private val actions =
+        listOf(
+          TextAction(R.drawable.ic_comment_text_outline, R.string.comment_line), // Comment Action
+          TextAction(R.drawable.ic_select_all, R.string.select_all), // Select All Text Action
+          TextAction(R.drawable.ic_text_select_start, R.string.long_select), // Long Select Action
+          TextAction(R.drawable.ic_copy, R.string.copy), // Copy Text Action
+          TextAction(R.drawable.ic_paste, R.string.paste), // Paste Text Action
+          TextAction(R.drawable.ic_cut, R.string.cut), // Cut Text Action
+          TextAction(R.drawable.ic_format_align_left, R.string.menu_format) // Format Text Action
+        )
     }
   }
 

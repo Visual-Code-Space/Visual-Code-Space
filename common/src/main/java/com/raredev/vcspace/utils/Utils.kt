@@ -28,7 +28,7 @@ import android.os.Environment
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
-import com.raredev.vcspace.app.BaseApplication.Companion.getInstance
+import com.raredev.vcspace.app.BaseApplication
 
 object Utils {
   fun setDrawableTint(drawable: Drawable, color: Int) {
@@ -37,17 +37,17 @@ object Utils {
 
   fun setActivityTitle(activity: Activity, title: String?) {
     if (activity is AppCompatActivity) {
-      activity.supportActionBar!!.title = title
+      activity.supportActionBar?.title = title
     } else {
-      activity.actionBar!!.title = title
+      activity.actionBar?.title = title
     }
   }
 
-  fun isPermissionGaranted(context: Context?): Boolean {
+  fun isPermissionGaranted(context: Context): Boolean {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
       Environment.isExternalStorageManager()
     } else {
-      (ContextCompat.checkSelfPermission(context!!, Manifest.permission.READ_EXTERNAL_STORAGE) ==
+      (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) ==
         PackageManager.PERMISSION_GRANTED)
     }
   }
@@ -58,7 +58,8 @@ object Utils {
       else if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO)
         return false
       val uiMode =
-        (getInstance().resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK)
+        (BaseApplication.instance.resources.configuration.uiMode and
+          Configuration.UI_MODE_NIGHT_MASK)
       return uiMode == Configuration.UI_MODE_NIGHT_YES
     }
 }

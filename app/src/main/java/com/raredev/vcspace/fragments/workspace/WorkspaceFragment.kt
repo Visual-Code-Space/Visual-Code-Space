@@ -5,9 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.forEach
+import androidx.core.view.children
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
@@ -16,18 +15,17 @@ import com.raredev.vcspace.R
 import com.raredev.vcspace.activities.SettingsActivity
 import com.raredev.vcspace.activities.TerminalActivity
 import com.raredev.vcspace.databinding.FragmentWorkspaceBinding
-import com.raredev.vcspace.viewmodel.FileExplorerViewModel
 
 class WorkspaceFragment : Fragment(), NavController.OnDestinationChangedListener {
-
-  private val fileViewModel by
-    viewModels<FileExplorerViewModel>(ownerProducer = { requireActivity() })
 
   private var _binding: FragmentWorkspaceBinding? = null
   private val binding: FragmentWorkspaceBinding
     get() = checkNotNull(_binding)
 
-  private lateinit var navController: NavController
+  private val navController by lazy {
+    (childFragmentManager.findFragmentById(binding.navHostFragment.id) as NavHostFragment)
+      .navController
+  }
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -40,16 +38,12 @@ class WorkspaceFragment : Fragment(), NavController.OnDestinationChangedListener
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    val navHostFragment =
-      childFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-    navController = navHostFragment.navController
-    NavigationUI.setupWithNavController(binding.navRail, navController)
 
     navController.addOnDestinationChangedListener(this)
+    NavigationUI.setupWithNavController(binding.navRail, navController)
     binding.navRail.setOnItemSelectedListener { item ->
       when (item.itemId) {
-        R.id.menu_terminal ->
-          TerminalActivity.startTerminalWithDir(requireContext(), fileViewModel.currentPath.value)
+        R.id.menu_terminal -> startActivity(Intent(requireContext(), TerminalActivity::class.java))
         R.id.menu_settings -> startActivity(Intent(requireContext(), SettingsActivity::class.java))
       }
       false
@@ -61,11 +55,11 @@ class WorkspaceFragment : Fragment(), NavController.OnDestinationChangedListener
     destination: NavDestination,
     arguments: Bundle?
   ) {
-    binding.navRail.menu.forEach { item ->
-      if (destination.id == item.itemId) {
-        binding.title.text = item.title
-        item.isChecked = true
-      }
+    val children = binding.navRail.menu.children
+    val menuItem = children.find { item -> destination.id == item.itemId }
+    menuItem?.let {
+      binding.title.text = it.title
+      it.isChecked = true
     }
   }
 

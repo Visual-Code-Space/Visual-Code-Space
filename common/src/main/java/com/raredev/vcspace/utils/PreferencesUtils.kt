@@ -23,7 +23,7 @@ import com.raredev.vcspace.res.R
 object PreferencesUtils {
 
   val prefs: SharedPreferences
-    get() = BaseApplication.getInstance().getPrefs()
+    get() = BaseApplication.instance.defaultPrefs
 
   // General
   val appTheme: Int

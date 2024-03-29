@@ -26,101 +26,52 @@ import com.raredev.vcspace.res.databinding.LayoutProgressDialogBinding
 class ProgressDialogBuilder(val context: Context) {
 
   private val binding = LayoutProgressDialogBinding.inflate(LayoutInflater.from(context))
-  private val builder = MaterialAlertDialogBuilder(context).setView(binding.root)
+  private val _builder = MaterialAlertDialogBuilder(context).setView(binding.root)
 
-  fun getDialogBuilder(): MaterialAlertDialogBuilder {
-    return this.builder
+  val builder: MaterialAlertDialogBuilder
+    get() = _builder
+
+  fun setPositiveButton(text: String, listener: DialogInterface.OnClickListener) = apply {
+    _builder.setPositiveButton(text, listener)
   }
 
-  fun setPositiveButton(
-    text: String,
-    listener: DialogInterface.OnClickListener
-  ): ProgressDialogBuilder {
-    builder.setPositiveButton(text, listener)
-    return this
+  fun setPositiveButton(@StringRes text: Int, listener: DialogInterface.OnClickListener) = apply {
+    _builder.setPositiveButton(text, listener)
   }
 
-  fun setPositiveButton(
-    @StringRes text: Int,
-    listener: DialogInterface.OnClickListener
-  ): ProgressDialogBuilder {
-    builder.setPositiveButton(text, listener)
-    return this
+  fun setNegativeButton(text: String, listener: DialogInterface.OnClickListener) = apply {
+    _builder.setNegativeButton(text, listener)
   }
 
-  fun setNegativeButton(
-    text: String,
-    listener: DialogInterface.OnClickListener
-  ): ProgressDialogBuilder {
-    builder.setNegativeButton(text, listener)
-    return this
+  fun setNegativeButton(@StringRes text: Int, listener: DialogInterface.OnClickListener) = apply {
+    _builder.setNegativeButton(text, listener)
   }
 
-  fun setNegativeButton(
-    @StringRes text: Int,
-    listener: DialogInterface.OnClickListener
-  ): ProgressDialogBuilder {
-    builder.setNegativeButton(text, listener)
-    return this
+  fun setNeutralButton(text: String, listener: DialogInterface.OnClickListener) = apply {
+    _builder.setNeutralButton(text, listener)
   }
 
-  fun setNeutralButton(
-    text: String,
-    listener: DialogInterface.OnClickListener
-  ): ProgressDialogBuilder {
-    builder.setNeutralButton(text, listener)
-    return this
+  fun setNeutralButton(@StringRes text: Int, listener: DialogInterface.OnClickListener) = apply {
+    _builder.setNeutralButton(text, listener)
   }
 
-  fun setNeutralButton(
-    @StringRes text: Int,
-    listener: DialogInterface.OnClickListener
-  ): ProgressDialogBuilder {
-    builder.setNeutralButton(text, listener)
-    return this
-  }
+  fun show(): AlertDialog = _builder.show()
 
-  fun show(): AlertDialog = builder.show()
+  fun create(): AlertDialog = _builder.create()
 
-  fun create(): AlertDialog = builder.create()
+  fun setTitle(title: String) = apply { _builder.setTitle(title) }
 
-  fun setTitle(title: String): ProgressDialogBuilder {
-    builder.setTitle(title)
-    return this
-  }
+  fun setTitle(@StringRes title: Int) = apply { _builder.setTitle(title) }
 
-  fun setTitle(@StringRes title: Int): ProgressDialogBuilder {
-    builder.setTitle(title)
-    return this
-  }
+  fun setMessage(message: String) = apply { binding.message.text = message }
 
-  fun setMessage(message: String): ProgressDialogBuilder {
-    binding.message.text = message
-    return this
-  }
+  fun setMessage(@StringRes message: Int) = apply { binding.message.setText(message) }
 
-  fun setMessage(@StringRes message: Int): ProgressDialogBuilder {
-    binding.message.setText(message)
-    return this
-  }
+  fun setProgress(progress: Int) = apply { binding.indicator.setProgressCompat(progress, true) }
 
-  fun setProgress(progress: Int): ProgressDialogBuilder {
-    binding.indicator.setProgressCompat(progress, true)
-    return this
-  }
+  fun setMax(max: Int) = apply { binding.indicator.setMax(max) }
 
-  fun setMax(max: Int): ProgressDialogBuilder {
-    binding.indicator.setMax(max)
-    return this
-  }
+  fun setMin(min: Int) = apply { binding.indicator.setMin(min) }
 
-  fun setMin(min: Int): ProgressDialogBuilder {
-    binding.indicator.setMin(min)
-    return this
-  }
-
-  fun setCancelable(cancelable: Boolean): ProgressDialogBuilder {
-    builder.setCancelable(cancelable)
-    return this
-  }
+  fun setCancelable(cancelable: Boolean) = apply { _builder.setCancelable(cancelable) }
 }

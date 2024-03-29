@@ -19,15 +19,13 @@ import com.blankj.utilcode.util.UriUtils
 import com.hzy.libp7zip.P7ZipApi
 import com.raredev.vcspace.R
 import com.raredev.vcspace.activities.TerminalActivity
-import com.raredev.vcspace.dialogs.ProgressDialogBuilder
+import com.raredev.vcspace.extensions.launchWithProgressDialog
 import com.raredev.vcspace.res.R.string
 import com.raredev.vcspace.utils.PreferencesUtils
 import com.raredev.vcspace.utils.SharedPreferencesKeys
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class EditorActivity : BaseEditorActivity() {
@@ -93,13 +91,15 @@ class EditorActivity : BaseEditorActivity() {
     val editor = getSelectedEditor()
     when (item.itemId) {
       R.id.menu_execute -> {
-        if (isPythonFile(editor?.file) == true) {
-          extractPythonFile {
-            startActivity(
-              Intent(this, TerminalActivity::class.java)
-                .putExtra(TerminalActivity.KEY_PYTHON_FILE_PATH, editor?.file?.absolutePath)
-                .putExtra(TerminalActivity.KEY_CONTAINS_PYTHON_FILE, true)
-            )
+        saveAllFilesAsync(false) {
+          if (editor?.file?.name?.endsWith(".py") ?: false) {
+            extractPythonFile {
+              startActivity(
+                Intent(this, TerminalActivity::class.java)
+                  .putExtra(TerminalActivity.KEY_PYTHON_FILE_PATH, editor?.file?.absolutePath)
+                  .putExtra(TerminalActivity.KEY_CONTAINS_PYTHON_FILE, true)
+              )
+            }
           }
         }
       }
@@ -108,7 +108,7 @@ class EditorActivity : BaseEditorActivity() {
       R.id.menu_redo -> editor?.redo()
       R.id.menu_new_file -> createFile.launch("filename.txt")
       R.id.menu_open_file -> openFile.launch(arrayOf("text/*"))
-      R.id.menu_save -> saveFileAsync(true, viewModel.getSelectedFilePos())
+      R.id.menu_save -> saveFileAsync(true, viewModel.selectedFileIndex)
       R.id.menu_save_all -> saveAllFilesAsync(true)
     }
     return true
@@ -143,34 +143,33 @@ class EditorActivity : BaseEditorActivity() {
     if (PreferencesUtils.isPythonFileExtracted) {
       whenExtractingDone()
     } else {
-      val dialog =
-        ProgressDialogBuilder(this)
-          .setCancelable(false)
-          .setTitle("Extracting files...")
-          .setMessage("Please wait")
-          .create()
-
-      dialog.setOnDismissListener {
-        PreferencesUtils.prefs
-          .edit()
-          .putBoolean(SharedPreferencesKeys.KEY_PYTHON_FILE_EXTRACTED, true)
-          .apply()
-        whenExtractingDone()
-      }
-      dialog.show()
-
-      CoroutineScope(Dispatchers.IO).launch {
-        val temp7zStream = assets.open("python/python.7z")
-        val file = File("${filesDir.absolutePath}/python.7z")
-        file.createNewFile()
-        Files.copy(temp7zStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING)
-        val exitCode =
-          P7ZipApi.executeCommand("7z x ${file.absolutePath} -o${filesDir.absolutePath}")
-        Log.d("EditorActivity", "extractFiles: $exitCode")
-        file.delete()
-        temp7zStream.close()
-        dialog.dismiss()
-      }
+      coroutineScope.launchWithProgressDialog(
+        configureBuilder = { builder ->
+          builder.setCancelable(false)
+          builder.setTitle("Extracting files...")
+          builder.setMessage(string.please_wait)
+        },
+        invokeOnCompletion = { throwable ->
+          if (throwable == null) {
+            PreferencesUtils.prefs
+              .edit()
+              .putBoolean(SharedPreferencesKeys.KEY_PYTHON_FILE_EXTRACTED, true)
+              .apply()
+            whenExtractingDone()
+          }
+        },
+        action = { _ ->
+          val temp7zStream = assets.open("python/python.7z")
+          val file = File("${filesDir.absolutePath}/python.7z")
+          file.createNewFile()
+          Files.copy(temp7zStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING)
+          val exitCode =
+            P7ZipApi.executeCommand("7z x ${file.absolutePath} -o${filesDir.absolutePath}")
+          Log.d("EditorActivity", "extractFiles: $exitCode")
+          file.delete()
+          temp7zStream.close()
+        }
+      )
     }
   }
 }

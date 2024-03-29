@@ -35,13 +35,13 @@ fun CoroutineScope.cancelIfActive(exception: CancellationException? = null) {
 
 inline fun CoroutineScope.launchWithProgressDialog(
   context: CoroutineContext = EmptyCoroutineContext,
-  configureDialog: (builder: ProgressDialogBuilder) -> Unit = {},
+  configureBuilder: (builder: ProgressDialogBuilder) -> Unit = {},
   crossinline invokeOnCompletion: (throwable: Throwable?) -> Unit = {},
   crossinline action: suspend CoroutineScope.(builder: ProgressDialogBuilder) -> Unit
 ): Job {
 
   val builder = withActivity { ProgressDialogBuilder(this) }
-  configureDialog(builder)
+  configureBuilder(builder)
 
   val dialog = builder.show()
   return launch(context) { action(builder) }

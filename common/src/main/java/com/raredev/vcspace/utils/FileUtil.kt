@@ -33,8 +33,8 @@ object FileUtil {
     } else null
   }
 
-  fun delete(path: String?): Boolean {
-    return delete(File(path.toString()))
+  fun delete(path: String): Boolean {
+    return delete(File(path))
   }
 
   fun delete(file: File): Boolean {
@@ -56,10 +56,10 @@ object FileUtil {
     return file.delete()
   }
 
-  fun readFromAsset(ctx: Context, path: String?): String {
+  fun readFromAsset(ctx: Context, path: String): String {
     try {
       // Get the input stream from the asset
-      val inputStream = ctx.assets.open(path!!)
+      val inputStream = ctx.assets.open(path)
 
       // Create a byte array output stream to store the read bytes
       val outputStream = ByteArrayOutputStream()

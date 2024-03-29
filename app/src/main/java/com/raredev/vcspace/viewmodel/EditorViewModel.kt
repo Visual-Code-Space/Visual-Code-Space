@@ -1,7 +1,6 @@
 package com.raredev.vcspace.viewmodel
 
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
@@ -9,58 +8,61 @@ import java.io.File
 
 class EditorViewModel : ViewModel() {
 
-  private val files = MutableLiveData<MutableList<File>>(ArrayList())
-  private val _selectedFilePosition = MutableLiveData<Int>(-1)
+  private val _files = MutableLiveData<MutableList<File>>(mutableListOf())
+  private val _selectedFile = MutableLiveData<Pair<Int, File?>>(-1 to null)
 
-  val selectedFilePosition: LiveData<Int> = _selectedFilePosition
+  val openedFiles: List<File>
+    get() = _files.value!!
+
+  val fileCount: Int
+    get() = _files.value!!.size
+
+  val selectedFile: File?
+    get() = _selectedFile.value!!.second
+
+  val selectedFileIndex: Int
+    get() = _selectedFile.value!!.first
 
   fun addFile(file: File) {
-    val files = this.files.value ?: mutableListOf()
+    val files = this._files.value!!
     files.add(file)
-    this.files.value = files
+    this._files.value = files
   }
 
-  fun updateFile(position: Int, file: File) {
-    val files = this.files.value ?: mutableListOf()
-    files[position] = file
-    this.files.value = files
+  fun updateFile(index: Int, file: File) {
+    val files = this._files.value!!
+    files[index] = file
+    this._files.value = files
   }
 
-  fun removeFile(position: Int) {
-    val files = this.files.value ?: mutableListOf()
-    files.removeAt(position)
-    this.files.value = files
+  fun removeFile(index: Int) {
+    val files = this._files.value!!
+    files.removeAt(index)
+    this._files.value = files
+
+    if (files.isEmpty()) setSelectedFile(-1, null)
   }
 
   fun removeAllFiles() {
-    val files = this.files.value ?: mutableListOf()
+    val files = this._files.value!!
     files.clear()
-    this.files.value = files
-
-    setSelectedFile(-1)
-  }
-
-  fun setSelectedFile(index: Int) {
-    _selectedFilePosition.value = index
-  }
-
-  fun getOpenedFiles(): List<File> {
-    return files.value ?: mutableListOf()
-  }
-
-  fun getFileCount(): Int {
-    return files.value?.size ?: 0
-  }
-
-  fun getSelectedFilePos(): Int {
-    return selectedFilePosition.value ?: -1
-  }
-
-  fun getSelectedFile(): File {
-    return getOpenedFiles()[getSelectedFilePos()]
+    this._files.value = files
+    setSelectedFile(-1, null)
   }
 
   fun observeFiles(lifecycleOwner: LifecycleOwner, observer: Observer<MutableList<File>>) {
-    files.observe(lifecycleOwner, observer)
+    this._files.observe(lifecycleOwner, observer)
+  }
+
+  fun setSelectedFile(index: Int) {
+    setSelectedFile(index, openedFiles[index])
+  }
+
+  fun setSelectedFile(index: Int, file: File?) {
+    this._selectedFile.value = index to file
+  }
+
+  fun observeSelectedFile(lifecycleOwner: LifecycleOwner, observer: Observer<Pair<Int, File?>>) {
+    this._selectedFile.observe(lifecycleOwner, observer)
   }
 }

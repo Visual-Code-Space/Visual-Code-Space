@@ -21,8 +21,8 @@ import android.util.AttributeSet
 import android.view.inputmethod.EditorInfo
 import com.raredev.vcspace.editor.completion.CompletionListAdapter
 import com.raredev.vcspace.editor.completion.CustomCompletionLayout
-import com.raredev.vcspace.editor.langs.VCSpaceTMLanguage
 import com.raredev.vcspace.editor.events.OnContentChangeEvent
+import com.raredev.vcspace.editor.langs.VCSpaceTMLanguage
 import io.github.rosemoe.sora.event.ContentChangeEvent
 import io.github.rosemoe.sora.widget.CodeEditor
 import io.github.rosemoe.sora.widget.component.EditorAutoCompletion
@@ -31,17 +31,14 @@ import java.io.File
 import org.eclipse.tm4e.languageconfiguration.model.CommentRule
 import org.greenrobot.eventbus.EventBus
 
-class VCSpaceEditor : CodeEditor {
-
-  constructor(context: Context) : super(context)
-
-  constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
-
-  constructor(
-    context: Context,
-    attrs: AttributeSet?,
-    defStyleAttr: Int
-  ) : super(context, attrs, defStyleAttr)
+class VCSpaceEditor
+@JvmOverloads
+constructor(
+  context: Context,
+  attrs: AttributeSet? = null,
+  defStyleAttr: Int = 0,
+  defStyleRes: Int = 0,
+) : CodeEditor(context, attrs, defStyleAttr, defStyleRes) {
 
   private var textActions: TextActionsWindow? = TextActionsWindow(this)
 

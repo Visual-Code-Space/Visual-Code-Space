@@ -13,12 +13,14 @@ import com.raredev.vcspace.res.R
 import io.github.rosemoe.sora.widget.EditorSearcher
 import io.github.rosemoe.sora.widget.EditorSearcher.SearchOptions
 
-class SearcherLayout  @JvmOverloads constructor(
+class SearcherLayout
+@JvmOverloads
+constructor(
   context: Context,
   attrs: AttributeSet? = null,
   defStyleAttr: Int = 0,
   defStyleRes: Int = 0,
-) : LinearLayout(context, attrs, defStyleAttr,defStyleRes), View.OnClickListener {
+) : LinearLayout(context, attrs, defStyleAttr, defStyleRes), View.OnClickListener {
 
   private val binding = LayoutSearcherBinding.inflate(LayoutInflater.from(context))
   private val optionsMenu: PopupMenu
@@ -106,7 +108,7 @@ class SearcherLayout  @JvmOverloads constructor(
     this.searcher = searcher
   }
 
-  fun search(text: String) {
+  private fun search(text: String) {
     if (text.isNotEmpty()) {
       searcher?.search(text, searchOptions)
     } else searcher?.stopSearch()

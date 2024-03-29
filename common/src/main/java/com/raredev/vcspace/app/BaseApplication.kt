@@ -26,24 +26,17 @@ open class BaseApplication : Application() {
   companion object {
     const val REPO_URL = "https://github.com/Visual-Code-Space/Visual-Code-Space"
 
-    private lateinit var instance: BaseApplication
-
-    fun getInstance(): BaseApplication {
-      return instance
-    }
+    private var _instance: BaseApplication? = null
+    val instance: BaseApplication
+      get() = checkNotNull(_instance) { "Application instance not found" }
   }
 
-  private lateinit var prefs: SharedPreferences
+  val defaultPrefs: SharedPreferences
+    get() = PreferenceManager.getDefaultSharedPreferences(this)
 
   override fun onCreate() {
-    instance = this
+    _instance = this
     super.onCreate()
-
-    prefs = PreferenceManager.getDefaultSharedPreferences(this)
-  }
-
-  fun getPrefs(): SharedPreferences {
-    return prefs
   }
 
   fun openProjectRepo() {
@@ -52,11 +45,13 @@ open class BaseApplication : Application() {
 
   fun openUrl(url: String) {
     try {
-      val intent = Intent()
-      intent.action = Intent.ACTION_VIEW
-      intent.data = Uri.parse(url)
-      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-      startActivity(intent)
+      startActivity(
+        Intent().apply {
+          addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+          action = Intent.ACTION_VIEW
+          data = Uri.parse(url)
+        }
+      )
     } catch (th: Throwable) {
       th.printStackTrace()
     }

@@ -42,7 +42,7 @@ class GitSettingsFragment : PreferenceFragmentCompat() {
       object : ClickableSpan() {
         override fun onClick(textView: View) {
           val url = "https://github.com/settings/tokens"
-          BaseApplication.getInstance().openUrl(url)
+          BaseApplication.instance.openUrl(url)
         }
       },
       startIndex,

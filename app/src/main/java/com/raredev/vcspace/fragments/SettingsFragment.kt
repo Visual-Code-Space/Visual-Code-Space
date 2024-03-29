@@ -41,7 +41,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     findPreference<Preference>(SharedPreferencesKeys.KEY_GITHUB)?.setOnPreferenceClickListener { _
       ->
-      BaseApplication.getInstance().openProjectRepo()
+      BaseApplication.instance.openProjectRepo()
       true
     }
     findPreference<Preference>(SharedPreferencesKeys.KEY_LICENSES)?.setOnPreferenceClickListener { _
