@@ -32,6 +32,7 @@ import org.eclipse.tm4e.core.registry.IGrammarSource
  */
 object GrammarProvider {
 
+  private val grammarRegistry = GrammarRegistry.getInstance()
   private var _grammars: List<GrammarModel> = mutableListOf()
 
   val grammars: List<GrammarModel>
@@ -43,33 +44,25 @@ object GrammarProvider {
     }
 
     val grammarsJson = FileUtil.readFromAsset(context, "editor/sora-editor/textmate/grammars.json")
-
     _grammars = Gson().fromJson(grammarsJson, object : TypeToken<List<GrammarModel>>() {})
-
-    // Create GrammarRegistry instance
-    GrammarRegistry.getInstance()
   }
 
-  fun findScopeByFileExtension(extension: String?): String? {
+  suspend fun findScopeByFileExtension(extension: String?): String? {
     val grammar = findGrammarByFileExtension(extension) ?: return null
-    if (!GrammarRegistry.getInstance().containsGrammarByFileName(grammar.name)) {
+    if (!grammarRegistry.containsGrammarByFileName(grammar.name)) {
       registerGrammar(grammar)
     }
     return grammar.scopeName
   }
 
-  fun registerGrammarByFileExtension(extension: String?) {
+  suspend fun registerGrammarByFileExtension(extension: String?) {
     val grammar = findGrammarByFileExtension(extension) ?: return
     registerGrammar(grammar)
   }
 
-  private fun registerGrammar(grammar: GrammarModel) {
-    val grammarRegistry = GrammarRegistry.getInstance()
-
+  private suspend fun registerGrammar(grammar: GrammarModel) {
     if (!grammarRegistry.containsGrammarByFileName(grammar.name)) {
-      if (grammar.embeddedLanguages != null) {
-        registerEmbeddedLanguagesGrammar(grammar)
-      }
+      registerEmbeddedLanguagesGrammar(grammar)
 
       val grammarSource =
         IGrammarSource.fromInputStream(
@@ -90,7 +83,7 @@ object GrammarProvider {
     }
   }
 
-  private fun registerEmbeddedLanguagesGrammar(grammar: GrammarModel) {
+  private suspend fun registerEmbeddedLanguagesGrammar(grammar: GrammarModel) {
     val embeddedLanguages = grammar.embeddedLanguages ?: return
 
     for ((_, name) in embeddedLanguages) {

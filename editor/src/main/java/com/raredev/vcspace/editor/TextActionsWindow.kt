@@ -93,7 +93,7 @@ class TextActionsWindow(editor: VCSpaceEditor) :
   fun executeTextAction(action: TextAction) {
     when (action.text) {
       R.string.comment_line -> {
-        val commentRule = (editor as VCSpaceEditor).getCommentRule()
+        val commentRule = (editor as VCSpaceEditor).commentRule
         if (!editor.cursor.isSelected) {
           addSingleComment(commentRule, editor.text)
         } else {
@@ -227,7 +227,7 @@ class TextActionsWindow(editor: VCSpaceEditor) :
     actionsAdapter.apply {
 
       // Comment action
-      val commentRule = (editor as VCSpaceEditor).getCommentRule()
+      val commentRule = (editor as VCSpaceEditor).commentRule
       updateAction(0, commentRule != null && editor.isEditable)
 
       // Select all action

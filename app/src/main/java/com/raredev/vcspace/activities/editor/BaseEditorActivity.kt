@@ -256,10 +256,7 @@ open class BaseEditorActivity :
     getEditorAtIndex(index)?.saveFile()
 
     withContext(Dispatchers.Main) {
-      val tab = binding.tabs.getTabAt(index) ?: return@withContext
-      if (tab.text!!.startsWith("*")) {
-        tab.text = tab.text!!.substring(startIndex = 1)
-      }
+      binding.tabs.getTabAt(index)?.markUnmodified()
       invalidateOptionsMenu()
       whenSave?.run()
     }
@@ -287,7 +284,7 @@ open class BaseEditorActivity :
 
   fun getUnsavedFilesCount(): Int {
     var count = 0
-    for (i in 0 until viewModel.openedFiles.size) {
+    for (i in 0 until viewModel.fileCount) {
       if (getEditorAtIndex(i)?.modified == true) count++
     }
     return count
@@ -321,11 +318,11 @@ open class BaseEditorActivity :
       }
     }
 
-    val tab = binding.tabs.getTabAt(index)
-    if (tab?.text?.startsWith("*") != false) {
-      return
-    }
-    tab.text = "*${tab.text}"
+    val tab = binding.tabs.getTabAt(index) ?: return
+
+    if (getEditorAtIndex(index)!!.modified) {
+      tab.markModified()
+    } else tab.markUnmodified()
   }
 
   @Subscribe(threadMode = ThreadMode.MAIN)
@@ -417,5 +414,17 @@ open class BaseEditorActivity :
       .setNegativeButton(R.string.close, negative)
       .setNeutralButton(R.string.cancel, null)
       .show()
+  }
+
+  private fun TabLayout.Tab.markModified() {
+    if (!text!!.startsWith("*")) {
+      text = "*$text"
+    }
+  }
+
+  private fun TabLayout.Tab.markUnmodified() {
+    if (text!!.startsWith("*")) {
+      text = text!!.substring(startIndex = 1)
+    }
   }
 }

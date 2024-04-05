@@ -7,11 +7,13 @@ import android.widget.LinearLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import com.blankj.utilcode.util.FileIOUtils
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.raredev.vcspace.databinding.LayoutCodeEditorBinding
 import com.raredev.vcspace.editor.langs.VCSpaceTMLanguage
 import com.raredev.vcspace.events.OnPreferenceChangeEvent
 import com.raredev.vcspace.extensions.cancelIfActive
 import com.raredev.vcspace.providers.GrammarProvider
+import com.raredev.vcspace.res.R
 import com.raredev.vcspace.utils.PreferencesUtils
 import com.raredev.vcspace.utils.SharedPreferencesKeys
 import io.github.rosemoe.sora.lang.EmptyLanguage
@@ -53,7 +55,12 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
       this.file = file
     }
     binding.searcher.bindSearcher(editor.searcher)
+    addView(binding.root, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
+    configureEditor()
+    readFile(file)
+  }
 
+  private fun readFile(file: File) {
     setLoading(true)
     editorScope.launch {
       val content = FileIOUtils.readFile2String(file)
@@ -64,14 +71,23 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
         postRead(language)
       }
     }
-    addView(binding.root, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
-    configureEditor()
   }
 
   private fun postRead(language: Language) {
-    editor.setEditorLanguage(language)
-    editor.subscribeEvents()
     setLoading(false)
+
+    editor.setEditorLanguage(language)
+  }
+
+  fun confirmReload() {
+    if (modified) {
+      MaterialAlertDialogBuilder(context)
+        .setTitle(R.string.menu_reload)
+        .setMessage(R.string.discard_changes)
+        .setPositiveButton(R.string.yes) { _, _ -> readFile(file!!) }
+        .setNegativeButton(R.string.no, null)
+        .show()
+    } else readFile(file!!)
   }
 
   fun undo() = editor.undo()
@@ -91,17 +107,13 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
   }
 
   fun release() {
+    EventBus.getDefault().unregister(this)
     editorScope.cancelIfActive("Editor has been released")
     editor.release()
-
-    EventBus.getDefault().unregister(this)
   }
 
   suspend fun saveFile(): Boolean {
-    if (!modified) {
-      return false
-    }
-    return if (FileIOUtils.writeFileFromString(file, editor.text.toString())) {
+    return if (modified && FileIOUtils.writeFileFromString(file, editor.text.toString())) {
       setModified(false)
       true
     } else false
@@ -189,7 +201,7 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
     }
   }
 
-  private fun createLanguage(): Language {
+  private suspend fun createLanguage(): Language {
     val scopeName: String? = GrammarProvider.findScopeByFileExtension(file?.extension)
 
     return if (scopeName != null) {

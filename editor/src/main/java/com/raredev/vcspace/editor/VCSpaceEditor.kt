@@ -45,10 +45,17 @@ constructor(
   var file: File? = null
   var modified: Boolean = false
 
+  val commentRule: CommentRule?
+    get() = (editorLanguage as? VCSpaceTMLanguage)?.languageConfiguration?.comments
+
   init {
     getComponent(EditorTextActionWindow::class.java).isEnabled = false
     getComponent(EditorAutoCompletion::class.java).setLayout(CustomCompletionLayout())
     getComponent(EditorAutoCompletion::class.java).setAdapter(CompletionListAdapter())
+    subscribeEvent(ContentChangeEvent::class.java) { event, _ ->
+      modified = event.action != ContentChangeEvent.ACTION_SET_NEW_TEXT
+      EventBus.getDefault().post(OnContentChangeEvent(file))
+    }
     inputType = createInputTypeFlags()
   }
 
@@ -66,18 +73,6 @@ constructor(
     super.release()
     textActions = null
     file = null
-  }
-
-  fun subscribeEvents() {
-    subscribeEvent(ContentChangeEvent::class.java) { _, _ ->
-      modified = true
-
-      EventBus.getDefault().post(OnContentChangeEvent(file))
-    }
-  }
-
-  fun getCommentRule(): CommentRule? {
-    return (editorLanguage as? VCSpaceTMLanguage)?.languageConfiguration?.comments
   }
 
   companion object {

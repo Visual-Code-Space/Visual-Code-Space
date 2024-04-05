@@ -1,7 +1,7 @@
 /*
  *    sora-editor - the awesome code editor for Android
  *    https://github.com/Rosemoe/sora-editor
- *    Copyright (C) 2020-2023  Rosemoe
+ *    Copyright (C) 2020-2024  Rosemoe
  *
  *     This library is free software; you can redistribute it and/or
  *     modify it under the terms of the GNU Lesser General Public
@@ -153,7 +153,7 @@ public final class TextMateAnalyzer extends AsyncIncrementalAnalyzeManager<LineS
 
   @Override
   public List<CodeBlock> computeBlocks(Content text, CodeBlockAnalyzeDelegate delegate) {
-    ArrayList<CodeBlock> list = new ArrayList<>();
+    var list = new ArrayList<CodeBlock>();
     analyzeCodeBlocks(text, list, delegate);
     if (delegate.isNotCancelled()) {
       withReceiver(r -> r.updateBracketProvider(this, bracketsProvider));
@@ -166,19 +166,16 @@ public final class TextMateAnalyzer extends AsyncIncrementalAnalyzeManager<LineS
     if (cachedRegExp == null) {
       return;
     }
-
     try {
       var foldingRegions =
           IndentRange.computeRanges(
               model, language.getTabSize(), foldingOffside, this, cachedRegExp, delegate);
       blocks.ensureCapacity(foldingRegions.length());
-
       for (int i = 0; i < foldingRegions.length() && delegate.isNotCancelled(); i++) {
         int startLine = foldingRegions.getStartLineNumber(i);
         int endLine = foldingRegions.getEndLineNumber(i);
-
         if (startLine != endLine) {
-          var codeBlock = new CodeBlock();
+          CodeBlock codeBlock = new CodeBlock();
           codeBlock.toBottomOfEndLine = true;
           codeBlock.startLine = startLine;
           codeBlock.endLine = endLine;
@@ -193,12 +190,10 @@ public final class TextMateAnalyzer extends AsyncIncrementalAnalyzeManager<LineS
           blocks.add(codeBlock);
         }
       }
-
       Collections.sort(blocks, CodeBlock.COMPARATOR_END);
     } catch (Exception e) {
       e.printStackTrace();
     }
-
     getManagedStyles().setIndentCountMode(true);
   }
 

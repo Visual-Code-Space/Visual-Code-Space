@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.raredev.vcspace.databinding.LayoutSymbolItemBinding
 import com.raredev.vcspace.editor.VCSpaceEditor
 import com.raredev.vcspace.models.Symbol
-import com.raredev.vcspace.utils.PreferencesUtils
 
 class SymbolInputAdapter : RecyclerView.Adapter<SymbolInputAdapter.VH>() {
 
@@ -46,7 +45,7 @@ class SymbolInputAdapter : RecyclerView.Adapter<SymbolInputAdapter.VH>() {
     }
 
     if ("→" == symbol.label) {
-      editor.indentOrCommitTab();
+      editor.indentOrCommitTab()
       return
     }
 

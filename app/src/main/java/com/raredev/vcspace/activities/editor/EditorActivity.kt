@@ -110,6 +110,7 @@ class EditorActivity : BaseEditorActivity() {
       R.id.menu_open_file -> openFile.launch(arrayOf("text/*"))
       R.id.menu_save -> saveFileAsync(true, viewModel.selectedFileIndex)
       R.id.menu_save_all -> saveAllFilesAsync(true)
+      R.id.menu_reload -> editor?.confirmReload()
     }
     return true
   }
