@@ -201,7 +201,7 @@ open class BaseEditorActivity :
     }
     val file = viewModel.selectedFile
     var pos: Int = 0
-    while (viewModel.fileCount != 1) {
+    while (viewModel.fileCount > 1) {
       val editor = getEditorAtIndex(pos) ?: continue
 
       if (file != editor.file) {

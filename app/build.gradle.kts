@@ -86,7 +86,6 @@ dependencies {
   implementation(projects.commonRes)
   implementation(projects.editor)
   implementation(projects.editorTextmate)
-  implementation(projects.emulatorview)
   implementation(projects.pluginSystem)
 
   debugImplementation(libs.common.leakcanary)
