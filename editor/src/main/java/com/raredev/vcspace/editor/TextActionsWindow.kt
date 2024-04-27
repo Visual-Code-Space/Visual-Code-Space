@@ -40,6 +40,16 @@ class TextActionsWindow(editor: VCSpaceEditor) :
   EditorPopupWindow(editor, FEATURE_SHOW_OUTSIDE_VIEW_ALLOWED) {
 
   companion object {
+    private val actions =
+      listOf(
+        TextAction(R.drawable.ic_comment_text_outline, R.string.comment_line), // Comment Action
+        TextAction(R.drawable.ic_select_all, R.string.select_all), // Select All Text Action
+        TextAction(R.drawable.ic_text_select_start, R.string.long_select), // Long Select Action
+        TextAction(R.drawable.ic_cut, R.string.cut), // Cut Text Action
+        TextAction(R.drawable.ic_copy, R.string.copy), // Copy Text Action
+        TextAction(R.drawable.ic_paste, R.string.paste), // Paste Text Action
+        TextAction(R.drawable.ic_format_align_left, R.string.menu_format) // Format Text Action
+      )
     const val DELAY: Long = 200
   }
 
@@ -236,14 +246,14 @@ class TextActionsWindow(editor: VCSpaceEditor) :
       // Long select action
       updateAction(2, editor.isEditable)
 
+      // Cut action
+      updateAction(3, editor.isEditable && editor.cursor.isSelected)
+
       // Copy action
-      updateAction(3, editor.cursor.isSelected, editor.cursor.isSelected)
+      updateAction(4, editor.cursor.isSelected, editor.cursor.isSelected)
 
       // Paste action
-      updateAction(4, true, editor.hasClip())
-
-      // Cut action
-      updateAction(5, editor.isEditable && editor.cursor.isSelected)
+      updateAction(5, true, editor.hasClip())
 
       // Format action
       updateAction(6, editor.isEditable)
@@ -309,19 +319,6 @@ class TextActionsWindow(editor: VCSpaceEditor) :
         }
       }
       notifyDataSetChanged()
-    }
-
-    companion object {
-      private val actions =
-        listOf(
-          TextAction(R.drawable.ic_comment_text_outline, R.string.comment_line), // Comment Action
-          TextAction(R.drawable.ic_select_all, R.string.select_all), // Select All Text Action
-          TextAction(R.drawable.ic_text_select_start, R.string.long_select), // Long Select Action
-          TextAction(R.drawable.ic_copy, R.string.copy), // Copy Text Action
-          TextAction(R.drawable.ic_paste, R.string.paste), // Paste Text Action
-          TextAction(R.drawable.ic_cut, R.string.cut), // Cut Text Action
-          TextAction(R.drawable.ic_format_align_left, R.string.menu_format) // Format Text Action
-        )
     }
   }
 

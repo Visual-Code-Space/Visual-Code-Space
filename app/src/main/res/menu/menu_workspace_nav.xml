@@ -7,11 +7,6 @@
     android:title="@string/file_explorer" />
 
   <item
-    android:id="@+id/menu_git"
-    android:icon="@drawable/ic_git"
-    android:title="@string/git" />
-
-  <item
     android:id="@+id/menu_terminal"
     android:icon="@drawable/ic_console_line"
     android:title="@string/terminal" />
@@ -20,4 +15,5 @@
     android:id="@+id/menu_settings"
     android:icon="@drawable/ic_settings"
     android:title="@string/menu_settings" />
+
 </menu>
