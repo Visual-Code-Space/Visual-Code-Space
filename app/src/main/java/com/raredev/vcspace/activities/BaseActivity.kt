@@ -25,6 +25,9 @@ abstract class BaseActivity : AppCompatActivity() {
       if (!Utils.isPermissionGaranted(this)) showRequestPermissionDialog()
     }
 
+  open val navigationBarDividerColor: Int
+    get() = getAttrColor(attr.colorSurface)
+
   open val navigationBarColor: Int
     get() = getAttrColor(attr.colorSurface)
 
@@ -35,6 +38,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     window?.apply {
+      navigationBarDividerColor = this@BaseActivity.navigationBarDividerColor
       navigationBarColor = this@BaseActivity.navigationBarColor
       statusBarColor = this@BaseActivity.statusBarColor
     }

@@ -4,13 +4,18 @@ import android.os.Bundle
 import android.view.View
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
+import com.google.android.material.R.attr
 import com.raredev.vcspace.databinding.ActivitySettingsBinding
+import com.raredev.vcspace.extensions.getAttrColor
 
 class SettingsActivity : BaseActivity() {
 
   private var _binding: ActivitySettingsBinding? = null
   private val binding: ActivitySettingsBinding
     get() = checkNotNull(_binding)
+
+  override val navigationBarDividerColor: Int
+    get() = getAttrColor(attr.colorOutlineVariant)
 
   override fun getLayout(): View {
     _binding = ActivitySettingsBinding.inflate(layoutInflater)
