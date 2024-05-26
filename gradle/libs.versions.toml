@@ -21,7 +21,7 @@ androidx-preference = { module = "androidx.preference:preference", version = "1.
 androidx-nav-fragment = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "androidx-navigation" }
 androidx-nav-ui = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "androidx-navigation" }
 androidx-nav-dynamic_features = { module = "androidx.navigation:navigation-dynamic-features-fragment", version.ref = "androidx-navigation" }
-androidx-webkit = { module = "androidx.webkit:webkit", version = "1.8.0" }
+androidx-webkit = { module = "androidx.webkit:webkit", version = "1.11.0" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-junit" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
 
