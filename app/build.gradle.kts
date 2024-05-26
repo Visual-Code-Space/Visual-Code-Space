@@ -74,7 +74,6 @@ dependencies {
 
   implementation(libs.common.editor)
   implementation(libs.common.utilcode)
-  implementation(libs.common.jgit)
   implementation(libs.common.eventbus)
   implementation(libs.common.android.coroutines)
   implementation(libs.common.p7zip)
@@ -86,7 +85,6 @@ dependencies {
   implementation(projects.commonRes)
   implementation(projects.editor)
   implementation(projects.editorTextmate)
-  implementation(projects.pluginSystem)
 
   debugImplementation(libs.common.leakcanary)
 }

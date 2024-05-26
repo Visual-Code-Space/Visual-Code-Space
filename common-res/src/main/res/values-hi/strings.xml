@@ -72,8 +72,6 @@
     <string name="renamed_message">फ़ाइल का नाम बदला गया</string> 
     <string name="copy_path">पथ कॉपी करें</string> 
     <string name="rename_hint">नया नाम दर्ज करें:</string> 
-    <string name="password_hint">पासवर्ड (टोकन)</string> 
-    <string name="username_hint">उपयोगकर्ता नाम</string> 
     <string name="open_folder">फोल्डर खोलें</string> 
     <string name="open_recent">हाल ही वाला खोलें</string> 
     <string name="file_name_hint">फ़ाइल का नाम:</string> 
@@ -100,32 +98,6 @@
     <string name="output">Output</string> 
     <string name="file_explorer">फाइल एक्सप्लोरर </string> 
     <string name="last_modified">अंतिम बार मोडिफाइड: %1$s</string> 
- 
-    <!-- Git --> 
-    <string name="git">Git</string> 
-    <string name="create_token_message">एक GitHub टोकन बनाएं.</string> 
-    <string name="github_token">GitHub टोकन</string> 
-    <string name="initialize_repo">रेपो initialize करें</string> 
-    <string name="no_open_repository">कोई खुला repository नहीं</string> 
-    <string name="clone">क्लोन</string> 
-    <string name="clone_repo">क्लोन repository</string> 
-    <string name="clone_to_path">Path पर क्लोन करें</string> 
-    <string name="clone_url_hint">Repository URL</string> 
-    <string name="successfully_cloned">सफलतापूर्वक क्लोन किया गया</string> 
-    <string name="clone_error_empty_url">Repository URL खाली नहीं हो सकता</string> 
- 
-    <string name="branch_name">Branch का नाम</string> 
-    <string name="remote_name">Remote का नाम</string> 
-    <string name="remote">Remote</string> 
-    <string name="branch">Branch</string> 
-    <string name="merge_changes_from">Merge changes from</string> 
-    <string name="into">into</string> 
-    <string name="description">विवरण</string> 
-    <string name="title">शीर्षक</string> 
-    <string name="pull_request_description">पुल रिक्वेस्ट विवरण</string> 
-    <string name="create_as_draft">ड्राफ्ट के रूप में बनाएं</string> 
-    <string name="initializing">प्रारंभ किया जा रहा है...</string> 
-    <string name="initializing_message">Git रिपॉजिटरी प्रारंभ किया जा रहा है। कृपया प्रतीक्षा करें।</string> 
  
     <!-- Settings String --> 
     <string name="configure">कॉन्फ़िगर</string> 
@@ -191,11 +163,6 @@
  
     <string name="pref_show_hidden_files">छिपी फ़ाइलें देखें</string> 
     <string name="pref_show_hidden_files_summary">बिंदु से प्रारंभ होने वाली फ़ाइलें और फ़ोल्डर दिखाई देंगे.</string> 
- 
-    <string name="git_summary">Git कॉन्फ़िगर करें</string> 
- 
-    <string name="pref_git_credentials">Credentials</string> 
-    <string name="pref_git_credentials_summary">अपना GitHub क्रेडेंशियल सेट करें</string> 
  
     <string name="about">बारे में</string> 
  

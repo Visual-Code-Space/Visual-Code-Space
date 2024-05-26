@@ -24,7 +24,7 @@
     android:layout_height="match_parent"
     android:name="androidx.navigation.fragment.NavHostFragment"
     app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-    app:navGraph="@navigation/settings_nav_graph"
+    app:navGraph="@navigation/preferences_nav_graph"
     app:defaultNavHost="true" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

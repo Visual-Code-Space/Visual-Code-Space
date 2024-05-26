@@ -12,7 +12,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import com.raredev.vcspace.R
-import com.raredev.vcspace.activities.SettingsActivity
+import com.raredev.vcspace.activities.PreferencesActivity
 import com.raredev.vcspace.activities.TerminalActivity
 import com.raredev.vcspace.databinding.FragmentWorkspaceBinding
 
@@ -44,7 +44,8 @@ class WorkspaceFragment : Fragment(), NavController.OnDestinationChangedListener
     binding.navRail.setOnItemSelectedListener { item ->
       when (item.itemId) {
         R.id.menu_terminal -> startActivity(Intent(requireContext(), TerminalActivity::class.java))
-        R.id.menu_settings -> startActivity(Intent(requireContext(), SettingsActivity::class.java))
+        R.id.menu_preferences ->
+          startActivity(Intent(requireContext(), PreferencesActivity::class.java))
       }
       false
     }

@@ -5,20 +5,20 @@ import android.view.View
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import com.google.android.material.R.attr
-import com.raredev.vcspace.databinding.ActivitySettingsBinding
+import com.raredev.vcspace.databinding.ActivityPreferencesBinding
 import com.raredev.vcspace.extensions.getAttrColor
 
-class SettingsActivity : BaseActivity() {
+class PreferencesActivity : BaseActivity() {
 
-  private var _binding: ActivitySettingsBinding? = null
-  private val binding: ActivitySettingsBinding
+  private var _binding: ActivityPreferencesBinding? = null
+  private val binding: ActivityPreferencesBinding
     get() = checkNotNull(_binding)
 
   override val navigationBarDividerColor: Int
     get() = getAttrColor(attr.colorOutlineVariant)
 
   override fun getLayout(): View {
-    _binding = ActivitySettingsBinding.inflate(layoutInflater)
+    _binding = ActivityPreferencesBinding.inflate(layoutInflater)
     return binding.root
   }
 

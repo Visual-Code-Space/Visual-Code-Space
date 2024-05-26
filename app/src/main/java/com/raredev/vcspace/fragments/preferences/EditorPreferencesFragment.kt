@@ -1,4 +1,4 @@
-package com.raredev.vcspace.fragments.settings
+package com.raredev.vcspace.fragments.preferences
 
 import android.os.Bundle
 import androidx.preference.Preference
@@ -10,7 +10,7 @@ import com.raredev.vcspace.utils.PreferencesUtils
 import com.raredev.vcspace.utils.PreferencesUtils.prefs
 import com.raredev.vcspace.utils.SharedPreferencesKeys
 
-class EditorSettingsFragment : PreferenceFragmentCompat() {
+class EditorPreferencesFragment : PreferenceFragmentCompat() {
 
   private val fonts by lazy {
     arrayOf(getString(R.string.pref_font_firacode), getString(R.string.pref_font_jetbrains))
@@ -21,7 +21,7 @@ class EditorSettingsFragment : PreferenceFragmentCompat() {
   private val tabSizes by lazy { arrayOf("2", "4", "6", "8") }
 
   override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-    setPreferencesFromResource(R.xml.settings_editor, rootKey)
+    setPreferencesFromResource(R.xml.preferences_editor, rootKey)
 
     findPreference<Preference>(SharedPreferencesKeys.KEY_EDITOR_TEXT_SIZE)
       ?.setOnPreferenceClickListener { _ ->

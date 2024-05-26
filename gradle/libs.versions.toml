@@ -2,7 +2,6 @@
 editor = "0.23.4"
 androidx-navigation = "2.7.7"
 
-jgit = "6.7.0.202309050840-r"
 junit = "4.13.2"
 androidx-junit = "1.1.5"
 espresso-core = "3.5.1"
@@ -37,7 +36,6 @@ common-editor = { module = "io.github.Rosemoe.sora-editor:editor", version.ref =
 common-eventbus = { module = "org.greenrobot:eventbus", version = "3.3.1" }
 common-jdt-annotation = { module = "org.eclipse.jdt:org.eclipse.jdt.annotation", version = "2.2.700" }
 common-jsoup = { module = "org.jsoup:jsoup", version = "1.16.2" }
-common-jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit" }
 common-leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version = "2.12" }
 common-utilcode = { module = "com.blankj:utilcodex", version = "1.31.1" }
 common-android-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version = "1.7.3" }

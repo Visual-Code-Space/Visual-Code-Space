@@ -39,7 +39,7 @@ private constructor(iGrammar: IGrammar, languageConfiguration: LanguageConfigura
       val grammarRegistry = GrammarRegistry.getInstance()
       val iGrammar =
         grammarRegistry.findGrammar(scopeName)
-          ?: throw IllegalArgumentException("Language with scopeName scope name not found")
+          ?: throw IllegalArgumentException("Language with $scopeName scope name not found")
 
       return VCSpaceTMLanguage(iGrammar, grammarRegistry.findLanguageConfiguration(scopeName))
     }

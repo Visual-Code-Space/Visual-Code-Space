@@ -25,12 +25,6 @@
       app:summary="@string/file_summary"
       app:iconSpaceReserved="false" />
 
-    <Preference
-      app:key="pref_git"
-      app:title="@string/git"
-      app:summary="@string/git_summary"
-      app:iconSpaceReserved="false" />
-
   </PreferenceCategory>
 
   <PreferenceCategory

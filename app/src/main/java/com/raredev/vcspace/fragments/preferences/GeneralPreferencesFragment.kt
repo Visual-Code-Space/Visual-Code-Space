@@ -1,4 +1,4 @@
-package com.raredev.vcspace.fragments.settings
+package com.raredev.vcspace.fragments.preferences
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
@@ -10,7 +10,7 @@ import com.raredev.vcspace.utils.PreferencesUtils
 import com.raredev.vcspace.utils.PreferencesUtils.prefs
 import com.raredev.vcspace.utils.SharedPreferencesKeys
 
-class GeneralSettingsFragment : PreferenceFragmentCompat() {
+class GeneralPreferencesFragment : PreferenceFragmentCompat() {
 
   private val themes by lazy {
     arrayOf(
@@ -23,7 +23,7 @@ class GeneralSettingsFragment : PreferenceFragmentCompat() {
   private val themeValues by lazy { arrayOf("default", "dark", "light") }
 
   override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-    setPreferencesFromResource(R.xml.settings_general, rootKey)
+    setPreferencesFromResource(R.xml.preferences_general, rootKey)
 
     findPreference<Preference>(SharedPreferencesKeys.KEY_THEME)?.setOnPreferenceClickListener { _ ->
       val selectedThemeValue = prefs.getString(SharedPreferencesKeys.KEY_THEME, "default")

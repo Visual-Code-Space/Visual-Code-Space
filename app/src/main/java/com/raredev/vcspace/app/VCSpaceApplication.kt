@@ -71,3 +71,32 @@ class VCSpaceApplication : BaseApplication() {
     }
   }
 }
+
+
+/*
+
+
+
+-- DATABASE --
+
+
+~ Tables ~
+
+1. User(id, username, fullname, age, email, password)
+
+2. Post(id, ownerId, description: text, postImages, like, postComments)
+
+3. Comment(id, userId, fullname, commentMessage)
+
+
+~ Cache ~
+
+
+1. PostCache(id, ownerId, postContent, description, postImages, like)
+
+2. CommentCache(id, userId, fullname, commentMessage)
+
+
+
+
+*/

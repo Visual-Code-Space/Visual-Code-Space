@@ -41,7 +41,7 @@
         </intent-filter>
       </activity>
       <activity
-        android:name=".activities.SettingsActivity"
+        android:name=".activities.PreferencesActivity"
         android:label="@string/menu_settings"/>
       <activity
         android:name=".activities.TerminalActivity"

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  app:startDestination="@id/fragmentPreferences">
+
+  <fragment
+    android:id="@+id/fragmentPreferences"
+    android:name="com.raredev.vcspace.fragments.preferences.PreferencesFragment"
+    android:label="@string/menu_settings">
+
+    <action
+      android:id="@+id/action_go_to_general_preferences"
+      app:destination="@id/fragmentGeneralPreferences"
+      app:enterAnim="@android:anim/fade_in"
+      app:exitAnim="@android:anim/fade_out" />
+
+    <action
+      android:id="@+id/action_go_to_editor_preferences"
+      app:destination="@id/fragmentEditorPreferences"
+      app:enterAnim="@android:anim/fade_in"
+      app:exitAnim="@android:anim/fade_out" />
+
+    <action
+      android:id="@+id/action_go_to_file_preferences"
+      app:destination="@id/fragmentFilePreferences"
+      app:enterAnim="@android:anim/fade_in"
+      app:exitAnim="@android:anim/fade_out" />
+
+  </fragment>
+
+  <fragment
+    android:id="@+id/fragmentGeneralPreferences"
+    android:name="com.raredev.vcspace.fragments.preferences.GeneralPreferencesFragment"
+    android:label="@string/general"/>
+
+  <fragment
+    android:id="@+id/fragmentEditorPreferences"
+    android:name="com.raredev.vcspace.fragments.preferences.EditorPreferencesFragment"
+    android:label="@string/editor" />
+
+  <fragment
+    android:id="@+id/fragmentFilePreferences"
+    android:name="com.raredev.vcspace.fragments.preferences.FilePreferencesFragment"
+    android:label="@string/file" />
+
+</navigation>

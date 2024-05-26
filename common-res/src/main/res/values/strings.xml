@@ -74,8 +74,6 @@
   <string name="renamed_message">File Renamed</string>
   <string name="copy_path">Copy path</string>
   <string name="rename_hint">Enter a new name:</string>
-  <string name="password_hint">Password (Token)</string>
-  <string name="username_hint">Username</string>
   <string name="open_folder">Open folder</string>
   <string name="open_recent">Open recent</string>
   <string name="file_name_hint">File name:</string>
@@ -102,32 +100,6 @@
   <string name="output">Output</string>
   <string name="file_explorer">File Explorer</string>
   <string name="last_modified">Last modified: %1$s</string>
-
-  <!-- Git -->
-  <string name="git">Git</string>
-  <string name="create_token_message">Create a GitHub token.</string>
-  <string name="github_token">GitHub token</string>
-  <string name="initialize_repo">Initialize Repo</string>
-  <string name="no_open_repository">No open repository</string>
-  <string name="clone">Clone</string>
-  <string name="clone_repo">Clone repository</string>
-  <string name="clone_to_path">Clone to path</string>
-  <string name="clone_url_hint">Repository URL</string>
-  <string name="successfully_cloned">Successfully cloned</string>
-  <string name="clone_error_empty_url">Repository URL cannot be empty</string>
-
-  <string name="branch_name">BRANCH NAME</string>
-  <string name="remote_name">REMOTE NAME</string>
-  <string name="remote">REMOTE</string>
-  <string name="branch">BRANCH</string>
-  <string name="merge_changes_from">MERGE CHANGES FROM</string>
-  <string name="into">INTO</string>
-  <string name="description">DESCRIPTION</string>
-  <string name="title">TITLE</string>
-  <string name="pull_request_description">Pull Request Description</string>
-  <string name="create_as_draft">Create as draft</string>
-  <string name="initializing">Initializing...</string>
-  <string name="initializing_message">Initializing git repository please wait.</string>
 
   <!-- Settings String -->
   <string name="configure">Configure</string>
@@ -193,11 +165,6 @@
 
   <string name="pref_show_hidden_files">Show hidden files</string>
   <string name="pref_show_hidden_files_summary">Files and folders that start with a dot will appear.</string>
-
-  <string name="git_summary">Configure Git</string>
-
-  <string name="pref_git_credentials">Credentials</string>
-  <string name="pref_git_credentials_summary">Set up your GitHub credentials</string>
 
   <string name="about">About</string>
 
