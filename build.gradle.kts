@@ -10,7 +10,7 @@ plugins {
 buildscript {
   dependencies {
     classpath("com.google.android.gms:oss-licenses-plugin:0.10.6")
-    classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.7.5")
+    classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.7.7")
   }
 }
 
