@@ -5,7 +5,6 @@ import android.os.Bundle
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.raredev.vcspace.app.BaseApplication
 import com.raredev.vcspace.res.R
 import com.raredev.vcspace.utils.SharedPreferencesKeys
@@ -37,11 +36,6 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     findPreference<Preference>(SharedPreferencesKeys.KEY_GITHUB)?.setOnPreferenceClickListener { _
       ->
       BaseApplication.instance.openProjectRepo()
-      true
-    }
-    findPreference<Preference>(SharedPreferencesKeys.KEY_LICENSES)?.setOnPreferenceClickListener { _
-      ->
-      startActivity(Intent(requireContext(), OssLicensesMenuActivity::class.java))
       true
     }
   }

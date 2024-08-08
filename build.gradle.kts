@@ -1,7 +1,6 @@
 import com.android.build.gradle.BaseExtension
 
 plugins {
-  id("build-logic.root-project")
   alias(libs.plugins.android.application) apply false
   alias(libs.plugins.android.library) apply false
   alias(libs.plugins.kotlin) apply false
@@ -9,21 +8,20 @@ plugins {
 
 buildscript {
   dependencies {
-    classpath("com.google.android.gms:oss-licenses-plugin:0.10.6")
     classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.7.5")
   }
 }
 
 fun Project.configureBaseExtension() {
   extensions.findByType(BaseExtension::class)?.run {
-    compileSdkVersion(Versions.compileSdkVersion)
-    buildToolsVersion = Versions.buildToolsVersion
+    compileSdkVersion(34)
+    buildToolsVersion = "34.0.0"
 
     defaultConfig {
-      minSdk = Versions.minSdkVersion
-      targetSdk = Versions.targetSdkVersion
-      versionCode = Versions.versionCode
-      versionName = Versions.versionName
+      minSdk = 26
+      targetSdk = 34
+      versionCode = 5
+      versionName = "1.2.0-beta"
     }
 
     compileOptions {

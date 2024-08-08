@@ -37,11 +37,6 @@
       app:summary="@string/pref_github_summary"
       app:title="GitHub" />
 
-    <Preference
-      app:icon="@drawable/ic_license"
-      app:key="licenses"
-      app:title="Open source licenses" />
-
   </PreferenceCategory>
 
 </PreferenceScreen>

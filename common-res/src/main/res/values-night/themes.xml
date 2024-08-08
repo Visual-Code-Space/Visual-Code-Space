@@ -34,11 +34,6 @@
     <item name="dialogCornerRadius">28dp</item>
   </style>
 
-  <style name="AppTheme.Licence" parent="AppTheme">
-    <item name="android:statusBarColor">?attr/colorSurface</item>
-    <item name="android:navigationBarColor">?attr/colorSurface</item>
-  </style>
-
   <style name="AppTheme.SwitchPreference" parent="Preference.SwitchPreference.Material">
     <item name="android:widgetLayout">@layout/layout_material_switch_style</item>
   </style>

@@ -1,7 +1,6 @@
 plugins {
   id("com.android.application")
   id("kotlin-android")
-  id("com.google.android.gms.oss-licenses-plugin")
   id("androidx.navigation.safeargs.kotlin")
 }
 
@@ -68,7 +67,6 @@ dependencies {
   implementation(libs.androidx.nav.ui)
 
   implementation(libs.google.material)
-  implementation(libs.google.oss.licenses)
   implementation(libs.google.guava)
   implementation(libs.google.gson)
 

@@ -61,11 +61,5 @@
           android:resource="@xml/provider_paths" />
       </provider>
 
-      <activity
-        android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
-        android:theme="@style/AppTheme.Licence" />
-      <activity
-        android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
-        android:theme="@style/AppTheme.Licence" />
   </application>
 </manifest>
