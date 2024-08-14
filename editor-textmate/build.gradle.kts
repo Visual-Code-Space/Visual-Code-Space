@@ -23,5 +23,5 @@ dependencies {
   implementation(libs.google.gson)
   implementation(libs.common.editor)
 
-  implementation(projects.common)
+  implementation(project(":common"))
 }

@@ -21,5 +21,5 @@ dependencies {
   implementation(libs.google.gson)
   implementation(libs.common.utilcode)
 
-  implementation(projects.commonRes)
+  implementation(project(":common-res"))
 }

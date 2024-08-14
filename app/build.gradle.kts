@@ -79,10 +79,10 @@ dependencies {
   implementation(libs.terminal.view)
   implementation(libs.terminal.emulator)
 
-  implementation(projects.common)
-  implementation(projects.commonRes)
-  implementation(projects.editor)
-  implementation(projects.editorTextmate)
+  implementation(project(":common"))
+  implementation(project(":common-res"))
+  implementation(project(":editor"))
+  implementation(project(":editor-textmate"))
 
   debugImplementation(libs.common.leakcanary)
 }
