@@ -1,8 +1,8 @@
-# Contributing to Visual Code Space
+## ✨️ Contributing to Visual Code Space
 
 Steps to be followed to contribute to the project.
 
-## How to Contribute to This Project:
+## ⚠ Steps:
 
 1. **Fork the Repository:** Click the "Fork" button at the top-right corner of the repository's page to create your copy.
 
