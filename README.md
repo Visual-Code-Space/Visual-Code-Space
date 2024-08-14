@@ -20,6 +20,10 @@
 - A simple terminal emulator.
 - No ads.
 
+🗨 <b>Join our community:</b>
+
+[![Telegram](https://img.shields.io/badge/Join-Telegram-blue)](https://t.me/vc_space)
+
 <hr/>
 
 ## 🩶 Thanks to
