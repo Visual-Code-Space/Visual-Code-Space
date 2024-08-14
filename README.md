@@ -3,18 +3,36 @@
 </p>
 
 <h2 align="center"><b>Visual Code Space</b></h2>
+<p align="center"><b>A code editor for Android </b></p>
 
 <div align="center">
 
-[![Build](https://github.com/raredeveloperofc/Visual-Code-Space/actions/workflows/build.yml/badge.svg)](https://github.com/raredeveloperofc/Visual-Code-Space/actions/workflows/build.yml) <img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License"></p>
+[![Android CI](https://github.com/Visual-Code-Space/Visual-Code-Space/actions/workflows/androidci.yml/badge.svg?branch=main)](https://github.com/Visual-Code-Space/Visual-Code-Space/actions/workflows/androidci.yml)
+<img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License"></p>
 
 </div>
 
-## Thanks to
-- [Rosemoe](https://github.com/Rosemoe) for [sora-editor](https://github.com/Rosemoe/sora-editor)
-- [Termux](https://github.com/termux) for [Terminal Emulator](https://github.com/termux/termux-app)
-- [Bogdan Melnychuk](https://github.com/bmelnychuk) for [AndroidTreeView](https://github.com/bmelnychuk/AndroidTreeView)
+<h3>👨‍💻 Visual Code Space Features</h3>
+
+- Fast file explorer.
+- Editor with support for multiple languages.
+- Tabbed editor.
+- A simple terminal emulator.
+- No ads.
+
+<hr/>
+
+## 🩶 Thanks to
+- [Rosemoe](https://github.com/Rosemoe) for the [sora-editor](https://github.com/Rosemoe/sora-editor)
+- [Termux](https://github.com/termux) for the [Terminal Emulator](https://github.com/termux/termux-app)
 - [Akash Yadav](https://github.com/itsaky) for the awesome [AndroidIDE](https://github.com/AndroidIDEOfficial/AndroidIDE)
 
-## To contribute
-- Read this file to learn how to contribute to the project [CONTRIBUTING.md](https://github.com/Visual-Code-Space/Visual-Code-Space/blob/main/CONTRIBUTING.md)
+<hr/>
+
+## ✨️ Contributors
+
+<a href="https://github.com/Visual-Code-Space/Visual-Code-Space/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Visual-Code-Space/Visual-Code-Space" />
+</a>
+
+Read [CONTRIBUTING.md](https://github.com/Visual-Code-Space/Visual-Code-Space/blob/main/CONTRIBUTING.md) for more details
