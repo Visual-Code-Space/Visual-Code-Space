@@ -5,7 +5,7 @@ androidx-navigation = "2.7.7"
 junit = "4.13.2"
 androidx-junit = "1.1.5"
 espresso-core = "3.5.1"
-termux = "v0.118.0"
+termux = "0.118.1"
 p7zip = "v1.7.2"
 
 [libraries]
