@@ -82,8 +82,8 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
   fun confirmReload() {
     if (modified) {
       MaterialAlertDialogBuilder(context)
-        .setTitle(R.string.menu_reload)
-        .setMessage(R.string.discard_changes)
+        .setTitle(R.string.file_reload)
+        .setMessage(R.string.file_reload_unsaved_message)
         .setPositiveButton(R.string.yes) { _, _ -> readFile(file!!) }
         .setNegativeButton(R.string.no, null)
         .show()

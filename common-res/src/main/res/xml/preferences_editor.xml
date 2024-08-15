@@ -5,19 +5,19 @@
 
   <PreferenceCategory
     app:iconSpaceReserved="false"
-    app:title="@string/editor">
+    app:title="@string/pref_category_editor">
 
     <Preference
       app:iconSpaceReserved="false"
       app:key="pref_font_size"
-      app:title="@string/pref_editor_textsize"
-      app:summary="@string/pref_editor_textsize_summary" />
+      app:title="@string/pref_editor_fontsize"
+      app:summary="@string/pref_editor_fontsize_summary" />
 
     <Preference
       app:iconSpaceReserved="false"
       app:key="pref_editortabsize"
-      app:title="@string/pref_editor_tabsize"
-      app:summary="@string/pref_editor_tabsize_summary" />
+      app:title="@string/pref_editor_indent"
+      app:summary="@string/pref_editor_indent_summary" />
 
     <Preference
       app:iconSpaceReserved="false"
@@ -50,42 +50,42 @@
       app:defaultValue="true"
       app:iconSpaceReserved="false"
       app:key="pref_linenumbers"
-      app:title="@string/pref_editor_linenumbers"
-      app:summary="@string/pref_editor_linenumbers_summary" />
+      app:title="@string/pref_editor_linenumber"
+      app:summary="@string/pref_editor_linenumber_summary" />
 
     <SwitchPreferenceCompat
       app:defaultValue="false"
       app:iconSpaceReserved="false"
       app:key="pref_usetab"
-      app:title="@string/pref_editor_use_tab"
-      app:summary="@string/pref_editor_use_tab_summary" />
+      app:title="@string/pref_editor_usetab"
+      app:summary="@string/pref_editor_usetab_summary" />
 
     <SwitchPreferenceCompat
       app:defaultValue="true"
       app:iconSpaceReserved="false"
       app:key="pref_deleteemptylinefast"
-      app:title="@string/pref_editor_deleteemptylinefast"
-      app:summary="@string/pref_editor_deleteemptylinefast_summary" />
+      app:title="@string/pref_editor_deletelineonbackspace"
+      app:summary="@string/pref_editor_deletelineonbackspace_summary" />
 
     <SwitchPreferenceCompat
       app:defaultValue="true"
       app:iconSpaceReserved="false"
       app:key="pref_deletetabs"
-      app:title="@string/pref_editor_deletetabs"
-      app:summary="@string/pref_editor_deletetabs_summary" />
+      app:title="@string/pref_editor_deleteindentonbackspace"
+      app:summary="@string/pref_editor_deleteindentonbackspace_summary" />
 
   </PreferenceCategory>
 
   <PreferenceCategory
     app:iconSpaceReserved="false"
-    app:title="@string/tabs">
+    app:title="@string/pref_category_editor_tabs">
 
     <SwitchPreferenceCompat
       app:defaultValue="false"
       app:iconSpaceReserved="false"
       app:key="pref_auto_save"
-      app:title="@string/pref_editor_auto_save"
-      app:summary="@string/pref_editor_auto_save_summary" />
+      app:title="@string/pref_editor_tabs_autosave"
+      app:summary="@string/pref_editor_tabs_autosave_summary" />
 
   </PreferenceCategory>
 

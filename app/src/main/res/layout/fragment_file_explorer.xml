@@ -29,7 +29,7 @@
     android:layout_centerInParent="true"
     android:textSize="14sp"
     android:singleLine="true"
-    android:text="@string/empty_folder" />
+    android:text="@string/file_empty_folder" />
 
   <com.raredev.vcspace.ui.NavigationSpace
     android:id="@+id/navigation_space"

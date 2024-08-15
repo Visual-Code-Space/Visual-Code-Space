@@ -14,9 +14,9 @@ class GeneralPreferencesFragment : PreferenceFragmentCompat() {
 
   private val themes by lazy {
     arrayOf(
-      getString(R.string.pref_theme_system),
-      getString(R.string.pref_theme_dark),
-      getString(R.string.pref_theme_light)
+      getString(R.string.pref_aparence_uimode_value_followsys),
+      getString(R.string.pref_aparence_uimode_value_dark),
+      getString(R.string.pref_aparence_uimode_value_light)
     )
   }
 
@@ -28,7 +28,7 @@ class GeneralPreferencesFragment : PreferenceFragmentCompat() {
     findPreference<Preference>(SharedPreferencesKeys.KEY_THEME)?.setOnPreferenceClickListener { _ ->
       val selectedThemeValue = prefs.getString(SharedPreferencesKeys.KEY_THEME, "default")
       MaterialAlertDialogBuilder(requireContext())
-        .setTitle(R.string.title_theme)
+        .setTitle(R.string.pref_aparence_uimode)
         .setSingleChoiceItems(themes, themeValues.indexOf(selectedThemeValue)) { d, w ->
           prefs.edit().putString(SharedPreferencesKeys.KEY_THEME, themeValues[w]).apply()
           AppCompatDelegate.setDefaultNightMode(PreferencesUtils.appTheme)

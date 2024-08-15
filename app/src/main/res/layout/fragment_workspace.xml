@@ -25,7 +25,7 @@
     android:layout_marginLeft="5dp"
     android:singleLine="true"
     android:paddingStart="5dp"
-    android:text="Workspace"
+    android:text="@string/workspace"
     android:paddingTop="8dp" />
 
   <TextView

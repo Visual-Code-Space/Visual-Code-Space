@@ -13,7 +13,7 @@ import com.raredev.vcspace.utils.SharedPreferencesKeys
 class EditorPreferencesFragment : PreferenceFragmentCompat() {
 
   private val fonts by lazy {
-    arrayOf(getString(R.string.pref_font_firacode), getString(R.string.pref_font_jetbrains))
+    arrayOf(getString(R.string.pref_editor_font_value_firacode), getString(R.string.pref_editor_font_value_jetbrains))
   }
 
   private val fontValues by lazy { arrayOf("firacode", "jetbrains") }
@@ -34,7 +34,7 @@ class EditorPreferencesFragment : PreferenceFragmentCompat() {
         }
 
         MaterialAlertDialogBuilder(requireContext())
-          .setTitle(R.string.pref_editor_textsize)
+          .setTitle(R.string.pref_editor_fontsize)
           .setPositiveButton(android.R.string.ok) { _, _ ->
             prefs
               .edit()
@@ -60,7 +60,7 @@ class EditorPreferencesFragment : PreferenceFragmentCompat() {
             else -> 0
           }
         MaterialAlertDialogBuilder(requireContext())
-          .setTitle(R.string.pref_editor_tabsize)
+          .setTitle(R.string.pref_editor_indent)
           .setSingleChoiceItems(tabSizes, selectedSizePos) { d, w ->
             prefs.edit().putString(SharedPreferencesKeys.KEY_EDITOR_TAB_SIZE, tabSizes[w]).apply()
             d.dismiss()

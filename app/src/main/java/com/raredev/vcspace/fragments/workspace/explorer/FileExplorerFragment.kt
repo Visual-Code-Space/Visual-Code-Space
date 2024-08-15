@@ -113,15 +113,15 @@ class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
 
   override fun onFileLongClickListener(file: File, view: View): Boolean {
     val sheet = OptionsListBottomSheet()
-    sheet.addOption(SheetOptionItem(R.drawable.ic_copy, getString(R.string.copy_path)))
-    sheet.addOption(SheetOptionItem(R.drawable.ic_file_rename, getString(R.string.rename)))
-    sheet.addOption(SheetOptionItem(R.drawable.ic_delete, getString(R.string.delete)))
+    sheet.addOption(SheetOptionItem(R.drawable.ic_copy, getString(R.string.file_copy_path)))
+    sheet.addOption(SheetOptionItem(R.drawable.ic_file_rename, getString(R.string.file_rename)))
+    sheet.addOption(SheetOptionItem(R.drawable.ic_delete, getString(R.string.file_delete)))
 
     sheet.setOptionClickListener { option ->
       when (option.name) {
-        getString(R.string.copy_path) -> ClipboardUtils.copyText(file.absolutePath)
-        getString(R.string.rename) -> showRenameFileDialog(file)
-        getString(R.string.delete) -> showDeleteFileDialog(file)
+        getString(R.string.file_copy_path) -> ClipboardUtils.copyText(file.absolutePath)
+        getString(R.string.file_rename) -> showRenameFileDialog(file)
+        getString(R.string.file_delete) -> showDeleteFileDialog(file)
       }
       sheet.dismiss()
     }
@@ -145,7 +145,7 @@ class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
       val binding = LayoutTextinputBinding.inflate(LayoutInflater.from(requireContext()))
       setView(binding.root, dp2px(20f), dp2px(5f), dp2px(20f), 0)
       setTitle(R.string.create)
-      setNeutralButton(R.string.cancel, null)
+      setNeutralButton(R.string.no, null)
       setNegativeButton(R.string.file) { _, _ ->
         val name = binding.inputEdittext.text.toString().trim()
         with(File(path, name)) {
@@ -158,7 +158,7 @@ class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
           }
         }
       }
-      setPositiveButton(R.string.folder) { _, _ ->
+      setPositiveButton(R.string.file_folder) { _, _ ->
         val name = binding.inputEdittext.text.toString().trim()
         with(File(path, name)) {
           try {
@@ -173,7 +173,7 @@ class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
       val dialog = create()
       dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
       dialog.setOnShowListener {
-        binding.inputLayout.setHint(R.string.file_name_hint)
+        binding.inputLayout.setHint(R.string.file_enter_name)
         binding.inputEdittext.requestFocus()
       }
       dialog.show()
@@ -186,12 +186,12 @@ class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
     MaterialAlertDialogBuilder(requireContext()).apply {
       val binding = LayoutTextinputBinding.inflate(LayoutInflater.from(requireContext()))
       setView(binding.root, dp2px(20f), dp2px(5f), dp2px(20f), 0)
-      setTitle(R.string.rename)
-      setNegativeButton(R.string.cancel, null)
-      setPositiveButton(R.string.rename) { _, _ ->
+      setTitle(R.string.file_rename)
+      setNegativeButton(R.string.no, null)
+      setPositiveButton(R.string.yes) { _, _ ->
         coroutineScope.launchWithProgressDialog(
           configureBuilder = { builder ->
-            builder.setMessage(R.string.please_wait)
+            builder.setMessage(R.string.file_renaming)
             builder.setCancelable(false)
           },
           action = { _ ->
@@ -206,7 +206,7 @@ class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
             EventBus.getDefault().post(OnRenameFileEvent(file, newFile))
 
             withContext(Dispatchers.Main) {
-              showShortToast(requireContext(), getString(R.string.renamed_message))
+              showShortToast(requireContext(), getString(R.string.file_renamed))
               fileViewModel.refreshFiles()
             }
           }
@@ -215,7 +215,7 @@ class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
       val dialog = create()
       dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
       dialog.setOnShowListener {
-        binding.inputLayout.setHint(R.string.rename_hint)
+        binding.inputLayout.setHint(R.string.file_enter_name)
         binding.inputEdittext.setText(file.name)
         binding.inputEdittext.requestFocus()
       }
@@ -225,13 +225,13 @@ class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
 
   private fun showDeleteFileDialog(file: File) {
     MaterialAlertDialogBuilder(requireContext())
-      .setTitle(R.string.delete)
-      .setMessage(getString(R.string.delete_message, file.name))
+      .setTitle(R.string.file_delete)
+      .setMessage(getString(R.string.file_delete_message, file.name))
       .setNegativeButton(R.string.no, null)
-      .setPositiveButton(R.string.delete) { _, _ ->
+      .setPositiveButton(R.string.yes) { _, _ ->
         coroutineScope.launchWithProgressDialog(
           configureBuilder = { builder ->
-            builder.setMessage(R.string.please_wait)
+            builder.setMessage(R.string.file_deleting)
             builder.setCancelable(false)
           },
           action = { _ ->
@@ -244,7 +244,7 @@ class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
             EventBus.getDefault().post(OnDeleteFileEvent(file))
 
             withContext(Dispatchers.Main) {
-              showShortToast(requireContext(), getString(R.string.deleted_message))
+              showShortToast(requireContext(), getString(R.string.file_deleted))
               fileViewModel.refreshFiles()
             }
           }

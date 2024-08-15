@@ -7,7 +7,7 @@
   <fragment
     android:id="@+id/fragmentPreferences"
     android:name="com.raredev.vcspace.fragments.preferences.PreferencesFragment"
-    android:label="@string/menu_settings">
+    android:label="@string/settings">
 
     <action
       android:id="@+id/action_go_to_general_preferences"
@@ -32,16 +32,16 @@
   <fragment
     android:id="@+id/fragmentGeneralPreferences"
     android:name="com.raredev.vcspace.fragments.preferences.GeneralPreferencesFragment"
-    android:label="@string/general"/>
+    android:label="@string/pref_configure_general"/>
 
   <fragment
     android:id="@+id/fragmentEditorPreferences"
     android:name="com.raredev.vcspace.fragments.preferences.EditorPreferencesFragment"
-    android:label="@string/editor" />
+    android:label="@string/pref_configure_editor" />
 
   <fragment
     android:id="@+id/fragmentFilePreferences"
     android:name="com.raredev.vcspace.fragments.preferences.FilePreferencesFragment"
-    android:label="@string/file" />
+    android:label="@string/pref_configure_file_explorer" />
 
 </navigation>

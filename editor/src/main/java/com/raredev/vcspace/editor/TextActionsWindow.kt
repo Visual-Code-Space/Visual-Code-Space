@@ -42,13 +42,13 @@ class TextActionsWindow(editor: VCSpaceEditor) :
   companion object {
     private val actions =
       listOf(
-        TextAction(R.drawable.ic_comment_text_outline, R.string.comment_line), // Comment Action
-        TextAction(R.drawable.ic_select_all, R.string.select_all), // Select All Text Action
-        TextAction(R.drawable.ic_text_select_start, R.string.long_select), // Long Select Action
-        TextAction(R.drawable.ic_cut, R.string.cut), // Cut Text Action
-        TextAction(R.drawable.ic_copy, R.string.copy), // Copy Text Action
-        TextAction(R.drawable.ic_paste, R.string.paste), // Paste Text Action
-        TextAction(R.drawable.ic_format_align_left, R.string.menu_format) // Format Text Action
+        TextAction(R.drawable.ic_comment_text_outline, R.string.editor_action_comment_line), // Comment Action
+        TextAction(R.drawable.ic_select_all, R.string.editor_action_select_all), // Select All Text Action
+        TextAction(R.drawable.ic_text_select_start, R.string.editor_action_long_select), // Long Select Action
+        TextAction(R.drawable.ic_cut, R.string.editor_action_cut), // Cut Text Action
+        TextAction(R.drawable.ic_copy, R.string.editor_action_copy), // Copy Text Action
+        TextAction(R.drawable.ic_paste, R.string.editor_action_paste), // Paste Text Action
+        TextAction(R.drawable.ic_format_align_left, R.string.editor_action_format) // Format Text Action
       )
     const val DELAY: Long = 200
   }
@@ -102,7 +102,7 @@ class TextActionsWindow(editor: VCSpaceEditor) :
 
   fun executeTextAction(action: TextAction) {
     when (action.text) {
-      R.string.comment_line -> {
+      R.string.editor_action_comment_line -> {
         val commentRule = (editor as VCSpaceEditor).commentRule
         if (!editor.cursor.isSelected) {
           addSingleComment(commentRule, editor.text)
@@ -111,25 +111,25 @@ class TextActionsWindow(editor: VCSpaceEditor) :
         }
         editor.setSelection(editor.cursor.rightLine, editor.cursor.rightColumn)
       }
-      R.string.select_all -> {
+      R.string.editor_action_select_all -> {
         editor.selectAll()
         return
       }
-      R.string.long_select -> editor.beginLongSelect()
-      R.string.copy -> {
+      R.string.editor_action_long_select -> editor.beginLongSelect()
+      R.string.editor_action_copy -> {
         editor.copyText()
         editor.setSelection(editor.cursor.rightLine, editor.cursor.rightColumn)
       }
-      R.string.paste -> {
+      R.string.editor_action_paste -> {
         editor.pasteText()
         editor.setSelection(editor.cursor.rightLine, editor.cursor.rightColumn)
       }
-      R.string.cut -> {
+      R.string.editor_action_cut -> {
         if (editor.cursor.isSelected) {
           editor.cutText()
         }
       }
-      R.string.menu_format -> {
+      R.string.editor_action_format -> {
         editor.setSelection(editor.cursor.rightLine, editor.cursor.rightColumn)
         editor.formatCodeAsync()
       }

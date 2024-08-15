@@ -5,14 +5,14 @@
 
   <PreferenceCategory
     app:iconSpaceReserved="false"
-    app:title="@string/file">
+    app:title="@string/pref_category_file">
 
     <SwitchPreferenceCompat
       app:defaultValue="true"
       app:icon="@drawable/ic_file_hidden"
       app:key="pref_show_hidden_files"
-      app:title="@string/pref_show_hidden_files"
-      app:summary="@string/pref_show_hidden_files_summary" />
+      app:title="@string/pref_file_showhiddenfiles"
+      app:summary="@string/pref_file_showhiddenfiles_summary" />
 
   </PreferenceCategory>
 </PreferenceScreen>

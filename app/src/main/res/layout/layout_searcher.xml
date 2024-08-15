@@ -19,7 +19,7 @@
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_marginEnd="2dp"
-    android:hint="@string/search"
+    android:hint="@string/editor_search_text"
     android:singleLine="true"
     android:layout_marginStart="2dp"
     android:inputType="text"
@@ -45,7 +45,7 @@
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_marginEnd="2dp"
-    android:hint="@string/replace"
+    android:hint="@string/editor_search_replace_text"
     android:singleLine="true"
     android:layout_marginStart="2dp"
     android:inputType="text"
@@ -86,7 +86,7 @@
         android:textAllCaps="true"
         android:layout_marginStart="2dp"
         android:layout_weight="1.0"
-        android:text="@string/previous"
+        android:text="@string/editor_search_previous"
         style="@style/Widget.Material3.Button.TextButton" />
 
       <com.google.android.material.button.MaterialButton
@@ -96,7 +96,7 @@
         android:textAllCaps="true"
         android:layout_marginStart="2dp"
         android:layout_weight="1.0"
-        android:text="@string/next"
+        android:text="@string/editor_search_next"
         style="@style/Widget.Material3.Button.TextButton" />
 
       <com.google.android.material.button.MaterialButton
@@ -106,7 +106,7 @@
         android:textAllCaps="true"
         android:layout_marginStart="2dp"
         android:layout_weight="1.0"
-        android:text="@string/replace"
+        android:text="@string/editor_search_replace"
         style="@style/Widget.Material3.Button.TextButton" />
 
       <com.google.android.material.button.MaterialButton
@@ -117,7 +117,7 @@
         android:textAllCaps="true"
         android:layout_marginStart="2dp"
         android:layout_weight="1.0"
-        android:text="@string/replace_all"
+        android:text="@string/editor_search_replaceall"
         style="@style/Widget.Material3.Button.TextButton" />
 
       <com.google.android.material.button.MaterialButton
@@ -127,7 +127,7 @@
         android:textAllCaps="true"
         android:layout_marginStart="2dp"
         android:layout_weight="1.0"
-        android:text="@string/btn_close"
+        android:text="@string/editor_search_close"
         style="@style/Widget.Material3.Button.TextButton" />
 
     </LinearLayout>

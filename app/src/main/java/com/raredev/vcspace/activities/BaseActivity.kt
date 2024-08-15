@@ -63,9 +63,9 @@ abstract class BaseActivity : AppCompatActivity() {
   private fun showRequestPermissionDialog() {
     MaterialAlertDialogBuilder(this)
       .setCancelable(false)
-      .setTitle(R.string.file_access_title)
-      .setMessage(R.string.file_access_message)
-      .setPositiveButton(R.string.grant_permission) { _, _ ->
+      .setTitle(R.string.file_storage_access)
+      .setMessage(R.string.file_storage_access_message)
+      .setPositiveButton(R.string.file_storage_access_grant) { _, _ ->
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
           val uri = Uri.parse("package:$packageName")
           permissionLauncher.launch(
@@ -81,7 +81,7 @@ abstract class BaseActivity : AppCompatActivity() {
           )
         }
       }
-      .setNegativeButton(R.string.exit) { _, _ ->
+      .setNegativeButton(R.string.close) { _, _ ->
         finishAffinity()
         exitProcess(0)
       }

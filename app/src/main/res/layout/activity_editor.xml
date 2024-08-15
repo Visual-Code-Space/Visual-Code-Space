@@ -67,7 +67,7 @@
       android:layout_height="wrap_content"
       android:textAppearance="@style/TextAppearance.Material3.BodySmall"
       android:textSize="14sp"
-      android:text="@string/no_file_opened"
+      android:text="@string/editor_no_files_open"
       app:layout_constraintTop_toTopOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintEnd_toEndOf="parent"

@@ -5,37 +5,37 @@
 
   <PreferenceCategory
     app:iconSpaceReserved="false"
-    app:title="@string/configure">
+    app:title="@string/pref_category_configure">
 
     <Preference
       app:key="pref_general"
-      app:title="@string/general"
-      app:summary="@string/general_summary"
+      app:title="@string/pref_configure_general"
+      app:summary="@string/pref_configure_general_summary"
       app:iconSpaceReserved="false" />
 
     <Preference
       app:key="pref_editor"
-      app:title="@string/editor"
-      app:summary="@string/editor_summary"
+      app:title="@string/pref_configure_editor"
+      app:summary="@string/pref_configure_editor_summary"
       app:iconSpaceReserved="false" />
 
     <Preference
       app:key="pref_file"
-      app:title="@string/file"
-      app:summary="@string/file_summary"
+      app:title="@string/pref_configure_file_explorer"
+      app:summary="@string/pref_configure_file_explorer_summary"
       app:iconSpaceReserved="false" />
 
   </PreferenceCategory>
 
   <PreferenceCategory
     app:iconSpaceReserved="false"
-    app:title="@string/about">
+    app:title="@string/pref_category_about">
 
     <Preference
       app:icon="@drawable/ic_github"
       app:key="github"
-      app:summary="@string/pref_github_summary"
-      app:title="GitHub" />
+      app:summary="@string/pref_about_github_summary"
+      app:title="@string/pref_about_github" />
 
   </PreferenceCategory>
 

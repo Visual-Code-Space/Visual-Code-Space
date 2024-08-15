@@ -84,9 +84,9 @@ abstract class EditorHandlerActivity : BaseEditorActivity(), TabLayout.OnTabSele
 
   override fun onTabReselected(tab: TabLayout.Tab) {
     val pm = PopupMenu(this, tab.view)
-    pm.menu.add(0, 0, 0, R.string.close)
-    pm.menu.add(0, 1, 0, R.string.close_others)
-    pm.menu.add(0, 2, 0, R.string.close_all)
+    pm.menu.add(0, 0, 0, R.string.editor_close)
+    pm.menu.add(0, 1, 0, R.string.editor_close_others)
+    pm.menu.add(0, 2, 0, R.string.editor_close_all)
 
     pm.setOnMenuItemClickListener { item ->
       when (item.itemId) {
@@ -223,7 +223,7 @@ abstract class EditorHandlerActivity : BaseEditorActivity(), TabLayout.OnTabSele
       }
 
       withContext(Dispatchers.Main) {
-        if (notify) showShortToast(this@EditorHandlerActivity, getString(R.string.saved_files))
+        if (notify) showShortToast(this@EditorHandlerActivity, getString(R.string.file_saved_all))
         whenSave?.run()
       }
     }
@@ -232,7 +232,7 @@ abstract class EditorHandlerActivity : BaseEditorActivity(), TabLayout.OnTabSele
   fun saveFileAsync(notify: Boolean, index: Int, whenSave: Runnable? = null) {
     coroutineScope.launch {
       saveFile(index) {
-        if (notify) showShortToast(this@EditorHandlerActivity, getString(R.string.saved))
+        if (notify) showShortToast(this@EditorHandlerActivity, getString(R.string.file_saved))
         whenSave?.run()
       }
     }
@@ -395,11 +395,11 @@ abstract class EditorHandlerActivity : BaseEditorActivity(), TabLayout.OnTabSele
     negative: DialogInterface.OnClickListener
   ) {
     MaterialAlertDialogBuilder(this)
-      .setTitle(R.string.unsaved_files_title)
-      .setMessage(getString(R.string.unsaved_files_message, unsavedFileName))
-      .setPositiveButton(R.string.save_and_close, positive)
+      .setTitle(R.string.editor_unsaved_files)
+      .setMessage(getString(R.string.editor_unsaved_files_message, unsavedFileName))
+      .setPositiveButton(R.string.editor_save_and_close, positive)
       .setNegativeButton(R.string.close, negative)
-      .setNeutralButton(R.string.cancel, null)
+      .setNeutralButton(R.string.no, null)
       .show()
   }
 

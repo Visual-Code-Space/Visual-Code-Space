@@ -66,11 +66,11 @@ abstract class MenuHandlerActivity : EditorHandlerActivity() {
     val editor = getSelectedEditor()
     if (editor != null) {
       menu.findItem(R.id.menu_execute).isVisible = true
-      menu.findItem(R.id.menu_editor).isVisible = true
       menu.findItem(R.id.menu_undo).isVisible = KeyboardUtils.isSoftInputVisible(this)
       menu.findItem(R.id.menu_redo).isVisible = KeyboardUtils.isSoftInputVisible(this)
       menu.findItem(R.id.menu_undo).isEnabled = editor.canUndo()
       menu.findItem(R.id.menu_redo).isEnabled = editor.canRedo()
+      menu.findItem(R.id.menu_search).isVisible = true
       menu.findItem(R.id.menu_save).isEnabled = editor.modified && !PreferencesUtils.autoSave
       menu.findItem(R.id.menu_save_as).isEnabled = true
       menu.findItem(R.id.menu_save_all).isEnabled = areModifiedFiles()
@@ -113,9 +113,8 @@ abstract class MenuHandlerActivity : EditorHandlerActivity() {
     } else {
       coroutineScope.launchWithProgressDialog(
         configureBuilder = { builder ->
+          builder.setMessage(string.python_extracting_python_compiler)
           builder.setCancelable(false)
-          builder.setTitle("Extracting files...")
-          builder.setMessage(string.please_wait)
         },
         invokeOnCompletion = { throwable ->
           if (throwable == null) {

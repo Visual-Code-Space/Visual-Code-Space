@@ -43,11 +43,11 @@ constructor(
     )
 
     optionsMenu = PopupMenu(context, binding.searchOptions)
-    optionsMenu.menu.add(0, 0, 0, R.string.ignore_letter_case).apply {
+    optionsMenu.menu.add(0, 0, 0, R.string.editor_search_option_ignore_case).apply {
       isCheckable = true
       isChecked = true
     }
-    optionsMenu.menu.add(0, 1, 0, R.string.use_regex).apply {
+    optionsMenu.menu.add(0, 1, 0, R.string.editor_search_option_use_regex).apply {
       isCheckable = true
       isChecked = false
     }

@@ -12,16 +12,22 @@
   <item
     android:id="@+id/menu_undo"
     android:icon="@drawable/ic_undo"
-    android:title="@string/menu_undo"
+    android:title="@string/editor_undo"
     android:visible="false"
     app:showAsAction="always" />
 
   <item
     android:id="@+id/menu_redo"
     android:icon="@drawable/ic_redo"
-    android:title="@string/menu_redo"
+    android:title="@string/editor_redo"
     android:visible="false"
     app:showAsAction="always" />
+
+  <item
+    android:id="@+id/menu_search"
+    android:icon="@drawable/ic_search"
+    android:title="@string/editor_search"
+    android:visible="false" />
 
   <item
     android:id="@+id/menu_folder"
@@ -32,50 +38,36 @@
       <item
         android:id="@+id/menu_new_file"
         android:icon="@drawable/ic_file_add"
-        android:title="@string/menu_new_file" />
+        android:title="@string/file_new" />
 
       <item
         android:id="@+id/menu_open_file"
         android:icon="@drawable/ic_file"
-        android:title="@string/menu_open_file" />
+        android:title="@string/file_open" />
 
       <item
         android:id="@+id/menu_save"
         android:icon="@drawable/ic_save"
-        android:title="@string/menu_save"
+        android:title="@string/file_save"
         android:enabled="false" />
 
       <item
         android:id="@+id/menu_save_as"
         android:icon="@drawable/ic_save"
-        android:title="@string/menu_save_as"
+        android:title="@string/file_save_as"
         android:enabled="false" />
 
       <item
         android:id="@+id/menu_save_all"
         android:icon="@drawable/ic_save_all"
-        android:title="@string/menu_save_all"
+        android:title="@string/file_save_all"
         android:enabled="false" />
 
       <item
         android:id="@+id/menu_reload"
         android:icon="@drawable/ic_refresh"
-        android:title="@string/menu_reload"
+        android:title="@string/file_reload"
         android:enabled="false" />
-    </menu>
-  </item>
-
-  <item
-    android:id="@+id/menu_editor"
-    android:icon="@drawable/ic_pencil"
-    android:title="@string/editor"
-    android:visible="false"
-    app:showAsAction="ifRoom">
-    <menu>
-      <item
-        android:id="@+id/menu_search"
-        android:icon="@drawable/ic_search"
-        android:title="@string/menu_search" />
     </menu>
   </item>
 </menu>
