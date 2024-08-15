@@ -5,7 +5,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.raredev.vcspace.app.BaseApplication.Companion.instance as app
 import com.raredev.vcspace.models.FileIcon
-import com.raredev.vcspace.res.R
+import com.raredev.vcspace.resources.R
 import com.raredev.vcspace.utils.FileUtil
 import java.io.File
 

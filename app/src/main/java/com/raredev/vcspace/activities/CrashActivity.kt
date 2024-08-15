@@ -9,7 +9,7 @@ import androidx.activity.OnBackPressedCallback
 import com.blankj.utilcode.util.ClipboardUtils
 import com.blankj.utilcode.util.DeviceUtils
 import com.raredev.vcspace.databinding.ActivityCrashBinding
-import com.raredev.vcspace.res.R
+import com.raredev.vcspace.resources.R
 import java.util.Calendar
 import java.util.Date
 

@@ -31,7 +31,7 @@ import com.raredev.vcspace.editor.CodeEditorView
 import com.raredev.vcspace.editor.events.OnContentChangeEvent
 import com.raredev.vcspace.events.OnDeleteFileEvent
 import com.raredev.vcspace.events.OnRenameFileEvent
-import com.raredev.vcspace.res.R
+import com.raredev.vcspace.resources.R
 import com.raredev.vcspace.tasks.TaskExecutor.executeAsyncProvideError
 import com.raredev.vcspace.utils.PreferencesUtils
 import com.raredev.vcspace.utils.UniqueNameBuilder

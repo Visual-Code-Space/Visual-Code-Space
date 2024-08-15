@@ -29,7 +29,7 @@ import com.hzy.libp7zip.P7ZipApi
 import com.raredev.vcspace.R
 import com.raredev.vcspace.activities.TerminalActivity
 import com.raredev.vcspace.extensions.launchWithProgressDialog
-import com.raredev.vcspace.res.R.string
+import com.raredev.vcspace.resources.R.string
 import com.raredev.vcspace.utils.PreferencesUtils
 import com.raredev.vcspace.utils.SharedPreferencesKeys
 import java.io.File

@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-  namespace = "com.raredev.vcspace.res"
+  namespace = "com.raredev.vcspace.resources"
 
   buildTypes {
     release {

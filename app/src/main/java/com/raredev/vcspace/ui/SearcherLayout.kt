@@ -9,7 +9,7 @@ import android.view.View
 import android.widget.LinearLayout
 import androidx.appcompat.widget.PopupMenu
 import com.raredev.vcspace.databinding.LayoutSearcherBinding
-import com.raredev.vcspace.res.R
+import com.raredev.vcspace.resources.R
 import io.github.rosemoe.sora.widget.EditorSearcher
 import io.github.rosemoe.sora.widget.EditorSearcher.SearchOptions
 

@@ -18,7 +18,7 @@ package com.raredev.vcspace.utils
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate.*
 import com.raredev.vcspace.app.BaseApplication
-import com.raredev.vcspace.res.R
+import com.raredev.vcspace.resources.R
 
 object PreferencesUtils {
 

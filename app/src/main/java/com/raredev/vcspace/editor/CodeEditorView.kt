@@ -13,7 +13,7 @@ import com.raredev.vcspace.editor.langs.VCSpaceTMLanguage
 import com.raredev.vcspace.events.OnPreferenceChangeEvent
 import com.raredev.vcspace.extensions.cancelIfActive
 import com.raredev.vcspace.providers.GrammarProvider
-import com.raredev.vcspace.res.R
+import com.raredev.vcspace.resources.R
 import com.raredev.vcspace.utils.PreferencesUtils
 import com.raredev.vcspace.utils.SharedPreferencesKeys
 import io.github.rosemoe.sora.lang.EmptyLanguage

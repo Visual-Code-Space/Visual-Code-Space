@@ -16,7 +16,7 @@
 package com.raredev.vcspace.editor.completion
 
 import android.view.ViewGroup
-import com.raredev.vcspace.res.R
+import com.raredev.vcspace.resources.R
 import io.github.rosemoe.sora.widget.component.DefaultCompletionLayout
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme
 

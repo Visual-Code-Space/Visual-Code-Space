@@ -5,7 +5,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.raredev.vcspace.app.BaseApplication
-import com.raredev.vcspace.res.R
+import com.raredev.vcspace.resources.R
 import com.raredev.vcspace.utils.SharedPreferencesKeys
 
 class PreferencesFragment : PreferenceFragmentCompat() {

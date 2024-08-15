@@ -27,6 +27,6 @@ dependencies {
   implementation(libs.common.jsoup)
 
   implementation(project(":common"))
-  implementation(project(":common-res"))
   implementation(project(":editor-textmate"))
+  implementation(project(":resources"))
 }

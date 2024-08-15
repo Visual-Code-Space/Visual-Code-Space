@@ -28,7 +28,7 @@ import com.raredev.vcspace.activities.BaseActivity
 import com.raredev.vcspace.databinding.ActivityEditorBinding
 import com.raredev.vcspace.events.OnPreferenceChangeEvent
 import com.raredev.vcspace.extensions.cancelIfActive
-import com.raredev.vcspace.res.R.string
+import com.raredev.vcspace.resources.R.string
 import com.raredev.vcspace.utils.PreferencesUtils
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry
 import kotlinx.coroutines.CoroutineScope

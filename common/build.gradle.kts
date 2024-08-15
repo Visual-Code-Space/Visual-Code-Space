@@ -20,6 +20,5 @@ dependencies {
   implementation(libs.google.material)
   implementation(libs.google.gson)
   implementation(libs.common.utilcode)
-
-  implementation(project(":common-res"))
+  implementation(project(":resources"))
 }

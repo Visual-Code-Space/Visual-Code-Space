@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.raredev.vcspace.databinding.LayoutFileItemBinding
 import com.raredev.vcspace.providers.FileIconProvider
-import com.raredev.vcspace.res.R
+import com.raredev.vcspace.resources.R
 import java.io.File
 import java.text.SimpleDateFormat
 

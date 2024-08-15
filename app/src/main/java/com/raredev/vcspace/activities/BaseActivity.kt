@@ -14,7 +14,7 @@ import androidx.core.app.ActivityCompat
 import com.google.android.material.R.attr
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.raredev.vcspace.extensions.getAttrColor
-import com.raredev.vcspace.res.R
+import com.raredev.vcspace.resources.R
 import com.raredev.vcspace.utils.Utils
 import kotlin.system.exitProcess
 

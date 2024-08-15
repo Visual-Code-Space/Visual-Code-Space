@@ -35,8 +35,8 @@ import com.raredev.vcspace.events.OnRenameFileEvent
 import com.raredev.vcspace.extensions.launchWithProgressDialog
 import com.raredev.vcspace.fragments.sheets.OptionsListBottomSheet
 import com.raredev.vcspace.models.SheetOptionItem
-import com.raredev.vcspace.res.R
-import com.raredev.vcspace.res.databinding.LayoutTextinputBinding
+import com.raredev.vcspace.resources.R
+import com.raredev.vcspace.resources.databinding.LayoutTextinputBinding
 import com.raredev.vcspace.utils.ApkInstaller
 import com.raredev.vcspace.utils.FileUtil
 import com.raredev.vcspace.utils.showShortToast
