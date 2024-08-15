@@ -22,11 +22,11 @@ dependencies {
   implementation(libs.google.guava)
   implementation(libs.google.gson)
   implementation(libs.common.editor)
+  implementation(libs.common.editor.textmate)
   implementation(libs.common.eventbus)
   implementation(libs.common.utilcode)
   implementation(libs.common.jsoup)
 
   implementation(project(":common"))
-  implementation(project(":editor-textmate"))
   implementation(project(":resources"))
 }

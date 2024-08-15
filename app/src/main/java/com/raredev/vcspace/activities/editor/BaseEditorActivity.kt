@@ -30,7 +30,6 @@ import com.raredev.vcspace.events.OnPreferenceChangeEvent
 import com.raredev.vcspace.extensions.cancelIfActive
 import com.raredev.vcspace.resources.R.string
 import com.raredev.vcspace.utils.PreferencesUtils
-import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import org.greenrobot.eventbus.EventBus
@@ -105,8 +104,6 @@ abstract class BaseEditorActivity :
   }
 
   protected open fun postDestroy() {
-    GrammarRegistry.getInstance().dispose()
-
     coroutineScope.cancelIfActive("Activity has been destroyed!")
 
     optionsMenuInvalidator?.also { ThreadUtils.getMainHandler().removeCallbacks(it) }

@@ -49,7 +49,7 @@ object GrammarProvider {
 
   suspend fun findScopeByFileExtension(extension: String?): String? {
     val grammar = findGrammarByFileExtension(extension) ?: return null
-    if (!grammarRegistry.containsGrammarByFileName(grammar.name)) {
+    if (grammarRegistry.findGrammar(grammar.scopeName) == null) {
       registerGrammar(grammar)
     }
     return grammar.scopeName
@@ -61,7 +61,7 @@ object GrammarProvider {
   }
 
   private suspend fun registerGrammar(grammar: GrammarModel) {
-    if (!grammarRegistry.containsGrammarByFileName(grammar.name)) {
+    if (grammarRegistry.findGrammar(grammar.scopeName) == null) {
       registerEmbeddedLanguagesGrammar(grammar)
 
       val grammarSource =

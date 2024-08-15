@@ -42,13 +42,25 @@ class TextActionsWindow(editor: VCSpaceEditor) :
   companion object {
     private val actions =
       listOf(
-        TextAction(R.drawable.ic_comment_text_outline, R.string.editor_action_comment_line), // Comment Action
-        TextAction(R.drawable.ic_select_all, R.string.editor_action_select_all), // Select All Text Action
-        TextAction(R.drawable.ic_text_select_start, R.string.editor_action_long_select), // Long Select Action
+        TextAction(
+          R.drawable.ic_comment_text_outline,
+          R.string.editor_action_comment_line
+        ), // Comment Action
+        TextAction(
+          R.drawable.ic_select_all,
+          R.string.editor_action_select_all
+        ), // Select All Text Action
+        TextAction(
+          R.drawable.ic_text_select_start,
+          R.string.editor_action_long_select
+        ), // Long Select Action
         TextAction(R.drawable.ic_cut, R.string.editor_action_cut), // Cut Text Action
         TextAction(R.drawable.ic_copy, R.string.editor_action_copy), // Copy Text Action
         TextAction(R.drawable.ic_paste, R.string.editor_action_paste), // Paste Text Action
-        TextAction(R.drawable.ic_format_align_left, R.string.editor_action_format) // Format Text Action
+        TextAction(
+          R.drawable.ic_format_align_left,
+          R.string.editor_action_format
+        ) // Format Text Action
       )
     const val DELAY: Long = 200
   }

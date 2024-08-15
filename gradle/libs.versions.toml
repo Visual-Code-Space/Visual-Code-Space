@@ -1,5 +1,5 @@
 [versions]
-editor = "0.23.4"
+editor = "0.23.4-96c0abc-SNAPSHOT"
 androidx-navigation = "2.7.7"
 
 junit = "4.13.2"
@@ -32,6 +32,7 @@ google-material = { module = "com.google.android.material:material", version = "
 
 # Common
 common-editor = { module = "io.github.Rosemoe.sora-editor:editor", version.ref = "editor" }
+common-editor-textmate = { module = "io.github.Rosemoe.sora-editor:language-textmate", version.ref = "editor" }
 common-eventbus = { module = "org.greenrobot:eventbus", version = "3.3.1" }
 common-jdt-annotation = { module = "org.eclipse.jdt:org.eclipse.jdt.annotation", version = "2.2.700" }
 common-jsoup = { module = "org.jsoup:jsoup", version = "1.18.1" }

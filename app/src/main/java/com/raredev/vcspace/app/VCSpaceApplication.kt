@@ -47,8 +47,9 @@ class VCSpaceApplication : BaseApplication() {
               null
             ),
             name
-          )
-          .setDark(name == "darcula")
+          ).apply {
+            setDark(name == "darcula")
+          }
       )
     }
   }

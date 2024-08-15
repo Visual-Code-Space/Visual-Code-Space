@@ -13,7 +13,10 @@ import com.raredev.vcspace.utils.SharedPreferencesKeys
 class EditorPreferencesFragment : PreferenceFragmentCompat() {
 
   private val fonts by lazy {
-    arrayOf(getString(R.string.pref_editor_font_value_firacode), getString(R.string.pref_editor_font_value_jetbrains))
+    arrayOf(
+      getString(R.string.pref_editor_font_value_firacode),
+      getString(R.string.pref_editor_font_value_jetbrains)
+    )
   }
 
   private val fontValues by lazy { arrayOf("firacode", "jetbrains") }

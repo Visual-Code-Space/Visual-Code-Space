@@ -9,7 +9,6 @@ import androidx.core.view.isVisible
 import com.blankj.utilcode.util.FileIOUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.raredev.vcspace.databinding.LayoutCodeEditorBinding
-import com.raredev.vcspace.editor.langs.VCSpaceTMLanguage
 import com.raredev.vcspace.events.OnPreferenceChangeEvent
 import com.raredev.vcspace.extensions.cancelIfActive
 import com.raredev.vcspace.providers.GrammarProvider
@@ -19,6 +18,8 @@ import com.raredev.vcspace.utils.SharedPreferencesKeys
 import io.github.rosemoe.sora.lang.EmptyLanguage
 import io.github.rosemoe.sora.lang.Language
 import io.github.rosemoe.sora.langs.textmate.TextMateColorScheme
+import io.github.rosemoe.sora.langs.textmate.TextMateLanguage
+import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 import io.github.rosemoe.sora.text.LineSeparator
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme
@@ -205,7 +206,10 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
     val scopeName: String? = GrammarProvider.findScopeByFileExtension(file?.extension)
 
     return if (scopeName != null) {
-      VCSpaceTMLanguage.create(scopeName)
+      TextMateLanguage.create(scopeName, GrammarRegistry.getInstance(), false).apply {
+        tabSize = PreferencesUtils.tabSize
+        useTab(PreferencesUtils.useTab)
+      }
     } else EmptyLanguage()
   }
 }

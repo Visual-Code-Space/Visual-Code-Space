@@ -71,6 +71,7 @@ dependencies {
   implementation(libs.google.gson)
 
   implementation(libs.common.editor)
+  implementation(libs.common.editor.textmate)
   implementation(libs.common.utilcode)
   implementation(libs.common.eventbus)
   implementation(libs.common.android.coroutines)
@@ -81,7 +82,6 @@ dependencies {
 
   implementation(project(":common"))
   implementation(project(":editor"))
-  implementation(project(":editor-textmate"))
   implementation(project(":resources"))
 
   debugImplementation(libs.common.leakcanary)

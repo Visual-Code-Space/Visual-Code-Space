@@ -190,7 +190,7 @@ abstract class EditorHandlerActivity : BaseEditorActivity(), TabLayout.OnTabSele
       var pos: Int = 0
       while (editorViewModel.fileCount > 1) {
         val editor = getEditorAtIndex(pos) ?: continue
-  
+
         if (file != editor.file) {
           closeFile(pos)
         } else {

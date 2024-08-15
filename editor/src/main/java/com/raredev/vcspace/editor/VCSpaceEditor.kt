@@ -22,13 +22,13 @@ import android.view.inputmethod.EditorInfo
 import com.raredev.vcspace.editor.completion.CompletionListAdapter
 import com.raredev.vcspace.editor.completion.CustomCompletionLayout
 import com.raredev.vcspace.editor.events.OnContentChangeEvent
-import com.raredev.vcspace.editor.langs.VCSpaceTMLanguage
 import io.github.rosemoe.sora.event.ContentChangeEvent
+import io.github.rosemoe.sora.langs.textmate.TextMateLanguage
 import io.github.rosemoe.sora.widget.CodeEditor
 import io.github.rosemoe.sora.widget.component.EditorAutoCompletion
 import io.github.rosemoe.sora.widget.component.EditorTextActionWindow
 import java.io.File
-import org.eclipse.tm4e.languageconfiguration.model.CommentRule
+import org.eclipse.tm4e.languageconfiguration.internal.model.CommentRule
 import org.greenrobot.eventbus.EventBus
 
 class VCSpaceEditor
@@ -46,7 +46,7 @@ constructor(
   var modified: Boolean = false
 
   val commentRule: CommentRule?
-    get() = (editorLanguage as? VCSpaceTMLanguage)?.languageConfiguration?.comments
+    get() = (editorLanguage as? TextMateLanguage)?.languageConfiguration?.comments
 
   init {
     getComponent(EditorTextActionWindow::class.java).isEnabled = false
