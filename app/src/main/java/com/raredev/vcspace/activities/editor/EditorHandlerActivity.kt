@@ -181,22 +181,24 @@ abstract class EditorHandlerActivity : BaseEditorActivity(), TabLayout.OnTabSele
   }
 
   fun closeOthers() {
-    if (areModifiedFiles()) {
-      notifyUnsavedFiles(getUnsavedFiles()) { closeOthers() }
-      return
-    }
-    val file = editorViewModel.selectedFile
-    var pos: Int = 0
-    while (editorViewModel.fileCount > 1) {
-      val editor = getEditorAtIndex(pos) ?: continue
-
-      if (file != editor.file) {
-        closeFile(pos)
-      } else {
-        pos = 1
+    if (editorViewModel.selectedFileIndex >= 0) {
+      if (areModifiedFiles()) {
+        notifyUnsavedFiles(getUnsavedFiles()) { closeOthers() }
+        return
       }
+      val file = editorViewModel.selectedFile
+      var pos: Int = 0
+      while (editorViewModel.fileCount > 1) {
+        val editor = getEditorAtIndex(pos) ?: continue
+  
+        if (file != editor.file) {
+          closeFile(pos)
+        } else {
+          pos = 1
+        }
+      }
+      editorViewModel.setSelectedFile(findIndexAtFile(file))
     }
-    editorViewModel.setSelectedFile(findIndexAtFile(file))
   }
 
   fun closeAll() {
