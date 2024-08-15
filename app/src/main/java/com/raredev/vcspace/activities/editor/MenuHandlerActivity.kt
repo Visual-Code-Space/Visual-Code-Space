@@ -40,7 +40,7 @@ import kotlinx.coroutines.launch
 /**
  * Base class for EditorActivity. Handles the menu options logic.
  *
- * @author Felipe Teixeira
+ * @author Felipe Teixeira, Vivek
  */
 abstract class MenuHandlerActivity : EditorHandlerActivity() {
 

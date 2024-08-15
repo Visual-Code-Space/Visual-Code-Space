@@ -38,7 +38,7 @@ import org.greenrobot.eventbus.EventBus
 /**
  * Base class for EditorActivity. which handles most activity related stuff.
  *
- * @author Felipe Teixeira
+ * @author Felipe Teixeira, Vivek
  */
 abstract class BaseEditorActivity :
   BaseActivity(), SharedPreferences.OnSharedPreferenceChangeListener {

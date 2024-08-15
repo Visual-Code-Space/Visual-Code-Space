@@ -50,7 +50,7 @@ import org.greenrobot.eventbus.ThreadMode
 /**
  * Base class for EditorActivity. Handles logic for working with file editors.
  *
- * @author Akash Yadav & Felipe Teixeira
+ * @author Akash Yadav, Felipe Teixeira, Vivek
  */
 abstract class EditorHandlerActivity : BaseEditorActivity(), TabLayout.OnTabSelectedListener {
 
