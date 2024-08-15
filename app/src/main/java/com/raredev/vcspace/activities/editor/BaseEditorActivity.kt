@@ -126,15 +126,13 @@ abstract class BaseEditorActivity :
           binding.main.translationX = view.width * slideOffset / 2
         }
 
-        override fun onDrawerStateChanged(state: Int) {}
-
-        override fun onDrawerClosed(view: View) {
-          onBackPressedCallback.isEnabled = false
+        override fun onDrawerStateChanged(state: Int) {
+          onBackPressedCallback.isEnabled = !(state == DrawerLayout.STATE_IDLE)
         }
 
-        override fun onDrawerOpened(view: View) {
-          onBackPressedCallback.isEnabled = true
-        }
+        override fun onDrawerClosed(view: View) {}
+
+        override fun onDrawerOpened(view: View) {}
       }
     )
   }
