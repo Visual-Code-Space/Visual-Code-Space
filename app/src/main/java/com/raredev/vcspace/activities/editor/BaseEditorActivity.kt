@@ -1,65 +1,69 @@
+/*
+ * This file is part of Visual Code Space.
+ *
+ * Visual Code Space is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU General Public License as published by the Free Software Foundation, either version 3 of
+ * the License, or (at your option) any later version.
+ *
+ * Visual Code Space is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with Visual Code Space.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.raredev.vcspace.activities.editor
 
-import android.content.DialogInterface
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.SparseArray
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
-import androidx.appcompat.widget.PopupMenu
-import androidx.core.util.forEach
-import androidx.core.view.isVisible
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import com.blankj.utilcode.util.KeyboardUtils
 import com.blankj.utilcode.util.ThreadUtils
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.tabs.TabLayout
 import com.raredev.vcspace.activities.BaseActivity
 import com.raredev.vcspace.databinding.ActivityEditorBinding
-import com.raredev.vcspace.editor.CodeEditorView
-import com.raredev.vcspace.editor.events.OnContentChangeEvent
-import com.raredev.vcspace.events.OnDeleteFileEvent
 import com.raredev.vcspace.events.OnPreferenceChangeEvent
-import com.raredev.vcspace.events.OnRenameFileEvent
 import com.raredev.vcspace.extensions.cancelIfActive
-import com.raredev.vcspace.res.R
-import com.raredev.vcspace.tasks.TaskExecutor.executeAsyncProvideError
+import com.raredev.vcspace.res.R.string
 import com.raredev.vcspace.utils.PreferencesUtils
-import com.raredev.vcspace.utils.UniqueNameBuilder
-import com.raredev.vcspace.utils.Utils
-import com.raredev.vcspace.utils.showShortToast
-import com.raredev.vcspace.viewmodel.EditorViewModel
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry
-import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
-import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 
-open class BaseEditorActivity :
-  BaseActivity(),
-  TabLayout.OnTabSelectedListener,
-  SharedPreferences.OnSharedPreferenceChangeListener {
-
-  private var _binding: ActivityEditorBinding? = null
+/**
+ * Base class for EditorActivity. which handles most activity related stuff.
+ *
+ * @author Felipe Teixeira
+ */
+abstract class BaseEditorActivity :
+  BaseActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
 
   private var optionsMenuInvalidator: Runnable? = null
-  private var autoSave: Runnable? = null
+  private var _binding: ActivityEditorBinding? = null
+  private var _isDestroying: Boolean = false
 
-  private val mainHandler = ThreadUtils.getMainHandler()
+  private val onBackPressedCallback: OnBackPressedCallback =
+    object : OnBackPressedCallback(true) {
+      override fun handleOnBackPressed() {
+        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+          binding.drawerLayout.closeDrawer(GravityCompat.START)
+        }
+      }
+    }
+
   protected val coroutineScope = CoroutineScope(Dispatchers.Default)
-  protected val viewModel by viewModels<EditorViewModel>()
-  protected var isDestroying = false
 
   protected val binding: ActivityEditorBinding
     get() = checkNotNull(_binding) { "Activity has been destroyed" }
 
-  companion object {
-    private const val OPTIONS_MENU_INVALIDATION_DELAY = 150L
-    private const val AUTO_SAVE_DELAY = 220L
-  }
+  protected val isDestroying: Boolean
+    get() = _isDestroying
 
   override fun getLayout(): View {
     _binding = ActivityEditorBinding.inflate(layoutInflater)
@@ -69,42 +73,19 @@ open class BaseEditorActivity :
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setSupportActionBar(binding.toolbar)
-
     optionsMenuInvalidator = Runnable { super.invalidateOptionsMenu() }
-    autoSave = Runnable { saveAllFilesAsync(false) }
 
-    binding.tabs.addOnTabSelectedListener(this)
-    viewModel.observeFiles(this) { files ->
-      val isEmpty = files.isEmpty()
-      binding.noFiles.isVisible = isEmpty
-      binding.tabs.isVisible = !isEmpty
-      binding.container.isVisible = !isEmpty
-      binding.symbolInput.isVisible = !isEmpty
-      binding.bottomDivider.isVisible = !isEmpty
-
-      if (isEmpty) invalidateOptionsMenu()
-    }
-    viewModel.observeSelectedFile(this) { (index, _) ->
-      binding.apply {
-        val tab = tabs.getTabAt(index)
-        if (tab != null && !tab.isSelected) {
-          tab.select()
-        }
-        container.displayedChild = index
-        symbolInput.bindEditor(getEditorAtIndex(index)?.editor)
-      }
-      invalidateOptionsMenu()
-    }
-
+    onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+    KeyboardUtils.registerSoftInputChangedListener(this) { invalidateOptionsMenu() }
     PreferencesUtils.prefs.registerOnSharedPreferenceChangeListener(this)
-    ThemeRegistry.getInstance().setTheme(if (Utils.isDarkMode) "darcula" else "quietlight")
     EventBus.getDefault().register(this)
+    configureDrawer()
   }
 
   override fun invalidateOptionsMenu() {
     optionsMenuInvalidator?.also {
-      mainHandler.removeCallbacks(it)
-      mainHandler.postDelayed(it, OPTIONS_MENU_INVALIDATION_DELAY)
+      ThreadUtils.getMainHandler().removeCallbacks(it)
+      ThreadUtils.getMainHandler().postDelayed(it, OPTIONS_MENU_INVALIDATION_DELAY)
     }
   }
 
@@ -113,318 +94,53 @@ open class BaseEditorActivity :
   }
 
   override fun onDestroy() {
-    isDestroying = true
+    _isDestroying = true
+    preDestroy()
     super.onDestroy()
-    PreferencesUtils.prefs.unregisterOnSharedPreferenceChangeListener(this)
+    postDestroy()
+  }
 
+  protected open fun preDestroy() {
+    PreferencesUtils.prefs.unregisterOnSharedPreferenceChangeListener(this)
     EventBus.getDefault().unregister(this)
+  }
+
+  protected open fun postDestroy() {
     GrammarRegistry.getInstance().dispose()
-    closeAll()
 
     coroutineScope.cancelIfActive("Activity has been destroyed!")
 
+    optionsMenuInvalidator?.also { ThreadUtils.getMainHandler().removeCallbacks(it) }
     optionsMenuInvalidator = null
-    autoSave = null
     _binding = null
   }
 
-  override fun onTabReselected(tab: TabLayout.Tab) {
-    val pm = PopupMenu(this, tab.view)
-    pm.menu.add(0, 0, 0, R.string.close)
-    pm.menu.add(0, 1, 0, R.string.close_others)
-    pm.menu.add(0, 2, 0, R.string.close_all)
+  private fun configureDrawer() {
+    val drawerToggle =
+      ActionBarDrawerToggle(this, binding.drawerLayout, binding.toolbar, string.open, string.close)
+    binding.drawerLayout.addDrawerListener(drawerToggle)
+    drawerToggle.syncState()
 
-    pm.setOnMenuItemClickListener { item ->
-      when (item.itemId) {
-        0 -> closeFile(tab.position)
-        1 -> closeOthers()
-        2 -> closeAll()
-      }
-      true
-    }
-    pm.show()
-  }
-
-  override fun onTabSelected(tab: TabLayout.Tab) {
-    viewModel.setSelectedFile(tab.position)
-  }
-
-  override fun onTabUnselected(tab: TabLayout.Tab) {}
-
-  fun openFile(file: File) {
-    if (!file.isFile || !file.exists()) {
-      return
-    }
-    binding.drawerLayout.closeDrawers()
-    val openedFileIndex = findIndexAtFile(file)
-    if (openedFileIndex != -1) {
-      viewModel.setSelectedFile(openedFileIndex)
-      return
-    }
-
-    val index = viewModel.fileCount
-
-    val editorView = CodeEditorView(this, file)
-
-    viewModel.addFile(file)
-    binding.container.addView(editorView)
-    binding.tabs.addTab(binding.tabs.newTab())
-
-    viewModel.setSelectedFile(index)
-    updateTabs()
-  }
-
-  fun closeFile(index: Int) {
-    if (index >= 0 && index < viewModel.fileCount) {
-      val editor = getEditorAtIndex(index) ?: return
-
-      val file = editor.file
-      if (editor.modified && file != null) {
-        notifyUnsavedFile(file) { closeFile(index) }
-        return
-      }
-      editor.release()
-
-      viewModel.removeFile(index)
-      binding.apply {
-        tabs.removeTabAt(index)
-        container.removeViewAt(index)
-      }
-      updateTabs()
-    }
-  }
-
-  fun closeOthers() {
-    if (getUnsavedFilesCount() > 0) {
-      notifyUnsavedFiles(getUnsavedFiles()) { closeOthers() }
-      return
-    }
-    val file = viewModel.selectedFile
-    var pos: Int = 0
-    while (viewModel.fileCount > 1) {
-      val editor = getEditorAtIndex(pos) ?: continue
-
-      if (file != editor.file) {
-        closeFile(pos)
-      } else {
-        pos = 1
-      }
-    }
-    viewModel.setSelectedFile(findIndexAtFile(file))
-  }
-
-  fun closeAll() {
-    if (getUnsavedFilesCount() > 0 && !isDestroying) {
-      notifyUnsavedFiles(getUnsavedFiles()) { closeAll() }
-      return
-    }
-    for (i in 0 until viewModel.fileCount) {
-      getEditorAtIndex(i)?.release()
-    }
-
-    viewModel.removeAllFiles()
-    binding.apply {
-      tabs.removeAllTabs()
-      tabs.requestLayout()
-      container.removeAllViews()
-    }
-  }
-
-  fun saveAllFilesAsync(notify: Boolean, whenSave: Runnable? = null) {
-    coroutineScope.launch {
-      for (i in 0 until viewModel.fileCount) {
-        saveFile(i, null)
-      }
-
-      withContext(Dispatchers.Main) {
-        if (notify) showShortToast(this@BaseEditorActivity, getString(R.string.saved_files))
-        whenSave?.run()
-      }
-    }
-  }
-
-  fun saveFileAsync(notify: Boolean, index: Int, whenSave: Runnable? = null) {
-    coroutineScope.launch {
-      saveFile(index) {
-        if (notify) showShortToast(this@BaseEditorActivity, getString(R.string.saved))
-        whenSave?.run()
-      }
-    }
-  }
-
-  private suspend fun saveFile(index: Int, whenSave: Runnable?) {
-    getEditorAtIndex(index)?.saveFile()
-
-    withContext(Dispatchers.Main) {
-      binding.tabs.getTabAt(index)?.markUnmodified()
-      invalidateOptionsMenu()
-      whenSave?.run()
-    }
-  }
-
-  fun getSelectedEditor(): CodeEditorView? {
-    return if (viewModel.selectedFileIndex >= 0) {
-      getEditorAtIndex(viewModel.selectedFileIndex)
-    } else null
-  }
-
-  fun getEditorAtIndex(index: Int): CodeEditorView? {
-    return binding.container.getChildAt(index) as? CodeEditorView
-  }
-
-  fun findIndexAtFile(file: File?): Int {
-    val files = viewModel.openedFiles
-    for (i in files.indices) {
-      if (files[i] == file) {
-        return i
-      }
-    }
-    return -1
-  }
-
-  fun getUnsavedFilesCount(): Int {
-    var count = 0
-    for (i in 0 until viewModel.fileCount) {
-      if (getEditorAtIndex(i)?.modified == true) count++
-    }
-    return count
-  }
-
-  fun getUnsavedFiles(): List<File> {
-    val unsavedFiles = mutableListOf<File>()
-    for (i in 0 until viewModel.fileCount) {
-      val editor = getEditorAtIndex(i) ?: continue
-
-      val file = editor.file
-      if (file != null && editor.modified) {
-        unsavedFiles.add(file)
-      }
-    }
-    return unsavedFiles
-  }
-
-  @Subscribe(threadMode = ThreadMode.MAIN)
-  fun onContentChangeEvent(event: OnContentChangeEvent) {
-    invalidateOptionsMenu()
-    val index = findIndexAtFile(event.file)
-    if (index == -1) {
-      return
-    }
-
-    if (PreferencesUtils.autoSave) {
-      autoSave?.also {
-        mainHandler.removeCallbacks(it)
-        mainHandler.postDelayed(it, AUTO_SAVE_DELAY)
-      }
-    }
-
-    val tab = binding.tabs.getTabAt(index) ?: return
-
-    if (getEditorAtIndex(index)!!.modified) {
-      tab.markModified()
-    } else tab.markUnmodified()
-  }
-
-  @Subscribe(threadMode = ThreadMode.MAIN)
-  fun onFileRenamed(event: OnRenameFileEvent) {
-    invalidateOptionsMenu()
-    val index = findIndexAtFile(event.oldFile)
-    val editor = getEditorAtIndex(index) ?: return
-    viewModel.updateFile(index, event.newFile)
-    editor.setFile(event.newFile)
-
-    updateTabs()
-  }
-
-  @Subscribe(threadMode = ThreadMode.MAIN)
-  fun onFileDeleted(event: OnDeleteFileEvent) {
-    closeFile(findIndexAtFile(event.file))
-  }
-
-  /** from AndroidIDE com.itsaky.androidide.activities.editor.EditorHandlerActivity */
-  private fun updateTabs() {
-    executeAsyncProvideError({
-      val files = viewModel.openedFiles
-      val dupliCount = mutableMapOf<String, Int>()
-      val names = SparseArray<String>()
-      val nameBuilder = UniqueNameBuilder<File>("", File.separator)
-
-      files.forEach {
-        dupliCount[it.name] = (dupliCount[it.name] ?: 0) + 1
-        nameBuilder.addPath(it, it.path)
-      }
-
-      for (i in 0 until binding.tabs.tabCount) {
-        val file = files[i]
-        val count = dupliCount[file.name] ?: 0
-        val isModified = getEditorAtIndex(i)?.modified ?: false
-        val name = if (count > 1) nameBuilder.getShortPath(file) else file.name
-        names[i] = if (isModified) "*$name" else name
-      }
-      names
-    }) { result, error ->
-      if (result == null || error != null) {
-        return@executeAsyncProvideError
-      }
-
-      ThreadUtils.runOnUiThread {
-        result.forEach { index, name -> binding.tabs.getTabAt(index)?.text = name }
-      }
-    }
-  }
-
-  private fun notifyUnsavedFile(unsavedFile: File, runAfter: Runnable) {
-    showUnsavedFilesAlert(
-      unsavedFile.name,
-      { _, _ -> saveFileAsync(true, findIndexAtFile(unsavedFile)) { runAfter.run() } },
-      { _, _ ->
-        getEditorAtIndex(findIndexAtFile(unsavedFile))?.setModified(false)
-        runAfter.run()
-      }
-    )
-  }
-
-  private fun notifyUnsavedFiles(unsavedFiles: List<File>, runAfter: Runnable) {
-    val sb = StringBuilder()
-    for (file in unsavedFiles) {
-      sb.append(" " + file.name)
-    }
-
-    showUnsavedFilesAlert(
-      sb.toString(),
-      { _, _ -> saveAllFilesAsync(true) { runAfter.run() } },
-      { _, _ ->
-        for (i in 0 until viewModel.fileCount) {
-          getEditorAtIndex(i)?.setModified(false)
+    binding.drawerLayout.addDrawerListener(
+      object : DrawerLayout.SimpleDrawerListener() {
+        override fun onDrawerSlide(view: View, slideOffset: Float) {
+          binding.main.translationX = view.width * slideOffset / 2
         }
-        runAfter.run()
+
+        override fun onDrawerStateChanged(state: Int) {}
+
+        override fun onDrawerClosed(view: View) {
+          onBackPressedCallback.isEnabled = false
+        }
+
+        override fun onDrawerOpened(view: View) {
+          onBackPressedCallback.isEnabled = true
+        }
       }
     )
   }
 
-  private fun showUnsavedFilesAlert(
-    unsavedFileName: String,
-    positive: DialogInterface.OnClickListener,
-    negative: DialogInterface.OnClickListener
-  ) {
-    MaterialAlertDialogBuilder(this)
-      .setTitle(R.string.unsaved_files_title)
-      .setMessage(getString(R.string.unsaved_files_message, unsavedFileName))
-      .setPositiveButton(R.string.save_and_close, positive)
-      .setNegativeButton(R.string.close, negative)
-      .setNeutralButton(R.string.cancel, null)
-      .show()
-  }
-
-  private fun TabLayout.Tab.markModified() {
-    if (!text!!.startsWith("*")) {
-      text = "*$text"
-    }
-  }
-
-  private fun TabLayout.Tab.markUnmodified() {
-    if (text!!.startsWith("*")) {
-      text = text!!.substring(startIndex = 1)
-    }
+  companion object {
+    private const val OPTIONS_MENU_INVALIDATION_DELAY = 150L
   }
 }

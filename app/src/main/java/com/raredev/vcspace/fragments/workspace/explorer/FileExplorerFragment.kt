@@ -28,7 +28,6 @@ import com.blankj.utilcode.util.ClipboardUtils
 import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.SizeUtils.dp2px
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.raredev.vcspace.activities.editor.EditorActivity
 import com.raredev.vcspace.adapters.FileListAdapter
 import com.raredev.vcspace.databinding.FragmentFileExplorerBinding
 import com.raredev.vcspace.events.OnDeleteFileEvent
@@ -41,6 +40,7 @@ import com.raredev.vcspace.res.databinding.LayoutTextinputBinding
 import com.raredev.vcspace.utils.ApkInstaller
 import com.raredev.vcspace.utils.FileUtil
 import com.raredev.vcspace.utils.showShortToast
+import com.raredev.vcspace.viewmodel.EditorViewModel
 import com.raredev.vcspace.viewmodel.FileExplorerViewModel
 import java.io.File
 import java.io.IOException
@@ -51,7 +51,9 @@ import org.greenrobot.eventbus.EventBus
 
 class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
 
-  private val viewModel by viewModels<FileExplorerViewModel>(ownerProducer = { requireActivity() })
+  private val editorViewModel by viewModels<EditorViewModel>(ownerProducer = { requireActivity() })
+  private val fileViewModel by
+    viewModels<FileExplorerViewModel>(ownerProducer = { requireActivity() })
 
   private var _binding: FragmentFileExplorerBinding? = null
   private val binding: FragmentFileExplorerBinding
@@ -72,17 +74,17 @@ class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
-    viewModel.files.observe(viewLifecycleOwner) { files ->
+    fileViewModel.files.observe(viewLifecycleOwner) { files ->
       binding.emptyFolder.isVisible = files.isEmpty()
       adapter.submitList(files)
     }
 
-    viewModel.currentPath.observe(viewLifecycleOwner) { path -> binding.pathList.setPath(path) }
-    binding.pathList.setFileExplorerViewModel(viewModel)
+    fileViewModel.currentPath.observe(viewLifecycleOwner) { path -> binding.pathList.setPath(path) }
+    binding.pathList.setFileExplorerViewModel(fileViewModel)
 
     binding.navigationSpace.addItem(R.string.refresh, R.drawable.ic_refresh) { refreshFiles() }
     binding.navigationSpace.addItem(R.string.create, R.drawable.ic_add) {
-      showCreateFileDialog(viewModel.currentPath.value!!)
+      showCreateFileDialog(fileViewModel.currentPath.value!!)
     }
 
     binding.rvFiles.layoutManager = LinearLayoutManager(requireContext())
@@ -102,14 +104,10 @@ class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
   override fun onFileClickListener(file: File) {
     if (file.isDirectory) {
       setCurrentPath(file.absolutePath)
-    } else {
-      if (FileUtil.isValidTextFile(file.name)) {
-        (requireActivity() as EditorActivity).openFile(file)
-      } else {
-        if (file.name.endsWith(".apk")) {
-          ApkInstaller.installApplication(requireContext(), file)
-        }
-      }
+    } else if (file.name.endsWith(".apk")) {
+      ApkInstaller.installApplication(requireContext(), file)
+    } else if (FileUtil.isValidTextFile(file.name)) {
+      editorViewModel.openFile(file)
     }
   }
 
@@ -133,11 +131,11 @@ class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
   }
 
   fun setCurrentPath(path: String) {
-    viewModel.setCurrentPath(path)
+    fileViewModel.setCurrentPath(path)
   }
 
   fun refreshFiles() {
-    viewModel.refreshFiles()
+    fileViewModel.refreshFiles()
   }
 
   @SuppressLint("RestrictedApi")
@@ -153,7 +151,7 @@ class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
         with(File(path, name)) {
           try {
             if (!exists() && createNewFile()) {
-              viewModel.refreshFiles()
+              fileViewModel.refreshFiles()
             }
           } catch (ioe: IOException) {
             ioe.printStackTrace()
@@ -165,7 +163,7 @@ class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
         with(File(path, name)) {
           try {
             if (!exists() && mkdirs()) {
-              viewModel.refreshFiles()
+              fileViewModel.refreshFiles()
             }
           } catch (ioe: IOException) {
             ioe.printStackTrace()
@@ -209,7 +207,7 @@ class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
 
             withContext(Dispatchers.Main) {
               showShortToast(requireContext(), getString(R.string.renamed_message))
-              viewModel.refreshFiles()
+              fileViewModel.refreshFiles()
             }
           }
         )
@@ -247,7 +245,7 @@ class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
 
             withContext(Dispatchers.Main) {
               showShortToast(requireContext(), getString(R.string.deleted_message))
-              viewModel.refreshFiles()
+              fileViewModel.refreshFiles()
             }
           }
         )

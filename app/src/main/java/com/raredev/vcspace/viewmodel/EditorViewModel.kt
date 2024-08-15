@@ -8,6 +8,7 @@ import java.io.File
 
 class EditorViewModel : ViewModel() {
 
+  private val _action = MutableLiveData<EditorAction>()
   private val _files = MutableLiveData<MutableList<File>>(mutableListOf())
   private val _selectedFile = MutableLiveData<Pair<Int, File?>>(-1 to null)
 
@@ -22,6 +23,26 @@ class EditorViewModel : ViewModel() {
 
   val selectedFileIndex: Int
     get() = _selectedFile.value!!.first
+
+  fun openFile(file: File) {
+    executeAction(EditorAction.OpenFileAction(file))
+  }
+
+  fun closeFile(fileIndex: Int) {
+    executeAction(EditorAction.CloseFileAction(fileIndex))
+  }
+
+  fun closeOthers() {
+    executeAction(EditorAction.CloseOthersAction())
+  }
+
+  fun closeAllFiles() {
+    executeAction(EditorAction.CloseAllAction())
+  }
+
+  fun executeAction(action: EditorAction) {
+    this._action.value = action
+  }
 
   fun addFile(file: File) {
     val files = this._files.value!!
@@ -50,19 +71,29 @@ class EditorViewModel : ViewModel() {
     setSelectedFile(-1, null)
   }
 
+  fun setSelectedFile(index: Int, file: File? = openedFiles[index]) {
+    this._selectedFile.value = index to file
+  }
+
+  fun observeAction(lifecycleOwner: LifecycleOwner, observer: Observer<EditorAction>) {
+    this._action.observe(lifecycleOwner, observer)
+  }
+
   fun observeFiles(lifecycleOwner: LifecycleOwner, observer: Observer<MutableList<File>>) {
     this._files.observe(lifecycleOwner, observer)
   }
 
-  fun setSelectedFile(index: Int) {
-    setSelectedFile(index, openedFiles[index])
-  }
-
-  fun setSelectedFile(index: Int, file: File?) {
-    this._selectedFile.value = index to file
-  }
-
   fun observeSelectedFile(lifecycleOwner: LifecycleOwner, observer: Observer<Pair<Int, File?>>) {
     this._selectedFile.observe(lifecycleOwner, observer)
+  }
+
+  sealed interface EditorAction {
+    class OpenFileAction(val file: File) : EditorAction
+
+    class CloseFileAction(val fileIndex: Int) : EditorAction
+
+    class CloseOthersAction : EditorAction
+
+    class CloseAllAction : EditorAction
   }
 }
