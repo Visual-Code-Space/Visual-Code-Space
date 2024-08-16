@@ -34,19 +34,14 @@ google-material = { module = "com.google.android.material:material", version = "
 common-editor = { module = "io.github.Rosemoe.sora-editor:editor", version.ref = "editor" }
 common-editor-textmate = { module = "io.github.Rosemoe.sora-editor:language-textmate", version.ref = "editor" }
 common-eventbus = { module = "org.greenrobot:eventbus", version = "3.3.1" }
-common-jdt-annotation = { module = "org.eclipse.jdt:org.eclipse.jdt.annotation", version = "2.2.700" }
 common-jsoup = { module = "org.jsoup:jsoup", version = "1.18.1" }
 common-leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version = "2.12" }
 common-utilcode = { module = "com.blankj:utilcodex", version = "1.31.1" }
-common-android-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version = "1.7.3" }
-common-pf4j = { module = "org.pf4j:pf4j", version = "3.10.0" }
-common-kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.7.1" }
 common-junit = { group = "junit", name = "junit", version.ref = "junit" }
 common-p7zip = { module = "com.github.hzy3774:AndroidP7zip", version.ref = "p7zip" }
-
-# Termux
-terminal-view = { module = "com.github.termux.termux-app:terminal-view", version.ref = "termux" }
-terminal-emulator = { module = "com.github.termux.termux-app:terminal-emulator", version.ref = "termux" }
+common-kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version = "1.7.3" }
+common-terminal-view = { module = "com.github.termux.termux-app:terminal-view", version.ref = "termux" }
+common-terminal-emulator = { module = "com.github.termux.termux-app:terminal-emulator", version.ref = "termux" }
 
 [plugins]
 android-application = { id = "com.android.application", version = "8.1.1" }

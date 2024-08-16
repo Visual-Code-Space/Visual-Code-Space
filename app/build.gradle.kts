@@ -74,11 +74,10 @@ dependencies {
   implementation(libs.common.editor.textmate)
   implementation(libs.common.utilcode)
   implementation(libs.common.eventbus)
-  implementation(libs.common.android.coroutines)
   implementation(libs.common.p7zip)
-
-  implementation(libs.terminal.view)
-  implementation(libs.terminal.emulator)
+  implementation(libs.common.kotlinx.coroutines.android)
+  implementation(libs.common.terminal.view)
+  implementation(libs.common.terminal.emulator)
 
   implementation(project(":common"))
   implementation(project(":editor"))
