@@ -18,7 +18,6 @@ package com.raredev.vcspace.providers
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.raredev.vcspace.utils.readFromAsset
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.model.DefaultGrammarDefinition
@@ -43,7 +42,10 @@ object GrammarProvider {
       return
     }
 
-    val grammarsJson = readFromAsset(context, "editor/sora-editor/textmate/grammars.json")
+    val grammarsJson =
+      context.assets.open("editor/sora-editor/textmate/grammars.json").bufferedReader().use {
+        it.readText()
+      }
     _grammars = Gson().fromJson(grammarsJson, object : TypeToken<List<GrammarModel>>() {})
   }
 

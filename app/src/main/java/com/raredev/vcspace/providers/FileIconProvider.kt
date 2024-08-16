@@ -6,7 +6,6 @@ import com.google.gson.reflect.TypeToken
 import com.raredev.vcspace.app.BaseApplication.Companion.instance as app
 import com.raredev.vcspace.models.FileIcon
 import com.raredev.vcspace.resources.R
-import com.raredev.vcspace.utils.readFromAsset
 import java.io.File
 
 /**
@@ -19,7 +18,8 @@ object FileIconProvider {
   private var fileIcons: List<FileIcon> = mutableListOf()
 
   init {
-    val fileIconsJson = readFromAsset(app, "files/file_icons.json")
+    val fileIconsJson =
+      app.assets.open("files/file_icons.json").bufferedReader().use { it.readText() }
     fileIcons = Gson().fromJson(fileIconsJson, object : TypeToken<List<FileIcon>>() {})
   }
 

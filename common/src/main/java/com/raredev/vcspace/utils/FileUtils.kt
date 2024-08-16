@@ -21,17 +21,29 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Environment
 import androidx.core.content.ContextCompat
-import java.io.ByteArrayOutputStream
 
+/** Regex used to check if file name extension is not of a text file. */
 val INVALID_TEXT_FILES_REGEX =
   Regex(
     ".*\\.(bin|ttf|png|jpe?g|bmp|mp4|mp3|m4a|iso|so|zip|rar|jar|dex|odex|vdex|7z|apk|apks|xapk)$"
   )
 
+/**
+ * Checks if the file with the given name is a valid text file, checking if the name extension is
+ * not in the [INVALID_TEXT_FILES_REGEX] regex.
+ *
+ * @param filename The file name to check the extension.
+ * @return If it is a valid text file.
+ */
 fun isValidTextFile(filename: String): Boolean {
   return !filename.matches(INVALID_TEXT_FILES_REGEX)
 }
 
+/**
+ * Checks if storage permission has been granted.
+ *
+ * @return If permission has been granted.
+ */
 fun Context.isStoragePermissionGranted(): Boolean {
   return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
     Environment.isExternalStorageManager()
@@ -41,38 +53,16 @@ fun Context.isStoragePermissionGranted(): Boolean {
   }
 }
 
+/**
+ * Get the previous path from the current path, for example: [/path1/path2] it will get the
+ * [/path1].
+ *
+ * @param path The way to get the parent path.
+ * @return The parent path.
+ */
 fun getParentDirPath(path: String): String {
   val index = path.lastIndexOf("/")
   return if (index >= 0) {
     path.substring(0, index)
   } else path
-}
-
-fun readFromAsset(ctx: Context, path: String): String {
-  try {
-    // Get the input stream from the asset
-    val inputStream = ctx.assets.open(path)
-
-    // Create a byte array output stream to store the read bytes
-    val outputStream = ByteArrayOutputStream()
-
-    // Create a buffer of 1024 bytes
-    val _buf = ByteArray(1024)
-    var i: Int
-
-    // Read the bytes from the input stream, write them to the output stream and close the streams
-    while (inputStream.read(_buf).also { i = it } != -1) {
-      outputStream.write(_buf, 0, i)
-    }
-    outputStream.close()
-    inputStream.close()
-
-    // Return the content of the output stream as a String
-    return outputStream.toString()
-  } catch (e: Exception) {
-    e.printStackTrace()
-  }
-
-  // If an exception occurred, return an empty String
-  return ""
 }

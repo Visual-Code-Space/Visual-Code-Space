@@ -25,14 +25,40 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
+/**
+ * Calls [CoroutineScope.cancel] only if a job is active in the scope.
+ *
+ * @param message Optional message describing the cause of the cancellation.
+ * @param cause Optional cause of the cancellation.
+ * @see cancelIfActive
+ * @author Akash Yadav
+ */
 fun CoroutineScope.cancelIfActive(message: String, cause: Throwable? = null) =
   cancelIfActive(CancellationException(message, cause))
 
+/**
+ * Calls [CoroutineScope.cancel] only if a job is active in the scope.
+ *
+ * @param exception Optional cause of the cancellation.
+ * @author Akash Yadav
+ */
 fun CoroutineScope.cancelIfActive(exception: CancellationException? = null) {
   val job = coroutineContext[Job]
   job?.cancel(exception)
 }
 
+/**
+ * Launches a new coroutine without blocking the current thread. This method displays a progress
+ * dialog while the [action] is executing. The dialog is automatically dismissed after the action
+ * completes, regardless of whether it fails or succeeds.
+ *
+ * @param uiContext The context of the activity or fragment to show the dialog.
+ * @param context The coroutine context [EmptyCoroutineContext] is empty by default.
+ * @param configureBuilder Function to configure the progress dialog builder.
+ * @param invokeOnCompletion The function is called when the [action] completes, either successfully
+ *   or with an error.
+ * @param action Function of the action to be executed when launching the coroutine.
+ */
 inline fun CoroutineScope.launchWithProgressDialog(
   uiContext: Context,
   context: CoroutineContext = EmptyCoroutineContext,
