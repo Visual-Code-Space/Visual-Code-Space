@@ -5,20 +5,20 @@ plugins {
 }
 
 android {
-  namespace = "com.raredev.vcspace"
+  namespace = "com.teixeira.vcspace"
 
   defaultConfig {
-    applicationId = "com.raredev.vcspace"
+    applicationId = "com.teixeira.vcspace"
 
     vectorDrawables.useSupportLibrary = true
   }
 
   signingConfigs {
     create("general") {
-      storeFile = file("vcspace.keystore")
-      keyAlias = "vcspace"
-      keyPassword = "raredevKey"
-      storePassword = "raredevKey"
+      storeFile = file("test.keystore")
+      keyAlias = "test"
+      keyPassword = "teixeira0x"
+      storePassword = "teixeira0x"
     }
   }
 

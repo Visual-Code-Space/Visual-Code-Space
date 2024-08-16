@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-  namespace = "com.raredev.vcspace.resources"
+  namespace = "com.teixeira.vcspace.resources"
 
   buildTypes {
     release {

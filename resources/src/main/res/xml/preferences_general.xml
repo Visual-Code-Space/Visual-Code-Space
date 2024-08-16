@@ -7,7 +7,7 @@
     app:iconSpaceReserved="false"
     app:title="@string/pref_category_aparence">
 
-    <com.raredev.vcspace.preferences.UIModePreference
+    <com.teixeira.vcspace.preferences.UIModePreference
       app:icon="@drawable/ic_theme"
       app:key="pref_aparence_uimode_key"
       app:title="@string/pref_aparence_uimode"

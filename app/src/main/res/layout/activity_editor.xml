@@ -43,7 +43,7 @@
       app:layout_constraintBottom_toTopOf="@+id/symbol_input"
       app:layout_constraintTop_toBottomOf="@+id/app_bar" />
 
-    <com.raredev.vcspace.ui.SymbolInputView
+    <com.teixeira.vcspace.ui.SymbolInputView
       android:id="@+id/symbol_input"
       android:layout_width="0dp"
       android:layout_height="45dp"
@@ -84,7 +84,7 @@
       android:id="@+id/fragment_file_explorer"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:name="com.raredev.vcspace.fragments.workspace.WorkspaceFragment" />
+      android:name="com.teixeira.vcspace.fragments.workspace.WorkspaceFragment" />
 
   </com.google.android.material.navigation.NavigationView>
 

@@ -7,19 +7,19 @@
     app:iconSpaceReserved="false"
     app:title="@string/pref_category_editor">
 
-    <com.raredev.vcspace.preferences.EditorFontSizePreference
+    <com.teixeira.vcspace.preferences.EditorFontSizePreference
       app:iconSpaceReserved="false"
       app:key="pref_editor_fontsize_key"
       app:title="@string/pref_editor_fontsize"
       app:summary="@string/pref_editor_fontsize_summary" />
 
-    <com.raredev.vcspace.preferences.EditorIndentPreference
+    <com.teixeira.vcspace.preferences.EditorIndentPreference
       app:iconSpaceReserved="false"
       app:key="pref_editor_indent_key"
       app:title="@string/pref_editor_indent"
       app:summary="@string/pref_editor_indent_summary" />
 
-    <com.raredev.vcspace.preferences.EditorFontPreference
+    <com.teixeira.vcspace.preferences.EditorFontPreference
       app:iconSpaceReserved="false"
       app:key="pref_editor_font_key"
       app:title="@string/pref_editor_font"

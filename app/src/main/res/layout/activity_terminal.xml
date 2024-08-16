@@ -7,7 +7,7 @@
   android:background="@android:color/black"
   android:orientation="vertical">
 
-  <com.raredev.vcspace.ui.virtualkeys.VirtualKeysView
+  <com.teixeira.vcspace.ui.virtualkeys.VirtualKeysView
     android:id="@+id/virtual_keys"
     android:layout_width="match_parent"
     android:layout_height="75dp" />

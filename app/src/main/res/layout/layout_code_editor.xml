@@ -5,7 +5,7 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent">
 
-  <com.raredev.vcspace.editor.VCSpaceEditor
+  <com.teixeira.vcspace.editor.VCSpaceEditor
     android:id="@+id/editor"
     android:layout_width="0dp"
     android:layout_height="0dp"
@@ -14,7 +14,7 @@
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintBottom_toTopOf="@id/searcher" />
 
-  <com.raredev.vcspace.ui.SearcherLayout
+  <com.teixeira.vcspace.ui.SearcherLayout
     android:id="@+id/searcher"
     android:layout_width="0dp"
     android:layout_height="wrap_content"

@@ -5,7 +5,7 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent">
 
-  <com.raredev.vcspace.ui.PathListView
+  <com.teixeira.vcspace.ui.PathListView
     android:id="@+id/path_list"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -31,7 +31,7 @@
     android:singleLine="true"
     android:text="@string/file_empty_folder" />
 
-  <com.raredev.vcspace.ui.NavigationSpace
+  <com.teixeira.vcspace.ui.NavigationSpace
     android:id="@+id/navigation_space"
     android:layout_width="match_parent"
     android:layout_height="45dp"
