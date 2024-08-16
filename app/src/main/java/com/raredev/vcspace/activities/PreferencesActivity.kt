@@ -2,10 +2,10 @@ package com.raredev.vcspace.activities
 
 import android.os.Bundle
 import android.view.View
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.NavigationUI
 import com.google.android.material.R.attr
+import com.raredev.vcspace.resources.R
 import com.raredev.vcspace.databinding.ActivityPreferencesBinding
+import com.raredev.vcspace.preferences.fragments.PreferencesFragment
 import com.raredev.vcspace.utils.getAttrColor
 
 class PreferencesActivity : BaseActivity() {
@@ -25,10 +25,17 @@ class PreferencesActivity : BaseActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setSupportActionBar(binding.toolbar)
+    supportActionBar?.setTitle(R.string.settings)
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    binding.toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
-    val navHostFragment =
-      supportFragmentManager.findFragmentById(binding.navHostFragment.id) as NavHostFragment
-    NavigationUI.setupWithNavController(binding.toolbar, navHostFragment.navController)
+    val fragmentManager = supportFragmentManager
+    if (fragmentManager.findFragmentByTag(PreferencesFragment.FRAGMENT_TAG) == null) {
+      getSupportFragmentManager()
+        .beginTransaction()
+        .replace(binding.container.id, PreferencesFragment(), PreferencesFragment.FRAGMENT_TAG)
+        .commit()
+    }
   }
 
   override fun onDestroy() {

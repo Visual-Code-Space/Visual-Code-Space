@@ -5,8 +5,9 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.blankj.utilcode.util.ThrowableUtils
 import com.google.android.material.color.DynamicColors
 import com.raredev.vcspace.activities.CrashActivity
+import com.raredev.vcspace.preferences.aparenceUIMode
+import com.raredev.vcspace.preferences.aparenceMaterialYou
 import com.raredev.vcspace.providers.GrammarProvider
-import com.raredev.vcspace.utils.PreferencesUtils
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.model.ThemeModel
@@ -23,10 +24,10 @@ class VCSpaceApplication : BaseApplication() {
     Thread.setDefaultUncaughtExceptionHandler(this::uncaughtException)
     super.onCreate()
 
-    if (PreferencesUtils.dynamicColors) {
+    AppCompatDelegate.setDefaultNightMode(aparenceUIMode)
+    if (aparenceMaterialYou) {
       DynamicColors.applyToActivitiesIfAvailable(this)
     }
-    AppCompatDelegate.setDefaultNightMode(PreferencesUtils.appTheme)
     GrammarProvider.initialize(this)
     loadDefaultThemes()
   }

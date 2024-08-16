@@ -28,9 +28,8 @@ import com.blankj.utilcode.util.UriUtils
 import com.hzy.libp7zip.P7ZipApi
 import com.raredev.vcspace.R
 import com.raredev.vcspace.activities.TerminalActivity
+import com.raredev.vcspace.preferences.pythonExtracted
 import com.raredev.vcspace.resources.R.string
-import com.raredev.vcspace.utils.PreferencesUtils
-import com.raredev.vcspace.utils.SharedPreferencesKeys
 import com.raredev.vcspace.utils.launchWithProgressDialog
 import java.io.File
 import java.nio.file.Files
@@ -71,7 +70,7 @@ abstract class MenuHandlerActivity : EditorHandlerActivity() {
       menu.findItem(R.id.menu_undo).isEnabled = editor.canUndo()
       menu.findItem(R.id.menu_redo).isEnabled = editor.canRedo()
       menu.findItem(R.id.menu_search).isVisible = true
-      menu.findItem(R.id.menu_save).isEnabled = editor.modified && !PreferencesUtils.autoSave
+      menu.findItem(R.id.menu_save).isEnabled = editor.modified
       menu.findItem(R.id.menu_save_as).isEnabled = true
       menu.findItem(R.id.menu_save_all).isEnabled = areModifiedFiles()
       menu.findItem(R.id.menu_reload).isEnabled = true
@@ -108,7 +107,7 @@ abstract class MenuHandlerActivity : EditorHandlerActivity() {
   }
 
   private fun extractPythonFile(whenExtractingDone: () -> Unit) {
-    if (PreferencesUtils.isPythonFileExtracted) {
+    if (pythonExtracted) {
       whenExtractingDone()
     } else {
       coroutineScope.launchWithProgressDialog(
@@ -119,10 +118,7 @@ abstract class MenuHandlerActivity : EditorHandlerActivity() {
         },
         invokeOnCompletion = { throwable ->
           if (throwable == null) {
-            PreferencesUtils.prefs
-              .edit()
-              .putBoolean(SharedPreferencesKeys.KEY_PYTHON_FILE_EXTRACTED, true)
-              .apply()
+            pythonExtracted = true
             whenExtractingDone()
           }
         },

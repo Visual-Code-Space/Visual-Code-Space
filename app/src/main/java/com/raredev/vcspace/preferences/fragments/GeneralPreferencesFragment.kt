@@ -1,12 +1,12 @@
-package com.raredev.vcspace.fragments.preferences
+package com.raredev.vcspace.preferences.fragments
 
 import android.os.Bundle
 import androidx.preference.PreferenceFragmentCompat
 import com.raredev.vcspace.resources.R
 
-class FilePreferencesFragment : PreferenceFragmentCompat() {
+class GeneralPreferencesFragment : PreferenceFragmentCompat() {
 
   override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-    setPreferencesFromResource(R.xml.preferences_file, rootKey)
+    setPreferencesFromResource(R.xml.preferences_general, rootKey)
   }
 }

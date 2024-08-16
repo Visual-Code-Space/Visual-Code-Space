@@ -7,16 +7,16 @@
     app:iconSpaceReserved="false"
     app:title="@string/pref_category_aparence">
 
-    <Preference
+    <com.raredev.vcspace.preferences.UIModePreference
       app:icon="@drawable/ic_theme"
-      app:key="pref_theme"
+      app:key="pref_aparence_uimode_key"
       app:title="@string/pref_aparence_uimode"
       app:summary="@string/pref_aparence_uimode_summary" />
 
     <SwitchPreferenceCompat
       app:defaultValue="true"
       app:icon="@drawable/ic_palette"
-      app:key="pref_dynamiccolors"
+      app:key="pref_aparence_materialyou_key"
       app:title="@string/pref_aparence_materialyou"
       app:summary="@string/pref_aparence_materialyou_summary" />
   </PreferenceCategory>

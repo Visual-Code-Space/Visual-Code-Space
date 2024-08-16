@@ -10,7 +10,7 @@
     <SwitchPreferenceCompat
       app:defaultValue="true"
       app:icon="@drawable/ic_file_hidden"
-      app:key="pref_show_hidden_files"
+      app:key="pref_file_showhiddenfiles_key"
       app:title="@string/pref_file_showhiddenfiles"
       app:summary="@string/pref_file_showhiddenfiles_summary" />
 

@@ -10,10 +10,27 @@ import com.blankj.utilcode.util.FileIOUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.raredev.vcspace.databinding.LayoutCodeEditorBinding
 import com.raredev.vcspace.events.OnPreferenceChangeEvent
+import com.raredev.vcspace.preferences.PREF_EDITOR_DELETELINEONBACKSPACE_KEY
+import com.raredev.vcspace.preferences.PREF_EDITOR_DELETETABONBACKSPACE_KEY
+import com.raredev.vcspace.preferences.PREF_EDITOR_FONTLIGATURES_KEY
+import com.raredev.vcspace.preferences.PREF_EDITOR_FONTSIZE_KEY
+import com.raredev.vcspace.preferences.PREF_EDITOR_FONT_KEY
+import com.raredev.vcspace.preferences.PREF_EDITOR_INDENT_KEY
+import com.raredev.vcspace.preferences.PREF_EDITOR_LINENUMBER_KEY
+import com.raredev.vcspace.preferences.PREF_EDITOR_STICKYSCROLL_KEY
+import com.raredev.vcspace.preferences.PREF_EDITOR_WORDWRAP_KEY
+import com.raredev.vcspace.preferences.editorDeleteLineOnBackspace
+import com.raredev.vcspace.preferences.editorDeleteTabOnBackspace
+import com.raredev.vcspace.preferences.editorFont
+import com.raredev.vcspace.preferences.editorFontSize
+import com.raredev.vcspace.preferences.editorUseTab
+import com.raredev.vcspace.preferences.editorFontLigatures
+import com.raredev.vcspace.preferences.editorIndent
+import com.raredev.vcspace.preferences.editorLineNumber
+import com.raredev.vcspace.preferences.editorStickyScroll
+import com.raredev.vcspace.preferences.editorWordWrap
 import com.raredev.vcspace.providers.GrammarProvider
 import com.raredev.vcspace.resources.R
-import com.raredev.vcspace.utils.PreferencesUtils
-import com.raredev.vcspace.utils.SharedPreferencesKeys
 import com.raredev.vcspace.utils.cancelIfActive
 import io.github.rosemoe.sora.lang.EmptyLanguage
 import io.github.rosemoe.sora.lang.Language
@@ -127,22 +144,22 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
   @Subscribe(threadMode = ThreadMode.MAIN)
   fun onSharedPreferenceChanged(event: OnPreferenceChangeEvent) {
     when (event.prefKey) {
-      SharedPreferencesKeys.KEY_EDITOR_TEXT_SIZE -> updateTextSize()
-      SharedPreferencesKeys.KEY_EDITOR_TAB_SIZE -> updateTABSize()
-      SharedPreferencesKeys.KEY_STICKY_SCROLL -> updateStickyScroll()
-      SharedPreferencesKeys.KEY_FONT_LIGATURES -> updateFontLigatures()
-      SharedPreferencesKeys.KEY_WORDWRAP -> updateWordWrap()
-      SharedPreferencesKeys.KEY_DELETE_EMPTY_LINE_FAST -> updateDeleteEmptyLineFast()
-      SharedPreferencesKeys.KEY_EDITOR_FONT -> updateEditorFont()
-      SharedPreferencesKeys.KEY_LINE_NUMBERS -> updateLineNumbers()
-      SharedPreferencesKeys.KEY_DELETE_TABS -> updateDeleteTabs()
+      PREF_EDITOR_FONT_KEY -> updateEditorFont()
+      PREF_EDITOR_FONTSIZE_KEY -> updateFontSize()
+      PREF_EDITOR_INDENT_KEY -> updateEditorIndent()
+      PREF_EDITOR_STICKYSCROLL_KEY -> updateStickyScroll()
+      PREF_EDITOR_FONTLIGATURES_KEY -> updateFontLigatures()
+      PREF_EDITOR_WORDWRAP_KEY -> updateWordWrap()
+      PREF_EDITOR_LINENUMBER_KEY -> updateLineNumbers()
+      PREF_EDITOR_DELETELINEONBACKSPACE_KEY -> updateDeleteEmptyLineFast()
+      PREF_EDITOR_DELETETABONBACKSPACE_KEY -> updateDeleteTabs()
     }
   }
 
   private fun configureEditor() {
     updateEditorFont()
-    updateTextSize()
-    updateTABSize()
+    updateFontSize()
+    updateEditorIndent()
     updateStickyScroll()
     updateFontLigatures()
     updateWordWrap()
@@ -151,42 +168,42 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
     updateDeleteTabs()
   }
 
-  private fun updateTextSize() {
-    editor.setTextSize(PreferencesUtils.textSize.toFloat())
-  }
-
-  private fun updateTABSize() {
-    editor.tabWidth = PreferencesUtils.tabSize
-  }
-
   private fun updateEditorFont() {
-    val font = PreferencesUtils.selectedFont
-    editor.typefaceText = ResourcesCompat.getFont(context, font)
-    editor.typefaceLineNumber = ResourcesCompat.getFont(context, font)
+    val font = ResourcesCompat.getFont(context, editorFont)
+    editor.typefaceText = font
+    editor.typefaceLineNumber = font
+  }
+
+  private fun updateFontSize() {
+    editor.setTextSize(editorFontSize)
+  }
+
+  private fun updateEditorIndent() {
+    editor.tabWidth = editorIndent
   }
 
   private fun updateStickyScroll() {
-    editor.props.stickyScroll = PreferencesUtils.stickyScroll
+    editor.props.stickyScroll = editorStickyScroll
   }
 
   private fun updateFontLigatures() {
-    editor.isLigatureEnabled = PreferencesUtils.fontLigatures
+    editor.isLigatureEnabled = editorFontLigatures
   }
 
   private fun updateWordWrap() {
-    editor.isWordwrap = PreferencesUtils.wordWrap
+    editor.isWordwrap = editorWordWrap
   }
 
   private fun updateLineNumbers() {
-    editor.isLineNumberEnabled = PreferencesUtils.lineNumbers
+    editor.isLineNumberEnabled = editorLineNumber
   }
 
   private fun updateDeleteEmptyLineFast() {
-    editor.props.deleteEmptyLineFast = PreferencesUtils.deleteEmptyLineFast
+    editor.props.deleteEmptyLineFast = editorDeleteLineOnBackspace
   }
 
   private fun updateDeleteTabs() {
-    editor.props.deleteMultiSpaces = if (PreferencesUtils.deleteMultiSpaces) -1 else 1
+    editor.props.deleteMultiSpaces = if (editorDeleteTabOnBackspace) -1 else 1
   }
 
   private fun setLoading(loading: Boolean) {
@@ -207,8 +224,8 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
 
     return if (scopeName != null) {
       TextMateLanguage.create(scopeName, GrammarRegistry.getInstance(), false).apply {
-        tabSize = PreferencesUtils.tabSize
-        useTab(PreferencesUtils.useTab)
+        tabSize = editorIndent
+        useTab(editorUseTab)
       }
     } else EmptyLanguage()
   }

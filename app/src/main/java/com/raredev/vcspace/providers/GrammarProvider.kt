@@ -43,9 +43,7 @@ object GrammarProvider {
     }
 
     val grammarsJson =
-      context.assets.open("editor/textmate/grammars.json").bufferedReader().use {
-        it.readText()
-      }
+      context.assets.open("editor/textmate/grammars.json").bufferedReader().use { it.readText() }
     _grammars = Gson().fromJson(grammarsJson, object : TypeToken<List<GrammarModel>>() {})
   }
 

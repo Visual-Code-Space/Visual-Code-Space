@@ -7,70 +7,70 @@
     app:iconSpaceReserved="false"
     app:title="@string/pref_category_editor">
 
-    <Preference
+    <com.raredev.vcspace.preferences.EditorFontSizePreference
       app:iconSpaceReserved="false"
-      app:key="pref_font_size"
+      app:key="pref_editor_fontsize_key"
       app:title="@string/pref_editor_fontsize"
       app:summary="@string/pref_editor_fontsize_summary" />
 
-    <Preference
+    <com.raredev.vcspace.preferences.EditorIndentPreference
       app:iconSpaceReserved="false"
-      app:key="pref_editortabsize"
+      app:key="pref_editor_indent_key"
       app:title="@string/pref_editor_indent"
       app:summary="@string/pref_editor_indent_summary" />
 
-    <Preference
+    <com.raredev.vcspace.preferences.EditorFontPreference
       app:iconSpaceReserved="false"
-      app:key="pref_editorfont"
+      app:key="pref_editor_font_key"
       app:title="@string/pref_editor_font"
       app:summary="@string/pref_editor_font_summary" />
 
     <SwitchPreferenceCompat
       app:defaultValue="false"
       app:iconSpaceReserved="false"
-      app:key="pref_stickyscroll"
+      app:key="pref_editor_stickyscroll_key"
       app:title="@string/pref_editor_stickyscroll"
       app:summary="@string/pref_editor_stickyscroll_summary" />
 
     <SwitchPreferenceCompat
       app:defaultValue="true"
       app:iconSpaceReserved="false"
-      app:key="pref_fontligatures"
+      app:key="pref_editor_fontligatures_key"
       app:title="@string/pref_editor_fontligatures"
       app:summary="@string/pref_editor_fontligatures_summary" />
 
     <SwitchPreferenceCompat
       app:defaultValue="false"
       app:iconSpaceReserved="false"
-      app:key="pref_wordwrap"
+      app:key="pref_editor_wordwrap_key"
       app:title="@string/pref_editor_wordwrap"
       app:summary="@string/pref_editor_wordwrap_summary" />
 
     <SwitchPreferenceCompat
       app:defaultValue="true"
       app:iconSpaceReserved="false"
-      app:key="pref_linenumbers"
+      app:key="pref_editor_linenumber_key"
       app:title="@string/pref_editor_linenumber"
       app:summary="@string/pref_editor_linenumber_summary" />
 
     <SwitchPreferenceCompat
       app:defaultValue="false"
       app:iconSpaceReserved="false"
-      app:key="pref_usetab"
+      app:key="pref_editor_usetab_key"
       app:title="@string/pref_editor_usetab"
       app:summary="@string/pref_editor_usetab_summary" />
 
     <SwitchPreferenceCompat
       app:defaultValue="true"
       app:iconSpaceReserved="false"
-      app:key="pref_deleteemptylinefast"
+      app:key="pref_editor_deletelineonbackspace_key"
       app:title="@string/pref_editor_deletelineonbackspace"
       app:summary="@string/pref_editor_deletelineonbackspace_summary" />
 
     <SwitchPreferenceCompat
       app:defaultValue="true"
       app:iconSpaceReserved="false"
-      app:key="pref_deletetabs"
+      app:key="pref_editor_deleteindentonbackspace_key"
       app:title="@string/pref_editor_deleteindentonbackspace"
       app:summary="@string/pref_editor_deleteindentonbackspace_summary" />
 
@@ -83,7 +83,7 @@
     <SwitchPreferenceCompat
       app:defaultValue="false"
       app:iconSpaceReserved="false"
-      app:key="pref_auto_save"
+      app:key="pref_editor_tabs_autosave_key"
       app:title="@string/pref_editor_tabs_autosave"
       app:summary="@string/pref_editor_tabs_autosave_summary" />
 

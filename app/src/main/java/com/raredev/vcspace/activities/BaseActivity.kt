@@ -10,6 +10,8 @@ import android.provider.Settings
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AppCompatActivity
+import com.raredev.vcspace.app.BaseApplication
+import com.raredev.vcspace.app.VCSpaceApplication
 import androidx.core.app.ActivityCompat
 import com.google.android.material.R.attr
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -33,6 +35,9 @@ abstract class BaseActivity : AppCompatActivity() {
 
   open val statusBarColor: Int
     get() = getAttrColor(attr.colorSurface)
+
+  protected val app: VCSpaceApplication
+    get() = BaseApplication.instance as VCSpaceApplication
 
   protected abstract fun getLayout(): View
 
