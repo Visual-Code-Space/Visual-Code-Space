@@ -134,7 +134,7 @@ constructor(
     try {
       val replaceText = binding.replaceText.text.toString()
       if (replaceText.isNotEmpty()) {
-        searcher?.replaceThis(replaceText)
+        searcher?.replaceCurrentMatch(replaceText)
       }
     } catch (e: IllegalStateException) {
       e.printStackTrace()
