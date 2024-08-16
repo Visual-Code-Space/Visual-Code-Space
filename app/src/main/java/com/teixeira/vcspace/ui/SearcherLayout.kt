@@ -132,10 +132,7 @@ constructor(
 
   private fun replace() {
     try {
-      val replaceText = binding.replaceText.text.toString()
-      if (replaceText.isNotEmpty()) {
-        searcher?.replaceCurrentMatch(replaceText)
-      }
+      searcher?.replaceCurrentMatch(binding.replaceText.text.toString())
     } catch (e: IllegalStateException) {
       e.printStackTrace()
     }
@@ -143,10 +140,7 @@ constructor(
 
   private fun replaceAll() {
     try {
-      val replaceText = binding.replaceText.text.toString()
-      if (replaceText.isNotEmpty()) {
-        searcher?.replaceAll(replaceText)
-      }
+      searcher?.replaceAll(binding.replaceText.text.toString())
     } catch (e: IllegalStateException) {
       e.printStackTrace()
     }
