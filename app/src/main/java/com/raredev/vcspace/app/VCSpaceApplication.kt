@@ -38,7 +38,7 @@ class VCSpaceApplication : BaseApplication() {
     val themes = arrayOf("darcula", "quietlight")
     val themeRegistry = ThemeRegistry.getInstance()
     themes.forEach { name ->
-      val path = "editor/sora-editor/schemes/$name.json"
+      val path = "editor/schemes/$name.json"
       themeRegistry.loadTheme(
         ThemeModel(
             IThemeSource.fromInputStream(
