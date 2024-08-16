@@ -3,7 +3,7 @@ editor = "0.23.4-3895689-SNAPSHOT"
 androidx-navigation = "2.7.7"
 
 junit = "4.13.2"
-androidx-junit = "1.1.5"
+androidx-junit = "1.2.1"
 espresso-core = "3.5.1"
 termux = "0.118.1"
 p7zip = "v1.7.2"
