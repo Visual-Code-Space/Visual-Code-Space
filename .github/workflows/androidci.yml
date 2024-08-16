@@ -12,6 +12,16 @@ on:
   workflow_dispatch:
 
 jobs:
+  telegram:
+    name: Notify telegram group
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify the commit on Telegram
+        uses: EverythingSuckz/github-telegram-notify@main
+        with:
+          bot_token: '${{ secrets.BOT_TOKEN }}'
+          chat_id: '${{ secrets.CHAT_ID }}'
+          topic_id: '${{ secrets.TOPIC_ID }}'
   build:
     name: Build APKs
     runs-on: ubuntu-latest
@@ -19,22 +29,6 @@ jobs:
       matrix:
         build-type: [debug, release]
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          submodules: 'true'
-
-      - name: Get commit message
-        id: get_commit_msg
-        run: echo "COMMIT_MSG=$(git log -1 --pretty=format:'%s')" >> $GITHUB_ENV
-
-      - name: Notify the commit on Telegram
-        run: |
-          curl -s -X POST https://api.telegram.org/bot${{ secrets.BOT_TOKEN }}/sendMessage \
-          -d chat_id=${{ secrets.CHAT_ID }} \
-          -d message_thread_id=${{ secrets.TOPIC_ID }} \
-          -d text="New commit on main branch: ${{ env.COMMIT_MSG }}"
-
       - name: Cancel previous runs
         uses: styfle/cancel-workflow-action@0.12.1
         with:
@@ -45,6 +39,11 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: 'true'
 
       - name: Give permission to executable
         run: chmod +x gradlew
