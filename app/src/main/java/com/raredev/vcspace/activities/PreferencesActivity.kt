@@ -6,7 +6,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import com.google.android.material.R.attr
 import com.raredev.vcspace.databinding.ActivityPreferencesBinding
-import com.raredev.vcspace.extensions.getAttrColor
+import com.raredev.vcspace.utils.getAttrColor
 
 class PreferencesActivity : BaseActivity() {
 

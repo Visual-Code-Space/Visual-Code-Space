@@ -10,11 +10,11 @@ import com.blankj.utilcode.util.FileIOUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.raredev.vcspace.databinding.LayoutCodeEditorBinding
 import com.raredev.vcspace.events.OnPreferenceChangeEvent
-import com.raredev.vcspace.extensions.cancelIfActive
 import com.raredev.vcspace.providers.GrammarProvider
 import com.raredev.vcspace.resources.R
 import com.raredev.vcspace.utils.PreferencesUtils
 import com.raredev.vcspace.utils.SharedPreferencesKeys
+import com.raredev.vcspace.utils.cancelIfActive
 import io.github.rosemoe.sora.lang.EmptyLanguage
 import io.github.rosemoe.sora.lang.Language
 import io.github.rosemoe.sora.langs.textmate.TextMateColorScheme

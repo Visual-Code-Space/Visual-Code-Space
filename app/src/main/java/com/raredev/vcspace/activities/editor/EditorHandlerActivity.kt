@@ -35,7 +35,7 @@ import com.raredev.vcspace.resources.R
 import com.raredev.vcspace.tasks.TaskExecutor.executeAsyncProvideError
 import com.raredev.vcspace.utils.PreferencesUtils
 import com.raredev.vcspace.utils.UniqueNameBuilder
-import com.raredev.vcspace.utils.Utils
+import com.raredev.vcspace.utils.isDarkMode
 import com.raredev.vcspace.utils.showShortToast
 import com.raredev.vcspace.viewmodel.EditorViewModel
 import com.raredev.vcspace.viewmodel.EditorViewModel.EditorAction
@@ -59,7 +59,7 @@ abstract class EditorHandlerActivity : BaseEditorActivity(), TabLayout.OnTabSele
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    ThemeRegistry.getInstance().setTheme(if (Utils.isDarkMode) "darcula" else "quietlight")
+    ThemeRegistry.getInstance().setTheme(if (isDarkMode()) "darcula" else "quietlight")
 
     fileSaver = Runnable { saveAllFilesAsync(false) }
 

@@ -27,8 +27,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.SizeUtils
 import com.raredev.vcspace.editor.databinding.LayoutTextActionItemBinding
-import com.raredev.vcspace.extensions.getAttrColor
 import com.raredev.vcspace.resources.R
+import com.raredev.vcspace.utils.getAttrColor
 import io.github.rosemoe.sora.event.HandleStateChangeEvent
 import io.github.rosemoe.sora.event.ScrollEvent
 import io.github.rosemoe.sora.event.SelectionChangeEvent

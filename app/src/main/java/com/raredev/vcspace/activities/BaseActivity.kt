@@ -13,16 +13,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.material.R.attr
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.raredev.vcspace.extensions.getAttrColor
 import com.raredev.vcspace.resources.R
-import com.raredev.vcspace.utils.Utils
+import com.raredev.vcspace.utils.getAttrColor
+import com.raredev.vcspace.utils.isStoragePermissionGranted
 import kotlin.system.exitProcess
 
 abstract class BaseActivity : AppCompatActivity() {
 
   private val permissionLauncher =
     registerForActivityResult(StartActivityForResult()) {
-      if (!Utils.isPermissionGaranted(this)) showRequestPermissionDialog()
+      if (!isStoragePermissionGranted()) showRequestPermissionDialog()
     }
 
   open val navigationBarDividerColor: Int
@@ -45,7 +45,7 @@ abstract class BaseActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
     setContentView(getLayout())
 
-    if (!Utils.isPermissionGaranted(this)) showRequestPermissionDialog()
+    if (!isStoragePermissionGranted()) showRequestPermissionDialog()
   }
 
   override fun onRequestPermissionsResult(
@@ -55,7 +55,7 @@ abstract class BaseActivity : AppCompatActivity() {
   ) {
     super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     if (requestCode == REQCODE_STORAGE) {
-      if (!Utils.isPermissionGaranted(this)) showRequestPermissionDialog()
+      if (!isStoragePermissionGranted()) showRequestPermissionDialog()
     }
   }
 

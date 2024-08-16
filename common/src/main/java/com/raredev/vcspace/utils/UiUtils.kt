@@ -13,18 +13,13 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.raredev.vcspace.extensions
+package com.raredev.vcspace.utils
 
-import android.annotation.SuppressLint
 import android.content.Context
-import androidx.annotation.AttrRes
-import androidx.annotation.ColorInt
-import androidx.appcompat.widget.TintTypedArray
+import android.content.res.Configuration
+import androidx.appcompat.app.AppCompatDelegate
 
-@SuppressLint("RestrictedApi")
-@ColorInt
-fun Context.getAttrColor(@AttrRes attr: Int): Int {
-  return TintTypedArray.obtainStyledAttributes(this, null, intArrayOf(attr), 0, 0)
-    .getColorStateList(0)
-    .defaultColor
+fun Context.isDarkMode(): Boolean {
+  val uiMode = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK)
+  return uiMode == Configuration.UI_MODE_NIGHT_YES
 }

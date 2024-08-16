@@ -28,10 +28,10 @@ import com.blankj.utilcode.util.UriUtils
 import com.hzy.libp7zip.P7ZipApi
 import com.raredev.vcspace.R
 import com.raredev.vcspace.activities.TerminalActivity
-import com.raredev.vcspace.extensions.launchWithProgressDialog
 import com.raredev.vcspace.resources.R.string
 import com.raredev.vcspace.utils.PreferencesUtils
 import com.raredev.vcspace.utils.SharedPreferencesKeys
+import com.raredev.vcspace.utils.launchWithProgressDialog
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
@@ -112,6 +112,7 @@ abstract class MenuHandlerActivity : EditorHandlerActivity() {
       whenExtractingDone()
     } else {
       coroutineScope.launchWithProgressDialog(
+        uiContext = this,
         configureBuilder = { builder ->
           builder.setMessage(string.python_extracting_python_compiler)
           builder.setCancelable(false)

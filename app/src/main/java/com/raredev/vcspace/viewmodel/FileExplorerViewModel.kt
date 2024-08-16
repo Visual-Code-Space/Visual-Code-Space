@@ -5,8 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.PathUtils
-import com.raredev.vcspace.utils.FileUtil
 import com.raredev.vcspace.utils.PreferencesUtils
+import com.raredev.vcspace.utils.getParentDirPath
 import java.io.File
 import java.util.Arrays
 import java.util.Comparator
@@ -26,7 +26,7 @@ class FileExplorerViewModel : ViewModel() {
     if (_currentPath.value.equals(PathUtils.getRootPathExternalFirst())) {
       return
     }
-    FileUtil.getParentPath(_currentPath.value!!)?.let { setCurrentPath(it) }
+    setCurrentPath(getParentDirPath(_currentPath.value!!))
   }
 
   fun setCurrentPath(path: String) {

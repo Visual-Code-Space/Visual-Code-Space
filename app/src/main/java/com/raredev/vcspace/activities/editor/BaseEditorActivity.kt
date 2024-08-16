@@ -27,9 +27,9 @@ import com.blankj.utilcode.util.ThreadUtils
 import com.raredev.vcspace.activities.BaseActivity
 import com.raredev.vcspace.databinding.ActivityEditorBinding
 import com.raredev.vcspace.events.OnPreferenceChangeEvent
-import com.raredev.vcspace.extensions.cancelIfActive
 import com.raredev.vcspace.resources.R.string
 import com.raredev.vcspace.utils.PreferencesUtils
+import com.raredev.vcspace.utils.cancelIfActive
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import org.greenrobot.eventbus.EventBus

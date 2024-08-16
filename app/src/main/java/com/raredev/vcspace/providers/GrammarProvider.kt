@@ -18,13 +18,12 @@ package com.raredev.vcspace.providers
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.raredev.vcspace.utils.FileUtil
+import com.raredev.vcspace.utils.readFromAsset
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.model.DefaultGrammarDefinition
 import java.nio.charset.Charset
 import org.eclipse.tm4e.core.registry.IGrammarSource
-import kotlinx.serialization.json.Json
 
 /**
  * Class to register and provide TextMate grammars
@@ -44,8 +43,8 @@ object GrammarProvider {
       return
     }
 
-    val grammarsJson = FileUtil.readFromAsset(context, "editor/sora-editor/textmate/grammars.json")
-    _grammars = Gson().fromJson(fileIconsJson, object : TypeToken<List<GrammarModel>>() {})
+    val grammarsJson = readFromAsset(context, "editor/sora-editor/textmate/grammars.json")
+    _grammars = Gson().fromJson(grammarsJson, object : TypeToken<List<GrammarModel>>() {})
   }
 
   suspend fun findScopeByFileExtension(extension: String?): String? {

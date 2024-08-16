@@ -32,13 +32,13 @@ import com.raredev.vcspace.adapters.FileListAdapter
 import com.raredev.vcspace.databinding.FragmentFileExplorerBinding
 import com.raredev.vcspace.events.OnDeleteFileEvent
 import com.raredev.vcspace.events.OnRenameFileEvent
-import com.raredev.vcspace.extensions.launchWithProgressDialog
 import com.raredev.vcspace.fragments.sheets.OptionsListBottomSheet
 import com.raredev.vcspace.models.SheetOptionItem
 import com.raredev.vcspace.resources.R
 import com.raredev.vcspace.resources.databinding.LayoutTextinputBinding
 import com.raredev.vcspace.utils.ApkInstaller
-import com.raredev.vcspace.utils.FileUtil
+import com.raredev.vcspace.utils.isValidTextFile
+import com.raredev.vcspace.utils.launchWithProgressDialog
 import com.raredev.vcspace.utils.showShortToast
 import com.raredev.vcspace.viewmodel.EditorViewModel
 import com.raredev.vcspace.viewmodel.FileExplorerViewModel
@@ -106,7 +106,7 @@ class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
       setCurrentPath(file.absolutePath)
     } else if (file.name.endsWith(".apk")) {
       ApkInstaller.installApplication(requireContext(), file)
-    } else if (FileUtil.isValidTextFile(file.name)) {
+    } else if (isValidTextFile(file.name)) {
       editorViewModel.openFile(file)
     }
   }
@@ -190,6 +190,7 @@ class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
       setNegativeButton(R.string.no, null)
       setPositiveButton(R.string.yes) { _, _ ->
         coroutineScope.launchWithProgressDialog(
+          uiContext = requireContext(),
           configureBuilder = { builder ->
             builder.setMessage(R.string.file_renaming)
             builder.setCancelable(false)
@@ -230,6 +231,7 @@ class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
       .setNegativeButton(R.string.no, null)
       .setPositiveButton(R.string.yes) { _, _ ->
         coroutineScope.launchWithProgressDialog(
+          uiContext = requireContext(),
           configureBuilder = { builder ->
             builder.setMessage(R.string.file_deleting)
             builder.setCancelable(false)

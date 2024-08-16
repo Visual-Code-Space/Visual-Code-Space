@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.R
 import com.raredev.vcspace.databinding.LayoutPathItemBinding
-import com.raredev.vcspace.extensions.getAttrColor
+import com.raredev.vcspace.utils.getAttrColor
 import com.raredev.vcspace.viewmodel.FileExplorerViewModel
 import java.io.File
 

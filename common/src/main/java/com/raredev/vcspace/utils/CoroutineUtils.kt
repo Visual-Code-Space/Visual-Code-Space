@@ -13,11 +13,11 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.raredev.vcspace.extensions
+package com.raredev.vcspace.utils
 
+import android.content.Context
 import com.blankj.utilcode.util.ThreadUtils.runOnUiThread
 import com.raredev.vcspace.dialogs.ProgressDialogBuilder
-import com.raredev.vcspace.utils.withActivity
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.CancellationException
@@ -34,13 +34,14 @@ fun CoroutineScope.cancelIfActive(exception: CancellationException? = null) {
 }
 
 inline fun CoroutineScope.launchWithProgressDialog(
+  uiContext: Context,
   context: CoroutineContext = EmptyCoroutineContext,
   configureBuilder: (builder: ProgressDialogBuilder) -> Unit = {},
   crossinline invokeOnCompletion: (throwable: Throwable?) -> Unit = {},
   crossinline action: suspend CoroutineScope.(builder: ProgressDialogBuilder) -> Unit
 ): Job {
 
-  val builder = withActivity { ProgressDialogBuilder(this) }
+  val builder = ProgressDialogBuilder(uiContext)
   configureBuilder(builder)
 
   val dialog = builder.show()

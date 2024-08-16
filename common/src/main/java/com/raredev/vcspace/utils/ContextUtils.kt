@@ -15,10 +15,16 @@
 
 package com.raredev.vcspace.utils
 
-import android.app.Activity
-import com.blankj.utilcode.util.ActivityUtils
+import android.annotation.SuppressLint
+import android.content.Context
+import androidx.annotation.AttrRes
+import androidx.annotation.ColorInt
+import androidx.appcompat.widget.TintTypedArray
 
-fun <T> withActivity(action: Activity.() -> T): T {
-  return ActivityUtils.getTopActivity()?.let { it.action() }
-    ?: run { throw IllegalArgumentException("No activity found!") }
+@SuppressLint("RestrictedApi")
+@ColorInt
+fun Context.getAttrColor(@AttrRes attr: Int): Int {
+  return TintTypedArray.obtainStyledAttributes(this, null, intArrayOf(attr), 0, 0)
+    .getColorStateList(0)
+    .defaultColor
 }
