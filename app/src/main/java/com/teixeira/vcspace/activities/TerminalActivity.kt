@@ -1,7 +1,5 @@
 package com.teixeira.vcspace.activities
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
@@ -9,13 +7,16 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat.getInsetsController
 import com.blankj.utilcode.util.ClipboardUtils
 import com.blankj.utilcode.util.KeyboardUtils
 import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.SizeUtils
+import com.blankj.utilcode.util.ThreadUtils
+import com.teixeira.vcspace.BuildConfig
 import com.teixeira.vcspace.databinding.ActivityTerminalBinding
-import com.teixeira.vcspace.dialogs.ProgressDialogBuilder
 import com.teixeira.vcspace.ui.virtualkeys.SpecialButton
 import com.teixeira.vcspace.ui.virtualkeys.VirtualKeyButton
 import com.teixeira.vcspace.ui.virtualkeys.VirtualKeysConstants
@@ -29,9 +30,7 @@ import com.termux.terminal.TerminalSessionClient
 import com.termux.terminal.TextStyle
 import com.termux.view.TerminalView
 import com.termux.view.TerminalViewClient
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import java.io.File
 import org.json.JSONException
 
 /**
@@ -40,40 +39,56 @@ import org.json.JSONException
  */
 class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClient {
   private val logger = Logger.newInstance("TerminalActivity")
-  private var binding: ActivityTerminalBinding? = null
-  private var session: TerminalSession? = null
+
+  private var _binding: ActivityTerminalBinding? = null
+  private var fontSize = SizeUtils.dp2px(14f)
   private lateinit var terminal: TerminalView
-  private var listener: KeyListener? = null
+
+  private val binding: ActivityTerminalBinding
+    get() = checkNotNull(_binding) { "Activity has been destroyed!" }
+
+  private val workingDirectory: String
+    get() {
+      val extras = intent.extras
+      if (extras != null && extras.containsKey(KEY_WORKING_DIRECTORY)) {
+        val directory = extras.getString(KEY_WORKING_DIRECTORY, null)
+        return if (directory != null && directory.trim { it <= ' ' }.isNotEmpty()) directory
+        else PathUtils.getRootPathExternalFirst()
+      }
+      return PathUtils.getRootPathExternalFirst()
+    }
+
+  override val navigationBarColor: Int
+    get() = ContextCompat.getColor(this, android.R.color.black)
+
+  override val statusBarColor: Int
+    get() = ContextCompat.getColor(this, android.R.color.black)
 
   override fun getLayout(): View {
-    binding = ActivityTerminalBinding.inflate(layoutInflater)
-    return binding!!.root
+    _binding = ActivityTerminalBinding.inflate(layoutInflater)
+    return binding.root
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    @Suppress("DEPRECATION")
-    window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+    window?.also {
+      val controller = getInsetsController(it, it.decorView)
+      controller.setAppearanceLightNavigationBars(false)
+      controller.setAppearanceLightStatusBars(false)
+    }
     super.onCreate(savedInstanceState)
-    setupTerminalView()
 
-    if (intent.getBooleanExtra(KEY_CONTAINS_PYTHON_FILE, false)) {
-      val pyFilePath = intent.getStringExtra(KEY_PYTHON_FILE_PATH)
-      if (pyFilePath != null) {
-        val command = TerminalPythonCommands.getInterpreterCommand(this, pyFilePath)
-        val dialog =
-          ProgressDialogBuilder(this)
-            .setCancelable(false)
-            .setTitle("Compiling...")
-            .setMessage("Please wait")
-            .create()
-        dialog.show()
-
-        CoroutineScope(Dispatchers.Main).launch {
-          terminal.mTermSession.write("$command\r")
-          dialog.dismiss()
+    onBackPressedDispatcher.addCallback(
+      this,
+      object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+          terminal.mTermSession.finishIfRunning()
+          finish()
         }
       }
-    }
+    )
+
+    setupTerminalView()
+    compilePython()
   }
 
   override fun onResume() {
@@ -89,62 +104,53 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
 
   override fun onDestroy() {
     super.onDestroy()
-    binding = null
+    _binding = null
   }
-
-  override val navigationBarColor: Int
-    get() = ContextCompat.getColor(this, android.R.color.black)
-
-  override val statusBarColor: Int
-    get() = ContextCompat.getColor(this, android.R.color.black)
 
   private fun setupTerminalView() {
     terminal = TerminalView(this, null)
     terminal.setTerminalViewClient(this)
     terminal.attachSession(createSession())
     terminal.keepScreenOn = true
-    terminal.setTextSize(SizeUtils.dp2px(14f))
+    terminal.setTextSize(fontSize)
     val params = LinearLayout.LayoutParams(-1, 0)
     params.weight = 1f
-    binding!!.root.addView(terminal, 0, params)
+    binding.root.addView(terminal, 0, params)
     try {
-      binding!!.virtualKeys.virtualKeysViewClient = keyListener
-      binding!!
-        .virtualKeys
-        .reload(VirtualKeysInfo(VIRTUAL_KEYS, "", VirtualKeysConstants.CONTROL_CHARS_ALIASES))
+      binding.virtualKeys.virtualKeysViewClient = KeyListener(terminal)
+      binding.virtualKeys.reload(
+        VirtualKeysInfo(VIRTUAL_KEYS, "", VirtualKeysConstants.CONTROL_CHARS_ALIASES)
+      )
     } catch (e: JSONException) {
       logger.e("Unable to parse terminal virtual keys json data", e)
     }
   }
 
-  private val keyListener: KeyListener
-    get() = if (listener == null) KeyListener(terminal).also { listener = it } else listener!!
-
   private fun createSession(): TerminalSession {
-    session =
-      TerminalSession(
-        "/system/bin/sh",
-        workingDirectory,
-        arrayOf(),
-        arrayOf(),
-        TerminalEmulator.DEFAULT_TERMINAL_TRANSCRIPT_ROWS,
-        this
-      )
-    return session!!
+    var shell = "/bin/sh"
+    if (File("/bin/sh").exists().not()) {
+      shell = "/system/bin/sh"
+    }
+    return TerminalSession(
+      shell,
+      workingDirectory,
+      arrayOf(),
+      arrayOf(),
+      TerminalEmulator.DEFAULT_TERMINAL_TRANSCRIPT_ROWS,
+      this
+    )
   }
 
-  private val workingDirectory: String
-    get() {
-      val extras = intent.extras
-      if (extras != null && extras.containsKey(KEY_WORKING_DIRECTORY)) {
-        var directory = extras.getString(KEY_WORKING_DIRECTORY, null)
-        if (directory == null || directory.trim { it <= ' ' }.isEmpty()) {
-          directory = PathUtils.getRootPathExternalFirst()
-        }
-        return directory
+  private fun compilePython() {
+    val filePath = intent?.extras?.getString(KEY_PYTHON_FILE_PATH, null) ?: return
+    if (filePath.trim { it <= ' ' }.isNotEmpty()) {
+      ThreadUtils.getMainHandler().post {
+        terminal.mTermSession.write(
+          "${TerminalPythonCommands.getInterpreterCommand(this, filePath)}\r"
+        )
       }
-      return PathUtils.getRootPathExternalFirst()
     }
+  }
 
   override fun onTextChanged(changedSession: TerminalSession) {
     terminal.onScreenUpdated()
@@ -174,43 +180,53 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
   override fun onTerminalCursorStateChange(state: Boolean) {}
 
   override fun getTerminalCursorStyle(): Int {
-    return if (intent.getBooleanExtra(KEY_CONTAINS_PYTHON_FILE, false)) {
-      TerminalEmulator.TERMINAL_CURSOR_STYLE_UNDERLINE
-    } else {
-      TerminalEmulator.DEFAULT_TERMINAL_CURSOR_STYLE
+    return TerminalEmulator.DEFAULT_TERMINAL_CURSOR_STYLE
+  }
+
+  override fun logError(tag: String?, message: String?) {
+    if (BuildConfig.DEBUG && message != null) {
+      Log.e(tag, message)
     }
   }
 
-  override fun logError(tag: String, message: String) {
-    logger.e(message)
+  override fun logWarn(tag: String?, message: String?) {
+    if (BuildConfig.DEBUG && message != null) {
+      Log.w(tag, message)
+    }
   }
 
-  override fun logWarn(tag: String, message: String) {
-    logger.w(message)
+  override fun logInfo(tag: String?, message: String?) {
+    if (BuildConfig.DEBUG && message != null) {
+      Log.i(tag, message)
+    }
   }
 
-  override fun logInfo(tag: String, message: String) {
-    logger.i(message)
+  override fun logDebug(tag: String?, message: String?) {
+    if (BuildConfig.DEBUG && message != null) {
+      Log.d(tag, message)
+    }
   }
 
-  override fun logDebug(tag: String, message: String) {
-    logger.d(message)
+  override fun logVerbose(tag: String?, message: String?) {
+    if (BuildConfig.DEBUG && message != null) {
+      Log.v(tag, message)
+    }
   }
 
-  override fun logVerbose(tag: String, message: String) {
-    logger.v(message)
+  override fun logStackTraceWithMessage(tag: String?, message: String?, e: Exception?) {
+    if (BuildConfig.DEBUG) {
+      Log.e(tag, message + "\n" + Log.getStackTraceString(e))
+    }
   }
 
-  override fun logStackTraceWithMessage(tag: String, message: String, e: Exception) {
-    logger.w(Log.getStackTraceString(e))
-  }
-
-  override fun logStackTrace(tag: String, e: Exception) {
-    logger.w(Log.getStackTraceString(e))
+  override fun logStackTrace(tag: String?, e: Exception?) {
+    if (BuildConfig.DEBUG) {
+      Log.e(tag, Log.getStackTraceString(e))
+    }
   }
 
   override fun onScale(scale: Float): Float {
-    return SizeUtils.dp2px(14f).toFloat()
+    return fontSize.toFloat()
   }
 
   override fun onSingleTapUp(e: MotionEvent) {
@@ -252,12 +268,12 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
   }
 
   override fun readControlKey(): Boolean {
-    val state = binding!!.virtualKeys.readSpecialButton(SpecialButton.CTRL, true)
+    val state = binding.virtualKeys.readSpecialButton(SpecialButton.CTRL, true)
     return state != null && state
   }
 
   override fun readAltKey(): Boolean {
-    val state = binding!!.virtualKeys.readSpecialButton(SpecialButton.ALT, true)
+    val state = binding.virtualKeys.readSpecialButton(SpecialButton.ALT, true)
     return state != null && state
   }
 
@@ -275,13 +291,9 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
 
   override fun onEmulatorSet() {
     setTerminalCursorBlinkingState(true)
-    if (session != null) {
-      binding
-        ?.root
-        ?.setBackgroundColor(
-          session!!.emulator.mColors.mCurrentColors[TextStyle.COLOR_INDEX_BACKGROUND]
-        )
-    }
+    binding.root.setBackgroundColor(
+      terminal.mTermSession.emulator.mColors.mCurrentColors[TextStyle.COLOR_INDEX_BACKGROUND]
+    )
   }
 
   private fun setTerminalCursorBlinkingState(start: Boolean) {
@@ -295,11 +307,8 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
     KeyboardUtils.showSoftInput(terminal)
   }
 
-  private class KeyListener(private val terminal: TerminalView?) : IVirtualKeysView {
+  private class KeyListener(private val terminal: TerminalView) : IVirtualKeysView {
     override fun onVirtualKeyButtonClick(view: View, buttonInfo: VirtualKeyButton, button: Button) {
-      if (terminal == null) {
-        return
-      }
       if (buttonInfo.isMacro) {
         val keys = buttonInfo.key.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         var ctrlDown = false
@@ -357,13 +366,13 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
           metaState = metaState or KeyEvent.META_FUNCTION_ON
         }
         val keyEvent = KeyEvent(0, 0, KeyEvent.ACTION_UP, keyCode, 0, metaState)
-        terminal!!.onKeyDown(keyCode, keyEvent)
+        terminal.onKeyDown(keyCode, keyEvent)
       } else {
         // not a control char
         var off = 0
         while (off < key.length) {
           val codePoint = key.codePointAt(off)
-          terminal!!.inputCodePoint(codePoint, ctrlDown, altDown)
+          terminal.inputCodePoint(codePoint, ctrlDown, altDown)
           off += Character.charCount(codePoint)
         }
       }
@@ -382,14 +391,7 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
 
   companion object {
     const val KEY_WORKING_DIRECTORY = "terminal_workingDirectory"
-    const val KEY_CONTAINS_PYTHON_FILE = "contains_py_file"
-    const val KEY_PYTHON_FILE_PATH = "py_file_path"
-
-    fun startTerminalWithDir(context: Context, path: String?) {
-      val it = Intent(context, TerminalActivity::class.java)
-      it.putExtra(KEY_WORKING_DIRECTORY, path)
-      context.startActivity(it)
-    }
+    const val KEY_PYTHON_FILE_PATH = "terminal_python_file"
 
     const val VIRTUAL_KEYS =
       ("[" +

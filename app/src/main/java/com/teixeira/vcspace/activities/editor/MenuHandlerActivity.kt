@@ -88,7 +88,6 @@ abstract class MenuHandlerActivity : EditorHandlerActivity() {
               startActivity(
                 Intent(this, TerminalActivity::class.java)
                   .putExtra(TerminalActivity.KEY_PYTHON_FILE_PATH, editor?.file?.absolutePath)
-                  .putExtra(TerminalActivity.KEY_CONTAINS_PYTHON_FILE, true)
               )
             }
           }
@@ -106,9 +105,9 @@ abstract class MenuHandlerActivity : EditorHandlerActivity() {
     return true
   }
 
-  private fun extractPythonFile(whenExtractingDone: () -> Unit) {
+  private fun extractPythonFile(whenExtractingDone: Runnable) {
     if (pythonExtracted) {
-      whenExtractingDone()
+      whenExtractingDone.run()
     } else {
       coroutineScope.launchWithProgressDialog(
         uiContext = this,
@@ -119,7 +118,7 @@ abstract class MenuHandlerActivity : EditorHandlerActivity() {
         invokeOnCompletion = { throwable ->
           if (throwable == null) {
             pythonExtracted = true
-            whenExtractingDone()
+            whenExtractingDone.run()
           }
         },
         action = { _ ->

@@ -20,15 +20,6 @@ import android.content.Context
 // From
 // https://github.com/PsiCodes/KtxPy/blob/master/app/src/main/java/github/psicodes/ktxpy/utils/Commands.kt
 object TerminalPythonCommands {
-  fun getBasicCommand(context: Context): String {
-    val appLibDirPath = context.applicationInfo.nativeLibraryDir
-    val appFileDirPath = context.filesDir.absolutePath
-    val pythonBuildDirPath = "$appFileDirPath/files/usr"
-    val pythonLibDirPath = "$pythonBuildDirPath/lib"
-    val pythonExecName = "libpython3.so"
-    val aliasCommand = "alias python=\"$pythonExecName\" && alias pip=\"$pythonExecName -m pip \""
-    return "export PATH=\$PATH:$appLibDirPath && export PYTHONHOME=$pythonBuildDirPath && export PYTHONPATH=$appLibDirPath && export LD_LIBRARY_PATH=\"\$LD_LIBRARY_PATH:\" && export LD_LIBRARY_PATH=\"\$LD_LIBRARY_PATH${pythonLibDirPath}\" && $aliasCommand && clear"
-  }
 
   fun getInterpreterCommand(context: Context, filePath: String): String {
     val appLibDirPath = context.applicationInfo.nativeLibraryDir
@@ -37,13 +28,5 @@ object TerminalPythonCommands {
     val pythonLibDirPath = "$pythonBuildDirPath/lib"
     val pythonExecName = "libpython3.so"
     return "export PATH=\$PATH:$appLibDirPath && export PYTHONHOME=$pythonBuildDirPath && export LD_LIBRARY_PATH=\"\$LD_LIBRARY_PATH:\" && export LD_LIBRARY_PATH=\"\$LD_LIBRARY_PATH${pythonLibDirPath}\" && clear && $pythonExecName $filePath && echo \'\n[Process completed - press Enter]\' && read junk && exit"
-  }
-
-  fun getPythonShellCommand(context: Context): String {
-    val appLibDirPath = context.applicationInfo.nativeLibraryDir
-    val appFileDirPath = context.filesDir.absolutePath
-    val pythonBuildDirPath = "$appFileDirPath/files/usr"
-    val pythonLibDirPath = "$pythonBuildDirPath/lib"
-    return "export PATH=\$PATH:$appLibDirPath && export PYTHONHOME=$pythonBuildDirPath && export PYTHONPATH=$appLibDirPath && export LD_LIBRARY_PATH=\"\$LD_LIBRARY_PATH:\" && export LD_LIBRARY_PATH=\"\$LD_LIBRARY_PATH${pythonLibDirPath}\" && clear && libpython3.so && echo \'\n[Process completed - press Enter]\' && read junk && exit"
   }
 }

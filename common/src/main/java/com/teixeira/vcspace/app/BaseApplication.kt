@@ -31,8 +31,9 @@ open class BaseApplication : Application() {
       get() = checkNotNull(_instance) { "Application instance not found" }
   }
 
-  val defaultPrefs: SharedPreferences
-    get() = PreferenceManager.getDefaultSharedPreferences(this)
+  val defaultPrefs: SharedPreferences by lazy {
+    PreferenceManager.getDefaultSharedPreferences(this)
+  }
 
   override fun onCreate() {
     _instance = this
