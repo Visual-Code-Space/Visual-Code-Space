@@ -26,9 +26,11 @@
     <item name="colorOnSurfaceInverse">@color/dark_inverseOnSurface</item>
     <item name="colorSurfaceInverse">@color/dark_inverseSurface</item>
     <item name="colorPrimaryInverse">@color/dark_inversePrimary</item>
-    
+
+    <item name="android:statusBarColor">?attr/colorSurface</item>
+    <item name="android:navigationBarColor">?attr/colorSurface</item>
     <item name="android:windowLightStatusBar">false</item>
-    <item name="android:windowLightNavigationBar" tools:targetApi="27">false</item>
+    <item name="android:windowLightNavigationBar">false</item>
     <item name="android:fontFamily">@font/josefin_sans</item>
     <item name="switchPreferenceCompatStyle">@style/AppTheme.SwitchPreference</item>
     <item name="dialogCornerRadius">28dp</item>
