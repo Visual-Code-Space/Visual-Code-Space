@@ -15,19 +15,24 @@
 
 package com.teixeira.vcspace.activities.editor
 
+import android.animation.LayoutTransition
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import android.widget.RelativeLayout
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.GravityCompat
+import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import com.blankj.utilcode.util.KeyboardUtils
 import com.blankj.utilcode.util.ThreadUtils
 import com.teixeira.vcspace.activities.BaseActivity
 import com.teixeira.vcspace.databinding.ActivityEditorBinding
 import com.teixeira.vcspace.events.OnPreferenceChangeEvent
-import com.teixeira.vcspace.resources.R.string
+import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.utils.cancelIfActive
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,9 +53,7 @@ abstract class BaseEditorActivity :
   private val onBackPressedCallback: OnBackPressedCallback =
     object : OnBackPressedCallback(true) {
       override fun handleOnBackPressed() {
-        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-          binding.drawerLayout.closeDrawer(GravityCompat.START)
-        }
+        closeWorkspace()
       }
     }
 
@@ -76,7 +79,8 @@ abstract class BaseEditorActivity :
     KeyboardUtils.registerSoftInputChangedListener(this) { invalidateOptionsMenu() }
     app.defaultPrefs.registerOnSharedPreferenceChangeListener(this)
     EventBus.getDefault().register(this)
-    configureDrawer()
+
+    configureWorkspace()
   }
 
   override fun invalidateOptionsMenu() {
@@ -110,26 +114,67 @@ abstract class BaseEditorActivity :
     _binding = null
   }
 
-  private fun configureDrawer() {
-    val drawerToggle =
-      ActionBarDrawerToggle(this, binding.drawerLayout, binding.toolbar, string.open, string.close)
-    binding.drawerLayout.addDrawerListener(drawerToggle)
-    drawerToggle.syncState()
+  protected fun closeWorkspace() {
+    closeWorkspaceDrawer()
+    closeWorkspaceLayout()
+  }
 
-    binding.drawerLayout.addDrawerListener(
-      object : DrawerLayout.SimpleDrawerListener() {
-        override fun onDrawerSlide(view: View, slideOffset: Float) {
-          binding.main.translationX = view.width * slideOffset / 2
-        }
-
-        override fun onDrawerStateChanged(state: Int) {
-          onBackPressedCallback.isEnabled = !(state == DrawerLayout.STATE_IDLE)
-        }
-
-        override fun onDrawerClosed(view: View) {}
-
-        override fun onDrawerOpened(view: View) {}
+  protected fun closeWorkspaceDrawer() {
+    if (binding.root is DrawerLayout) {
+      val drawerLayout = binding.root as DrawerLayout
+      if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+        drawerLayout.closeDrawer(GravityCompat.START)
       }
+    }
+  }
+
+  protected fun closeWorkspaceLayout() {
+    if (binding.root is ConstraintLayout) {
+      binding.fragmentWorkspace.isVisible = false
+      onBackPressedCallback.isEnabled = false
+    }
+  }
+
+  private fun configureWorkspace() {
+    when (binding.root) {
+      is DrawerLayout -> configureWorkspaceDrawer(binding.root as DrawerLayout)
+      is ConstraintLayout -> configureWorkspaceLayout(binding.root as ConstraintLayout)
+      else -> throw IllegalStateException("The workspace layout is invalid")
+    }
+  }
+
+  private fun configureWorkspaceDrawer(drawerLayout: DrawerLayout) {
+    val drawerToggle =
+      ActionBarDrawerToggle(this, drawerLayout, binding.toolbar, R.string.open, R.string.close)
+    drawerToggle.syncState()
+    drawerLayout.apply {
+      addDrawerListener(drawerToggle)
+      addDrawerListener(
+        object : DrawerLayout.SimpleDrawerListener() {
+          override fun onDrawerSlide(view: View, slideOffset: Float) {
+            binding.main.translationX = view.width * slideOffset * 0.98f
+            binding.main.rotation = slideOffset / 2
+          }
+
+          override fun onDrawerStateChanged(state: Int) {
+            onBackPressedCallback.isEnabled = !(state == DrawerLayout.STATE_IDLE)
+          }
+        }
+      )
+      setScrimColor(Color.TRANSPARENT)
+    }
+  }
+
+  private fun configureWorkspaceLayout(layout: ConstraintLayout) {
+    binding.toolbar.setNavigationIcon(R.drawable.ic_drawer_toggle)
+    binding.toolbar.setNavigationOnClickListener {
+      binding.fragmentWorkspace.isVisible = !binding.fragmentWorkspace.isVisible
+      onBackPressedCallback.isEnabled = binding.fragmentWorkspace.isVisible
+    }
+    binding.fragmentWorkspace.layoutParams.width = layout.width / 4
+    binding.fragmentWorkspace.requestLayout()
+    layout.setLayoutTransition(
+      LayoutTransition().apply { enableTransitionType(LayoutTransition.CHANGING) }
     )
   }
 

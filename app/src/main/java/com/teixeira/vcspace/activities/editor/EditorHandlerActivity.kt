@@ -141,7 +141,7 @@ abstract class EditorHandlerActivity : BaseEditorActivity(), TabLayout.OnTabSele
     if (!file.isFile || !file.exists() || isDestroying) {
       return
     }
-    binding.drawerLayout.closeDrawers()
+    closeWorkspaceDrawer()
     val openedFileIndex = findIndexAtFile(file)
     if (openedFileIndex != -1) {
       editorViewModel.setSelectedFile(openedFileIndex)
