@@ -43,6 +43,7 @@ import io.github.rosemoe.sora.text.LineSeparator
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme
 import java.io.File
 import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -152,24 +153,6 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
       setModified(false)
       true
     } else false
-  }
-
-  inline fun launchWithProgress(
-    context: CoroutineContext = EmptyCoroutineContext,
-    crossinline invokeOnCompletion: (throwable: Throwable?) -> Unit = {},
-    crossinline action: suspend CoroutineScope.() -> Unit
-  ): Job {
-    return editorScope
-      .launch(context) { action(builder) }
-      .also { job ->
-        job.invokeOnCompletion { throwable ->
-          runOnUiThread {
-            binding.progress.isVisible = loading
-            editor.isEditable = !loading
-          }
-          invokeOnCompletion(throwable)
-        }
-      }
   }
 
   fun beginSearchMode() {
