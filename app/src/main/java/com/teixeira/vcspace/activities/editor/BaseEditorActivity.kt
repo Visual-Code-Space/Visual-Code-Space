@@ -20,15 +20,16 @@ import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
-import android.widget.RelativeLayout
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.GravityCompat
-import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import com.blankj.utilcode.util.KeyboardUtils
 import com.blankj.utilcode.util.ThreadUtils
+import com.google.android.material.shape.CornerFamily
+import com.google.android.material.shape.MaterialShapeDrawable
 import com.teixeira.vcspace.activities.BaseActivity
 import com.teixeira.vcspace.databinding.ActivityEditorBinding
 import com.teixeira.vcspace.events.OnPreferenceChangeEvent
@@ -130,8 +131,7 @@ abstract class BaseEditorActivity :
 
   protected fun closeWorkspaceLayout() {
     if (binding.root is ConstraintLayout) {
-      binding.fragmentWorkspace.isVisible = false
-      onBackPressedCallback.isEnabled = false
+      setWorkspaceLayoutVisible(false)
     }
   }
 
@@ -165,17 +165,60 @@ abstract class BaseEditorActivity :
     }
   }
 
+  // New layout features under development for devices with dpi 600 or higher
+
   private fun configureWorkspaceLayout(layout: ConstraintLayout) {
     binding.toolbar.setNavigationIcon(R.drawable.ic_drawer_toggle)
     binding.toolbar.setNavigationOnClickListener {
-      binding.fragmentWorkspace.isVisible = !binding.fragmentWorkspace.isVisible
-      onBackPressedCallback.isEnabled = binding.fragmentWorkspace.isVisible
+      setWorkspaceLayoutVisible(!onBackPressedCallback.isEnabled)
     }
-    binding.fragmentWorkspace.layoutParams.width = layout.width / 4
-    binding.fragmentWorkspace.requestLayout()
+
+    val navViewBackground = binding.navWorkspace.background as MaterialShapeDrawable
+    navViewBackground.setShapeAppearanceModel(
+      navViewBackground
+        .getShapeAppearanceModel()
+        .toBuilder()
+        .setTopRightCorner(CornerFamily.ROUNDED, 25f)
+        .setBottomRightCorner(CornerFamily.ROUNDED, 25f)
+        .build()
+    )
+
     layout.setLayoutTransition(
       LayoutTransition().apply { enableTransitionType(LayoutTransition.CHANGING) }
     )
+  }
+
+  private fun setWorkspaceLayoutVisible(visible: Boolean) {
+    if (this.workspaceVisible == visible) {
+      return
+    }
+
+    val workspaceWidth = binding.navWorkspace.width
+    val translationX = if (visible) 0f else -workspaceWidth.toFloat()
+    binding.navWorkspace.animate().translationX(translationX).start()
+
+    val constraintLayout = binding.root as ConstraintLayout
+    val constraintSet = ConstraintSet()
+    constraintSet.clone(constraintLayout)
+    if (visible) {
+      constraintSet.connect(
+        binding.main.id,
+        ConstraintSet.START,
+        binding.navWorkspace.id,
+        ConstraintSet.END
+      )
+    } else {
+      constraintSet.connect(
+        binding.main.id,
+        ConstraintSet.START,
+        ConstraintSet.PARENT_ID,
+        ConstraintSet.START
+      )
+    }
+    constraintSet.applyTo(constraintLayout)
+    binding.main.requestLayout()
+
+    onBackPressedCallback.isEnabled = visible
   }
 
   companion object {

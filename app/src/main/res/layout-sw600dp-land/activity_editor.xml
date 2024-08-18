@@ -4,22 +4,29 @@
   xmlns:app="http://schemas.android.com/apk/res-auto"
   android:layout_width="match_parent"
   android:layout_height="match_parent">
-
-  <androidx.fragment.app.FragmentContainerView
-    android:id="@+id/fragment_workspace"
-    android:layout_width="0dp"
+  
+  <com.google.android.material.navigation.NavigationView
+    android:id="@+id/nav_workspace"
+    android:layout_width="wrap_content"
     android:layout_height="0dp"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
     app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toStartOf="@id/main"
-    android:name="com.teixeira.vcspace.fragments.workspace.WorkspaceFragment" />
+    app:elevation="1dp">
+
+    <androidx.fragment.app.FragmentContainerView
+      android:id="@+id/fragment_workspace"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:name="com.teixeira.vcspace.fragments.workspace.WorkspaceFragment" />
+
+  </com.google.android.material.navigation.NavigationView>
 
   <androidx.constraintlayout.widget.ConstraintLayout
     android:id="@+id/main"
     android:layout_width="0dp"
     android:layout_height="0dp"
-    app:layout_constraintStart_toEndOf="@id/fragment_workspace"
+    app:layout_constraintStart_toEndOf="@id/nav_workspace"
     app:layout_constraintTop_toTopOf="parent"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent" >
