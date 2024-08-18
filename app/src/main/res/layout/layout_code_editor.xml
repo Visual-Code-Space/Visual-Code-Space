@@ -25,10 +25,10 @@
 
   <ProgressBar
     android:id="@+id/progress"
-    android:layout_width="22dp"
-    android:layout_height="22dp"
-    android:layout_marginBottom="8dp"
-    android:layout_marginEnd="8dp"
+    android:layout_width="15dp"
+    android:layout_height="15dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginStart="8dp"
     android:indeterminate="true"
     android:focusable="false"
     app:layout_constraintTop_toTopOf="parent"
