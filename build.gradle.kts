@@ -19,7 +19,7 @@ fun Project.configureBaseExtension() {
       minSdk = 26
       targetSdk = 34
       versionCode = 6
-      versionName = "1.2.0-beta"
+      versionName = "1.2.0"
     }
 
     compileOptions {
