@@ -189,7 +189,7 @@ abstract class BaseEditorActivity :
   }
 
   private fun setWorkspaceLayoutVisible(visible: Boolean) {
-    if (this.workspaceVisible == visible) {
+    if (onBackPressedCallback.isEnabled == visible) {
       return
     }
 
