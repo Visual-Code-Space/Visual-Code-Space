@@ -7,6 +7,7 @@ import android.widget.LinearLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import com.blankj.utilcode.util.FileIOUtils
+import com.blankj.utilcode.util.ThreadUtils.runOnUiThread
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.teixeira.vcspace.databinding.LayoutCodeEditorBinding
 import com.teixeira.vcspace.events.OnPreferenceChangeEvent
@@ -41,8 +42,10 @@ import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 import io.github.rosemoe.sora.text.LineSeparator
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme
 import java.io.File
+import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
@@ -62,14 +65,17 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
   val modified: Boolean
     get() = editor.modified
 
-  val file: File?
+  var file: File?
     get() = editor.file
+    set(value) {
+      editor.file = value
+    }
 
   init {
     EventBus.getDefault().register(this)
     binding.editor.apply {
-      colorScheme = createColorScheme()
-      lineSeparator = LineSeparator.LF
+      this.colorScheme = createColorScheme()
+      this.lineSeparator = LineSeparator.LF
       this.file = file
     }
     binding.searcher.bindSearcher(editor.searcher)
@@ -80,21 +86,16 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
 
   private fun readFile(file: File) {
     setLoading(true)
-    editorScope.launch {
+    editorScope.launch(Dispatchers.IO) {
       val content = FileIOUtils.readFile2String(file)
       val language = createLanguage()
 
       withContext(Dispatchers.Main) {
         binding.editor.setText(content, null)
-        postRead(language)
+        editor.setEditorLanguage(language)
+        setLoading(false)
       }
     }
-  }
-
-  private fun postRead(language: Language) {
-    setLoading(false)
-
-    editor.setEditorLanguage(language)
   }
 
   fun confirmReload() {
@@ -120,8 +121,24 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
     editor.modified = modified
   }
 
-  fun setFile(file: File) {
-    editor.file = file
+  fun updateFile(file: File, updateContent: Boolean) {
+    this.file = file
+
+    if (updateContent) {
+      readFile(file)
+    } else updateLanguage()
+  }
+
+  fun updateLanguage() {
+    setLoading(true)
+    editorScope.launch {
+      val language = createLanguage()
+
+      withContext(Dispatchers.Main) {
+        editor.setEditorLanguage(language)
+        setLoading(false)
+      }
+    }
   }
 
   fun release() {
@@ -135,6 +152,24 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
       setModified(false)
       true
     } else false
+  }
+
+  inline fun launchWithProgress(
+    context: CoroutineContext = EmptyCoroutineContext,
+    crossinline invokeOnCompletion: (throwable: Throwable?) -> Unit = {},
+    crossinline action: suspend CoroutineScope.() -> Unit
+  ): Job {
+    return editorScope
+      .launch(context) { action(builder) }
+      .also { job ->
+        job.invokeOnCompletion { throwable ->
+          runOnUiThread {
+            binding.progress.isVisible = loading
+            editor.isEditable = !loading
+          }
+          invokeOnCompletion(throwable)
+        }
+      }
   }
 
   fun beginSearchMode() {

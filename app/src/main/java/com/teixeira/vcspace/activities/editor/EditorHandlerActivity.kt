@@ -321,7 +321,7 @@ abstract class EditorHandlerActivity : BaseEditorActivity(), TabLayout.OnTabSele
     val index = findIndexAtFile(event.oldFile)
     val editor = getEditorAtIndex(index) ?: return
     editorViewModel.updateFile(index, event.newFile)
-    editor.setFile(event.newFile)
+    editor.updateFile(event.newFile, false)
     updateTabs()
   }
 
