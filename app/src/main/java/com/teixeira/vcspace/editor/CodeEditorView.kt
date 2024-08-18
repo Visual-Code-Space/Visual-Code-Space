@@ -7,9 +7,8 @@ import android.widget.LinearLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import com.blankj.utilcode.util.FileIOUtils
-import com.blankj.utilcode.util.ThreadUtils.runOnUiThread
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.teixeira.vcspace.databinding.LayoutCodeEditorBinding
+import com.teixeira.vcspace.editor.databinding.LayoutCodeEditorBinding
 import com.teixeira.vcspace.events.OnPreferenceChangeEvent
 import com.teixeira.vcspace.preferences.PREF_EDITOR_DELETELINEONBACKSPACE_KEY
 import com.teixeira.vcspace.preferences.PREF_EDITOR_DELETETABONBACKSPACE_KEY
@@ -42,11 +41,8 @@ import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 import io.github.rosemoe.sora.text.LineSeparator
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme
 import java.io.File
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus

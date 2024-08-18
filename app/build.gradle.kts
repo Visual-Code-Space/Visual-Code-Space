@@ -79,9 +79,10 @@ dependencies {
   implementation(libs.common.terminal.view)
   implementation(libs.common.terminal.emulator)
 
-  implementation(project(":common"))
-  implementation(project(":editor"))
-  implementation(project(":resources"))
+  implementation(project(":core:common"))
+  implementation(project(":core:resources"))
+  implementation(project(":feature:editor"))
+  implementation(project(":feature:preferences"))
 
   debugImplementation(libs.common.leakcanary)
 }

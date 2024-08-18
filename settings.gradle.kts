@@ -18,4 +18,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "VCSpace"
 
-include(":app", ":common", ":editor", ":resources")
+include(":app", ":core:common", ":core:resources", ":feature:editor", ":feature:preferences")
