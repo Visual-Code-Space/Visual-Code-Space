@@ -41,10 +41,13 @@ class PreferencesFragment : PreferenceFragmentCompat() {
   }
 
   private fun goToPreferenceFragment(fragment: PreferenceFragmentCompat) {
-    parentFragmentManager
-      .beginTransaction()
+    val fm = parentFragmentManager
+    fm.beginTransaction()
       .replace(R.id.container, fragment)
       .addToBackStack(null)
-      .commit()
+      .commitAllowingStateLoss()
+
+    // Ensure it is committed.
+    fm.executePendingTransactions()
   }
 }

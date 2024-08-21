@@ -33,8 +33,8 @@ class PreferencesActivity : BaseActivity() {
     if (fragmentManager.findFragmentByTag(PreferencesFragment.FRAGMENT_TAG) == null) {
       supportFragmentManager
         .beginTransaction()
-        .replace(binding.container.id, PreferencesFragment(), PreferencesFragment.FRAGMENT_TAG)
-        .commit()
+        .add(binding.container.id, PreferencesFragment(), PreferencesFragment.FRAGMENT_TAG)
+        .commitAllowingStateLoss()
     }
   }
 
