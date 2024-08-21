@@ -52,7 +52,7 @@ abstract class BaseEditorActivity :
   private var _isDestroying: Boolean = false
 
   private val onBackPressedCallback: OnBackPressedCallback =
-    object : OnBackPressedCallback(true) {
+    object : OnBackPressedCallback(false) {
       override fun handleOnBackPressed() {
         closeWorkspace()
       }
@@ -186,6 +186,7 @@ abstract class BaseEditorActivity :
     layout.setLayoutTransition(
       LayoutTransition().apply { enableTransitionType(LayoutTransition.CHANGING) }
     )
+    onBackPressedCallback.isEnabled = true
   }
 
   private fun setWorkspaceLayoutVisible(visible: Boolean) {
