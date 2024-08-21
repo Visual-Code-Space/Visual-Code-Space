@@ -3,6 +3,7 @@ package com.teixeira.vcspace.preferences
 import androidx.appcompat.app.AppCompatDelegate
 import com.teixeira.vcspace.app.BaseApplication
 import com.teixeira.vcspace.resources.R
+import com.teixeira.vcspace.utils.isDarkMode
 
 val PREF_CONFIGURE_GENERAL_KEY = "pref_configure_general_key"
 val PREF_CONFIGURE_EDITOR_KEY = "pref_configure_editor_key"
@@ -17,6 +18,7 @@ val PREF_APARENCE_MATERIALYOU_KEY = "pref_aparence_materialyou_key"
 val PREF_EDITOR_FONTSIZE_KEY = "pref_editor_fontsize_key"
 val PREF_EDITOR_INDENT_KEY = "pref_editor_indent_key"
 val PREF_EDITOR_FONT_KEY = "pref_editor_font_key"
+val PREF_EDITOR_COLORSCHEME_KEY = "pref_editor_colorscheme_key"
 val PREF_EDITOR_STICKYSCROLL_KEY = "pref_editor_stickyscroll_key"
 val PREF_EDITOR_FONTLIGATURES_KEY = "pref_editor_fontligatures_key"
 val PREF_EDITOR_WORDWRAP_KEY = "pref_editor_wordwrap_key"
@@ -29,7 +31,8 @@ val PREF_EDITOR_TABS_AUTOSAVE = "pref_editor_tabs_autosave"
 // File
 val PREF_FILE_SHOWHIDDENFILES_KEY = "pref_file_showhiddenfiles_key"
 
-val defaultPrefs = BaseApplication.instance.defaultPrefs
+val app = BaseApplication.instance
+val defaultPrefs = app.defaultPrefs
 
 // General
 val aparenceUIMode: Int
@@ -64,6 +67,20 @@ val editorFont: Int
       1 -> R.font.jetbrains_mono
       else -> R.font.firacode_regular
     }
+
+val editorColorScheme: String
+  get() =
+    when (defaultPrefs.getInt(PREF_EDITOR_COLORSCHEME_KEY, 0)) {
+      0 -> editorUIModeScheme
+      1 -> "quietlight"
+      2 -> "darcula"
+      3 -> "abyss"
+      4 -> "solarized_drak"
+      else -> editorUIModeScheme
+    }
+
+private val editorUIModeScheme: String
+  get() = if (app.isDarkMode()) "darcula" else "quietlight"
 
 val editorStickyScroll: Boolean
   get() = defaultPrefs.getBoolean(PREF_EDITOR_STICKYSCROLL_KEY, false)

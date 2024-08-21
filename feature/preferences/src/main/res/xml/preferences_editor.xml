@@ -25,6 +25,12 @@
       app:title="@string/pref_editor_font"
       app:summary="@string/pref_editor_font_summary" />
 
+    <com.teixeira.vcspace.preferences.EditorColorSchemePreference
+      app:iconSpaceReserved="false"
+      app:key="pref_editor_colorscheme_key"
+      app:title="@string/pref_editor_colorscheme"
+      app:summary="@string/pref_editor_colorscheme_summary" />
+
     <SwitchPreferenceCompat
       app:defaultValue="false"
       app:iconSpaceReserved="false"

@@ -36,7 +36,7 @@ class VCSpaceApplication : BaseApplication() {
     FileProviderRegistry.getInstance().dispose()
     FileProviderRegistry.getInstance().addFileProvider(AssetsFileResolver(assets))
 
-    val themes = arrayOf("darcula", "quietlight")
+    val themes = arrayOf("darcula", "quietlight", "abyss", "solarized_drak")
     val themeRegistry = ThemeRegistry.getInstance()
     themes.forEach { name ->
       val path = "editor/schemes/$name.json"
@@ -49,7 +49,7 @@ class VCSpaceApplication : BaseApplication() {
             ),
             name
           )
-          .apply { setDark(name == "darcula") }
+          .apply { setDark(name != "quietlight") }
       )
     }
   }

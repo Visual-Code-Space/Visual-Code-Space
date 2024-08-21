@@ -121,6 +121,10 @@
   <string name="pref_editor_font_summary">Set the editor font.</string>
   <string name="pref_editor_font_value_firacode">Fira Code Regular</string>
   <string name="pref_editor_font_value_jetbrains">JetBrains Mono</string>
+  <string name="pref_editor_colorscheme">Editor color scheme</string>
+  <string name="pref_editor_colorscheme_summary">Choose a color scheme for the editor.</string>
+  <string name="pref_editor_colorscheme_value_followui">Follow UI Mode</string>
+  <string name="pref_editor_colorscheme_value_custom">Custom TextMate Schema File</string>
   <string name="pref_editor_stickyscroll">Sticky scroll</string>
   <string name="pref_editor_stickyscroll_summary">Show current scope at top of editor.</string>
   <string name="pref_editor_fontligatures">Font ligatures</string>

@@ -35,11 +35,9 @@ import com.teixeira.vcspace.preferences.editorTabsAutosave
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.tasks.TaskExecutor.executeAsyncProvideError
 import com.teixeira.vcspace.utils.UniqueNameBuilder
-import com.teixeira.vcspace.utils.isDarkMode
 import com.teixeira.vcspace.utils.showShortToast
 import com.teixeira.vcspace.viewmodel.EditorViewModel
 import com.teixeira.vcspace.viewmodel.EditorViewModel.EditorAction
-import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -59,7 +57,6 @@ abstract class EditorHandlerActivity : BaseEditorActivity(), TabLayout.OnTabSele
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    ThemeRegistry.getInstance().setTheme(if (isDarkMode()) "darcula" else "quietlight")
 
     fileSaver = Runnable { saveAllFilesAsync(false) }
 

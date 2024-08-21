@@ -17,6 +17,7 @@ package com.teixeira.vcspace.utils
 
 import android.content.Context
 import android.content.res.Configuration
+import androidx.appcompat.app.AppCompatDelegate
 
 /**
  * Check if the app is in light or dark mode.
@@ -24,6 +25,13 @@ import android.content.res.Configuration
  * @return If the app is in dark mode.
  */
 fun Context.isDarkMode(): Boolean {
+  val defaultNightMode = AppCompatDelegate.getDefaultNightMode()
+  if (defaultNightMode == AppCompatDelegate.MODE_NIGHT_YES) {
+    return true
+  } else if (defaultNightMode == AppCompatDelegate.MODE_NIGHT_NO) {
+    return false
+  }
+
   val uiMode = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK)
   return uiMode == Configuration.UI_MODE_NIGHT_YES
 }

@@ -42,7 +42,8 @@ class PreferencesFragment : PreferenceFragmentCompat() {
 
   private fun goToPreferenceFragment(fragment: PreferenceFragmentCompat) {
     val fm = parentFragmentManager
-    fm.beginTransaction()
+    fm
+      .beginTransaction()
       .replace(R.id.container, fragment)
       .addToBackStack(null)
       .commitAllowingStateLoss()

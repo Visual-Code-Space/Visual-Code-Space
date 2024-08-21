@@ -10,6 +10,8 @@ import com.blankj.utilcode.util.FileIOUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.teixeira.vcspace.editor.databinding.LayoutCodeEditorBinding
 import com.teixeira.vcspace.events.OnPreferenceChangeEvent
+import com.teixeira.vcspace.preferences.PREF_APARENCE_UIMODE_KEY
+import com.teixeira.vcspace.preferences.PREF_EDITOR_COLORSCHEME_KEY
 import com.teixeira.vcspace.preferences.PREF_EDITOR_DELETELINEONBACKSPACE_KEY
 import com.teixeira.vcspace.preferences.PREF_EDITOR_DELETETABONBACKSPACE_KEY
 import com.teixeira.vcspace.preferences.PREF_EDITOR_FONTLIGATURES_KEY
@@ -18,7 +20,9 @@ import com.teixeira.vcspace.preferences.PREF_EDITOR_FONT_KEY
 import com.teixeira.vcspace.preferences.PREF_EDITOR_INDENT_KEY
 import com.teixeira.vcspace.preferences.PREF_EDITOR_LINENUMBER_KEY
 import com.teixeira.vcspace.preferences.PREF_EDITOR_STICKYSCROLL_KEY
+import com.teixeira.vcspace.preferences.PREF_EDITOR_USETAB_KEY
 import com.teixeira.vcspace.preferences.PREF_EDITOR_WORDWRAP_KEY
+import com.teixeira.vcspace.preferences.editorColorScheme
 import com.teixeira.vcspace.preferences.editorDeleteLineOnBackspace
 import com.teixeira.vcspace.preferences.editorDeleteTabOnBackspace
 import com.teixeira.vcspace.preferences.editorFont
@@ -69,16 +73,18 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
     }
 
   init {
+    ThemeRegistry.getInstance().setTheme(editorColorScheme)
     EventBus.getDefault().register(this)
+    binding.searcher.bindSearcher(editor.searcher)
     binding.editor.apply {
       this.colorScheme = createColorScheme()
       this.lineSeparator = LineSeparator.LF
       this.file = file
     }
-    binding.searcher.bindSearcher(editor.searcher)
-    addView(binding.root, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
     configureEditor()
     readFile(file)
+
+    addView(binding.root, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
   }
 
   private fun readFile(file: File) {
@@ -88,7 +94,7 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
       val language = createLanguage()
 
       withContext(Dispatchers.Main) {
-        binding.editor.setText(content, null)
+        editor.setText(content, null)
         editor.setEditorLanguage(language)
         setLoading(false)
       }
@@ -158,6 +164,8 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
   @Subscribe(threadMode = ThreadMode.MAIN)
   fun onSharedPreferenceChanged(event: OnPreferenceChangeEvent) {
     when (event.prefKey) {
+      PREF_APARENCE_UIMODE_KEY,
+      PREF_EDITOR_COLORSCHEME_KEY -> updateEditorColorScheme()
       PREF_EDITOR_FONT_KEY -> updateEditorFont()
       PREF_EDITOR_FONTSIZE_KEY -> updateFontSize()
       PREF_EDITOR_INDENT_KEY -> updateEditorIndent()
@@ -165,6 +173,7 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
       PREF_EDITOR_FONTLIGATURES_KEY -> updateFontLigatures()
       PREF_EDITOR_WORDWRAP_KEY -> updateWordWrap()
       PREF_EDITOR_LINENUMBER_KEY -> updateLineNumbers()
+      PREF_EDITOR_USETAB_KEY -> updateEditorUseTab()
       PREF_EDITOR_DELETELINEONBACKSPACE_KEY -> updateDeleteEmptyLineFast()
       PREF_EDITOR_DELETETABONBACKSPACE_KEY -> updateDeleteTabs()
     }
@@ -182,6 +191,12 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
     updateDeleteTabs()
   }
 
+  private fun updateEditorColorScheme() {
+    ThemeRegistry.getInstance().setTheme(editorColorScheme)
+    // Required to update colors correctly :-)
+    editor.setText(editor.text.toString())
+  }
+
   private fun updateEditorFont() {
     val font = ResourcesCompat.getFont(context, editorFont)
     editor.typefaceText = font
@@ -193,7 +208,12 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
   }
 
   private fun updateEditorIndent() {
+    (editor.editorLanguage as? TextMateLanguage)?.tabSize = editorIndent
     editor.tabWidth = editorIndent
+  }
+
+  private fun updateEditorUseTab() {
+    (editor.editorLanguage as? TextMateLanguage)?.useTab(editorUseTab)
   }
 
   private fun updateStickyScroll() {

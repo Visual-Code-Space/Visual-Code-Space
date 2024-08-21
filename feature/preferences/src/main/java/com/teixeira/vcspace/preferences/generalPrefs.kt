@@ -3,10 +3,10 @@ package com.teixeira.vcspace.preferences
 import android.content.Context
 import android.util.AttributeSet
 import androidx.appcompat.app.AppCompatDelegate
-import com.teixeira.vcspace.preferences.base.ChoiceDialogPreference
+import com.teixeira.vcspace.preferences.base.SingleChoiceDialogPreference
 import com.teixeira.vcspace.resources.R
 
-class UIModePreference : ChoiceDialogPreference {
+class UIModePreference : SingleChoiceDialogPreference {
 
   constructor(context: Context) : super(context)
 

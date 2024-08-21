@@ -6,7 +6,7 @@ import androidx.preference.Preference
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.teixeira.vcspace.resources.R
 
-abstract class ChoiceDialogPreference : Preference {
+abstract class SingleChoiceDialogPreference : Preference {
 
   constructor(context: Context) : super(context)
 
@@ -37,7 +37,10 @@ abstract class ChoiceDialogPreference : Preference {
     MaterialAlertDialogBuilder(context).apply {
       setTitle(title)
 
-      setSingleChoiceItems(choiceItems, value) { _, w -> editor.putInt(key, w) }
+      setSingleChoiceItems(choiceItems, value) { _, w ->
+        editor.putInt(key, w)
+        onChoose(w)
+      }
 
       setNegativeButton(R.string.cancel, null)
       setPositiveButton(R.string.save) { _, _ ->
@@ -47,6 +50,8 @@ abstract class ChoiceDialogPreference : Preference {
       show()
     }
   }
+
+  protected open fun onChoose(value: Int) {}
 
   protected open fun onSave() {}
 }
