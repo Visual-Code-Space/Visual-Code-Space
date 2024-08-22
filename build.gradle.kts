@@ -1,4 +1,5 @@
 import com.android.build.gradle.BaseExtension
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   alias(libs.plugins.android.application) apply false
@@ -32,6 +33,10 @@ fun Project.configureBaseExtension() {
 subprojects {
   plugins.withId("com.android.application") { configureBaseExtension() }
   plugins.withId("com.android.library") { configureBaseExtension() }
+
+  tasks.withType<KotlinCompile>().configureEach {
+    kotlinOptions { jvmTarget = JavaVersion.VERSION_17.toString() }
+  }
 }
 
 tasks.register<Delete>("clean") { delete(rootProject.buildDir) }
