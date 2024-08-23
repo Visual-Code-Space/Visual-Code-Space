@@ -64,7 +64,7 @@ inline fun CoroutineScope.launchWithProgressDialog(
   context: CoroutineContext = EmptyCoroutineContext,
   configureBuilder: (builder: ProgressDialogBuilder) -> Unit = {},
   crossinline invokeOnCompletion: (throwable: Throwable?) -> Unit = {},
-  crossinline action: suspend CoroutineScope.(builder: ProgressDialogBuilder) -> Unit
+  crossinline action: suspend CoroutineScope.(builder: ProgressDialogBuilder) -> Unit,
 ): Job {
 
   val builder = ProgressDialogBuilder(uiContext)

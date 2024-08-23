@@ -56,7 +56,7 @@ abstract class BaseActivity : AppCompatActivity() {
   override fun onRequestPermissionsResult(
     requestCode: Int,
     permissions: Array<String>,
-    grantResults: IntArray
+    grantResults: IntArray,
   ) {
     super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     if (requestCode == REQCODE_STORAGE) {
@@ -82,7 +82,7 @@ abstract class BaseActivity : AppCompatActivity() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
               arrayOf(permission.MANAGE_EXTERNAL_STORAGE)
             } else arrayOf(permission.READ_EXTERNAL_STORAGE, permission.WRITE_EXTERNAL_STORAGE),
-            REQCODE_STORAGE
+            REQCODE_STORAGE,
           )
         }
       }

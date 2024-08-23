@@ -22,7 +22,7 @@ class EditorFontSizePreference : SliderDialogPreference {
     context: Context,
     attrs: AttributeSet?,
     defStyleAttr: Int,
-    defStyleRes: Int
+    defStyleRes: Int,
   ) : super(context, attrs, defStyleAttr, defStyleRes)
 
   override val defaultValue = 14f
@@ -47,7 +47,7 @@ class EditorIndentPreference : SingleChoiceDialogPreference {
     context: Context,
     attrs: AttributeSet?,
     defStyleAttr: Int,
-    defStyleRes: Int
+    defStyleRes: Int,
   ) : super(context, attrs, defStyleAttr, defStyleRes)
 
   override val defaultValue = 1
@@ -70,14 +70,14 @@ class EditorFontPreference : SingleChoiceDialogPreference {
     context: Context,
     attrs: AttributeSet?,
     defStyleAttr: Int,
-    defStyleRes: Int
+    defStyleRes: Int,
   ) : super(context, attrs, defStyleAttr, defStyleRes)
 
   override val defaultValue = 0
   override val choiceItems =
     arrayOf(
       context.getString(R.string.pref_editor_font_value_firacode),
-      context.getString(R.string.pref_editor_font_value_jetbrains)
+      context.getString(R.string.pref_editor_font_value_jetbrains),
     )
 }
 
@@ -97,7 +97,7 @@ class EditorColorSchemePreference : SingleChoiceDialogPreference {
     context: Context,
     attrs: AttributeSet?,
     defStyleAttr: Int,
-    defStyleRes: Int
+    defStyleRes: Int,
   ) : super(context, attrs, defStyleAttr, defStyleRes)
 
   override val defaultValue = 0
@@ -107,7 +107,7 @@ class EditorColorSchemePreference : SingleChoiceDialogPreference {
       "Quietlight",
       "Darcula",
       "Abyss",
-      "Solarized Dark"
+      "Solarized Dark",
       // context.getString(R.string.pref_editor_colorscheme_value_custom)
     )
 }

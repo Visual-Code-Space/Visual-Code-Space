@@ -366,7 +366,7 @@ abstract class EditorHandlerActivity : BaseEditorActivity(), TabLayout.OnTabSele
       { _, _ ->
         getEditorAtIndex(findIndexAtFile(unsavedFile))?.setModified(false)
         runAfter.run()
-      }
+      },
     )
   }
 
@@ -384,14 +384,14 @@ abstract class EditorHandlerActivity : BaseEditorActivity(), TabLayout.OnTabSele
           getEditorAtIndex(i)?.setModified(false)
         }
         runAfter.run()
-      }
+      },
     )
   }
 
   private fun showUnsavedFilesAlert(
     unsavedFileName: String,
     positive: DialogInterface.OnClickListener,
-    negative: DialogInterface.OnClickListener
+    negative: DialogInterface.OnClickListener,
   ) {
     MaterialAlertDialogBuilder(this)
       .setTitle(R.string.editor_unsaved_files)

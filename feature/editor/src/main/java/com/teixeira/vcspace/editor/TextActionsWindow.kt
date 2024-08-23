@@ -44,23 +44,23 @@ class TextActionsWindow(editor: VCSpaceEditor) :
       listOf(
         TextAction(
           R.drawable.ic_comment_text_outline,
-          R.string.editor_action_comment_line
+          R.string.editor_action_comment_line,
         ), // Comment Action
         TextAction(
           R.drawable.ic_select_all,
-          R.string.editor_action_select_all
+          R.string.editor_action_select_all,
         ), // Select All Text Action
         TextAction(
           R.drawable.ic_text_select_start,
-          R.string.editor_action_long_select
+          R.string.editor_action_long_select,
         ), // Long Select Action
         TextAction(R.drawable.ic_cut, R.string.editor_action_cut), // Cut Text Action
         TextAction(R.drawable.ic_copy, R.string.editor_action_copy), // Copy Text Action
         TextAction(R.drawable.ic_paste, R.string.editor_action_paste), // Paste Text Action
         TextAction(
           R.drawable.ic_format_align_left,
-          R.string.editor_action_format
-        ) // Format Text Action
+          R.string.editor_action_format,
+        ), // Format Text Action
       )
     const val DELAY: Long = 200
   }
@@ -179,7 +179,7 @@ class TextActionsWindow(editor: VCSpaceEditor) :
           }
         }
       },
-      DELAY
+      DELAY,
     )
   }
 
@@ -279,8 +279,8 @@ class TextActionsWindow(editor: VCSpaceEditor) :
       View.MeasureSpec.makeMeasureSpec(editor.width - dp16 * 2, View.MeasureSpec.AT_MOST),
       View.MeasureSpec.makeMeasureSpec(
         (260 * editor.dpUnit).toInt() - dp16 * 2,
-        View.MeasureSpec.AT_MOST
-      )
+        View.MeasureSpec.AT_MOST,
+      ),
     )
     setSize(rootView.measuredWidth, height)
   }
@@ -338,6 +338,6 @@ class TextActionsWindow(editor: VCSpaceEditor) :
     val icon: Int,
     val text: Int,
     var visible: Boolean = true,
-    var clickable: Boolean = true
+    var clickable: Boolean = true,
   )
 }

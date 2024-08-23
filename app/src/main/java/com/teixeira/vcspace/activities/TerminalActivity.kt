@@ -84,7 +84,7 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
           terminal.mTermSession.finishIfRunning()
           finish()
         }
-      }
+      },
     )
 
     setupTerminalView()
@@ -137,7 +137,7 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
       arrayOf(),
       arrayOf(),
       TerminalEmulator.DEFAULT_TERMINAL_TRANSCRIPT_ROWS,
-      this
+      this,
     )
   }
 
@@ -338,7 +338,7 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
           ctrlDown = false,
           altDown = false,
           shiftDown = false,
-          fnDown = false
+          fnDown = false,
         )
       }
     }
@@ -348,7 +348,7 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
       ctrlDown: Boolean,
       altDown: Boolean,
       shiftDown: Boolean,
-      fnDown: Boolean
+      fnDown: Boolean,
     ) {
       if (VirtualKeysConstants.PRIMARY_KEY_CODES_FOR_STRINGS.containsKey(key)) {
         val keyCode = VirtualKeysConstants.PRIMARY_KEY_CODES_FOR_STRINGS[key] ?: return
@@ -381,7 +381,7 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
     override fun performVirtualKeyButtonHapticFeedback(
       view: View,
       buttonInfo: VirtualKeyButton,
-      button: Button
+      button: Button,
     ): Boolean {
       // No need to handle this
       // VirtualKeysView will take care of performing haptic feedback

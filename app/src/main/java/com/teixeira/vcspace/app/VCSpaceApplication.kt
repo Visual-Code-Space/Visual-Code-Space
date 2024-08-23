@@ -45,9 +45,9 @@ class VCSpaceApplication : BaseApplication() {
             IThemeSource.fromInputStream(
               FileProviderRegistry.getInstance().tryGetInputStream(path),
               path,
-              null
+              null,
             ),
-            name
+            name,
           )
           .apply { setDark(name != "quietlight") }
       )

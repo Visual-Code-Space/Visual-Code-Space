@@ -8,7 +8,7 @@ import com.teixeira.vcspace.models.SheetOptionItem
 
 class SheetOptionsListAdapter(
   private val options: List<SheetOptionItem>,
-  private val listener: (SheetOptionItem) -> Unit = {}
+  private val listener: (SheetOptionItem) -> Unit = {},
 ) : RecyclerView.Adapter<SheetOptionsListAdapter.VH>() {
 
   inner class VH(internal val binding: LayoutSheetOptionItemBinding) :

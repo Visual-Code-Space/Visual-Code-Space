@@ -28,12 +28,11 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.blankj.utilcode.util.KeyboardUtils
 import com.blankj.utilcode.util.ThreadUtils
-import com.google.android.material.shape.CornerFamily
-import com.google.android.material.shape.MaterialShapeDrawable
 import com.teixeira.vcspace.activities.BaseActivity
 import com.teixeira.vcspace.databinding.ActivityEditorBinding
 import com.teixeira.vcspace.events.OnPreferenceChangeEvent
 import com.teixeira.vcspace.resources.R
+import com.teixeira.vcspace.ui.workspace.configureNavigationViewBackground
 import com.teixeira.vcspace.utils.cancelIfActive
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -136,6 +135,7 @@ abstract class BaseEditorActivity :
   }
 
   private fun configureWorkspace() {
+    binding.navWorkspace.configureNavigationViewBackground()
     when (binding.root) {
       is DrawerLayout -> configureWorkspaceDrawer(binding.root as DrawerLayout)
       is ConstraintLayout -> configureWorkspaceLayout(binding.root as ConstraintLayout)
@@ -172,17 +172,6 @@ abstract class BaseEditorActivity :
     binding.toolbar.setNavigationOnClickListener {
       setWorkspaceLayoutVisible(!onBackPressedCallback.isEnabled)
     }
-
-    val navViewBackground = binding.navWorkspace.background as MaterialShapeDrawable
-    navViewBackground.setShapeAppearanceModel(
-      navViewBackground
-        .getShapeAppearanceModel()
-        .toBuilder()
-        .setTopRightCorner(CornerFamily.ROUNDED, 25f)
-        .setBottomRightCorner(CornerFamily.ROUNDED, 25f)
-        .build()
-    )
-
     layout.setLayoutTransition(
       LayoutTransition().apply { enableTransitionType(LayoutTransition.CHANGING) }
     )
@@ -206,14 +195,14 @@ abstract class BaseEditorActivity :
         binding.main.id,
         ConstraintSet.START,
         binding.navWorkspace.id,
-        ConstraintSet.END
+        ConstraintSet.END,
       )
     } else {
       constraintSet.connect(
         binding.main.id,
         ConstraintSet.START,
         ConstraintSet.PARENT_ID,
-        ConstraintSet.START
+        ConstraintSet.START,
       )
     }
     constraintSet.applyTo(constraintLayout)

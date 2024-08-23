@@ -82,7 +82,7 @@ class Logger private constructor(private val tag: String) {
     WARNING,
     ERROR,
     INFO,
-    VERBOSE
+    VERBOSE,
   }
 
   companion object {

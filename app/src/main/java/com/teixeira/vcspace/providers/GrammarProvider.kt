@@ -68,7 +68,7 @@ object GrammarProvider {
         IGrammarSource.fromInputStream(
           FileProviderRegistry.getInstance().tryGetInputStream(grammar.grammar),
           grammar.grammar,
-          Charset.defaultCharset()
+          Charset.defaultCharset(),
         )
 
       grammarRegistry.loadGrammar(
@@ -76,7 +76,7 @@ object GrammarProvider {
             grammarSource,
             grammar.languageConfiguration,
             grammar.name,
-            grammar.scopeName
+            grammar.scopeName,
           )
           .withEmbeddedLanguages(grammar.embeddedLanguages)
       )
@@ -108,6 +108,6 @@ object GrammarProvider {
     val grammar: String,
     val languageConfiguration: String? = null,
     val embeddedLanguages: Map<String, String>? = null,
-    val fileExtensions: Array<String>? = null
+    val fileExtensions: Array<String>? = null,
   )
 }

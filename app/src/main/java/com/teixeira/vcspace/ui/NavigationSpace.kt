@@ -15,7 +15,7 @@ class NavigationSpace : LinearLayout {
   constructor(
     context: Context,
     attrs: AttributeSet?,
-    defStyleAttr: Int
+    defStyleAttr: Int,
   ) : super(context, attrs, defStyleAttr)
 
   fun addItem(title: Int, icon: Int, listener: OnClickListener) {

@@ -15,6 +15,7 @@ import com.teixeira.vcspace.R
 import com.teixeira.vcspace.activities.PreferencesActivity
 import com.teixeira.vcspace.activities.TerminalActivity
 import com.teixeira.vcspace.databinding.FragmentWorkspaceBinding
+import com.teixeira.vcspace.ui.workspace.configureNavigationRailBackground
 
 class WorkspaceFragment : Fragment(), NavController.OnDestinationChangedListener {
 
@@ -30,7 +31,7 @@ class WorkspaceFragment : Fragment(), NavController.OnDestinationChangedListener
   override fun onCreateView(
     inflater: LayoutInflater,
     container: ViewGroup?,
-    savedInstanceState: Bundle?
+    savedInstanceState: Bundle?,
   ): View {
     _binding = FragmentWorkspaceBinding.inflate(inflater, container, false)
     return binding.root
@@ -49,12 +50,13 @@ class WorkspaceFragment : Fragment(), NavController.OnDestinationChangedListener
       }
       false
     }
+    binding.navRail.configureNavigationRailBackground()
   }
 
   override fun onDestinationChanged(
     controller: NavController,
     destination: NavDestination,
-    arguments: Bundle?
+    arguments: Bundle?,
   ) {
     val children = binding.navRail.menu.children
     val menuItem = children.find { item -> destination.id == item.itemId }

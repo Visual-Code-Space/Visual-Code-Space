@@ -65,7 +65,7 @@ class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
   override fun onCreateView(
     inflater: LayoutInflater,
     container: ViewGroup?,
-    savedInstanceState: Bundle?
+    savedInstanceState: Bundle?,
   ): View {
     _binding = FragmentFileExplorerBinding.inflate(inflater, container, false)
     return binding.root
@@ -210,7 +210,7 @@ class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
               showShortToast(requireContext(), getString(R.string.file_renamed))
               fileViewModel.refreshFiles()
             }
-          }
+          },
         )
       }
       val dialog = create()
@@ -249,7 +249,7 @@ class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
               showShortToast(requireContext(), getString(R.string.file_deleted))
               fileViewModel.refreshFiles()
             }
-          }
+          },
         )
       }
       .show()

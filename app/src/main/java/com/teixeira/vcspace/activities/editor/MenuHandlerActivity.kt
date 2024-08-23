@@ -131,7 +131,7 @@ abstract class MenuHandlerActivity : EditorHandlerActivity() {
           Log.d("EditorActivity", "extractFiles: $exitCode")
           file.delete()
           temp7zStream.close()
-        }
+        },
       )
     }
   }

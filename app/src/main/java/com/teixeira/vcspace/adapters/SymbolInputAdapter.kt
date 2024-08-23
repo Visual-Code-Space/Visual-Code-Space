@@ -88,7 +88,7 @@ class SymbolInputAdapter : RecyclerView.Adapter<SymbolInputAdapter.VH>() {
           "!",
           "?",
           "<",
-          ">"
+          ">",
         )
       return baseSymbols.map { Symbol(it[0].toString(), it) }.toTypedArray()
     }

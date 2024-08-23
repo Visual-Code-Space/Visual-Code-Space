@@ -9,10 +9,8 @@
     android:id="@+id/nav_rail"
     android:layout_width="58dp"
     android:layout_height="match_parent"
-    android:background="@drawable/workspace_navrail_bg"
     app:labelVisibilityMode="unlabeled"
-    app:menu="@menu/menu_workspace_nav"
-    app:elevation="1dp" />
+    app:menu="@menu/menu_workspace_nav" />
 
   <TextView
     android:id="@+id/workspace_text"

@@ -22,7 +22,7 @@ abstract class SingleChoiceDialogPreference : Preference {
     context: Context,
     attrs: AttributeSet?,
     defStyleAttr: Int,
-    defStyleRes: Int
+    defStyleRes: Int,
   ) : super(context, attrs, defStyleAttr, defStyleRes)
 
   abstract val defaultValue: Int

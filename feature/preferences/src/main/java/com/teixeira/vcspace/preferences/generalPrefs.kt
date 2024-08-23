@@ -22,7 +22,7 @@ class UIModePreference : SingleChoiceDialogPreference {
     context: Context,
     attrs: AttributeSet?,
     defStyleAttr: Int,
-    defStyleRes: Int
+    defStyleRes: Int,
   ) : super(context, attrs, defStyleAttr, defStyleRes)
 
   override val defaultValue = 0
@@ -30,7 +30,7 @@ class UIModePreference : SingleChoiceDialogPreference {
     arrayOf(
       context.getString(R.string.pref_aparence_uimode_value_followsys),
       context.getString(R.string.pref_aparence_uimode_value_light),
-      context.getString(R.string.pref_aparence_uimode_value_dark)
+      context.getString(R.string.pref_aparence_uimode_value_dark),
     )
 
   override fun onSave() {

@@ -17,7 +17,7 @@ class PathListView : RecyclerView {
   constructor(
     context: Context,
     attrs: AttributeSet?,
-    defStyleAttr: Int
+    defStyleAttr: Int,
   ) : super(context, attrs, defStyleAttr)
 
   private val adapter = PathListAdapter()

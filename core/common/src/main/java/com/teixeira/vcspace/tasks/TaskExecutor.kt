@@ -30,7 +30,7 @@ object TaskExecutor {
   @JvmStatic
   fun <R> executeAsync(
     callable: Callable<R>,
-    callback: (result: R?) -> Unit = {}
+    callback: (result: R?) -> Unit = {},
   ): CompletableFuture<R?> {
     return CompletableFuture.supplyAsync {
         try {
@@ -47,7 +47,7 @@ object TaskExecutor {
   @JvmStatic
   fun <R> executeAsyncProvideError(
     callable: Callable<R>,
-    callback: (result: R?, error: Throwable?) -> Unit = { _, _ -> }
+    callback: (result: R?, error: Throwable?) -> Unit = { _, _ -> },
   ): CompletableFuture<R?> {
     return CompletableFuture.supplyAsync {
         try {
