@@ -7,8 +7,8 @@ import com.teixeira.vcspace.databinding.LayoutSheetOptionItemBinding
 import com.teixeira.vcspace.models.SheetOptionItem
 
 class SheetOptionsListAdapter(
-  private val options: List<SheetOptionItem>,
-  private val listener: (SheetOptionItem) -> Unit = {},
+  private val options: Array<SheetOptionItem>,
+  private val onOptionClickListener: (SheetOptionItem) -> Unit,
 ) : RecyclerView.Adapter<SheetOptionsListAdapter.VH>() {
 
   inner class VH(internal val binding: LayoutSheetOptionItemBinding) :
@@ -27,7 +27,7 @@ class SheetOptionsListAdapter(
       icon.setImageResource(option.icon)
       name.text = option.name
 
-      root.setOnClickListener { listener.invoke(option) }
+      root.setOnClickListener { onOptionClickListener(option) }
     }
   }
 

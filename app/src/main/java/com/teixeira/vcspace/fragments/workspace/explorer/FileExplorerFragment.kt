@@ -112,20 +112,21 @@ class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
   }
 
   override fun onFileLongClickListener(file: File, view: View): Boolean {
-    val sheet = OptionsListBottomSheet()
-    sheet.addOption(SheetOptionItem(R.drawable.ic_copy, getString(R.string.file_copy_path)))
-    sheet.addOption(SheetOptionItem(R.drawable.ic_file_rename, getString(R.string.file_rename)))
-    sheet.addOption(SheetOptionItem(R.drawable.ic_delete, getString(R.string.file_delete)))
+    val options =
+      arrayOf(
+        SheetOptionItem(R.drawable.ic_copy, getString(R.string.file_copy_path)),
+        SheetOptionItem(R.drawable.ic_file_rename, getString(R.string.file_rename)),
+        SheetOptionItem(R.drawable.ic_delete, getString(R.string.file_delete)),
+      )
 
-    sheet.setOptionClickListener { option ->
-      when (option.name) {
-        getString(R.string.file_copy_path) -> ClipboardUtils.copyText(file.absolutePath)
-        getString(R.string.file_rename) -> showRenameFileDialog(file)
-        getString(R.string.file_delete) -> showDeleteFileDialog(file)
+    OptionsListBottomSheet.newInstance(options) { option ->
+        when (option.name) {
+          getString(R.string.file_copy_path) -> ClipboardUtils.copyText(file.absolutePath)
+          getString(R.string.file_rename) -> showRenameFileDialog(file)
+          getString(R.string.file_delete) -> showDeleteFileDialog(file)
+        }
       }
-      sheet.dismiss()
-    }
-    sheet.show(childFragmentManager, null)
+      .show(childFragmentManager, null)
 
     return true
   }

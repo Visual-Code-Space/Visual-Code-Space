@@ -9,6 +9,7 @@
         android:id="@+id/handle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:paddingBottom="2dp"
         app:layout_constraintBottom_toTopOf="@id/recycler_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

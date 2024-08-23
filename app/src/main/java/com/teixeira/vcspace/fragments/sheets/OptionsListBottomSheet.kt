@@ -15,50 +15,65 @@
 
 package com.teixeira.vcspace.fragments.sheets
 
+import android.app.Dialog
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import androidx.core.os.BundleCompat
+import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.teixeira.vcspace.adapters.SheetOptionsListAdapter
 import com.teixeira.vcspace.databinding.LayoutSheetDialogBinding
 import com.teixeira.vcspace.models.SheetOptionItem
 
-class OptionsListBottomSheet : BottomSheetDialogFragment() {
+class OptionsListBottomSheet : DialogFragment() {
 
-  private val options: MutableList<SheetOptionItem> = ArrayList()
-  private var listener: (SheetOptionItem) -> Unit = {}
-
+  private var onOptionClickListener: ((SheetOptionItem) -> Unit)? = null
   private var binding: LayoutSheetDialogBinding? = null
 
-  override fun onCreateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?,
-  ): View {
-    binding = LayoutSheetDialogBinding.inflate(inflater, container, false)
-    return binding!!.root
+  companion object {
+    const val KEY_OPTIONS = "key_options"
+
+    @JvmStatic
+    fun newInstance(
+      options: Array<SheetOptionItem>,
+      onOptionClickListener: (SheetOptionItem) -> Unit,
+    ): OptionsListBottomSheet {
+      return OptionsListBottomSheet().also {
+        it.onOptionClickListener = onOptionClickListener
+        it.arguments = Bundle().apply { putParcelableArray(KEY_OPTIONS, options) }
+      }
+    }
   }
 
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    binding!!.recyclerView.apply {
-      layoutManager = LinearLayoutManager(requireContext())
-      adapter = SheetOptionsListAdapter(options, listener)
+  override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+    val sheetDialog = BottomSheetDialog(requireContext())
+    binding = LayoutSheetDialogBinding.inflate(sheetDialog.layoutInflater)
+    sheetDialog.setContentView(binding!!.root)
+    sheetDialog.behavior.apply {
+      peekHeight = BottomSheetBehavior.PEEK_HEIGHT_AUTO
+      state = BottomSheetBehavior.STATE_EXPANDED
     }
+
+    val args = arguments
+    if (args != null && args.containsKey(KEY_OPTIONS)) {
+      val options = BundleCompat.getParcelableArray(args, KEY_OPTIONS, SheetOptionItem::class.java)
+      if (options != null) {
+        binding!!.recyclerView.apply {
+          layoutManager = LinearLayoutManager(requireContext())
+          adapter =
+            SheetOptionsListAdapter(options as Array<SheetOptionItem>) {
+              onOptionClickListener?.invoke(it)
+              dismiss()
+            }
+        }
+      }
+    }
+    return sheetDialog
   }
 
   override fun onDestroyView() {
     super.onDestroyView()
-    options.clear()
     binding = null
-  }
-
-  fun setOptionClickListener(listener: (SheetOptionItem) -> Unit) {
-    this.listener = listener
-  }
-
-  fun addOption(option: SheetOptionItem) {
-    options.add(option)
   }
 }
