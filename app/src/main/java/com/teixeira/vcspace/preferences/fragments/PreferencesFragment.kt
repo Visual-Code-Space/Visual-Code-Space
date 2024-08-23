@@ -3,12 +3,13 @@ package com.teixeira.vcspace.preferences.fragments
 import android.os.Bundle
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import com.teixeira.vcspace.R
 import com.teixeira.vcspace.app.BaseApplication
 import com.teixeira.vcspace.preferences.PREF_ABOUT_GITHUB_KEY
 import com.teixeira.vcspace.preferences.PREF_CONFIGURE_EDITOR_KEY
 import com.teixeira.vcspace.preferences.PREF_CONFIGURE_FILE_KEY
 import com.teixeira.vcspace.preferences.PREF_CONFIGURE_GENERAL_KEY
-import com.teixeira.vcspace.preferences.R
+import com.teixeira.vcspace.preferences.R.xml
 
 class PreferencesFragment : PreferenceFragmentCompat() {
 
@@ -17,7 +18,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
   }
 
   override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-    setPreferencesFromResource(R.xml.preferences, rootKey)
+    setPreferencesFromResource(xml.preferences, rootKey)
 
     findPreference<Preference>(PREF_CONFIGURE_GENERAL_KEY)?.setOnPreferenceClickListener { _ ->
       goToPreferenceFragment(GeneralPreferencesFragment())
@@ -41,14 +42,10 @@ class PreferencesFragment : PreferenceFragmentCompat() {
   }
 
   private fun goToPreferenceFragment(fragment: PreferenceFragmentCompat) {
-    val fm = parentFragmentManager
-    fm
+    parentFragmentManager
       .beginTransaction()
       .replace(R.id.container, fragment)
       .addToBackStack(null)
       .commitAllowingStateLoss()
-
-    // Ensure it is committed.
-    fm.executePendingTransactions()
   }
 }
