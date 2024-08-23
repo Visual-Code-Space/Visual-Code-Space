@@ -2,13 +2,12 @@ package com.teixeira.vcspace.ui.workspace
 
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
-import com.google.android.material.color.MaterialColors
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.navigationrail.NavigationRailView
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
-import com.teixeira.vcspace.utils.getAttrColor
 import com.teixeira.vcspace.resources.R
+import com.teixeira.vcspace.utils.getAttrColor
 
 fun NavigationView.configureNavigationViewBackground() {
   val shapeDrawable = background as? MaterialShapeDrawable ?: return

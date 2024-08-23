@@ -26,7 +26,7 @@ import io.github.rosemoe.sora.widget.component.EditorCompletionAdapter
 class CompletionListAdapter : EditorCompletionAdapter() {
 
   override fun getItemHeight(): Int {
-    return SizeUtils.dp2px(50f)
+    return SizeUtils.dp2px(40f)
   }
 
   override fun getView(pos: Int, v: View?, parent: ViewGroup?, isSelected: Boolean): View {
@@ -34,9 +34,12 @@ class CompletionListAdapter : EditorCompletionAdapter() {
       v?.let { LayoutCompletionItemBinding.bind(it) }
         ?: LayoutCompletionItemBinding.inflate(LayoutInflater.from(context), parent, false)
 
-    val item = getItem(pos) as VCSpaceCompletionItem
-
-    val kind = item.completionKind.toString()
+    val item = getItem(pos)
+    val kind =
+      (if (item is VCSpaceCompletionItem) {
+          item.completionKind
+        } else CompletionItemKind.IDENTIFIER)
+        .toString()
 
     binding.apply {
       itemIcon.text = kind[0].toString()

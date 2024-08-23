@@ -257,7 +257,7 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
     val scopeName: String? = GrammarProvider.findScopeByFileExtension(file?.extension)
 
     return if (scopeName != null) {
-      TextMateLanguage.create(scopeName, GrammarRegistry.getInstance(), false).apply {
+      TextMateLanguage.create(scopeName, GrammarRegistry.getInstance(), true).apply {
         tabSize = editorIndent
         useTab(editorUseTab)
       }
