@@ -27,7 +27,7 @@ fun NavigationRailView.configureNavigationRailBackground() {
   val corner = context.resources.getDimension(R.dimen.nav_corners)
   shapeDrawable.setColorFilter(
     PorterDuffColorFilter(
-      context.getAttrColor(com.google.android.material.R.attr.colorPrimaryContainer),
+      context.getAttrColor(com.google.android.material.R.attr.colorOnSurfaceInverse),
       PorterDuff.Mode.SRC_ATOP,
     )
   )
