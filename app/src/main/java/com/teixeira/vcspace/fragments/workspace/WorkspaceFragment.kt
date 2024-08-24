@@ -15,7 +15,6 @@ import com.teixeira.vcspace.R
 import com.teixeira.vcspace.activities.PreferencesActivity
 import com.teixeira.vcspace.activities.TerminalActivity
 import com.teixeira.vcspace.databinding.FragmentWorkspaceBinding
-import com.teixeira.vcspace.ui.workspace.configureNavigationRailBackground
 
 class WorkspaceFragment : Fragment(), NavController.OnDestinationChangedListener {
 
@@ -50,7 +49,6 @@ class WorkspaceFragment : Fragment(), NavController.OnDestinationChangedListener
       }
       false
     }
-    binding.navRail.configureNavigationRailBackground()
   }
 
   override fun onDestinationChanged(
