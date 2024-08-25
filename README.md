@@ -28,6 +28,7 @@
 
 ## 🩶 Thanks to
 - [Rosemoe](https://github.com/Rosemoe) for the [sora-editor](https://github.com/Rosemoe/sora-editor)
+- [VSCode](https://github.com/microsoft/vscode) for the [TextMate files](https://github.com/microsoft/vscode/tree/main/extensions)
 - [Termux](https://github.com/termux) for the [Terminal Emulator](https://github.com/termux/termux-app)
 - [Akash Yadav](https://github.com/itsaky) for the awesome [AndroidIDE](https://github.com/AndroidIDEOfficial/AndroidIDE)
 
