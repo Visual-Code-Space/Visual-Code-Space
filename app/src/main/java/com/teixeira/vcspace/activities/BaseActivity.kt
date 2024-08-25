@@ -43,9 +43,11 @@ abstract class BaseActivity : AppCompatActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     window?.apply {
-      navigationBarDividerColor = this@BaseActivity.navigationBarDividerColor
-      navigationBarColor = this@BaseActivity.navigationBarColor
-      statusBarColor = this@BaseActivity.statusBarColor
+      this.statusBarColor = this@BaseActivity.statusBarColor
+      this.navigationBarColor = this@BaseActivity.navigationBarColor
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        this.navigationBarDividerColor = this@BaseActivity.navigationBarDividerColor
+      }
     }
     super.onCreate(savedInstanceState)
     setContentView(getLayout())
