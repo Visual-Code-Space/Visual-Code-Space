@@ -27,13 +27,13 @@ abstract class BaseActivity : AppCompatActivity() {
       if (!isStoragePermissionGranted()) showRequestPermissionDialog()
     }
 
-  open val navigationBarDividerColor: Int
+  protected open val navigationBarDividerColor: Int
     get() = getAttrColor(attr.colorSurface)
 
-  open val navigationBarColor: Int
+  protected open val navigationBarColor: Int
     get() = getAttrColor(attr.colorSurface)
 
-  open val statusBarColor: Int
+  protected open val statusBarColor: Int
     get() = getAttrColor(attr.colorSurface)
 
   protected val app: VCSpaceApplication
@@ -81,9 +81,7 @@ abstract class BaseActivity : AppCompatActivity() {
         } else {
           ActivityCompat.requestPermissions(
             this,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-              arrayOf(permission.MANAGE_EXTERNAL_STORAGE)
-            } else arrayOf(permission.READ_EXTERNAL_STORAGE, permission.WRITE_EXTERNAL_STORAGE),
+            arrayOf(permission.READ_EXTERNAL_STORAGE, permission.WRITE_EXTERNAL_STORAGE),
             REQCODE_STORAGE,
           )
         }

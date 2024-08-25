@@ -57,8 +57,10 @@ class OptionsListBottomSheet : DialogFragment() {
 
     val args = arguments
     if (args != null && args.containsKey(KEY_OPTIONS)) {
-      val options = BundleCompat.getParcelableArray(args, KEY_OPTIONS, SheetOptionItem::class.java)
-        ?.map { it as SheetOptionItem }?.toTypedArray()
+      val options =
+        BundleCompat.getParcelableArray(args, KEY_OPTIONS, SheetOptionItem::class.java)
+          ?.map { it as SheetOptionItem }
+          ?.toTypedArray()
       if (options != null) {
         binding!!.recyclerView.apply {
           layoutManager = LinearLayoutManager(requireContext())
