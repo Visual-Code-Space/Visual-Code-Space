@@ -2,6 +2,7 @@ package com.teixeira.vcspace.activities
 
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.commit
 import com.google.android.material.R.attr
 import com.teixeira.vcspace.databinding.ActivityPreferencesBinding
 import com.teixeira.vcspace.preferences.fragments.PreferencesFragment
@@ -31,10 +32,9 @@ class PreferencesActivity : BaseActivity() {
 
     val fragmentManager = supportFragmentManager
     if (fragmentManager.findFragmentByTag(PreferencesFragment.FRAGMENT_TAG) == null) {
-      supportFragmentManager
-        .beginTransaction()
-        .add(binding.container.id, PreferencesFragment(), PreferencesFragment.FRAGMENT_TAG)
-        .commitAllowingStateLoss()
+      supportFragmentManager.commit {
+        add(binding.container.id, PreferencesFragment(), PreferencesFragment.FRAGMENT_TAG)
+      }
     }
   }
 
