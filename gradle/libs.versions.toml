@@ -45,5 +45,5 @@ common-terminal-emulator = { module = "com.github.termux.termux-app:terminal-emu
 
 [plugins]
 android-application = { id = "com.android.application", version = "8.1.1" }
-android-library = { id = "com.android.library", version = "8.1.1" }
+android-library = { id = "com.android.library", version = "8.6.0" }
 kotlin = { id = "org.jetbrains.kotlin.android", version = "1.9.10" }
