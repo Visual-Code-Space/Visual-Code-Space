@@ -111,10 +111,17 @@ val fileShowhiddenfiles: Boolean
   get() = defaultPrefs.getBoolean(PREF_FILE_SHOWHIDDENFILES_KEY, true)
 
 // Others
-val PREF_PYTHON_EXTRACTED_KEY = "pref_python_extracted_key"
+const val PREF_PYTHON_EXTRACTED_KEY = "pref_python_extracted_key"
+const val PREF_PYTHON_DOWNLOADED_KEY = "pref_python_downloaded_key"
 
 var pythonExtracted: Boolean
   get() = defaultPrefs.getBoolean(PREF_PYTHON_EXTRACTED_KEY, false)
   set(value) {
     defaultPrefs.edit().putBoolean(PREF_PYTHON_EXTRACTED_KEY, value).apply()
+  }
+
+var pythonDownloaded: Boolean
+  get() = defaultPrefs.getBoolean(PREF_PYTHON_DOWNLOADED_KEY, false)
+  set(value) {
+    defaultPrefs.edit().putBoolean(PREF_PYTHON_DOWNLOADED_KEY, value).apply()
   }

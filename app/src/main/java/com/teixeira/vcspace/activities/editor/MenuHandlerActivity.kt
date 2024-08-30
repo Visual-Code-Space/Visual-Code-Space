@@ -24,6 +24,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.view.menu.MenuBuilder
+import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.KeyboardUtils
 import com.blankj.utilcode.util.UriUtils
 import com.downloader.Error
@@ -34,6 +35,7 @@ import com.teixeira.vcspace.PYTHON_PACKAGE_URL_32_BIT
 import com.teixeira.vcspace.PYTHON_PACKAGE_URL_64_BIT
 import com.teixeira.vcspace.R
 import com.teixeira.vcspace.activities.TerminalActivity
+import com.teixeira.vcspace.preferences.pythonDownloaded
 import com.teixeira.vcspace.preferences.pythonExtracted
 import com.teixeira.vcspace.resources.R.string
 import com.teixeira.vcspace.utils.launchWithProgressDialog
@@ -114,7 +116,7 @@ abstract class MenuHandlerActivity : EditorHandlerActivity() {
   }
 
   private fun extractPythonFile(filePath: String, onDone: Runnable) {
-    if (pythonExtracted) {
+    if (pythonDownloaded) {
       onDone.run()
     } else {
       coroutineScope.launchWithProgressDialog(
@@ -126,7 +128,7 @@ abstract class MenuHandlerActivity : EditorHandlerActivity() {
         },
         invokeOnCompletion = { throwable ->
           if (throwable == null) {
-            pythonExtracted = true
+            pythonDownloaded = true
             onDone.run()
           }
         }
@@ -144,9 +146,13 @@ abstract class MenuHandlerActivity : EditorHandlerActivity() {
   }
 
   private fun downloadPythonPackage(onDownloaded: () -> Unit) {
-    if (pythonExtracted) {
+    if (pythonDownloaded) {
       onDownloaded()
       return
+    }
+
+    if (pythonExtracted) {
+      FileUtils.deleteAllInDir(filesDir)
     }
 
     val url = if (Process.is64Bit()) PYTHON_PACKAGE_URL_64_BIT else PYTHON_PACKAGE_URL_32_BIT
@@ -173,7 +179,7 @@ abstract class MenuHandlerActivity : EditorHandlerActivity() {
           override fun onDownloadComplete() {
             extractPythonFile(outputFile.absolutePath) {
               outputFile.delete()
-              pythonExtracted = true
+              pythonDownloaded = true
               onDownloaded()
             }
           }
