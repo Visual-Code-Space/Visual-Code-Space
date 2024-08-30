@@ -64,8 +64,6 @@ dependencies {
   implementation(libs.androidx.core.ktx)
   implementation(libs.androidx.fragment.ktx)
   implementation(libs.androidx.preference)
-  implementation(libs.androidx.nav.fragment)
-  implementation(libs.androidx.nav.ui)
 
   implementation(libs.google.material)
   implementation(libs.google.guava)
