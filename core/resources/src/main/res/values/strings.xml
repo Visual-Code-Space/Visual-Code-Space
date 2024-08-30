@@ -52,6 +52,7 @@
 
   <!-- Python Compiler -->
   <string name="python_extracting_python_compiler">Extracting python compiler, please wait</string>
+  <string name="python_downloading_python_compiler">Downloading python compiler, please wait</string>
 
   <!-- Workspace -->
   <string name="workspace">Workspace</string>

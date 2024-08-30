@@ -17,24 +17,31 @@ package com.teixeira.vcspace.activities.editor
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.Process
+import android.text.Html
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.view.menu.MenuBuilder
-import androidx.core.view.isVisible
 import com.blankj.utilcode.util.KeyboardUtils
 import com.blankj.utilcode.util.UriUtils
+import com.downloader.Error
+import com.downloader.OnDownloadListener
+import com.downloader.PRDownloader
 import com.hzy.libp7zip.P7ZipApi
+import com.teixeira.vcspace.PYTHON_PACKAGE_URL_32_BIT
+import com.teixeira.vcspace.PYTHON_PACKAGE_URL_64_BIT
 import com.teixeira.vcspace.R
 import com.teixeira.vcspace.activities.TerminalActivity
 import com.teixeira.vcspace.preferences.pythonExtracted
 import com.teixeira.vcspace.resources.R.string
 import com.teixeira.vcspace.utils.launchWithProgressDialog
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
-import kotlinx.coroutines.launch
 
 /**
  * Base class for EditorActivity. Handles the menu options logic.
@@ -83,16 +90,17 @@ abstract class MenuHandlerActivity : EditorHandlerActivity() {
     when (item.itemId) {
       R.id.menu_execute -> {
         saveAllFilesAsync(false) {
-          if (editor?.file?.name?.endsWith(".py") ?: false) {
-            extractPythonFile {
+          if (editor?.file?.name?.endsWith(".py") == true) {
+            downloadPythonPackage {
               startActivity(
                 Intent(this, TerminalActivity::class.java)
-                  .putExtra(TerminalActivity.KEY_PYTHON_FILE_PATH, editor?.file?.absolutePath)
+                  .putExtra(TerminalActivity.KEY_PYTHON_FILE_PATH, editor.file?.absolutePath)
               )
             }
           }
         }
       }
+
       R.id.menu_search -> editor?.beginSearchMode()
       R.id.menu_undo -> editor?.undo()
       R.id.menu_redo -> editor?.redo()
@@ -105,34 +113,82 @@ abstract class MenuHandlerActivity : EditorHandlerActivity() {
     return true
   }
 
-  private fun extractPythonFile(whenExtractingDone: Runnable) {
+  private fun extractPythonFile(filePath: String, onDone: Runnable) {
     if (pythonExtracted) {
-      whenExtractingDone.run()
+      onDone.run()
     } else {
       coroutineScope.launchWithProgressDialog(
         uiContext = this,
-        configureBuilder = { builder ->
-          builder.setMessage(string.python_extracting_python_compiler)
-          builder.setCancelable(false)
+        context = Dispatchers.IO,
+        configureBuilder = {
+          it.setMessage(string.python_extracting_python_compiler)
+            .setCancelable(false)
         },
         invokeOnCompletion = { throwable ->
           if (throwable == null) {
             pythonExtracted = true
-            whenExtractingDone.run()
+            onDone.run()
           }
-        },
-        action = { _ ->
-          val temp7zStream = assets.open("python/python.7z")
-          val file = File("${filesDir.absolutePath}/python.7z")
-          file.createNewFile()
+        }
+      ) {
+        File(filePath).inputStream().use { temp7zStream ->
+          val file = File("${filesDir.absolutePath}/python.7z").apply { createNewFile() }
           Files.copy(temp7zStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING)
           val exitCode =
             P7ZipApi.executeCommand("7z x ${file.absolutePath} -o${filesDir.absolutePath}")
           Log.d("EditorActivity", "extractFiles: $exitCode")
           file.delete()
-          temp7zStream.close()
-        },
-      )
+        }
+      }
+    }
+  }
+
+  private fun downloadPythonPackage(onDownloaded: () -> Unit) {
+    if (pythonExtracted) {
+      onDownloaded()
+      return
+    }
+
+    val url = if (Process.is64Bit()) PYTHON_PACKAGE_URL_64_BIT else PYTHON_PACKAGE_URL_32_BIT
+    val outputFile = File(filesDir, "python.7z")
+
+    CoroutineScope(Dispatchers.IO).launchWithProgressDialog(
+      uiContext = this,
+      context = Dispatchers.IO,
+      configureBuilder = {
+        it.setTitle("Downloading Python")
+          .setMessage(string.python_downloading_python_compiler)
+          .setCancelable(false)
+          .setIndeterminate(false)
+          .setMax(100)
+      }
+    ) { builder ->
+      PRDownloader.download(url, outputFile.parent, outputFile.name)
+        .build()
+        .setOnProgressListener {
+          val progress = (it.currentBytes * 100 / it.totalBytes).toInt()
+          builder.setProgress(progress).setMessage("Downloading... $progress%")
+        }
+        .start(object : OnDownloadListener {
+          override fun onDownloadComplete() {
+            extractPythonFile(outputFile.absolutePath) {
+              outputFile.delete()
+              pythonExtracted = true
+              onDownloaded()
+            }
+          }
+
+          override fun onError(error: Error) {
+            builder.setMessage(
+              "Download error:\n\n${
+                Html.fromHtml(
+                  error.serverErrorMessage,
+                  Html.FROM_HTML_MODE_COMPACT
+                )
+              }"
+            )
+          }
+        })
     }
   }
 }

@@ -70,11 +70,12 @@ inline fun CoroutineScope.launchWithProgressDialog(
   val builder = ProgressDialogBuilder(uiContext)
   configureBuilder(builder)
 
-  val dialog = builder.show()
+  runOnUiThread { builder.show() }
+
   return launch(context) { action(builder) }
     .also { job ->
       job.invokeOnCompletion { throwable ->
-        runOnUiThread { dialog.dismiss() }
+        runOnUiThread { builder.dismiss() }
         invokeOnCompletion(throwable)
       }
     }

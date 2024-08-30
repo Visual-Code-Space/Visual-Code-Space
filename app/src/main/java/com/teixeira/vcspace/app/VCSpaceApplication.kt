@@ -3,6 +3,7 @@ package com.teixeira.vcspace.app
 import android.content.Intent
 import androidx.appcompat.app.AppCompatDelegate
 import com.blankj.utilcode.util.ThrowableUtils
+import com.downloader.PRDownloader
 import com.google.android.material.color.DynamicColors
 import com.teixeira.vcspace.activities.CrashActivity
 import com.teixeira.vcspace.preferences.aparenceMaterialYou
@@ -12,8 +13,8 @@ import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.model.ThemeModel
 import io.github.rosemoe.sora.langs.textmate.registry.provider.AssetsFileResolver
-import kotlin.system.exitProcess
 import org.eclipse.tm4e.core.registry.IThemeSource
+import kotlin.system.exitProcess
 
 class VCSpaceApplication : BaseApplication() {
 
@@ -28,6 +29,7 @@ class VCSpaceApplication : BaseApplication() {
     if (aparenceMaterialYou) {
       DynamicColors.applyToActivitiesIfAvailable(this)
     }
+    PRDownloader.initialize(applicationContext)
     GrammarProvider.initialize(this)
     loadDefaultThemes()
   }
@@ -42,13 +44,13 @@ class VCSpaceApplication : BaseApplication() {
       val path = "editor/schemes/$name.json"
       themeRegistry.loadTheme(
         ThemeModel(
-            IThemeSource.fromInputStream(
-              FileProviderRegistry.getInstance().tryGetInputStream(path),
-              path,
-              null,
-            ),
-            name,
-          )
+          IThemeSource.fromInputStream(
+            FileProviderRegistry.getInstance().tryGetInputStream(path),
+            path,
+            null,
+          ),
+          name,
+        )
           .apply { setDark(name != "quietlight") }
       )
     }

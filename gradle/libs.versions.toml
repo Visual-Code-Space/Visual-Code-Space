@@ -2,7 +2,7 @@
 editor = "0.23.4-96c0abc-SNAPSHOT"
 androidx-navigation = "2.7.7"
 
-junit = "4.13.2"
+prdownloader = "1.0.1"
 termux = "0.118.1"
 p7zip = "v1.7.2"
 
@@ -36,6 +36,8 @@ common-p7zip = { module = "com.github.hzy3774:AndroidP7zip", version.ref = "p7zi
 common-kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version = "1.7.3" }
 common-terminal-view = { module = "com.github.termux.termux-app:terminal-view", version.ref = "termux" }
 common-terminal-emulator = { module = "com.github.termux.termux-app:terminal-emulator", version.ref = "termux" }
+
+prdownloader = { module = "com.github.amitshekhariitbhu:PRDownloader", version.ref = "prdownloader" }
 
 [plugins]
 android-application = { id = "com.android.application", version = "8.6.0" }

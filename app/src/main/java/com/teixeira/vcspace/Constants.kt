@@ -20,6 +20,10 @@ import com.teixeira.vcspace.preferences.PREF_CONFIGURE_EDITOR_KEY
 import com.teixeira.vcspace.preferences.PREF_CONFIGURE_FILE_KEY
 import com.teixeira.vcspace.preferences.PREF_CONFIGURE_GENERAL_KEY
 
+// From https://github.com/PsiCodes/ktxpy
+const val PYTHON_PACKAGE_URL_64_BIT = "https://github.com/PsiCodes/ktxpy/raw/master/app/arch_arm64-v8a/assets/python.7z"
+const val PYTHON_PACKAGE_URL_32_BIT = "https://github.com/PsiCodes/ktxpy/raw/master/app/arch_arm32/assets/python.7z"
+
 object PreferenceKeys {
   const val GENERAL_PREFERENCES = PREF_CONFIGURE_GENERAL_KEY
   const val EDITOR_PREFERENCES = PREF_CONFIGURE_EDITOR_KEY

@@ -82,6 +82,8 @@ dependencies {
   implementation(libs.androidx.nav.ui)
   implementation(libs.androidx.nav.dynamic.features)
 
+  implementation(libs.prdownloader)
+
   implementation(project(":core:common"))
   implementation(project(":core:resources"))
   implementation(project(":feature:editor"))
