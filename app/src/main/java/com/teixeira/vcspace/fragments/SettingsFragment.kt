@@ -16,6 +16,7 @@
 package com.teixeira.vcspace.fragments
 
 import android.os.Bundle
+import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
@@ -48,8 +49,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
       BaseApplication.instance.openProjectRepo()
       true
     }
+  }
 
-    requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+
+    requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
       override fun handleOnBackPressed() {
         requireActivity().finish()
       }

@@ -16,6 +16,7 @@
 package com.teixeira.vcspace.fragments.settings
 
 import android.os.Bundle
+import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceFragmentCompat
@@ -25,11 +26,17 @@ import com.teixeira.vcspace.preferences.R.xml
 class FileSettingsFragment : PreferenceFragmentCompat() {
   override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
     setPreferencesFromResource(xml.preferences_file, rootKey)
+  }
 
-    requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
-      override fun handleOnBackPressed() {
-        findNavController().navigate(R.id.action_fileSettingsFragment_to_settingsFragment)
-      }
-    })
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+
+    requireActivity().onBackPressedDispatcher.addCallback(
+      viewLifecycleOwner,
+      object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+          findNavController().navigate(R.id.action_fileSettingsFragment_to_settingsFragment)
+        }
+      })
   }
 }
