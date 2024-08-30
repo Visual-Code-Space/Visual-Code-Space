@@ -36,11 +36,6 @@ android {
     }
   }
 
-  compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
-  }
-
   compileOptions { isCoreLibraryDesugaringEnabled = true }
 
   packaging {
@@ -84,6 +79,10 @@ dependencies {
   implementation(libs.common.kotlinx.coroutines.android)
   implementation(libs.common.terminal.view)
   implementation(libs.common.terminal.emulator)
+
+  implementation(libs.androidx.nav.fragment)
+  implementation(libs.androidx.nav.ui)
+  implementation(libs.androidx.nav.dynamic.features)
 
   implementation(project(":core:common"))
   implementation(project(":core:resources"))

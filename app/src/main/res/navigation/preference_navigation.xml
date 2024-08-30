@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ This file is part of Visual Code Space.
+  ~
+  ~ Visual Code Space is free software: you can redistribute it and/or modify it under the terms of
+  ~ the GNU General Public License as published by the Free Software Foundation, either version 3 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ Visual Code Space is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+  ~ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along with Visual Code Space.
+  ~ If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:id="@+id/preference_navigation"
+  app:startDestination="@id/settingsFragment">
+
+  <fragment
+    android:id="@+id/settingsFragment"
+    android:name="com.teixeira.vcspace.fragments.SettingsFragment"
+    android:label="Settings">
+    <action
+      android:id="@+id/action_settingsFragment_to_generalSettingsFragment"
+      app:destination="@id/generalSettingsFragment" />
+    <action
+      android:id="@+id/action_settingsFragment_to_editorSettingsFragment"
+      app:destination="@id/editorSettingsFragment" />
+    <action
+      android:id="@+id/action_settingsFragment_to_fileSettingsFragment"
+      app:destination="@id/fileSettingsFragment" />
+  </fragment>
+  <fragment
+    android:id="@+id/generalSettingsFragment"
+    android:name="com.teixeira.vcspace.fragments.settings.GeneralSettingsFragment"
+    android:label="General">
+    <action
+      android:id="@+id/action_generalSettingsFragment_to_settingsFragment"
+      app:destination="@id/settingsFragment" />
+  </fragment>
+  <fragment
+    android:id="@+id/editorSettingsFragment"
+    android:name="com.teixeira.vcspace.fragments.settings.EditorSettingsFragment"
+    android:label="Editor">
+    <action
+      android:id="@+id/action_editorSettingsFragment_to_settingsFragment"
+      app:destination="@id/settingsFragment" />
+  </fragment>
+  <fragment
+    android:id="@+id/fileSettingsFragment"
+    android:name="com.teixeira.vcspace.fragments.settings.FileSettingsFragment"
+    android:label="File">
+    <action
+      android:id="@+id/action_fileSettingsFragment_to_settingsFragment"
+      app:destination="@id/settingsFragment" />
+  </fragment>
+</navigation>

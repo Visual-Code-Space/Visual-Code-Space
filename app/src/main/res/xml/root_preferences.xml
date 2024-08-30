@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ This file is part of Visual Code Space.
+  ~
+  ~ Visual Code Space is free software: you can redistribute it and/or modify it under the terms of
+  ~ the GNU General Public License as published by the Free Software Foundation, either version 3 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ Visual Code Space is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+  ~ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along with Visual Code Space.
+  ~ If not, see <https://www.gnu.org/licenses/>.
+  -->
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+  <PreferenceCategory
+    app:iconSpaceReserved="false"
+    app:title="@string/pref_category_configure">
+
+    <Preference
+      app:iconSpaceReserved="false"
+      app:key="pref_configure_general_key"
+      app:summary="@string/pref_configure_general_summary"
+      app:title="@string/pref_configure_general" />
+
+    <Preference
+      app:iconSpaceReserved="false"
+      app:key="pref_configure_editor_key"
+      app:summary="@string/pref_configure_editor_summary"
+      app:title="@string/pref_configure_editor" />
+
+    <Preference
+      app:iconSpaceReserved="false"
+      app:key="pref_configure_file_key"
+      app:summary="@string/pref_configure_file_explorer_summary"
+      app:title="@string/pref_configure_file_explorer" />
+
+  </PreferenceCategory>
+
+  <PreferenceCategory
+    app:iconSpaceReserved="false"
+    app:title="@string/pref_category_about">
+
+    <Preference
+      app:icon="@drawable/ic_github"
+      app:key="pref_about_github_key"
+      app:summary="@string/pref_about_github_summary"
+      app:title="@string/pref_about_github" />
+
+  </PreferenceCategory>
+
+</PreferenceScreen>

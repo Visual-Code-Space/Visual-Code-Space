@@ -14,15 +14,12 @@ android {
   }
 
   buildFeatures { viewBinding = true }
-
-  compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
-  }
 }
 
 dependencies {
   implementation(libs.androidx.appcompat)
   implementation(libs.androidx.preference)
   implementation(libs.google.material)
+  implementation(libs.androidx.nav.fragment)
+  implementation(libs.androidx.nav.ui)
 }

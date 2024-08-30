@@ -13,31 +13,23 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.preferences.fragments
+package com.teixeira.vcspace.fragments.settings
 
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
+import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceFragmentCompat
+import com.teixeira.vcspace.R
+import com.teixeira.vcspace.preferences.R.xml
 
-/** @author Felipe Teixeira */
-class GenericPreferencesFragment : PreferenceFragmentCompat() {
-
-  companion object {
-    const val KEY_RESOURCE_ID = "resource_id"
-
-    @JvmStatic
-    fun create(resourceId: Int): GenericPreferencesFragment {
-      return GenericPreferencesFragment().also {
-        it.arguments = Bundle().apply { putInt(KEY_RESOURCE_ID, resourceId) }
-      }
-    }
-  }
-
+class EditorSettingsFragment : PreferenceFragmentCompat() {
   override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-    val resourceId =
-      arguments?.getInt(KEY_RESOURCE_ID)
-        ?: throw IllegalStateException(
-          "Preferences fragment cannot be launched without a resource ID"
-        )
-    setPreferencesFromResource(resourceId, rootKey)
+    setPreferencesFromResource(xml.preferences_editor, rootKey)
+
+    requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
+      override fun handleOnBackPressed() {
+        findNavController().navigate(R.id.action_editorSettingsFragment_to_settingsFragment)
+      }
+    })
   }
 }
