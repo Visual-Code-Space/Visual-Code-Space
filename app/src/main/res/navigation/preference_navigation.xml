@@ -51,7 +51,7 @@
   <fragment
     android:id="@+id/fileSettingsFragment"
     android:name="com.teixeira.vcspace.fragments.settings.FileSettingsFragment"
-    android:label="File">
+    android:label="File Explorer">
     <action
       android:id="@+id/action_fileSettingsFragment_to_settingsFragment"
       app:destination="@id/settingsFragment" />
