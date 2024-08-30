@@ -35,7 +35,7 @@ common-editor = { module = "io.github.Rosemoe.sora-editor:editor", version.ref =
 common-editor-textmate = { module = "io.github.Rosemoe.sora-editor:language-textmate", version.ref = "editor" }
 common-eventbus = { module = "org.greenrobot:eventbus", version = "3.3.1" }
 common-jsoup = { module = "org.jsoup:jsoup", version = "1.18.1" }
-common-leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version = "2.12" }
+common-leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version = "2.14" }
 common-utilcode = { module = "com.blankj:utilcodex", version = "1.31.1" }
 common-junit = { group = "junit", name = "junit", version.ref = "junit" }
 common-p7zip = { module = "com.github.hzy3774:AndroidP7zip", version.ref = "p7zip" }
