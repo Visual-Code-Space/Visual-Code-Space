@@ -38,12 +38,12 @@ import com.teixeira.vcspace.utils.UniqueNameBuilder
 import com.teixeira.vcspace.utils.showShortToast
 import com.teixeira.vcspace.viewmodel.EditorViewModel
 import com.teixeira.vcspace.viewmodel.EditorViewModel.EditorAction
-import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.io.File
 
 /**
  * Base class for EditorActivity. Handles logic for working with file editors.

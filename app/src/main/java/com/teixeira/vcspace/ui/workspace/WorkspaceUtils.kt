@@ -10,7 +10,7 @@ fun NavigationView.configureNavigationViewBackground() {
   val corner = context.resources.getDimension(R.dimen.nav_corners)
   shapeDrawable.setShapeAppearanceModel(
     shapeDrawable
-      .getShapeAppearanceModel()
+      .shapeAppearanceModel
       .toBuilder()
       .setTopRightCorner(CornerFamily.ROUNDED, corner)
       .setBottomRightCorner(CornerFamily.ROUNDED, corner)

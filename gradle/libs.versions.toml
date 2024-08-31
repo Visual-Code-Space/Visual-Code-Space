@@ -1,4 +1,5 @@
 [versions]
+bsh = "3.0.0-SNAPSHOT"
 editor = "0.23.4-96c0abc-SNAPSHOT"
 androidx-navigation = "2.7.7"
 
@@ -38,6 +39,7 @@ common-terminal-view = { module = "com.github.termux.termux-app:terminal-view", 
 common-terminal-emulator = { module = "com.github.termux.termux-app:terminal-emulator", version.ref = "termux" }
 
 prdownloader = { module = "com.github.amitshekhariitbhu:PRDownloader", version.ref = "prdownloader" }
+bsh = { module = "org.beanshell:bsh", version.ref = "bsh" }
 
 [plugins]
 android-application = { id = "com.android.application", version = "8.6.0" }

@@ -1,29 +1,53 @@
 package com.teixeira.vcspace.app
 
+import android.app.Activity
 import android.content.Intent
+import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
+import com.blankj.utilcode.util.ThreadUtils
 import com.blankj.utilcode.util.ThrowableUtils
 import com.downloader.PRDownloader
 import com.google.android.material.color.DynamicColors
 import com.teixeira.vcspace.activities.CrashActivity
+import com.teixeira.vcspace.activities.editor.EditorActivity
 import com.teixeira.vcspace.preferences.aparenceMaterialYou
 import com.teixeira.vcspace.preferences.aparenceUIMode
 import com.teixeira.vcspace.providers.GrammarProvider
+import com.vcspace.plugins.internal.PluginManager
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.model.ThemeModel
 import io.github.rosemoe.sora.langs.textmate.registry.provider.AssetsFileResolver
 import org.eclipse.tm4e.core.registry.IThemeSource
+import java.util.concurrent.TimeUnit
 import kotlin.system.exitProcess
 
 class VCSpaceApplication : BaseApplication() {
 
   private var uncaughtException: Thread.UncaughtExceptionHandler? = null
 
+  private val activities = mutableListOf<Activity>()
+
   override fun onCreate() {
     uncaughtException = Thread.getDefaultUncaughtExceptionHandler()
     Thread.setDefaultUncaughtExceptionHandler(this::uncaughtException)
     super.onCreate()
+
+    registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
+      override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+        activities.add(activity)
+      }
+
+      override fun onActivityStarted(activity: Activity) {}
+      override fun onActivityResumed(activity: Activity) {}
+      override fun onActivityPaused(activity: Activity) {}
+      override fun onActivityStopped(activity: Activity) {}
+      override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
+      override fun onActivityDestroyed(activity: Activity) {
+        activities.removeAt(activities.indexOf(activity))
+      }
+    })
 
     AppCompatDelegate.setDefaultNightMode(aparenceUIMode)
     if (aparenceMaterialYou) {
@@ -32,6 +56,23 @@ class VCSpaceApplication : BaseApplication() {
     PRDownloader.initialize(applicationContext)
     GrammarProvider.initialize(this)
     loadDefaultThemes()
+
+    ThreadUtils.executeByIoWithDelay(object : ThreadUtils.Task<Unit>() {
+      override fun doInBackground() {
+        ThreadUtils.runOnUiThread {
+          Toast.makeText(
+            applicationContext,
+            "Loading plugins...",
+            Toast.LENGTH_SHORT
+          ).show()
+        }
+        PluginManager(this@VCSpaceApplication).init()
+      }
+
+      override fun onCancel() {}
+      override fun onFail(t: Throwable?) {}
+      override fun onSuccess(result: Unit?) {}
+    }, 2, TimeUnit.SECONDS)
   }
 
   private fun loadDefaultThemes() {
@@ -50,8 +91,7 @@ class VCSpaceApplication : BaseApplication() {
             null,
           ),
           name,
-        )
-          .apply { setDark(name != "quietlight") }
+        ).apply { isDark = name != "quietlight" }
       )
     }
   }
@@ -72,5 +112,10 @@ class VCSpaceApplication : BaseApplication() {
     } catch (e: Throwable) {
       e.printStackTrace()
     }
+  }
+
+  // for plugin use
+  fun getEditorActivity(): EditorActivity? {
+    return activities.find { it is EditorActivity } as EditorActivity?
   }
 }

@@ -88,6 +88,7 @@ dependencies {
   implementation(project(":core:resources"))
   implementation(project(":feature:editor"))
   implementation(project(":feature:preferences"))
+  implementation(project(":feature:plugins"))
 
   debugImplementation(libs.common.leakcanary)
 }

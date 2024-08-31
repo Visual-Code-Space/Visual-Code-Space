@@ -5,11 +5,6 @@ import com.teixeira.vcspace.app.BaseApplication
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.utils.isDarkMode
 
-const val PREF_CONFIGURE_GENERAL_KEY = "pref_configure_general_key"
-const val PREF_CONFIGURE_EDITOR_KEY = "pref_configure_editor_key"
-const val PREF_CONFIGURE_FILE_KEY = "pref_configure_file_key"
-const val PREF_ABOUT_GITHUB_KEY = "pref_about_github_key"
-
 // General
 val PREF_APARENCE_UIMODE_KEY = "pref_aparence_uimode_key"
 val PREF_APARENCE_MATERIALYOU_KEY = "pref_aparence_materialyou_key"
