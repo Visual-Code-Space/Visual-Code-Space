@@ -188,21 +188,11 @@ abstract class MenuHandlerActivity : EditorHandlerActivity() {
           override fun onError(error: Error) {
             dialog.dismiss()
 
-            if (error.isConnectionError) {
-              Snackbar.make(window.decorView, "Connection failed!", Snackbar.LENGTH_SHORT)
-                .setAnimationMode(Snackbar.ANIMATION_MODE_FADE)
-                .show()
-            } else if (error.isServerError) {
-              Snackbar.make(window.decorView, "Server error!", Snackbar.LENGTH_SHORT)
-                .setAnimationMode(Snackbar.ANIMATION_MODE_FADE)
-                .show()
-            } else {
-              Snackbar.make(
-                window.decorView,
-                "Download failed! Something went wrong.",
-                Snackbar.LENGTH_SHORT
-              ).setAnimationMode(Snackbar.ANIMATION_MODE_FADE).show()
-            }
+            Snackbar.make(
+              window.decorView,
+              if (error.isConnectionError) "Connection failed!" else if (error.isServerError) "Server error!" else "Download failed! Something went wrong.",
+              Snackbar.LENGTH_SHORT
+            ).setAnimationMode(Snackbar.ANIMATION_MODE_FADE).show()
           }
         })
     }
