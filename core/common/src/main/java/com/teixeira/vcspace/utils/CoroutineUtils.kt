@@ -16,6 +16,7 @@
 package com.teixeira.vcspace.utils
 
 import android.content.Context
+import androidx.appcompat.app.AlertDialog
 import com.blankj.utilcode.util.ThreadUtils.runOnUiThread
 import com.teixeira.vcspace.dialogs.ProgressDialogBuilder
 import kotlin.coroutines.CoroutineContext
@@ -64,18 +65,18 @@ inline fun CoroutineScope.launchWithProgressDialog(
   context: CoroutineContext = EmptyCoroutineContext,
   configureBuilder: (builder: ProgressDialogBuilder) -> Unit = {},
   crossinline invokeOnCompletion: (throwable: Throwable?) -> Unit = {},
-  crossinline action: suspend CoroutineScope.(builder: ProgressDialogBuilder) -> Unit,
+  crossinline action: suspend CoroutineScope.(builder: ProgressDialogBuilder, dialog: AlertDialog) -> Unit,
 ): Job {
 
   val builder = ProgressDialogBuilder(uiContext)
   configureBuilder(builder)
 
-  runOnUiThread { builder.show() }
+  val dialog = builder.show()
 
-  return launch(context) { action(builder) }
+  return launch(context) { action(builder, dialog) }
     .also { job ->
       job.invokeOnCompletion { throwable ->
-        runOnUiThread { builder.dismiss() }
+        runOnUiThread { dialog.dismiss() }
         invokeOnCompletion(throwable)
       }
     }

@@ -59,8 +59,6 @@ class ProgressDialogBuilder(val context: Context) {
 
   fun create(): AlertDialog = _builder.create()
 
-  fun dismiss() = create().dismiss()
-
   fun setTitle(title: String) = apply { _builder.setTitle(title) }
 
   fun setTitle(@StringRes title: Int) = apply { _builder.setTitle(title) }

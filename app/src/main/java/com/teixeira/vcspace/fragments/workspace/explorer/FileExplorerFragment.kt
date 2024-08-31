@@ -42,18 +42,18 @@ import com.teixeira.vcspace.utils.launchWithProgressDialog
 import com.teixeira.vcspace.utils.showShortToast
 import com.teixeira.vcspace.viewmodel.EditorViewModel
 import com.teixeira.vcspace.viewmodel.FileExplorerViewModel
-import java.io.File
-import java.io.IOException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
+import java.io.File
+import java.io.IOException
 
 class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
 
   private val editorViewModel by viewModels<EditorViewModel>(ownerProducer = { requireActivity() })
   private val fileViewModel by
-    viewModels<FileExplorerViewModel>(ownerProducer = { requireActivity() })
+  viewModels<FileExplorerViewModel>(ownerProducer = { requireActivity() })
 
   private var _binding: FragmentFileExplorerBinding? = null
   private val binding: FragmentFileExplorerBinding
@@ -120,12 +120,12 @@ class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
       )
 
     OptionsListBottomSheet.newInstance(options) { option ->
-        when (option.name) {
-          getString(R.string.file_copy_path) -> ClipboardUtils.copyText(file.absolutePath)
-          getString(R.string.file_rename) -> showRenameFileDialog(file)
-          getString(R.string.file_delete) -> showDeleteFileDialog(file)
-        }
+      when (option.name) {
+        getString(R.string.file_copy_path) -> ClipboardUtils.copyText(file.absolutePath)
+        getString(R.string.file_rename) -> showRenameFileDialog(file)
+        getString(R.string.file_delete) -> showDeleteFileDialog(file)
       }
+    }
       .show(childFragmentManager, null)
 
     return true
@@ -196,7 +196,7 @@ class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
             builder.setMessage(R.string.file_renaming)
             builder.setCancelable(false)
           },
-          action = { _ ->
+          action = { _, _ ->
             val name = binding.inputEdittext.text.toString().trim()
             val newFile = File(file.parentFile, name)
             val renamed = file.renameTo(newFile)
@@ -237,7 +237,7 @@ class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
             builder.setMessage(R.string.file_deleting)
             builder.setCancelable(false)
           },
-          action = { _ ->
+          action = { _, _ ->
             val deleted = FileUtils.delete(file)
 
             if (!deleted) {

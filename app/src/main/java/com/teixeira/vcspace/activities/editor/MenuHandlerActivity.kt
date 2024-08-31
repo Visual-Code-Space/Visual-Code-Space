@@ -18,7 +18,6 @@ package com.teixeira.vcspace.activities.editor
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Process
-import android.text.Html
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -30,6 +29,7 @@ import com.blankj.utilcode.util.UriUtils
 import com.downloader.Error
 import com.downloader.OnDownloadListener
 import com.downloader.PRDownloader
+import com.google.android.material.snackbar.Snackbar
 import com.hzy.libp7zip.P7ZipApi
 import com.teixeira.vcspace.PYTHON_PACKAGE_URL_32_BIT
 import com.teixeira.vcspace.PYTHON_PACKAGE_URL_64_BIT
@@ -132,7 +132,7 @@ abstract class MenuHandlerActivity : EditorHandlerActivity() {
             onDone.run()
           }
         }
-      ) {
+      ) { _, _ ->
         File(filePath).inputStream().use { temp7zStream ->
           val file = File("${filesDir.absolutePath}/python.7z").apply { createNewFile() }
           Files.copy(temp7zStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING)
@@ -168,7 +168,7 @@ abstract class MenuHandlerActivity : EditorHandlerActivity() {
           .setIndeterminate(false)
           .setMax(100)
       }
-    ) { builder ->
+    ) { builder, dialog ->
       PRDownloader.download(url, outputFile.parent, outputFile.name)
         .build()
         .setOnProgressListener {
@@ -177,6 +177,7 @@ abstract class MenuHandlerActivity : EditorHandlerActivity() {
         }
         .start(object : OnDownloadListener {
           override fun onDownloadComplete() {
+            dialog.dismiss()
             extractPythonFile(outputFile.absolutePath) {
               outputFile.delete()
               pythonDownloaded = true
@@ -185,14 +186,23 @@ abstract class MenuHandlerActivity : EditorHandlerActivity() {
           }
 
           override fun onError(error: Error) {
-            builder.setMessage(
-              "Download error:\n\n${
-                Html.fromHtml(
-                  error.serverErrorMessage,
-                  Html.FROM_HTML_MODE_COMPACT
-                )
-              }"
-            )
+            dialog.dismiss()
+
+            if (error.isConnectionError) {
+              Snackbar.make(window.decorView, "Connection failed!", Snackbar.LENGTH_SHORT)
+                .setAnimationMode(Snackbar.ANIMATION_MODE_FADE)
+                .show()
+            } else if (error.isServerError) {
+              Snackbar.make(window.decorView, "Server error!", Snackbar.LENGTH_SHORT)
+                .setAnimationMode(Snackbar.ANIMATION_MODE_FADE)
+                .show()
+            } else {
+              Snackbar.make(
+                window.decorView,
+                "Download failed! Something went wrong.",
+                Snackbar.LENGTH_SHORT
+              ).setAnimationMode(Snackbar.ANIMATION_MODE_FADE).show()
+            }
           }
         })
     }
