@@ -34,6 +34,6 @@ class UIModePreference : SingleChoiceDialogPreference {
     )
 
   override fun onSave() {
-    AppCompatDelegate.setDefaultNightMode(aparenceUIMode)
+    AppCompatDelegate.setDefaultNightMode(appearanceUIMode)
   }
 }

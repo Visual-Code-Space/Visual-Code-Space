@@ -1,0 +1,5 @@
+<resources>
+  <string name="title_activity_plugins">PluginsActivity</string>
+  <string name="pref_configure_plugins_summary">Manage plugins</string>
+  <string name="pref_configure_plugins">Plugins</string>
+</resources>

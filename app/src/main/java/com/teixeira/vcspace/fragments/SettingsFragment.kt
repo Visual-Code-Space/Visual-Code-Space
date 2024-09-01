@@ -23,7 +23,9 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.teixeira.vcspace.PreferenceKeys
 import com.teixeira.vcspace.R
+import com.teixeira.vcspace.activities.PluginsActivity
 import com.teixeira.vcspace.app.BaseApplication
+import com.teixeira.vcspace.extensions.open
 
 class SettingsFragment : PreferenceFragmentCompat() {
 
@@ -45,6 +47,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
       true
     }
 
+    findPreference<Preference>(PreferenceKeys.PLUGINS_PREFERENCES)?.setOnPreferenceClickListener {
+      requireContext().open(PluginsActivity::class.java)
+      true
+    }
+
     findPreference<Preference>(PreferenceKeys.GITHUB_ABOUT_PREFERENCES)?.setOnPreferenceClickListener {
       BaseApplication.instance.openProjectRepo()
       true
@@ -54,10 +61,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
-    requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-      override fun handleOnBackPressed() {
-        requireActivity().finish()
-      }
-    })
+    requireActivity().onBackPressedDispatcher.addCallback(
+      viewLifecycleOwner,
+      object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+          requireActivity().finish()
+        }
+      })
   }
 }

@@ -11,8 +11,8 @@ import com.downloader.PRDownloader
 import com.google.android.material.color.DynamicColors
 import com.teixeira.vcspace.activities.CrashActivity
 import com.teixeira.vcspace.activities.editor.EditorActivity
-import com.teixeira.vcspace.preferences.aparenceMaterialYou
-import com.teixeira.vcspace.preferences.aparenceUIMode
+import com.teixeira.vcspace.preferences.appearanceMaterialYou
+import com.teixeira.vcspace.preferences.appearanceUIMode
 import com.teixeira.vcspace.providers.GrammarProvider
 import com.vcspace.plugins.internal.PluginManager
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry
@@ -49,8 +49,8 @@ class VCSpaceApplication : BaseApplication() {
       }
     })
 
-    AppCompatDelegate.setDefaultNightMode(aparenceUIMode)
-    if (aparenceMaterialYou) {
+    AppCompatDelegate.setDefaultNightMode(appearanceUIMode)
+    if (appearanceMaterialYou) {
       DynamicColors.applyToActivitiesIfAvailable(this)
     }
     PRDownloader.initialize(applicationContext)

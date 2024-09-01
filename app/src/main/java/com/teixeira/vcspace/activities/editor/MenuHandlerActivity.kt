@@ -177,7 +177,6 @@ abstract class MenuHandlerActivity : EditorHandlerActivity() {
         }
         .start(object : OnDownloadListener {
           override fun onDownloadComplete() {
-            dialog.dismiss()
             extractPythonFile(outputFile.absolutePath) {
               outputFile.delete()
               pythonDownloaded = true

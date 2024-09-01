@@ -36,6 +36,12 @@
       app:summary="@string/pref_configure_file_explorer_summary"
       app:title="@string/pref_configure_file_explorer" />
 
+    <Preference
+      app:iconSpaceReserved="false"
+      app:key="pref_configure_plugins_key"
+      app:summary="@string/pref_configure_plugins_summary"
+      app:title="@string/pref_configure_plugins" />
+
   </PreferenceCategory>
 
   <PreferenceCategory

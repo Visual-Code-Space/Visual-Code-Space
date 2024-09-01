@@ -1,14 +1,18 @@
 import com.android.build.gradle.BaseExtension
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   alias(libs.plugins.android.application) apply false
   alias(libs.plugins.android.library) apply false
   alias(libs.plugins.kotlin) apply false
+  alias(libs.plugins.kotlin.compose) apply false
 }
 
 buildscript {
-  dependencies { classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.7.7") }
+  dependencies { classpath(libs.androidx.navigation.safe.args.gradle.plugin) }
 }
 
 fun Project.configureBaseExtension() {
@@ -35,8 +39,13 @@ subprojects {
   plugins.withId("com.android.library") { configureBaseExtension() }
 
   tasks.withType<KotlinCompile>().configureEach {
-    kotlinOptions { jvmTarget = JavaVersion.VERSION_17.toString() }
+    compilerOptions {
+      apiVersion = KotlinVersion.KOTLIN_2_0
+      languageVersion = KotlinVersion.KOTLIN_2_0
+      jvmTarget = JvmTarget.JVM_17
+      jvmTargetValidationMode = JvmTargetValidationMode.WARNING
+    }
   }
 }
 
-tasks.register<Delete>("clean") { delete(rootProject.buildDir) }
+tasks.register<Delete>("clean") { delete(rootProject.layout.buildDirectory) }

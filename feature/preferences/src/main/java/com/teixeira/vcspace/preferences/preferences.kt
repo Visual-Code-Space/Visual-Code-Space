@@ -30,7 +30,7 @@ val app = BaseApplication.instance
 val defaultPrefs = app.defaultPrefs
 
 // General
-val aparenceUIMode: Int
+val appearanceUIMode: Int
   get() =
     when (defaultPrefs.getInt(PREF_APARENCE_UIMODE_KEY, 0)) {
       1 -> AppCompatDelegate.MODE_NIGHT_NO
@@ -38,7 +38,7 @@ val aparenceUIMode: Int
       else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
     }
 
-val aparenceMaterialYou: Boolean
+val appearanceMaterialYou: Boolean
   get() = defaultPrefs.getBoolean(PREF_APARENCE_MATERIALYOU_KEY, true)
 
 // Editor
