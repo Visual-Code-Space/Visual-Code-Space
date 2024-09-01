@@ -25,4 +25,8 @@ public class PluginHelper {
   public void runOnUiThread(Runnable runnable) {
     handler.post(runnable);
   }
+
+  public void runOnUiThreadDelayed(Runnable runnable, long delay) {
+    handler.postDelayed(runnable, delay);
+  }
 }
