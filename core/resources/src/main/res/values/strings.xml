@@ -144,4 +144,6 @@
   <string name="pref_editor_tabs_autosave_summary">Automatically saves files opened while typing in the editor.</string>
   <string name="pref_file_showhiddenfiles">Show hidden files</string>
   <string name="pref_file_showhiddenfiles_summary">If enabled, shows files and folders whose names start with \".\".</string>
+  <string name="pref_configure_plugins_summary">Manage plugins</string>
+  <string name="pref_configure_plugins">Plugins</string>
 </resources>

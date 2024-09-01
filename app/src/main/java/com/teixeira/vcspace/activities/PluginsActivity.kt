@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.teixeira.vcspace.preferences.appearanceMaterialYou
 import com.teixeira.vcspace.ui.theme.VCSpaceTheme
 
 class PluginsActivity : ComponentActivity() {
@@ -23,7 +24,7 @@ class PluginsActivity : ComponentActivity() {
     super.onCreate(savedInstanceState)
     enableEdgeToEdge()
     setContent {
-      VCSpaceTheme {
+      VCSpaceTheme(dynamicColor = appearanceMaterialYou) {
         Scaffold(
           modifier = Modifier.fillMaxSize(),
           topBar = { TopBar() }
