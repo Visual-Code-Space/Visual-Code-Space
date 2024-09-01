@@ -59,10 +59,10 @@ abstract class BaseEditorActivity :
 
   protected val coroutineScope = CoroutineScope(Dispatchers.Default)
 
-  protected val binding: ActivityEditorBinding
+  val binding: ActivityEditorBinding
     get() = checkNotNull(_binding) { "Activity has been destroyed" }
 
-  protected val isDestroying: Boolean
+  val isDestroying: Boolean
     get() = _isDestroying
 
   override fun getLayout(): View {
