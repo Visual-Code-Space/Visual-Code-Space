@@ -21,8 +21,11 @@ import com.vcspace.plugins.internal.extensions.loadPlugins
 class PluginManager(
   private val application: Application
 ) {
+  private val plugins = application.loadPlugins()
+
   fun init() {
-    val plugins = application.loadPlugins()
     plugins.forEach { it.start() }
   }
+
+  fun getPlugins() = plugins
 }
