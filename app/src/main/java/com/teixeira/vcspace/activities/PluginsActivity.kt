@@ -113,29 +113,3 @@ fun PluginItem(plugin: Plugin, onClick: (Plugin) -> Unit = {}) {
     // HorizontalDivider()
   }
 }
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-  Text(
-    text = "Hello $name!",
-    modifier = modifier
-  )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PluginsPreview() {
-  VCSpaceTheme {
-    Column {
-      PluginItem(
-        Plugin(
-          "",
-          Manifest("Test", "com.test", "test.bsh"),
-          app = BaseApplication.instance
-        )
-      ) {
-
-      }
-    }
-  }
-}
