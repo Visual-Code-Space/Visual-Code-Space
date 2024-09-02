@@ -17,7 +17,7 @@
   <string name="reset">Reset</string>
   <string name="no">No</string>
   <string name="yes">Yes</string>
-  <string name="ok">Ok</string>
+  <string name="ok">OK</string>
 
   <!-- Editor -->
   <string name="editor">Editor</string>
@@ -146,4 +146,12 @@
   <string name="pref_file_showhiddenfiles_summary">If enabled, shows files and folders whose names start with \".\".</string>
   <string name="pref_configure_plugins_summary">Manage plugins</string>
   <string name="pref_configure_plugins">Plugins</string>
+
+  <!-- Others -->
+  <string name="the_directory_does_not_exist_would_you_like_to_create_it">The directory does not exist. Would you like to create it?</string>
+  <string name="directory_not_found">Directory Not Found</string>
+  <string name="plugin_settings">Plugin Settings</string>
+  <string name="plugins_path">Plugins Path</string>
+  <string name="confirm">Confirm</string>
+  <string name="no_plugins_found">No plugins found</string>
 </resources>

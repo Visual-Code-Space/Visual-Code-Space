@@ -38,7 +38,11 @@ fun Application.loadPlugins(): List<Plugin> {
       val json = manifestFile.readText()
       manifest = Gson().fromJson(json, Manifest::class.java)
     } catch (e: Exception) {
-      Toast.makeText(this, "Invalid manifest.json for plugin ${it.name}", Toast.LENGTH_SHORT).show()
+      Toast.makeText(
+        this,
+        "Invalid manifest.json for plugin ${it.name}",
+        Toast.LENGTH_SHORT
+      ).show()
       return@forEach
     }
 

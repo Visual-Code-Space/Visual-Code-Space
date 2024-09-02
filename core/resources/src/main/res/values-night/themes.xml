@@ -30,10 +30,14 @@
     <item name="android:statusBarColor">?attr/colorSurface</item>
     <item name="android:navigationBarColor">?attr/colorSurface</item>
     <item name="android:windowLightStatusBar">false</item>
-    <item name="android:windowLightNavigationBar">false</item>
+    <item name="android:windowLightNavigationBar" tools:ignore="NewApi">false</item>
     <item name="android:fontFamily">@font/josefin_sans</item>
     <item name="switchPreferenceCompatStyle">@style/AppTheme.SwitchPreference</item>
     <item name="dialogCornerRadius">28dp</item>
+
+    <item name="android:windowActivityTransitions">true</item>
+    <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
+    <item name="android:windowExitAnimation">@android:anim/fade_out</item>
   </style>
 
   <style name="AppTheme.SwitchPreference" parent="Preference.SwitchPreference.Material">

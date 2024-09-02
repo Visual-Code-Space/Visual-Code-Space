@@ -3,6 +3,7 @@ bsh = "3.0.0-SNAPSHOT"
 editor = "0.23.4-96c0abc-SNAPSHOT"
 androidx-navigation = "2.7.7"
 
+konfetti-compose = "2.0.4"
 prdownloader = "1.0.1"
 termux = "0.118.1"
 p7zip = "v1.7.2"
@@ -43,6 +44,7 @@ common-kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-co
 common-terminal-view = { module = "com.github.termux.termux-app:terminal-view", version.ref = "termux" }
 common-terminal-emulator = { module = "com.github.termux.termux-app:terminal-emulator", version.ref = "termux" }
 
+konfetti-compose = { module = "nl.dionsegijn:konfetti-compose", version.ref = "konfetti-compose" }
 prdownloader = { module = "com.github.amitshekhariitbhu:PRDownloader", version.ref = "prdownloader" }
 bsh = { module = "org.beanshell:bsh", version.ref = "bsh" }
 

@@ -24,13 +24,25 @@
     android:label="Settings">
     <action
       android:id="@+id/action_settingsFragment_to_generalSettingsFragment"
-      app:destination="@id/generalSettingsFragment" />
+      app:destination="@id/generalSettingsFragment"
+      app:enterAnim="@android:anim/fade_in"
+      app:exitAnim="@android:anim/fade_out"
+      app:popEnterAnim="@android:anim/fade_in"
+      app:popExitAnim="@android:anim/fade_out" />
     <action
       android:id="@+id/action_settingsFragment_to_editorSettingsFragment"
-      app:destination="@id/editorSettingsFragment" />
+      app:destination="@id/editorSettingsFragment"
+      app:enterAnim="@android:anim/fade_in"
+      app:exitAnim="@android:anim/fade_out"
+      app:popEnterAnim="@android:anim/fade_in"
+      app:popExitAnim="@android:anim/fade_out" />
     <action
       android:id="@+id/action_settingsFragment_to_fileSettingsFragment"
-      app:destination="@id/fileSettingsFragment" />
+      app:destination="@id/fileSettingsFragment"
+      app:enterAnim="@android:anim/fade_in"
+      app:exitAnim="@android:anim/fade_out"
+      app:popEnterAnim="@android:anim/fade_in"
+      app:popExitAnim="@android:anim/fade_out" />
   </fragment>
   <fragment
     android:id="@+id/generalSettingsFragment"
@@ -38,7 +50,11 @@
     android:label="General">
     <action
       android:id="@+id/action_generalSettingsFragment_to_settingsFragment"
-      app:destination="@id/settingsFragment" />
+      app:destination="@id/settingsFragment"
+      app:enterAnim="@android:anim/fade_in"
+      app:exitAnim="@android:anim/fade_out"
+      app:popEnterAnim="@android:anim/fade_in"
+      app:popExitAnim="@android:anim/fade_out" />
   </fragment>
   <fragment
     android:id="@+id/editorSettingsFragment"
@@ -46,7 +62,11 @@
     android:label="Editor">
     <action
       android:id="@+id/action_editorSettingsFragment_to_settingsFragment"
-      app:destination="@id/settingsFragment" />
+      app:destination="@id/settingsFragment"
+      app:enterAnim="@android:anim/fade_in"
+      app:exitAnim="@android:anim/fade_out"
+      app:popEnterAnim="@android:anim/fade_in"
+      app:popExitAnim="@android:anim/fade_out" />
   </fragment>
   <fragment
     android:id="@+id/fileSettingsFragment"
@@ -54,6 +74,10 @@
     android:label="File Explorer">
     <action
       android:id="@+id/action_fileSettingsFragment_to_settingsFragment"
-      app:destination="@id/settingsFragment" />
+      app:destination="@id/settingsFragment"
+      app:enterAnim="@android:anim/fade_in"
+      app:exitAnim="@android:anim/fade_out"
+      app:popEnterAnim="@android:anim/fade_in"
+      app:popExitAnim="@android:anim/fade_out" />
   </fragment>
 </navigation>

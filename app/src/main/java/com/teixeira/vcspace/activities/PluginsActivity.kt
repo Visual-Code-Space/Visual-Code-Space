@@ -6,26 +6,36 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -36,26 +46,35 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.blankj.utilcode.util.FileUtils
+import com.google.gson.GsonBuilder
 import com.teixeira.vcspace.app.BaseApplication
 import com.teixeira.vcspace.preferences.appearanceMaterialYou
 import com.teixeira.vcspace.preferences.pluginsPath
 import com.teixeira.vcspace.resources.R
+import com.teixeira.vcspace.resources.R.string
 import com.teixeira.vcspace.ui.theme.VCSpaceTheme
+import com.vcspace.plugins.Manifest
 import com.vcspace.plugins.Plugin
 import com.vcspace.plugins.internal.PluginManager
+import kotlinx.coroutines.launch
 import java.io.File
 
 class PluginsActivity : ComponentActivity() {
@@ -72,7 +91,20 @@ class PluginsActivity : ComponentActivity() {
 
 @Composable
 fun PluginsScreen() {
-  var plugins by remember { mutableStateOf(loadPlugins()) }
+  val coroutineScope = rememberCoroutineScope()
+  val listState = rememberLazyListState()
+  val expandedFab by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
+  var plugins by remember { mutableStateOf<List<Plugin>>(emptyList()) }
+  var isLoading by remember { mutableStateOf(true) }
+
+  LaunchedEffect(Unit) {
+    coroutineScope.launch {
+      plugins = PluginManager(BaseApplication.instance).getPlugins()
+      isLoading = false
+    }
+  }
+
+  var showNewPluginDialog by remember { mutableStateOf(false) }
 
   Scaffold(
     modifier = Modifier.fillMaxSize(),
@@ -80,15 +112,89 @@ fun PluginsScreen() {
       TopBar { updatedPath ->
         if (updatedPath != null) {
           pluginsPath = updatedPath
-          plugins = loadPlugins()
+          isLoading = true
+          coroutineScope.launch {
+            plugins = loadPlugins()
+            isLoading = false
+          }
         }
       }
-    }
+    },
+    floatingActionButton = {
+      NewPluginButton(expandedFab) { showNewPluginDialog = !showNewPluginDialog }
+    },
+    floatingActionButtonPosition = FabPosition.EndOverlay
   ) { innerPadding ->
-    PluginsList(
-      plugins = plugins,
-      modifier = Modifier.padding(innerPadding)
-    )
+    if (isLoading) {
+      LoadingIndicator()
+    } else {
+      PluginsList(
+        state = listState,
+        plugins = plugins,
+        modifier = Modifier.padding(innerPadding)
+      )
+    }
+  }
+
+  if (showNewPluginDialog) {
+    NewPluginDialog { manifest ->
+      showNewPluginDialog = false
+
+      if (manifest != null) {
+        val newPluginPath = "$pluginsPath/${manifest.packageName}"
+        FileUtils.createOrExistsDir(newPluginPath)
+
+        val manifestFile = File("$newPluginPath/manifest.json")
+        FileUtils.createOrExistsFile(manifestFile)
+        manifestFile.writeText(GsonBuilder().setPrettyPrinting().create().toJson(manifest))
+
+        val pluginFile = File("$newPluginPath/main.bsh")
+        FileUtils.createOrExistsFile(pluginFile)
+        pluginFile.writeText(buildString {
+          append("// This is an example plugin script. You should modify it for your use.\n")
+          append("\n")
+          append("import android.widget.Toast;\n")
+          append("\n")
+          append("Runnable runnable = new Runnable() {\n")
+          append("  public void run() {\n")
+          append("    // Display a toast message\n")
+          append("    Toast.makeText(app, \"Hello from plugin.\", Toast.LENGTH_SHORT).show();\n")
+          append("  }\n")
+          append("};\n")
+          append("\n")
+          append("// Run the code on the UI thread\n")
+          append("helper.runOnUiThread(runnable);")
+        })
+
+        plugins = plugins + Plugin(
+          manifest = manifest,
+          app = BaseApplication.instance,
+          dirName = manifest.packageName
+        )
+
+        Toast.makeText(
+          BaseApplication.instance,
+          "Plugin created successfully",
+          Toast.LENGTH_SHORT
+        ).show()
+      } else {
+        Toast.makeText(
+          BaseApplication.instance,
+          "Plugin creation cancelled",
+          Toast.LENGTH_SHORT
+        ).show()
+      }
+    }
+  }
+}
+
+@Composable
+fun LoadingIndicator() {
+  Box(
+    modifier = Modifier.fillMaxSize(),
+    contentAlignment = Alignment.Center
+  ) {
+    CircularProgressIndicator()
   }
 }
 
@@ -98,7 +204,7 @@ fun TopBar(onPathUpdated: (String?) -> Unit) {
   var showPluginSettings by remember { mutableStateOf(false) }
 
   TopAppBar(
-    title = { TitleText("Plugins") },
+    title = { TitleText(stringResource(string.pref_configure_plugins)) },
     navigationIcon = { BackButton() },
     actions = { SettingsButton { showPluginSettings = !showPluginSettings } }
   )
@@ -109,6 +215,16 @@ fun TopBar(onPathUpdated: (String?) -> Unit) {
       onPathUpdated(it)
     }
   }
+}
+
+@Composable
+fun NewPluginButton(expanded: Boolean, onClick: () -> Unit) {
+  ExtendedFloatingActionButton(
+    onClick = onClick,
+    text = { Text("New Plugin") },
+    icon = { Icon(Icons.Default.Add, contentDescription = "add plugin") },
+    expanded = expanded
+  )
 }
 
 @Composable
@@ -138,23 +254,32 @@ fun SettingsButton(onClick: () -> Unit) {
   }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun PluginsList(plugins: List<Plugin>, modifier: Modifier = Modifier) {
+fun PluginsList(
+  modifier: Modifier = Modifier,
+  plugins: List<Plugin>,
+  state: LazyListState = rememberLazyListState()
+) {
   if (plugins.isEmpty()) {
     NoPluginsFound()
   } else {
     LazyColumn(
+      state = state,
       modifier = modifier.fillMaxSize(),
       contentPadding = PaddingValues(
-        vertical = 3.dp,
+        vertical = 5.dp,
         horizontal = 5.dp
       ),
       verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
-      items(plugins.size) { index ->
+      items(plugins, key = { it.dirName }) { plugin ->
         val context = LocalContext.current
 
-        PluginItem(plugins[index]) {
+        PluginItem(
+          plugin,
+          modifier = Modifier.animateItemPlacement()
+        ) {
           Toast.makeText(
             context,
             "Edit plugin \"${it.manifest.name}\"",
@@ -173,7 +298,7 @@ fun NoPluginsFound() {
     contentAlignment = Alignment.Center
   ) {
     Text(
-      text = "No plugins found",
+      text = stringResource(string.no_plugins_found),
       style = MaterialTheme.typography.bodyLarge,
       color = MaterialTheme.colorScheme.onBackground
     )
@@ -245,7 +370,7 @@ fun PluginSettingsContent(
         .padding(16.dp)
     ) {
       Text(
-        text = "Plugin Settings",
+        text = stringResource(string.plugin_settings),
         style = MaterialTheme.typography.titleLarge
       )
 
@@ -275,7 +400,7 @@ fun PluginPathTextField(
   OutlinedTextField(
     value = path,
     onValueChange = onPathChange,
-    label = { Text("Plugins Path") },
+    label = { Text(stringResource(string.plugins_path)) },
     modifier = Modifier.padding(top = 8.dp),
     isError = errorMessage != null,
     keyboardOptions = KeyboardOptions(
@@ -304,19 +429,24 @@ fun ActionButtons(
   confirmEnabled: Boolean
 ) {
   Row(
-    modifier = Modifier.fillMaxWidth(),
-    horizontalArrangement = Arrangement.Center
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(
+        vertical = 8.dp,
+        horizontal = 0.dp
+      ),
+    horizontalArrangement = Arrangement.End
   ) {
     OutlinedButton(
       onClick = onCancel,
-      modifier = Modifier.padding(8.dp)
-    ) { Text("Cancel") }
+      modifier = Modifier.padding(end = 4.dp)
+    ) { Text(stringResource(string.cancel)) }
 
     Button(
       onClick = onConfirm,
       enabled = confirmEnabled,
-      modifier = Modifier.padding(8.dp)
-    ) { Text("Confirm") }
+      modifier = Modifier.padding(start = 4.dp)
+    ) { Text(stringResource(string.confirm)) }
   }
 }
 
@@ -327,21 +457,24 @@ fun ConfirmCreateDirectoryDialog(
 ) {
   AlertDialog(
     onDismissRequest = onCancel,
-    title = { Text("Directory Not Found") },
-    text = { Text("The directory does not exist. Would you like to create it?") },
+    title = { Text(stringResource(string.directory_not_found)) },
+    text = { Text(stringResource(string.the_directory_does_not_exist_would_you_like_to_create_it)) },
     confirmButton = {
-      Button(onClick = onCreate) { Text("Create") }
+      Button(onClick = onCreate) { Text(stringResource(string.create)) }
     },
     dismissButton = {
-      OutlinedButton(onClick = onCancel) { Text("Cancel") }
+      OutlinedButton(onClick = onCancel) { Text(stringResource(string.cancel)) }
     }
   )
 }
 
 @Composable
-fun PluginItem(plugin: Plugin, onClick: (Plugin) -> Unit = {}) {
+fun PluginItem(plugin: Plugin, modifier: Modifier = Modifier, onClick: (Plugin) -> Unit = {}) {
   val manifest = plugin.manifest
-  ElevatedCard(onClick = { onClick(plugin) }) {
+  ElevatedCard(
+    onClick = { onClick(plugin) },
+    modifier = modifier
+  ) {
     ListItem(
       headlineContent = { Text(manifest.name) },
       supportingContent = { Text(manifest.description) },
@@ -353,6 +486,155 @@ fun PluginItem(plugin: Plugin, onClick: (Plugin) -> Unit = {}) {
         )
       }
     )
+  }
+}
+
+@Composable
+fun NewPluginDialog(onDismiss: (Manifest?) -> Unit) {
+  val defaultPackageName = "com.example.plugin"
+  val defaultAuthorName = "Unknown"
+  val defaultDescription = "No description provided"
+
+  var name by remember { mutableStateOf("") }
+  var packageName by remember { mutableStateOf(defaultPackageName) }
+  var author by remember { mutableStateOf(defaultAuthorName) }
+  var description by remember { mutableStateOf("") }
+  var isValid by remember { mutableStateOf(false) }
+  var isValidPackageName by remember { mutableStateOf(true) }
+
+  LaunchedEffect(name, packageName) {
+    val packageFile = File("$pluginsPath/$packageName")
+    isValidPackageName = !packageFile.exists() && packageName.isNotBlank()
+    isValid = isValidPackageName && name.isNotBlank()
+  }
+
+  Dialog(onDismissRequest = { onDismiss(null) }) {
+    ElevatedCard(
+      modifier = Modifier
+        .fillMaxWidth()
+        .wrapContentHeight(Alignment.CenterVertically)
+        .padding(16.dp),
+      shape = RoundedCornerShape(16.dp)
+    ) {
+      Column(modifier = Modifier.padding(16.dp)) {
+        Text(
+          text = "New Plugin",
+          style = MaterialTheme.typography.titleLarge
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        InputField(
+          label = "Name",
+          value = name,
+          onValueChange = { name = it }
+        )
+
+        InputField(
+          label = "Package Name",
+          value = packageName,
+          placeholder = { Text(defaultPackageName) },
+          onValueChange = { packageName = it },
+          isError = !isValidPackageName
+        )
+
+        ErrorMessageText(if (!isValidPackageName) "Package name already exists" else null)
+
+        InputField(
+          label = "Author",
+          value = author,
+          placeholder = { Text(defaultAuthorName) },
+          onValueChange = { author = it }
+        )
+
+        InputField(
+          label = "Description",
+          value = description,
+          placeholder = { Text(defaultDescription) },
+          onValueChange = { description = it },
+          singleLine = false,
+          maxLines = 3
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        DialogActions(
+          isValid = isValid,
+          onDismiss = onDismiss,
+          name = name,
+          packageName = packageName.ifBlank { defaultPackageName },
+          author = author.ifBlank { defaultAuthorName },
+          description = description.ifBlank { defaultDescription }
+        )
+      }
+    }
+  }
+}
+
+@Composable
+fun InputField(
+  label: String,
+  value: String,
+  placeholder: @Composable (() -> Unit)? = null,
+  onValueChange: (String) -> Unit,
+  singleLine: Boolean = true,
+  maxLines: Int = 1,
+  isError: Boolean = false
+) {
+  OutlinedTextField(
+    value = value,
+    onValueChange = onValueChange,
+    label = { Text(label) },
+    placeholder = placeholder,
+    isError = isError,
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(vertical = 4.dp),
+    singleLine = singleLine,
+    maxLines = maxLines,
+    keyboardOptions = KeyboardOptions(
+      imeAction = if (singleLine) ImeAction.Next else ImeAction.Default
+    )
+  )
+}
+
+@Composable
+fun DialogActions(
+  isValid: Boolean,
+  onDismiss: (Manifest?) -> Unit,
+  name: String,
+  packageName: String,
+  author: String,
+  description: String
+) {
+  Row(
+    modifier = Modifier.fillMaxWidth(),
+    horizontalArrangement = Arrangement.End
+  ) {
+    OutlinedButton(
+      onClick = { onDismiss(null) },
+      modifier = Modifier.padding(end = 8.dp)
+    ) {
+      Text("Cancel")
+    }
+
+    Button(
+      onClick = {
+        if (isValid) {
+          val newManifest = Manifest(
+            name = name,
+            packageName = packageName,
+            author = author,
+            description = description,
+            path = "main.bsh"
+          )
+          onDismiss(newManifest)
+        }
+      },
+      enabled = isValid
+    ) {
+      Text("Create")
+    }
   }
 }
 

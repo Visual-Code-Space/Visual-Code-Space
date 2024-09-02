@@ -1,4 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
+
   <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
     <item name="colorPrimary">@color/light_primary</item>
     <item name="colorOnPrimary">@color/light_onPrimary</item>
@@ -30,10 +31,14 @@
     <item name="android:statusBarColor">?attr/colorSurface</item>
     <item name="android:navigationBarColor">?attr/colorSurface</item>
     <item name="android:windowLightStatusBar">true</item>
-    <item name="android:windowLightNavigationBar">true</item>
+    <item name="android:windowLightNavigationBar" tools:ignore="NewApi">true</item>
     <item name="android:fontFamily">@font/josefin_sans</item>
     <item name="switchPreferenceCompatStyle">@style/AppTheme.SwitchPreference</item>
     <item name="dialogCornerRadius">28dp</item>
+
+    <item name="android:windowActivityTransitions">true</item>
+    <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
+    <item name="android:windowExitAnimation">@android:anim/fade_out</item>
   </style>
 
   <style name="AppTheme.SwitchPreference" parent="Preference.SwitchPreference.Material">

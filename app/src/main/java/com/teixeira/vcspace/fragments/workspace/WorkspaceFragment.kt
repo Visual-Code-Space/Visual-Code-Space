@@ -11,10 +11,12 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
+import com.teixeira.vcspace.PreferenceKeys
 import com.teixeira.vcspace.R
 import com.teixeira.vcspace.activities.PreferencesActivity
 import com.teixeira.vcspace.activities.TerminalActivity
 import com.teixeira.vcspace.databinding.FragmentWorkspaceBinding
+import com.teixeira.vcspace.extensions.open
 
 class WorkspaceFragment : Fragment(), NavController.OnDestinationChangedListener {
 
@@ -43,9 +45,8 @@ class WorkspaceFragment : Fragment(), NavController.OnDestinationChangedListener
     NavigationUI.setupWithNavController(binding.navRail, navController)
     binding.navRail.setOnItemSelectedListener { item ->
       when (item.itemId) {
-        R.id.menu_terminal -> startActivity(Intent(requireContext(), TerminalActivity::class.java))
-        R.id.menu_preferences ->
-          startActivity(Intent(requireContext(), PreferencesActivity::class.java))
+        R.id.menu_terminal -> requireContext().open(TerminalActivity::class.java)
+        R.id.menu_preferences -> requireContext().open(PreferencesActivity::class.java)
       }
       false
     }
