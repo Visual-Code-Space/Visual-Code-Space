@@ -23,6 +23,8 @@ const val PYTHON_PACKAGE_URL_64_BIT =
 const val PYTHON_PACKAGE_URL_32_BIT =
   "https://github.com/PsiCodes/ktxpy/raw/master/app/arch_arm32/assets/python.7z"
 
+val APP_EXTERNAL_DIR = "${PathUtils.getExternalStoragePath()}/VCSpace"
+
 object PreferenceKeys {
   const val GENERAL_PREFERENCES = "pref_configure_general_key"
   const val EDITOR_PREFERENCES = "pref_configure_editor_key"
@@ -31,8 +33,10 @@ object PreferenceKeys {
   const val PLUGINS_PREFERENCES = "pref_configure_plugins_key"
 
   const val GITHUB_ABOUT_PREFERENCES = "pref_about_github_key"
+
+  const val PLUGINS_PATH = "plugins_path"
 }
 
 object PluginConstants {
-  val PLUGIN_HOME = "${PathUtils.getExternalAppFilesPath()}/plugins"
+  val PLUGIN_HOME = "$APP_EXTERNAL_DIR/plugins"
 }

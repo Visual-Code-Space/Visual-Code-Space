@@ -1,6 +1,8 @@
 package com.teixeira.vcspace.preferences
 
 import androidx.appcompat.app.AppCompatDelegate
+import com.teixeira.vcspace.PluginConstants
+import com.teixeira.vcspace.PreferenceKeys
 import com.teixeira.vcspace.app.BaseApplication
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.utils.isDarkMode
@@ -120,3 +122,7 @@ var pythonDownloaded: Boolean
   set(value) {
     defaultPrefs.edit().putBoolean(PREF_PYTHON_DOWNLOADED_KEY, value).apply()
   }
+
+var pluginsPath: String
+  get() = defaultPrefs.getString(PreferenceKeys.PLUGINS_PATH, PluginConstants.PLUGIN_HOME)!!
+  set(value) = defaultPrefs.edit().putString(PreferenceKeys.PLUGINS_PATH, value).apply()

@@ -38,4 +38,5 @@ dependencies {
   implementation(libs.bsh)
   implementation(project(":core:common"))
   implementation(project(":core:resources"))
+  implementation(project(":feature:preferences"))
 }

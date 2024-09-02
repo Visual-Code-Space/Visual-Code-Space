@@ -18,15 +18,15 @@ package com.vcspace.plugins.internal.extensions
 import android.app.Application
 import android.widget.Toast
 import com.google.gson.Gson
-import com.teixeira.vcspace.PluginConstants
 import com.teixeira.vcspace.extensions.toFile
+import com.teixeira.vcspace.preferences.pluginsPath
 import com.vcspace.plugins.Manifest
 import com.vcspace.plugins.Plugin
 
 fun Application.loadPlugins(): List<Plugin> {
   val plugins = mutableListOf<Plugin>()
 
-  val pluginHome = PluginConstants.PLUGIN_HOME.toFile()
+  val pluginHome = pluginsPath.toFile()
   if (!pluginHome.exists()) pluginHome.mkdirs()
 
   pluginHome.listFiles()?.forEach {

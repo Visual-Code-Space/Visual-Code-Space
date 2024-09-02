@@ -25,7 +25,7 @@
     tools:targetApi="tiramisu">
     <activity
       android:name=".activities.PluginsActivity"
-      android:exported="true" />
+      android:exported="false" />
     <activity
       android:name=".activities.editor.EditorActivity"
       android:configChanges="orientation|screenSize"
