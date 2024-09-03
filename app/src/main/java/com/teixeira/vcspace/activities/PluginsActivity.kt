@@ -1,12 +1,12 @@
 package com.teixeira.vcspace.activities
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,6 +28,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -40,11 +43,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -55,7 +61,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -70,10 +77,14 @@ import com.teixeira.vcspace.preferences.appearanceMaterialYou
 import com.teixeira.vcspace.preferences.pluginsPath
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.resources.R.string
+import com.teixeira.vcspace.ui.ToastHost
+import com.teixeira.vcspace.ui.ToastHostState
+import com.teixeira.vcspace.ui.rememberToastHostState
 import com.teixeira.vcspace.ui.theme.VCSpaceTheme
 import com.vcspace.plugins.Manifest
 import com.vcspace.plugins.Plugin
 import com.vcspace.plugins.internal.PluginManager
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -93,6 +104,7 @@ class PluginsActivity : ComponentActivity() {
 fun PluginsScreen() {
   val coroutineScope = rememberCoroutineScope()
   val listState = rememberLazyListState()
+  val toastHostState = rememberToastHostState()
   val expandedFab by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
   var plugins by remember { mutableStateOf<List<Plugin>>(emptyList()) }
   var isLoading by remember { mutableStateOf(true) }
@@ -131,9 +143,18 @@ fun PluginsScreen() {
       PluginsList(
         state = listState,
         plugins = plugins,
-        modifier = Modifier.padding(innerPadding)
+        modifier = Modifier.padding(innerPadding),
+        scope = coroutineScope,
+        toastHostState = toastHostState,
+        onDelete = {
+          coroutineScope.launch {
+            plugins = PluginManager(BaseApplication.instance).getPlugins()
+          }
+        }
       )
     }
+
+    ToastHost(hostState = toastHostState)
   }
 
   if (showNewPluginDialog) {
@@ -169,22 +190,69 @@ fun PluginsScreen() {
         plugins = plugins + Plugin(
           manifest = manifest,
           app = BaseApplication.instance,
-          dirName = manifest.packageName
+          fullPath = "$pluginsPath/${manifest.packageName}"
         )
 
-        Toast.makeText(
-          BaseApplication.instance,
-          "Plugin created successfully",
-          Toast.LENGTH_SHORT
-        ).show()
+        coroutineScope.launch {
+          toastHostState.showToast(
+            message = "Plugin created successfully",
+            icon = Icons.Default.Check
+          )
+        }
       } else {
-        Toast.makeText(
-          BaseApplication.instance,
-          "Plugin creation cancelled",
-          Toast.LENGTH_SHORT
-        ).show()
+        coroutineScope.launch {
+          toastHostState.showToast(
+            message = "Plugin creation canceled",
+            icon = Icons.Default.Close
+          )
+        }
       }
     }
+  }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PluginActionsSheet(
+  plugin: Plugin,
+  sheetState: SheetState = rememberModalBottomSheetState(),
+  scope: CoroutineScope = rememberCoroutineScope(),
+  toastHostState: ToastHostState = rememberToastHostState(),
+  onDismissSheet: () -> Unit,
+  onDelete: () -> Unit
+) {
+  var showDeleteDialog by remember { mutableStateOf(false) }
+
+  ModalBottomSheet(
+    onDismissRequest = onDismissSheet,
+    sheetState = sheetState
+  ) {
+    ElevatedCard(
+      modifier = Modifier.padding(16.dp),
+      onClick = { showDeleteDialog = !showDeleteDialog }
+    ) {
+      ListItem(
+        headlineContent = { Text("Delete Plugin") },
+        leadingContent = { Icon(Icons.Default.Delete, contentDescription = null) }
+      )
+    }
+  }
+
+  if (showDeleteDialog) {
+    DeletePluginDialog(
+      onConfirm = {
+        showDeleteDialog = false
+        deletePlugin(plugin)
+        onDismissSheet()
+        onDelete()
+        scope.launch {
+          toastHostState.showToast(
+            message = "Plugin deleted successfully"
+          )
+        }
+      },
+      onDismiss = { showDeleteDialog = false }
+    )
   }
 }
 
@@ -206,7 +274,7 @@ fun TopBar(onPathUpdated: (String?) -> Unit) {
   TopAppBar(
     title = { TitleText(stringResource(string.pref_configure_plugins)) },
     navigationIcon = { BackButton() },
-    actions = { SettingsButton { showPluginSettings = !showPluginSettings } }
+    actions = { SettingsButton { showPluginSettings = true } }
   )
 
   if (showPluginSettings) {
@@ -254,40 +322,53 @@ fun SettingsButton(onClick: () -> Unit) {
   }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun PluginsList(
   modifier: Modifier = Modifier,
   plugins: List<Plugin>,
-  state: LazyListState = rememberLazyListState()
+  state: LazyListState = rememberLazyListState(),
+  scope: CoroutineScope = rememberCoroutineScope(),
+  toastHostState: ToastHostState = rememberToastHostState(),
+  onDelete: () -> Unit = {}
 ) {
+  val pluginIcon = painterResource(R.drawable.ic_plugin)
+  var selectedPlugin by remember { mutableStateOf<Plugin?>(null) }
+
   if (plugins.isEmpty()) {
     NoPluginsFound()
   } else {
     LazyColumn(
       state = state,
       modifier = modifier.fillMaxSize(),
-      contentPadding = PaddingValues(
-        vertical = 5.dp,
-        horizontal = 5.dp
-      ),
+      contentPadding = PaddingValues(vertical = 5.dp, horizontal = 5.dp),
       verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
-      items(plugins, key = { it.dirName }) { plugin ->
-        val context = LocalContext.current
-
+      items(plugins, key = { it.fullPath }) { plugin ->
         PluginItem(
           plugin,
-          modifier = Modifier.animateItemPlacement()
+          modifier = Modifier.animateItemPlacement(),
+          onLongClick = { selectedPlugin = it }
         ) {
-          Toast.makeText(
-            context,
-            "Edit plugin \"${it.manifest.name}\"",
-            Toast.LENGTH_SHORT
-          ).show()
+          scope.launch {
+            toastHostState.showToast(
+              message = "Edit plugin \"${it.manifest.name}\"",
+              painter = pluginIcon
+            )
+          }
         }
       }
     }
+  }
+
+  selectedPlugin?.let {
+    PluginActionsSheet(
+      plugin = it,
+      scope = scope,
+      toastHostState = toastHostState,
+      onDismissSheet = { selectedPlugin = null },
+      onDelete = onDelete
+    )
   }
 }
 
@@ -468,12 +549,26 @@ fun ConfirmCreateDirectoryDialog(
   )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun PluginItem(plugin: Plugin, modifier: Modifier = Modifier, onClick: (Plugin) -> Unit = {}) {
+fun PluginItem(
+  plugin: Plugin,
+  modifier: Modifier = Modifier,
+  onLongClick: (Plugin) -> Unit = {},
+  onClick: (Plugin) -> Unit = {},
+) {
   val manifest = plugin.manifest
+
+  val haptics = LocalHapticFeedback.current
+
   ElevatedCard(
-    onClick = { onClick(plugin) },
-    modifier = modifier
+    modifier = modifier.combinedClickable(
+      onClick = { onClick(plugin) },
+      onLongClick = {
+        haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+        onLongClick(plugin)
+      }
+    )
   ) {
     ListItem(
       headlineContent = { Text(manifest.name) },
@@ -636,6 +731,28 @@ fun DialogActions(
       Text("Create")
     }
   }
+}
+
+@Composable
+fun DeletePluginDialog(
+  onConfirm: () -> Unit,
+  onDismiss: () -> Unit
+) {
+  AlertDialog(
+    onDismissRequest = onDismiss,
+    title = { Text("Delete Plugin") },
+    text = { Text("Are you sure you want to delete this plugin?") },
+    confirmButton = {
+      Button(onClick = onConfirm) { Text(stringResource(string.confirm)) }
+    },
+    dismissButton = {
+      OutlinedButton(onClick = onDismiss) { Text(stringResource(string.cancel)) }
+    }
+  )
+}
+
+private fun deletePlugin(plugin: Plugin) {
+  FileUtils.delete(File(plugin.fullPath))
 }
 
 private fun validatePath(path: String): String? {

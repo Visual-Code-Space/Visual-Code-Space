@@ -46,7 +46,7 @@ fun Application.loadPlugins(): List<Plugin> {
       return@forEach
     }
 
-    plugins.add(Plugin(dirName = it.name, manifest = manifest, app = this))
+    plugins.add(Plugin(fullPath = it.absolutePath, manifest = manifest, app = this))
   }
 
   return plugins

@@ -21,7 +21,7 @@ import com.teixeira.vcspace.PluginConstants
 import java.io.File
 
 class Plugin(
-  val dirName: String,
+  val fullPath: String,
   val manifest: Manifest,
   val app: Application
 ) : Thread() {
@@ -35,7 +35,7 @@ class Plugin(
       set("app", app)
       set("manifest", manifest)
       set("helper", helper)
-      source(File("${PluginConstants.PLUGIN_HOME}/$dirName/${manifest.path}"))
+      source(File("$fullPath/${manifest.path}"))
     }
   }
 }
