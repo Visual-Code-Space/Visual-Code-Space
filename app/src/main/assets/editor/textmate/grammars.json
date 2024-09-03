@@ -90,7 +90,7 @@
     "grammar": "editor/textmate/java/syntaxes/java.tmLanguage.json",
     "languageConfiguration": "editor/textmate/java/language-configuration.json",
     "fileExtensions": [
-      "java"
+      "java", "bsh"
     ]
   },
   {
