@@ -9,6 +9,7 @@ import com.blankj.utilcode.util.ThreadUtils
 import com.blankj.utilcode.util.ThrowableUtils
 import com.downloader.PRDownloader
 import com.google.android.material.color.DynamicColors
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.teixeira.vcspace.activities.CrashActivity
 import com.teixeira.vcspace.activities.editor.EditorActivity
 import com.teixeira.vcspace.preferences.appearanceMaterialYou
@@ -66,7 +67,7 @@ class VCSpaceApplication : BaseApplication() {
             Toast.LENGTH_SHORT
           ).show()
         }
-        PluginManager(this@VCSpaceApplication).init()
+        PluginManager(this@VCSpaceApplication).init { plugin, err -> }
       }
 
       override fun onCancel() {}
@@ -117,5 +118,15 @@ class VCSpaceApplication : BaseApplication() {
   // for plugin use
   fun getEditorActivity(): EditorActivity? {
     return activities.find { it is EditorActivity } as EditorActivity?
+  }
+
+  fun applyTheme(theme: String) {
+    when (theme) {
+      "dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+      "light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+      "system" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+      "battery" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY)
+      else -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+    }
   }
 }

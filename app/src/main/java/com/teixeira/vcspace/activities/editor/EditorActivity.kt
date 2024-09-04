@@ -15,4 +15,26 @@
 
 package com.teixeira.vcspace.activities.editor
 
-class EditorActivity : MenuHandlerActivity()
+import android.view.Menu
+import android.view.MenuItem
+import androidx.annotation.DrawableRes
+
+class EditorActivity : MenuHandlerActivity() {
+  @JvmOverloads
+  fun addMenu(
+    title: String,
+    @DrawableRes icon: Int = 0,
+    onClick: Runnable = Runnable { },
+  ): MenuItem {
+    return menu.add(title).apply {
+      setIcon(icon)
+      setOnMenuItemClickListener {
+        onClick.run()
+        true
+      }
+    }
+  }
+
+  // use app.getEditorActivity().getMenu() in plugin
+  val menu: Menu get() = binding.toolbar.menu
+}

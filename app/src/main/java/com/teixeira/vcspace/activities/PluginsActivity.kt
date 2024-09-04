@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -32,6 +34,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -83,6 +86,7 @@ import com.teixeira.vcspace.ui.rememberToastHostState
 import com.teixeira.vcspace.ui.theme.VCSpaceTheme
 import com.vcspace.plugins.Manifest
 import com.vcspace.plugins.Plugin
+import com.vcspace.plugins.Script
 import com.vcspace.plugins.internal.PluginManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -143,7 +147,9 @@ fun PluginsScreen() {
       PluginsList(
         state = listState,
         plugins = plugins,
-        modifier = Modifier.padding(innerPadding),
+        modifier = Modifier
+          .padding(innerPadding)
+          .imePadding(),
         scope = coroutineScope,
         toastHostState = toastHostState,
         onDelete = {
@@ -169,23 +175,61 @@ fun PluginsScreen() {
         FileUtils.createOrExistsFile(manifestFile)
         manifestFile.writeText(GsonBuilder().setPrettyPrinting().create().toJson(manifest))
 
-        val pluginFile = File("$newPluginPath/main.bsh")
+        val pluginFile = File("$newPluginPath/${manifest.name.lowercase().replace(" ", "_")}.bsh")
         FileUtils.createOrExistsFile(pluginFile)
-        pluginFile.writeText(buildString {
-          append("// This is an example plugin script. You should modify it for your use.\n")
-          append("\n")
-          append("import android.widget.Toast;\n")
-          append("\n")
-          append("Runnable runnable = new Runnable() {\n")
-          append("  public void run() {\n")
-          append("    // Display a toast message\n")
-          append("    Toast.makeText(app, \"Hello from plugin.\", Toast.LENGTH_SHORT).show();\n")
-          append("  }\n")
-          append("};\n")
-          append("\n")
-          append("// Run the code on the UI thread\n")
-          append("helper.runOnUiThread(runnable);")
-        })
+        pluginFile.writeText(
+          """
+          // This is a sample plugin script for Visual Code Space.
+          // 
+          // This script serves as the entry point for your plugin. The 'main' function is
+          // the default method that will be executed when your plugin is loaded and started.
+          // 
+          // Follow this template to create your own plugin by adding custom logic inside the 'main' function.
+          // You can use Android-specific features and classes, as well as interact with the app using
+          // provided objects like 'app' and 'helper'.
+          // 
+          // The 'app' object refers to the Application instance of this app, allowing you to access various
+          // application-level features and context. 
+          // 
+          // The 'helper' object provides additional utility methods to assist with plugin development.
+          // 
+          // Example Usage:
+          // - Display a Toast message to the user
+          // - Add custom behavior or UI elements to your app
+          // - Interact with existing app components
+          // 
+          // Modifying the Entry Point:
+          // - By default, the entry point is set to the 'main' function.
+          // - You can change the entry point by modifying the 'entryPoint' field in the plugin's manifest.
+          // - Set 'entryPoint' to the name of any other function in this script that you want to execute when the plugin is loaded.
+          // - Example: To use 'startPlugin' as the entry point, set 'entryPoint: "startPlugin"' in the manifest.
+      
+          void main() {
+            // Display a simple Toast message when the plugin is loaded
+            Toast.makeText(app, "Hello from plugin!", Toast.LENGTH_SHORT).show();
+            
+            // Add your custom plugin logic here
+            // For example, you could interact with other components of the app, create new UI elements, etc.
+            
+            // Additional Example 1: Print a message to the logcat
+            // Log.d("Plugin", "Plugin is running!");
+            
+            // Additional Example 2: Start an Android Activity from the plugin
+            // Intent intent = new Intent(app, YourTargetActivity.class);
+            // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            // app.startActivity(intent);
+            
+            // Remember to keep the 'main' function parameterless for it to be correctly identified and executed.
+          }
+      
+          // Example of an alternative entry point
+          void startPlugin() {
+            // Custom logic that can be used as the entry point if specified in the manifest
+            Toast.makeText(app, "startPlugin function executed!", Toast.LENGTH_SHORT).show();
+          }
+          
+        """.trimIndent()
+        )
 
         plugins = plugins + Plugin(
           manifest = manifest,
@@ -291,7 +335,9 @@ fun NewPluginButton(expanded: Boolean, onClick: () -> Unit) {
     onClick = onClick,
     text = { Text("New Plugin") },
     icon = { Icon(Icons.Default.Add, contentDescription = "add plugin") },
-    expanded = expanded
+    expanded = expanded,
+    modifier = Modifier
+      .imePadding()
   )
 }
 
@@ -567,7 +613,9 @@ fun PluginItem(
       onLongClick = {
         haptics.performHapticFeedback(HapticFeedbackType.LongPress)
         onLongClick(plugin)
-      }
+      },
+      interactionSource = remember { MutableInteractionSource() },
+      indication = rememberRipple(bounded = true)
     )
   ) {
     ListItem(
@@ -721,7 +769,12 @@ fun DialogActions(
             packageName = packageName,
             author = author,
             description = description,
-            path = "main.bsh"
+            scripts = arrayOf(
+              Script(
+                name = "${name.lowercase().replace(" ", "_")}.bsh",
+                entryPoint = "main"
+              )
+            )
           )
           onDismiss(newManifest)
         }

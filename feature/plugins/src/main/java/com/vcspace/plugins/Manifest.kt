@@ -17,12 +17,42 @@ package com.vcspace.plugins
 
 import java.io.Serializable
 
+data class Script @JvmOverloads constructor(val name: String, val entryPoint: String = "main")
+
 data class Manifest @JvmOverloads constructor(
   val name: String,
   val packageName: String,
-  val path: String,
+  val scripts: Array<Script> = arrayOf(),
   val versionCode: Int = 1,
   val versionName: String = "1.0.0",
   val author: String = "Unknown",
   val description: String = "No description provided.",
-) : Serializable
+) : Serializable {
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (javaClass != other?.javaClass) return false
+
+    other as Manifest
+
+    if (name != other.name) return false
+    if (packageName != other.packageName) return false
+    if (!scripts.contentEquals(other.scripts)) return false
+    if (versionCode != other.versionCode) return false
+    if (versionName != other.versionName) return false
+    if (author != other.author) return false
+    if (description != other.description) return false
+
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result = name.hashCode()
+    result = 31 * result + packageName.hashCode()
+    result = 31 * result + scripts.contentHashCode()
+    result = 31 * result + versionCode
+    result = 31 * result + versionName.hashCode()
+    result = 31 * result + author.hashCode()
+    result = 31 * result + description.hashCode()
+    return result
+  }
+}

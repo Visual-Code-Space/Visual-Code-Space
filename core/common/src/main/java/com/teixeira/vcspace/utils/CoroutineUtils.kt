@@ -16,6 +16,7 @@
 package com.teixeira.vcspace.utils
 
 import android.content.Context
+import androidx.annotation.UiContext
 import androidx.appcompat.app.AlertDialog
 import com.blankj.utilcode.util.ThreadUtils.runOnUiThread
 import com.teixeira.vcspace.dialogs.ProgressDialogBuilder
@@ -61,7 +62,7 @@ fun CoroutineScope.cancelIfActive(exception: CancellationException? = null) {
  * @param action Function of the action to be executed when launching the coroutine.
  */
 inline fun CoroutineScope.launchWithProgressDialog(
-  uiContext: Context,
+  @UiContext uiContext: Context,
   context: CoroutineContext = EmptyCoroutineContext,
   configureBuilder: (builder: ProgressDialogBuilder) -> Unit = {},
   crossinline invokeOnCompletion: (throwable: Throwable?) -> Unit = {},

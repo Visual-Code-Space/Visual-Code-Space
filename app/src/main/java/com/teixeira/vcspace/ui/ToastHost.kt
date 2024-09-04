@@ -284,12 +284,12 @@ private fun ToastDuration.toMillis(
   accessibilityManager: AccessibilityManager?
 ): Long {
   val original = when (this) {
-    ToastDuration.Long -> 6500L
-    ToastDuration.Short -> 3500L
+    ToastDuration.Long -> 4500L
+    ToastDuration.Short -> 2000L
   }
   return accessibilityManager?.calculateRecommendedTimeoutMillis(
     original,
-    containsIcons = true,
+    containsIcons = false,
     containsText = true
   ) ?: original
 }

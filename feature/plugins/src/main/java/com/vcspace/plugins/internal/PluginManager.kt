@@ -16,6 +16,7 @@
 package com.vcspace.plugins.internal
 
 import android.app.Application
+import com.vcspace.plugins.Plugin
 import com.vcspace.plugins.internal.extensions.loadPlugins
 
 class PluginManager(
@@ -23,8 +24,8 @@ class PluginManager(
 ) {
   private val plugins = application.loadPlugins()
 
-  fun init() {
-    plugins.forEach { it.start() }
+  fun init(onError: (Plugin, Exception) -> Unit = { _, _ -> }) {
+    plugins.forEach { it.start { err -> onError(it, err) } }
   }
 
   fun getPlugins() = plugins
