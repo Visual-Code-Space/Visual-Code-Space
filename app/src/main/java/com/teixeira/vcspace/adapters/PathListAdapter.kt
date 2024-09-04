@@ -31,7 +31,11 @@ class PathListAdapter : RecyclerView.Adapter<PathListAdapter.VH>() {
       val colorPrimary = root.context.getAttrColor(R.attr.colorPrimary)
       val colorControlNormal = root.context.getAttrColor(R.attr.colorControlNormal)
 
-      name.text = file.name
+      name.text = when (file.name) {
+        "0" -> "Device storage"
+        else -> file.name
+      }
+
       if (position == itemCount - 1) {
         name.setTextColor(colorPrimary)
         separator.visibility = View.GONE

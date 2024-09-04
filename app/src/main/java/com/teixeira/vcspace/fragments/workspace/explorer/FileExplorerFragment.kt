@@ -125,8 +125,7 @@ class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
         getString(R.string.file_rename) -> showRenameFileDialog(file)
         getString(R.string.file_delete) -> showDeleteFileDialog(file)
       }
-    }
-      .show(childFragmentManager, null)
+    }.show(childFragmentManager, null)
 
     return true
   }
