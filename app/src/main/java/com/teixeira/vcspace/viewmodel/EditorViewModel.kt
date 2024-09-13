@@ -33,11 +33,11 @@ class EditorViewModel : ViewModel() {
   }
 
   fun closeOthers() {
-    executeAction(EditorAction.CloseOthersAction())
+    executeAction(EditorAction.CloseOthersAction)
   }
 
   fun closeAllFiles() {
-    executeAction(EditorAction.CloseAllAction())
+    executeAction(EditorAction.CloseAllAction)
   }
 
   fun executeAction(action: EditorAction) {
@@ -92,8 +92,8 @@ class EditorViewModel : ViewModel() {
 
     class CloseFileAction(val fileIndex: Int) : EditorAction
 
-    class CloseOthersAction : EditorAction
+    data object CloseOthersAction : EditorAction
 
-    class CloseAllAction : EditorAction
+    data object CloseAllAction : EditorAction
   }
 }

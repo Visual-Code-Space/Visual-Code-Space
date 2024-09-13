@@ -17,7 +17,10 @@ package com.vcspace.plugins
 
 import java.io.Serializable
 
-data class Script @JvmOverloads constructor(val name: String, val entryPoint: String = "main")
+data class Script @JvmOverloads constructor(
+  val name: String,
+  val entryPoint: String = "main"
+) : Serializable
 
 data class Manifest @JvmOverloads constructor(
   val name: String,
@@ -27,6 +30,7 @@ data class Manifest @JvmOverloads constructor(
   val versionName: String = "1.0.0",
   val author: String = "Unknown",
   val description: String = "No description provided.",
+  val enabled: Boolean = true
 ) : Serializable {
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
@@ -41,6 +45,7 @@ data class Manifest @JvmOverloads constructor(
     if (versionName != other.versionName) return false
     if (author != other.author) return false
     if (description != other.description) return false
+    if (enabled != other.enabled) return false
 
     return true
   }
@@ -53,6 +58,7 @@ data class Manifest @JvmOverloads constructor(
     result = 31 * result + versionName.hashCode()
     result = 31 * result + author.hashCode()
     result = 31 * result + description.hashCode()
+    result = 31 * result + enabled.hashCode()
     return result
   }
 }

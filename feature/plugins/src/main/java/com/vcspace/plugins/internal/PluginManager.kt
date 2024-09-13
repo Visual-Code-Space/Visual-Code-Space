@@ -20,12 +20,13 @@ import com.vcspace.plugins.Plugin
 import com.vcspace.plugins.internal.extensions.loadPlugins
 
 class PluginManager(
-  private val application: Application
+  application: Application
 ) {
   private val plugins = application.loadPlugins()
 
+  @JvmOverloads
   fun init(onError: (Plugin, Exception) -> Unit = { _, _ -> }) {
-    plugins.forEach { it.start { err -> onError(it, err) } }
+    plugins.filter { it.manifest.enabled }.forEach { it.start { err -> onError(it, err) } }
   }
 
   fun getPlugins() = plugins

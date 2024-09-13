@@ -20,6 +20,7 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
 import bsh.Interpreter
+import com.google.gson.GsonBuilder
 import java.io.File
 
 class Plugin(
@@ -96,5 +97,10 @@ class Plugin(
         Toast.makeText(app, err.message, Toast.LENGTH_SHORT).show()
       }
     }
+  }
+
+  fun saveManifest(manifest: Manifest) {
+    val manifestFile = File("$fullPath/manifest.json")
+    manifestFile.writeText(GsonBuilder().setPrettyPrinting().create().toJson(manifest))
   }
 }

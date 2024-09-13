@@ -9,7 +9,6 @@ import com.blankj.utilcode.util.ThreadUtils
 import com.blankj.utilcode.util.ThrowableUtils
 import com.downloader.PRDownloader
 import com.google.android.material.color.DynamicColors
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.teixeira.vcspace.activities.CrashActivity
 import com.teixeira.vcspace.activities.editor.EditorActivity
 import com.teixeira.vcspace.preferences.appearanceMaterialYou
@@ -27,8 +26,11 @@ import kotlin.system.exitProcess
 class VCSpaceApplication : BaseApplication() {
 
   private var uncaughtException: Thread.UncaughtExceptionHandler? = null
-
   private val activities = mutableListOf<Activity>()
+
+  companion object {
+    val instance by lazy { VCSpaceApplication() }
+  }
 
   override fun onCreate() {
     uncaughtException = Thread.getDefaultUncaughtExceptionHandler()

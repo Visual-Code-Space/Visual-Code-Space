@@ -17,6 +17,7 @@ package com.teixeira.vcspace.activities.editor
 
 import android.content.DialogInterface
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.SparseArray
 import androidx.activity.viewModels
@@ -31,13 +32,16 @@ import com.teixeira.vcspace.editor.CodeEditorView
 import com.teixeira.vcspace.editor.events.OnContentChangeEvent
 import com.teixeira.vcspace.events.OnDeleteFileEvent
 import com.teixeira.vcspace.events.OnRenameFileEvent
+import com.teixeira.vcspace.extensions.toFile
 import com.teixeira.vcspace.preferences.editorTabsAutosave
+import com.teixeira.vcspace.preferences.pluginsPath
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.tasks.TaskExecutor.executeAsyncProvideError
 import com.teixeira.vcspace.utils.UniqueNameBuilder
 import com.teixeira.vcspace.utils.showShortToast
 import com.teixeira.vcspace.viewmodel.EditorViewModel
 import com.teixeira.vcspace.viewmodel.EditorViewModel.EditorAction
+import com.vcspace.plugins.Manifest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -55,6 +59,10 @@ abstract class EditorHandlerActivity : BaseEditorActivity(), TabLayout.OnTabSele
   protected val editorViewModel by viewModels<EditorViewModel>()
   private var fileSaver: Runnable? = null
 
+  companion object {
+    const val EXTRA_KEY_PLUGIN_MANIFEST = "plugin_manifest"
+  }
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
@@ -65,6 +73,20 @@ abstract class EditorHandlerActivity : BaseEditorActivity(), TabLayout.OnTabSele
 
     val fileUri: Uri? = intent.data
     if (fileUri != null) openFile(UriUtils.uri2File(fileUri))
+
+    // Open plugin files if opened from PluginsActivity
+    run {
+      @Suppress("DEPRECATION")
+      val manifest = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        intent.getSerializableExtra(EXTRA_KEY_PLUGIN_MANIFEST, Manifest::class.java)
+      } else intent.getSerializableExtra(EXTRA_KEY_PLUGIN_MANIFEST) as? Manifest
+
+      if (manifest != null) {
+        val pluginPath = "${pluginsPath}/${manifest.packageName}"
+        openFile("$pluginPath/${manifest.scripts.first().name}".toFile())
+        openFile("$pluginPath/manifest.json".toFile())
+      }
+    }
   }
 
   override fun preDestroy() {
