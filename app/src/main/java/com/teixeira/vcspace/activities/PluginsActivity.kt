@@ -9,6 +9,7 @@ import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -60,6 +61,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -67,6 +70,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -84,6 +88,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.blankj.utilcode.util.FileUtils
 import com.google.gson.GsonBuilder
 import com.teixeira.vcspace.activities.editor.EditorActivity
@@ -95,6 +102,7 @@ import com.teixeira.vcspace.preferences.appearanceUIMode
 import com.teixeira.vcspace.preferences.pluginsPath
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.resources.R.string
+import com.teixeira.vcspace.screens.PluginScreen
 import com.teixeira.vcspace.ui.ToastHost
 import com.teixeira.vcspace.ui.ToastHostState
 import com.teixeira.vcspace.ui.rememberToastHostState
@@ -144,6 +152,9 @@ fun PluginsScreen() {
   var plugins by remember { mutableStateOf<List<Plugin>>(emptyList()) }
   var isLoading by remember { mutableStateOf(true) }
 
+  val navController = rememberNavController()
+  var selectedTabIndex by remember { mutableIntStateOf(0) }
+
   LaunchedEffect(Unit) {
     coroutineScope.launch {
       plugins = PluginManager(BaseApplication.instance).getPlugins()
@@ -168,27 +179,78 @@ fun PluginsScreen() {
       }
     },
     floatingActionButton = {
-      NewPluginButton(expandedFab) { showNewPluginDialog = !showNewPluginDialog }
+      AnimatedVisibility(
+        visible = selectedTabIndex == 1
+      ) {
+        NewPluginButton(expandedFab) { showNewPluginDialog = !showNewPluginDialog }
+      }
     },
     floatingActionButtonPosition = FabPosition.EndOverlay
   ) { innerPadding ->
-    if (isLoading) {
-      LoadingIndicator()
-    } else {
-      PluginsList(
-        state = listState,
-        plugins = plugins,
-        modifier = Modifier
-          .padding(innerPadding)
-          .imePadding(),
-        scope = coroutineScope,
-        toastHostState = toastHostState,
-        onDelete = {
-          coroutineScope.launch {
-            plugins = PluginManager(BaseApplication.instance).getPlugins()
+    Column {
+      TabRow(
+        selectedTabIndex = selectedTabIndex,
+        modifier = Modifier.padding(innerPadding)
+      ) {
+        Tab(
+          selected = selectedTabIndex == 0,
+          onClick = {
+            selectedTabIndex = 0
+            navController.navigate(PluginScreen.Explore.route)
+          },
+          text = { Text(PluginScreen.Explore.title) },
+          icon = if (PluginScreen.Explore.icon != null) {
+            { Icon(PluginScreen.Explore.icon, contentDescription = null) }
+          } else {
+            null
+          }
+        )
+
+        Tab(
+          selected = selectedTabIndex == 1,
+          onClick = {
+            selectedTabIndex = 1
+            navController.navigate(PluginScreen.Installed.route)
+          },
+          text = { Text(PluginScreen.Installed.title) },
+          icon = if (PluginScreen.Installed.icon != null) {
+            { Icon(PluginScreen.Installed.icon, contentDescription = null) }
+          } else {
+            null
+          }
+        )
+      }
+      NavHost(
+        navController = navController,
+        startDestination = PluginScreen.Explore.route,
+        modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding())
+      ) {
+        composable(PluginScreen.Explore.route) {
+          Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+          ) {
+            Text("Nothing to show here yet")
           }
         }
-      )
+        composable(PluginScreen.Installed.route) {
+          if (isLoading) {
+            LoadingIndicator()
+          } else {
+            PluginsList(
+              state = listState,
+              plugins = plugins,
+              scope = coroutineScope,
+              toastHostState = toastHostState,
+              onDelete = {
+                coroutineScope.launch {
+                  plugins = PluginManager(BaseApplication.instance).getPlugins()
+                }
+              }
+            )
+          }
+        }
+      }
     }
 
     ToastHost(hostState = toastHostState)

@@ -1,9 +1,18 @@
 plugins {
-  id("com.android.application")
-  id("kotlin-android")
+  alias(libs.plugins.android.application)
+  alias(libs.plugins.kotlin)
   id("kotlin-parcelize")
   id("androidx.navigation.safeargs.kotlin")
   alias(libs.plugins.kotlin.compose)
+  alias(libs.plugins.chaquo)
+}
+
+chaquopy {
+  defaultConfig {
+    pip {
+      install("requests")
+    }
+  }
 }
 
 android {
@@ -13,6 +22,10 @@ android {
     applicationId = "com.teixeira.vcspace"
 
     vectorDrawables.useSupportLibrary = true
+
+    ndk {
+      abiFilters += listOf("arm64-v8a", "x86_64", "armeabi-v7a")
+    }
   }
 
   signingConfigs {
@@ -95,8 +108,10 @@ dependencies {
   implementation(libs.androidx.nav.fragment)
   implementation(libs.androidx.nav.ui)
   implementation(libs.androidx.nav.dynamic.features)
+  implementation(libs.androidx.navigation.compose)
 
   implementation(libs.prdownloader)
+  implementation(libs.retrofit)
 
   implementation(project(":core:common"))
   implementation(project(":core:resources"))

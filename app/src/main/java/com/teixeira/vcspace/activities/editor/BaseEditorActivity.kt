@@ -73,7 +73,9 @@ abstract class BaseEditorActivity :
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setSupportActionBar(binding.toolbar)
-    optionsMenuInvalidator = Runnable { super.invalidateOptionsMenu() }
+    optionsMenuInvalidator = Runnable {
+//      super.invalidateOptionsMenu()
+    }
 
     onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
     KeyboardUtils.registerSoftInputChangedListener(this) { invalidateOptionsMenu() }

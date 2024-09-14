@@ -12,26 +12,12 @@
  * You should have received a copy of the GNU General Public License along with Visual Code Space.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package com.vcspace.plugins
 
-import android.os.Handler
-import android.os.Looper
-import com.blankj.utilcode.util.AppUtils
-import java.io.File
+package com.teixeira.vcspace.screens
 
-// This file is for plugin use only.
-class PluginHelper {
-  private val handler = Handler(Looper.getMainLooper())
+import androidx.compose.ui.graphics.vector.ImageVector
 
-  fun runOnUiThread(runnable: Runnable) {
-    handler.post(runnable)
-  }
-
-  fun runOnUiThreadDelayed(runnable: Runnable, delay: Long) {
-    handler.postDelayed(runnable, delay)
-  }
-
-  fun getFileNameWithoutExtension(file: File) = file.nameWithoutExtension
-
-  fun isAppInstalled(packageName: String) = AppUtils.isAppInstalled(packageName)
+sealed class PluginScreen(val route: String, val title: String, val icon: ImageVector? = null) {
+  data object Explore : PluginScreen("explore", "Explore")
+  data object Installed : PluginScreen("installed", "Installed")
 }

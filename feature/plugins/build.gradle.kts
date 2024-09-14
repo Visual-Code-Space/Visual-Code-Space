@@ -36,6 +36,7 @@ dependencies {
   implementation(libs.google.material)
   implementation(libs.google.gson)
   implementation(libs.bsh)
+  implementation(libs.common.utilcode)
   implementation(project(":core:common"))
   implementation(project(":core:resources"))
   implementation(project(":feature:preferences"))

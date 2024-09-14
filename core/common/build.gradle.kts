@@ -20,5 +20,6 @@ dependencies {
   implementation(libs.google.material)
   implementation(libs.google.gson)
   implementation(libs.common.utilcode)
+  implementation(libs.termux.app.termux.shared)
   implementation(project(":core:resources"))
 }
