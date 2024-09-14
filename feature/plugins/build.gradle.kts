@@ -32,9 +32,12 @@ android {
 
   defaultConfig {
     val file = project.rootProject.file("token.properties")
-    val properties = Properties().also { it.load(file.inputStream()) }
+    
+    val githubToken = if (file.exists()) {
+      val properties = Properties().also { it.load(file.inputStream()) }
+      properties.getProperty("VCSPACE_TOKEN") ?: ""
+    } else ""
 
-    val githubToken = properties.getProperty("VCSPACE_TOKEN") ?: ""
     buildConfigField("String", "GITHUB_TOKEN", "\"$githubToken\"")
   }
 
