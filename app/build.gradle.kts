@@ -4,15 +4,6 @@ plugins {
   id("kotlin-parcelize")
   id("androidx.navigation.safeargs.kotlin")
   alias(libs.plugins.kotlin.compose)
-  alias(libs.plugins.chaquo)
-}
-
-chaquopy {
-  defaultConfig {
-    pip {
-      install("requests")
-    }
-  }
 }
 
 android {

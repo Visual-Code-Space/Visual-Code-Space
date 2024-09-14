@@ -70,7 +70,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -88,14 +87,17 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.blankj.utilcode.util.FileUtils
 import com.google.gson.GsonBuilder
 import com.teixeira.vcspace.activities.editor.EditorActivity
 import com.teixeira.vcspace.activities.editor.EditorHandlerActivity
 import com.teixeira.vcspace.app.BaseApplication
+import com.teixeira.vcspace.extensions.formatSize
 import com.teixeira.vcspace.extensions.getEmptyActivityBundle
 import com.teixeira.vcspace.preferences.appearanceMaterialYou
 import com.teixeira.vcspace.preferences.appearanceUIMode
@@ -108,10 +110,12 @@ import com.teixeira.vcspace.ui.ToastHostState
 import com.teixeira.vcspace.ui.rememberToastHostState
 import com.teixeira.vcspace.ui.theme.VCSpaceTheme
 import com.teixeira.vcspace.utils.isDarkMode
+import com.teixeira.vcspace.viewmodel.PluginViewModel
 import com.vcspace.plugins.Manifest
 import com.vcspace.plugins.Plugin
 import com.vcspace.plugins.Script
 import com.vcspace.plugins.internal.PluginManager
+import com.vcspace.plugins.internal.distribution.github.Content
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.io.File
@@ -144,22 +148,23 @@ class PluginsActivity : ComponentActivity() {
 }
 
 @Composable
-fun PluginsScreen() {
+fun PluginsScreen(viewModel: PluginViewModel = viewModel()) {
   val coroutineScope = rememberCoroutineScope()
   val listState = rememberLazyListState()
   val toastHostState = rememberToastHostState()
   val expandedFab by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 } }
-  var plugins by remember { mutableStateOf<List<Plugin>>(emptyList()) }
-  var isLoading by remember { mutableStateOf(true) }
+
+  val installedPlugins by viewModel.installedPlugins
+  val plugins by viewModel.plugins
+  val isLoadingInstalledPlugins by viewModel.isLoadingInstalledPlugins
+  val isLoadingPlugins by viewModel.isLoadingPlugins
 
   val navController = rememberNavController()
-  var selectedTabIndex by remember { mutableIntStateOf(0) }
+  val navBackStackEntry by navController.currentBackStackEntryAsState()
 
   LaunchedEffect(Unit) {
-    coroutineScope.launch {
-      plugins = PluginManager(BaseApplication.instance).getPlugins()
-      isLoading = false
-    }
+    viewModel.loadInstalledPlugins()
+    viewModel.loadPlugins()
   }
 
   var showNewPluginDialog by remember { mutableStateOf(false) }
@@ -170,51 +175,45 @@ fun PluginsScreen() {
       TopBar { updatedPath ->
         if (updatedPath != null) {
           pluginsPath = updatedPath
-          isLoading = true
-          coroutineScope.launch {
-            plugins = loadPlugins()
-            isLoading = false
-          }
+          viewModel.loadInstalledPlugins()
         }
       }
     },
     floatingActionButton = {
       AnimatedVisibility(
-        visible = selectedTabIndex == 1
+        visible = navBackStackEntry?.destination?.route == PluginScreen.Installed.route,
       ) {
         NewPluginButton(expandedFab) { showNewPluginDialog = !showNewPluginDialog }
       }
     },
     floatingActionButtonPosition = FabPosition.EndOverlay
   ) { innerPadding ->
+    val tabItems = listOf(PluginScreen.Explore, PluginScreen.Installed)
+    val tabIndices = mapOf(PluginScreen.Explore.route to 0, PluginScreen.Installed.route to 1)
+    val currentRoute = navBackStackEntry?.destination?.route ?: PluginScreen.Explore.route
+
     Column {
       TabRow(
-        selectedTabIndex = selectedTabIndex,
+        selectedTabIndex = tabIndices[currentRoute]!!,
         modifier = Modifier.padding(innerPadding)
       ) {
-        Tab(
-          selected = selectedTabIndex == 0,
-          onClick = {
-            selectedTabIndex = 0
-            navController.navigate(PluginScreen.Explore.route)
-          },
-          selectedContentColor = MaterialTheme.colorScheme.primary,
-          unselectedContentColor = MaterialTheme.colorScheme.onBackground,
-          text = { Text(PluginScreen.Explore.title) },
-          icon = PluginScreen.Explore.icon
-        )
-
-        Tab(
-          selected = selectedTabIndex == 1,
-          onClick = {
-            selectedTabIndex = 1
-            navController.navigate(PluginScreen.Installed.route)
-          },
-          selectedContentColor = MaterialTheme.colorScheme.primary,
-          unselectedContentColor = MaterialTheme.colorScheme.onBackground,
-          text = { Text(PluginScreen.Installed.title) },
-          icon = PluginScreen.Installed.icon
-        )
+        tabItems.forEach { screen ->
+          Tab(
+            selected = currentRoute == screen.route,
+            onClick = {
+              navController.navigate(screen.route) {
+                popUpTo(navController.graph.startDestinationId) {
+                  saveState = true
+                }
+                launchSingleTop = true
+                restoreState = true
+              }
+            },
+            text = { Text(screen.title) },
+            selectedContentColor = MaterialTheme.colorScheme.primary,
+            unselectedContentColor = MaterialTheme.colorScheme.onBackground,
+          )
+        }
       }
       NavHost(
         navController = navController,
@@ -222,27 +221,26 @@ fun PluginsScreen() {
         modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding())
       ) {
         composable(PluginScreen.Explore.route) {
-          Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-          ) {
-            Text("Nothing to show here yet")
+          if (isLoadingPlugins) {
+            LoadingIndicator()
+          } else {
+            PluginExploreList(
+              contents = plugins,
+              scope = coroutineScope,
+              toastHostState = toastHostState
+            )
           }
         }
         composable(PluginScreen.Installed.route) {
-          if (isLoading) {
+          if (isLoadingInstalledPlugins) {
             LoadingIndicator()
           } else {
             PluginsList(
               state = listState,
-              plugins = plugins,
+              plugins = installedPlugins,
               scope = coroutineScope,
               toastHostState = toastHostState,
-              onDelete = {
-                coroutineScope.launch {
-                  plugins = PluginManager(BaseApplication.instance).getPlugins()
-                }
-              }
+              onDelete = { viewModel.loadInstalledPlugins() }
             )
           }
         }
@@ -320,10 +318,12 @@ fun PluginsScreen() {
         """.trimIndent()
         )
 
-        plugins = plugins + Plugin(
-          manifest = manifest,
-          app = BaseApplication.instance,
-          fullPath = "$pluginsPath/${manifest.packageName}"
+        viewModel.addNewPlugin(
+          Plugin(
+            manifest = manifest,
+            app = BaseApplication.instance,
+            fullPath = "$pluginsPath/${manifest.packageName}"
+          )
         )
 
         coroutineScope.launch {
@@ -337,6 +337,63 @@ fun PluginsScreen() {
           toastHostState.showToast(
             message = "Plugin creation canceled",
             icon = Icons.Rounded.Close
+          )
+        }
+      }
+    }
+  }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun PluginExploreList(
+  modifier: Modifier = Modifier,
+  contents: List<Content>,
+  scope: CoroutineScope,
+  toastHostState: ToastHostState
+) {
+  if (contents.isEmpty()) {
+    Box(
+      modifier = modifier.fillMaxSize(),
+      contentAlignment = Alignment.Center
+    ) {
+      Text("Nothing to show here")
+    }
+  } else {
+    LazyColumn(
+      modifier = modifier.fillMaxSize(),
+      contentPadding = PaddingValues(vertical = 5.dp, horizontal = 5.dp),
+      verticalArrangement = Arrangement.spacedBy(5.dp)
+    ) {
+      items(contents) {
+        ElevatedCard(
+          modifier = Modifier
+            .clip(CardDefaults.elevatedShape)
+            .combinedClickable(
+              onClick = {
+                scope.launch {
+                  toastHostState.showToast("Soon to be implemented")
+                }
+              },
+              onLongClick = {
+
+              },
+              interactionSource = remember { MutableInteractionSource() },
+              indication = rememberRipple(bounded = true)
+            )
+        ) {
+          ListItem(
+            headlineContent = { Text(it.name) },
+            supportingContent = { Text(it.size.toLong().formatSize()) },
+            trailingContent = {
+
+            },
+            leadingContent = {
+              Icon(
+                painter = painterResource(R.drawable.ic_plugin),
+                contentDescription = null
+              )
+            }
           )
         }
       }
@@ -457,7 +514,7 @@ fun SettingsButton(onClick: () -> Unit) {
   }
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PluginsList(
   modifier: Modifier = Modifier,
@@ -483,7 +540,7 @@ fun PluginsList(
       items(plugins, key = { it.fullPath }) { plugin ->
         PluginItem(
           plugin,
-          modifier = Modifier.animateItemPlacement(),
+          modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null),
           onLongClick = { selectedPlugin = it },
           onClick = {
             val intent = Intent(context, EditorActivity::class.java).apply {
@@ -629,7 +686,7 @@ fun PluginPathTextField(
     modifier = Modifier.padding(top = 8.dp),
     isError = errorMessage != null,
     keyboardOptions = KeyboardOptions(
-      autoCorrect = false,
+      autoCorrectEnabled = false,
       imeAction = ImeAction.Done
     )
   )
@@ -938,5 +995,5 @@ private fun validatePath(path: String): String? {
 }
 
 private fun loadPlugins(): List<Plugin> {
-  return PluginManager(BaseApplication.instance).getPlugins()
+  return PluginManager.getPlugins()
 }

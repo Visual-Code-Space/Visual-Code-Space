@@ -7,8 +7,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import com.blankj.utilcode.util.ThreadUtils
 import com.blankj.utilcode.util.ThrowableUtils
-import com.chaquo.python.Python
-import com.chaquo.python.android.AndroidPlatform
 import com.downloader.PRDownloader
 import com.google.android.material.color.DynamicColors
 import com.teixeira.vcspace.activities.CrashActivity
@@ -39,10 +37,6 @@ class VCSpaceApplication : BaseApplication() {
     uncaughtException = Thread.getDefaultUncaughtExceptionHandler()
     Thread.setDefaultUncaughtExceptionHandler(this::uncaughtException)
     super.onCreate()
-
-    if (!Python.isStarted()) {
-      Python.start(AndroidPlatform(applicationContext))
-    }
 
     registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
       override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
@@ -76,7 +70,8 @@ class VCSpaceApplication : BaseApplication() {
             Toast.LENGTH_SHORT
           ).show()
         }
-        PluginManager(this@VCSpaceApplication).init { plugin, err -> }
+
+        PluginManager.init(this@VCSpaceApplication) { plugin, err -> }
       }
 
       override fun onCancel() {}

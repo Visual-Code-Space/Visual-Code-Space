@@ -1,3 +1,5 @@
+import java.util.Properties
+
 /*
  * This file is part of Visual Code Space.
  *
@@ -28,7 +30,17 @@ android {
     }
   }
 
-  buildFeatures { viewBinding = true }
+  defaultConfig {
+    val file = project.rootProject.file("token.properties")
+    val properties = Properties().also { it.load(file.inputStream()) }
+
+    val githubToken = properties.getProperty("VCSPACE_TOKEN") ?: ""
+    buildConfigField("String", "GITHUB_TOKEN", "\"$githubToken\"")
+  }
+
+  buildFeatures {
+    buildConfig = true
+  }
 }
 
 dependencies {
@@ -37,6 +49,11 @@ dependencies {
   implementation(libs.google.gson)
   implementation(libs.bsh)
   implementation(libs.common.utilcode)
+
+  implementation(libs.retrofit)
+  implementation(libs.retrofit.converter.gson)
+  implementation(libs.okhttp)
+
   implementation(project(":core:common"))
   implementation(project(":core:resources"))
   implementation(project(":feature:preferences"))
