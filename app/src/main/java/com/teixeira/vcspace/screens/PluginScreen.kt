@@ -15,9 +15,30 @@
 
 package com.teixeira.vcspace.screens
 
+import androidx.compose.material3.Icon
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
+import com.teixeira.vcspace.resources.R
 
-sealed class PluginScreen(val route: String, val title: String, val icon: ImageVector? = null) {
-  data object Explore : PluginScreen("explore", "Explore")
-  data object Installed : PluginScreen("installed", "Installed")
+sealed class PluginScreen(
+  val route: String,
+  val title: String,
+  val icon: (@Composable () -> Unit)? = null
+) {
+  data object Explore : PluginScreen(
+    route = "explore",
+    title = "Explore",
+    icon = {
+      Icon(ImageVector.vectorResource(R.drawable.ic_explore), contentDescription = null)
+    }
+  )
+
+  data object Installed : PluginScreen(
+    route = "installed",
+    title = "Installed",
+    icon = {
+      Icon(ImageVector.vectorResource(R.drawable.ic_download), contentDescription = null)
+    }
+  )
 }

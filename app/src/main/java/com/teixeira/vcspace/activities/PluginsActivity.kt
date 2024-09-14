@@ -198,12 +198,10 @@ fun PluginsScreen() {
             selectedTabIndex = 0
             navController.navigate(PluginScreen.Explore.route)
           },
+          selectedContentColor = MaterialTheme.colorScheme.primary,
+          unselectedContentColor = MaterialTheme.colorScheme.onBackground,
           text = { Text(PluginScreen.Explore.title) },
-          icon = if (PluginScreen.Explore.icon != null) {
-            { Icon(PluginScreen.Explore.icon, contentDescription = null) }
-          } else {
-            null
-          }
+          icon = PluginScreen.Explore.icon
         )
 
         Tab(
@@ -212,12 +210,10 @@ fun PluginsScreen() {
             selectedTabIndex = 1
             navController.navigate(PluginScreen.Installed.route)
           },
+          selectedContentColor = MaterialTheme.colorScheme.primary,
+          unselectedContentColor = MaterialTheme.colorScheme.onBackground,
           text = { Text(PluginScreen.Installed.title) },
-          icon = if (PluginScreen.Installed.icon != null) {
-            { Icon(PluginScreen.Installed.icon, contentDescription = null) }
-          } else {
-            null
-          }
+          icon = PluginScreen.Installed.icon
         )
       }
       NavHost(

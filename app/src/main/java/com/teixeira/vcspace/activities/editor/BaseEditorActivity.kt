@@ -74,7 +74,7 @@ abstract class BaseEditorActivity :
     super.onCreate(savedInstanceState)
     setSupportActionBar(binding.toolbar)
     optionsMenuInvalidator = Runnable {
-//      super.invalidateOptionsMenu()
+      super.invalidateOptionsMenu()
     }
 
     onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
