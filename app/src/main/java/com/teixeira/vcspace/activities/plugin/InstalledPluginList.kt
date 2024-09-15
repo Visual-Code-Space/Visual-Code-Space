@@ -41,7 +41,7 @@ import com.teixeira.vcspace.activities.editor.EditorActivity
 import com.teixeira.vcspace.activities.editor.EditorHandlerActivity
 import com.teixeira.vcspace.extensions.getEmptyActivityBundle
 import com.teixeira.vcspace.resources.R
-import com.teixeira.vcspace.ui.LoadingIndicator
+import com.teixeira.vcspace.ui.LoadingDialog
 import com.teixeira.vcspace.ui.ToastHostState
 import com.teixeira.vcspace.viewmodel.PluginViewModel
 import com.vcspace.plugins.Plugin
@@ -63,7 +63,7 @@ fun InstalledPluginList(
   val context = LocalContext.current
 
   if (isLoading) {
-    LoadingIndicator()
+    LoadingDialog(message = "Loading")
   } else if (plugins.isEmpty()) {
     NoPlugins()
   } else {

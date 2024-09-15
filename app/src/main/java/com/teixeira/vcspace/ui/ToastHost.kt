@@ -15,7 +15,6 @@
 
 package com.teixeira.vcspace.ui
 
-import androidx.annotation.FloatRange
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.core.tween
@@ -58,14 +57,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.AccessibilityManager
 import androidx.compose.ui.platform.LocalAccessibilityManager
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.core.graphics.ColorUtils
+import com.teixeira.vcspace.ui.extensions.harmonizeWithPrimary
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -284,8 +282,8 @@ private fun ToastDuration.toMillis(
   accessibilityManager: AccessibilityManager?
 ): Long {
   val original = when (this) {
-    ToastDuration.Long -> 4500L
-    ToastDuration.Short -> 2000L
+    ToastDuration.Long -> 6500L
+    ToastDuration.Short -> 3000L
   }
   return accessibilityManager?.calculateRecommendedTimeoutMillis(
     original,
@@ -293,16 +291,3 @@ private fun ToastDuration.toMillis(
     containsText = true
   ) ?: original
 }
-
-private fun Color.blend(
-  color: Color,
-  @FloatRange(from = 0.0, to = 1.0) fraction: Float = 0.2f
-): Color = Color(ColorUtils.blendARGB(this.toArgb(), color.toArgb(), fraction))
-
-@Composable
-private fun Color.harmonizeWithPrimary(
-  @FloatRange(
-    from = 0.0,
-    to = 1.0
-  ) fraction: Float = 0.2f
-): Color = blend(MaterialTheme.colorScheme.primary, fraction)

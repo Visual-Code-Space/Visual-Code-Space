@@ -83,6 +83,7 @@ fun PluginSettingsDialog(
         onClick = {
           if (path.toFile().exists()) {
             onSettingsChanged?.invoke(settings.copy(pluginPath = path))
+            onDismiss()
           } else showCreateDirDialog = true
         },
         enabled = errorMessage == null
@@ -103,6 +104,7 @@ fun PluginSettingsDialog(
         File(path).mkdirs()
         showCreateDirDialog = false
         onSettingsChanged?.invoke(settings.copy(pluginPath = path))
+        onDismiss()
       },
       onCancel = { showCreateDirDialog = false }
     )

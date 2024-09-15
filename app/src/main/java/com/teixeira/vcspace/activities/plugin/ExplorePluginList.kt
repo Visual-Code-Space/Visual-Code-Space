@@ -41,7 +41,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.teixeira.vcspace.extensions.formatSize
 import com.teixeira.vcspace.resources.R
-import com.teixeira.vcspace.ui.LoadingIndicator
+import com.teixeira.vcspace.ui.LoadingDialog
 import com.teixeira.vcspace.ui.ToastHostState
 import com.teixeira.vcspace.viewmodel.PluginViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -59,7 +59,7 @@ fun ExplorePluginList(
   val isLoading by viewModel.isLoadingPlugins
 
   if (isLoading) {
-    LoadingIndicator()
+    LoadingDialog(message = "Loading")
   } else if (plugins.isEmpty()) {
     NothingToShowHere()
   } else {

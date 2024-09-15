@@ -65,6 +65,7 @@ fun PluginsScreen(
   val navBackStackEntry by navController.currentBackStackEntryAsState()
 
   var showNewPluginDialog by remember { mutableStateOf(false) }
+  var showProgressDialog by remember { mutableStateOf(false) }
 
   LaunchedEffect(Unit) {
     viewModel.loadInstalledPlugins()
