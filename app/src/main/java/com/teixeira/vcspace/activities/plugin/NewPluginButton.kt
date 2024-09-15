@@ -13,32 +13,27 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.screens
+package com.teixeira.vcspace.activities.plugin
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
-import com.teixeira.vcspace.resources.R
+import androidx.compose.ui.Modifier
 
-sealed class PluginScreen(
-  val route: String,
-  val title: String,
-  val icon: (@Composable () -> Unit)? = null
+@Composable
+fun NewPluginButton(
+  modifier: Modifier = Modifier,
+  expanded: Boolean,
+  onClick: () -> Unit
 ) {
-  data object Explore : PluginScreen(
-    route = "explore",
-    title = "Explore",
-    icon = {
-      Icon(ImageVector.vectorResource(R.drawable.ic_explore), contentDescription = null)
-    }
-  )
-
-  data object Installed : PluginScreen(
-    route = "installed",
-    title = "Installed",
-    icon = {
-      Icon(ImageVector.vectorResource(R.drawable.ic_download), contentDescription = null)
-    }
+  ExtendedFloatingActionButton(
+    onClick = onClick,
+    text = { Text("New Plugin") },
+    icon = { Icon(Icons.Rounded.Add, contentDescription = "add plugin") },
+    expanded = expanded,
+    modifier = modifier
   )
 }

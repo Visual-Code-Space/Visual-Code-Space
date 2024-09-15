@@ -28,7 +28,7 @@
     android:usesCleartextTraffic="true"
     tools:targetApi="tiramisu">
     <activity
-      android:name=".activities.PluginsActivity"
+      android:name=".activities.plugin.PluginsActivity"
       android:exported="false" />
     <activity
       android:name=".activities.editor.EditorActivity"

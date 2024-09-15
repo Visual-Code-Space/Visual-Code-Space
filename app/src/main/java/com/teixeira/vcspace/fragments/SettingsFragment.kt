@@ -23,7 +23,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.teixeira.vcspace.PreferenceKeys
 import com.teixeira.vcspace.R
-import com.teixeira.vcspace.activities.PluginsActivity
+import com.teixeira.vcspace.activities.plugin.PluginsActivity
 import com.teixeira.vcspace.app.BaseApplication
 import com.teixeira.vcspace.extensions.open
 
