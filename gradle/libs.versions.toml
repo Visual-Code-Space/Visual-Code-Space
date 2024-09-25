@@ -45,7 +45,7 @@ common-jsoup = { module = "org.jsoup:jsoup", version = "1.18.1" }
 common-leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version = "2.12" }
 common-utilcode = { module = "com.blankj:utilcodex", version = "1.31.1" }
 common-p7zip = { module = "com.github.hzy3774:AndroidP7zip", version.ref = "p7zip" }
-common-kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version = "1.7.3" }
+common-kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version = "1.9.0" }
 common-terminal-view = { module = "com.github.termux.termux-app:terminal-view", version.ref = "termux" }
 common-terminal-emulator = { module = "com.github.termux.termux-app:terminal-emulator", version.ref = "termux" }
 
