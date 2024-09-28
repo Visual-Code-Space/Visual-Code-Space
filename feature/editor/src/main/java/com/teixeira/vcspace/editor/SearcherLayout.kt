@@ -13,9 +13,7 @@ import com.teixeira.vcspace.resources.R
 import io.github.rosemoe.sora.widget.EditorSearcher
 import io.github.rosemoe.sora.widget.EditorSearcher.SearchOptions
 
-class SearcherLayout
-@JvmOverloads
-constructor(
+class SearcherLayout @JvmOverloads constructor(
   context: Context,
   attrs: AttributeSet? = null,
   defStyleAttr: Int = 0,

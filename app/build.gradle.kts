@@ -115,6 +115,12 @@ dependencies {
   implementation(project(":feature:preferences"))
   implementation(project(":feature:plugins"))
 
+//  implementation(kotlin("compiler"))
+//  implementation(kotlin("scripting-compiler"))
+//  implementation(kotlin("scripting-jvm-host-unshaded"))
+//  implementation(kotlin("sam-with-receiver-compiler-plugin"))
+//  implementation(kotlin("reflect"))
+
   debugImplementation(libs.common.leakcanary)
   debugImplementation(libs.androidx.ui.tooling)
   debugImplementation(libs.androidx.ui.test.manifest)

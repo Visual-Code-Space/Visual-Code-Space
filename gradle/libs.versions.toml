@@ -7,6 +7,7 @@ konfetti-compose = "2.0.4"
 material-icons-extended = "1.7.2"
 navigation-compose = "2.8.1"
 okhttp = "4.12.0"
+lsp4j = "0.23.1"
 prdownloader = "1.0.1"
 retrofit = "2.11.0"
 termux = "0.118.1"
@@ -53,6 +54,8 @@ common-terminal-view = { module = "com.github.termux.termux-app:terminal-view", 
 common-terminal-emulator = { module = "com.github.termux.termux-app:terminal-emulator", version.ref = "termux" }
 
 konfetti-compose = { module = "nl.dionsegijn:konfetti-compose", version.ref = "konfetti-compose" }
+org-eclipse-lsp4j = { module = "org.eclipse.lsp4j:org.eclipse.lsp4j", version.ref = "lsp4j" }
+org-eclipse-lsp4j-jsonrpc = { module = "org.eclipse.lsp4j:org.eclipse.lsp4j.jsonrpc", version.ref = "lsp4j" }
 prdownloader = { module = "com.github.amitshekhariitbhu:PRDownloader", version.ref = "prdownloader" }
 bsh = { module = "org.beanshell:bsh", version.ref = "bsh" }
 

@@ -24,10 +24,14 @@ import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.util.forEach
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
+import com.blankj.utilcode.util.FileUtils
+import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.ThreadUtils
 import com.blankj.utilcode.util.UriUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
+import com.google.gson.Gson
 import com.teixeira.vcspace.editor.CodeEditorView
 import com.teixeira.vcspace.editor.events.OnContentChangeEvent
 import com.teixeira.vcspace.events.OnDeleteFileEvent
@@ -35,6 +39,7 @@ import com.teixeira.vcspace.events.OnRenameFileEvent
 import com.teixeira.vcspace.extensions.toFile
 import com.teixeira.vcspace.preferences.editorTabsAutosave
 import com.teixeira.vcspace.preferences.pluginsPath
+import com.teixeira.vcspace.preferences.rememberLastOpenedFile
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.tasks.TaskExecutor.executeAsyncProvideError
 import com.teixeira.vcspace.utils.UniqueNameBuilder
@@ -42,6 +47,8 @@ import com.teixeira.vcspace.utils.showShortToast
 import com.teixeira.vcspace.viewmodel.EditorViewModel
 import com.teixeira.vcspace.viewmodel.EditorViewModel.EditorAction
 import com.vcspace.plugins.Manifest
+import io.github.rosemoe.sora.lang.EmptyLanguage
+import io.github.rosemoe.sora.lsp.client.languageserver.wrapper.EventHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -59,8 +66,13 @@ abstract class EditorHandlerActivity : BaseEditorActivity(), TabLayout.OnTabSele
   protected val editorViewModel by viewModels<EditorViewModel>()
   private var fileSaver: Runnable? = null
 
+  private val openedFiles = mutableListOf<String>()
+
   companion object {
     const val EXTRA_KEY_PLUGIN_MANIFEST = "plugin_manifest"
+
+    private val LAST_OPENED_FILES_JSON_PATH =
+      "${PathUtils.getExternalAppFilesPath()}/settings/lastOpenedFile.json"
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,6 +82,8 @@ abstract class EditorHandlerActivity : BaseEditorActivity(), TabLayout.OnTabSele
 
     binding.tabs.addOnTabSelectedListener(this)
     observeEditorViewModel()
+
+    if (rememberLastOpenedFile) openLastFiles()
 
     val fileUri: Uri? = intent.data
     if (fileUri != null) openFile(UriUtils.uri2File(fileUri))
@@ -174,11 +188,22 @@ abstract class EditorHandlerActivity : BaseEditorActivity(), TabLayout.OnTabSele
 
       val editorView = CodeEditorView(this, file)
 
+      if (file.extension == "kt") {
+        lifecycleScope.launch {
+          editorView.editor.connectToKotlinLsp(
+            lifecycleScope,
+            EmptyLanguage(),
+            object : EventHandler.EventListener {}
+          )
+        }
+      }
+
       editorViewModel.addFile(file)
       binding.container.addView(editorView)
       binding.tabs.addTab(binding.tabs.newTab())
 
       editorViewModel.setSelectedFile(index)
+      openedFiles.add(file.absolutePath)
       updateTabs()
     }
   }
@@ -199,6 +224,7 @@ abstract class EditorHandlerActivity : BaseEditorActivity(), TabLayout.OnTabSele
         tabs.removeTabAt(index)
         container.removeViewAt(index)
       }
+      openedFiles.remove(file?.absolutePath)
       updateTabs()
     }
   }
@@ -239,6 +265,7 @@ abstract class EditorHandlerActivity : BaseEditorActivity(), TabLayout.OnTabSele
       tabs.requestLayout()
       container.removeAllViews()
     }
+    openedFiles.forEach { openedFiles.remove(it) }
   }
 
   fun saveAllFilesAsync(notify: Boolean, whenSave: Runnable? = null) {
@@ -438,5 +465,32 @@ abstract class EditorHandlerActivity : BaseEditorActivity(), TabLayout.OnTabSele
     if (text!!.startsWith("*")) {
       text = text!!.substring(startIndex = 1)
     }
+  }
+
+  private fun openLastFiles() {
+    File(LAST_OPENED_FILES_JSON_PATH).apply {
+      if (!exists()) return@apply
+
+      val fileHistory = Gson().fromJson(readText(), FileHistory::class.java)
+      fileHistory.lastOpenedFilesPath.forEach { openFile(it.toFile()) }
+    }
+  }
+
+  private fun rememberLastFiles() {
+    val lastOpenedFiles = Gson().toJson(FileHistory(openedFiles))
+    File(LAST_OPENED_FILES_JSON_PATH).apply {
+      FileUtils.createOrExistsFile(this)
+      writeText(lastOpenedFiles)
+    }
+  }
+
+  override fun onPause() {
+    rememberLastFiles()
+    super.onPause()
+  }
+
+  override fun onDestroy() {
+    rememberLastFiles()
+    super.onDestroy()
   }
 }

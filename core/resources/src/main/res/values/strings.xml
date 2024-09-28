@@ -94,7 +94,7 @@
   <!-- Preferences -->
   <string name="pref_category_configure">Configure</string>
   <string name="pref_category_about">About</string>
-  <string name="pref_category_aparence">Aparence</string>
+  <string name="pref_category_appearance">Appearance</string>
   <string name="pref_category_editor">Editor</string>
   <string name="pref_category_editor_tabs">Editor tabs</string>
   <string name="pref_category_file">File</string>
@@ -146,6 +146,9 @@
   <string name="pref_file_showhiddenfiles_summary">If enabled, shows files and folders whose names start with \".\".</string>
   <string name="pref_configure_plugins_summary">Manage plugins</string>
   <string name="pref_configure_plugins">Plugins</string>
+
+  <string name="pref_remember_last_opened_file_title">Remember Last Opened File</string>
+  <string name="pref_remember_last_opened_file_summary">Automatically reopen the last file you were working on at startup.</string>
 
   <!-- Others -->
   <string name="the_directory_does_not_exist_would_you_like_to_create_it">The directory does not exist. Would you like to create it?</string>

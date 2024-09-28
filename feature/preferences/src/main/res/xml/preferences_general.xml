@@ -1,24 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
-  xmlns:android="http://schemas.android.com/apk/res/android"
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto">
 
   <PreferenceCategory
     app:iconSpaceReserved="false"
-    app:title="@string/pref_category_aparence">
+    app:title="@string/pref_category_appearance">
 
     <com.teixeira.vcspace.preferences.UIModePreference
       app:icon="@drawable/ic_theme"
       app:key="pref_aparence_uimode_key"
-      app:title="@string/pref_aparence_uimode"
-      app:summary="@string/pref_aparence_uimode_summary" />
+      app:summary="@string/pref_aparence_uimode_summary"
+      app:title="@string/pref_aparence_uimode" />
 
     <SwitchPreferenceCompat
       app:defaultValue="true"
       app:icon="@drawable/ic_palette"
       app:key="pref_aparence_materialyou_key"
-      app:title="@string/pref_aparence_materialyou"
-      app:summary="@string/pref_aparence_materialyou_summary" />
+      app:summary="@string/pref_aparence_materialyou_summary"
+      app:title="@string/pref_aparence_materialyou" />
+  </PreferenceCategory>
+
+  <PreferenceCategory
+    app:iconSpaceReserved="false"
+    app:title="File Settings">
+
+    <SwitchPreferenceCompat
+      app:defaultValue="false"
+      app:icon="@android:drawable/ic_menu_recent_history"
+      app:key="pref_remember_last_opened_file"
+      app:summary="@string/pref_remember_last_opened_file_summary"
+      app:title="@string/pref_remember_last_opened_file_title" />
+
   </PreferenceCategory>
 
 </PreferenceScreen>

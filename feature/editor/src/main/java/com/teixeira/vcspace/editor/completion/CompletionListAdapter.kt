@@ -35,11 +35,9 @@ class CompletionListAdapter : EditorCompletionAdapter() {
         ?: LayoutCompletionItemBinding.inflate(LayoutInflater.from(context), parent, false)
 
     val item = getItem(pos)
-    val kind =
-      (if (item is VCSpaceCompletionItem) {
-          item.completionKind
-        } else CompletionItemKind.IDENTIFIER)
-        .toString()
+    val kind = (if (item is VCSpaceCompletionItem) {
+      item.completionKind
+    } else CompletionItemKind.IDENTIFIER).toString()
 
     binding.apply {
       itemIcon.text = kind[0].toString()

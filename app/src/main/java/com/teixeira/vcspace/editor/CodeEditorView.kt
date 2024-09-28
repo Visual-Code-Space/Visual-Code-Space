@@ -10,12 +10,12 @@ import com.blankj.utilcode.util.FileIOUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.teixeira.vcspace.editor.databinding.LayoutCodeEditorBinding
 import com.teixeira.vcspace.events.OnPreferenceChangeEvent
-import com.teixeira.vcspace.preferences.PREF_APARENCE_UIMODE_KEY
+import com.teixeira.vcspace.preferences.PREF_APPEARANCE_UI_MODE_KEY
 import com.teixeira.vcspace.preferences.PREF_EDITOR_COLORSCHEME_KEY
 import com.teixeira.vcspace.preferences.PREF_EDITOR_DELETELINEONBACKSPACE_KEY
 import com.teixeira.vcspace.preferences.PREF_EDITOR_DELETETABONBACKSPACE_KEY
 import com.teixeira.vcspace.preferences.PREF_EDITOR_FONTLIGATURES_KEY
-import com.teixeira.vcspace.preferences.PREF_EDITOR_FONTSIZE_KEY
+import com.teixeira.vcspace.preferences.PREF_EDITOR_FONT_SIZE_KEY
 import com.teixeira.vcspace.preferences.PREF_EDITOR_FONT_KEY
 import com.teixeira.vcspace.preferences.PREF_EDITOR_INDENT_KEY
 import com.teixeira.vcspace.preferences.PREF_EDITOR_LINENUMBER_KEY
@@ -164,10 +164,10 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
   @Subscribe(threadMode = ThreadMode.MAIN)
   fun onSharedPreferenceChanged(event: OnPreferenceChangeEvent) {
     when (event.prefKey) {
-      PREF_APARENCE_UIMODE_KEY,
+      PREF_APPEARANCE_UI_MODE_KEY,
       PREF_EDITOR_COLORSCHEME_KEY -> updateEditorColorScheme()
       PREF_EDITOR_FONT_KEY -> updateEditorFont()
-      PREF_EDITOR_FONTSIZE_KEY -> updateFontSize()
+      PREF_EDITOR_FONT_SIZE_KEY -> updateFontSize()
       PREF_EDITOR_INDENT_KEY -> updateEditorIndent()
       PREF_EDITOR_STICKYSCROLL_KEY -> updateStickyScroll()
       PREF_EDITOR_FONTLIGATURES_KEY -> updateFontLigatures()

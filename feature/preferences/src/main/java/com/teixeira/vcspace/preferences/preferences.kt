@@ -8,25 +8,26 @@ import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.utils.isDarkMode
 
 // General
-val PREF_APARENCE_UIMODE_KEY = "pref_aparence_uimode_key"
-val PREF_APARENCE_MATERIALYOU_KEY = "pref_aparence_materialyou_key"
+const val PREF_APPEARANCE_UI_MODE_KEY = "pref_aparence_uimode_key"
+const val PREF_APPEARANCE_MATERIAL_YOU_KEY = "pref_aparence_materialyou_key"
+const val PREF_REMEMBER_LAST_OPENED_FILE = "pref_remember_last_opened_file"
 
 // Editor
-val PREF_EDITOR_FONTSIZE_KEY = "pref_editor_fontsize_key"
-val PREF_EDITOR_INDENT_KEY = "pref_editor_indent_key"
-val PREF_EDITOR_FONT_KEY = "pref_editor_font_key"
-val PREF_EDITOR_COLORSCHEME_KEY = "pref_editor_colorscheme_key"
-val PREF_EDITOR_STICKYSCROLL_KEY = "pref_editor_stickyscroll_key"
-val PREF_EDITOR_FONTLIGATURES_KEY = "pref_editor_fontligatures_key"
-val PREF_EDITOR_WORDWRAP_KEY = "pref_editor_wordwrap_key"
-val PREF_EDITOR_LINENUMBER_KEY = "pref_editor_linenumber_key"
-val PREF_EDITOR_USETAB_KEY = "pref_editor_usetab_key"
-val PREF_EDITOR_DELETELINEONBACKSPACE_KEY = "pref_editor_deletelineonbackspace"
-val PREF_EDITOR_DELETETABONBACKSPACE_KEY = "pref_editor_deletetabonbackspace"
-val PREF_EDITOR_TABS_AUTOSAVE = "pref_editor_tabs_autosave"
+const val PREF_EDITOR_FONT_SIZE_KEY = "pref_editor_fontsize_key"
+const val PREF_EDITOR_INDENT_KEY = "pref_editor_indent_key"
+const val PREF_EDITOR_FONT_KEY = "pref_editor_font_key"
+const val PREF_EDITOR_COLORSCHEME_KEY = "pref_editor_colorscheme_key"
+const val PREF_EDITOR_STICKYSCROLL_KEY = "pref_editor_stickyscroll_key"
+const val PREF_EDITOR_FONTLIGATURES_KEY = "pref_editor_fontligatures_key"
+const val PREF_EDITOR_WORDWRAP_KEY = "pref_editor_wordwrap_key"
+const val PREF_EDITOR_LINENUMBER_KEY = "pref_editor_linenumber_key"
+const val PREF_EDITOR_USETAB_KEY = "pref_editor_usetab_key"
+const val PREF_EDITOR_DELETELINEONBACKSPACE_KEY = "pref_editor_deletelineonbackspace"
+const val PREF_EDITOR_DELETETABONBACKSPACE_KEY = "pref_editor_deletetabonbackspace"
+const val PREF_EDITOR_TABS_AUTOSAVE = "pref_editor_tabs_autosave"
 
 // File
-val PREF_FILE_SHOWHIDDENFILES_KEY = "pref_file_showhiddenfiles_key"
+const val PREF_FILE_SHOWHIDDENFILES_KEY = "pref_file_showhiddenfiles_key"
 
 val app = BaseApplication.instance
 val defaultPrefs = app.defaultPrefs
@@ -34,18 +35,21 @@ val defaultPrefs = app.defaultPrefs
 // General
 val appearanceUIMode: Int
   get() =
-    when (defaultPrefs.getInt(PREF_APARENCE_UIMODE_KEY, 0)) {
+    when (defaultPrefs.getInt(PREF_APPEARANCE_UI_MODE_KEY, 0)) {
       1 -> AppCompatDelegate.MODE_NIGHT_NO
       2 -> AppCompatDelegate.MODE_NIGHT_YES
       else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
     }
 
 val appearanceMaterialYou: Boolean
-  get() = defaultPrefs.getBoolean(PREF_APARENCE_MATERIALYOU_KEY, true)
+  get() = defaultPrefs.getBoolean(PREF_APPEARANCE_MATERIAL_YOU_KEY, true)
+
+val rememberLastOpenedFile: Boolean
+  get() = defaultPrefs.getBoolean(PREF_REMEMBER_LAST_OPENED_FILE, false)
 
 // Editor
 val editorFontSize: Float
-  get() = defaultPrefs.getFloat(PREF_EDITOR_FONTSIZE_KEY, 14f)
+  get() = defaultPrefs.getFloat(PREF_EDITOR_FONT_SIZE_KEY, 14f)
 
 val editorIndent: Int
   get() =
