@@ -70,6 +70,10 @@ dependencies {
   implementation(libs.androidx.ui.tooling.preview)
   implementation(libs.androidx.material3)
 
+  // Compose Material Design extended icons. This module contains all Material icons.
+  // It is a very large dependency (almost 36MB)
+  implementation(libs.androidx.material.icons.extended)
+
   implementation(libs.konfetti.compose)
 
   androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -88,6 +92,7 @@ dependencies {
   implementation(libs.google.gson)
 
   implementation(libs.common.editor)
+  implementation(libs.common.editor.lsp)
   implementation(libs.common.editor.textmate)
   implementation(libs.common.utilcode)
   implementation(libs.common.eventbus)

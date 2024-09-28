@@ -4,6 +4,7 @@ editor = "0.23.4-96c0abc-SNAPSHOT"
 androidx-navigation = "2.8.1"
 
 konfetti-compose = "2.0.4"
+material-icons-extended = "1.7.2"
 navigation-compose = "2.8.1"
 okhttp = "4.12.0"
 prdownloader = "1.0.1"
@@ -25,6 +26,7 @@ androidx-core = { module = "androidx.core:core", version = "1.13.1" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version = "1.13.1" }
 androidx-desugar = { module = "com.android.tools:desugar_jdk_libs", version = "2.1.2" }
 androidx-fragment_ktx = { module = "androidx.fragment:fragment-ktx", version = "1.8.3" }
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "material-icons-extended" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigation-compose" }
 androidx-navigation-safe-args-gradle-plugin = { module = "androidx.navigation:navigation-safe-args-gradle-plugin", version.ref = "androidx-navigation" }
 androidx-preference = { module = "androidx.preference:preference", version = "1.2.1" }
@@ -39,6 +41,7 @@ google-material = { module = "com.google.android.material:material", version = "
 
 # Common
 common-editor = { module = "io.github.Rosemoe.sora-editor:editor", version.ref = "editor" }
+common-editor-lsp = { module = "io.github.Rosemoe.sora-editor:editor-lsp", version.ref = "editor" }
 common-editor-textmate = { module = "io.github.Rosemoe.sora-editor:language-textmate", version.ref = "editor" }
 common-eventbus = { module = "org.greenrobot:eventbus", version = "3.3.1" }
 common-jsoup = { module = "org.jsoup:jsoup", version = "1.18.1" }
