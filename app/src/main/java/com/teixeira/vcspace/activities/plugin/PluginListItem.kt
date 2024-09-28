@@ -16,16 +16,17 @@
 package com.teixeira.vcspace.activities.plugin
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -65,9 +66,7 @@ fun PluginListItem(
         onLongClick = {
           haptics.performHapticFeedback(HapticFeedbackType.LongPress)
           onLongClick?.invoke(plugin)
-        },
-        interactionSource = remember { MutableInteractionSource() },
-        indication = rememberRipple(bounded = true)
+        }
       )
   ) {
     ListItem(
@@ -98,7 +97,10 @@ fun PluginListItem(
           painter = painterResource(R.drawable.ic_plugin),
           contentDescription = null
         )
-      }
+      },
+      colors = ListItemDefaults.colors(
+        containerColor = MaterialTheme.colorScheme.surfaceContainer
+      )
     )
   }
 }
