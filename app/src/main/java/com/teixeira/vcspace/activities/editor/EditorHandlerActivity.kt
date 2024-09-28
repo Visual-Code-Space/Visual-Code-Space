@@ -83,8 +83,10 @@ abstract class EditorHandlerActivity : BaseEditorActivity(), TabLayout.OnTabSele
 
       if (manifest != null) {
         val pluginPath = "${pluginsPath}/${manifest.packageName}"
-        openFile("$pluginPath/${manifest.scripts.first().name}".toFile())
-        openFile("$pluginPath/manifest.json".toFile())
+        openFile(
+          "$pluginPath/${manifest.scripts.first().name}".toFile(),
+          "$pluginPath/manifest.json".toFile()
+        )
       }
     }
   }
@@ -156,27 +158,29 @@ abstract class EditorHandlerActivity : BaseEditorActivity(), TabLayout.OnTabSele
     }
   }
 
-  fun openFile(file: File) {
-    if (!file.isFile || !file.exists() || isDestroying) {
-      return
+  fun openFile(vararg files: File) {
+    files.forEach { file ->
+      if (!file.isFile || !file.exists() || isDestroying) {
+        return
+      }
+      closeWorkspaceDrawer()
+      val openedFileIndex = findIndexAtFile(file)
+      if (openedFileIndex != -1) {
+        editorViewModel.setSelectedFile(openedFileIndex)
+        return
+      }
+
+      val index = editorViewModel.fileCount
+
+      val editorView = CodeEditorView(this, file)
+
+      editorViewModel.addFile(file)
+      binding.container.addView(editorView)
+      binding.tabs.addTab(binding.tabs.newTab())
+
+      editorViewModel.setSelectedFile(index)
+      updateTabs()
     }
-    closeWorkspaceDrawer()
-    val openedFileIndex = findIndexAtFile(file)
-    if (openedFileIndex != -1) {
-      editorViewModel.setSelectedFile(openedFileIndex)
-      return
-    }
-
-    val index = editorViewModel.fileCount
-
-    val editorView = CodeEditorView(this, file)
-
-    editorViewModel.addFile(file)
-    binding.container.addView(editorView)
-    binding.tabs.addTab(binding.tabs.newTab())
-
-    editorViewModel.setSelectedFile(index)
-    updateTabs()
   }
 
   fun closeFile(index: Int) {

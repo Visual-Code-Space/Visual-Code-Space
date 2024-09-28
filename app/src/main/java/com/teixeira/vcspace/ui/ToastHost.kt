@@ -56,7 +56,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.AccessibilityManager
 import androidx.compose.ui.platform.LocalAccessibilityManager
@@ -143,12 +142,7 @@ fun Toast(
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.Center
     ) {
-      toastData.visuals.icon?.let { Icon(it, null) } ?: toastData.visuals.painter?.let {
-        Icon(
-          painter = it,
-          contentDescription = null
-        )
-      }
+      toastData.visuals.icon?.let { Icon(it, null) }
       Spacer(modifier = Modifier.size(8.dp))
       Text(
         style = MaterialTheme.typography.bodySmall,
@@ -171,9 +165,8 @@ class ToastHostState {
   suspend fun showToast(
     message: String,
     icon: ImageVector? = null,
-    painter: Painter? = null,
     duration: ToastDuration = ToastDuration.Short
-  ) = showToast(ToastVisualsImpl(message, icon, painter, duration))
+  ) = showToast(ToastVisualsImpl(message, icon, duration))
 
   @ExperimentalMaterial3Api
   suspend fun showToast(visuals: ToastVisuals) = mutex.withLock {
@@ -189,7 +182,6 @@ class ToastHostState {
   private class ToastVisualsImpl(
     override val message: String,
     override val icon: ImageVector? = null,
-    override val painter: Painter? = null,
     override val duration: ToastDuration
   ) : ToastVisuals {
 
@@ -253,7 +245,6 @@ interface ToastVisuals {
   val message: String
   val icon: ImageVector?
   val duration: ToastDuration
-  val painter: Painter?
 }
 
 enum class ToastDuration { Short, Long }
