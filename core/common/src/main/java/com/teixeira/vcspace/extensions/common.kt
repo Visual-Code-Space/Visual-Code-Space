@@ -13,19 +13,5 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.activities.plugin
+package com.teixeira.vcspace.extensions
 
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import com.teixeira.vcspace.activities.BaseComposeActivity
-
-class PluginsActivity : BaseComposeActivity() {
-  @Composable
-  override fun MainScreen() {
-    Surface(modifier = Modifier.fillMaxSize()) {
-      PluginsScreen()
-    }
-  }
-}

@@ -4,6 +4,7 @@ plugins {
   id("kotlin-parcelize")
   id("androidx.navigation.safeargs.kotlin")
   alias(libs.plugins.kotlin.compose)
+  alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -69,6 +70,9 @@ dependencies {
   implementation(libs.androidx.ui.graphics)
   implementation(libs.androidx.ui.tooling.preview)
   implementation(libs.androidx.material3)
+  implementation(libs.androidx.datastore.prefs)
+
+  implementation(libs.compose.preference.library)
 
   // Compose Material Design extended icons. This module contains all Material icons.
   // It is a very large dependency (almost 36MB)
@@ -90,6 +94,7 @@ dependencies {
   implementation(libs.google.material)
   implementation(libs.google.guava)
   implementation(libs.google.gson)
+  implementation(libs.google.accompanist.permissions)
 
   implementation(libs.common.editor)
   implementation(libs.common.editor.lsp)
@@ -97,7 +102,6 @@ dependencies {
   implementation(libs.common.utilcode)
   implementation(libs.common.eventbus)
   implementation(libs.common.p7zip)
-  implementation(libs.common.kotlinx.coroutines.android)
   implementation(libs.common.terminal.view)
   implementation(libs.common.terminal.emulator)
 
@@ -120,6 +124,9 @@ dependencies {
 //  implementation(kotlin("scripting-jvm-host-unshaded"))
 //  implementation(kotlin("sam-with-receiver-compiler-plugin"))
 //  implementation(kotlin("reflect"))
+
+  implementation(libs.kotlinx.coroutines.android)
+  implementation(libs.kotlinx.serialization.json)
 
   debugImplementation(libs.common.leakcanary)
   debugImplementation(libs.androidx.ui.tooling)

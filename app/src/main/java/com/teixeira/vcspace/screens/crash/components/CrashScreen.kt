@@ -13,19 +13,29 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.activities.plugin
+package com.teixeira.vcspace.screens.crash.components
 
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Surface
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.teixeira.vcspace.activities.BaseComposeActivity
+import androidx.compose.ui.unit.dp
 
-class PluginsActivity : BaseComposeActivity() {
-  @Composable
-  override fun MainScreen() {
-    Surface(modifier = Modifier.fillMaxSize()) {
-      PluginsScreen()
-    }
+@Composable
+fun CrashScreen(
+  error: String,
+  modifier: Modifier = Modifier
+) {
+  Column(
+    modifier = modifier
+      .padding(15.dp)
+      .verticalScroll(rememberScrollState())
+      .horizontalScroll(rememberScrollState())
+  ) {
+    Text(text = error)
   }
 }

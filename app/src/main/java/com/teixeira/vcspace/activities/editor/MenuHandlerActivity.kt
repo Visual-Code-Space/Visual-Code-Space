@@ -50,7 +50,7 @@ import java.nio.file.StandardCopyOption
  *
  * @author Felipe Teixeira, Vivek
  */
-abstract class MenuHandlerActivity : EditorHandlerActivity() {
+class MenuHandlerActivity : EditorHandlerActivity() {
 
   private val createFile =
     registerForActivityResult(ActivityResultContracts.CreateDocument("text/*")) {

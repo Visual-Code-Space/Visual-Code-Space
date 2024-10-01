@@ -28,8 +28,8 @@
     <item name="colorSurfaceInverse">@color/light_inverseSurface</item>
     <item name="colorPrimaryInverse">@color/light_inversePrimary</item>
 
-    <item name="android:statusBarColor">?attr/colorSurface</item>
-    <item name="android:navigationBarColor">?attr/colorSurface</item>
+<!--    <item name="android:statusBarColor">?attr/colorSurface</item>-->
+<!--    <item name="android:navigationBarColor">?attr/colorSurface</item>-->
     <item name="android:windowLightStatusBar">true</item>
     <item name="android:windowLightNavigationBar" tools:ignore="NewApi">true</item>
     <item name="android:fontFamily">@font/josefin_sans</item>

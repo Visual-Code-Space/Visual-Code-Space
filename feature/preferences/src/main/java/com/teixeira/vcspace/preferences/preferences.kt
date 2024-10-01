@@ -41,6 +41,9 @@ val appearanceUIMode: Int
       else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
     }
 
+val isLocalDarkTheme get() = appearanceUIMode == AppCompatDelegate.MODE_NIGHT_YES
+val isLocalFollowSystemTheme get() = appearanceUIMode == AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+
 val appearanceMaterialYou: Boolean
   get() = defaultPrefs.getBoolean(PREF_APPEARANCE_MATERIAL_YOU_KEY, true)
 

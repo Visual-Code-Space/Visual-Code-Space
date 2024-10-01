@@ -9,7 +9,7 @@ import com.blankj.utilcode.util.ThreadUtils
 import com.blankj.utilcode.util.ThrowableUtils
 import com.downloader.PRDownloader
 import com.google.android.material.color.DynamicColors
-import com.teixeira.vcspace.activities.CrashActivity
+import com.teixeira.vcspace.activities.crash.CrashActivity
 import com.teixeira.vcspace.activities.editor.EditorActivity
 import com.teixeira.vcspace.preferences.appearanceMaterialYou
 import com.teixeira.vcspace.preferences.appearanceUIMode
@@ -63,13 +63,13 @@ class VCSpaceApplication : BaseApplication() {
 
     ThreadUtils.executeByIoWithDelay(object : ThreadUtils.Task<Unit>() {
       override fun doInBackground() {
-        ThreadUtils.runOnUiThread {
-          Toast.makeText(
-            applicationContext,
-            "Loading plugins...",
-            Toast.LENGTH_SHORT
-          ).show()
-        }
+//        ThreadUtils.runOnUiThread {
+//          Toast.makeText(
+//            applicationContext,
+//            "Loading plugins...",
+//            Toast.LENGTH_SHORT
+//          ).show()
+//        }
 
         PluginManager.init(this@VCSpaceApplication) { plugin, err -> }
       }
@@ -108,7 +108,9 @@ class VCSpaceApplication : BaseApplication() {
         Intent(this, CrashActivity::class.java).apply {
           // Add the error message
           putExtra(CrashActivity.KEY_EXTRA_ERROR, ThrowableUtils.getFullStackTrace(th))
-          addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+          flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+            Intent.FLAG_ACTIVITY_CLEAR_TASK or
+            Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
       )
 

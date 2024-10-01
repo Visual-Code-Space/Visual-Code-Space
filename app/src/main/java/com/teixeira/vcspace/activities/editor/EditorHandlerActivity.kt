@@ -98,8 +98,8 @@ abstract class EditorHandlerActivity : BaseEditorActivity(), TabLayout.OnTabSele
       if (manifest != null) {
         val pluginPath = "${pluginsPath}/${manifest.packageName}"
         openFile(
+          "$pluginPath/manifest.json".toFile(),
           "$pluginPath/${manifest.scripts.first().name}".toFile(),
-          "$pluginPath/manifest.json".toFile()
         )
       }
     }
@@ -265,7 +265,7 @@ abstract class EditorHandlerActivity : BaseEditorActivity(), TabLayout.OnTabSele
       tabs.requestLayout()
       container.removeAllViews()
     }
-    openedFiles.forEach { openedFiles.remove(it) }
+    openedFiles.clear()
   }
 
   fun saveAllFilesAsync(notify: Boolean, whenSave: Runnable? = null) {

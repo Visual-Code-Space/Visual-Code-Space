@@ -88,9 +88,9 @@ class EditorViewModel : ViewModel() {
   }
 
   sealed interface EditorAction {
-    class OpenFileAction(val file: File) : EditorAction
+    data class OpenFileAction(val file: File) : EditorAction
 
-    class CloseFileAction(val fileIndex: Int) : EditorAction
+    data class CloseFileAction(val fileIndex: Int) : EditorAction
 
     data object CloseOthersAction : EditorAction
 

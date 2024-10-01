@@ -4,6 +4,8 @@
 
   <!-- Actions -->
   <string name="open">Open</string>
+  <string name="open_drawer">Open drawer</string>
+  <string name="close_drawer">Close drawer</string>
   <string name="close">Close</string>
   <string name="close_app">Close app</string>
   <string name="copy">Copy</string>
@@ -18,6 +20,7 @@
   <string name="no">No</string>
   <string name="yes">Yes</string>
   <string name="ok">OK</string>
+  <string name="exit">Exit</string>
 
   <!-- Editor -->
   <string name="editor">Editor</string>
@@ -150,6 +153,62 @@
   <string name="pref_remember_last_opened_file_title">Remember Last Opened File</string>
   <string name="pref_remember_last_opened_file_summary">Automatically reopen the last file you were working on at startup.</string>
 
+  <string name="follow_system_theme_title">Follow System Theme</string>
+  <string name="follow_system_theme_summary_true">Following system theme settings</string>
+  <string name="follow_system_theme_summary_false">Not following system theme</string>
+  <string name="use_dark_mode_title">Use Dark Mode</string>
+  <string name="use_dark_mode_summary_enabled">Dark mode is enabled</string>
+  <string name="use_dark_mode_summary_disabled">Dark mode is disabled</string>
+  <string name="use_amoled_mode_title">Use Amoled Mode</string>
+  <string name="use_amoled_mode_summary_enabled">AMOLED mode is enabled</string>
+  <string name="use_amoled_mode_summary_disabled">AMOLED mode is disabled</string>
+  <string name="dynamic_colors_title">Dynamic Colors</string>
+  <string name="dynamic_colors_summary_enabled">Dynamic color mode is enabled</string>
+  <string name="dynamic_colors_summary_disabled">Dynamic color mode is disabled</string>
+
+  <string name="file_settings">File Settings</string>
+  <string name="show_hidden_files_title">Show Hidden Files</string>
+  <string name="show_hidden_files_summary_true">Hidden files are displayed</string>
+  <string name="show_hidden_files_summary_false">Hidden files are not displayed</string>
+  <string name="remember_last_opened_file_title">Remember Last Opened File</string>
+  <string name="remember_last_opened_file_summary_true">Will remember the last opened file</string>
+  <string name="remember_last_opened_file_summary_false">Will not remember the last opened file</string>
+
+  <string name="editor_settings">Editor Settings</string>
+  <string name="font_size">Font Size</string>
+  <string name="font_size_value">%1$d sp</string>
+  <string name="indent_size">Indent Size</string>
+  <string name="indent_size_summary">Indent size: %1$d spaces</string>
+  <string name="font_family">Font Family</string>
+  <string name="font_family_summary">Choose the font family for the editor</string>
+  <string name="color_scheme">Color Scheme</string>
+  <string name="color_scheme_summary">Choose a color scheme for the editor</string>
+  <string name="font_ligatures">Font Ligatures</string>
+  <string name="font_ligatures_enabled">Ligatures enabled</string>
+  <string name="font_ligatures_disabled">Ligatures disabled</string>
+  <string name="sticky_scroll">Sticky Scroll</string>
+  <string name="sticky_scroll_enabled">Sticky scroll enabled</string>
+  <string name="sticky_scroll_disabled">Sticky scroll disabled</string>
+  <string name="word_wrap">Word Wrap</string>
+  <string name="word_wrap_enabled">Word wrap enabled</string>
+  <string name="word_wrap_disabled">Word wrap disabled</string>
+  <string name="line_numbers">Show Line Numbers</string>
+  <string name="line_numbers_displayed">Line numbers displayed</string>
+  <string name="line_numbers_hidden">Line numbers hidden</string>
+  <string name="use_tabs">Use Tabs</string>
+  <string name="use_tabs_enabled">Tabs are used</string>
+  <string name="use_tabs_disabled">Spaces are used</string>
+  <string name="delete_line_on_backspace">Delete Line on Backspace</string>
+  <string name="delete_line_on_backspace_enabled">Deletes entire line when backspace is pressed</string>
+  <string name="delete_line_on_backspace_disabled">Normal backspace behavior</string>
+  <string name="delete_indent_on_backspace">Delete Indent on Backspace</string>
+  <string name="delete_indent_on_backspace_enabled">Deletes indent when backspace is pressed</string>
+  <string name="delete_indent_on_backspace_disabled">Normal backspace behavior</string>
+  <string name="tabs_category">Tabs</string>
+  <string name="auto_save">Auto Save</string>
+  <string name="auto_save_enabled">Auto save is enabled</string>
+  <string name="auto_save_disabled">Auto save is disabled</string>
+
   <!-- Others -->
   <string name="the_directory_does_not_exist_would_you_like_to_create_it">The directory does not exist. Would you like to create it?</string>
   <string name="directory_not_found">Directory Not Found</string>
@@ -157,4 +216,5 @@
   <string name="plugins_path">Plugins Path</string>
   <string name="confirm">Confirm</string>
   <string name="no_plugins_found">No plugins found</string>
+  <string name="copied_to_clipboard">Copied to clipboard</string>
 </resources>

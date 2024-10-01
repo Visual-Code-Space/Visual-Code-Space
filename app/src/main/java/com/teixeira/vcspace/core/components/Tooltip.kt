@@ -13,19 +13,26 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.activities.plugin
+package com.teixeira.vcspace.core.components
 
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Surface
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.RichTooltip
+import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import com.teixeira.vcspace.activities.BaseComposeActivity
 
-class PluginsActivity : BaseComposeActivity() {
-  @Composable
-  override fun MainScreen() {
-    Surface(modifier = Modifier.fillMaxSize()) {
-      PluginsScreen()
-    }
-  }
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Tooltip(
+  text: String,
+  content: @Composable () -> Unit
+) {
+  TooltipBox(
+    tooltip = { RichTooltip { Text(text) } },
+    positionProvider = TooltipDefaults.rememberRichTooltipPositionProvider(),
+    state = rememberTooltipState(),
+    content = content
+  )
 }

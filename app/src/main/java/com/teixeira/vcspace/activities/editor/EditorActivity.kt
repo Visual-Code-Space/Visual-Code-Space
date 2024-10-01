@@ -15,26 +15,68 @@
 
 package com.teixeira.vcspace.activities.editor
 
-import android.view.Menu
-import android.view.MenuItem
-import androidx.annotation.DrawableRes
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.rememberDrawerState
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.teixeira.vcspace.activities.BaseComposeActivity
+import com.teixeira.vcspace.screens.editor.EditorScreen
+import com.teixeira.vcspace.screens.editor.components.EditorDrawerSheet
+import com.teixeira.vcspace.screens.editor.components.EditorTopBar
+import com.teixeira.vcspace.viewmodel.editor.EditorViewModel
+import com.teixeira.vcspace.viewmodel.file.FileExplorerViewModel
 
-class EditorActivity : MenuHandlerActivity() {
-  @JvmOverloads
-  fun addMenu(
-    title: String,
-    @DrawableRes icon: Int = 0,
-    onClick: Runnable = Runnable { },
-  ): MenuItem {
-    return menu.add(title).apply {
-      setIcon(icon)
-      setOnMenuItemClickListener {
-        onClick.run()
-        true
+class EditorActivity : BaseComposeActivity() {
+  @Composable
+  override fun MainScreen() {
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+
+    val fileExplorerViewModel: FileExplorerViewModel = viewModel()
+    val editorViewModel: EditorViewModel = viewModel()
+
+    ModalNavigationDrawer(
+      modifier = Modifier.fillMaxSize(),
+      drawerState = drawerState,
+      gesturesEnabled = false,
+      drawerContent = {
+        ModalDrawerSheet(
+          drawerState = drawerState,
+          modifier = Modifier
+            .fillMaxWidth(fraction = 0.8f)
+            .systemBarsPadding()
+        ) {
+
+          EditorDrawerSheet(
+            fileExplorerViewModel = fileExplorerViewModel,
+            editorViewModel = editorViewModel,
+            drawerState = drawerState
+          )
+        }
+      }
+    ) {
+      Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+          EditorTopBar(
+            drawerState = drawerState
+          )
+        }
+      ) {
+        EditorScreen(
+          viewModel = editorViewModel,
+          modifier = Modifier
+            .fillMaxSize()
+            .padding(it)
+        )
       }
     }
   }
-
-  // use app.getEditorActivity().getMenu() in plugin
-  val menu: Menu get() = binding.toolbar.menu
 }

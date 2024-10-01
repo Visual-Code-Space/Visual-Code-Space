@@ -1,6 +1,5 @@
 package com.teixeira.vcspace.fragments.workspace
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,9 +10,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
-import com.teixeira.vcspace.PreferenceKeys
 import com.teixeira.vcspace.R
-import com.teixeira.vcspace.activities.PreferencesActivity
+import com.teixeira.vcspace.activities.SettingsActivity
 import com.teixeira.vcspace.activities.TerminalActivity
 import com.teixeira.vcspace.databinding.FragmentWorkspaceBinding
 import com.teixeira.vcspace.extensions.open
@@ -25,8 +23,9 @@ class WorkspaceFragment : Fragment(), NavController.OnDestinationChangedListener
     get() = checkNotNull(_binding)
 
   private val navController by lazy {
-    (childFragmentManager.findFragmentById(binding.navHostFragment.id) as NavHostFragment)
-      .navController
+    (childFragmentManager.findFragmentById(
+      binding.navHostFragment.id
+    ) as NavHostFragment).navController
   }
 
   override fun onCreateView(
@@ -46,7 +45,7 @@ class WorkspaceFragment : Fragment(), NavController.OnDestinationChangedListener
     binding.navRail.setOnItemSelectedListener { item ->
       when (item.itemId) {
         R.id.menu_terminal -> requireContext().open(TerminalActivity::class.java)
-        R.id.menu_preferences -> requireContext().open(PreferencesActivity::class.java)
+        R.id.menu_preferences -> requireContext().open(SettingsActivity::class.java)
       }
       false
     }

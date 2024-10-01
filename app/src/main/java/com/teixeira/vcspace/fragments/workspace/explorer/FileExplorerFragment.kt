@@ -52,8 +52,7 @@ import java.io.IOException
 class FileExplorerFragment : Fragment(), FileListAdapter.OnFileClickListener {
 
   private val editorViewModel by viewModels<EditorViewModel>(ownerProducer = { requireActivity() })
-  private val fileViewModel by
-  viewModels<FileExplorerViewModel>(ownerProducer = { requireActivity() })
+  private val fileViewModel by viewModels<FileExplorerViewModel>(ownerProducer = { requireActivity() })
 
   private var _binding: FragmentFileExplorerBinding? = null
   private val binding: FragmentFileExplorerBinding

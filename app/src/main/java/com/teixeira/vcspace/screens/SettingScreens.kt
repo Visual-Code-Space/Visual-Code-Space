@@ -13,19 +13,21 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.activities.plugin
+package com.teixeira.vcspace.screens
 
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import com.teixeira.vcspace.activities.BaseComposeActivity
+import kotlinx.serialization.Serializable
 
-class PluginsActivity : BaseComposeActivity() {
-  @Composable
-  override fun MainScreen() {
-    Surface(modifier = Modifier.fillMaxSize()) {
-      PluginsScreen()
-    }
-  }
+@Serializable
+sealed class SettingScreens {
+  @Serializable
+  data object Default : SettingScreens()
+
+  @Serializable
+  data object General : SettingScreens()
+
+  @Serializable
+  data object File : SettingScreens()
+
+  @Serializable
+  data object Editor : SettingScreens()
 }

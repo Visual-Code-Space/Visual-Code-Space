@@ -142,7 +142,7 @@ fun Toast(
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.Center
     ) {
-      toastData.visuals.icon?.let { Icon(it, null) }
+      toastData.visuals.icon?.let { Icon(it, null, tint = contentColor) }
       Spacer(modifier = Modifier.size(8.dp))
       Text(
         style = MaterialTheme.typography.bodySmall,

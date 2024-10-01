@@ -17,13 +17,23 @@ package com.teixeira.vcspace.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import com.teixeira.vcspace.core.settings.Settings.General.rememberFollowSystemTheme
+import com.teixeira.vcspace.core.settings.Settings.General.rememberIsAmoledMode
+import com.teixeira.vcspace.core.settings.Settings.General.rememberIsDarkMode
+import com.teixeira.vcspace.core.settings.Settings.General.rememberIsDynamicColor
 
 val LightColorScheme = lightColorScheme(
   primary = light_primary,
@@ -91,19 +101,28 @@ val DarkColorScheme = darkColorScheme(
 
 @Composable
 fun VCSpaceTheme(
-  darkTheme: Boolean = isSystemInDarkTheme(),
-  // Dynamic color is available on Android 12+
-  dynamicColor: Boolean = true,
+  systemTheme: Boolean = isSystemInDarkTheme(),
+  dynamicColor: MutableState<Boolean> = rememberIsDynamicColor(),
   content: @Composable () -> Unit
 ) {
-  val colorScheme = when {
-    dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-      val context = LocalContext.current
-      if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-    }
+  val context = LocalContext.current
 
-    darkTheme -> DarkColorScheme
-    else -> LightColorScheme
+  val followSystemTheme by rememberFollowSystemTheme()
+  val isDarkMode by rememberIsDarkMode()
+  val isAmoledMode by rememberIsAmoledMode()
+  val isDynamicColor by dynamicColor
+
+  val darkTheme by remember(followSystemTheme, systemTheme, isDarkMode) {
+    mutableStateOf(if (followSystemTheme) systemTheme else isDarkMode)
+  }
+
+  val colorScheme = remember(darkTheme, isAmoledMode, isDynamicColor) {
+    if (isDynamicColor && atLeastS) {
+      if (darkTheme) dynamicDarkColorScheme(context).maybeAmoled(isAmoledMode)
+      else dynamicLightColorScheme(context)
+    } else {
+      if (darkTheme) DarkColorScheme.maybeAmoled(isAmoledMode) else LightColorScheme
+    }
   }
 
   MaterialTheme(
@@ -112,3 +131,16 @@ fun VCSpaceTheme(
     content = content
   )
 }
+
+private fun ColorScheme.maybeAmoled(isAmoledMode: Boolean): ColorScheme {
+  return if (isAmoledMode) {
+    copy(
+      surface = Color.Black,
+      inverseSurface = Color.White,
+      background = Color.Black
+    )
+  } else this
+}
+
+val atLeastS: Boolean
+  get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
