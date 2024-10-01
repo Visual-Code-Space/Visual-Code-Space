@@ -81,7 +81,7 @@ okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 termux-app-termux-shared = { module = "com.github.termux.termux-app:termux-shared", version.ref = "termux-shared" }
 
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization-json" }
-kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version = "1.8.1" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version = "1.9.0" }
 
 [plugins]
 android-application = { id = "com.android.application", version = "8.6.0" }
