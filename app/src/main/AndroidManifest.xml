@@ -34,7 +34,7 @@
 
     <!--  Open MenuHandlerActivity for now because EditorActivity is not stable right now. -->
     <activity
-      android:name=".activities.editor.MenuHandlerActivity"
+      android:name=".activities.editor.EditorActivity"
       android:configChanges="orientation|screenSize"
       android:exported="true"
       android:windowSoftInputMode="adjustResize">

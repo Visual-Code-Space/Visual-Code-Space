@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,23 +44,29 @@ fun EditorScreen(
   val files = uiState.openedFiles
   val selectedFileIndex = uiState.selectedFileIndex
 
+  val editorMap = remember { mutableStateMapOf<String, CodeEditorView>() }
+
   Column(modifier = modifier) {
     FileTabLayout(editorViewModel = viewModel)
 
     val selectedFile = files.getOrNull(selectedFileIndex)
 
     selectedFile?.let { file ->
+      val filePath = file.path
+      val context = LocalContext.current
+
       key(file) {
-        val context = LocalContext.current
-        val editor = remember(file) { CodeEditorView(context, file) }
+        val editor = remember(filePath) {
+          editorMap.getOrPut(filePath) {
+            CodeEditorView(context, file)
+          }
+        }
 
         AndroidView(
           factory = { editor },
           modifier = Modifier.fillMaxSize(),
           update = { editorView ->
-            if (editorView.file != file) {
-              editorView.file = file
-            }
+            editorView.updateFile(file, updateContent = true)
           },
           onRelease = { it.release() }
         )
