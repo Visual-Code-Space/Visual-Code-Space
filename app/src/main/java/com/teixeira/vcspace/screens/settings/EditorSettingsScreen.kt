@@ -16,7 +16,10 @@
 package com.teixeira.vcspace.screens.settings
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Backspace
@@ -31,11 +34,15 @@ import androidx.compose.material.icons.filled.Tab
 import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material.icons.filled.VerticalAlignTop
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastRoundToInt
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberColorScheme
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberDeleteIndentOnBackspace
@@ -78,7 +85,15 @@ fun EditorSettingsScreen(
 
   BackHandler(onBack = onNavigateUp)
 
-  LazyColumn(modifier = modifier.fillMaxWidth()) {
+  val backgroundColor = MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
+
+  LazyColumn(
+    modifier = modifier
+      .fillMaxWidth()
+      .padding(horizontal = 12.dp)
+      .padding(bottom = 12.dp),
+    verticalArrangement = Arrangement.spacedBy(3.dp)
+  ) {
     preferenceCategory(
       key = "editor_settings_category",
       title = { Text(text = stringResource(R.string.editor_settings)) }
@@ -92,7 +107,10 @@ fun EditorSettingsScreen(
       valueRange = 11f..28f,
       valueSteps = 16,
       valueText = { Text(stringResource(R.string.font_size_value, it.fastRoundToInt())) },
-      icon = { Icon(Icons.Default.TextFields, contentDescription = null) }
+      icon = { Icon(Icons.Default.TextFields, contentDescription = null) },
+      modifier = Modifier
+        .clip(PreferenceShape.Top)
+        .background(backgroundColor)
     )
 
     listPreference(
@@ -102,7 +120,10 @@ fun EditorSettingsScreen(
       rememberState = { indentSize },
       defaultValue = indentSize.value,
       values = (2..8 step 2).map { it },
-      icon = { Icon(Icons.AutoMirrored.Filled.FormatIndentIncrease, contentDescription = null) }
+      icon = { Icon(Icons.AutoMirrored.Filled.FormatIndentIncrease, contentDescription = null) },
+      modifier = Modifier
+        .clip(PreferenceShape.Middle)
+        .background(backgroundColor)
     )
 
     listPreference(
@@ -115,7 +136,10 @@ fun EditorSettingsScreen(
         context.getString(R.string.pref_editor_font_value_firacode),
         context.getString(R.string.pref_editor_font_value_jetbrains),
       ),
-      icon = { Icon(Icons.Filled.TextFields, contentDescription = null) }
+      icon = { Icon(Icons.Filled.TextFields, contentDescription = null) },
+      modifier = Modifier
+        .clip(PreferenceShape.Middle)
+        .background(backgroundColor)
     )
 
     listPreference(
@@ -131,7 +155,10 @@ fun EditorSettingsScreen(
         "Abyss",
         "Solarized Dark",
       ),
-      icon = { Icon(Icons.Filled.Palette, contentDescription = null) }
+      icon = { Icon(Icons.Filled.Palette, contentDescription = null) },
+      modifier = Modifier
+        .clip(PreferenceShape.Middle)
+        .background(backgroundColor)
     )
 
     switchPreference(
@@ -146,7 +173,10 @@ fun EditorSettingsScreen(
       },
       rememberState = { fontLigatures },
       defaultValue = fontLigatures.value,
-      icon = { Icon(imageVector = Icons.Default.FontDownload, contentDescription = null) }
+      icon = { Icon(imageVector = Icons.Default.FontDownload, contentDescription = null) },
+      modifier = Modifier
+        .clip(PreferenceShape.Middle)
+        .background(backgroundColor)
     )
 
     switchPreference(
@@ -161,7 +191,10 @@ fun EditorSettingsScreen(
       },
       rememberState = { stickyScroll },
       defaultValue = stickyScroll.value,
-      icon = { Icon(imageVector = Icons.Default.VerticalAlignTop, contentDescription = null) }
+      icon = { Icon(imageVector = Icons.Default.VerticalAlignTop, contentDescription = null) },
+      modifier = Modifier
+        .clip(PreferenceShape.Middle)
+        .background(backgroundColor)
     )
 
     switchPreference(
@@ -176,7 +209,10 @@ fun EditorSettingsScreen(
       },
       rememberState = { wordWrap },
       defaultValue = wordWrap.value,
-      icon = { Icon(imageVector = Icons.AutoMirrored.Filled.WrapText, contentDescription = null) }
+      icon = { Icon(imageVector = Icons.AutoMirrored.Filled.WrapText, contentDescription = null) },
+      modifier = Modifier
+        .clip(PreferenceShape.Middle)
+        .background(backgroundColor)
     )
 
     switchPreference(
@@ -191,7 +227,10 @@ fun EditorSettingsScreen(
       },
       rememberState = { lineNumber },
       defaultValue = lineNumber.value,
-      icon = { Icon(imageVector = Icons.AutoMirrored.Filled.List, contentDescription = null) }
+      icon = { Icon(imageVector = Icons.AutoMirrored.Filled.List, contentDescription = null) },
+      modifier = Modifier
+        .clip(PreferenceShape.Middle)
+        .background(backgroundColor)
     )
 
     switchPreference(
@@ -206,7 +245,10 @@ fun EditorSettingsScreen(
       },
       rememberState = { useTab },
       defaultValue = useTab.value,
-      icon = { Icon(imageVector = Icons.Default.Tab, contentDescription = null) }
+      icon = { Icon(imageVector = Icons.Default.Tab, contentDescription = null) },
+      modifier = Modifier
+        .clip(PreferenceShape.Middle)
+        .background(backgroundColor)
     )
 
     switchPreference(
@@ -221,7 +263,10 @@ fun EditorSettingsScreen(
       },
       rememberState = { deleteLineOnBackspace },
       defaultValue = deleteLineOnBackspace.value,
-      icon = { Icon(imageVector = Icons.AutoMirrored.Filled.Backspace, contentDescription = null) }
+      icon = { Icon(imageVector = Icons.AutoMirrored.Filled.Backspace, contentDescription = null) },
+      modifier = Modifier
+        .clip(PreferenceShape.Middle)
+        .background(backgroundColor)
     )
 
     switchPreference(
@@ -241,7 +286,10 @@ fun EditorSettingsScreen(
           imageVector = Icons.AutoMirrored.Filled.FormatIndentDecrease,
           contentDescription = null
         )
-      }
+      },
+      modifier = Modifier
+        .clip(PreferenceShape.Bottom)
+        .background(backgroundColor)
     )
 
     preferenceCategory(
@@ -264,7 +312,10 @@ fun EditorSettingsScreen(
           imageVector = Icons.Default.Save,
           contentDescription = null
         )
-      }
+      },
+      modifier = Modifier
+        .clip(PreferenceShape.Alone)
+        .background(backgroundColor)
     )
   }
 }

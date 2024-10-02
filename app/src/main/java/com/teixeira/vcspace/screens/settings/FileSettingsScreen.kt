@@ -16,16 +16,23 @@
 package com.teixeira.vcspace.screens.settings
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.teixeira.vcspace.core.settings.Settings.File.rememberLastOpenedFile
 import com.teixeira.vcspace.core.settings.Settings.File.rememberShowHiddenFiles
 import com.teixeira.vcspace.resources.R
@@ -42,7 +49,15 @@ fun FileSettingsScreen(
 
   BackHandler(onBack = onNavigateUp)
 
-  LazyColumn(modifier = modifier.fillMaxWidth()) {
+  val backgroundColor = MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
+
+  LazyColumn(
+    modifier = modifier
+      .fillMaxWidth()
+      .padding(horizontal = 12.dp)
+      .padding(bottom = 12.dp),
+    verticalArrangement = Arrangement.spacedBy(3.dp)
+  ) {
     preferenceCategory(
       key = "file_settings_category",
       title = { Text(text = stringResource(R.string.file_settings)) }
@@ -64,7 +79,10 @@ fun FileSettingsScreen(
           imageVector = Icons.Default.VisibilityOff,
           contentDescription = null
         )
-      }
+      },
+      modifier = Modifier
+        .clip(PreferenceShape.Top)
+        .background(backgroundColor)
     )
 
     switchPreference(
@@ -83,7 +101,10 @@ fun FileSettingsScreen(
           imageVector = Icons.Default.History,
           contentDescription = null
         )
-      }
+      },
+      modifier = Modifier
+        .clip(PreferenceShape.Bottom)
+        .background(backgroundColor)
     )
   }
 }

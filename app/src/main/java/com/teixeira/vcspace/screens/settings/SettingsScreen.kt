@@ -17,6 +17,7 @@ package com.teixeira.vcspace.screens.settings
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -142,4 +143,29 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
       }
     }
   }
+}
+
+object PreferenceShape {
+  val Top = RoundedCornerShape(
+    topStart = 24.dp,
+    topEnd = 24.dp,
+    bottomStart = 4.dp,
+    bottomEnd = 4.dp
+  )
+
+  val Middle = RoundedCornerShape(
+    topStart = 4.dp,
+    topEnd = 4.dp,
+    bottomStart = 4.dp,
+    bottomEnd = 4.dp
+  )
+
+  val Bottom = RoundedCornerShape(
+    topStart = 4.dp,
+    topEnd = 4.dp,
+    bottomStart = 24.dp,
+    bottomEnd = 24.dp
+  )
+
+  val Alone = RoundedCornerShape(24.dp)
 }
