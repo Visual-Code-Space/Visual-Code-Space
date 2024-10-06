@@ -164,6 +164,15 @@
     ]
   },
   {
+    "name": "shellscript",
+    "scopeName": "source.shell",
+    "grammar": "editor/textmate/shellscript/syntaxes/shell-unix-bash.tmLanguage.json",
+    "languageConfiguration": "editor/textmate/shellcript/language-configuration.json",
+    "fileExtensions": [
+      "sh"
+    ]
+  },
+  {
     "name": "typescript",
     "scopeName": "source.ts",
     "grammar": "editor/textmate/typescript/syntaxes/TypeScript.tmLanguage.json",
