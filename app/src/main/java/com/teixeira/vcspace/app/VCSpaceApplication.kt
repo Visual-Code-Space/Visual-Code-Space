@@ -3,16 +3,11 @@ package com.teixeira.vcspace.app
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatDelegate
 import com.blankj.utilcode.util.ThreadUtils
 import com.blankj.utilcode.util.ThrowableUtils
 import com.downloader.PRDownloader
-import com.google.android.material.color.DynamicColors
 import com.teixeira.vcspace.activities.crash.CrashActivity
 import com.teixeira.vcspace.activities.editor.EditorActivity
-import com.teixeira.vcspace.preferences.appearanceMaterialYou
-import com.teixeira.vcspace.preferences.appearanceUIMode
 import com.teixeira.vcspace.providers.GrammarProvider
 import com.vcspace.plugins.internal.PluginManager
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry
@@ -53,10 +48,6 @@ class VCSpaceApplication : BaseApplication() {
       }
     })
 
-    AppCompatDelegate.setDefaultNightMode(appearanceUIMode)
-    if (appearanceMaterialYou) {
-      DynamicColors.applyToActivitiesIfAvailable(this)
-    }
     PRDownloader.initialize(applicationContext)
     GrammarProvider.initialize(this)
     loadDefaultThemes()
@@ -124,15 +115,5 @@ class VCSpaceApplication : BaseApplication() {
   // for plugin use
   fun getEditorActivity(): EditorActivity? {
     return activities.find { it is EditorActivity } as EditorActivity?
-  }
-
-  fun applyTheme(theme: String) {
-    when (theme) {
-      "dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-      "light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-      "system" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-      "battery" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY)
-      else -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-    }
   }
 }
