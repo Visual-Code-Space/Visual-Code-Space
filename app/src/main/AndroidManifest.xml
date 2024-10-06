@@ -35,7 +35,6 @@
     <!--  Open MenuHandlerActivity for now because EditorActivity is not stable right now. -->
     <activity
       android:name=".activities.editor.EditorActivity"
-      android:configChanges="orientation|screenSize"
       android:exported="true"
       android:windowSoftInputMode="adjustResize">
       <intent-filter>
@@ -62,7 +61,7 @@
 
     <activity
       android:name=".activities.SettingsActivity"
-      android:exported="true" />
+      android:exported="false" />
 
     <activity
       android:name=".activities.crash.CrashActivity"

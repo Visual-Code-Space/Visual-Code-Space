@@ -71,7 +71,7 @@ abstract class EditorHandlerActivity : BaseEditorActivity(), TabLayout.OnTabSele
   companion object {
     const val EXTRA_KEY_PLUGIN_MANIFEST = "plugin_manifest"
 
-    private val LAST_OPENED_FILES_JSON_PATH =
+    val LAST_OPENED_FILES_JSON_PATH =
       "${PathUtils.getExternalAppFilesPath()}/settings/lastOpenedFile.json"
   }
 

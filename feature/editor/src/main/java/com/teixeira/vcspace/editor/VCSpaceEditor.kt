@@ -71,10 +71,6 @@ class VCSpaceEditor @JvmOverloads constructor(
     getComponent(EditorTextActionWindow::class.java).isEnabled = false
     getComponent(EditorAutoCompletion::class.java).setLayout(CustomCompletionLayout())
     getComponent(EditorAutoCompletion::class.java).setAdapter(CompletionListAdapter())
-    subscribeEvent(ContentChangeEvent::class.java) { event, _ ->
-      modified = event.action != ContentChangeEvent.ACTION_SET_NEW_TEXT
-      EventBus.getDefault().post(OnContentChangeEvent(file))
-    }
     inputType = createInputTypeFlags()
   }
 

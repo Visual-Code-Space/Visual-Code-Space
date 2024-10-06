@@ -39,6 +39,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.teixeira.vcspace.core.components.PathListView
+import com.teixeira.vcspace.core.settings.Settings.File.rememberShowHiddenFiles
 import com.teixeira.vcspace.extensions.toFile
 import com.teixeira.vcspace.utils.ApkInstaller
 import com.teixeira.vcspace.utils.isValidTextFile
@@ -58,18 +59,20 @@ fun FileExplorer(
 
   val context = LocalContext.current
 
-  LaunchedEffect(Unit) { viewModel.refreshFiles() }
+  val showHiddenFiles by rememberShowHiddenFiles()
+
+  LaunchedEffect(showHiddenFiles) { viewModel.refreshFiles(showHiddenFiles) }
 
   PathListView(
     path = currentPath.toFile(),
     modifier = Modifier.padding(start = 5.dp)
   ) {
-    viewModel.setCurrentPath(it.absolutePath)
+    viewModel.setCurrentPath(it.absolutePath, showHiddenFiles)
   }
 
   FileList(files, modifier = modifier) {
     if (it.isDirectory) {
-      viewModel.setCurrentPath(it.absolutePath)
+      viewModel.setCurrentPath(it.absolutePath, showHiddenFiles)
     } else if (it.name.endsWith(".apk")) {
       ApkInstaller.installApplication(context, it)
     } else if (isValidTextFile(it.name)) {

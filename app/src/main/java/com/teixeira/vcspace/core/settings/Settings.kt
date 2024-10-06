@@ -139,10 +139,10 @@ object Settings {
     fun rememberFontLigatures() = rememberPreference(key = FONT_LIGATURES, defaultValue = false)
 
     @Composable
-    fun rememberWordWrap() = rememberPreference(key = WORD_WRAP, defaultValue = true)
+    fun rememberWordWrap() = rememberPreference(key = WORD_WRAP, defaultValue = false)
 
     @Composable
-    fun rememberLineNumber() = rememberPreference(key = LINE_NUMBER, defaultValue = false)
+    fun rememberLineNumber() = rememberPreference(key = LINE_NUMBER, defaultValue = true)
 
     @Composable
     fun rememberUseTab() = rememberPreference(key = USE_TAB, defaultValue = true)
