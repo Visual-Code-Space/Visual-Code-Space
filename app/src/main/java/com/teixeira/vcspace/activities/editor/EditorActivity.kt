@@ -15,8 +15,12 @@
 
 package com.teixeira.vcspace.activities.editor
 
+import android.os.Bundle
+import android.util.Log
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.DrawerValue
@@ -25,16 +29,60 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.blankj.utilcode.util.PathUtils
 import com.teixeira.vcspace.activities.BaseComposeActivity
+import com.teixeira.vcspace.core.settings.Settings.File.rememberLastOpenedFile
+import com.teixeira.vcspace.editor.events.OnContentChangeEvent
 import com.teixeira.vcspace.screens.editor.EditorScreen
 import com.teixeira.vcspace.screens.editor.components.EditorDrawerSheet
 import com.teixeira.vcspace.screens.editor.components.EditorTopBar
 import com.teixeira.vcspace.viewmodel.editor.EditorViewModel
 import com.teixeira.vcspace.viewmodel.file.FileExplorerViewModel
+import io.github.rosemoe.sora.event.ContentChangeEvent
+import kotlinx.coroutines.delay
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 class EditorActivity : BaseComposeActivity() {
+  companion object {
+    val LAST_OPENED_FILES_JSON_PATH =
+      "${PathUtils.getExternalAppFilesPath()}/settings/lastOpenedFile.json"
+  }
+
+  private val editorViewModel: EditorViewModel by viewModels()
+
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    EventBus.getDefault().register(this)
+  }
+
+  override fun onDestroy() {
+    EventBus.getDefault().unregister(this)
+    super.onDestroy()
+  }
+
+  @Subscribe(threadMode = ThreadMode.MAIN)
+  fun onContentChangeEvent(e: OnContentChangeEvent) {
+    Log.d("EditorActivity", "Content change event received: ${e.file?.name}")
+
+    if (e.file != null) {
+      editorViewModel.setModified(
+        e.file!!,
+        e.event.action != ContentChangeEvent.ACTION_SET_NEW_TEXT
+      )
+    }
+  }
+
   @Composable
   override fun MainScreen() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -42,8 +90,40 @@ class EditorActivity : BaseComposeActivity() {
     val fileExplorerViewModel: FileExplorerViewModel = viewModel()
     val editorViewModel: EditorViewModel = viewModel()
 
+    val editorUiState by editorViewModel.uiState.collectAsStateWithLifecycle()
+    val selectedFileIndex = editorUiState.selectedFileIndex
+
+    LaunchedEffect(selectedFileIndex) {
+      editorViewModel.rememberLastFiles()
+    }
+
+    val openLastFiles by rememberLastOpenedFile()
+    LaunchedEffect(Unit) {
+      delay(200)
+      if (openLastFiles) {
+        editorViewModel.openLastFiles()
+      }
+    }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+      val observer = LifecycleEventObserver { _, event ->
+        if (event == Lifecycle.Event.ON_DESTROY || event == Lifecycle.Event.ON_PAUSE) {
+          editorViewModel.rememberLastFiles()
+        }
+      }
+
+      lifecycleOwner.lifecycle.addObserver(observer)
+
+      onDispose {
+        lifecycleOwner.lifecycle.removeObserver(observer)
+      }
+    }
+
     ModalNavigationDrawer(
-      modifier = Modifier.fillMaxSize(),
+      modifier = Modifier
+        .fillMaxSize()
+        .imePadding(),
       drawerState = drawerState,
       gesturesEnabled = false,
       drawerContent = {
@@ -66,6 +146,7 @@ class EditorActivity : BaseComposeActivity() {
         modifier = Modifier.fillMaxSize(),
         topBar = {
           EditorTopBar(
+            editorViewModel = editorViewModel,
             drawerState = drawerState
           )
         }

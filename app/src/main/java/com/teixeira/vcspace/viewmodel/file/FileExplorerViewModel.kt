@@ -18,7 +18,6 @@ package com.teixeira.vcspace.viewmodel.file
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.PathUtils
-import com.teixeira.vcspace.preferences.fileShowhiddenfiles
 import com.teixeira.vcspace.utils.getParentDirPath
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,19 +34,19 @@ class FileExplorerViewModel : ViewModel() {
   val files get() = _files.asStateFlow()
   val currentPath get() = _currentPath.asStateFlow()
 
-  fun backPath() {
+  fun backPath(showHiddenFiles: Boolean) {
     if (_currentPath.value.equals(PathUtils.getRootPathExternalFirst())) {
       return
     }
-    setCurrentPath(getParentDirPath(_currentPath.value))
+    setCurrentPath(getParentDirPath(_currentPath.value), showHiddenFiles)
   }
 
-  fun setCurrentPath(path: String) {
+  fun setCurrentPath(path: String, showHiddenFiles: Boolean) {
     _currentPath.value = path
-    refreshFiles()
+    refreshFiles(showHiddenFiles)
   }
 
-  fun refreshFiles() {
+  fun refreshFiles(showHiddenFiles: Boolean) {
     viewModelScope.launch(Dispatchers.IO) {
       val listFiles = _currentPath.value?.let { File(it).listFiles() }
 
@@ -57,7 +56,7 @@ class FileExplorerViewModel : ViewModel() {
         if (listFiles != null) {
           Arrays.sort(listFiles, FOLDER_FIRST_ORDER)
           for (file in listFiles) {
-            if (file.isHidden && !fileShowhiddenfiles) {
+            if (file.isHidden && !showHiddenFiles) {
               continue
             }
             files.add(file)

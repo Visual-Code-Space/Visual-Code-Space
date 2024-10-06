@@ -15,11 +15,13 @@
 
 package com.teixeira.vcspace.screens.editor
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
@@ -27,11 +29,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.teixeira.vcspace.core.components.editor.FileTabLayout
-import com.teixeira.vcspace.editor.CodeEditorView
+import com.teixeira.vcspace.core.settings.Settings.Editor.rememberColorScheme
+import com.teixeira.vcspace.core.settings.Settings.Editor.rememberDeleteIndentOnBackspace
+import com.teixeira.vcspace.core.settings.Settings.Editor.rememberDeleteLineOnBackspace
+import com.teixeira.vcspace.core.settings.Settings.Editor.rememberFontFamily
+import com.teixeira.vcspace.core.settings.Settings.Editor.rememberFontLigatures
+import com.teixeira.vcspace.core.settings.Settings.Editor.rememberFontSize
+import com.teixeira.vcspace.core.settings.Settings.Editor.rememberIndentSize
+import com.teixeira.vcspace.core.settings.Settings.Editor.rememberLineNumber
+import com.teixeira.vcspace.core.settings.Settings.Editor.rememberStickyScroll
+import com.teixeira.vcspace.core.settings.Settings.Editor.rememberUseTab
+import com.teixeira.vcspace.core.settings.Settings.Editor.rememberWordWrap
+import com.teixeira.vcspace.core.settings.Settings.General.rememberFollowSystemTheme
+import com.teixeira.vcspace.core.settings.Settings.General.rememberIsDarkMode
+import com.teixeira.vcspace.editor.VCSpaceEditor
+import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.viewmodel.editor.EditorViewModel
+import io.github.rosemoe.sora.langs.textmate.TextMateLanguage
+import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 
 @Composable
 fun EditorScreen(
@@ -39,29 +58,30 @@ fun EditorScreen(
   modifier: Modifier = Modifier
 ) {
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+  val editorConfigMap = remember { viewModel.editorConfigMap }
 
-  val files = uiState.openedFiles
+  val openedFiles = uiState.openedFiles
   val selectedFileIndex = uiState.selectedFileIndex
+
+  val context = LocalContext.current
 
   Column(modifier = modifier) {
     FileTabLayout(editorViewModel = viewModel)
 
-    val selectedFile = files.getOrNull(selectedFileIndex)
+    val openedFile = openedFiles.getOrNull(selectedFileIndex)
 
-    selectedFile?.let { file ->
-      key(file) {
-        val context = LocalContext.current
-        val editor = remember(file) { CodeEditorView(context, file) }
+    openedFile?.let { fileEntry ->
+      val editorView = viewModel.getEditorForFile(context, fileEntry.file)
 
+      key(editorConfigMap[fileEntry.file.path]) {
+        configureEditor(editorView.editor)
+        viewModel.setEditorConfiguredForFile(fileEntry.file)
+      }
+
+      key(fileEntry.file.path) {
         AndroidView(
-          factory = { editor },
-          modifier = Modifier.fillMaxSize(),
-          update = { editorView ->
-            if (editorView.file != file) {
-              editorView.file = file
-            }
-          },
-          onRelease = { it.release() }
+          factory = { editorView },
+          modifier = Modifier.fillMaxSize()
         )
       }
     } ?: run {
@@ -71,6 +91,108 @@ fun EditorScreen(
       ) {
         Text("No opened files")
       }
+    }
+  }
+}
+
+@Composable
+private fun configureEditor(editor: VCSpaceEditor) {
+  configureFontSettings(editor)
+  configureColorScheme(editor)
+  configureIndentation(editor)
+  configureMiscSettings(editor)
+}
+
+@Composable
+private fun configureFontSettings(editor: VCSpaceEditor) {
+  val fontFamily by rememberFontFamily()
+  val fontSize by rememberFontSize()
+
+  val context = LocalContext.current
+
+  LaunchedEffect(fontFamily, fontSize) {
+    editor.apply {
+      val font = ResourcesCompat.getFont(
+        context, when (fontFamily) {
+          context.getString(R.string.pref_editor_font_value_firacode) -> R.font.firacode_regular
+          context.getString(R.string.pref_editor_font_value_jetbrains) -> R.font.jetbrains_mono
+          else -> R.font.jetbrains_mono
+        }
+      )
+
+      typefaceText = font
+      typefaceLineNumber = font
+      setTextSize(fontSize)
+    }
+  }
+}
+
+@Composable
+private fun configureColorScheme(editor: VCSpaceEditor) {
+  val colorScheme by rememberColorScheme()
+  val isDarkTheme = isSystemInDarkTheme()
+
+  val followSystemTheme by rememberFollowSystemTheme()
+  val isDarkMode by rememberIsDarkMode()
+
+  val context = LocalContext.current
+
+  LaunchedEffect(colorScheme, isDarkTheme, followSystemTheme, isDarkMode) {
+    editor.apply {
+      ThemeRegistry.getInstance().setTheme(
+        when (colorScheme) {
+          context.getString(R.string.pref_editor_colorscheme_value_followui) -> if ((followSystemTheme && isDarkTheme) || isDarkMode) "darcula" else "quietlight"
+          "Quietlight" -> "quietlight"
+          "Darcula" -> "darcula"
+          "Abyss" -> "abyss"
+          "Solarized Dark" -> "solarized_drak"
+          else -> if ((followSystemTheme && isDarkTheme) || isDarkMode) "darcula" else "quietlight"
+        }
+      ).also {
+        setText(text.toString()) // Required to update colors correctly
+      }
+    }
+  }
+}
+
+@Composable
+private fun configureIndentation(editor: VCSpaceEditor) {
+  val indentSize by rememberIndentSize()
+  val useTab by rememberUseTab()
+
+  LaunchedEffect(indentSize, useTab) {
+    editor.apply {
+      (editorLanguage as? TextMateLanguage)?.tabSize = indentSize
+      (editorLanguage as? TextMateLanguage)?.useTab(useTab)
+      tabWidth = indentSize
+    }
+  }
+}
+
+@Composable
+private fun configureMiscSettings(editor: VCSpaceEditor) {
+  val stickyScroll by rememberStickyScroll()
+  val fontLigatures by rememberFontLigatures()
+  val wordWrap by rememberWordWrap()
+  val lineNumber by rememberLineNumber()
+  val deleteLineOnBackspace by rememberDeleteLineOnBackspace()
+  val deleteIndentOnBackspace by rememberDeleteIndentOnBackspace()
+
+  LaunchedEffect(
+    stickyScroll,
+    fontLigatures,
+    wordWrap,
+    lineNumber,
+    deleteLineOnBackspace,
+    deleteIndentOnBackspace
+  ) {
+    editor.apply {
+      props.stickyScroll = stickyScroll
+      isLigatureEnabled = fontLigatures
+      isWordwrap = wordWrap
+      isLineNumberEnabled = lineNumber
+      props.deleteEmptyLineFast = deleteLineOnBackspace
+      props.deleteMultiSpaces = if (deleteIndentOnBackspace) -1 else 1
     }
   }
 }

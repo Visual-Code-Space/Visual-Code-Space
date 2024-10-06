@@ -73,7 +73,6 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
     }
 
   init {
-    ThemeRegistry.getInstance().setTheme(editorColorScheme)
     EventBus.getDefault().register(this)
     binding.searcher.bindSearcher(editor.searcher)
     binding.editor.apply {
