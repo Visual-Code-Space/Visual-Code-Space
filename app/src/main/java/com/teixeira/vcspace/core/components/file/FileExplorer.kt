@@ -52,6 +52,7 @@ fun FileExplorer(
   viewModel: FileExplorerViewModel,
   editorViewModel: EditorViewModel,
   modifier: Modifier = Modifier,
+  onFileLongClick: ((File) -> Unit)? = null,
   onFileClick: ((File) -> Unit)? = null
 ) {
   val files by viewModel.files.collectAsStateWithLifecycle()
@@ -70,7 +71,11 @@ fun FileExplorer(
     viewModel.setCurrentPath(it.absolutePath, showHiddenFiles)
   }
 
-  FileList(files, modifier = modifier) {
+  FileList(
+    files = files,
+    modifier = modifier,
+    onFileLongClick = onFileLongClick
+  ) {
     if (it.isDirectory) {
       viewModel.setCurrentPath(it.absolutePath, showHiddenFiles)
     } else if (it.name.endsWith(".apk")) {

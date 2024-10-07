@@ -15,7 +15,6 @@
 
 package com.teixeira.vcspace.activities.editor
 
-import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
@@ -48,7 +47,6 @@ import com.teixeira.vcspace.screens.editor.components.EditorTopBar
 import com.teixeira.vcspace.viewmodel.editor.EditorViewModel
 import com.teixeira.vcspace.viewmodel.file.FileExplorerViewModel
 import io.github.rosemoe.sora.event.ContentChangeEvent
-import kotlinx.coroutines.delay
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -60,16 +58,6 @@ class EditorActivity : BaseComposeActivity() {
   }
 
   private val editorViewModel: EditorViewModel by viewModels()
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    EventBus.getDefault().register(this)
-  }
-
-  override fun onDestroy() {
-    EventBus.getDefault().unregister(this)
-    super.onDestroy()
-  }
 
   @Subscribe(threadMode = ThreadMode.MAIN)
   fun onContentChangeEvent(e: OnContentChangeEvent) {
@@ -99,7 +87,6 @@ class EditorActivity : BaseComposeActivity() {
 
     val openLastFiles by rememberLastOpenedFile()
     LaunchedEffect(Unit) {
-      delay(200)
       if (openLastFiles) {
         editorViewModel.openLastFiles()
       }
@@ -108,8 +95,24 @@ class EditorActivity : BaseComposeActivity() {
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
       val observer = LifecycleEventObserver { _, event ->
-        if (event == Lifecycle.Event.ON_DESTROY || event == Lifecycle.Event.ON_PAUSE) {
-          editorViewModel.rememberLastFiles()
+        when (event) {
+          Lifecycle.Event.ON_CREATE -> {
+            EventBus.getDefault().register(this@EditorActivity)
+          }
+
+          Lifecycle.Event.ON_PAUSE -> {
+            editorViewModel.rememberLastFiles()
+          }
+
+          Lifecycle.Event.ON_DESTROY -> {
+            editorViewModel.rememberLastFiles()
+            EventBus.getDefault().unregister(this@EditorActivity)
+          }
+
+          Lifecycle.Event.ON_START -> {}
+          Lifecycle.Event.ON_RESUME -> {}
+          Lifecycle.Event.ON_STOP -> {}
+          Lifecycle.Event.ON_ANY -> {}
         }
       }
 

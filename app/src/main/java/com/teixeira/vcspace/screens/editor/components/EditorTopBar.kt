@@ -419,6 +419,7 @@ fun FileMenu(
           contentDescription = null
         )
       },
+      enabled = editor != null,
       onClick = {
         editor?.confirmReload()
       }

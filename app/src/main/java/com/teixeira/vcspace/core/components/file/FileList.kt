@@ -38,7 +38,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -60,6 +62,7 @@ fun FileList(
   onFileClick: (File) -> Unit,
 ) {
   val context = LocalContext.current
+  val haptics = LocalHapticFeedback.current
 
   if (files.isEmpty()) {
     Box(
@@ -113,7 +116,10 @@ fun FileList(
             .heightIn(max = 45.dp)
             .combinedClickable(
               onClick = { onFileClick(it) },
-              onLongClick = { onFileLongClick?.invoke(it) }
+              onLongClick = {
+                haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                onFileLongClick?.invoke(it)
+              }
             )
         )
       }
