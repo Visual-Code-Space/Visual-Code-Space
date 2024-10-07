@@ -29,17 +29,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.blankj.utilcode.util.PathUtils
 import com.teixeira.vcspace.activities.BaseComposeActivity
-import com.teixeira.vcspace.core.settings.Settings.File.rememberLastOpenedFile
 import com.teixeira.vcspace.editor.events.OnContentChangeEvent
 import com.teixeira.vcspace.screens.editor.EditorScreen
 import com.teixeira.vcspace.screens.editor.components.EditorDrawerSheet
@@ -77,20 +73,6 @@ class EditorActivity : BaseComposeActivity() {
 
     val fileExplorerViewModel: FileExplorerViewModel = viewModel()
     val editorViewModel: EditorViewModel = viewModel()
-
-    val editorUiState by editorViewModel.uiState.collectAsStateWithLifecycle()
-    val selectedFileIndex = editorUiState.selectedFileIndex
-
-    LaunchedEffect(selectedFileIndex) {
-      editorViewModel.rememberLastFiles()
-    }
-
-    val openLastFiles by rememberLastOpenedFile()
-    LaunchedEffect(Unit) {
-      if (openLastFiles) {
-        editorViewModel.openLastFiles()
-      }
-    }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {

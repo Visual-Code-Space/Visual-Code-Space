@@ -92,7 +92,7 @@ object Settings {
 
   object File {
     private val SHOW_HIDDEN_FILES = booleanPreferencesKey("show_hidden_files")
-    private val REMEMBER_LAST_OPENED_FILE = booleanPreferencesKey("remember_last_opened_file")
+    private val REMEMBER_LAST_OPENED_FILE = booleanPreferencesKey("__remember_last_opened_file__")
 
     @Composable
     fun rememberShowHiddenFiles() = rememberPreference(

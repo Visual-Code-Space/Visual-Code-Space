@@ -44,6 +44,7 @@ import com.teixeira.vcspace.core.settings.Settings.Editor.rememberLineNumber
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberStickyScroll
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberUseTab
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberWordWrap
+import com.teixeira.vcspace.core.settings.Settings.File.rememberLastOpenedFile
 import com.teixeira.vcspace.core.settings.Settings.General.rememberFollowSystemTheme
 import com.teixeira.vcspace.core.settings.Settings.General.rememberIsDarkMode
 import com.teixeira.vcspace.editor.VCSpaceEditor
@@ -62,6 +63,18 @@ fun EditorScreen(
 
   val openedFiles = uiState.openedFiles
   val selectedFileIndex = uiState.selectedFileIndex
+
+  LaunchedEffect(selectedFileIndex) {
+    viewModel.rememberLastFiles()
+  }
+
+  val openLastFiles by rememberLastOpenedFile()
+
+  if (!openLastFiles) {
+    viewModel.lastOpenedFiles().forEach {
+      viewModel.addFile(it)
+    }
+  }
 
   val context = LocalContext.current
 

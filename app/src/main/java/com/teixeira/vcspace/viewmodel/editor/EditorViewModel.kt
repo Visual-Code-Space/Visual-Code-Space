@@ -84,15 +84,10 @@ class EditorViewModel : ViewModel() {
     }
   }
 
-  fun openLastFiles() {
-    viewModelScope.launch {
-      File(LAST_OPENED_FILES_JSON_PATH).apply {
-        if (!exists()) return@apply
-
-        val fileHistory = Gson().fromJson(readText(), FileHistory::class.java)
-        fileHistory.lastOpenedFilesPath.forEach { addFile(it.toFile()) }
-      }
-    }
+  fun lastOpenedFiles(): List<File> {
+    val file = File(LAST_OPENED_FILES_JSON_PATH)
+    val fileHistory = Gson().fromJson(file.readText(), FileHistory::class.java)
+    return fileHistory.lastOpenedFilesPath.map { it.toFile() }
   }
 
   fun setModified(file: File, modified: Boolean) {
