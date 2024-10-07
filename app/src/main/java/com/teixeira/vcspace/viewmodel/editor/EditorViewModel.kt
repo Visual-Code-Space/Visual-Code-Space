@@ -86,6 +86,8 @@ class EditorViewModel : ViewModel() {
 
   fun lastOpenedFiles(): List<File> {
     val file = File(LAST_OPENED_FILES_JSON_PATH)
+    if (!file.exists()) return emptyList()
+
     val fileHistory = Gson().fromJson(file.readText(), FileHistory::class.java)
     return fileHistory.lastOpenedFilesPath.map { it.toFile() }
   }
