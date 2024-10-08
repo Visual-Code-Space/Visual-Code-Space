@@ -42,6 +42,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.teixeira.vcspace.activities.editor.LocalDrawerState
 import com.teixeira.vcspace.core.components.editor.FileTabLayout
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberColorScheme
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberDeleteIndentOnBackspace
@@ -67,8 +68,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun EditorScreen(
   viewModel: EditorViewModel = viewModel(),
-  modifier: Modifier = Modifier,
-  drawerState: DrawerState
+  modifier: Modifier = Modifier
 ) {
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
   val editorConfigMap = remember { viewModel.editorConfigMap }
@@ -89,6 +89,7 @@ fun EditorScreen(
   }
 
   val context = LocalContext.current
+  val drawerState = LocalDrawerState.current
   val scope = rememberCoroutineScope()
 
   Column(modifier = modifier) {

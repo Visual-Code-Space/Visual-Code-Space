@@ -22,13 +22,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -46,6 +49,10 @@ import io.github.rosemoe.sora.event.ContentChangeEvent
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+
+val LocalDrawerState = compositionLocalOf<DrawerState> {
+  error("CompositionLocal LocalDrawerState not present")
+}
 
 class EditorActivity : BaseComposeActivity() {
   companion object {
@@ -105,44 +112,42 @@ class EditorActivity : BaseComposeActivity() {
       }
     }
 
-    ModalNavigationDrawer(
-      modifier = Modifier
-        .fillMaxSize()
-        .imePadding(),
-      drawerState = drawerState,
-      gesturesEnabled = false,
-      drawerContent = {
-        ModalDrawerSheet(
-          drawerState = drawerState,
-          modifier = Modifier
-            .fillMaxWidth(fraction = 0.8f)
-            .systemBarsPadding()
-        ) {
-
-          EditorDrawerSheet(
-            fileExplorerViewModel = fileExplorerViewModel,
-            editorViewModel = editorViewModel,
-            drawerState = drawerState
-          )
-        }
-      }
-    ) {
-      Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-          EditorTopBar(
-            editorViewModel = editorViewModel,
-            drawerState = drawerState
-          )
+    CompositionLocalProvider(LocalDrawerState provides drawerState) {
+      ModalNavigationDrawer(
+        modifier = Modifier
+          .fillMaxSize()
+          .imePadding(),
+        drawerState = LocalDrawerState.current,
+        gesturesEnabled = false,
+        drawerContent = {
+          ModalDrawerSheet(
+            drawerState = LocalDrawerState.current,
+            modifier = Modifier
+              .fillMaxWidth(fraction = 0.8f)
+              .systemBarsPadding()
+          ) {
+            EditorDrawerSheet(
+              fileExplorerViewModel = fileExplorerViewModel,
+              editorViewModel = editorViewModel
+            )
+          }
         }
       ) {
-        EditorScreen(
-          viewModel = editorViewModel,
-          drawerState = drawerState,
-          modifier = Modifier
-            .fillMaxSize()
-            .padding(it)
-        )
+        Scaffold(
+          modifier = Modifier.fillMaxSize(),
+          topBar = {
+            EditorTopBar(
+              editorViewModel = editorViewModel
+            )
+          }
+        ) {
+          EditorScreen(
+            viewModel = editorViewModel,
+            modifier = Modifier
+              .fillMaxSize()
+              .padding(it)
+          )
+        }
       }
     }
   }

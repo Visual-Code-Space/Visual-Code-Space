@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import com.teixeira.vcspace.extensions.formatSize
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.ui.LoadingDialog
-import com.teixeira.vcspace.ui.ToastHostState
+import com.teixeira.vcspace.ui.LocalToastHostState
 import com.teixeira.vcspace.viewmodel.PluginViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -50,11 +50,12 @@ import kotlinx.coroutines.launch
 fun ExplorePluginList(
   modifier: Modifier = Modifier,
   viewModel: PluginViewModel,
-  scope: CoroutineScope,
-  toastHostState: ToastHostState
+  scope: CoroutineScope
 ) {
   val plugins by viewModel.plugins
   val isLoading by viewModel.isLoadingPlugins
+
+  val toastHostState = LocalToastHostState.current
 
   if (isLoading) {
     LoadingDialog(message = "Loading")

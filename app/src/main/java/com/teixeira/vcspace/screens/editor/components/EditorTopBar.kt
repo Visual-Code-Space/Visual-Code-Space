@@ -77,6 +77,7 @@ import com.hzy.libp7zip.P7ZipApi
 import com.teixeira.vcspace.PYTHON_PACKAGE_URL_32_BIT
 import com.teixeira.vcspace.PYTHON_PACKAGE_URL_64_BIT
 import com.teixeira.vcspace.activities.TerminalActivity
+import com.teixeira.vcspace.activities.editor.LocalDrawerState
 import com.teixeira.vcspace.core.components.Tooltip
 import com.teixeira.vcspace.core.settings.Settings.EditorTabs.rememberAutoSave
 import com.teixeira.vcspace.editor.CodeEditorView
@@ -100,10 +101,10 @@ import java.nio.file.StandardCopyOption
 @Composable
 fun EditorTopBar(
   modifier: Modifier = Modifier,
-  editorViewModel: EditorViewModel,
-  drawerState: DrawerState
+  editorViewModel: EditorViewModel
 ) {
   val scope = rememberCoroutineScope()
+  val drawerState = LocalDrawerState.current
 
   var showMenu by remember { mutableStateOf(false) }
   val showFileMenu = remember { mutableStateOf(false) }

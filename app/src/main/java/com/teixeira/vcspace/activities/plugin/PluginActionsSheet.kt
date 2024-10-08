@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import com.teixeira.vcspace.extensions.toFile
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.ui.LoadingDialog
-import com.teixeira.vcspace.ui.ToastHostState
+import com.teixeira.vcspace.ui.LocalToastHostState
 import com.teixeira.vcspace.viewmodel.PluginViewModel
 import com.vcspace.plugins.Plugin
 import com.vcspace.plugins.internal.PluginManager
@@ -53,11 +53,12 @@ fun PluginActionsSheet(
   plugin: Plugin,
   viewModel: PluginViewModel,
   scope: CoroutineScope,
-  toastHostState: ToastHostState,
   onDismissSheet: () -> Unit,
 ) {
   var showDeleteDialog by remember { mutableStateOf(false) }
   var showUploadDialog by remember { mutableStateOf(false) }
+
+  val toastHostState = LocalToastHostState.current
 
   ModalBottomSheet(
     modifier = modifier,

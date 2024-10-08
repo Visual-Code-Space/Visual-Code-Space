@@ -46,8 +46,10 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -61,6 +63,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import com.blankj.utilcode.util.AppUtils
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
@@ -68,8 +71,16 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.teixeira.vcspace.core.settings.Settings.General.rememberFollowSystemTheme
 import com.teixeira.vcspace.core.settings.Settings.General.rememberIsDarkMode
 import com.teixeira.vcspace.resources.R
+import com.teixeira.vcspace.ui.LocalToastHostState
+import com.teixeira.vcspace.ui.ToastHost
+import com.teixeira.vcspace.ui.rememberToastHostState
 import com.teixeira.vcspace.ui.theme.VCSpaceTheme
 import com.teixeira.vcspace.utils.isStoragePermissionGranted
+import kotlinx.coroutines.CoroutineScope
+
+val LocalLifecycleScope = compositionLocalOf<CoroutineScope> {
+  error("CompositionLocal LifecycleScope not present")
+}
 
 abstract class BaseComposeActivity : ComponentActivity() {
   @OptIn(ExperimentalPermissionsApi::class)
@@ -129,11 +140,20 @@ abstract class BaseComposeActivity : ComponentActivity() {
           }
         }
 
-        if (hasPermission) {
-          MainScreen()
-        } else {
-          SetupPermissionScreen(storagePermissionsState)
+        val toastHostState = rememberToastHostState()
+
+        CompositionLocalProvider(
+          LocalLifecycleScope provides lifecycleScope,
+          LocalToastHostState provides toastHostState
+        ) {
+          if (hasPermission) {
+            MainScreen()
+          } else {
+            SetupPermissionScreen(storagePermissionsState)
+          }
         }
+
+        ToastHost(hostState = toastHostState)
       }
     }
   }

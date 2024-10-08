@@ -15,6 +15,7 @@
 
 package com.teixeira.vcspace.screens.settings
 
+import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -141,30 +142,38 @@ fun GeneralSettingsScreen(
         )
       },
       modifier = Modifier
-        .clip(PreferenceShape.Middle)
+        .clip(
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PreferenceShape.Middle
+          } else {
+            PreferenceShape.Bottom
+          }
+        )
         .background(backgroundColor)
     )
 
-    switchPreference(
-      key = "dynamic_colors_preference",
-      title = { Text(text = stringResource(R.string.dynamic_colors_title)) },
-      summary = {
-        Text(
-          text = if (it) stringResource(R.string.dynamic_colors_summary_enabled)
-          else stringResource(R.string.dynamic_colors_summary_disabled)
-        )
-      },
-      rememberState = { dynamicColor },
-      defaultValue = dynamicColor.value,
-      icon = {
-        Icon(
-          imageVector = Icons.Default.Palette,
-          contentDescription = null
-        )
-      },
-      modifier = Modifier
-        .clip(PreferenceShape.Bottom)
-        .background(backgroundColor)
-    )
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+      switchPreference(
+        key = "dynamic_colors_preference",
+        title = { Text(text = stringResource(R.string.dynamic_colors_title)) },
+        summary = {
+          Text(
+            text = if (it) stringResource(R.string.dynamic_colors_summary_enabled)
+            else stringResource(R.string.dynamic_colors_summary_disabled)
+          )
+        },
+        rememberState = { dynamicColor },
+        defaultValue = dynamicColor.value,
+        icon = {
+          Icon(
+            imageVector = Icons.Default.Palette,
+            contentDescription = null
+          )
+        },
+        modifier = Modifier
+          .clip(PreferenceShape.Bottom)
+          .background(backgroundColor)
+      )
+    }
   }
 }

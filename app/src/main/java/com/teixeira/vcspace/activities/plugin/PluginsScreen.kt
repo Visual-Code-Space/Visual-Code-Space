@@ -43,8 +43,7 @@ import com.google.gson.GsonBuilder
 import com.teixeira.vcspace.app.VCSpaceApplication
 import com.teixeira.vcspace.preferences.pluginsPath
 import com.teixeira.vcspace.screens.PluginScreens
-import com.teixeira.vcspace.ui.ToastHost
-import com.teixeira.vcspace.ui.rememberToastHostState
+import com.teixeira.vcspace.ui.LocalToastHostState
 import com.teixeira.vcspace.viewmodel.PluginViewModel
 import com.vcspace.plugins.Plugin
 import kotlinx.coroutines.CoroutineScope
@@ -58,14 +57,14 @@ fun PluginsScreen(
   coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) {
   val installedPluginListState = rememberLazyListState()
-  val toastHostState = rememberToastHostState()
   val expandedFab by remember { derivedStateOf { installedPluginListState.firstVisibleItemIndex == 0 } }
 
   val navController = rememberNavController()
   val navBackStackEntry by navController.currentBackStackEntryAsState()
 
   var showNewPluginDialog by remember { mutableStateOf(false) }
-  var showProgressDialog by remember { mutableStateOf(false) }
+
+  val toastHostState = LocalToastHostState.current
 
   LaunchedEffect(Unit) {
     viewModel.loadInstalledPlugins()
@@ -110,8 +109,7 @@ fun PluginsScreen(
         composable(PluginScreens.Explore.route) {
           ExplorePluginList(
             viewModel = viewModel,
-            scope = coroutineScope,
-            toastHostState = toastHostState
+            scope = coroutineScope
           )
         }
 
@@ -119,14 +117,11 @@ fun PluginsScreen(
           InstalledPluginList(
             viewModel = viewModel,
             listState = installedPluginListState,
-            scope = coroutineScope,
-            toastHostState = toastHostState
+            scope = coroutineScope
           )
         }
       }
     }
-
-    ToastHost(hostState = toastHostState)
   }
 
   if (showNewPluginDialog) {

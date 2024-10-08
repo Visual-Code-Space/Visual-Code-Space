@@ -55,6 +55,7 @@ import com.blankj.utilcode.util.ClipboardUtils
 import com.blankj.utilcode.util.FileUtils
 import com.teixeira.vcspace.activities.SettingsActivity
 import com.teixeira.vcspace.activities.TerminalActivity
+import com.teixeira.vcspace.activities.editor.LocalDrawerState
 import com.teixeira.vcspace.core.components.Tooltip
 import com.teixeira.vcspace.core.components.editor.FileOptionsSheet
 import com.teixeira.vcspace.core.components.file.FileExplorer
@@ -77,10 +78,10 @@ import java.io.File
 @Composable
 fun EditorDrawerSheet(
   fileExplorerViewModel: FileExplorerViewModel,
-  editorViewModel: EditorViewModel,
-  drawerState: DrawerState
+  editorViewModel: EditorViewModel
 ) {
   val context = LocalContext.current
+  val drawerState = LocalDrawerState.current
   val scope = rememberCoroutineScope()
   val selectedItem by remember { mutableIntStateOf(0) }
 
