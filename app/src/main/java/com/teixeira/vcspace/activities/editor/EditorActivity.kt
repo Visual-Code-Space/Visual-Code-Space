@@ -15,6 +15,7 @@
 
 package com.teixeira.vcspace.activities.editor
 
+import android.os.Build
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
@@ -39,13 +40,17 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.blankj.utilcode.util.PathUtils
 import com.teixeira.vcspace.activities.BaseComposeActivity
+import com.teixeira.vcspace.activities.editor.EditorHandlerActivity.Companion.EXTRA_KEY_PLUGIN_MANIFEST
 import com.teixeira.vcspace.app.noLocalProvidedFor
 import com.teixeira.vcspace.editor.events.OnContentChangeEvent
+import com.teixeira.vcspace.extensions.toFile
+import com.teixeira.vcspace.preferences.pluginsPath
 import com.teixeira.vcspace.screens.editor.EditorScreen
 import com.teixeira.vcspace.screens.editor.components.EditorDrawerSheet
 import com.teixeira.vcspace.screens.editor.components.EditorTopBar
 import com.teixeira.vcspace.viewmodel.editor.EditorViewModel
 import com.teixeira.vcspace.viewmodel.file.FileExplorerViewModel
+import com.vcspace.plugins.Manifest
 import io.github.rosemoe.sora.event.ContentChangeEvent
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -97,7 +102,23 @@ class EditorActivity : BaseComposeActivity() {
             EventBus.getDefault().unregister(this@EditorActivity)
           }
 
-          Lifecycle.Event.ON_START -> {}
+          Lifecycle.Event.ON_START -> {
+            // Open plugin files if opened from PluginsActivity
+            run {
+              @Suppress("DEPRECATION")
+              val manifest = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intent.getSerializableExtra(EXTRA_KEY_PLUGIN_MANIFEST, Manifest::class.java)
+              } else intent.getSerializableExtra(EXTRA_KEY_PLUGIN_MANIFEST) as? Manifest
+
+              if (manifest != null) {
+                val pluginPath = "$pluginsPath/${manifest.packageName}"
+                editorViewModel.addFiles(
+                  "$pluginPath/manifest.json".toFile(),
+                  "$pluginPath/${manifest.scripts.first().name}".toFile(),
+                )
+              }
+            }
+          }
           Lifecycle.Event.ON_RESUME -> {}
           Lifecycle.Event.ON_STOP -> {}
           Lifecycle.Event.ON_ANY -> {}

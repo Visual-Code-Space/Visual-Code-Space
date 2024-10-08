@@ -22,9 +22,9 @@ import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.FileUtils
 import com.google.gson.Gson
 import com.teixeira.vcspace.activities.editor.EditorActivity.Companion.LAST_OPENED_FILES_JSON_PATH
-import com.teixeira.vcspace.models.FileHistory
 import com.teixeira.vcspace.editor.CodeEditorView
 import com.teixeira.vcspace.extensions.toFile
+import com.teixeira.vcspace.models.FileHistory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -88,7 +88,8 @@ class EditorViewModel : ViewModel() {
     val file = File(LAST_OPENED_FILES_JSON_PATH)
     if (!file.exists()) return emptyList()
 
-    val fileHistory = Gson().fromJson(file.readText(), FileHistory::class.java) ?: return emptyList()
+    val fileHistory =
+      Gson().fromJson(file.readText(), FileHistory::class.java) ?: return emptyList()
     return fileHistory.lastOpenedFilesPath.map { it.toFile() }
   }
 
@@ -129,6 +130,12 @@ class EditorViewModel : ViewModel() {
       openedFiles = newOpenedFiles,
       selectedFileIndex = newSelectedFileIndex
     )
+  }
+
+  fun addFiles(vararg files: File) {
+    viewModelScope.launch {
+      files.forEach { addFile(it) }
+    }
   }
 
   fun selectFile(index: Int) {
