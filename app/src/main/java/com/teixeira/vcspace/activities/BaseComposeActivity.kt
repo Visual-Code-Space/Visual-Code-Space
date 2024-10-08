@@ -68,6 +68,7 @@ import com.blankj.utilcode.util.AppUtils
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.teixeira.vcspace.app.noLocalProvidedFor
 import com.teixeira.vcspace.core.settings.Settings.General.rememberFollowSystemTheme
 import com.teixeira.vcspace.core.settings.Settings.General.rememberIsDarkMode
 import com.teixeira.vcspace.resources.R
@@ -78,9 +79,7 @@ import com.teixeira.vcspace.ui.theme.VCSpaceTheme
 import com.teixeira.vcspace.utils.isStoragePermissionGranted
 import kotlinx.coroutines.CoroutineScope
 
-val LocalLifecycleScope = compositionLocalOf<CoroutineScope> {
-  error("CompositionLocal LifecycleScope not present")
-}
+val LocalLifecycleScope = compositionLocalOf<CoroutineScope> { noLocalProvidedFor("LocalLifecycleScope") }
 
 abstract class BaseComposeActivity : ComponentActivity() {
   @OptIn(ExperimentalPermissionsApi::class)

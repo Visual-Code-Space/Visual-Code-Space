@@ -39,6 +39,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.blankj.utilcode.util.PathUtils
 import com.teixeira.vcspace.activities.BaseComposeActivity
+import com.teixeira.vcspace.app.noLocalProvidedFor
 import com.teixeira.vcspace.editor.events.OnContentChangeEvent
 import com.teixeira.vcspace.screens.editor.EditorScreen
 import com.teixeira.vcspace.screens.editor.components.EditorDrawerSheet
@@ -50,9 +51,7 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-val LocalDrawerState = compositionLocalOf<DrawerState> {
-  error("CompositionLocal LocalDrawerState not present")
-}
+val LocalDrawerState = compositionLocalOf<DrawerState> { noLocalProvidedFor("LocalDrawerState") }
 
 class EditorActivity : BaseComposeActivity() {
   companion object {

@@ -62,6 +62,7 @@ import androidx.compose.ui.platform.LocalAccessibilityManager
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.teixeira.vcspace.app.noLocalProvidedFor
 import com.teixeira.vcspace.ui.extensions.harmonizeWithPrimary
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.delay
@@ -71,7 +72,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlin.coroutines.resume
 import kotlin.math.min
 
-val LocalToastHostState = compositionLocalOf<ToastHostState> { error("ToastHostState not present") }
+val LocalToastHostState = compositionLocalOf<ToastHostState> { noLocalProvidedFor("LocalToastHostState") }
 
 @Composable
 fun rememberToastHostState() = remember { ToastHostState() }

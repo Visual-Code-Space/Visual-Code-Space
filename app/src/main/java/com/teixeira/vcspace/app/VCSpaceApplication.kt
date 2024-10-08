@@ -117,3 +117,7 @@ class VCSpaceApplication : BaseApplication() {
     return activities.find { it is EditorActivity } as EditorActivity?
   }
 }
+
+internal fun noLocalProvidedFor(name: String): Nothing {
+  error("CompositionLocal $name not present")
+}

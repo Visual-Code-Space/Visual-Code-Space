@@ -22,7 +22,7 @@ import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.FileUtils
 import com.google.gson.Gson
 import com.teixeira.vcspace.activities.editor.EditorActivity.Companion.LAST_OPENED_FILES_JSON_PATH
-import com.teixeira.vcspace.activities.editor.FileHistory
+import com.teixeira.vcspace.models.FileHistory
 import com.teixeira.vcspace.editor.CodeEditorView
 import com.teixeira.vcspace.extensions.toFile
 import kotlinx.coroutines.Dispatchers

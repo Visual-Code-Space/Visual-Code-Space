@@ -37,6 +37,7 @@ import com.teixeira.vcspace.editor.events.OnContentChangeEvent
 import com.teixeira.vcspace.events.OnDeleteFileEvent
 import com.teixeira.vcspace.events.OnRenameFileEvent
 import com.teixeira.vcspace.extensions.toFile
+import com.teixeira.vcspace.models.FileHistory
 import com.teixeira.vcspace.preferences.editorTabsAutosave
 import com.teixeira.vcspace.preferences.pluginsPath
 import com.teixeira.vcspace.preferences.rememberLastOpenedFile
