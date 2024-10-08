@@ -138,6 +138,7 @@ class EditorActivity : BaseComposeActivity() {
       ) {
         EditorScreen(
           viewModel = editorViewModel,
+          drawerState = drawerState,
           modifier = Modifier
             .fillMaxSize()
             .padding(it)

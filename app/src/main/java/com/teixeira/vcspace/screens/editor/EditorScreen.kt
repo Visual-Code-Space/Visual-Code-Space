@@ -16,18 +16,28 @@
 package com.teixeira.vcspace.screens.editor
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withLink
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -52,11 +62,13 @@ import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.viewmodel.editor.EditorViewModel
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
+import kotlinx.coroutines.launch
 
 @Composable
 fun EditorScreen(
   viewModel: EditorViewModel = viewModel(),
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
+  drawerState: DrawerState
 ) {
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
   val editorConfigMap = remember { viewModel.editorConfigMap }
@@ -77,6 +89,7 @@ fun EditorScreen(
   }
 
   val context = LocalContext.current
+  val scope = rememberCoroutineScope()
 
   Column(modifier = modifier) {
     FileTabLayout(editorViewModel = viewModel)
@@ -98,11 +111,32 @@ fun EditorScreen(
         )
       }
     } ?: run {
-      Box(
+      Column(
         modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
       ) {
         Text("No opened files")
+
+        val linkColor = MaterialTheme.colorScheme.tertiary
+
+        Text(
+          text = buildAnnotatedString {
+            append("Open ")
+
+            val link = LinkAnnotation.Clickable(
+              "files",
+              TextLinkStyles(SpanStyle(color = linkColor))
+            ) {
+              scope.launch { drawerState.open() }
+            }
+            withLink(link) {
+              withStyle(SpanStyle(textDecoration = TextDecoration.Underline)) {
+                append("files")
+              }
+            }
+          }
+        )
       }
     }
   }
