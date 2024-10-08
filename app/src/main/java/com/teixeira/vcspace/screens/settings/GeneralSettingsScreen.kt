@@ -127,7 +127,7 @@ fun GeneralSettingsScreen(
       title = { Text(text = stringResource(R.string.use_amoled_mode_title)) },
       summary = {
         Text(
-          text = if (it && darkMode.value)
+          text = if ((it && darkMode.value) || (followSystemTheme.value && isSystemDarkTheme && it))
             stringResource(R.string.use_amoled_mode_summary_enabled)
           else stringResource(R.string.use_amoled_mode_summary_disabled)
         )
