@@ -145,7 +145,7 @@ fun PluginsScreen(
           pluginFile.writeText(it.readText())
         }
 
-        viewModel.addNewPlugin(
+        viewModel.addNewInstalledPlugin(
           Plugin(
             manifest = manifest,
             app = VCSpaceApplication.instance,

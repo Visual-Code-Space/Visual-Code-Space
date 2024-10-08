@@ -15,58 +15,78 @@
 
 package com.teixeira.vcspace.viewmodel
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vcspace.plugins.Plugin
 import com.vcspace.plugins.internal.PluginManager
 import com.vcspace.plugins.internal.distribution.github.Content
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class PluginViewModel : ViewModel() {
-  private val _installedPlugins = mutableStateOf(mutableListOf<Plugin>())
-  private val _plugins = mutableStateOf(mutableListOf<Content>())
-  private val _isLoadingInstalledPlugins = mutableStateOf(true)
-  private val _isLoadingPlugins = mutableStateOf(true)
+data class InstalledPluginState(
+  val plugins: List<Plugin> = emptyList(),
+  val isLoading: Boolean = false
+)
 
-  val installedPlugins get() = _installedPlugins
-  val plugins get() = _plugins
-  val isLoadingInstalledPlugins get() = _isLoadingInstalledPlugins
-  val isLoadingPlugins get() = _isLoadingPlugins
+data class PluginState(
+  val plugins: List<Content> = emptyList(),
+  val isLoading: Boolean = false
+)
+
+class PluginViewModel : ViewModel() {
+  private val _installedPluginState = MutableStateFlow(InstalledPluginState())
+  private val _pluginState = MutableStateFlow(PluginState())
+
+  val installedPluginState = _installedPluginState.asStateFlow()
+  val pluginState = _pluginState.asStateFlow()
 
   fun loadInstalledPlugins() {
-    _isLoadingInstalledPlugins.value = true
+    _installedPluginState.update { it.copy(isLoading = true) }
 
     viewModelScope.launch {
-      _installedPlugins.value = PluginManager.getPlugins().toMutableList()
-    }.invokeOnCompletion {
-      _isLoadingInstalledPlugins.value = false
+      // Fetch installed plugins asynchronously
+      val installedPlugins = PluginManager.getPlugins().toList()
+      _installedPluginState.update {
+        it.copy(plugins = installedPlugins, isLoading = false)
+      }
     }
   }
 
-  fun addNewPlugin(plugin: Plugin) {
-    val newList = _installedPlugins.value
-    newList.add(plugin)
-    _installedPlugins.value = newList
+  fun addNewInstalledPlugin(plugin: Plugin) {
+    _installedPluginState.update {
+      val updatedList = it.plugins.toMutableList().apply { add(plugin) }
+      it.copy(plugins = updatedList)
+    }
   }
 
+  // Load Available Plugins
   fun loadPlugins() {
-    _isLoadingPlugins.value = true
-    val list = mutableListOf<Content>()
+    _pluginState.update { it.copy(isLoading = true) }
 
     viewModelScope.launch {
+      val pluginList = mutableListOf<Content>()
+
       PluginManager.fetchPluginsFromGithub { contents ->
         val dirs = contents?.filter { it.type == "dir" } ?: emptyList()
-        dirs.forEach { content ->
-          PluginManager.getPluginSize(content.path) { size ->
-            list.add(content.copy(size = size.toInt()))
-            if (list.size == dirs.size) {
-              _plugins.value = list
-              _isLoadingPlugins.value = false
+
+        if (dirs.isEmpty()) {
+          _pluginState.update { it.copy(isLoading = false) }
+        } else {
+          dirs.forEach { content ->
+            PluginManager.getPluginSize(content.path) { size ->
+              pluginList.add(content.copy(size = size.toInt()))
+
+              // When all plugins are loaded, update the state
+              if (pluginList.size == dirs.size) {
+                _pluginState.update {
+                  it.copy(plugins = pluginList, isLoading = false)
+                }
+              }
             }
           }
         }
-        if (dirs.isEmpty()) _isLoadingPlugins.value = false
       }
     }
   }

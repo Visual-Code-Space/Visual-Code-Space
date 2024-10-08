@@ -37,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.teixeira.vcspace.extensions.formatSize
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.ui.LoadingDialog
@@ -52,8 +53,10 @@ fun ExplorePluginList(
   viewModel: PluginViewModel,
   scope: CoroutineScope
 ) {
-  val plugins by viewModel.plugins
-  val isLoading by viewModel.isLoadingPlugins
+  val pluginState by viewModel.pluginState.collectAsStateWithLifecycle()
+
+  val isLoading = pluginState.isLoading
+  val plugins = pluginState.plugins
 
   val toastHostState = LocalToastHostState.current
 

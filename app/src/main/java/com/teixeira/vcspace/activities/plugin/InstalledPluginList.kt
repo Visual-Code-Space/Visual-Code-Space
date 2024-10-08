@@ -37,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.teixeira.vcspace.activities.editor.EditorActivity
 import com.teixeira.vcspace.activities.editor.EditorHandlerActivity
 import com.teixeira.vcspace.extensions.getEmptyActivityBundle
@@ -55,8 +56,10 @@ fun InstalledPluginList(
   listState: LazyListState,
   scope: CoroutineScope
 ) {
-  val plugins by viewModel.installedPlugins
-  val isLoading by viewModel.isLoadingInstalledPlugins
+  val installedPluginState by viewModel.installedPluginState.collectAsStateWithLifecycle()
+
+  val isLoading = installedPluginState.isLoading
+  val plugins = installedPluginState.plugins
 
   var selectedPlugin by remember { mutableStateOf<Plugin?>(null) }
   val context = LocalContext.current
