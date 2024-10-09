@@ -18,8 +18,10 @@ package com.teixeira.vcspace.screens.editor
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.DrawerState
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,13 +33,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.LinkAnnotation
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextLinkStyles
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.withLink
-import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -89,8 +85,6 @@ fun EditorScreen(
   }
 
   val context = LocalContext.current
-  val drawerState = LocalDrawerState.current
-  val scope = rememberCoroutineScope()
 
   Column(modifier = modifier) {
     FileTabLayout(editorViewModel = viewModel)
@@ -112,33 +106,32 @@ fun EditorScreen(
         )
       }
     } ?: run {
-      Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-      ) {
-        Text("No opened files")
+      NoOpenedFiles()
+    }
+  }
+}
 
-        val linkColor = MaterialTheme.colorScheme.tertiary
+@Composable
+fun NoOpenedFiles() {
+  val drawerState = LocalDrawerState.current
+  val scope = rememberCoroutineScope()
 
-        Text(
-          text = buildAnnotatedString {
-            append("Open ")
+  Column(
+    modifier = Modifier.fillMaxSize(),
+    horizontalAlignment = Alignment.CenterHorizontally,
+    verticalArrangement = Arrangement.Center
+  ) {
+    Text(
+      text = "No opened files",
+      style = MaterialTheme.typography.titleLarge
+    )
 
-            val link = LinkAnnotation.Clickable(
-              "files",
-              TextLinkStyles(SpanStyle(color = linkColor))
-            ) {
-              scope.launch { drawerState.open() }
-            }
-            withLink(link) {
-              withStyle(SpanStyle(textDecoration = TextDecoration.Underline)) {
-                append("files")
-              }
-            }
-          }
-        )
-      }
+    Spacer(modifier = Modifier.height(5.dp))
+
+    ElevatedButton(onClick = {
+      scope.launch { drawerState.open() }
+    }) {
+      Text("Open files")
     }
   }
 }
