@@ -78,6 +78,13 @@ fun PluginsScreen(
         onSettingsChanged = { settings ->
           pluginsPath = settings.pluginPath
           viewModel.loadInstalledPlugins()
+
+          coroutineScope.launch {
+            toastHostState.showToast(
+              message = "Saved",
+              icon = Icons.Rounded.Check
+            )
+          }
         }
       )
     },

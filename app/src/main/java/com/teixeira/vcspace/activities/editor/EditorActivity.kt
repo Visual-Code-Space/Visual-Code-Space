@@ -38,6 +38,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.PathUtils
 import com.teixeira.vcspace.activities.BaseComposeActivity
 import com.teixeira.vcspace.activities.editor.EditorHandlerActivity.Companion.EXTRA_KEY_PLUGIN_MANIFEST

@@ -82,7 +82,7 @@ fun EditorScreen(
 
   val openLastFiles by rememberLastOpenedFile()
 
-  if (!openLastFiles) {
+  if (openLastFiles) {
     viewModel.lastOpenedFiles().forEach {
       viewModel.addFile(it)
     }
