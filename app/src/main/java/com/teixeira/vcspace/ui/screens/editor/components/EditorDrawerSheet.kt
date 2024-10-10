@@ -15,6 +15,7 @@
 
 package com.teixeira.vcspace.ui.screens.editor.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,11 +27,13 @@ import androidx.compose.material.icons.automirrored.rounded.MenuOpen
 import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Terminal
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.ErrorOutline
 import androidx.compose.material.icons.rounded.Folder
+import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Terminal
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.DrawerState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -40,6 +43,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -51,13 +55,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.blankj.utilcode.util.ClipboardUtils
 import com.blankj.utilcode.util.FileUtils
+import com.teixeira.vcspace.activities.LocalEditorDrawerState
 import com.teixeira.vcspace.activities.SettingsActivity
 import com.teixeira.vcspace.activities.TerminalActivity
-import com.teixeira.vcspace.activities.editor.LocalDrawerState
+import com.teixeira.vcspace.activities.base.LocalLifecycleScope
 import com.teixeira.vcspace.core.components.Tooltip
 import com.teixeira.vcspace.core.components.editor.FileOptionsSheet
+import com.teixeira.vcspace.core.components.editor.NavigationSpace
+import com.teixeira.vcspace.core.components.editor.NavigationSpaceItem
+import com.teixeira.vcspace.core.components.editor.rememberNavigationSpaceState
 import com.teixeira.vcspace.core.components.file.FileExplorer
 import com.teixeira.vcspace.core.settings.Settings.File.rememberShowHiddenFiles
 import com.teixeira.vcspace.events.OnDeleteFileEvent
@@ -65,15 +74,17 @@ import com.teixeira.vcspace.events.OnRenameFileEvent
 import com.teixeira.vcspace.extensions.open
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.resources.R.string
+import com.teixeira.vcspace.ui.LocalToastHostState
+import com.teixeira.vcspace.ui.screens.editor.EditorViewModel
+import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
 import com.teixeira.vcspace.utils.launchWithProgressDialog
 import com.teixeira.vcspace.utils.showShortToast
-import com.teixeira.vcspace.viewmodel.editor.EditorViewModel
-import com.teixeira.vcspace.viewmodel.file.FileExplorerViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import java.io.File
+import java.io.IOException
 
 @Composable
 fun EditorDrawerSheet(
