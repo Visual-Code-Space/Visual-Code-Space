@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.teixeira.vcspace.viewmodel.editor.EditorViewModel
+import com.teixeira.vcspace.ui.screens.editor.EditorViewModel
 
 @Composable
 fun FileTabLayout(

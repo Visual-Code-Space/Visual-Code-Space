@@ -13,44 +13,32 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.core.components.editor
+package com.teixeira.vcspace.ui.screens.plugin.components
 
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.teixeira.vcspace.resources.R.string
-import com.teixeira.vcspace.ui.screens.editor.EditorViewModel
+import com.teixeira.vcspace.resources.R
 
 @Composable
-fun FileTabActions(
-  editorViewModel: EditorViewModel,
-  index: Int,
-  onClick: () -> Unit = {}
+fun DeletePluginDialog(
+  modifier: Modifier = Modifier,
+  onConfirm: () -> Unit,
+  onDismiss: () -> Unit
 ) {
-  DropdownMenuItem(
-    text = { Text(stringResource(string.close)) },
-    onClick = {
-      editorViewModel.closeFile(index)
-      onClick()
-    }
-  )
-
-  DropdownMenuItem(
-    text = { Text(stringResource(string.close_others)) },
-    onClick = {
-      editorViewModel.closeOthers(index)
-      onClick()
-    }
-  )
-
-  DropdownMenuItem(
-    text = { Text(stringResource(string.close_all)) },
-    onClick = {
-      editorViewModel.closeAll()
-      onClick()
+  AlertDialog(
+    onDismissRequest = onDismiss,
+    title = { Text("Delete Plugin") },
+    text = { Text("Are you sure you want to delete this plugin?") },
+    confirmButton = {
+      Button(onClick = onConfirm) { Text(stringResource(R.string.confirm)) }
+    },
+    dismissButton = {
+      OutlinedButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
     }
   )
 }
-
-
