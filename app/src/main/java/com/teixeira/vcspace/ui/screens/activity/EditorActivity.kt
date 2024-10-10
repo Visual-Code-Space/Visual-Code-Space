@@ -13,7 +13,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.comscreens.activity
+package com.teixeira.vcspace.ui.screens.activity
 
 import android.os.Build
 import android.util.Log
@@ -41,7 +41,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.PathUtils
 import com.teixeira.vcspace.ui.screens.activity.base.BaseComposeActivity
-import com.teixeira.vcspace.activities.editor.EditorHandlerActivity.Companion.EXTRA_KEY_PLUGIN_MANIFEST
 import com.teixeira.vcspace.app.noLocalProvidedFor
 import com.teixeira.vcspace.editor.events.OnContentChangeEvent
 import com.teixeira.vcspace.extensions.toFile
@@ -57,10 +56,12 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-val LocalDrawerState = compositionLocalOf<DrawerState> { noLocalProvidedFor("LocalDrawerState") }
+val EditorLocalDrawerState = compositionLocalOf<DrawerState> { noLocalProvidedFor("LocalDrawerState") }
 
 class EditorActivity : BaseComposeActivity() {
   companion object {
+    const val EXTRA_KEY_PLUGIN_MANIFEST = "plugin_manifest"
+
     val LAST_OPENED_FILES_JSON_PATH =
       "${PathUtils.getExternalAppFilesPath()}/settings/lastOpenedFile.json"
   }
