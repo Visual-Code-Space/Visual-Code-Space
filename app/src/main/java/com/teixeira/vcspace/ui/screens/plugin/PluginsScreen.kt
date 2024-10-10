@@ -44,11 +44,11 @@ import com.teixeira.vcspace.app.VCSpaceApplication
 import com.teixeira.vcspace.preferences.pluginsPath
 import com.teixeira.vcspace.ui.LocalToastHostState
 import com.teixeira.vcspace.ui.screens.PluginScreens
-import com.teixeira.vcspace.ui.screens.plugin.NewPluginDialog
-import com.teixeira.vcspace.ui.screens.plugin.ExplorePluginList
-import com.teixeira.vcspace.ui.screens.plugin.InstalledPluginList
-import com.teixeira.vcspace.ui.screens.plugin.NewPluginButton
-import com.teixeira.vcspace.ui.screens.plugin.PluginTopBar
+import com.teixeira.vcspace.ui.screens.plugin.components.NewPluginDialog
+import com.teixeira.vcspace.ui.screens.plugin.components.ExplorePluginList
+import com.teixeira.vcspace.ui.screens.plugin.components.InstalledPluginList
+import com.teixeira.vcspace.ui.screens.plugin.components.NewPluginButton
+import com.teixeira.vcspace.ui.screens.plugin.components.PluginTopBar
 import com.vcspace.plugins.Plugin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
