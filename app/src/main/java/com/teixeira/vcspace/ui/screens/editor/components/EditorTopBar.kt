@@ -85,7 +85,7 @@ import com.teixeira.vcspace.preferences.pythonDownloaded
 import com.teixeira.vcspace.preferences.pythonExtracted
 import com.teixeira.vcspace.resources.R.string
 import com.teixeira.vcspace.utils.launchWithProgressDialog
-import com.teixeira.vcspace.ui.screens.activity.EditorLocalDrawerState
+import com.teixeira.vcspace.activities.EditorLocalDrawerState
 import com.teixeira.vcspace.ui.screens.editor.EditorViewModel
 import io.github.rosemoe.sora.event.ContentChangeEvent
 import kotlinx.coroutines.CoroutineScope

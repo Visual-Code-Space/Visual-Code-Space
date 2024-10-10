@@ -1,4 +1,4 @@
-package com.teixeira.vcspace.activities
+package com.teixeira.vcspace.activities.base
 
 import android.Manifest.permission
 import android.annotation.SuppressLint

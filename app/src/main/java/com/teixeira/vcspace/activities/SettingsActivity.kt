@@ -13,7 +13,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.ui.screens.activity
+package com.teixeira.vcspace.activities
 
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,7 +34,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.teixeira.vcspace.resources.R.string
-import com.teixeira.vcspace.ui.screens.activity.base.BaseComposeActivity
+import com.teixeira.vcspace.activities.base.BaseComposeActivity
 import com.teixeira.vcspace.ui.screens.settings.SettingsScreen
 
 class SettingsActivity : BaseComposeActivity() {

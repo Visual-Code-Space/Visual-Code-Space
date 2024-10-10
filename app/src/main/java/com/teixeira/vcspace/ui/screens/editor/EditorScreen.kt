@@ -54,7 +54,7 @@ import com.teixeira.vcspace.core.settings.Settings.File.rememberLastOpenedFile
 import com.teixeira.vcspace.core.settings.Settings.General.rememberFollowSystemTheme
 import com.teixeira.vcspace.core.settings.Settings.General.rememberIsDarkMode
 import com.teixeira.vcspace.editor.VCSpaceEditor
-import com.teixeira.vcspace.ui.screens.activity.EditorLocalDrawerState
+import com.teixeira.vcspace.activities.EditorLocalDrawerState
 import com.teixeira.vcspace.resources.R
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry

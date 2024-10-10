@@ -13,7 +13,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.ui.screens.activity
+package com.teixeira.vcspace.activities
 
 import android.os.Build
 import android.util.Log
@@ -40,7 +40,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.PathUtils
-import com.teixeira.vcspace.ui.screens.activity.base.BaseComposeActivity
+import com.teixeira.vcspace.activities.base.BaseComposeActivity
 import com.teixeira.vcspace.app.noLocalProvidedFor
 import com.teixeira.vcspace.editor.events.OnContentChangeEvent
 import com.teixeira.vcspace.extensions.toFile

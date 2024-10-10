@@ -13,13 +13,13 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.ui.screens.activity
+package com.teixeira.vcspace.activities
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.teixeira.vcspace.ui.screens.activity.base.BaseComposeActivity
+import com.teixeira.vcspace.activities.base.BaseComposeActivity
 import com.teixeira.vcspace.ui.screens.plugin.PluginsScreen
 
 class PluginsActivity : BaseComposeActivity() {

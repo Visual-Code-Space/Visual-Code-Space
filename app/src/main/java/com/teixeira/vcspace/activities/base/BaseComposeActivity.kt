@@ -13,7 +13,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.ui.screens.activity.base
+package com.teixeira.vcspace.activities.base
 
 import android.Manifest
 import android.content.Intent

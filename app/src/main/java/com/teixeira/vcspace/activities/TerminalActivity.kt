@@ -16,6 +16,7 @@ import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.SizeUtils
 import com.blankj.utilcode.util.ThreadUtils
 import com.teixeira.vcspace.BuildConfig
+import com.teixeira.vcspace.activities.base.BaseActivity
 import com.teixeira.vcspace.databinding.ActivityTerminalBinding
 import com.teixeira.vcspace.ui.virtualkeys.SpecialButton
 import com.teixeira.vcspace.ui.virtualkeys.VirtualKeyButton
