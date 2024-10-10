@@ -40,23 +40,24 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.PathUtils
-import com.teixeira.vcspace.activities.base.BaseComposeActivity
+import com.teixeira.vcspace.activities.BaseComposeActivity
+import com.teixeira.vcspace.activities.editor.EditorHandlerActivity.Companion.EXTRA_KEY_PLUGIN_MANIFEST
 import com.teixeira.vcspace.app.noLocalProvidedFor
 import com.teixeira.vcspace.editor.events.OnContentChangeEvent
 import com.teixeira.vcspace.extensions.toFile
 import com.teixeira.vcspace.preferences.pluginsPath
-import com.teixeira.vcspace.ui.screens.editor.EditorScreen
-import com.teixeira.vcspace.ui.screens.editor.components.EditorDrawerSheet
-import com.teixeira.vcspace.ui.screens.editor.components.EditorTopBar
-import com.teixeira.vcspace.ui.screens.editor.EditorViewModel
-import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
+import com.teixeira.vcspace.screens.editor.EditorScreen
+import com.teixeira.vcspace.screens.editor.components.EditorDrawerSheet
+import com.teixeira.vcspace.screens.editor.components.EditorTopBar
+import com.teixeira.vcspace.viewmodel.editor.EditorViewModel
+import com.teixeira.vcspace.viewmodel.file.FileExplorerViewModel
 import com.vcspace.plugins.Manifest
 import io.github.rosemoe.sora.event.ContentChangeEvent
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-val EditorLocalDrawerState = compositionLocalOf<DrawerState> { noLocalProvidedFor("LocalDrawerState") }
+val LocalEditorDrawerState = compositionLocalOf<DrawerState> { noLocalProvidedFor("LocalEditorDrawerState") }
 
 class EditorActivity : BaseComposeActivity() {
   companion object {
@@ -134,16 +135,16 @@ class EditorActivity : BaseComposeActivity() {
       }
     }
 
-    CompositionLocalProvider(EditorLocalDrawerState provides drawerState) {
+    CompositionLocalProvider(LocalEditorDrawerState provides drawerState) {
       ModalNavigationDrawer(
         modifier = Modifier
           .fillMaxSize()
           .imePadding(),
-        drawerState = EditorLocalDrawerState.current,
+        drawerState = LocalEditorDrawerState.current,
         gesturesEnabled = false,
         drawerContent = {
           ModalDrawerSheet(
-            drawerState = EditorLocalDrawerState.current,
+            drawerState = LocalEditorDrawerState.current,
             modifier = Modifier
               .fillMaxWidth(fraction = 0.8f)
               .systemBarsPadding()

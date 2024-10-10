@@ -38,6 +38,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.teixeira.vcspace.activities.editor.LocalDrawerState
 import com.teixeira.vcspace.core.components.editor.FileTabLayout
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberColorScheme
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberDeleteIndentOnBackspace
@@ -54,8 +55,8 @@ import com.teixeira.vcspace.core.settings.Settings.File.rememberLastOpenedFile
 import com.teixeira.vcspace.core.settings.Settings.General.rememberFollowSystemTheme
 import com.teixeira.vcspace.core.settings.Settings.General.rememberIsDarkMode
 import com.teixeira.vcspace.editor.VCSpaceEditor
-import com.teixeira.vcspace.activities.EditorLocalDrawerState
 import com.teixeira.vcspace.resources.R
+import com.teixeira.vcspace.viewmodel.editor.EditorViewModel
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 import kotlinx.coroutines.launch
@@ -112,7 +113,7 @@ fun EditorScreen(
 
 @Composable
 fun NoOpenedFiles() {
-  val drawerState = EditorLocalDrawerState.current
+  val drawerState = LocalEditorDrawerState.current
   val scope = rememberCoroutineScope()
 
   Column(

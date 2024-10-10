@@ -53,7 +53,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import com.blankj.utilcode.util.ClipboardUtils
 import com.blankj.utilcode.util.FileUtils
+import com.teixeira.vcspace.activities.SettingsActivity
 import com.teixeira.vcspace.activities.TerminalActivity
+import com.teixeira.vcspace.activities.editor.LocalDrawerState
 import com.teixeira.vcspace.core.components.Tooltip
 import com.teixeira.vcspace.core.components.editor.FileOptionsSheet
 import com.teixeira.vcspace.core.components.file.FileExplorer
@@ -65,10 +67,8 @@ import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.resources.R.string
 import com.teixeira.vcspace.utils.launchWithProgressDialog
 import com.teixeira.vcspace.utils.showShortToast
-import com.teixeira.vcspace.activities.SettingsActivity
-import com.teixeira.vcspace.activities.EditorLocalDrawerState
-import com.teixeira.vcspace.ui.screens.editor.EditorViewModel
-import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
+import com.teixeira.vcspace.viewmodel.editor.EditorViewModel
+import com.teixeira.vcspace.viewmodel.file.FileExplorerViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -81,7 +81,7 @@ fun EditorDrawerSheet(
   editorViewModel: EditorViewModel
 ) {
   val context = LocalContext.current
-  val drawerState = EditorLocalDrawerState.current
+  val drawerState = LocalEditorDrawerState.current
   val scope = rememberCoroutineScope()
   val selectedItem by remember { mutableIntStateOf(0) }
 
@@ -164,44 +164,193 @@ fun EditorDrawerSheet(
         }
       }
 
+      val showHiddenFiles by rememberShowHiddenFiles()
+
       FileExplorer(
         viewModel = fileExplorerViewModel,
         editorViewModel = editorViewModel,
         onFileClick = { closeDrawer() },
-        onFileLongClick = { selectedFile = it }
+        onFileLongClick = { selectedFile = it },
+        modifier = Modifier.weight(1f)
       )
 
-      var renamableFile by remember { mutableStateOf<File?>(null) }
-      var deletableFile by remember { mutableStateOf<File?>(null) }
+      val refresh = stringResource(string.refresh)
+      val add = stringResource(string.add)
 
-      if (selectedFile != null) {
-        FileOptionsSheet(onDismissRequest = { selectedFile = null }) {
-          when (it) {
-            0 -> ClipboardUtils.copyText(selectedFile!!.absolutePath)
-            1 -> renamableFile = selectedFile
-            2 -> deletableFile = selectedFile
-            else -> {}
-          }
+      val navigationSpaceState = rememberNavigationSpaceState()
+      LaunchedEffect(Unit) {
+        navigationSpaceState.apply {
+          add(
+            NavigationSpaceItem(
+              id = 0,
+              icon = Icons.Rounded.Refresh,
+              title = refresh
+            )
+          )
+          add(
+            NavigationSpaceItem(
+              id = 1,
+              icon = Icons.Rounded.Add,
+              title = add
+            )
+          )
         }
       }
 
-      if (deletableFile != null) {
-        DeleteFileDialog(
-          file = deletableFile!!,
-          fileExplorerViewModel = fileExplorerViewModel,
-          onDismissRequest = { deletableFile = null }
-        )
+      var showNewFileDialog by remember { mutableStateOf(false) }
+      var renamableFile by remember { mutableStateOf<File?>(null) }
+      var deletableFile by remember { mutableStateOf<File?>(null) }
+
+      NavigationSpace(state = navigationSpaceState) {
+        when (it.id) {
+          0 -> fileExplorerViewModel.refreshFiles(showHiddenFiles = showHiddenFiles)
+          1 -> showNewFileDialog = true
+        }
       }
 
-      if (renamableFile != null) {
-        RenameFileDialog(
-          file = renamableFile!!,
-          fileExplorerViewModel = fileExplorerViewModel,
-          onDismissRequest = { renamableFile = null }
-        )
+      when {
+        showNewFileDialog -> {
+          NewFileDialog(fileExplorerViewModel) { showNewFileDialog = false }
+        }
+
+        selectedFile != null -> {
+          FileOptionsSheet(onDismissRequest = { selectedFile = null }) {
+            when (it) {
+              0 -> ClipboardUtils.copyText(selectedFile!!.absolutePath)
+              1 -> renamableFile = selectedFile
+              2 -> deletableFile = selectedFile
+              else -> {}
+            }
+          }
+        }
+
+        deletableFile != null -> {
+          DeleteFileDialog(
+            file = deletableFile!!,
+            fileExplorerViewModel = fileExplorerViewModel,
+            onDismissRequest = { deletableFile = null }
+          )
+        }
+
+        renamableFile != null -> {
+          RenameFileDialog(
+            file = renamableFile!!,
+            fileExplorerViewModel = fileExplorerViewModel,
+            onDismissRequest = { renamableFile = null }
+          )
+        }
       }
     }
   }
+}
+
+@Composable
+fun NewFileDialog(
+  fileExplorerViewModel: FileExplorerViewModel,
+  onDismissRequest: () -> Unit
+) {
+  val showHiddenFiles by rememberShowHiddenFiles()
+  var fileName by remember { mutableStateOf("") }
+  val currentPath by fileExplorerViewModel.currentPath.collectAsStateWithLifecycle()
+
+  val toastHostState = LocalToastHostState.current
+  val lifecycleScope = LocalLifecycleScope.current
+  val scope = rememberCoroutineScope()
+
+  AlertDialog(
+    onDismissRequest = onDismissRequest,
+    title = { Text(stringResource(string.create)) },
+    text = {
+      OutlinedTextField(
+        value = fileName,
+        onValueChange = { fileName = it },
+        isError = fileName.isEmpty(),
+        textStyle = MaterialTheme.typography.bodyLarge,
+        placeholder = { Text(stringResource(string.file_enter_name)) }
+      )
+    },
+    confirmButton = {
+      Row(
+        horizontalArrangement = Arrangement.spacedBy(2.dp)
+      ) {
+        TextButton(
+          onClick = {
+            with(File(currentPath, fileName)) {
+              try {
+                if (!exists()) {
+                  lifecycleScope.launch(Dispatchers.IO) {
+                    createNewFile()
+                  }.invokeOnCompletion {
+                    fileExplorerViewModel.refreshFiles(showHiddenFiles)
+                  }
+                } else {
+                  scope.launch {
+                    toastHostState.showToast(
+                      message = "Already exists",
+                      icon = Icons.Rounded.ErrorOutline
+                    )
+                  }
+                }
+              } catch (ioe: IOException) {
+                ioe.printStackTrace()
+                scope.launch {
+                  toastHostState.showToast(
+                    message = ioe.message ?: "Error",
+                    icon = Icons.Rounded.ErrorOutline
+                  )
+                }
+              }
+            }
+
+            onDismissRequest()
+          },
+          enabled = fileName.isNotEmpty()
+        ) {
+          Text(stringResource(string.file))
+        }
+        TextButton(
+          onClick = {
+            with(File(currentPath, fileName)) {
+              try {
+                if (!exists()) {
+                  lifecycleScope.launch(Dispatchers.IO) {
+                    mkdirs()
+                  }.invokeOnCompletion {
+                    fileExplorerViewModel.refreshFiles(showHiddenFiles)
+                  }
+                } else {
+                  scope.launch {
+                    toastHostState.showToast(
+                      message = "Already exists",
+                      icon = Icons.Rounded.ErrorOutline
+                    )
+                  }
+                }
+              } catch (ioe: IOException) {
+                ioe.printStackTrace()
+                scope.launch {
+                  toastHostState.showToast(
+                    message = ioe.message ?: "Error",
+                    icon = Icons.Rounded.ErrorOutline
+                  )
+                }
+              }
+            }
+
+            onDismissRequest()
+          },
+          enabled = fileName.isNotEmpty()
+        ) {
+          Text(stringResource(string.file_folder))
+        }
+      }
+    },
+    dismissButton = {
+      TextButton(onClick = onDismissRequest) {
+        Text(stringResource(string.no))
+      }
+    }
+  )
 }
 
 @Composable

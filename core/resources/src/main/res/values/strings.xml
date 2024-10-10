@@ -23,6 +23,7 @@
   <string name="yes">Yes</string>
   <string name="ok">OK</string>
   <string name="exit">Exit</string>
+  <string name="add">Add</string>
 
   <!-- Editor -->
   <string name="editor">Editor</string>

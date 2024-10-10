@@ -77,16 +77,16 @@ import com.hzy.libp7zip.P7ZipApi
 import com.teixeira.vcspace.PYTHON_PACKAGE_URL_32_BIT
 import com.teixeira.vcspace.PYTHON_PACKAGE_URL_64_BIT
 import com.teixeira.vcspace.activities.TerminalActivity
+import com.teixeira.vcspace.activities.editor.LocalDrawerState
 import com.teixeira.vcspace.core.components.Tooltip
 import com.teixeira.vcspace.core.settings.Settings.EditorTabs.rememberAutoSave
-import com.teixeira.vcspace.ui.screens.editor.components.view.CodeEditorView
+import com.teixeira.vcspace.editor.CodeEditorView
 import com.teixeira.vcspace.editor.events.OnContentChangeEvent
 import com.teixeira.vcspace.preferences.pythonDownloaded
 import com.teixeira.vcspace.preferences.pythonExtracted
 import com.teixeira.vcspace.resources.R.string
 import com.teixeira.vcspace.utils.launchWithProgressDialog
-import com.teixeira.vcspace.activities.EditorLocalDrawerState
-import com.teixeira.vcspace.ui.screens.editor.EditorViewModel
+import com.teixeira.vcspace.viewmodel.editor.EditorViewModel
 import io.github.rosemoe.sora.event.ContentChangeEvent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -104,7 +104,7 @@ fun EditorTopBar(
   editorViewModel: EditorViewModel
 ) {
   val scope = rememberCoroutineScope()
-  val drawerState = EditorLocalDrawerState.current
+  val drawerState = LocalEditorDrawerState.current
 
   var showMenu by remember { mutableStateOf(false) }
   val showFileMenu = remember { mutableStateOf(false) }
