@@ -48,6 +48,7 @@ import com.teixeira.vcspace.ui.screens.plugin.components.NewPluginDialog
 import com.teixeira.vcspace.ui.screens.plugin.components.ExplorePluginList
 import com.teixeira.vcspace.ui.screens.plugin.components.InstalledPluginList
 import com.teixeira.vcspace.ui.screens.plugin.components.NewPluginButton
+import com.teixeira.vcspace.ui.screens.plugin.components.PluginTabs
 import com.teixeira.vcspace.ui.screens.plugin.components.PluginTopBar
 import com.vcspace.plugins.Plugin
 import kotlinx.coroutines.CoroutineScope
