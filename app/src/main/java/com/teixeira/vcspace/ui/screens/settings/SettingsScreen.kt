@@ -33,7 +33,7 @@ import androidx.navigation.compose.rememberNavController
 import com.teixeira.vcspace.app.BaseApplication
 import com.teixeira.vcspace.extensions.open
 import com.teixeira.vcspace.resources.R.string
-import com.teixeira.vcspace.ui.screens.activity.PluginsActivity
+import com.teixeira.vcspace.activities.PluginsActivity
 import com.teixeira.vcspace.ui.screens.SettingScreens
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import me.zhanghai.compose.preference.preference

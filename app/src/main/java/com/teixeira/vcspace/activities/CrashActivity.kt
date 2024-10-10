@@ -13,7 +13,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.ui.screens.activity
+package com.teixeira.vcspace.activities
 
 import android.os.Build
 import androidx.activity.compose.BackHandler
@@ -40,7 +40,7 @@ import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.ClipboardUtils
 import com.blankj.utilcode.util.DeviceUtils
 import com.teixeira.vcspace.BuildConfig
-import com.teixeira.vcspace.ui.screens.activity.base.BaseComposeActivity
+import com.teixeira.vcspace.activities.base.BaseComposeActivity
 import com.teixeira.vcspace.resources.R.string
 import com.teixeira.vcspace.ui.screens.crash.CrashScreen
 import com.teixeira.vcspace.ui.screens.crash.components.CrashTopBar

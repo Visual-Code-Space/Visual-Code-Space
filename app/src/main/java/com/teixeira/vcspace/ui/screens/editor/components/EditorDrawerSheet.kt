@@ -65,8 +65,8 @@ import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.resources.R.string
 import com.teixeira.vcspace.utils.launchWithProgressDialog
 import com.teixeira.vcspace.utils.showShortToast
-import com.teixeira.vcspace.ui.screens.activity.SettingsActivity
-import com.teixeira.vcspace.ui.screens.activity.EditorLocalDrawerState
+import com.teixeira.vcspace.activities.SettingsActivity
+import com.teixeira.vcspace.activities.EditorLocalDrawerState
 import com.teixeira.vcspace.ui.screens.editor.EditorViewModel
 import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
 import kotlinx.coroutines.Dispatchers

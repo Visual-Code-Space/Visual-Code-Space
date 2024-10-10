@@ -42,7 +42,7 @@ import com.teixeira.vcspace.extensions.getEmptyActivityBundle
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.ui.LoadingDialog
 import com.teixeira.vcspace.ui.LocalToastHostState
-import com.teixeira.vcspace.ui.screens.activity.EditorActivity
+import com.teixeira.vcspace.activities.EditorActivity
 import com.teixeira.vcspace.ui.screens.plugin.PluginViewModel
 import com.vcspace.plugins.Plugin
 import kotlinx.coroutines.CoroutineScope
