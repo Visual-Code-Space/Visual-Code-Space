@@ -29,12 +29,7 @@
     android:usesCleartextTraffic="true"
     tools:targetApi="tiramisu">
     <activity
-      android:name=".activities.plugin.PluginsActivity"
-      android:exported="false" />
-
-    <!--  Open MenuHandlerActivity for now because EditorActivity is not stable right now. -->
-    <activity
-      android:name=".activities.editor.EditorActivity"
+      android:name=".ui.screens.activity.EditorActivity"
       android:exported="true"
       android:windowSoftInputMode="adjustResize">
       <intent-filter>
@@ -54,18 +49,22 @@
     </activity>
 
     <activity
+      android:name=".ui.screens.activity.PluginsActivity"
+      android:exported="false" />
+
+    <activity
+      android:name=".ui.screens.activity.SettingsActivity"
+      android:exported="false" />
+
+    <activity
+      android:name=".ui.screens.activity.CrashActivity"
+      android:exported="false" />
+
+    <activity
       android:name=".activities.TerminalActivity"
       android:configChanges="orientation|screenSize"
       android:exported="false"
       android:windowSoftInputMode="adjustResize" />
-
-    <activity
-      android:name=".activities.SettingsActivity"
-      android:exported="false" />
-
-    <activity
-      android:name=".activities.crash.CrashActivity"
-      android:exported="false" />
 
     <service
       android:name=".editor.lsp.service.KotlinLSPService"

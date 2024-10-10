@@ -28,8 +28,8 @@ import com.teixeira.vcspace.core.settings.Settings.File.rememberShowHiddenFiles
 import com.teixeira.vcspace.extensions.toFile
 import com.teixeira.vcspace.utils.ApkInstaller
 import com.teixeira.vcspace.utils.isValidTextFile
-import com.teixeira.vcspace.viewmodel.editor.EditorViewModel
-import com.teixeira.vcspace.viewmodel.file.FileExplorerViewModel
+import com.teixeira.vcspace.ui.screens.editor.EditorViewModel
+import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
 import java.io.File
 
 @Composable
