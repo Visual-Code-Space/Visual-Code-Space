@@ -8,6 +8,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import com.blankj.utilcode.util.FileIOUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.teixeira.vcspace.editor.VCSpaceEditor
 import com.teixeira.vcspace.editor.databinding.LayoutCodeEditorBinding
 import com.teixeira.vcspace.events.OnPreferenceChangeEvent
 import com.teixeira.vcspace.preferences.PREF_APPEARANCE_UI_MODE_KEY

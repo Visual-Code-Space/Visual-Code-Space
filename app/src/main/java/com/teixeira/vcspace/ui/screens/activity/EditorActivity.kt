@@ -134,16 +134,16 @@ class EditorActivity : BaseComposeActivity() {
       }
     }
 
-    CompositionLocalProvider(LocalDrawerState provides drawerState) {
+    CompositionLocalProvider(EditorLocalDrawerState provides drawerState) {
       ModalNavigationDrawer(
         modifier = Modifier
           .fillMaxSize()
           .imePadding(),
-        drawerState = LocalDrawerState.current,
+        drawerState = EditorLocalDrawerState.current,
         gesturesEnabled = false,
         drawerContent = {
           ModalDrawerSheet(
-            drawerState = LocalDrawerState.current,
+            drawerState = EditorLocalDrawerState.current,
             modifier = Modifier
               .fillMaxWidth(fraction = 0.8f)
               .systemBarsPadding()

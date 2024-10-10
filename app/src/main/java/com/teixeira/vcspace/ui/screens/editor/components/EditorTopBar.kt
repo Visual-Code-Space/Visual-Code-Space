@@ -79,7 +79,7 @@ import com.teixeira.vcspace.PYTHON_PACKAGE_URL_64_BIT
 import com.teixeira.vcspace.activities.TerminalActivity
 import com.teixeira.vcspace.core.components.Tooltip
 import com.teixeira.vcspace.core.settings.Settings.EditorTabs.rememberAutoSave
-import com.teixeira.vcspace.editor.CodeEditorView
+import com.teixeira.vcspace.ui.screens.editor.components.view.CodeEditorView
 import com.teixeira.vcspace.editor.events.OnContentChangeEvent
 import com.teixeira.vcspace.preferences.pythonDownloaded
 import com.teixeira.vcspace.preferences.pythonExtracted
