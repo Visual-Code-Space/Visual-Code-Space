@@ -75,7 +75,7 @@ class VCSpaceApplication : BaseApplication() {
     FileProviderRegistry.getInstance().dispose()
     FileProviderRegistry.getInstance().addFileProvider(AssetsFileResolver(assets))
 
-    val themes = arrayOf("darcula", "quietlight", "abyss", "solarized_drak")
+    val themes = arrayOf("darcula", "quietlight", "abyss", "solarized_drak", "pythondm")
     val themeRegistry = ThemeRegistry.getInstance()
     themes.forEach { name ->
       val path = "editor/schemes/$name.json"

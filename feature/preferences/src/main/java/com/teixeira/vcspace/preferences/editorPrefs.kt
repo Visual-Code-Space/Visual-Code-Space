@@ -108,6 +108,7 @@ class EditorColorSchemePreference : SingleChoiceDialogPreference {
       "Darcula",
       "Abyss",
       "Solarized Dark",
+      "Python Dark Mode",
       // context.getString(R.string.pref_editor_colorscheme_value_custom)
     )
 }

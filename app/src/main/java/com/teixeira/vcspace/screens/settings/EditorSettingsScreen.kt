@@ -154,6 +154,7 @@ fun EditorSettingsScreen(
         "Darcula",
         "Abyss",
         "Solarized Dark",
+        "Python Dark Mode",
       ),
       icon = { Icon(Icons.Filled.Palette, contentDescription = null) },
       modifier = Modifier

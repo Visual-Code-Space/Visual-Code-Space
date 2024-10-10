@@ -80,6 +80,7 @@ val editorColorScheme: String
       2 -> "darcula"
       3 -> "abyss"
       4 -> "solarized_drak"
+      5 -> "pythondm"
       else -> editorUIModeScheme
     }
 
