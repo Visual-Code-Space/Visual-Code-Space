@@ -29,7 +29,7 @@
     android:usesCleartextTraffic="true"
     tools:targetApi="tiramisu">
     <activity
-      android:name=".ui.screens.activity.EditorActivity"
+      android:name=".activities.EditorActivity"
       android:exported="true"
       android:windowSoftInputMode="adjustResize">
       <intent-filter>
@@ -49,15 +49,15 @@
     </activity>
 
     <activity
-      android:name=".ui.screens.activity.PluginsActivity"
+      android:name=".activities.PluginsActivity"
       android:exported="false" />
 
     <activity
-      android:name=".ui.screens.activity.SettingsActivity"
+      android:name=".activities.SettingsActivity"
       android:exported="false" />
 
     <activity
-      android:name=".ui.screens.activity.CrashActivity"
+      android:name=".activities.CrashActivity"
       android:exported="false" />
 
     <activity
