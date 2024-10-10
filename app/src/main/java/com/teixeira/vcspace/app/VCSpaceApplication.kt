@@ -6,8 +6,8 @@ import android.os.Bundle
 import com.blankj.utilcode.util.ThreadUtils
 import com.blankj.utilcode.util.ThrowableUtils
 import com.downloader.PRDownloader
-import com.teixeira.vcspace.activities.crash.CrashActivity
-import com.teixeira.vcspace.activities.editor.EditorActivity
+import com.teixeira.vcspace.ui.screens.activity.CrashActivity
+import com.teixeira.vcspace.ui.screens.activity.EditorActivity
 import com.teixeira.vcspace.providers.GrammarProvider
 import com.vcspace.plugins.internal.PluginManager
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry

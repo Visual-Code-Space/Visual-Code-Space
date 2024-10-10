@@ -38,12 +38,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.teixeira.vcspace.activities.editor.EditorActivity
-import com.teixeira.vcspace.activities.editor.EditorHandlerActivity
 import com.teixeira.vcspace.extensions.getEmptyActivityBundle
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.ui.LoadingDialog
 import com.teixeira.vcspace.ui.LocalToastHostState
+import com.teixeira.vcspace.ui.screens.activity.EditorActivity
 import com.teixeira.vcspace.ui.screens.plugin.PluginViewModel
 import com.vcspace.plugins.Plugin
 import kotlinx.coroutines.CoroutineScope
@@ -83,7 +82,7 @@ fun InstalledPluginList(
           onLongClick = { selectedPlugin = it },
           onClick = {
             val intent = Intent(context, EditorActivity::class.java).apply {
-              putExtra(EditorHandlerActivity.EXTRA_KEY_PLUGIN_MANIFEST, it.manifest)
+              putExtra(EditorActivity.EXTRA_KEY_PLUGIN_MANIFEST, it.manifest)
               flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             }
             context.startActivity(intent, context.getEmptyActivityBundle())

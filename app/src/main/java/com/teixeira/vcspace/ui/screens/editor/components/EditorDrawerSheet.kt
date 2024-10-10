@@ -53,9 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import com.blankj.utilcode.util.ClipboardUtils
 import com.blankj.utilcode.util.FileUtils
-import com.teixeira.vcspace.activities.SettingsActivity
 import com.teixeira.vcspace.activities.TerminalActivity
-import com.teixeira.vcspace.activities.editor.LocalDrawerState
 import com.teixeira.vcspace.core.components.Tooltip
 import com.teixeira.vcspace.core.components.editor.FileOptionsSheet
 import com.teixeira.vcspace.core.components.file.FileExplorer
@@ -67,6 +65,8 @@ import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.resources.R.string
 import com.teixeira.vcspace.utils.launchWithProgressDialog
 import com.teixeira.vcspace.utils.showShortToast
+import com.teixeira.vcspace.ui.screens.activity.SettingsActivity
+import com.teixeira.vcspace.ui.screens.activity.EditorLocalDrawerState
 import com.teixeira.vcspace.ui.screens.editor.EditorViewModel
 import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
 import kotlinx.coroutines.Dispatchers
@@ -81,7 +81,7 @@ fun EditorDrawerSheet(
   editorViewModel: EditorViewModel
 ) {
   val context = LocalContext.current
-  val drawerState = LocalDrawerState.current
+  val drawerState = EditorLocalDrawerState.current
   val scope = rememberCoroutineScope()
   val selectedItem by remember { mutableIntStateOf(0) }
 
