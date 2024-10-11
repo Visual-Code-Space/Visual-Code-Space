@@ -17,8 +17,11 @@ package com.teixeira.vcspace.extensions
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.core.app.ActivityOptionsCompat
+import androidx.core.content.FileProvider
+import java.io.File
 
 fun <T> Context.open(clazz: Class<T>, newTask: Boolean = false) {
   val intent = Intent(this, clazz)
@@ -35,3 +38,20 @@ fun Context.getEmptyActivityBundle(): Bundle? {
     android.R.anim.fade_out
   ).toBundle()
 }
+
+fun Context.openFile(file: File) {
+  val uri = uriFromFile(file)
+  val mimeType = contentResolver.getType(uri)
+
+  Intent(Intent.ACTION_VIEW).apply {
+    setDataAndType(uri, mimeType)
+    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    startActivity(this)
+  }
+}
+
+fun Context.uriFromFile(file: File): Uri = FileProvider.getUriForFile(
+  this,
+  "$packageName.provider",
+  file
+)

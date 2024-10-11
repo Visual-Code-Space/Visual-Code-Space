@@ -21,14 +21,17 @@ import androidx.compose.material.icons.filled.EmojiEmotions
 import androidx.compose.material.icons.rounded.ContentCopy
 import androidx.compose.material.icons.rounded.DeleteForever
 import androidx.compose.material.icons.rounded.DriveFileRenameOutline
-import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.teixeira.vcspace.resources.R.string
@@ -45,14 +48,20 @@ fun FileOptionsSheet(
     onDismissRequest = onDismissRequest
   ) {
     repeat(3) {
-      ElevatedCard(
+      Card(
         onClick = {
           onItemClick(it)
           onDismissRequest()
         },
+        colors = CardDefaults.cardColors(
+          containerColor = Color.Transparent
+        ),
         modifier = Modifier.padding(vertical = 3.dp, horizontal = 5.dp)
       ) {
         ListItem(
+          colors = ListItemDefaults.colors(
+            containerColor = Color.Transparent
+          ),
           headlineContent = {
             Text(
               when (it) {

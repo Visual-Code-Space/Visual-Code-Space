@@ -21,6 +21,9 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Environment
 import androidx.core.content.ContextCompat
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.Paths
 
 /** Regex used to check if file name extension is not of a text file. */
 val INVALID_TEXT_FILES_REGEX =
@@ -35,8 +38,9 @@ val INVALID_TEXT_FILES_REGEX =
  * @param filename The file name to check the extension.
  * @return If it is a valid text file.
  */
-fun isValidTextFile(filename: String): Boolean {
-  return !filename.matches(INVALID_TEXT_FILES_REGEX)
+fun isValidTextFile(file: File): Boolean {
+  val type = Files.probeContentType(Paths.get(file.absolutePath))
+  return type == null || type.startsWith("text/")
 }
 
 /**

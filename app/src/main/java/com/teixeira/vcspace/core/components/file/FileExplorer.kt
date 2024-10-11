@@ -25,11 +25,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.teixeira.vcspace.core.components.PathListView
 import com.teixeira.vcspace.core.settings.Settings.File.rememberShowHiddenFiles
+import com.teixeira.vcspace.extensions.openFile
 import com.teixeira.vcspace.extensions.toFile
-import com.teixeira.vcspace.utils.ApkInstaller
-import com.teixeira.vcspace.utils.isValidTextFile
 import com.teixeira.vcspace.ui.screens.editor.EditorViewModel
 import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
+import com.teixeira.vcspace.utils.ApkInstaller
+import com.teixeira.vcspace.utils.isValidTextFile
 import java.io.File
 
 @Composable
@@ -59,15 +60,18 @@ fun FileExplorer(
   FileList(
     files = files,
     modifier = modifier,
-    onFileLongClick = onFileLongClick
-  ) {
-    if (it.isDirectory) {
-      viewModel.setCurrentPath(it.absolutePath, showHiddenFiles)
-    } else if (it.name.endsWith(".apk")) {
-      ApkInstaller.installApplication(context, it)
-    } else if (isValidTextFile(it.name)) {
-      editorViewModel.addFile(it)
-      onFileClick?.invoke(it)
+    onFileLongClick = onFileLongClick,
+    onFileClick = { file ->
+      if (file.isDirectory) {
+        viewModel.setCurrentPath(file.absolutePath, showHiddenFiles)
+      } else if (file.name.endsWith(".apk")) {
+        ApkInstaller.installApplication(context, file)
+      } else if (isValidTextFile(file)) {
+        editorViewModel.addFile(file)
+        onFileClick?.invoke(file)
+      } else {
+        context.openFile(file)
+      }
     }
-  }
+  )
 }
