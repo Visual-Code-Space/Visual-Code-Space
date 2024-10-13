@@ -31,16 +31,28 @@ val INVALID_TEXT_FILES_REGEX =
     ".*\\.(bin|ttf|png|jpe?g|bmp|mp4|mp3|m4a|iso|so|zip|rar|jar|dex|odex|vdex|7z|apk|apks|xapk)$"
   )
 
-/**
- * Checks if the file with the given name is a valid text file, checking if the name extension is
- * not in the [INVALID_TEXT_FILES_REGEX] regex.
- *
- * @param filename The file name to check the extension.
- * @return If it is a valid text file.
- */
 fun isValidTextFile(file: File): Boolean {
   val type = Files.probeContentType(Paths.get(file.absolutePath))
-  return type == null || type.startsWith("text/")
+
+  // A comprehensive list of known text-based MIME types
+  val additionalTextTypes = listOf(
+    "application/json",
+    "application/xml",
+    "application/javascript",
+    "application/x-sh",
+    "application/x-www-form-urlencoded",
+    "application/x-yaml",
+    "application/x-php",
+    "application/x-httpd-php",
+    "application/x-perl",
+    "application/xhtml+xml",
+    "application/sql",
+    "application/rtf",   // Rich Text Format
+    "application/csv",   // CSV file, some systems may use this
+    "application/x-latex"
+  )
+
+  return type == null || type.startsWith("text/") || type in additionalTextTypes
 }
 
 /**
