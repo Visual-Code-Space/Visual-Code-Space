@@ -18,6 +18,7 @@ package com.teixeira.vcspace.core.components.file
 import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.MarqueeSpacing
+import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
@@ -27,6 +28,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Folder
 import androidx.compose.material3.Icon
@@ -37,6 +39,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -66,6 +69,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.offset
 import com.teixeira.vcspace.providers.FileIconProvider
 import com.teixeira.vcspace.resources.R
+import com.teixeira.vcspace.ui.screens.editor.EditorViewModel
 import java.io.File
 import java.text.SimpleDateFormat
 import kotlin.math.max
@@ -75,12 +79,22 @@ import kotlin.math.max
 @Composable
 fun FileList(
   files: List<File>,
+  selectedFile: EditorViewModel.OpenedFile? = null,
   modifier: Modifier = Modifier,
+  itemModifier: Modifier = Modifier,
   onFileLongClick: ((File) -> Unit)? = null,
   onFileClick: (File) -> Unit,
 ) {
   val context = LocalContext.current
   val haptics = LocalHapticFeedback.current
+
+  val listState = rememberLazyListState()
+
+  LaunchedEffect(files, selectedFile) {
+    val index = files.indexOf(selectedFile?.file)
+
+    listState.animateScrollToItem(if (index != -1) index else 0)
+  }
 
   if (files.isEmpty()) {
     Box(
@@ -93,15 +107,23 @@ fun FileList(
     }
   } else {
     LazyColumn(
-      modifier = modifier.fillMaxWidth()
+      modifier = modifier.fillMaxWidth(),
+      state = listState
     ) {
       items(files) { file ->
+        val isSelectedFile = selectedFile?.file == file
+
+        val itemBackgroundModifier = if (isSelectedFile) {
+          Modifier.background(color = MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
+        } else Modifier
+
         val icon = if (file.isFile) {
           ImageVector.vectorResource(FileIconProvider.findFileIconResource(file))
         } else Icons.Rounded.Folder
 
         Surface(
-          modifier = Modifier
+          modifier = itemModifier
+            .then(itemBackgroundModifier)
             .semantics(mergeDescendants = true) {}
             .combinedClickable(
               onClick = { onFileClick(file) },

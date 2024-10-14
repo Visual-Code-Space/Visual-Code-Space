@@ -37,7 +37,9 @@ import java.io.File
 fun FileExplorer(
   viewModel: FileExplorerViewModel,
   editorViewModel: EditorViewModel,
+  selectedFile: EditorViewModel.OpenedFile? = null,
   modifier: Modifier = Modifier,
+  itemModifier: Modifier = Modifier,
   onFileLongClick: ((File) -> Unit)? = null,
   onFileClick: ((File) -> Unit)? = null
 ) {
@@ -60,17 +62,21 @@ fun FileExplorer(
   FileList(
     files = files,
     modifier = modifier,
+    selectedFile = selectedFile,
+    itemModifier = itemModifier,
     onFileLongClick = onFileLongClick,
     onFileClick = { file ->
-      if (file.isDirectory) {
-        viewModel.setCurrentPath(file.absolutePath, showHiddenFiles)
-      } else if (file.name.endsWith(".apk")) {
-        ApkInstaller.installApplication(context, file)
-      } else if (isValidTextFile(file)) {
-        editorViewModel.addFile(file)
-        onFileClick?.invoke(file)
-      } else {
-        context.openFile(file)
+      viewModel.setCurrentPath(file.absolutePath, showHiddenFiles)
+
+      if (!file.isDirectory) {
+        if (file.name.endsWith(".apk")) {
+          ApkInstaller.installApplication(context, file)
+        } else if (isValidTextFile(file)) {
+          editorViewModel.addFile(file)
+          onFileClick?.invoke(file)
+        } else {
+          context.openFile(file)
+        }
       }
     }
   )

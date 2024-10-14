@@ -54,19 +54,23 @@ fun PathListView(
   val listState = rememberLazyListState()
 
   LaunchedEffect(path) {
-    paths.clear()
+    val dir = if (path?.isDirectory == true) path else path?.parentFile
 
-    var temp: File? = path
-    while (temp != null) {
-      if (temp.absolutePath.equals("/storage/emulated") || temp.absolutePath.equals("/")) {
-        break
+    if (dir?.isDirectory == true) {
+      paths.clear()
+
+      var temp: File? = dir
+      while (temp != null) {
+        if (temp.absolutePath.equals("/storage/emulated") || temp.absolutePath.equals("/")) {
+          break
+        }
+        paths.add(temp)
+        temp = temp.parentFile
       }
-      paths.add(temp)
-      temp = temp.parentFile
-    }
-    paths.reverse()
+      paths.reverse()
 
-    listState.animateScrollToItem(paths.size - 1)
+      listState.animateScrollToItem(paths.size - 1)
+    }
   }
 
   LazyRow(

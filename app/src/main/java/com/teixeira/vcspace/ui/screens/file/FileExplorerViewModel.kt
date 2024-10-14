@@ -18,6 +18,7 @@ package com.teixeira.vcspace.ui.screens.file
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.PathUtils
+import com.teixeira.vcspace.extensions.toFile
 import com.teixeira.vcspace.utils.getParentDirPath
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -48,7 +49,13 @@ class FileExplorerViewModel : ViewModel() {
 
   fun refreshFiles(showHiddenFiles: Boolean) {
     viewModelScope.launch(Dispatchers.IO) {
-      val listFiles = _currentPath.value?.let { File(it).listFiles() }
+      val dir = if (_currentPath.value.toFile().isDirectory) {
+        _currentPath.value.toFile()
+      } else {
+        _currentPath.value.toFile().parentFile
+      }
+      
+      val listFiles = dir?.listFiles()
 
       _files.update {
         val files = mutableListOf<File>()

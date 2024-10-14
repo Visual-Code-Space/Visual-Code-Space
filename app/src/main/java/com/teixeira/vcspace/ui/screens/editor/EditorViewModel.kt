@@ -41,7 +41,9 @@ class EditorViewModel : ViewModel() {
   data class UiState(
     val openedFiles: List<OpenedFile> = emptyList(),
     val selectedFileIndex: Int = 0
-  )
+  ) {
+    val selectedFile get() = openedFiles.getOrNull(selectedFileIndex)
+  }
 
   private val _uiState = MutableStateFlow(UiState())
   val uiState get() = _uiState.asStateFlow()

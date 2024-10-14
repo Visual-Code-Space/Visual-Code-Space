@@ -15,6 +15,7 @@
 
 package com.teixeira.vcspace.ui.screens.editor
 
+import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,6 +26,7 @@ import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -52,10 +54,14 @@ import com.teixeira.vcspace.core.settings.Settings.Editor.rememberStickyScroll
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberUseTab
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberWordWrap
 import com.teixeira.vcspace.core.settings.Settings.File.rememberLastOpenedFile
+import com.teixeira.vcspace.core.settings.Settings.File.rememberShowHiddenFiles
 import com.teixeira.vcspace.core.settings.Settings.General.rememberFollowSystemTheme
 import com.teixeira.vcspace.core.settings.Settings.General.rememberIsDarkMode
+import com.teixeira.vcspace.core.settings.Settings.General.rememberIsDynamicColor
 import com.teixeira.vcspace.editor.VCSpaceEditor
 import com.teixeira.vcspace.resources.R
+import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
+import com.teixeira.vcspace.ui.theme.atLeastS
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 import kotlinx.coroutines.launch
@@ -63,6 +69,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun EditorScreen(
   viewModel: EditorViewModel = viewModel(),
+  fileExplorerViewModel: FileExplorerViewModel = viewModel(),
   modifier: Modifier = Modifier
 ) {
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -76,17 +83,27 @@ fun EditorScreen(
   }
 
   val openLastFiles by rememberLastOpenedFile()
+  val showHiddenFiles by rememberShowHiddenFiles()
+  val isDynamicColor by rememberIsDynamicColor()
 
-  if (openLastFiles) {
-    viewModel.lastOpenedFiles().forEach {
-      viewModel.addFile(it)
+  DisposableEffect(openLastFiles) {
+    for (file in viewModel.lastOpenedFiles()) {
+      viewModel.addFile(file)
+      fileExplorerViewModel.setCurrentPath(file.absolutePath, showHiddenFiles)
+    }
+
+    onDispose {
+      viewModel.rememberLastFiles()
     }
   }
 
   val context = LocalContext.current
 
   Column(modifier = modifier) {
-    FileTabLayout(editorViewModel = viewModel)
+    FileTabLayout(
+      editorViewModel = viewModel,
+      fileExplorerViewModel = fileExplorerViewModel
+    )
 
     val openedFile = openedFiles.getOrNull(selectedFileIndex)
 
@@ -95,6 +112,9 @@ fun EditorScreen(
 
       key(editorConfigMap[fileEntry.file.path]) {
         configureEditor(editorView.editor)
+        if (isDynamicColor && atLeastS) {
+          editorView.applyDynamicColor(context as Activity)
+        }
         viewModel.setEditorConfiguredForFile(fileEntry.file)
       }
 

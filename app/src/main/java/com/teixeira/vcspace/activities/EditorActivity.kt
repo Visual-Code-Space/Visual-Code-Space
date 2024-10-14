@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ModalDrawerSheet
@@ -33,14 +32,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.blankj.utilcode.util.PathUtils
+import com.blankj.utilcode.util.UriUtils
 import com.teixeira.vcspace.activities.base.BaseComposeActivity
 import com.teixeira.vcspace.app.noLocalProvidedFor
+import com.teixeira.vcspace.core.settings.Settings.File.rememberShowHiddenFiles
 import com.teixeira.vcspace.editor.events.OnContentChangeEvent
 import com.teixeira.vcspace.extensions.toFile
 import com.teixeira.vcspace.preferences.pluginsPath
@@ -55,7 +58,8 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-val LocalEditorDrawerState = compositionLocalOf<DrawerState> { noLocalProvidedFor("LocalEditorDrawerState") }
+val LocalEditorDrawerState =
+  compositionLocalOf<DrawerState> { noLocalProvidedFor("LocalEditorDrawerState") }
 
 class EditorActivity : BaseComposeActivity() {
   companion object {
@@ -86,12 +90,41 @@ class EditorActivity : BaseComposeActivity() {
     val fileExplorerViewModel: FileExplorerViewModel = viewModel()
     val editorViewModel: EditorViewModel = viewModel()
 
+    val editorUiState by editorViewModel.uiState.collectAsStateWithLifecycle()
+    val openedFiles = editorUiState.openedFiles
+
+    val showHiddenFiles by rememberShowHiddenFiles()
+
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
       val observer = LifecycleEventObserver { _, event ->
         when (event) {
           Lifecycle.Event.ON_CREATE -> {
             EventBus.getDefault().register(this@EditorActivity)
+
+            // Open plugin files if opened from PluginsActivity
+            run {
+              @Suppress("DEPRECATION")
+              val manifest = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intent.getSerializableExtra(EXTRA_KEY_PLUGIN_MANIFEST, Manifest::class.java)
+              } else intent.getSerializableExtra(EXTRA_KEY_PLUGIN_MANIFEST) as? Manifest
+
+              if (manifest != null) {
+                val pluginPath = "$pluginsPath/${manifest.packageName}"
+                val filesToOpen = arrayOf(
+                  "$pluginPath/manifest.json".toFile(),
+                  "$pluginPath/${manifest.scripts.first().name}".toFile()
+                )
+                editorViewModel.addFiles(*filesToOpen)
+                fileExplorerViewModel.setCurrentPath(filesToOpen.last().absolutePath, showHiddenFiles)
+              }
+            }
+
+            val externalFileUri = intent.data
+            if (externalFileUri != null) {
+              editorViewModel.addFile(UriUtils.uri2File(externalFileUri))
+              externalFileUri.path?.let { fileExplorerViewModel.setCurrentPath(it, showHiddenFiles) }
+            }
           }
 
           Lifecycle.Event.ON_PAUSE -> {
@@ -103,23 +136,7 @@ class EditorActivity : BaseComposeActivity() {
             EventBus.getDefault().unregister(this@EditorActivity)
           }
 
-          Lifecycle.Event.ON_START -> {
-            // Open plugin files if opened from PluginsActivity
-            run {
-              @Suppress("DEPRECATION")
-              val manifest = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                intent.getSerializableExtra(EXTRA_KEY_PLUGIN_MANIFEST, Manifest::class.java)
-              } else intent.getSerializableExtra(EXTRA_KEY_PLUGIN_MANIFEST) as? Manifest
-
-              if (manifest != null) {
-                val pluginPath = "$pluginsPath/${manifest.packageName}"
-                editorViewModel.addFiles(
-                  "$pluginPath/manifest.json".toFile(),
-                  "$pluginPath/${manifest.scripts.first().name}".toFile(),
-                )
-              }
-            }
-          }
+          Lifecycle.Event.ON_START -> {}
           Lifecycle.Event.ON_RESUME -> {}
           Lifecycle.Event.ON_STOP -> {}
           Lifecycle.Event.ON_ANY -> {}
@@ -139,13 +156,12 @@ class EditorActivity : BaseComposeActivity() {
           .fillMaxSize()
           .imePadding(),
         drawerState = LocalEditorDrawerState.current,
-        gesturesEnabled = false,
+        gesturesEnabled = openedFiles.isEmpty(),
         drawerContent = {
           ModalDrawerSheet(
             drawerState = LocalEditorDrawerState.current,
             modifier = Modifier
               .fillMaxWidth(fraction = 0.8f)
-              .systemBarsPadding()
           ) {
             EditorDrawerSheet(
               fileExplorerViewModel = fileExplorerViewModel,
@@ -161,12 +177,13 @@ class EditorActivity : BaseComposeActivity() {
               editorViewModel = editorViewModel
             )
           }
-        ) {
+        ) { innerPadding ->
           EditorScreen(
             viewModel = editorViewModel,
+            fileExplorerViewModel = fileExplorerViewModel,
             modifier = Modifier
               .fillMaxSize()
-              .padding(it)
+              .padding(innerPadding)
           )
         }
       }

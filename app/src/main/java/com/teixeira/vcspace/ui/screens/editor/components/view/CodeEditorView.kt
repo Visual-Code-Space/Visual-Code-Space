@@ -1,12 +1,14 @@
 package com.teixeira.vcspace.ui.screens.editor.components.view
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import com.blankj.utilcode.util.FileIOUtils
+import com.google.android.material.color.DynamicColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.teixeira.vcspace.editor.VCSpaceEditor
 import com.teixeira.vcspace.editor.databinding.LayoutCodeEditorBinding
@@ -16,8 +18,8 @@ import com.teixeira.vcspace.preferences.PREF_EDITOR_COLORSCHEME_KEY
 import com.teixeira.vcspace.preferences.PREF_EDITOR_DELETELINEONBACKSPACE_KEY
 import com.teixeira.vcspace.preferences.PREF_EDITOR_DELETETABONBACKSPACE_KEY
 import com.teixeira.vcspace.preferences.PREF_EDITOR_FONTLIGATURES_KEY
-import com.teixeira.vcspace.preferences.PREF_EDITOR_FONT_SIZE_KEY
 import com.teixeira.vcspace.preferences.PREF_EDITOR_FONT_KEY
+import com.teixeira.vcspace.preferences.PREF_EDITOR_FONT_SIZE_KEY
 import com.teixeira.vcspace.preferences.PREF_EDITOR_INDENT_KEY
 import com.teixeira.vcspace.preferences.PREF_EDITOR_LINENUMBER_KEY
 import com.teixeira.vcspace.preferences.PREF_EDITOR_STICKYSCROLL_KEY
@@ -45,7 +47,6 @@ import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 import io.github.rosemoe.sora.text.LineSeparator
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme
-import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -53,6 +54,7 @@ import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.io.File
 
 @SuppressLint("ViewConstructor")
 class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
@@ -85,6 +87,10 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
     readFile(file)
 
     addView(binding.root, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
+  }
+
+  fun applyDynamicColor(activity: Activity) {
+    DynamicColors.applyToActivityIfAvailable(activity)
   }
 
   private fun readFile(file: File) {
@@ -166,6 +172,7 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
     when (event.prefKey) {
       PREF_APPEARANCE_UI_MODE_KEY,
       PREF_EDITOR_COLORSCHEME_KEY -> updateEditorColorScheme()
+
       PREF_EDITOR_FONT_KEY -> updateEditorFont()
       PREF_EDITOR_FONT_SIZE_KEY -> updateFontSize()
       PREF_EDITOR_INDENT_KEY -> updateEditorIndent()

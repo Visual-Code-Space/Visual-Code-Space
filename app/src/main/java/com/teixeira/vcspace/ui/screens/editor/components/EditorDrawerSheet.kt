@@ -15,6 +15,7 @@
 
 package com.teixeira.vcspace.ui.screens.editor.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -177,10 +178,17 @@ fun EditorDrawerSheet(
 
       val showHiddenFiles by rememberShowHiddenFiles()
 
+      val editorUiState by editorViewModel.uiState.collectAsStateWithLifecycle()
+      var currentFile by remember { mutableStateOf<File?>(null) }
+
       FileExplorer(
         viewModel = fileExplorerViewModel,
+        selectedFile = editorUiState.selectedFile,
         editorViewModel = editorViewModel,
-        onFileClick = { closeDrawer() },
+        onFileClick = { file ->
+          currentFile = file
+          closeDrawer()
+        },
         onFileLongClick = { selectedFile = it },
         modifier = Modifier.weight(1f)
       )
