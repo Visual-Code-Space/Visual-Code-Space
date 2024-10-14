@@ -85,7 +85,7 @@ kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutine
 
 [plugins]
 android-application = { id = "com.android.application", version = "8.6.0" }
-android-library = { id = "com.android.library", version = "8.6.0" }
+android-library = { id = "com.android.library", version = "8.7.1" }
 kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
