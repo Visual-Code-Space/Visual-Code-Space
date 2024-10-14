@@ -402,7 +402,7 @@ fun RenameFileDialog(
           scope.launchWithProgressDialog(
             uiContext = context,
             configureBuilder = { builder ->
-              builder.setMessage(R.string.file_renaming)
+              builder.setMessage(string.file_renaming)
               builder.setCancelable(false)
             },
             action = { _, _ ->
@@ -444,6 +444,7 @@ fun DeleteFileDialog(
   onDismissRequest: () -> Unit
 ) {
   val context = LocalContext.current
+  val toastHostState = LocalToastHostState.current
   val scope = rememberCoroutineScope()
 
   val showHiddenFiles by rememberShowHiddenFiles()
@@ -471,6 +472,8 @@ fun DeleteFileDialog(
 
             withContext(Dispatchers.Main) {
               showShortToast(context, context.getString(string.file_deleted))
+              // FIX: Not working
+              // scope.launch { toastHostState.showToast(context.getString(string.file_deleted)) }
               fileExplorerViewModel.refreshFiles(showHiddenFiles)
             }
 

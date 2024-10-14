@@ -79,7 +79,9 @@ import com.teixeira.vcspace.ui.theme.VCSpaceTheme
 import com.teixeira.vcspace.utils.isStoragePermissionGranted
 import kotlinx.coroutines.CoroutineScope
 
-val LocalLifecycleScope = compositionLocalOf<CoroutineScope> { noLocalProvidedFor("LocalLifecycleScope") }
+val LocalLifecycleScope = compositionLocalOf<CoroutineScope> {
+  noLocalProvidedFor("LocalLifecycleScope")
+}
 
 abstract class BaseComposeActivity : ComponentActivity() {
   @OptIn(ExperimentalPermissionsApi::class)
@@ -139,22 +141,28 @@ abstract class BaseComposeActivity : ComponentActivity() {
           }
         }
 
-        val toastHostState = rememberToastHostState()
-
-        CompositionLocalProvider(
-          LocalLifecycleScope provides lifecycleScope,
-          LocalToastHostState provides toastHostState
-        ) {
+        ProvideBaseCompositionLocals {
           if (hasPermission) {
             MainScreen()
           } else {
             SetupPermissionScreen(storagePermissionsState)
           }
-        }
 
-        ToastHost(hostState = toastHostState)
+          ToastHost()
+        }
       }
     }
+  }
+
+  @Composable
+  private fun ProvideBaseCompositionLocals(content: @Composable () -> Unit) {
+    val toastHostState = rememberToastHostState()
+
+    CompositionLocalProvider(
+      LocalLifecycleScope provides lifecycleScope,
+      LocalToastHostState provides toastHostState,
+      content = content
+    )
   }
 
   @Composable

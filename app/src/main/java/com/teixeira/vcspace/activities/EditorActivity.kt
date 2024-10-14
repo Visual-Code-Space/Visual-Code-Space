@@ -58,8 +58,9 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-val LocalEditorDrawerState =
-  compositionLocalOf<DrawerState> { noLocalProvidedFor("LocalEditorDrawerState") }
+val LocalEditorDrawerState = compositionLocalOf<DrawerState> {
+  noLocalProvidedFor("LocalEditorDrawerState")
+}
 
 class EditorActivity : BaseComposeActivity() {
   companion object {
@@ -85,8 +86,6 @@ class EditorActivity : BaseComposeActivity() {
 
   @Composable
   override fun MainScreen() {
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-
     val fileExplorerViewModel: FileExplorerViewModel = viewModel()
     val editorViewModel: EditorViewModel = viewModel()
 
@@ -95,62 +94,61 @@ class EditorActivity : BaseComposeActivity() {
 
     val showHiddenFiles by rememberShowHiddenFiles()
 
-    val lifecycleOwner = LocalLifecycleOwner.current
-    DisposableEffect(lifecycleOwner) {
-      val observer = LifecycleEventObserver { _, event ->
-        when (event) {
-          Lifecycle.Event.ON_CREATE -> {
-            EventBus.getDefault().register(this@EditorActivity)
+    observerLifecycleEvents { event ->
+      when (event) {
+        Lifecycle.Event.ON_CREATE -> {
+          EventBus.getDefault().register(this@EditorActivity)
 
-            // Open plugin files if opened from PluginsActivity
-            run {
-              @Suppress("DEPRECATION")
-              val manifest = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                intent.getSerializableExtra(EXTRA_KEY_PLUGIN_MANIFEST, Manifest::class.java)
-              } else intent.getSerializableExtra(EXTRA_KEY_PLUGIN_MANIFEST) as? Manifest
+          // Open plugin files if opened from PluginsActivity
+          run {
+            @Suppress("DEPRECATION")
+            val manifest = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+              intent.getSerializableExtra(EXTRA_KEY_PLUGIN_MANIFEST, Manifest::class.java)
+            } else intent.getSerializableExtra(EXTRA_KEY_PLUGIN_MANIFEST) as? Manifest
 
-              if (manifest != null) {
-                val pluginPath = "$pluginsPath/${manifest.packageName}"
-                val filesToOpen = arrayOf(
-                  "$pluginPath/manifest.json".toFile(),
-                  "$pluginPath/${manifest.scripts.first().name}".toFile()
-                )
-                editorViewModel.addFiles(*filesToOpen)
-                fileExplorerViewModel.setCurrentPath(filesToOpen.last().absolutePath, showHiddenFiles)
-              }
-            }
-
-            val externalFileUri = intent.data
-            if (externalFileUri != null) {
-              editorViewModel.addFile(UriUtils.uri2File(externalFileUri))
-              externalFileUri.path?.let { fileExplorerViewModel.setCurrentPath(it, showHiddenFiles) }
+            if (manifest != null) {
+              val pluginPath = "$pluginsPath/${manifest.packageName}"
+              val filesToOpen = arrayOf(
+                "$pluginPath/manifest.json".toFile(),
+                "$pluginPath/${manifest.scripts.first().name}".toFile()
+              )
+              editorViewModel.addFiles(*filesToOpen)
+              fileExplorerViewModel.setCurrentPath(
+                filesToOpen.last().absolutePath,
+                showHiddenFiles
+              )
             }
           }
 
-          Lifecycle.Event.ON_PAUSE -> {
-            editorViewModel.rememberLastFiles()
+          val externalFileUri = intent.data
+          if (externalFileUri != null) {
+            editorViewModel.addFile(UriUtils.uri2File(externalFileUri))
+            externalFileUri.path?.let {
+              fileExplorerViewModel.setCurrentPath(
+                path = it,
+                showHiddenFiles = showHiddenFiles
+              )
+            }
           }
-
-          Lifecycle.Event.ON_DESTROY -> {
-            editorViewModel.rememberLastFiles()
-            EventBus.getDefault().unregister(this@EditorActivity)
-          }
-
-          Lifecycle.Event.ON_START -> {}
-          Lifecycle.Event.ON_RESUME -> {}
-          Lifecycle.Event.ON_STOP -> {}
-          Lifecycle.Event.ON_ANY -> {}
         }
-      }
 
-      lifecycleOwner.lifecycle.addObserver(observer)
+        Lifecycle.Event.ON_PAUSE -> {
+          editorViewModel.rememberLastFiles()
+        }
 
-      onDispose {
-        lifecycleOwner.lifecycle.removeObserver(observer)
+        Lifecycle.Event.ON_DESTROY -> {
+          editorViewModel.rememberLastFiles()
+          EventBus.getDefault().unregister(this@EditorActivity)
+        }
+
+        Lifecycle.Event.ON_START -> {}
+        Lifecycle.Event.ON_RESUME -> {}
+        Lifecycle.Event.ON_STOP -> {}
+        Lifecycle.Event.ON_ANY -> {}
       }
     }
 
-    CompositionLocalProvider(LocalEditorDrawerState provides drawerState) {
+    ProvideEditorCompositionLocals {
       ModalNavigationDrawer(
         modifier = Modifier
           .fillMaxSize()
@@ -186,6 +184,32 @@ class EditorActivity : BaseComposeActivity() {
               .padding(innerPadding)
           )
         }
+      }
+    }
+  }
+
+  @Composable
+  private fun ProvideEditorCompositionLocals(content: @Composable () -> Unit) {
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+
+    CompositionLocalProvider(
+      LocalEditorDrawerState provides drawerState,
+      content = content
+    )
+  }
+
+  @Composable
+  private fun observerLifecycleEvents(onStateChanged: (Lifecycle.Event) -> Unit) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+      val observer = LifecycleEventObserver { _, event ->
+        onStateChanged(event)
+      }
+
+      lifecycleOwner.lifecycle.addObserver(observer)
+
+      onDispose {
+        lifecycleOwner.lifecycle.removeObserver(observer)
       }
     }
   }

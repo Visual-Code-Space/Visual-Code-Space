@@ -16,6 +16,7 @@
 package com.vcspace.plugins.internal
 
 import android.app.Application
+import com.blankj.utilcode.util.ToastUtils
 import com.teixeira.vcspace.app.BaseApplication
 import com.teixeira.vcspace.extensions.toBase64String
 import com.teixeira.vcspace.extensions.toFile
@@ -140,28 +141,18 @@ object PluginManager {
       override fun onResponse(call: Call<List<Content>>, response: Response<List<Content>>) {
         if (response.isSuccessful) {
           val contents = response.body()
-          contents?.forEach { content ->
-            if (content.type == "dir") getPluginSize(content.path) {
-              println("Plugin Package Name: ${content.name}")
-              println("Download URL: ${content.downloadUrl}")
-              println("Size: $it bytes")
-              println("-------------------------")
-            } else {
-              println("Plugin Package Name: ${content.name}")
-              println("Download URL: ${content.downloadUrl}")
-              println("Size: ${content.size} bytes")
-              println("-------------------------")
-            }
-          }
           callback(contents)
         } else {
-          println("Failed to fetch plugins: ${response.message()}")
+          val error = response.errorBody()?.string()
+          println("Failed to fetch plugins: $error")
+          ToastUtils.showShort("Failed to fetch plugins: $error")
           callback(null)
         }
       }
 
       override fun onFailure(call: Call<List<Content>>, t: Throwable) {
         println("Error: ${t.message}")
+        ToastUtils.showShort("Error: ${t.message}")
         callback(null)
       }
     })
