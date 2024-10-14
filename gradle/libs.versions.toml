@@ -18,7 +18,7 @@ lifecycle-runtime-ktx = "2.8.6"
 activity-compose = "1.9.2"
 kotlin = "2.0.20"
 compose-bom = "2024.09.02"
-termux-shared = "v0.118.1"
+termux-shared = "0.118.1"
 datastore = "1.1.1"
 accompanist = "0.36.0"
 
