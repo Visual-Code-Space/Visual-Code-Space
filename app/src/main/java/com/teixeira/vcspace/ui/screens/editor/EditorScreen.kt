@@ -87,9 +87,11 @@ fun EditorScreen(
   val isDynamicColor by rememberIsDynamicColor()
 
   DisposableEffect(openLastFiles) {
-    for (file in viewModel.lastOpenedFiles()) {
-      viewModel.addFile(file)
-      fileExplorerViewModel.setCurrentPath(file.absolutePath, showHiddenFiles)
+    if (openLastFiles) {
+      for (file in viewModel.lastOpenedFiles()) {
+        viewModel.addFile(file)
+        fileExplorerViewModel.setCurrentPath(file.absolutePath, showHiddenFiles)
+      }
     }
 
     onDispose {
