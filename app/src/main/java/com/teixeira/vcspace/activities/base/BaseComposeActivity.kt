@@ -40,7 +40,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -49,7 +48,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -68,20 +66,15 @@ import com.blankj.utilcode.util.AppUtils
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.teixeira.vcspace.app.noLocalProvidedFor
+import com.teixeira.vcspace.app.strings
+import com.teixeira.vcspace.core.components.common.VCSpaceLargeTopBar
 import com.teixeira.vcspace.core.settings.Settings.General.rememberFollowSystemTheme
 import com.teixeira.vcspace.core.settings.Settings.General.rememberIsDarkMode
-import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.ui.LocalToastHostState
 import com.teixeira.vcspace.ui.ToastHost
 import com.teixeira.vcspace.ui.rememberToastHostState
 import com.teixeira.vcspace.ui.theme.VCSpaceTheme
 import com.teixeira.vcspace.utils.isStoragePermissionGranted
-import kotlinx.coroutines.CoroutineScope
-
-val LocalLifecycleScope = compositionLocalOf<CoroutineScope> {
-  noLocalProvidedFor("LocalLifecycleScope")
-}
 
 abstract class BaseComposeActivity : ComponentActivity() {
   @OptIn(ExperimentalPermissionsApi::class)
@@ -142,6 +135,7 @@ abstract class BaseComposeActivity : ComponentActivity() {
         }
 
         ProvideBaseCompositionLocals {
+
           if (hasPermission) {
             MainScreen()
           } else {
@@ -160,6 +154,7 @@ abstract class BaseComposeActivity : ComponentActivity() {
 
     CompositionLocalProvider(
       LocalLifecycleScope provides lifecycleScope,
+      LocalLayoutInflater provides layoutInflater,
       LocalToastHostState provides toastHostState,
       content = content
     )
@@ -173,10 +168,10 @@ abstract class BaseComposeActivity : ComponentActivity() {
   private fun SetupPermissionScreen(permissionsState: MultiplePermissionsState) {
     Scaffold(
       topBar = {
-        LargeTopAppBar(
+        VCSpaceLargeTopBar(
           title = {
             Text(
-              text = stringResource(R.string.app_name),
+              text = stringResource(strings.app_name),
               fontWeight = FontWeight.ExtraBold,
               fontFamily = FontFamily.SansSerif,
             )
@@ -193,7 +188,7 @@ abstract class BaseComposeActivity : ComponentActivity() {
           .padding(16.dp)
       ) {
         Text(
-          text = stringResource(R.string.file_storage_access),
+          text = stringResource(strings.file_storage_access),
           style = MaterialTheme.typography.headlineMedium,
           modifier = Modifier.padding(start = 4.dp)
         )
@@ -202,7 +197,7 @@ abstract class BaseComposeActivity : ComponentActivity() {
 
         ElevatedCard {
           Text(
-            text = stringResource(R.string.file_storage_access_message),
+            text = stringResource(strings.file_storage_access_message),
             modifier = Modifier.padding(16.dp)
           )
         }
@@ -220,7 +215,7 @@ abstract class BaseComposeActivity : ComponentActivity() {
               .fillMaxWidth()
               .weight(1f)
           ) {
-            Text(stringResource(R.string.exit))
+            Text(stringResource(strings.exit))
           }
 
           Button(
@@ -242,7 +237,7 @@ abstract class BaseComposeActivity : ComponentActivity() {
               .fillMaxWidth()
               .weight(1f)
           ) {
-            Text(stringResource(R.string.file_storage_access_grant))
+            Text(stringResource(strings.file_storage_access_grant))
           }
         }
       }

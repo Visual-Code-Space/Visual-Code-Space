@@ -42,12 +42,10 @@ import androidx.compose.material.icons.rounded.SaveAs
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -77,12 +75,13 @@ import com.teixeira.vcspace.PYTHON_PACKAGE_URL_32_BIT
 import com.teixeira.vcspace.PYTHON_PACKAGE_URL_64_BIT
 import com.teixeira.vcspace.activities.LocalEditorDrawerState
 import com.teixeira.vcspace.activities.TerminalActivity
+import com.teixeira.vcspace.app.strings
 import com.teixeira.vcspace.core.components.Tooltip
+import com.teixeira.vcspace.core.components.common.VCSpaceTopBar
 import com.teixeira.vcspace.core.settings.Settings.EditorTabs.rememberAutoSave
 import com.teixeira.vcspace.editor.events.OnContentChangeEvent
 import com.teixeira.vcspace.preferences.pythonDownloaded
 import com.teixeira.vcspace.preferences.pythonExtracted
-import com.teixeira.vcspace.resources.R.string
 import com.teixeira.vcspace.ui.screens.editor.EditorViewModel
 import com.teixeira.vcspace.ui.screens.editor.components.view.CodeEditorView
 import com.teixeira.vcspace.utils.launchWithProgressDialog
@@ -96,7 +95,6 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditorTopBar(
   modifier: Modifier = Modifier,
@@ -156,17 +154,17 @@ fun EditorTopBar(
     isKeyboardOpen = KeyboardUtils.isSoftInputVisible(context)
   }
 
-  TopAppBar(
+  VCSpaceTopBar(
     modifier = modifier,
     title = {
       Text(
-        text = stringResource(id = string.app_name),
+        text = stringResource(id = strings.app_name),
         overflow = TextOverflow.Ellipsis,
         maxLines = 1
       )
     },
     navigationIcon = {
-      Tooltip(stringResource(id = string.open_drawer)) {
+      Tooltip(stringResource(id = strings.open_drawer)) {
         IconButton(onClick = {
           scope.launch {
             drawerState.apply {
@@ -176,7 +174,7 @@ fun EditorTopBar(
         }) {
           Icon(
             imageVector = Icons.Rounded.Menu,
-            contentDescription = stringResource(id = string.open_drawer)
+            contentDescription = stringResource(id = strings.open_drawer)
           )
         }
       }
@@ -185,7 +183,7 @@ fun EditorTopBar(
       AnimatedVisibility(
         visible = selectedEditor?.file?.extension == "py"
       ) {
-        Tooltip(stringResource(id = string.execute)) {
+        Tooltip(stringResource(id = strings.execute)) {
           IconButton(
             onClick = {
               downloadPythonPackage(
@@ -216,7 +214,7 @@ fun EditorTopBar(
         visible = isKeyboardOpen
       ) {
         Row {
-          Tooltip(stringResource(id = string.editor_undo)) {
+          Tooltip(stringResource(id = strings.editor_undo)) {
             IconButton(
               onClick = { selectedEditor?.undo() },
               enabled = canUndo
@@ -228,7 +226,7 @@ fun EditorTopBar(
             }
           }
 
-          Tooltip(stringResource(id = string.editor_redo)) {
+          Tooltip(stringResource(id = strings.editor_redo)) {
             IconButton(
               onClick = { selectedEditor?.redo() },
               enabled = canRedo
@@ -261,7 +259,7 @@ fun EditorTopBar(
           onDismissRequest = { showMenu = false }
         ) {
           DropdownMenuItem(
-            text = { Text(stringResource(id = string.editor_search)) },
+            text = { Text(stringResource(id = strings.editor_search)) },
             leadingIcon = {
               Icon(
                 Icons.Rounded.Search,
@@ -276,7 +274,7 @@ fun EditorTopBar(
           )
 
           DropdownMenuItem(
-            text = { Text(stringResource(id = string.file)) },
+            text = { Text(stringResource(id = strings.file)) },
             leadingIcon = {
               Icon(
                 Icons.Rounded.Folder,
@@ -335,7 +333,7 @@ fun FileMenu(
     onDismissRequest = { showFileMenu.value = false }
   ) {
     DropdownMenuItem(
-      text = { Text(stringResource(id = string.file_new)) },
+      text = { Text(stringResource(id = strings.file_new)) },
       leadingIcon = {
         Icon(
           Icons.Rounded.Add,
@@ -349,7 +347,7 @@ fun FileMenu(
     )
 
     DropdownMenuItem(
-      text = { Text(stringResource(id = string.file_open)) },
+      text = { Text(stringResource(id = strings.file_open)) },
       leadingIcon = {
         Icon(
           Icons.Rounded.FileOpen,
@@ -363,7 +361,7 @@ fun FileMenu(
     )
 
     DropdownMenuItem(
-      text = { Text(stringResource(id = string.file_save)) },
+      text = { Text(stringResource(id = strings.file_save)) },
       leadingIcon = {
         Icon(
           Icons.Rounded.Save,
@@ -380,7 +378,7 @@ fun FileMenu(
     )
 
     DropdownMenuItem(
-      text = { Text(stringResource(id = string.file_save_as)) },
+      text = { Text(stringResource(id = strings.file_save_as)) },
       leadingIcon = {
         Icon(
           Icons.Rounded.SaveAs,
@@ -395,7 +393,7 @@ fun FileMenu(
     )
 
     DropdownMenuItem(
-      text = { Text(stringResource(id = string.file_save_all)) },
+      text = { Text(stringResource(id = strings.file_save_all)) },
       leadingIcon = {
         Icon(
           Icons.Rounded.Save,
@@ -412,7 +410,7 @@ fun FileMenu(
     )
 
     DropdownMenuItem(
-      text = { Text(stringResource(id = string.file_reload)) },
+      text = { Text(stringResource(id = strings.file_reload)) },
       leadingIcon = {
         Icon(
           Icons.Rounded.Refresh,
@@ -440,7 +438,7 @@ private fun extractPythonFile(
       uiContext = context,
       context = Dispatchers.IO,
       configureBuilder = {
-        it.setMessage(string.python_extracting_python_compiler)
+        it.setMessage(strings.python_extracting_python_compiler)
           .setCancelable(false)
       },
       invokeOnCompletion = { throwable ->
@@ -485,7 +483,7 @@ private fun downloadPythonPackage(
     context = Dispatchers.IO,
     configureBuilder = {
       it.setTitle("Downloading Python")
-        .setMessage(string.python_downloading_python_compiler)
+        .setMessage(strings.python_downloading_python_compiler)
         .setCancelable(false)
         .setIndeterminate(false)
         .setMax(100)

@@ -41,7 +41,7 @@ import com.blankj.utilcode.util.ClipboardUtils
 import com.blankj.utilcode.util.DeviceUtils
 import com.teixeira.vcspace.BuildConfig
 import com.teixeira.vcspace.activities.base.BaseComposeActivity
-import com.teixeira.vcspace.resources.R.string
+import com.teixeira.vcspace.app.strings
 import com.teixeira.vcspace.ui.screens.crash.CrashScreen
 import com.teixeira.vcspace.ui.screens.crash.components.CrashTopBar
 import com.teixeira.vcspace.ui.ToastHost
@@ -110,7 +110,7 @@ class CrashActivity : BaseComposeActivity() {
       )
     }
 
-    val copiedMessage = stringResource(string.copied_to_clipboard)
+    val copiedMessage = stringResource(strings.copied_to_clipboard)
 
     Scaffold(
       modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -132,12 +132,12 @@ class CrashActivity : BaseComposeActivity() {
             }
           },
           text = {
-            Text(stringResource(string.copy))
+            Text(stringResource(strings.copy))
           },
           icon = {
             Icon(
               imageVector = Icons.Outlined.CopyAll,
-              contentDescription = stringResource(string.copy)
+              contentDescription = stringResource(strings.copy)
             )
           }
         )

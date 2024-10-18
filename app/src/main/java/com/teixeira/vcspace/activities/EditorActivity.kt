@@ -94,7 +94,7 @@ class EditorActivity : BaseComposeActivity() {
 
     val showHiddenFiles by rememberShowHiddenFiles()
 
-    observerLifecycleEvents { event ->
+    observeLifecycleEvents { event ->
       when (event) {
         Lifecycle.Event.ON_CREATE -> {
           EventBus.getDefault().register(this@EditorActivity)
@@ -199,7 +199,7 @@ class EditorActivity : BaseComposeActivity() {
   }
 
   @Composable
-  private fun observerLifecycleEvents(onStateChanged: (Lifecycle.Event) -> Unit) {
+  private fun observeLifecycleEvents(onStateChanged: (Lifecycle.Event) -> Unit) {
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
       val observer = LifecycleEventObserver { _, event ->

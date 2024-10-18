@@ -73,8 +73,8 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
   override fun onCreate(savedInstanceState: Bundle?) {
     window?.also {
       val controller = getInsetsController(it, it.decorView)
-      controller.setAppearanceLightNavigationBars(false)
-      controller.setAppearanceLightStatusBars(false)
+      controller.isAppearanceLightNavigationBars = false
+      controller.isAppearanceLightStatusBars = false
     }
     super.onCreate(savedInstanceState)
 

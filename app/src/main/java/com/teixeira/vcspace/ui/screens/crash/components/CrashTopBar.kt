@@ -24,7 +24,6 @@ import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -36,7 +35,8 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.blankj.utilcode.util.AppUtils
-import com.teixeira.vcspace.resources.R.string
+import com.teixeira.vcspace.app.strings
+import com.teixeira.vcspace.core.components.common.VCSpaceLargeTopBar
 import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,12 +45,12 @@ fun CrashTopBar(
   modifier: Modifier = Modifier,
   scrollBehavior: TopAppBarScrollBehavior
 ) {
-  LargeTopAppBar(
+  VCSpaceLargeTopBar(
     modifier = modifier,
     title = {
       Column {
         Text(
-          text = stringResource(string.app_name),
+          text = stringResource(strings.app_name),
           fontWeight = FontWeight.ExtraBold,
           fontFamily = FontFamily.SansSerif,
         )
@@ -81,7 +81,7 @@ fun CrashTopBar(
       IconButton(onClick = AppUtils::exitApp) {
         Icon(
           imageVector = Icons.Rounded.Close,
-          contentDescription = stringResource(string.close)
+          contentDescription = stringResource(strings.close)
         )
       }
     },

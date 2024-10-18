@@ -23,7 +23,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -33,8 +32,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.teixeira.vcspace.resources.R.string
 import com.teixeira.vcspace.activities.base.BaseComposeActivity
+import com.teixeira.vcspace.app.strings
+import com.teixeira.vcspace.core.components.common.VCSpaceLargeTopBar
 import com.teixeira.vcspace.ui.screens.settings.SettingsScreen
 
 class SettingsActivity : BaseComposeActivity() {
@@ -48,12 +48,8 @@ class SettingsActivity : BaseComposeActivity() {
     Scaffold(
       modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
       topBar = {
-        LargeTopAppBar(
-          title = {
-            Text(
-              text = stringResource(id = string.settings),
-            )
-          },
+        VCSpaceLargeTopBar(
+          title = stringResource(id = strings.settings),
           navigationIcon = {
             IconButton(
               onClick = { backPressedDispatcher?.onBackPressed() },
