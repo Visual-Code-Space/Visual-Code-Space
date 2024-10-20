@@ -1,0 +1,25 @@
+{
+  "name": "com.vcspace.terminal",
+  "version": "0.1.0",
+  "description": "A simple terminal",
+  "main": "dist/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Vivek",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "@xterm/xterm": "^5.5.0",
+    "child_process": "^1.0.2",
+    "express": "^4.21.1",
+    "http": "^0.0.1-security",
+    "node-pty": "^1.0.0",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "css-loader": "^7.1.2",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.95.0",
+    "webpack-cli": "^5.1.4"
+  }
+}
