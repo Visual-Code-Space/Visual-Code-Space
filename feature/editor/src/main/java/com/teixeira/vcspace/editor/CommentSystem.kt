@@ -19,13 +19,13 @@ import io.github.rosemoe.sora.text.Content
 import io.github.rosemoe.sora.text.batchEdit
 import org.eclipse.tm4e.languageconfiguration.internal.model.CommentRule
 
-internal fun addSingleComment(commentRule: CommentRule?, text: Content) {
+fun addSingleComment(commentRule: CommentRule?, text: Content) {
   if (commentRule == null) return
   val comment = commentRule.lineComment ?: return
   text.insert(text.cursor.leftLine, 0, comment)
 }
 
-internal fun addBlockComment(commentRule: CommentRule?, text: Content) {
+fun addBlockComment(commentRule: CommentRule?, text: Content) {
   if (commentRule == null) return
   val blockComment = commentRule.blockComment ?: return
   val openPrefix = blockComment.open

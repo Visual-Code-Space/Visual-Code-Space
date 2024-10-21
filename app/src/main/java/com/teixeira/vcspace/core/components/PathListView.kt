@@ -42,6 +42,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.blankj.utilcode.util.PathUtils
+import com.teixeira.vcspace.extensions.toFile
 import java.io.File
 
 @Composable
@@ -63,6 +65,8 @@ fun PathListView(
       while (temp != null) {
         if (temp.absolutePath.equals("/storage/emulated") || temp.absolutePath.equals("/")) {
           break
+        } else if (temp.absolutePath.startsWith("/data")) {
+          temp = PathUtils.getExternalStoragePath().toFile()
         }
         paths.add(temp)
         temp = temp.parentFile

@@ -21,9 +21,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.FileUtils
 import com.google.gson.Gson
+import com.teixeira.vcspace.activities.EditorActivity.Companion.LAST_OPENED_FILES_JSON_PATH
 import com.teixeira.vcspace.extensions.toFile
 import com.teixeira.vcspace.models.FileHistory
-import com.teixeira.vcspace.activities.EditorActivity.Companion.LAST_OPENED_FILES_JSON_PATH
 import com.teixeira.vcspace.ui.screens.editor.components.view.CodeEditorView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -53,6 +53,13 @@ class EditorViewModel : ViewModel() {
 
   private val _editorConfigMap = mutableStateMapOf<String, Boolean>()
   val editorConfigMap get() = _editorConfigMap
+
+  private val _canEditorHandleCurrentKeyBinding = MutableStateFlow(false)
+  val canEditorHandleCurrentKeyBinding get() = _canEditorHandleCurrentKeyBinding.asStateFlow()
+
+  fun setCanEditorHandleCurrentKeyBinding(value: Boolean) {
+    _canEditorHandleCurrentKeyBinding.value = value
+  }
 
   fun setEditorConfiguredForFile(file: File) {
     _editorConfigMap[file.path] = true
@@ -124,6 +131,13 @@ class EditorViewModel : ViewModel() {
     val openedFile = OpenedFile(file)
 
     val newOpenedFiles = uiState.value.openedFiles.toMutableList()
+
+    newOpenedFiles.remove(
+      newOpenedFiles.find {
+        it.file.name.equals("untitled.txt") && !it.isModified
+      }
+    )
+
     if (!newOpenedFiles.contains(openedFile)) newOpenedFiles.add(openedFile)
 
     val newSelectedFileIndex = newOpenedFiles.indexOf(openedFile)

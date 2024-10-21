@@ -30,10 +30,19 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isCtrlPressed
+import androidx.compose.ui.input.key.isShiftPressed
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -41,6 +50,8 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.teixeira.vcspace.activities.LocalEditorDrawerState
+import com.teixeira.vcspace.commandpalette.CommandPalette
+import com.teixeira.vcspace.commandpalette.CommandPaletteManager
 import com.teixeira.vcspace.core.components.editor.FileTabLayout
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberColorScheme
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberDeleteIndentOnBackspace
@@ -65,6 +76,7 @@ import com.teixeira.vcspace.ui.theme.atLeastS
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 import kotlinx.coroutines.launch
+import java.io.File
 
 @Composable
 fun EditorScreen(
@@ -100,8 +112,22 @@ fun EditorScreen(
   }
 
   val context = LocalContext.current
+  val commandPaletteManager = CommandPaletteManager.instance
 
-  Column(modifier = modifier) {
+  Column(modifier = modifier.onKeyEvent {
+    if (it.isCtrlPressed && it.isShiftPressed && it.key == Key.P) {
+      println("Ctrl + Shift + P is pressed")
+      commandPaletteManager.show()
+      return@onKeyEvent true
+    }
+
+    if (it.type == KeyEventType.KeyDown) {
+      CommandPaletteManager.instance.applyKeyBindings(it)
+      return@onKeyEvent true
+    }
+
+    false
+  }) {
     FileTabLayout(
       editorViewModel = viewModel,
       fileExplorerViewModel = fileExplorerViewModel
@@ -127,7 +153,23 @@ fun EditorScreen(
         )
       }
     } ?: run {
-      NoOpenedFiles()
+      val tempFile = File(context.cacheDir, "untitled.txt")
+      viewModel.addFile(tempFile)
+
+      // NoOpenedFiles()
+    }
+
+    if (commandPaletteManager.showCommandPalette.value) {
+      CommandPalette(
+        commands = CommandPaletteManager.instance.allCommands,
+        recentlyUsedCommands = CommandPaletteManager.instance.recentlyUsedCommands,
+        onCommandSelected = { command ->
+          commandPaletteManager.hide()
+
+          // do something
+        },
+        onDismissRequest = { commandPaletteManager.hide() }
+      )
     }
   }
 }

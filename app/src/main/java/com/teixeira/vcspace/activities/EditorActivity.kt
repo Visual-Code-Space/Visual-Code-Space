@@ -39,12 +39,21 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.blankj.utilcode.util.ClipboardUtils
+import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.PathUtils
+import com.blankj.utilcode.util.ToastUtils
 import com.blankj.utilcode.util.UriUtils
 import com.teixeira.vcspace.activities.base.BaseComposeActivity
 import com.teixeira.vcspace.app.noLocalProvidedFor
+import com.teixeira.vcspace.commandpalette.CommandPaletteManager
+import com.teixeira.vcspace.commandpalette.newCommand
 import com.teixeira.vcspace.core.settings.Settings.File.rememberShowHiddenFiles
+import com.teixeira.vcspace.editor.addBlockComment
+import com.teixeira.vcspace.editor.addSingleComment
 import com.teixeira.vcspace.editor.events.OnContentChangeEvent
+import com.teixeira.vcspace.editor.events.OnKeyBindingEvent
+import com.teixeira.vcspace.extensions.open
 import com.teixeira.vcspace.extensions.toFile
 import com.teixeira.vcspace.preferences.pluginsPath
 import com.teixeira.vcspace.ui.screens.editor.EditorScreen
@@ -64,6 +73,8 @@ val LocalEditorDrawerState = compositionLocalOf<DrawerState> {
 
 class EditorActivity : BaseComposeActivity() {
   companion object {
+    private const val TAG = "EditorActivity"
+
     const val EXTRA_KEY_PLUGIN_MANIFEST = "plugin_manifest"
 
     val LAST_OPENED_FILES_JSON_PATH =
@@ -82,6 +93,85 @@ class EditorActivity : BaseComposeActivity() {
         e.event.action != ContentChangeEvent.ACTION_SET_NEW_TEXT
       )
     }
+  }
+
+  @Subscribe(threadMode = ThreadMode.MAIN)
+  fun onKeyBindingEvent(event: OnKeyBindingEvent) {
+    editorViewModel.setCanEditorHandleCurrentKeyBinding(event.canEditorHandle)
+  }
+
+  private fun onCreate() {
+    CommandPaletteManager.instance.addCommand(
+      newCommand("Paste", "Ctrl+V") {
+        val editor = editorViewModel.getSelectedEditor()?.editor
+        val canEditorHandle = editorViewModel.canEditorHandleCurrentKeyBinding.value
+
+        if (!canEditorHandle) {
+          editor?.pasteText()
+        }
+      },
+      newCommand("Copy", "Ctrl+C") {
+        val editor = editorViewModel.getSelectedEditor()?.editor
+        val canEditorHandle = editorViewModel.canEditorHandleCurrentKeyBinding.value
+
+        if (!canEditorHandle && editor?.cursor?.isSelected == true) {
+          editor.copyText()
+        }
+      },
+      newCommand("Cut", "Ctrl+X") {
+        val editor = editorViewModel.getSelectedEditor()?.editor
+        val canEditorHandle = editorViewModel.canEditorHandleCurrentKeyBinding.value
+
+        if (!canEditorHandle && editor?.cursor?.isSelected == true) {
+          editor.cutText()
+        }
+      },
+      newCommand("Copy Path of Active File", "Shift+Alt+C") {
+        val file = editorViewModel.getSelectedEditor()?.file
+        ClipboardUtils.copyText(file?.absolutePath)
+        ToastUtils.showShort("Copied path of active file: ${file?.name}")
+      },
+      newCommand("Copy File Name", "Shift+Alt+F") {
+        val file = editorViewModel.getSelectedEditor()?.file
+        ClipboardUtils.copyText(file?.name)
+        ToastUtils.showShort("Copied file name: ${file?.name}")
+      },
+      newCommand("Undo", "Ctrl+Z") {
+        val editor = editorViewModel.getSelectedEditor()?.editor
+        val canEditorHandle = editorViewModel.canEditorHandleCurrentKeyBinding.value
+
+        if (!canEditorHandle) {
+          editor?.undo()
+        }
+      },
+      newCommand("Redo", "Ctrl+Y") {
+        val editor = editorViewModel.getSelectedEditor()?.editor
+        val canEditorHandle = editorViewModel.canEditorHandleCurrentKeyBinding.value
+
+        if (!canEditorHandle) {
+          editor?.redo()
+        }
+      },
+      newCommand("Toggle Line Comment", "Ctrl+/") {
+        val editor = editorViewModel.getSelectedEditor()?.editor
+        val canEditorHandle = editorViewModel.canEditorHandleCurrentKeyBinding.value
+
+        val commentRule = editor?.commentRule
+        if (editor != null && !canEditorHandle) {
+          if (!editor.cursor.isSelected) {
+            addSingleComment(commentRule, editor.text)
+          } else {
+            addBlockComment(commentRule, editor.text)
+          }
+        }
+      },
+      newCommand("Settings", "Ctrl+,") {
+        open(SettingsActivity::class.java)
+      },
+      newCommand("Manage Plugins", "Ctrl+P") {
+        open(PluginsActivity::class.java)
+      }
+    )
   }
 
   @Composable
@@ -130,6 +220,8 @@ class EditorActivity : BaseComposeActivity() {
               )
             }
           }
+
+          onCreate()
         }
 
         Lifecycle.Event.ON_PAUSE -> {
@@ -139,11 +231,12 @@ class EditorActivity : BaseComposeActivity() {
         Lifecycle.Event.ON_DESTROY -> {
           editorViewModel.rememberLastFiles()
           EventBus.getDefault().unregister(this@EditorActivity)
+          clearCache()
         }
 
         Lifecycle.Event.ON_START -> {}
         Lifecycle.Event.ON_RESUME -> {}
-        Lifecycle.Event.ON_STOP -> {}
+        Lifecycle.Event.ON_STOP -> clearCache()
         Lifecycle.Event.ON_ANY -> {}
       }
     }
@@ -211,6 +304,12 @@ class EditorActivity : BaseComposeActivity() {
       onDispose {
         lifecycleOwner.lifecycle.removeObserver(observer)
       }
+    }
+  }
+
+  private fun clearCache(): Boolean {
+    return FileUtils.deleteAllInDir(cacheDir).also {
+      Log.i(TAG, "Cache cleared 😊")
     }
   }
 }

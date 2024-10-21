@@ -22,3 +22,7 @@ data class OnContentChangeEvent(
   val file: File?,
   val event: ContentChangeEvent
 )
+
+data class OnKeyBindingEvent(
+  val canEditorHandle: Boolean
+)

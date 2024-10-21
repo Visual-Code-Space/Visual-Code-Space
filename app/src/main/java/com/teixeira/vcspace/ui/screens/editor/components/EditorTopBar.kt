@@ -33,6 +33,7 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.FileOpen
 import androidx.compose.material.icons.rounded.Folder
+import androidx.compose.material.icons.rounded.KeyboardCommandKey
 import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.PlayArrow
@@ -76,16 +77,20 @@ import com.teixeira.vcspace.PYTHON_PACKAGE_URL_64_BIT
 import com.teixeira.vcspace.activities.LocalEditorDrawerState
 import com.teixeira.vcspace.activities.TerminalActivity
 import com.teixeira.vcspace.app.strings
+import com.teixeira.vcspace.commandpalette.CommandPaletteManager
+import com.teixeira.vcspace.commandpalette.newCommand
 import com.teixeira.vcspace.core.components.Tooltip
 import com.teixeira.vcspace.core.components.common.VCSpaceTopBar
 import com.teixeira.vcspace.core.settings.Settings.EditorTabs.rememberAutoSave
 import com.teixeira.vcspace.editor.events.OnContentChangeEvent
+import com.teixeira.vcspace.editor.events.OnKeyBindingEvent
 import com.teixeira.vcspace.preferences.pythonDownloaded
 import com.teixeira.vcspace.preferences.pythonExtracted
 import com.teixeira.vcspace.ui.screens.editor.EditorViewModel
 import com.teixeira.vcspace.ui.screens.editor.components.view.CodeEditorView
 import com.teixeira.vcspace.utils.launchWithProgressDialog
 import io.github.rosemoe.sora.event.ContentChangeEvent
+import io.github.rosemoe.sora.event.KeyBindingEvent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -142,6 +147,10 @@ fun EditorTopBar(
             editorViewModel.saveFile()
           }
         }
+      }
+
+      editorView.editor.subscribeEvent(KeyBindingEvent::class.java) { event, _ ->
+        EventBus.getDefault().post(OnKeyBindingEvent(event.canEditorHandle()))
       }
     }
   }
@@ -240,6 +249,17 @@ fun EditorTopBar(
         }
       }
 
+      LaunchedEffect(Unit) {
+        CommandPaletteManager.instance.addCommand(
+          newCommand("Terminal", "Ctrl+T") {
+            context.startActivity(Intent(context, TerminalActivity::class.java))
+          },
+          newCommand("Search", "Ctrl+F") {
+            selectedEditor?.beginSearchMode()
+          }
+        )
+      }
+
       Box {
         Tooltip("Menu") {
           IconButton(
@@ -266,10 +286,30 @@ fun EditorTopBar(
                 contentDescription = null
               )
             },
+            trailingIcon = {
+              Text("Ctrl+F")
+            },
             enabled = selectedEditor != null,
             onClick = {
               selectedEditor?.beginSearchMode()
               showMenu = false
+            }
+          )
+
+          DropdownMenuItem(
+            text = { Text("Command Palette") },
+            onClick = {
+              CommandPaletteManager.instance.show()
+              showMenu = false
+            },
+            leadingIcon = {
+              Icon(
+                Icons.Rounded.KeyboardCommandKey,
+                contentDescription = null
+              )
+            },
+            trailingIcon = {
+              Text("Ctrl+Shift+P")
             }
           )
 
@@ -326,6 +366,27 @@ fun FileMenu(
     if (it != null) editorViewModel.addFile(UriUtils.uri2File(it))
   }
 
+  LaunchedEffect(Unit) {
+    CommandPaletteManager.instance.addCommand(
+      newCommand("New File", "Ctrl+N") {
+        createFile.launch("filename.txt")
+      },
+      newCommand("Open File", "Ctrl+O") {
+        openFile.launch(arrayOf("text/*"))
+      },
+      newCommand("Save File", "Ctrl+S") {
+        scope.launch {
+          editorViewModel.saveFile(editor)
+        }
+      },
+      newCommand("Save All Files", "Ctrl+Shift+S") {
+        scope.launch {
+          editorViewModel.saveAll()
+        }
+      }
+    )
+  }
+
   DropdownMenu(
     shape = MaterialTheme.shapes.medium,
     expanded = showFileMenu.value,
@@ -340,6 +401,9 @@ fun FileMenu(
           contentDescription = null
         )
       },
+      trailingIcon = {
+        Text("Ctrl+N")
+      },
       onClick = {
         createFile.launch("filename.txt")
         showFileMenu.value = false
@@ -353,6 +417,9 @@ fun FileMenu(
           Icons.Rounded.FileOpen,
           contentDescription = null
         )
+      },
+      trailingIcon = {
+        Text("Ctrl+O")
       },
       onClick = {
         openFile.launch(arrayOf("text/*"))
@@ -369,6 +436,9 @@ fun FileMenu(
         )
       },
       enabled = modified,
+      trailingIcon = {
+        Text("Ctrl+S")
+      },
       onClick = {
         scope.launch {
           editorViewModel.saveFile(editor)
@@ -401,6 +471,9 @@ fun FileMenu(
         )
       },
       enabled = areModifiedFiles,
+      trailingIcon = {
+        Text("Ctrl+Shift+S")
+      },
       onClick = {
         scope.launch {
           editorViewModel.saveAll()

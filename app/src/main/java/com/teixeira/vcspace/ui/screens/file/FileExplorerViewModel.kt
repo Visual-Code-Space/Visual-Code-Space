@@ -51,10 +51,12 @@ class FileExplorerViewModel : ViewModel() {
     viewModelScope.launch(Dispatchers.IO) {
       val dir = if (_currentPath.value.toFile().isDirectory) {
         _currentPath.value.toFile()
+      } else if (_currentPath.value.startsWith("/data")) {
+        PathUtils.getExternalStoragePath().toFile()
       } else {
         _currentPath.value.toFile().parentFile
       }
-      
+
       val listFiles = dir?.listFiles()
 
       _files.update {
