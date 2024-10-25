@@ -53,8 +53,11 @@ fun File.extractZipFile(destinationDir: File) {
   ZipInputStream(inputStream()).use { zipInputStream ->
     var entry: ZipEntry? = zipInputStream.nextEntry
 
-    while (entry != null) {
+    while (entry != null) { 
       val extractedFile = File(destinationDir, entry.name)
+      if (!extractedFile.canonicalPath.startsWith(destinationDir.canonicalPath)) {
+        throw SecurityException("Bad zip entry path: ${entry.name}")
+      }
 
       if (entry.isDirectory) {
         extractedFile.mkdirs()
