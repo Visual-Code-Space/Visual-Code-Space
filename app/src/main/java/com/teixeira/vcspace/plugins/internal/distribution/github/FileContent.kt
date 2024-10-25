@@ -13,11 +13,18 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.vcspace.plugins.internal.distribution.github
+package com.teixeira.vcspace.plugins.internal.distribution.github
 
-import com.vcspace.plugins.internal.distribution.github.commit.Commit
+import com.google.gson.annotations.SerializedName
 
-data class FileCreateResponse(
-  val content: Content,
-  val commit: Commit
+data class FileContent(
+  val encoding: String,
+  val content: String,
+  val name: String,
+  val path: String,
+  val sha: String,
+  val size: Int, // in bytes
+  val type: String, // "file" or "dir"
+  @SerializedName("download_url")
+  val downloadUrl: String
 )

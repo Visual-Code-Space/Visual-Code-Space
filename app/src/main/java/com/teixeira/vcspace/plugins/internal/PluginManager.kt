@@ -13,22 +13,21 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.vcspace.plugins.internal
+package com.teixeira.vcspace.plugins.internal
 
-import android.app.Application
 import com.blankj.utilcode.util.ToastUtils
-import com.teixeira.vcspace.app.BaseApplication
+import com.teixeira.vcspace.BuildConfig
+import com.teixeira.vcspace.app.VCSpaceApplication
 import com.teixeira.vcspace.extensions.toBase64String
 import com.teixeira.vcspace.extensions.toFile
-import com.vcspace.plugins.BuildConfig
-import com.vcspace.plugins.Manifest
-import com.vcspace.plugins.Plugin
-import com.vcspace.plugins.Script
-import com.vcspace.plugins.internal.distribution.GitHubService
-import com.vcspace.plugins.internal.distribution.github.Content
-import com.vcspace.plugins.internal.distribution.github.FileCreateRequest
-import com.vcspace.plugins.internal.distribution.github.FileCreateResponse
-import com.vcspace.plugins.internal.extensions.loadPlugins
+import com.teixeira.vcspace.plugins.Manifest
+import com.teixeira.vcspace.plugins.Plugin
+import com.teixeira.vcspace.plugins.Script
+import com.teixeira.vcspace.plugins.internal.distribution.GitHubService
+import com.teixeira.vcspace.plugins.internal.distribution.github.Content
+import com.teixeira.vcspace.plugins.internal.distribution.github.FileCreateRequest
+import com.teixeira.vcspace.plugins.internal.distribution.github.FileCreateResponse
+import com.teixeira.vcspace.plugins.internal.extensions.loadPlugins
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import retrofit2.Call
@@ -42,13 +41,13 @@ object PluginManager {
   private const val REPO_NAME = "vcspace-plugins"
 
   @JvmOverloads
-  fun init(application: Application, onError: (Plugin, Exception) -> Unit = { _, _ -> }) {
+  fun init(application: VCSpaceApplication, onError: (Plugin, Throwable) -> Unit = { _, _ -> }) {
     val plugins = application.loadPlugins()
     plugins.filter { it.manifest.enabled }.forEach { it.start { err -> onError(it, err) } }
   }
 
-  fun getPlugins(application: Application) = application.loadPlugins()
-  fun getPlugins() = getPlugins(BaseApplication.instance)
+  private fun getPlugins(application: VCSpaceApplication) = application.loadPlugins()
+  fun getPlugins() = getPlugins(VCSpaceApplication.appInstance)
 
   fun uploadPlugin(plugin: Plugin, callback: (Boolean, String?) -> Unit) {
     val pluginFile = plugin.fullPath.toFile()

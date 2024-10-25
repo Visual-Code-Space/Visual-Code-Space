@@ -13,18 +13,10 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.vcspace.plugins.internal.distribution.github
+package com.teixeira.vcspace.plugins.internal.distribution.github
 
-import com.google.gson.annotations.SerializedName
-
-data class FileContent(
-  val encoding: String,
-  val content: String,
+data class Author(
   val name: String,
-  val path: String,
-  val sha: String,
-  val size: Int, // in bytes
-  val type: String, // "file" or "dir"
-  @SerializedName("download_url")
-  val downloadUrl: String
+  val email: String,
+  val date: String?
 )

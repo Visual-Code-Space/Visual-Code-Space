@@ -13,49 +13,30 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.vcspace.plugins
+package com.teixeira.vcspace.plugins
 
-import android.app.Application
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
 import bsh.Interpreter
+import com.blankj.utilcode.util.ThreadUtils
 import com.google.gson.GsonBuilder
+import com.teixeira.vcspace.app.VCSpaceApplication
 import java.io.File
 
 class Plugin(
   val fullPath: String,
   val manifest: Manifest,
-  val app: Application
+  val app: VCSpaceApplication
 ) {
   private lateinit var interpreter: Interpreter
 
-  fun start(onError: (Exception) -> Unit) {
+  fun start(onError: (Throwable) -> Unit) {
     val helper = PluginHelper()
 
     try {
       interpreter = Interpreter().apply {
         setClassLoader(app.classLoader)
-        eval("import com.teixeira.vcspace.activities.editor.*;")
-        eval("import com.teixeira.vcspace.activities.*;")
-        eval("import com.teixeira.vcspace.providers.*;")
-        eval("import com.teixeira.vcspace.utils.*;")
-        eval("import com.teixeira.vcspace.app.*;")
-        eval("import com.teixeira.vcspace.editor.*;")
-        eval("import com.teixeira.vcspace.*;")
-        eval("import android.util.*;")
-        eval("import android.os.*;")
-        eval("import android.content.*;")
-        eval("import android.content.pm.*;")
-        eval("import android.view.*;")
-        eval("import android.widget.*;")
-        eval("import android.app.*;")
-        eval("import androidx.appcompat.app.*;")
-        eval("import androidx.core.content.*;")
-        eval("import androidx.core.view.*;")
-        eval("import androidx.core.app.*;")
-        eval("import androidx.core.graphics.*;")
-        eval("import androidx.core.util.*;")
         eval("import java.io.*;")
         eval("import java.util.*;")
         eval("import java.util.concurrent.*;")
@@ -86,8 +67,15 @@ class Plugin(
           val entryPoint = nameSpace.getMethod(script.entryPoint, arrayOfNulls<Class<*>>(0))
 
           if (entryPoint != null && entryPoint.parameterTypes.isEmpty()) {
-            // Invoke the "entryPoint" function
-            helper.runOnUiThread { entryPoint.invoke(arrayOfNulls<Any>(0), this) }
+            runCatching {
+              // Invoke the "entryPoint" function
+              entryPoint.invoke(arrayOfNulls<Any>(0), this)
+            }.onFailure {
+              ThreadUtils.runOnUiThread {
+                onError(it)
+              }
+              it.printStackTrace()
+            }
           }
         }
       }

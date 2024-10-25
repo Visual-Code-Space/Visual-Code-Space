@@ -12,11 +12,26 @@
  * You should have received a copy of the GNU General Public License along with Visual Code Space.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+package com.teixeira.vcspace.plugins
 
-package com.vcspace.plugins.internal.distribution.github
+import android.os.Handler
+import android.os.Looper
+import com.blankj.utilcode.util.AppUtils
+import java.io.File
 
-data class Author(
-  val name: String,
-  val email: String,
-  val date: String?
-)
+// This file is for plugin use only.
+class PluginHelper {
+  private val handler = Handler(Looper.getMainLooper())
+
+  fun runOnUiThread(runnable: Runnable) {
+    handler.post(runnable)
+  }
+
+  fun runOnUiThreadDelayed(runnable: Runnable, delay: Long) {
+    handler.postDelayed(runnable, delay)
+  }
+
+  fun getFileNameWithoutExtension(file: File) = file.nameWithoutExtension
+
+  fun isAppInstalled(packageName: String) = AppUtils.isAppInstalled(packageName)
+}

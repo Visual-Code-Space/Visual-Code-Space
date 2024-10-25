@@ -13,14 +13,14 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.vcspace.plugins.internal.distribution
+package com.teixeira.vcspace.plugins.internal.distribution
 
-import com.vcspace.plugins.internal.distribution.github.Content
-import com.vcspace.plugins.internal.distribution.github.FileContent
-import com.vcspace.plugins.internal.distribution.github.FileCreateRequest
-import com.vcspace.plugins.internal.distribution.github.FileCreateResponse
-import com.vcspace.plugins.internal.distribution.github.FileUpdateRequest
-import com.vcspace.plugins.internal.distribution.github.FileUpdateResponse
+import com.teixeira.vcspace.plugins.internal.distribution.github.Content
+import com.teixeira.vcspace.plugins.internal.distribution.github.FileContent
+import com.teixeira.vcspace.plugins.internal.distribution.github.FileCreateRequest
+import com.teixeira.vcspace.plugins.internal.distribution.github.FileCreateResponse
+import com.teixeira.vcspace.plugins.internal.distribution.github.FileUpdateRequest
+import com.teixeira.vcspace.plugins.internal.distribution.github.FileUpdateResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET

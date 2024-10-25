@@ -13,12 +13,14 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.vcspace.plugins.internal.distribution.github
+package com.teixeira.vcspace.plugins.internal.distribution.github.commit
 
-data class FileUpdateRequest(
+import com.teixeira.vcspace.plugins.internal.distribution.github.Author
+
+data class Commit(
+  val author: Author,
   val message: String,
-  val content: String,
   val sha: String,
-  val branch: String = "main",
-  val author: Author? = null
+  val url: String,
+  val verification: Verification
 )

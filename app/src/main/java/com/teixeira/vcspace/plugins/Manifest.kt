@@ -13,7 +13,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.vcspace.plugins
+package com.teixeira.vcspace.plugins
 
 import java.io.Serializable
 
