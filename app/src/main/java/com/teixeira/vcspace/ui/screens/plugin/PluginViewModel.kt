@@ -17,9 +17,9 @@ package com.teixeira.vcspace.ui.screens.plugin
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vcspace.plugins.Plugin
-import com.vcspace.plugins.internal.PluginManager
-import com.vcspace.plugins.internal.distribution.github.Content
+import com.teixeira.vcspace.plugins.Plugin
+import com.teixeira.vcspace.plugins.internal.PluginManager
+import com.teixeira.vcspace.plugins.internal.distribution.github.Content
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update

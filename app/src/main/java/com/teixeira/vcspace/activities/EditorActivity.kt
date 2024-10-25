@@ -55,14 +55,15 @@ import com.teixeira.vcspace.editor.events.OnContentChangeEvent
 import com.teixeira.vcspace.editor.events.OnKeyBindingEvent
 import com.teixeira.vcspace.extensions.open
 import com.teixeira.vcspace.extensions.toFile
+import com.teixeira.vcspace.plugins.Manifest
 import com.teixeira.vcspace.preferences.pluginsPath
 import com.teixeira.vcspace.ui.screens.editor.EditorScreen
 import com.teixeira.vcspace.ui.screens.editor.EditorViewModel
 import com.teixeira.vcspace.ui.screens.editor.components.EditorDrawerSheet
 import com.teixeira.vcspace.ui.screens.editor.components.EditorTopBar
 import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
-import com.vcspace.plugins.Manifest
 import io.github.rosemoe.sora.event.ContentChangeEvent
+import kotlinx.coroutines.DelicateCoroutinesApi
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -100,6 +101,7 @@ class EditorActivity : BaseComposeActivity() {
     editorViewModel.setCanEditorHandleCurrentKeyBinding(event.canEditorHandle)
   }
 
+  @OptIn(DelicateCoroutinesApi::class)
   private fun onCreate() {
     CommandPaletteManager.instance.addCommand(
       newCommand("Paste", "Ctrl+V") {

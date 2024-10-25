@@ -63,6 +63,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.blankj.utilcode.util.AppUtils
+import com.blankj.utilcode.util.PathUtils
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -75,12 +76,14 @@ import com.teixeira.vcspace.ui.ToastHost
 import com.teixeira.vcspace.ui.rememberToastHostState
 import com.teixeira.vcspace.ui.theme.VCSpaceTheme
 import com.teixeira.vcspace.utils.isStoragePermissionGranted
+import java.io.File
 
 abstract class BaseComposeActivity : ComponentActivity() {
   @OptIn(ExperimentalPermissionsApi::class)
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     enableEdgeToEdge()
+    setupKotlinStdlib()
 
     setContent {
       VCSpaceTheme {
@@ -242,5 +245,20 @@ abstract class BaseComposeActivity : ComponentActivity() {
         }
       }
     }
+  }
+
+  private fun setupKotlinStdlib() {
+    val filesDir = PathUtils.getExternalAppFilesPath()
+    val kotlinStdlib = "$filesDir/kotlin-stdlib.jar"
+
+    if (!File(kotlinStdlib).exists()) {
+      assets.open("kotlin-stdlib-2.0.20.jar").use { input ->
+        File(kotlinStdlib).outputStream().use { output ->
+          input.copyTo(output)
+        }
+      }
+    }
+
+    System.setProperty("kotlin.java.stdlib.jar", kotlinStdlib)
   }
 }

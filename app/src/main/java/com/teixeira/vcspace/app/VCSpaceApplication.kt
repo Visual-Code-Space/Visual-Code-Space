@@ -5,11 +5,13 @@ import android.content.Intent
 import android.os.Bundle
 import com.blankj.utilcode.util.ThreadUtils
 import com.blankj.utilcode.util.ThrowableUtils
+import com.blankj.utilcode.util.ToastUtils
 import com.downloader.PRDownloader
+import com.itsaky.androidide.treesitter.TreeSitter
 import com.teixeira.vcspace.activities.CrashActivity
 import com.teixeira.vcspace.activities.EditorActivity
+import com.teixeira.vcspace.plugins.internal.PluginManager
 import com.teixeira.vcspace.providers.GrammarProvider
-import com.vcspace.plugins.internal.PluginManager
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.model.ThemeModel
@@ -25,13 +27,15 @@ class VCSpaceApplication : BaseApplication() {
 
   companion object {
     @JvmStatic
-    val instance by lazy { VCSpaceApplication() }
+    val appInstance by lazy { VCSpaceApplication() }
   }
 
   override fun onCreate() {
     uncaughtException = Thread.getDefaultUncaughtExceptionHandler()
     Thread.setDefaultUncaughtExceptionHandler(this::uncaughtException)
     super.onCreate()
+
+    TreeSitter.loadLibrary()
 
     registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
       override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
@@ -54,15 +58,15 @@ class VCSpaceApplication : BaseApplication() {
 
     ThreadUtils.executeByIoWithDelay(object : ThreadUtils.Task<Unit>() {
       override fun doInBackground() {
-//        ThreadUtils.runOnUiThread {
-//          Toast.makeText(
-//            applicationContext,
-//            "Loading plugins...",
-//            Toast.LENGTH_SHORT
-//          ).show()
-//        }
-
-        PluginManager.init(this@VCSpaceApplication) { plugin, err -> }
+        PluginManager.init(
+          application = this@VCSpaceApplication,
+          onError = { plugin, err ->
+            ToastUtils.showLong("""
+              Plugin ${plugin.manifest.name} failed to start.
+              Error: ${err.message}
+            """.trimIndent().trim())
+          }
+        )
       }
 
       override fun onCancel() {}

@@ -10,6 +10,9 @@ import androidx.core.view.isVisible
 import com.blankj.utilcode.util.FileIOUtils
 import com.google.android.material.color.DynamicColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.itsaky.androidide.treesitter.java.TSLanguageJava
+import com.teixeira.vcspace.editor.JavaLanguageSpec
+import com.teixeira.vcspace.editor.TsLanguageJava
 import com.teixeira.vcspace.editor.VCSpaceEditor
 import com.teixeira.vcspace.editor.databinding.LayoutCodeEditorBinding
 import com.teixeira.vcspace.events.OnPreferenceChangeEvent
@@ -39,14 +42,20 @@ import com.teixeira.vcspace.preferences.editorWordWrap
 import com.teixeira.vcspace.providers.GrammarProvider
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.utils.cancelIfActive
+import io.github.rosemoe.sora.editor.ts.LocalsCaptureSpec
+import io.github.rosemoe.sora.editor.ts.TsLanguage
+import io.github.rosemoe.sora.editor.ts.TsLanguageSpec
 import io.github.rosemoe.sora.lang.EmptyLanguage
 import io.github.rosemoe.sora.lang.Language
+import io.github.rosemoe.sora.lang.styling.textStyle
 import io.github.rosemoe.sora.langs.textmate.TextMateColorScheme
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 import io.github.rosemoe.sora.text.LineSeparator
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme
+import io.github.rosemoe.sora.widget.schemes.EditorColorScheme.KEYWORD
+import io.github.rosemoe.sora.widget.schemes.EditorColorScheme.LITERAL
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -99,7 +108,12 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
       val content = FileIOUtils.readFile2String(file)
       val language = createLanguage()
 
+      if (language is TsLanguage) {
+        ThemeRegistry.getInstance().setTheme("darcula")
+      }
+
       withContext(Dispatchers.Main) {
+        editor.colorScheme = TextMateColorScheme.create(ThemeRegistry.getInstance())
         editor.setText(content, null)
         editor.setEditorLanguage(language)
         setLoading(false)
@@ -261,6 +275,29 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
   }
 
   private suspend fun createLanguage(): Language {
+    if (file?.extension == "java") {
+      val assets = context.assets
+
+      val language = TsLanguageJava(
+        JavaLanguageSpec(
+          highlightScmSource = assets.open(
+            "tree-sitter-queries/java/highlights.scm"
+          ).reader().readText(),
+          codeBlocksScmSource = assets.open(
+            "tree-sitter-queries/java/blocks.scm"
+          ).reader().readText(),
+          bracketsScmSource = assets.open(
+            "tree-sitter-queries/java/brackets.scm"
+          ).reader().readText(),
+          localsScmSource = assets.open(
+            "tree-sitter-queries/java/locals.scm"
+          ).reader().readText()
+        )
+      )
+
+      return language
+    }
+
     val scopeName: String? = GrammarProvider.findScopeByFileExtension(file?.extension)
 
     return if (scopeName != null) {

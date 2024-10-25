@@ -16,7 +16,6 @@
 package com.teixeira.vcspace.ui.screens.plugin.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -41,7 +40,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import com.teixeira.vcspace.resources.R
-import com.vcspace.plugins.Plugin
+import com.teixeira.vcspace.plugins.Plugin
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

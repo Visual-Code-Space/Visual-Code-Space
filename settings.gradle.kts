@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 pluginManagement {
   repositories {
     gradlePluginPortal()
@@ -24,4 +26,3 @@ dependencyResolutionManagement {
 rootProject.name = "VCSpace"
 
 include(":app", ":core:common", ":core:resources", ":feature:editor", ":feature:preferences")
-include(":feature:plugins")

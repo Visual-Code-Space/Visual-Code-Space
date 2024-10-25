@@ -50,7 +50,7 @@ import com.teixeira.vcspace.ui.screens.plugin.components.InstalledPluginList
 import com.teixeira.vcspace.ui.screens.plugin.components.NewPluginButton
 import com.teixeira.vcspace.ui.screens.plugin.components.PluginTabs
 import com.teixeira.vcspace.ui.screens.plugin.components.PluginTopBar
-import com.vcspace.plugins.Plugin
+import com.teixeira.vcspace.plugins.Plugin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.io.File
@@ -160,7 +160,7 @@ fun PluginsScreen(
         viewModel.addNewInstalledPlugin(
           Plugin(
             manifest = manifest,
-            app = VCSpaceApplication.instance,
+            app = VCSpaceApplication.appInstance,
             fullPath = "$pluginsPath/${manifest.packageName}"
           )
         )

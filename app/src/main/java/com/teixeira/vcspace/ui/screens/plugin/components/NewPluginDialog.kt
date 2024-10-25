@@ -27,11 +27,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.teixeira.vcspace.plugins.Manifest
+import com.teixeira.vcspace.plugins.Script
 import com.teixeira.vcspace.preferences.pluginsPath
 import com.teixeira.vcspace.ui.ErrorMessage
 import com.teixeira.vcspace.ui.InputField
-import com.vcspace.plugins.Manifest
-import com.vcspace.plugins.Script
 import java.io.File
 
 @Composable

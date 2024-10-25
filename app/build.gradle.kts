@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.kotlin)
@@ -18,6 +20,15 @@ android {
     ndk {
       abiFilters += listOf("arm64-v8a", "x86_64", "armeabi-v7a")
     }
+
+    val file = project.rootProject.file("token.properties")
+
+    val githubToken = if (file.exists()) {
+      val properties = Properties().also { it.load(file.inputStream()) }
+      properties.getProperty("VCSPACE_TOKEN") ?: ""
+    } else ""
+
+    buildConfigField("String", "GITHUB_TOKEN", "\"$githubToken\"")
   }
 
   signingConfigs {
@@ -46,7 +57,12 @@ android {
 
   packaging {
     resources.excludes.addAll(
-      arrayOf("META-INF/README.md", "META-INF/CHANGES", "bundle.properties", "plugin.properties")
+      arrayOf(
+        "META-INF/README.md",
+        "META-INF/CHANGES",
+        "bundle.properties",
+        "plugin.properties"
+      )
     )
 
     jniLibs { useLegacyPackaging = true }
@@ -99,6 +115,7 @@ dependencies {
   implementation(libs.common.editor)
   implementation(libs.common.editor.lsp)
   implementation(libs.common.editor.textmate)
+  implementation(libs.common.editor.treesitter)
   implementation(libs.common.utilcode)
   implementation(libs.common.eventbus)
   implementation(libs.common.p7zip)
@@ -117,16 +134,18 @@ dependencies {
   implementation(project(":core:resources"))
   implementation(project(":feature:editor"))
   implementation(project(":feature:preferences"))
-  implementation(project(":feature:plugins"))
-
-//  implementation(kotlin("compiler"))
-//  implementation(kotlin("scripting-compiler"))
-//  implementation(kotlin("scripting-jvm-host-unshaded"))
-//  implementation(kotlin("sam-with-receiver-compiler-plugin"))
-//  implementation(kotlin("reflect"))
 
   implementation(libs.kotlinx.coroutines.android)
   implementation(libs.kotlinx.serialization.json)
+
+  implementation(libs.android.tree.sitter)
+  implementation(libs.tree.sitter.java)
+
+  implementation(libs.bsh)
+
+  implementation(libs.retrofit)
+  implementation(libs.retrofit.converter.gson)
+  implementation(libs.okhttp)
 
   debugImplementation(libs.common.leakcanary)
   debugImplementation(libs.androidx.ui.tooling)
