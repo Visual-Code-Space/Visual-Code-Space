@@ -22,6 +22,10 @@ import bsh.Interpreter
 import com.blankj.utilcode.util.ThreadUtils
 import com.google.gson.GsonBuilder
 import com.teixeira.vcspace.app.VCSpaceApplication
+import com.teixeira.vcspace.editor.snippet.SnippetController
+import com.teixeira.vcspace.plugins.helper.EditorHelper
+import com.teixeira.vcspace.plugins.helper.PluginHelper
+import com.teixeira.vcspace.preferences.pluginsPath
 import java.io.File
 
 class Plugin(
@@ -33,10 +37,13 @@ class Plugin(
 
   fun start(onError: (Throwable) -> Unit) {
     val helper = PluginHelper()
+    val snippetController = SnippetController.instance
+    val editorHelper = EditorHelper(app.getEditorActivity())
 
     try {
       interpreter = Interpreter().apply {
         setClassLoader(app.classLoader)
+        eval("import com.teixeira.vcspace.plugins.helper.FileHelper;")
         eval("import java.io.*;")
         eval("import java.util.*;")
         eval("import java.util.concurrent.*;")
@@ -59,6 +66,9 @@ class Plugin(
         set("app", app)
         set("manifest", manifest)
         set("helper", helper)
+        set("editorHelper", editorHelper)
+        set("snippetController", snippetController)
+        set("PLUGIN_DIR", pluginsPath)
 
         manifest.scripts.forEach { script ->
           source(File("$fullPath/${script.name}"))
@@ -68,8 +78,10 @@ class Plugin(
 
           if (entryPoint != null && entryPoint.parameterTypes.isEmpty()) {
             runCatching {
-              // Invoke the "entryPoint" function
-              entryPoint.invoke(arrayOfNulls<Any>(0), this)
+              ThreadUtils.runOnUiThread {
+                // Invoke the "entryPoint" function
+                entryPoint.invoke(arrayOfNulls<Any>(0), this)
+              }
             }.onFailure {
               ThreadUtils.runOnUiThread {
                 onError(it)

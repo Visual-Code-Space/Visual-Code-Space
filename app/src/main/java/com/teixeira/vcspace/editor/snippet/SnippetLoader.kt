@@ -12,26 +12,19 @@
  * You should have received a copy of the GNU General Public License along with Visual Code Space.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package com.teixeira.vcspace.plugins
 
-import android.os.Handler
-import android.os.Looper
-import com.blankj.utilcode.util.AppUtils
-import java.io.File
+package com.teixeira.vcspace.editor.snippet
 
-// This file is for plugin use only.
-class PluginHelper {
-  private val handler = Handler(Looper.getMainLooper())
+import com.google.gson.Gson
+import com.teixeira.vcspace.extensions.toFile
 
-  fun runOnUiThread(runnable: Runnable) {
-    handler.post(runnable)
+object SnippetLoader {
+  @JvmStatic
+  fun loadSnippets(filePath: String): List<Snippet> {
+    val file = filePath.toFile()
+    if (!file.exists()) return emptyList()
+
+    val snippetFile = Gson().fromJson(file.readText(), SnippetFile::class.java)
+    return snippetFile.snippets
   }
-
-  fun runOnUiThreadDelayed(runnable: Runnable, delay: Long) {
-    handler.postDelayed(runnable, delay)
-  }
-
-  fun getFileNameWithoutExtension(file: File) = file.nameWithoutExtension
-
-  fun isAppInstalled(packageName: String) = AppUtils.isAppInstalled(packageName)
 }

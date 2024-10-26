@@ -33,7 +33,7 @@ class CustomCompletionLayout : DefaultCompletionLayout() {
         setColor(
           completionList.context.getAttrColor(com.google.android.material.R.attr.colorSurface)
         )
-        setCornerRadius(25f)
+        setCornerRadius(10f)
       }
   }
 }

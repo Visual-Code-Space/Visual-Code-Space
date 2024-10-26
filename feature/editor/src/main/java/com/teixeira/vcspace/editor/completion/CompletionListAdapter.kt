@@ -19,29 +19,33 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.updatePadding
 import com.blankj.utilcode.util.SizeUtils
 import com.teixeira.vcspace.editor.databinding.LayoutCompletionItemBinding
+import io.github.rosemoe.sora.lang.completion.SimpleCompletionItem
 import io.github.rosemoe.sora.widget.component.EditorCompletionAdapter
 
 class CompletionListAdapter : EditorCompletionAdapter() {
 
   override fun getItemHeight(): Int {
-    return SizeUtils.dp2px(40f)
+    return SizeUtils.dp2px(44f)
   }
 
   override fun getView(pos: Int, v: View?, parent: ViewGroup?, isSelected: Boolean): View {
-    val binding =
-      v?.let { LayoutCompletionItemBinding.bind(it) }
-        ?: LayoutCompletionItemBinding.inflate(LayoutInflater.from(context), parent, false)
+    val binding = v?.let {
+      LayoutCompletionItemBinding.bind(it)
+    } ?: LayoutCompletionItemBinding.inflate(LayoutInflater.from(context), parent, false)
 
     val item = getItem(pos)
-    val kind = (if (item is VCSpaceCompletionItem) {
-      item.completionKind
-    } else CompletionItemKind.IDENTIFIER).toString()
+    val kind = when (item) {
+      is VCSpaceCompletionItem -> item.completionKind.toString()
+      is SimpleCompletionItem -> item.desc
+      else -> CompletionItemKind.IDENTIFIER.name
+    }
 
     binding.apply {
-      itemIcon.text = kind[0].toString()
-      itemType.text = kind
+      itemIcon.text = kind[0].toString().uppercase()
+      itemType.text = kind.toString().uppercase()
 
       if (!TextUtils.isEmpty(item.label)) {
         itemLabel.text = item.label
@@ -50,6 +54,11 @@ class CompletionListAdapter : EditorCompletionAdapter() {
       if (!TextUtils.isEmpty(item.desc)) {
         itemDesc.text = item.desc
       }
+
+      root.updatePadding(
+        top = SizeUtils.dp2px(4f),
+        bottom = SizeUtils.dp2px(4f)
+      )
     }
     return binding.root
   }

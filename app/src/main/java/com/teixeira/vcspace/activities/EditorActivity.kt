@@ -38,6 +38,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.blankj.utilcode.util.ClipboardUtils
 import com.blankj.utilcode.util.FileUtils
@@ -61,12 +62,15 @@ import com.teixeira.vcspace.ui.screens.editor.EditorScreen
 import com.teixeira.vcspace.ui.screens.editor.EditorViewModel
 import com.teixeira.vcspace.ui.screens.editor.components.EditorDrawerSheet
 import com.teixeira.vcspace.ui.screens.editor.components.EditorTopBar
+import com.teixeira.vcspace.ui.screens.editor.components.view.CodeEditorView
 import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
 import io.github.rosemoe.sora.event.ContentChangeEvent
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.io.File
 
 val LocalEditorDrawerState = compositionLocalOf<DrawerState> {
   noLocalProvidedFor("LocalEditorDrawerState")
@@ -312,6 +316,33 @@ class EditorActivity : BaseComposeActivity() {
   private fun clearCache(): Boolean {
     return FileUtils.deleteAllInDir(cacheDir).also {
       Log.i(TAG, "Cache cleared 😊")
+    }
+  }
+
+  val currentEditor get() = editorViewModel.getSelectedEditor()
+  val selectedFileIndex get() = editorViewModel.uiState.value.selectedFileIndex
+
+  val editorForFile = { file: File -> editorViewModel.getEditorForFile(file) }
+
+  @JvmField
+  val openFile = { file: File -> editorViewModel.addFile(file) }
+
+  @JvmField
+  val closeFile = { index: Int -> editorViewModel.closeFile(index) }
+
+  @JvmField
+  val closeAll = { editorViewModel.closeAll() }
+
+  @JvmField
+  val closeOthers = { index: Int -> editorViewModel.closeOthers(index) }
+
+  @JvmField
+  val saveAll = { lifecycleScope.launch { editorViewModel.saveAll() } }
+
+  @JvmOverloads
+  fun saveFile(codeEditorView: CodeEditorView? = null) {
+    lifecycleScope.launch {
+      editorViewModel.saveFile(codeEditorView)
     }
   }
 }

@@ -15,16 +15,21 @@
 package com.teixeira.vcspace.utils
 
 import android.util.Log
+import com.teixeira.vcspace.common.BuildConfig
+import com.teixeira.vcspace.extensions.doIf
 import java.util.WeakHashMap
 
 class Logger private constructor(private val tag: String) {
-
   fun d(message: String) {
-    log(Priority.DEBUG, tag, message)
+    doIf(BuildConfig.DEBUG) {
+      log(Priority.DEBUG, tag, message)
+    }
   }
 
   fun d(message: String, vararg format: Any) {
-    log(Priority.DEBUG, tag, String.format(message, *format))
+    doIf(BuildConfig.DEBUG) {
+      log(Priority.DEBUG, tag, String.format(message, *format))
+    }
   }
 
   fun w(message: String) {
@@ -88,14 +93,8 @@ class Logger private constructor(private val tag: String) {
   companion object {
     private val map: MutableMap<String, Logger> = WeakHashMap()
 
-    @Synchronized
-    fun newInstance(tag: String): Logger {
-      var logger = map[tag]
-      if (logger == null) {
-        logger = Logger(tag)
-        map[tag] = logger
-      }
-      return logger
+    val newInstance: (String) -> Logger by lazy {
+      { tag: String -> map[tag] ?: Logger(tag).also { map[tag] = it } }
     }
   }
 }
