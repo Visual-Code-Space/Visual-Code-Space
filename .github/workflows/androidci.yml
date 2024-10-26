@@ -65,7 +65,7 @@ jobs:
           path: app/build/outputs/apk/${{ matrix.build-type }}/app-${{ matrix.build-type }}.apk
       
       - name: Send APK to Telegram
-        if: matrix.build-type == 'release' && github.event_name != "pull_request"
+        if: matrix.build-type == 'release' && github.event_name != 'pull_request'
         continue-on-error: true
         run: |
           curl -X POST "https://api.telegram.org/bot${{ secrets.BOT_TOKEN }}/sendDocument" \
