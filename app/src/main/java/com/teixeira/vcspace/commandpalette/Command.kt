@@ -24,7 +24,7 @@ data class Command(
   val action: Command.() -> Unit
 )
 
-val newCommand: (String, String, Command.() -> Unit) -> Command = { name, keybinding, action ->
+val newCommand = { name: String, keybinding: String, action: Command.() -> Unit ->
   Command(
     name = name,
     keybinding = keybinding,

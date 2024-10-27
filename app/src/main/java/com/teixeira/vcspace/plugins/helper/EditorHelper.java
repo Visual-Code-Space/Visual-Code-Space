@@ -83,4 +83,8 @@ public class EditorHelper {
   public void saveFile() {
     editorActivity.saveFile();
   }
+
+  public boolean canEditorHandleCurrentKeyBinding() {
+    return editorActivity.getCanEditorHandleCurrentKeyBinding();
+  }
 }

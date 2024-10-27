@@ -30,6 +30,7 @@ import java.io.File
 
 class CommandPaletteManager {
   companion object {
+    @JvmStatic
     val instance by lazy { CommandPaletteManager() }
 
     private const val COMMANDS_FILE_NAME = "recently_used_commands.json"

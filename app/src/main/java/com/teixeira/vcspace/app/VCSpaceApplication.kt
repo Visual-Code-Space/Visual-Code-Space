@@ -10,6 +10,7 @@ import com.downloader.PRDownloader
 import com.itsaky.androidide.treesitter.TreeSitter
 import com.teixeira.vcspace.activities.CrashActivity
 import com.teixeira.vcspace.activities.EditorActivity
+import com.teixeira.vcspace.extensions.doIfNull
 import com.teixeira.vcspace.plugins.internal.PluginManager
 import com.teixeira.vcspace.providers.GrammarProvider
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry
@@ -26,14 +27,24 @@ class VCSpaceApplication : BaseApplication() {
   private val activities = mutableListOf<Activity>()
 
   companion object {
+    private var appInstance: VCSpaceApplication? = null
+
     @JvmStatic
-    val appInstance by lazy { VCSpaceApplication() }
+    @Synchronized
+    fun getInstance(): VCSpaceApplication {
+      doIfNull(appInstance) {
+        appInstance = VCSpaceApplication()
+      }
+
+      return appInstance!!
+    }
   }
 
   override fun onCreate() {
     uncaughtException = Thread.getDefaultUncaughtExceptionHandler()
     Thread.setDefaultUncaughtExceptionHandler(this::uncaughtException)
     super.onCreate()
+    appInstance = this
 
     TreeSitter.loadLibrary()
 
@@ -61,10 +72,12 @@ class VCSpaceApplication : BaseApplication() {
         PluginManager.init(
           application = this@VCSpaceApplication,
           onError = { plugin, err ->
-            ToastUtils.showLong("""
+            ToastUtils.showLong(
+              """
               Plugin ${plugin.manifest.name} failed to start.
               Error: ${err.message}
-            """.trimIndent().trim())
+            """.trimIndent().trim()
+            )
           }
         )
       }

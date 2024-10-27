@@ -15,14 +15,12 @@
 
 package com.teixeira.vcspace.plugins
 
-import android.os.Handler
-import android.os.Looper
-import android.widget.Toast
 import bsh.Interpreter
 import com.blankj.utilcode.util.ThreadUtils
 import com.google.gson.GsonBuilder
 import com.teixeira.vcspace.app.VCSpaceApplication
 import com.teixeira.vcspace.editor.snippet.SnippetController
+import com.teixeira.vcspace.plugins.helper.CommandManager
 import com.teixeira.vcspace.plugins.helper.EditorHelper
 import com.teixeira.vcspace.plugins.helper.PluginHelper
 import com.teixeira.vcspace.preferences.pluginsPath
@@ -37,6 +35,7 @@ class Plugin(
 
   fun start(onError: (Throwable) -> Unit) {
     val helper = PluginHelper()
+    val commandManager = CommandManager()
     val snippetController = SnippetController.instance
     val editorHelper = EditorHelper(app.getEditorActivity())
 
@@ -66,9 +65,11 @@ class Plugin(
         set("app", app)
         set("manifest", manifest)
         set("helper", helper)
+        set("commandManager", commandManager)
         set("editorHelper", editorHelper)
         set("snippetController", snippetController)
         set("PLUGIN_DIR", pluginsPath)
+        set("CURRENT_PLUGIN_DIR", fullPath)
 
         manifest.scripts.forEach { script ->
           source(File("$fullPath/${script.name}"))
@@ -94,10 +95,6 @@ class Plugin(
     } catch (err: Exception) {
       onError(err)
       err.printStackTrace()
-
-      Handler(Looper.getMainLooper()).post {
-        Toast.makeText(app, err.message, Toast.LENGTH_SHORT).show()
-      }
     }
   }
 

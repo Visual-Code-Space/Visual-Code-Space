@@ -160,7 +160,7 @@ fun PluginsScreen(
         viewModel.addNewInstalledPlugin(
           Plugin(
             manifest = manifest,
-            app = VCSpaceApplication.appInstance,
+            app = VCSpaceApplication.getInstance(),
             fullPath = "$pluginsPath/${manifest.packageName}"
           )
         )

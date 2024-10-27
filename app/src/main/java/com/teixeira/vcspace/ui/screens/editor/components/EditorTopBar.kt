@@ -31,6 +31,7 @@ import androidx.compose.material.icons.automirrored.rounded.Redo
 import androidx.compose.material.icons.automirrored.rounded.Undo
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ChevronRight
+import androidx.compose.material.icons.rounded.ElectricalServices
 import androidx.compose.material.icons.rounded.FileOpen
 import androidx.compose.material.icons.rounded.Folder
 import androidx.compose.material.icons.rounded.KeyboardCommandKey
@@ -66,6 +67,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.KeyboardUtils
+import com.blankj.utilcode.util.ToastUtils
 import com.blankj.utilcode.util.UriUtils
 import com.downloader.Error
 import com.downloader.OnDownloadListener
@@ -76,6 +78,7 @@ import com.teixeira.vcspace.PYTHON_PACKAGE_URL_32_BIT
 import com.teixeira.vcspace.PYTHON_PACKAGE_URL_64_BIT
 import com.teixeira.vcspace.activities.LocalEditorDrawerState
 import com.teixeira.vcspace.activities.TerminalActivity
+import com.teixeira.vcspace.app.VCSpaceApplication
 import com.teixeira.vcspace.app.strings
 import com.teixeira.vcspace.commandpalette.CommandPaletteManager
 import com.teixeira.vcspace.commandpalette.newCommand
@@ -84,6 +87,7 @@ import com.teixeira.vcspace.core.components.common.VCSpaceTopBar
 import com.teixeira.vcspace.core.settings.Settings.EditorTabs.rememberAutoSave
 import com.teixeira.vcspace.editor.events.OnContentChangeEvent
 import com.teixeira.vcspace.editor.events.OnKeyBindingEvent
+import com.teixeira.vcspace.plugins.internal.PluginManager
 import com.teixeira.vcspace.preferences.pythonDownloaded
 import com.teixeira.vcspace.preferences.pythonExtracted
 import com.teixeira.vcspace.ui.screens.editor.EditorViewModel
@@ -254,7 +258,7 @@ fun EditorTopBar(
           newCommand("Terminal", "Ctrl+T") {
             context.startActivity(Intent(context, TerminalActivity::class.java))
           },
-          newCommand("Search", "Ctrl+F") {
+          newCommand("Search", "Ctrl+K") {
             selectedEditor?.beginSearchMode()
           }
         )
@@ -287,7 +291,7 @@ fun EditorTopBar(
               )
             },
             trailingIcon = {
-              Text("Ctrl+F")
+              Text("Ctrl+K")
             },
             enabled = selectedEditor != null,
             onClick = {
@@ -330,6 +334,30 @@ fun EditorTopBar(
             onClick = {
               showFileMenu.value = !showFileMenu.value
               showMenu = false
+            }
+          )
+
+          DropdownMenuItem(
+            text = { Text(stringResource(strings.reload_plugins)) },
+            onClick = {
+              PluginManager.init(
+                application = VCSpaceApplication.getInstance(),
+                onError = { plugin, err ->
+                  ToastUtils.showLong(
+                    """
+                    Plugin "${plugin.manifest.name}" failed to start.
+                    Error: ${err.message}
+                  """.trimIndent().trim()
+                  )
+                }
+              )
+              showMenu = false
+            },
+            leadingIcon = {
+              Icon(
+                Icons.Rounded.ElectricalServices,
+                contentDescription = null
+              )
             }
           )
         }

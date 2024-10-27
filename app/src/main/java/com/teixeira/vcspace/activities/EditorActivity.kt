@@ -105,62 +105,61 @@ class EditorActivity : BaseComposeActivity() {
     editorViewModel.setCanEditorHandleCurrentKeyBinding(event.canEditorHandle)
   }
 
-  @OptIn(DelicateCoroutinesApi::class)
   private fun onCreate() {
     CommandPaletteManager.instance.addCommand(
       newCommand("Paste", "Ctrl+V") {
-        val editor = editorViewModel.getSelectedEditor()?.editor
-        val canEditorHandle = editorViewModel.canEditorHandleCurrentKeyBinding.value
+        val editor = currentEditor?.editor
+        val canEditorHandle = canEditorHandleCurrentKeyBinding
 
         if (!canEditorHandle) {
           editor?.pasteText()
         }
       },
       newCommand("Copy", "Ctrl+C") {
-        val editor = editorViewModel.getSelectedEditor()?.editor
-        val canEditorHandle = editorViewModel.canEditorHandleCurrentKeyBinding.value
+        val editor = currentEditor?.editor
+        val canEditorHandle = canEditorHandleCurrentKeyBinding
 
         if (!canEditorHandle && editor?.cursor?.isSelected == true) {
           editor.copyText()
         }
       },
       newCommand("Cut", "Ctrl+X") {
-        val editor = editorViewModel.getSelectedEditor()?.editor
-        val canEditorHandle = editorViewModel.canEditorHandleCurrentKeyBinding.value
+        val editor = currentEditor?.editor
+        val canEditorHandle = canEditorHandleCurrentKeyBinding
 
         if (!canEditorHandle && editor?.cursor?.isSelected == true) {
           editor.cutText()
         }
       },
-      newCommand("Copy Path of Active File", "Shift+Alt+C") {
-        val file = editorViewModel.getSelectedEditor()?.file
+      newCommand("Copy Path of Active File", "Alt+Shift+C") {
+        val file = currentEditor?.file
         ClipboardUtils.copyText(file?.absolutePath)
         ToastUtils.showShort("Copied path of active file: ${file?.name}")
       },
-      newCommand("Copy File Name", "Shift+Alt+F") {
-        val file = editorViewModel.getSelectedEditor()?.file
+      newCommand("Copy File Name", "Alt+Shift+F") {
+        val file = currentEditor?.file
         ClipboardUtils.copyText(file?.name)
         ToastUtils.showShort("Copied file name: ${file?.name}")
       },
       newCommand("Undo", "Ctrl+Z") {
-        val editor = editorViewModel.getSelectedEditor()?.editor
-        val canEditorHandle = editorViewModel.canEditorHandleCurrentKeyBinding.value
+        val editor = currentEditor?.editor
+        val canEditorHandle = canEditorHandleCurrentKeyBinding
 
         if (!canEditorHandle) {
           editor?.undo()
         }
       },
       newCommand("Redo", "Ctrl+Y") {
-        val editor = editorViewModel.getSelectedEditor()?.editor
-        val canEditorHandle = editorViewModel.canEditorHandleCurrentKeyBinding.value
+        val editor = currentEditor?.editor
+        val canEditorHandle = canEditorHandleCurrentKeyBinding
 
         if (!canEditorHandle) {
           editor?.redo()
         }
       },
       newCommand("Toggle Line Comment", "Ctrl+/") {
-        val editor = editorViewModel.getSelectedEditor()?.editor
-        val canEditorHandle = editorViewModel.canEditorHandleCurrentKeyBinding.value
+        val editor = currentEditor?.editor
+        val canEditorHandle = canEditorHandleCurrentKeyBinding
 
         val commentRule = editor?.commentRule
         if (editor != null && !canEditorHandle) {
@@ -321,6 +320,7 @@ class EditorActivity : BaseComposeActivity() {
 
   val currentEditor get() = editorViewModel.getSelectedEditor()
   val selectedFileIndex get() = editorViewModel.uiState.value.selectedFileIndex
+  val canEditorHandleCurrentKeyBinding get() = editorViewModel.canEditorHandleCurrentKeyBinding.value
 
   val editorForFile = { file: File -> editorViewModel.getEditorForFile(file) }
 

@@ -47,7 +47,7 @@ object PluginManager {
   }
 
   private fun getPlugins(application: VCSpaceApplication) = application.loadPlugins()
-  fun getPlugins() = getPlugins(VCSpaceApplication.appInstance)
+  fun getPlugins() = getPlugins(VCSpaceApplication.getInstance())
 
   fun uploadPlugin(plugin: Plugin, callback: (Boolean, String?) -> Unit) {
     val pluginFile = plugin.fullPath.toFile()
