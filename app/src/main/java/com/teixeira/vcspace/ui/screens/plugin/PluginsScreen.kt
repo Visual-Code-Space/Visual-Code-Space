@@ -150,7 +150,7 @@ fun PluginsScreen(
         FileUtils.createOrExistsFile(manifestFile)
         manifestFile.writeText(GsonBuilder().setPrettyPrinting().create().toJson(manifest))
 
-        val pluginFile = File("$newPluginPath/${manifest.name.lowercase().replace(" ", "_")}.java")
+        val pluginFile = File("$newPluginPath/main.bsh")
         FileUtils.createOrExistsFile(pluginFile)
 
         context.assets.open("plugin/main.java").bufferedReader().use {

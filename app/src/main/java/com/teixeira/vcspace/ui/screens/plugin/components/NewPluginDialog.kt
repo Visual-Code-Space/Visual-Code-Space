@@ -109,8 +109,8 @@ fun NewPluginDialog(
               description = description.ifEmpty { defaultDescription },
               scripts = arrayOf(
                 Script(
-                  name = "${name.lowercase().replace(" ", "_")}.java",
-                  entryPoint = "main"
+                  name = "main.bsh",
+                  entryPoint = "init"
                 )
               )
             )

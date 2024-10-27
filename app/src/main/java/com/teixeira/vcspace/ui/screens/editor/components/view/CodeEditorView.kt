@@ -274,7 +274,7 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
   }
 
   private suspend fun createLanguage(): Language {
-    if (file?.extension == "java") {
+    if (file?.extension == "java" || file?.extension == "bsh") {
       return JavaLanguage()
     }
 

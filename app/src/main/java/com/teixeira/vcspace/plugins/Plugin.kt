@@ -15,6 +15,7 @@
 
 package com.teixeira.vcspace.plugins
 
+import android.widget.Toast
 import bsh.Interpreter
 import com.blankj.utilcode.util.ThreadUtils
 import com.google.gson.GsonBuilder
@@ -42,26 +43,11 @@ class Plugin(
     try {
       interpreter = Interpreter().apply {
         setClassLoader(app.classLoader)
-        eval("import com.teixeira.vcspace.plugins.helper.FileHelper;")
-        eval("import java.io.*;")
-        eval("import java.util.*;")
-        eval("import java.util.concurrent.*;")
-        eval("import java.lang.*;")
-        eval("import java.net.*;")
-        eval("import java.nio.*;")
-        eval("import java.nio.file.*;")
-        eval("import java.nio.charset.*;")
-        eval("import java.nio.channels.*;")
-        eval("import java.nio.charset.spi.*;")
-        eval("import java.nio.file.attribute.*;")
-        eval("import java.nio.file.spi.*;")
-        eval("import java.security.*;")
-        eval("import java.security.spec.*;")
-        eval("import java.security.cert.*;")
-        eval("import java.text.*;")
-        eval("import java.time.*;")
-        eval("import java.time.format.*;")
-        eval("import java.time.temporal.*;")
+        /* strictJava = true */
+        nameSpace.importClass("com.teixeira.vcspace.plugins.helper.FileHelper")
+        nameSpace.importClass("android.widget.Toast")
+        nameSpace.loadDefaultImports()
+
         set("app", app)
         set("manifest", manifest)
         set("helper", helper)
@@ -70,6 +56,14 @@ class Plugin(
         set("snippetController", snippetController)
         set("PLUGIN_DIR", pluginsPath)
         set("CURRENT_PLUGIN_DIR", fullPath)
+
+        eval(
+          """
+          public static void showMessage(String message) {
+            Toast.makeText(app, message, Toast.LENGTH_SHORT).show();
+          }
+        """.trimIndent()
+        )
 
         manifest.scripts.forEach { script ->
           source(File("$fullPath/${script.name}"))
@@ -96,6 +90,10 @@ class Plugin(
       onError(err)
       err.printStackTrace()
     }
+  }
+
+  private fun showToast(message: String) {
+    ThreadUtils.runOnUiThread { Toast.makeText(app, message, Toast.LENGTH_SHORT).show() }
   }
 
   fun saveManifest(manifest: Manifest) {

@@ -4,10 +4,10 @@ import android.widget.Toast;
 /*
  * This is a sample plugin script for Visual Code Space.
  *
- * This script serves as the entry point for your plugin. The 'main' function is
+ * This script serves as the entry point for your plugin. The 'init' function is
  * the default method that will be executed when your plugin is loaded and started.
  *
- * Follow this template to create your own plugin by adding custom logic inside the 'main' function.
+ * Follow this template to create your own plugin by adding custom logic inside the 'init' function.
  * You can use Android-specific features and classes, as well as interact with the app using
  * provided objects like 'app' and 'helper'.
  *
@@ -22,13 +22,13 @@ import android.widget.Toast;
  * - Interact with existing app components
  *
  * Modifying the Entry Point:
- * - By default, the entry point is set to the 'main' function.
+ * - By default, the entry point is set to the 'init' function.
  * - You can change the entry point by modifying the 'entryPoint' field in the plugin's manifest.
  * - Set 'entryPoint' to the name of any other function in this script that you want to execute when the plugin is loaded.
  * - Example: To use 'startPlugin' as the entry point, set 'entryPoint: "startPlugin"' in the manifest.
  */
 
-void main() {
+void init() {
   // Display a simple Toast message when the plugin is loaded
   Toast.makeText(app, "Hello from plugin!", Toast.LENGTH_SHORT).show();
 
@@ -43,7 +43,7 @@ void main() {
   // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
   // app.startActivity(intent);
 
-  // Remember to keep the 'main' function parameterless for it to be correctly identified and executed.
+  // Remember to keep the 'init' function parameterless for it to be correctly identified and executed.
 }
 
 // Example of an alternative entry point
