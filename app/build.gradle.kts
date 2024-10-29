@@ -147,6 +147,8 @@ dependencies {
   implementation(libs.retrofit.converter.gson)
   implementation(libs.okhttp)
 
+  implementation(libs.nanohttpd)
+
   debugImplementation(libs.common.leakcanary)
   debugImplementation(libs.androidx.ui.tooling)
   debugImplementation(libs.androidx.ui.test.manifest)

@@ -55,6 +55,15 @@ fun isValidTextFile(file: File): Boolean {
   return type == null || type.startsWith("text/") || type in additionalTextTypes
 }
 
+private const val RUNNABLE_FILE_EXTENSIONS = "py,html,htm"
+
+fun isFileRunnable(file: File?): Boolean {
+  if (file != null) {
+    return file.extension in RUNNABLE_FILE_EXTENSIONS.split(",")
+  }
+  return false
+}
+
 /**
  * Checks if storage permission has been granted.
  *

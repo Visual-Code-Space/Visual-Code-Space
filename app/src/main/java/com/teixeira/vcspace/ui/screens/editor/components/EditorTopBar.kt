@@ -49,6 +49,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
@@ -59,11 +60,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.KeyboardUtils
@@ -92,7 +97,9 @@ import com.teixeira.vcspace.preferences.pythonDownloaded
 import com.teixeira.vcspace.preferences.pythonExtracted
 import com.teixeira.vcspace.ui.screens.editor.EditorViewModel
 import com.teixeira.vcspace.ui.screens.editor.components.view.CodeEditorView
+import com.teixeira.vcspace.utils.isFileRunnable
 import com.teixeira.vcspace.utils.launchWithProgressDialog
+import com.teixeira.vcspace.webserver.LocalHttpServer
 import io.github.rosemoe.sora.event.ContentChangeEvent
 import io.github.rosemoe.sora.event.KeyBindingEvent
 import kotlinx.coroutines.CoroutineScope
@@ -111,6 +118,7 @@ fun EditorTopBar(
 ) {
   val scope = rememberCoroutineScope()
   val drawerState = LocalEditorDrawerState.current
+  val uriHandler = LocalUriHandler.current
 
   var showMenu by remember { mutableStateOf(false) }
   val showFileMenu = remember { mutableStateOf(false) }
@@ -167,6 +175,28 @@ fun EditorTopBar(
     isKeyboardOpen = KeyboardUtils.isSoftInputVisible(context)
   }
 
+  var server: LocalHttpServer? = null
+
+  val lifecycleOwner = LocalLifecycleOwner.current
+  DisposableEffect(lifecycleOwner) {
+    val observer = LifecycleEventObserver { _, event ->
+      if (event == Lifecycle.Event.ON_DESTROY) {
+        server?.let {
+          if (it.isAlive || it.wasStarted()) {
+            it.closeAllConnections()
+            it.stop()
+          }
+        }
+      }
+    }
+
+    lifecycleOwner.lifecycle.addObserver(observer)
+
+    onDispose {
+      lifecycleOwner.lifecycle.removeObserver(observer)
+    }
+  }
+
   VCSpaceTopBar(
     modifier = modifier,
     title = {
@@ -194,24 +224,49 @@ fun EditorTopBar(
     },
     actions = {
       AnimatedVisibility(
-        visible = selectedEditor?.file?.extension == "py"
+        visible = isFileRunnable(selectedEditor?.file)
       ) {
         Tooltip(stringResource(id = strings.execute)) {
           IconButton(
             onClick = {
-              downloadPythonPackage(
-                scope = scope,
-                context = context,
-                view = view
-              ) {
-                context.startActivity(
-                  Intent(context, TerminalActivity::class.java).apply {
-                    putExtra(
-                      TerminalActivity.KEY_PYTHON_FILE_PATH,
-                      selectedEditor?.file?.absolutePath
-                    )
+              when (selectedEditor?.file?.extension) {
+                "html", "htm" -> {
+                  selectedEditor.file?.parent?.let { directory ->
+                    server?.let {
+                      if (it.isAlive || it.wasStarted()) {
+                        it.closeAllConnections()
+                        it.stop()
+                      }
+                    }
+
+                    server = LocalHttpServer(directory)
+
+                    runCatching {
+                      server?.start()
+                      val assignedPort = server?.assignedPort ?: 8000
+                      ToastUtils.showLong("Server started on http://localhost:$assignedPort")
+                      uriHandler.openUri("http://localhost:$assignedPort/${selectedEditor.file?.name ?: ""}")
+                    }.onFailure {
+                      Log.e("ServerError", "Failed to start server: ${it.message}")
+                      ToastUtils.showLong("Failed to start server: ${it.message}")
+                    }
                   }
-                )
+                }
+
+                "py" -> downloadPythonPackage(
+                  scope = scope,
+                  context = context,
+                  view = view
+                ) {
+                  context.startActivity(
+                    Intent(context, TerminalActivity::class.java).apply {
+                      putExtra(
+                        TerminalActivity.KEY_PYTHON_FILE_PATH,
+                        selectedEditor.file?.absolutePath
+                      )
+                    }
+                  )
+                }
               }
             }
           ) {
