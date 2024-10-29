@@ -30,10 +30,8 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.Key
@@ -49,6 +47,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.teixeira.vcspace.activities.LocalCommandPaletteManager
 import com.teixeira.vcspace.activities.LocalEditorDrawerState
 import com.teixeira.vcspace.commandpalette.CommandPalette
 import com.teixeira.vcspace.commandpalette.CommandPaletteManager
@@ -99,12 +98,12 @@ fun EditorScreen(
   val isDynamicColor by rememberIsDynamicColor()
 
   DisposableEffect(openLastFiles) {
-    if (openLastFiles) {
-      for (file in viewModel.lastOpenedFiles()) {
-        viewModel.addFile(file)
-        fileExplorerViewModel.setCurrentPath(file.absolutePath, showHiddenFiles)
-      }
+    /*if (openLastFiles) {*/
+    for (file in viewModel.lastOpenedFiles()) {
+      viewModel.addFile(file)
+      fileExplorerViewModel.setCurrentPath(file.absolutePath, showHiddenFiles)
     }
+    /*}*/
 
     onDispose {
       viewModel.rememberLastFiles()
@@ -112,7 +111,7 @@ fun EditorScreen(
   }
 
   val context = LocalContext.current
-  val commandPaletteManager = CommandPaletteManager.instance
+  val commandPaletteManager = LocalCommandPaletteManager.current
 
   Column(modifier = modifier.onKeyEvent {
     if (it.isCtrlPressed && it.isShiftPressed && it.key == Key.P) {
@@ -161,8 +160,8 @@ fun EditorScreen(
 
     if (commandPaletteManager.showCommandPalette.value) {
       CommandPalette(
-        commands = CommandPaletteManager.instance.allCommands,
-        recentlyUsedCommands = CommandPaletteManager.instance.recentlyUsedCommands,
+        commands = commandPaletteManager.allCommands,
+        recentlyUsedCommands = commandPaletteManager.recentlyUsedCommands,
         onCommandSelected = { command ->
           commandPaletteManager.hide()
 

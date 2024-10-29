@@ -81,11 +81,11 @@ fun FileSettingsScreen(
         )
       },
       modifier = Modifier
-        .clip(PreferenceShape.Top)
+        .clip(PreferenceShape.Alone /* PreferenceShape.Top */)
         .background(backgroundColor)
     )
 
-    switchPreference(
+    /*switchPreference(
       key = "remember_last_opened_file_preference",
       title = { Text(text = stringResource(R.string.remember_last_opened_file_title)) },
       summary = {
@@ -105,6 +105,6 @@ fun FileSettingsScreen(
       modifier = Modifier
         .clip(PreferenceShape.Bottom)
         .background(backgroundColor)
-    )
+    )*/
   }
 }

@@ -33,6 +33,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -65,7 +66,6 @@ import com.teixeira.vcspace.ui.screens.editor.components.EditorTopBar
 import com.teixeira.vcspace.ui.screens.editor.components.view.CodeEditorView
 import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
 import io.github.rosemoe.sora.event.ContentChangeEvent
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -74,6 +74,10 @@ import java.io.File
 
 val LocalEditorDrawerState = compositionLocalOf<DrawerState> {
   noLocalProvidedFor("LocalEditorDrawerState")
+}
+
+val LocalCommandPaletteManager = staticCompositionLocalOf {
+  CommandPaletteManager.instance
 }
 
 class EditorActivity : BaseComposeActivity() {

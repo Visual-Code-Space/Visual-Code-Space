@@ -81,6 +81,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.hzy.libp7zip.P7ZipApi
 import com.teixeira.vcspace.PYTHON_PACKAGE_URL_32_BIT
 import com.teixeira.vcspace.PYTHON_PACKAGE_URL_64_BIT
+import com.teixeira.vcspace.activities.LocalCommandPaletteManager
 import com.teixeira.vcspace.activities.LocalEditorDrawerState
 import com.teixeira.vcspace.activities.TerminalActivity
 import com.teixeira.vcspace.app.VCSpaceApplication
@@ -119,6 +120,7 @@ fun EditorTopBar(
   val scope = rememberCoroutineScope()
   val drawerState = LocalEditorDrawerState.current
   val uriHandler = LocalUriHandler.current
+  val commandPaletteManager = LocalCommandPaletteManager.current
 
   var showMenu by remember { mutableStateOf(false) }
   val showFileMenu = remember { mutableStateOf(false) }
@@ -309,7 +311,7 @@ fun EditorTopBar(
       }
 
       LaunchedEffect(Unit) {
-        CommandPaletteManager.instance.addCommand(
+        commandPaletteManager.addCommand(
           newCommand("Terminal", "Ctrl+T") {
             context.startActivity(Intent(context, TerminalActivity::class.java))
           },
@@ -358,7 +360,7 @@ fun EditorTopBar(
           DropdownMenuItem(
             text = { Text("Command Palette") },
             onClick = {
-              CommandPaletteManager.instance.show()
+              commandPaletteManager.show()
               showMenu = false
             },
             leadingIcon = {
@@ -449,8 +451,10 @@ fun FileMenu(
     if (it != null) editorViewModel.addFile(UriUtils.uri2File(it))
   }
 
+  val commandPaletteManager = LocalCommandPaletteManager.current
+
   LaunchedEffect(Unit) {
-    CommandPaletteManager.instance.addCommand(
+    commandPaletteManager.addCommand(
       newCommand("New File", "Ctrl+N") {
         createFile.launch("filename.txt")
       },
