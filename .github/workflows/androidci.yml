@@ -12,17 +12,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  telegram:
-    name: Notify telegram group
-    runs-on: ubuntu-latest
-    steps:
-      - name: Notify the commit on Telegram
-        uses: EverythingSuckz/github-telegram-notify@main
-        with:
-          bot_token: '${{ secrets.BOT_TOKEN }}'
-          chat_id: '${{ secrets.CHAT_ID }}'
-          topic_id: '${{ secrets.TOPIC_ID }}'
-
   build:
     name: Build APKs
     runs-on: ubuntu-latest
