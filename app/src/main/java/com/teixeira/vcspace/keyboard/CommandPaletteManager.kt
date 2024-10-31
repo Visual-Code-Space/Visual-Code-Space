@@ -13,7 +13,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.commandpalette
+package com.teixeira.vcspace.keyboard
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.input.key.Key
@@ -24,6 +24,8 @@ import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.key
 import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.PathUtils
+import com.teixeira.vcspace.keyboard.model.Command
+import com.teixeira.vcspace.keyboard.model.Command.Companion.toKey
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File
