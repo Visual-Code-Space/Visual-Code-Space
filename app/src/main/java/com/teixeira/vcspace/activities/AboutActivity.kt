@@ -34,7 +34,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import com.teixeira.vcspace.activities.base.BaseComposeActivity
 import com.teixeira.vcspace.core.components.common.VCSpaceLargeTopBar
-import com.teixeira.vcspace.core.components.common.VCSpaceTopBar
 import com.teixeira.vcspace.ui.screens.about.ContributorsCard
 import com.teixeira.vcspace.ui.screens.about.SocialCard
 import com.teixeira.vcspace.ui.screens.about.VersionCard
