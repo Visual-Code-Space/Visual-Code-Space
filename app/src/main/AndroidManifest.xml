@@ -66,11 +66,9 @@
       android:exported="false"
       android:windowSoftInputMode="adjustResize" />
 
-    <service
-      android:name=".editor.lsp.service.KotlinLSPService"
-      android:enabled="true"
-      android:exported="false"
-      android:process=":kotlinLSPService" />
+    <activity
+      android:name=".activities.LocalServerActivity"
+      android:exported="false" />
 
     <provider
       android:name="androidx.core.content.FileProvider"
