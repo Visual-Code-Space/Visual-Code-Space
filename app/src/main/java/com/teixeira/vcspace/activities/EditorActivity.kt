@@ -49,8 +49,8 @@ import com.blankj.utilcode.util.UriUtils
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
 import com.teixeira.vcspace.activities.base.BaseComposeActivity
 import com.teixeira.vcspace.app.noLocalProvidedFor
-import com.teixeira.vcspace.commandpalette.CommandPaletteManager
-import com.teixeira.vcspace.commandpalette.newCommand
+import com.teixeira.vcspace.keyboard.CommandPaletteManager
+import com.teixeira.vcspace.keyboard.model.Command.Companion.newCommand
 import com.teixeira.vcspace.core.settings.Settings.File.rememberShowHiddenFiles
 import com.teixeira.vcspace.editor.addBlockComment
 import com.teixeira.vcspace.editor.addSingleComment

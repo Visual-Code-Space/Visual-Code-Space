@@ -86,7 +86,7 @@ import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
 import com.teixeira.vcspace.activities.TerminalActivity
 import com.teixeira.vcspace.app.VCSpaceApplication
 import com.teixeira.vcspace.app.strings
-import com.teixeira.vcspace.commandpalette.newCommand
+import com.teixeira.vcspace.keyboard.model.Command.Companion.newCommand
 import com.teixeira.vcspace.core.components.Tooltip
 import com.teixeira.vcspace.core.components.common.VCSpaceTopBar
 import com.teixeira.vcspace.core.settings.Settings.EditorTabs.rememberAutoSave

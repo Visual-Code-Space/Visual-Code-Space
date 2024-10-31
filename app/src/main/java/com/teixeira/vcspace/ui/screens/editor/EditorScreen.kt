@@ -49,8 +49,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.teixeira.vcspace.activities.Editor.LocalCommandPaletteManager
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
-import com.teixeira.vcspace.commandpalette.CommandPalette
-import com.teixeira.vcspace.commandpalette.CommandPaletteManager
+import com.teixeira.vcspace.components.keyboard.CommandPalette
+import com.teixeira.vcspace.keyboard.CommandPaletteManager
 import com.teixeira.vcspace.core.components.editor.FileTabLayout
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberColorScheme
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberDeleteIndentOnBackspace

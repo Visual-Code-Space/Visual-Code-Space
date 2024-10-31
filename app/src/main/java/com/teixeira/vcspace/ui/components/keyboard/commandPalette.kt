@@ -13,7 +13,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.commandpalette
+package com.teixeira.vcspace.ui.components.keyboard
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable

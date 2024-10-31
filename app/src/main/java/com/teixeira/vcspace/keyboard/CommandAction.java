@@ -13,7 +13,9 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.commandpalette;
+package com.teixeira.vcspace.keyboard;
+
+import com.teixeira.vcspace.keyboard.model.Command;
 
 @FunctionalInterface
 public interface CommandAction {
