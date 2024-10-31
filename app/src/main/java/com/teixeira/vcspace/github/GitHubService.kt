@@ -13,7 +13,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.plugins.internal.distribution
+package com.teixeira.vcspace.github
 
 import okhttp3.Credentials
 import okhttp3.OkHttpClient

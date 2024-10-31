@@ -13,11 +13,18 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.plugins.internal.distribution.github.commit
+package com.teixeira.vcspace.github
 
-data class Verification(
-  val reason: String,
-  val verified: Boolean,
-  val signature: String?,
-  val payload: String?
+import com.google.gson.annotations.SerializedName
+
+data class FileContent(
+  val encoding: String,
+  val content: String,
+  val name: String,
+  val path: String,
+  val sha: String,
+  val size: Int, // in bytes
+  val type: String, // "file" or "dir"
+  @SerializedName("download_url")
+  val downloadUrl: String
 )

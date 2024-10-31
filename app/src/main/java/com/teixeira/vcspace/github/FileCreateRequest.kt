@@ -13,12 +13,11 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.plugins.internal.distribution.github
+package com.teixeira.vcspace.github
 
-data class FileUpdateRequest(
+data class FileCreateRequest(
   val message: String,
   val content: String,
-  val sha: String,
   val branch: String = "main",
   val author: Author? = null
 )

@@ -13,14 +13,10 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.plugins.internal.distribution.github.commit
+package com.teixeira.vcspace.github
 
-import com.teixeira.vcspace.plugins.internal.distribution.github.Author
-
-data class Commit(
-  val author: Author,
-  val message: String,
-  val sha: String,
-  val url: String,
-  val verification: Verification
+data class Author(
+  val name: String,
+  val email: String,
+  val date: String?
 )

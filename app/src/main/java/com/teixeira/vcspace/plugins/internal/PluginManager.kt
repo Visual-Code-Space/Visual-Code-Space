@@ -23,10 +23,10 @@ import com.teixeira.vcspace.extensions.toFile
 import com.teixeira.vcspace.plugins.Manifest
 import com.teixeira.vcspace.plugins.Plugin
 import com.teixeira.vcspace.plugins.Script
-import com.teixeira.vcspace.plugins.internal.distribution.GitHubService
-import com.teixeira.vcspace.plugins.internal.distribution.github.Content
-import com.teixeira.vcspace.plugins.internal.distribution.github.FileCreateRequest
-import com.teixeira.vcspace.plugins.internal.distribution.github.FileCreateResponse
+import com.teixeira.vcspace.github.GitHubService
+import com.teixeira.vcspace.github.Content
+import com.teixeira.vcspace.github.FileCreateRequest
+import com.teixeira.vcspace.github.FileCreateResponse
 import com.teixeira.vcspace.plugins.internal.extensions.loadPlugins
 import okhttp3.OkHttpClient
 import okhttp3.Request

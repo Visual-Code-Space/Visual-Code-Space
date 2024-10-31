@@ -13,10 +13,11 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.plugins.internal.distribution.github
+package com.teixeira.vcspace.github
 
-data class Author(
-  val name: String,
-  val email: String,
-  val date: String?
+import com.teixeira.vcspace.github.commit.Commit
+
+data class FileCreateResponse(
+  val content: Content,
+  val commit: Commit
 )

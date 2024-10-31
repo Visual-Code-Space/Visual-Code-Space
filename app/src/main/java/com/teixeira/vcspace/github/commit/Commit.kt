@@ -13,11 +13,14 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.plugins.internal.distribution.github
+package com.teixeira.vcspace.github.commit
 
-import com.teixeira.vcspace.plugins.internal.distribution.github.commit.Commit
+import com.teixeira.vcspace.github.Author
 
-data class FileCreateResponse(
-  val content: Content,
-  val commit: Commit
+data class Commit(
+  val author: Author,
+  val message: String,
+  val sha: String,
+  val url: String,
+  val verification: Verification
 )

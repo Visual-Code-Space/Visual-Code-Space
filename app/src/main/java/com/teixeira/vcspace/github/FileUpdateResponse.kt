@@ -13,9 +13,9 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.plugins.internal.distribution.github
+package com.teixeira.vcspace.github
 
-import com.teixeira.vcspace.plugins.internal.distribution.github.commit.Commit
+import com.teixeira.vcspace.github.commit.Commit
 
 data class FileUpdateResponse(
   val content: Content,

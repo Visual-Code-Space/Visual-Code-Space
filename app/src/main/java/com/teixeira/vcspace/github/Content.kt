@@ -13,11 +13,16 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.plugins.internal.distribution.github
+package com.teixeira.vcspace.github
 
-data class FileCreateRequest(
-  val message: String,
-  val content: String,
-  val branch: String = "main",
-  val author: Author? = null
+import com.google.gson.annotations.SerializedName
+
+data class Content(
+  val name: String,
+  val path: String,
+  val sha: String,
+  val size: Int, // in bytes
+  val type: String, // "file" or "dir"
+  @SerializedName("download_url")
+  val downloadUrl: String?
 )
