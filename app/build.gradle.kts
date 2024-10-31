@@ -149,6 +149,8 @@ dependencies {
   implementation(libs.okhttp)
 
   implementation(libs.nanohttpd)
+  implementation(libs.coil.compose)
+  implementation(libs.coil.network.okhttp)
 
   debugImplementation(libs.common.leakcanary)
   debugImplementation(libs.androidx.ui.tooling)

@@ -17,6 +17,7 @@ package com.teixeira.vcspace.plugins.internal
 
 import com.blankj.utilcode.util.ToastUtils
 import com.teixeira.vcspace.BuildConfig
+import com.teixeira.vcspace.ORGANIZATION_NAME
 import com.teixeira.vcspace.app.VCSpaceApplication
 import com.teixeira.vcspace.extensions.toBase64String
 import com.teixeira.vcspace.extensions.toFile
@@ -37,7 +38,6 @@ import java.io.File
 import java.io.IOException
 
 object PluginManager {
-  private const val ORGANIZATION_NAME = "Visual-Code-Space"
   private const val REPO_NAME = "vcspace-plugins"
 
   @JvmOverloads

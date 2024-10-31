@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.teixeira.vcspace.app.drawables
 import com.teixeira.vcspace.ui.extensions.harmonizeWithPrimary
@@ -67,7 +68,8 @@ fun SocialCard(modifier: Modifier = Modifier) {
       Text(
         text = "Socials",
         modifier = Modifier.padding(16.dp),
-        style = MaterialTheme.typography.bodyLarge
+        style = MaterialTheme.typography.bodyLarge,
+        fontWeight = FontWeight.SemiBold
       )
 
       LazyColumn {
@@ -95,7 +97,7 @@ fun SocialListItem(
 
   Row(
     modifier = modifier
-      .clip(RoundedCornerShape(16))
+      .clip(RoundedCornerShape(16.dp))
       .clickable {
         if (title == "Email") {
           uriHandler.openUri("mailto:${url}")

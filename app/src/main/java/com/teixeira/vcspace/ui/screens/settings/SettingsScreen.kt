@@ -30,10 +30,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.teixeira.vcspace.activities.AboutActivity
+import com.teixeira.vcspace.activities.PluginsActivity
 import com.teixeira.vcspace.app.BaseApplication
+import com.teixeira.vcspace.app.strings
 import com.teixeira.vcspace.extensions.open
 import com.teixeira.vcspace.resources.R.string
-import com.teixeira.vcspace.activities.PluginsActivity
 import com.teixeira.vcspace.ui.screens.SettingScreens
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import me.zhanghai.compose.preference.preference
@@ -110,6 +112,15 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
             summary = { Text(stringResource(string.pref_about_github_summary)) },
             onClick = {
               uriHandler.openUri(BaseApplication.REPO_URL)
+            }
+          )
+
+          preference(
+            key = "about_vcspace",
+            title = { Text("About VCSpace") },
+            summary = { Text("More about ${stringResource(strings.app_name)}.") },
+            onClick = {
+              context.open(AboutActivity::class.java)
             }
           )
         }

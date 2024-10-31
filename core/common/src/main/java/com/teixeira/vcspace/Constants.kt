@@ -25,6 +25,9 @@ const val PYTHON_PACKAGE_URL_32_BIT =
 
 val APP_EXTERNAL_DIR = "${PathUtils.getExternalStoragePath()}/VCSpace"
 
+const val ORGANIZATION_NAME = "Visual-Code-Space"
+const val APPLICATION_REPOSITORY_NAME = "Visual-Code-Space"
+
 object PreferenceKeys {
   const val GENERAL_PREFERENCES = "pref_configure_general_key"
   const val EDITOR_PREFERENCES = "pref_configure_editor_key"

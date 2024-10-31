@@ -53,4 +53,15 @@ interface GitHubApiService {
     @Path("repo") repo: String,
     @Path("path") path: String
   ): Call<FileContent>
+
+  @GET("repos/{owner}/{repo}/contributors")
+  fun getContributors(
+    @Path("owner") owner: String,
+    @Path("repo") repo: String
+  ): Call<List<Contributor>>
+
+  @GET("users/{username}")
+  fun getUser(
+    @Path("username") username: String
+  ): Call<User>
 }

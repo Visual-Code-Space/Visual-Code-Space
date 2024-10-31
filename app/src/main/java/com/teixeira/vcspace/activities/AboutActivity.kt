@@ -23,27 +23,38 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import com.teixeira.vcspace.activities.base.BaseComposeActivity
+import com.teixeira.vcspace.core.components.common.VCSpaceLargeTopBar
 import com.teixeira.vcspace.core.components.common.VCSpaceTopBar
+import com.teixeira.vcspace.ui.screens.about.ContributorsCard
 import com.teixeira.vcspace.ui.screens.about.SocialCard
 import com.teixeira.vcspace.ui.screens.about.VersionCard
 
 class AboutActivity : BaseComposeActivity() {
+  @OptIn(ExperimentalMaterial3Api::class)
   @Composable
   override fun MainScreen() {
     val backPressedDispatcherOwner = LocalOnBackPressedDispatcherOwner.current
     val backPressedDispatcher = backPressedDispatcherOwner?.onBackPressedDispatcher
 
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
     Scaffold(
-      modifier = Modifier.fillMaxSize(),
+      modifier = Modifier
+        .fillMaxSize()
+        .nestedScroll(scrollBehavior.nestedScrollConnection),
       topBar = {
-        VCSpaceTopBar(title = "About",
+        VCSpaceLargeTopBar(
+          title = "About",
           navigationIcon = {
             IconButton(onClick = {
               backPressedDispatcher?.onBackPressed()
@@ -53,7 +64,9 @@ class AboutActivity : BaseComposeActivity() {
                 contentDescription = null
               )
             }
-          })
+          },
+          scrollBehavior = scrollBehavior
+        )
       }
     ) { innerPadding ->
       Column(
@@ -65,6 +78,7 @@ class AboutActivity : BaseComposeActivity() {
       ) {
         VersionCard(modifier = Modifier.fillMaxWidth())
         SocialCard(modifier = Modifier.fillMaxWidth())
+        ContributorsCard(modifier = Modifier.fillMaxWidth())
       }
     }
   }
