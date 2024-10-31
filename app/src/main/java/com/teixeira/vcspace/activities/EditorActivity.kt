@@ -46,6 +46,7 @@ import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.blankj.utilcode.util.UriUtils
+import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
 import com.teixeira.vcspace.activities.base.BaseComposeActivity
 import com.teixeira.vcspace.app.noLocalProvidedFor
 import com.teixeira.vcspace.commandpalette.CommandPaletteManager
@@ -72,12 +73,14 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.io.File
 
-val LocalEditorDrawerState = compositionLocalOf<DrawerState> {
-  noLocalProvidedFor("LocalEditorDrawerState")
-}
+object Editor {
+  val LocalEditorDrawerState = compositionLocalOf<DrawerState> {
+    noLocalProvidedFor("LocalEditorDrawerState")
+  }
 
-val LocalCommandPaletteManager = staticCompositionLocalOf {
-  CommandPaletteManager.instance
+  val LocalCommandPaletteManager = staticCompositionLocalOf {
+    CommandPaletteManager.instance
+  }
 }
 
 class EditorActivity : BaseComposeActivity() {

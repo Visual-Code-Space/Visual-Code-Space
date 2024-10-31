@@ -81,12 +81,11 @@ import com.google.android.material.snackbar.Snackbar
 import com.hzy.libp7zip.P7ZipApi
 import com.teixeira.vcspace.PYTHON_PACKAGE_URL_32_BIT
 import com.teixeira.vcspace.PYTHON_PACKAGE_URL_64_BIT
-import com.teixeira.vcspace.activities.LocalCommandPaletteManager
-import com.teixeira.vcspace.activities.LocalEditorDrawerState
+import com.teixeira.vcspace.activities.Editor.LocalCommandPaletteManager
+import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
 import com.teixeira.vcspace.activities.TerminalActivity
 import com.teixeira.vcspace.app.VCSpaceApplication
 import com.teixeira.vcspace.app.strings
-import com.teixeira.vcspace.commandpalette.CommandPaletteManager
 import com.teixeira.vcspace.commandpalette.newCommand
 import com.teixeira.vcspace.core.components.Tooltip
 import com.teixeira.vcspace.core.components.common.VCSpaceTopBar
@@ -248,6 +247,12 @@ fun EditorTopBar(
                       val assignedPort = server?.assignedPort ?: 8000
                       ToastUtils.showLong("Server started on http://localhost:$assignedPort")
                       uriHandler.openUri("http://localhost:$assignedPort/${selectedEditor.file?.name ?: ""}")
+                      /*context.startActivity(Intent(context, LocalServerActivity::class.java).apply {
+                        putExtra(
+                          LocalServerActivity.SERVER_URI,
+                          "http://localhost:$assignedPort/${selectedEditor.file?.name ?: ""}"
+                        )
+                      })*/
                     }.onFailure {
                       Log.e("ServerError", "Failed to start server: ${it.message}")
                       ToastUtils.showLong("Failed to start server: ${it.message}")
