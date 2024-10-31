@@ -49,6 +49,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
+import com.teixeira.vcspace.keyboard.model.Command
+import com.teixeira.vcspace.keyboard.CommandPaletteManager
 import com.teixeira.vcspace.ui.extensions.harmonizeWithPrimary
 
 @Composable

@@ -49,7 +49,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.teixeira.vcspace.activities.Editor.LocalCommandPaletteManager
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
-import com.teixeira.vcspace.components.keyboard.CommandPalette
 import com.teixeira.vcspace.keyboard.CommandPaletteManager
 import com.teixeira.vcspace.core.components.editor.FileTabLayout
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberColorScheme
@@ -70,6 +69,7 @@ import com.teixeira.vcspace.core.settings.Settings.General.rememberIsDarkMode
 import com.teixeira.vcspace.core.settings.Settings.General.rememberIsDynamicColor
 import com.teixeira.vcspace.editor.VCSpaceEditor
 import com.teixeira.vcspace.resources.R
+import com.teixeira.vcspace.ui.components.keyboard.CommandPalette
 import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
 import com.teixeira.vcspace.ui.theme.atLeastS
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage
