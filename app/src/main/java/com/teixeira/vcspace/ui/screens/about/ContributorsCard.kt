@@ -59,30 +59,30 @@ import retrofit2.Response
 @Composable
 fun ContributorsCard(modifier: Modifier = Modifier) {
   val githubApiService = GitHubService.createGitHubApiService(BuildConfig.GITHUB_TOKEN)
-  val getContributorsCall = githubApiService.getContributors(
+  val contributorsCall = githubApiService.getContributors(
     owner = ORGANIZATION_NAME,
     repo = APPLICATION_REPOSITORY_NAME
   )
 
-  var isLoading by remember { mutableStateOf(true) }
-  val contributors = remember { mutableStateListOf<Contributor>() }
+  var isLoadingContributors by remember { mutableStateOf(true) }
+  val contributorList = remember { mutableStateListOf<Contributor>() }
 
   val uriHandler = LocalUriHandler.current
 
   LaunchedEffect(Unit) {
-    getContributorsCall.enqueue(object : Callback<List<Contributor>> {
+    contributorsCall.enqueue(object : Callback<List<Contributor>> {
       override fun onResponse(
         call: Call<List<Contributor>>,
         response: Response<List<Contributor>>
       ) {
         if (response.isSuccessful) {
-          response.body()?.let { contributors.addAll(it) }
-          isLoading = false
+          response.body()?.let { contributorList.addAll(it) }
+          isLoadingContributors = false
         }
       }
 
-      override fun onFailure(call: Call<List<Contributor>>, t: Throwable) {
-        isLoading = false
+      override fun onFailure(call: Call<List<Contributor>>, throwable: Throwable) {
+        isLoadingContributors = false
       }
     })
   }
@@ -95,7 +95,7 @@ fun ContributorsCard(modifier: Modifier = Modifier) {
       fontWeight = FontWeight.SemiBold
     )
 
-    if (isLoading) {
+    if (isLoadingContributors) {
       Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -105,25 +105,25 @@ fun ContributorsCard(modifier: Modifier = Modifier) {
     } else {
       // I will improve this ui later
       LazyColumn {
-        items(contributors) { contributor ->
+        items(contributorList) { contributor ->
           var user by remember { mutableStateOf<User?>(null) }
 
           LaunchedEffect(contributor) {
             githubApiService.getUser(contributor.username).enqueue(object : Callback<User> {
-              override fun onResponse(p0: Call<User>, response: Response<User>) {
+              override fun onResponse(call: Call<User>, response: Response<User>) {
                 if (response.isSuccessful) {
                   user = response.body()
                 }
               }
 
-              override fun onFailure(p0: Call<User>, t: Throwable) {
-                t.printStackTrace()
+              override fun onFailure(call: Call<User>, throwable: Throwable) {
+                throwable.printStackTrace()
               }
             })
           }
 
           Row(
-            modifier = modifier
+            modifier = Modifier
               .clip(RoundedCornerShape(16.dp))
               .clickable {
                 uriHandler.openUri(contributor.profileUrl)

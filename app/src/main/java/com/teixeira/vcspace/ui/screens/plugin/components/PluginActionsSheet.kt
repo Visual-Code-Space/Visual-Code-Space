@@ -44,6 +44,7 @@ import com.teixeira.vcspace.ui.screens.plugin.PluginViewModel
 import com.teixeira.vcspace.plugins.Plugin
 import com.teixeira.vcspace.plugins.internal.PluginManager
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -82,26 +83,33 @@ fun PluginActionsSheet(
           onClick = {
             showUploadDialog = true
 
-            PluginManager.uploadPlugin(plugin) { success, errorMessage ->
-              showUploadDialog = false
-              onDismissSheet()
+            scope.launch(Dispatchers.IO) {
+              PluginManager.uploadPlugin(
+                plugin = plugin,
+                onSuccess = {
+                  showUploadDialog = false
+                  onDismissSheet()
 
-              if (success) {
-                viewModel.loadPlugins()
-                scope.launch {
-                  toastHostState.showToast(
-                    message = "Plugin uploaded successfully",
-                    icon = Icons.Outlined.CheckCircle
-                  )
+                  viewModel.loadPlugins()
+                  scope.launch {
+                    toastHostState.showToast(
+                      message = "Plugin uploaded successfully",
+                      icon = Icons.Outlined.CheckCircle
+                    )
+                  }
+                },
+                onFailure = {
+                  showUploadDialog = false
+                  onDismissSheet()
+
+                  scope.launch {
+                    toastHostState.showToast(
+                      message = it.message.toString(),
+                      icon = Icons.Outlined.Info
+                    )
+                  }
                 }
-              } else {
-                scope.launch {
-                  toastHostState.showToast(
-                    message = errorMessage.toString(),
-                    icon = Icons.Outlined.Info
-                  )
-                }
-              }
+              )
             }
           }
         ) {

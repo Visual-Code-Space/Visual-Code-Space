@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
@@ -30,8 +31,12 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,6 +44,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.teixeira.vcspace.extensions.formatSize
+import com.teixeira.vcspace.github.Content
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.ui.LoadingDialog
 import com.teixeira.vcspace.ui.LocalToastHostState
@@ -60,6 +66,8 @@ fun ExplorePluginList(
 
   val toastHostState = LocalToastHostState.current
 
+  var clickedPlugin by remember { mutableStateOf<Content?>(null) }
+
   if (isLoading) {
     LoadingDialog(message = "Loading")
   } else if (plugins.isEmpty()) {
@@ -76,12 +84,12 @@ fun ExplorePluginList(
             .clip(CardDefaults.elevatedShape)
             .combinedClickable(
               onClick = {
-                scope.launch {
-                  toastHostState.showToast("Soon to be implemented")
-                }
+                clickedPlugin = it
               },
               onLongClick = {
-
+                scope.launch {
+                  toastHostState.showToast("Long click not implemented yet")
+                }
               }
             )
         ) {
@@ -105,6 +113,32 @@ fun ExplorePluginList(
       }
     }
   }
+
+  clickedPlugin?.let {
+    ConfirmPluginDownload(
+      plugin = it,
+      onConfirm = {
+        viewModel.downloadPlugin(
+          plugin = it,
+          onSuccess = { plugin ->
+            clickedPlugin = null
+
+            scope.launch {
+              toastHostState.showToast("Plugin ${plugin.manifest.name} downloaded successfully")
+            }
+          },
+          onFailure = {
+            clickedPlugin = null
+
+            scope.launch {
+              toastHostState.showToast("Failed to download plugin: ${it.message}")
+            }
+          }
+        )
+      },
+      onDismiss = { clickedPlugin = null }
+    )
+  }
 }
 
 @Composable
@@ -119,4 +153,37 @@ fun NothingToShowHere(modifier: Modifier = Modifier) {
       color = MaterialTheme.colorScheme.onBackground
     )
   }
+}
+
+@Composable
+fun ConfirmPluginDownload(
+  modifier: Modifier = Modifier,
+  plugin: Content,
+  onConfirm: () -> Unit,
+  onDismiss: () -> Unit
+) {
+  AlertDialog(
+    modifier = modifier,
+    onDismissRequest = onDismiss,
+    title = {
+      Text(
+        text = "Download Plugin"
+      )
+    },
+    text = {
+      Text(
+        text = "Do you want to download ${plugin.name.substringBefore(" -")}?"
+      )
+    },
+    confirmButton = {
+      TextButton(onClick = onConfirm) {
+        Text(text = "Yes")
+      }
+    },
+    dismissButton = {
+      TextButton(onClick = onDismiss) {
+        Text(text = "No")
+      }
+    }
+  )
 }

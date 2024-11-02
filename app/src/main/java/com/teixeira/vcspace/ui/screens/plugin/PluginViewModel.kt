@@ -17,9 +17,9 @@ package com.teixeira.vcspace.ui.screens.plugin
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.teixeira.vcspace.github.Content
 import com.teixeira.vcspace.plugins.Plugin
 import com.teixeira.vcspace.plugins.internal.PluginManager
-import com.teixeira.vcspace.github.Content
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -68,26 +68,64 @@ class PluginViewModel : ViewModel() {
     viewModelScope.launch {
       val pluginList = mutableListOf<Content>()
 
-      PluginManager.fetchPluginsFromGithub { contents ->
-        val dirs = contents?.filter { it.type == "dir" } ?: emptyList()
+      PluginManager.fetchPluginsFromGithub(
+        onSuccess = { contents ->
+          val dirs = contents.filter { it.type == "dir" }
 
-        if (dirs.isEmpty()) {
-          _pluginState.update { it.copy(isLoading = false) }
-        } else {
-          dirs.forEach { content ->
-            PluginManager.getPluginSize(content.path) { size ->
-              pluginList.add(content.copy(size = size.toInt()))
+          if (dirs.isEmpty()) {
+            _pluginState.update { it.copy(isLoading = false) }
+          } else {
+            dirs.forEach { content ->
+              viewModelScope.launch {
+                PluginManager.getPluginSize(
+                  path = content.path,
+                  onSuccess = { size ->
+                    pluginList.add(content.copy(size = size))
 
-              // When all plugins are loaded, update the state
-              if (pluginList.size == dirs.size) {
-                _pluginState.update {
-                  it.copy(plugins = pluginList, isLoading = false)
-                }
+                    // When all plugins are loaded, update the state
+                    if (pluginList.size == dirs.size) {
+                      _pluginState.update {
+                        it.copy(plugins = pluginList, isLoading = false)
+                      }
+                    }
+                  },
+                  onFailure = {
+                    it.printStackTrace()
+                  }
+                )
               }
             }
           }
+        },
+        onFailure = {
+          it.printStackTrace()
         }
-      }
+      )
+    }
+  }
+
+  fun downloadPlugin(
+    plugin: Content,
+    onSuccess: (Plugin) -> Unit,
+    onFailure: (Throwable) -> Unit
+  ) {
+    viewModelScope.launch {
+      _installedPluginState.update { it.copy(isLoading = true) }
+      _pluginState.update { it.copy(isLoading = true) }
+
+      PluginManager.downloadPlugin(
+        plugin = plugin,
+        onSuccess = { result ->
+          loadInstalledPlugins()
+          _pluginState.update { it.copy(isLoading = false) }
+          onSuccess(result)
+        },
+        onFailure = { error ->
+          loadInstalledPlugins()
+          _pluginState.update { it.copy(isLoading = false) }
+          onFailure(error)
+        }
+      )
     }
   }
 }

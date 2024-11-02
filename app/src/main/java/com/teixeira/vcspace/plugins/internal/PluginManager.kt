@@ -15,27 +15,32 @@
 
 package com.teixeira.vcspace.plugins.internal
 
-import com.blankj.utilcode.util.ToastUtils
+import com.google.gson.Gson
 import com.teixeira.vcspace.BuildConfig
 import com.teixeira.vcspace.ORGANIZATION_NAME
 import com.teixeira.vcspace.app.VCSpaceApplication
+import com.teixeira.vcspace.extensions.decodeBase64
+import com.teixeira.vcspace.extensions.extractZipFile
 import com.teixeira.vcspace.extensions.toBase64String
 import com.teixeira.vcspace.extensions.toFile
-import com.teixeira.vcspace.plugins.Manifest
-import com.teixeira.vcspace.plugins.Plugin
-import com.teixeira.vcspace.plugins.Script
-import com.teixeira.vcspace.github.GitHubService
+import com.teixeira.vcspace.extensions.toZipFile
 import com.teixeira.vcspace.github.Content
 import com.teixeira.vcspace.github.FileCreateRequest
 import com.teixeira.vcspace.github.FileCreateResponse
+import com.teixeira.vcspace.github.GitHubService
+import com.teixeira.vcspace.plugins.Manifest
+import com.teixeira.vcspace.plugins.Plugin
 import com.teixeira.vcspace.plugins.internal.extensions.loadPlugins
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import com.teixeira.vcspace.preferences.pluginsPath
 import retrofit2.Call
 import retrofit2.Callback
+import retrofit2.HttpException
 import retrofit2.Response
 import java.io.File
-import java.io.IOException
+import java.nio.charset.Charset
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 object PluginManager {
   private const val REPO_NAME = "vcspace-plugins"
@@ -49,44 +54,32 @@ object PluginManager {
   private fun getPlugins(application: VCSpaceApplication) = application.loadPlugins()
   fun getPlugins() = getPlugins(VCSpaceApplication.getInstance())
 
-  fun uploadPlugin(plugin: Plugin, callback: (Boolean, String?) -> Unit) {
+  suspend fun uploadPlugin(
+    plugin: Plugin,
+    onSuccess: () -> Unit,
+    onFailure: (Throwable) -> Unit
+  ) {
     val pluginFile = plugin.fullPath.toFile()
+    val pluginZip = pluginFile.toZipFile()
 
-    uploadFileToGithub(
-      File(pluginFile, "manifest.json"),
-      plugin.manifest
-    ) { manifestSuccess, manifestError ->
-      if (manifestSuccess) {
-        fun uploadScriptsSequentially(scripts: List<Script>, index: Int = 0) {
-          if (index < scripts.size) {
-            val script = scripts[index]
-            uploadFileToGithub(
-              File(pluginFile, script.name),
-              plugin.manifest
-            ) { scriptSuccess, scriptError ->
-              if (scriptSuccess) {
-                uploadScriptsSequentially(scripts, index + 1)
-              } else {
-                callback(false, "Failed to upload script: ${script.name}. Error: $scriptError")
-              }
-            }
-          } else {
-            callback(true, null)
-          }
-        }
-
-        uploadScriptsSequentially(plugin.manifest.scripts.toList())
-      } else {
-        callback(false, "Failed to upload manifest. Error: $manifestError")
-      }
-    }
+    runCatching {
+      uploadFileToGithub(
+        File(pluginFile, "manifest.json"),
+        manifest = plugin.manifest
+      )
+      uploadFileToGithub(
+        file = pluginZip,
+        manifest = plugin.manifest
+      )
+    }.onSuccess {
+      onSuccess()
+    }.onFailure(onFailure)
   }
 
-  private fun uploadFileToGithub(
+  private suspend fun uploadFileToGithub(
     file: File,
-    manifest: Manifest,
-    callback: (Boolean, String?) -> Unit
-  ) {
+    manifest: Manifest
+  ): FileCreateResponse {
     val token = BuildConfig.GITHUB_TOKEN
     val service = GitHubService.createGitHubApiService(token)
 
@@ -100,34 +93,18 @@ object PluginManager {
     val call = service.createFile(
       owner = ORGANIZATION_NAME,
       repo = REPO_NAME,
-      path = "plugins/${manifest.name} - ${manifest.versionName} (${manifest.versionCode})/${file.name}",
+      path = "plugins/${manifest.name} - v${manifest.versionName} (${manifest.versionCode})/${file.name}",
       request = createRequest
     )
-    call.enqueue(object : Callback<FileCreateResponse> {
-      override fun onResponse(
-        call: Call<FileCreateResponse>,
-        response: Response<FileCreateResponse>
-      ) {
-        if (response.isSuccessful) {
-          println("File uploaded (${file.name}): ${response.body()?.commit?.sha}")
-          callback(true, response.message())
-        } else {
-          println("Failed to upload file (${file.name}): ${response.code()} ${response.message()}")
-          response.errorBody()?.string()?.let { errorBody ->
-            println("Error Body: $errorBody")
-            callback(false, errorBody)
-          } ?: callback(false, "Unknown error")
-        }
-      }
 
-      override fun onFailure(call: Call<FileCreateResponse>, t: Throwable) {
-        println("Error uploading file (${file.name}): ${t.message}")
-        callback(false, t.message)
-      }
-    })
+    return call.awaitResult().getOrThrow()
   }
 
-  fun fetchPluginsFromGithub(path: String? = "", callback: (List<Content>?) -> Unit) {
+  suspend fun fetchPluginsFromGithub(
+    path: String? = "",
+    onSuccess: (List<Content>) -> Unit,
+    onFailure: (Throwable) -> Unit
+  ) {
     val token = BuildConfig.GITHUB_TOKEN
     val service = GitHubService.createGitHubApiService(token)
 
@@ -136,28 +113,15 @@ object PluginManager {
       repo = REPO_NAME,
       path = if (path.isNullOrEmpty()) "plugins" else "plugins/$path"
     )
-    call.enqueue(object : Callback<List<Content>> {
-      override fun onResponse(call: Call<List<Content>>, response: Response<List<Content>>) {
-        if (response.isSuccessful) {
-          val contents = response.body()
-          callback(contents)
-        } else {
-          val error = response.errorBody()?.string()
-          println("Failed to fetch plugins: $error")
-          ToastUtils.showShort("Failed to fetch plugins: $error")
-          callback(null)
-        }
-      }
 
-      override fun onFailure(call: Call<List<Content>>, t: Throwable) {
-        println("Error: ${t.message}")
-        ToastUtils.showShort("Error: ${t.message}")
-        callback(null)
-      }
-    })
+    call.awaitResult().onSuccess(onSuccess).onFailure(onFailure)
   }
 
-  fun getPluginSize(path: String, callback: (Long) -> Unit) {
+  suspend fun getPluginSize(
+    path: String,
+    onSuccess: (Int) -> Unit,
+    onFailure: (Throwable) -> Unit
+  ) {
     val token = BuildConfig.GITHUB_TOKEN
     val service = GitHubService.createGitHubApiService(token)
 
@@ -166,58 +130,79 @@ object PluginManager {
       repo = REPO_NAME,
       path = path
     )
-    call.enqueue(object : Callback<List<Content>> {
-      override fun onResponse(call: Call<List<Content>>, response: Response<List<Content>>) {
+
+    call.awaitResult().onSuccess {
+      val size = it.sumOf { content -> content.size }
+      onSuccess(size)
+    }.onFailure(onFailure)
+  }
+
+  suspend fun downloadPlugin(
+    plugin: Content,
+    onSuccess: (Plugin) -> Unit,
+    onFailure: (Throwable) -> Unit
+  ) {
+    val token = BuildConfig.GITHUB_TOKEN
+    val service = GitHubService.createGitHubApiService(token)
+
+    val manifestCall = service.getFileContent(
+      owner = ORGANIZATION_NAME,
+      repo = REPO_NAME,
+      path = "${plugin.path}/manifest.json"
+    )
+
+    manifestCall.awaitResult().onSuccess { response ->
+      val content = response.content.decodeBase64().toString(Charset.defaultCharset())
+      val manifest = Gson().fromJson(content, Manifest::class.java)
+
+      val pluginZipCall = service.getFileContent(
+        owner = ORGANIZATION_NAME,
+        repo = REPO_NAME,
+        path = "${plugin.path}/${manifest.packageName}.zip"
+      )
+
+      pluginZipCall.awaitResult().onSuccess {
+        val outputDir = "$pluginsPath/${manifest.packageName}".toFile()
+        outputDir.mkdirs()
+
+        val zipFile = outputDir.resolve("${manifest.packageName}.zip")
+        zipFile.writeBytes(it.content.decodeBase64())
+
+        zipFile.extractZipFile(outputDir)
+        zipFile.delete()
+
+        onSuccess(
+          Plugin(
+            fullPath = outputDir.absolutePath,
+            manifest = manifest,
+            app = VCSpaceApplication.getInstance()
+          )
+        )
+      }.onFailure {
+        println("Error: ${it.message}")
+        onFailure(it)
+      }
+    }.onFailure {
+      println("Error: ${it.message}")
+      onFailure(it)
+    }
+  }
+}
+
+suspend fun <T> Call<T>.awaitResult(): Result<T> {
+  return suspendCoroutine { continuation ->
+    enqueue(object : Callback<T> {
+      override fun onResponse(call: Call<T>, response: Response<T>) {
         if (response.isSuccessful) {
-          val contents = response.body()
-          var totalSize = 0L
-          contents?.forEach { content ->
-            if (content.type == "file") totalSize += content.size
-          }
-          callback(totalSize)
+          continuation.resume(Result.success(response.body()!!))
         } else {
-          println("Failed to fetch directory contents: ${response.message()}")
-          callback(0)
+          continuation.resume(Result.failure(HttpException(response)))
         }
       }
 
-      override fun onFailure(call: Call<List<Content>>, t: Throwable) {
-        println("Error: ${t.message}")
-        callback(0)
+      override fun onFailure(call: Call<T>, t: Throwable) {
+        continuation.resumeWithException(t)
       }
     })
-  }
-
-  private fun downloadDirectory(path: String, targetDir: File) {
-    fetchPluginsFromGithub(path = path) { contents ->
-      contents?.forEach {
-        if (it.type == "file") {
-          downloadFile(it.downloadUrl, File(targetDir, it.name))
-        } else if (it.type == "dir") {
-          val newDir = File(targetDir, it.name)
-          newDir.mkdirs()
-          downloadDirectory(it.path, newDir)
-        }
-      }
-    }
-  }
-
-  private fun downloadFile(downloadUrl: String?, targetFile: File) {
-    downloadUrl?.let {
-      val request = Request.Builder().url(it).build()
-      val client = OkHttpClient()
-
-      client.newCall(request).enqueue(object : okhttp3.Callback {
-        override fun onFailure(call: okhttp3.Call, e: IOException) {
-          println("Failed to download file: ${e.message}")
-        }
-
-        override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
-          response.body?.byteStream()?.use {
-            targetFile.outputStream().use { os -> it.copyTo(os) }
-          }
-        }
-      })
-    }
   }
 }

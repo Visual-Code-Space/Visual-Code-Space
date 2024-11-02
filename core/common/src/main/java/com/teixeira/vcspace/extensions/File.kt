@@ -26,6 +26,7 @@ import java.util.zip.ZipOutputStream
 fun String.toFile() = File(this)
 
 fun File.toBase64String(): String = Base64.encodeToString(readBytes(), Base64.NO_WRAP)
+fun String.decodeBase64(): ByteArray = Base64.decode(this, Base64.NO_WRAP)
 
 fun File.toZipFile(): File {
   val zipFile = File(parent, "$name.zip")
