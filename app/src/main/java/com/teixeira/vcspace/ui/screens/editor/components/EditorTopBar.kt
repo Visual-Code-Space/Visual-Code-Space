@@ -61,7 +61,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -85,7 +84,6 @@ import com.teixeira.vcspace.PYTHON_PACKAGE_URL_32_BIT
 import com.teixeira.vcspace.PYTHON_PACKAGE_URL_64_BIT
 import com.teixeira.vcspace.activities.Editor.LocalCommandPaletteManager
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
-import com.teixeira.vcspace.activities.LocalServerActivity
 import com.teixeira.vcspace.activities.TerminalActivity
 import com.teixeira.vcspace.app.VCSpaceApplication
 import com.teixeira.vcspace.app.strings
@@ -121,7 +119,6 @@ fun EditorTopBar(
 ) {
   val scope = rememberCoroutineScope()
   val drawerState = LocalEditorDrawerState.current
-  val uriHandler = LocalUriHandler.current
   val commandPaletteManager = LocalCommandPaletteManager.current
 
   var showMenu by remember { mutableStateOf(false) }
@@ -249,6 +246,7 @@ fun EditorTopBar(
                       server?.start()
                       val assignedPort = server?.assignedPort ?: 8000
                       ToastUtils.showLong("Server started on http://localhost:$assignedPort")
+
                       val customTabs = CustomTabsIntent.Builder()
                         .setShowTitle(true)
                         .setShareState(CustomTabsIntent.SHARE_STATE_OFF)
@@ -258,13 +256,6 @@ fun EditorTopBar(
                         context,
                         "http://localhost:$assignedPort/${selectedEditor.file?.name ?: ""}".toUri()
                       )
-                      //uriHandler.openUri("http://localhost:$assignedPort/${selectedEditor.file?.name ?: ""}")
-                      /*context.startActivity(Intent(context, LocalServerActivity::class.java).apply {
-                        putExtra(
-                          LocalServerActivity.SERVER_URI,
-                          "http://localhost:$assignedPort/${selectedEditor.file?.name ?: ""}"
-                        )
-                      })*/
                     }.onFailure {
                       Log.e("ServerError", "Failed to start server: ${it.message}")
                       ToastUtils.showLong("Failed to start server: ${it.message}")
