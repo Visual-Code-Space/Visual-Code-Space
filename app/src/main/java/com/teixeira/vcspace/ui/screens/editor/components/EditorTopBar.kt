@@ -23,6 +23,7 @@ import android.util.Log
 import android.view.View
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -66,6 +67,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -83,15 +85,16 @@ import com.teixeira.vcspace.PYTHON_PACKAGE_URL_32_BIT
 import com.teixeira.vcspace.PYTHON_PACKAGE_URL_64_BIT
 import com.teixeira.vcspace.activities.Editor.LocalCommandPaletteManager
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
+import com.teixeira.vcspace.activities.LocalServerActivity
 import com.teixeira.vcspace.activities.TerminalActivity
 import com.teixeira.vcspace.app.VCSpaceApplication
 import com.teixeira.vcspace.app.strings
-import com.teixeira.vcspace.keyboard.model.Command.Companion.newCommand
 import com.teixeira.vcspace.core.components.Tooltip
 import com.teixeira.vcspace.core.components.common.VCSpaceTopBar
 import com.teixeira.vcspace.core.settings.Settings.EditorTabs.rememberAutoSave
 import com.teixeira.vcspace.editor.events.OnContentChangeEvent
 import com.teixeira.vcspace.editor.events.OnKeyBindingEvent
+import com.teixeira.vcspace.keyboard.model.Command.Companion.newCommand
 import com.teixeira.vcspace.plugins.internal.PluginManager
 import com.teixeira.vcspace.preferences.pythonDownloaded
 import com.teixeira.vcspace.preferences.pythonExtracted
@@ -246,7 +249,16 @@ fun EditorTopBar(
                       server?.start()
                       val assignedPort = server?.assignedPort ?: 8000
                       ToastUtils.showLong("Server started on http://localhost:$assignedPort")
-                      uriHandler.openUri("http://localhost:$assignedPort/${selectedEditor.file?.name ?: ""}")
+                      val customTabs = CustomTabsIntent.Builder()
+                        .setShowTitle(true)
+                        .setShareState(CustomTabsIntent.SHARE_STATE_OFF)
+                        .build()
+
+                      customTabs.launchUrl(
+                        context,
+                        "http://localhost:$assignedPort/${selectedEditor.file?.name ?: ""}".toUri()
+                      )
+                      //uriHandler.openUri("http://localhost:$assignedPort/${selectedEditor.file?.name ?: ""}")
                       /*context.startActivity(Intent(context, LocalServerActivity::class.java).apply {
                         putExtra(
                           LocalServerActivity.SERVER_URI,

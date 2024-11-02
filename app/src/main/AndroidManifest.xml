@@ -67,10 +67,6 @@
       android:windowSoftInputMode="adjustResize" />
 
     <activity
-      android:name=".activities.LocalServerActivity"
-      android:exported="false" />
-
-    <activity
       android:name=".activities.AboutActivity"
       android:exported="false" />
 

@@ -127,6 +127,7 @@ dependencies {
   implementation(libs.androidx.nav.ui)
   implementation(libs.androidx.nav.dynamic.features)
   implementation(libs.androidx.navigation.compose)
+  implementation(libs.androidx.browser)
 
   implementation(libs.prdownloader)
   implementation(libs.retrofit)

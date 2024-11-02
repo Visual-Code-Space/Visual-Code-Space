@@ -1,5 +1,6 @@
 [versions]
 android-tree-sitter = "4.3.1"
+browser = "1.8.0"
 bsh = "3.0.0-SNAPSHOT"
 editor = "0.23.4-96c0abc-SNAPSHOT"
 androidx-navigation = "2.8.3"
@@ -31,6 +32,7 @@ coil = "3.0.0-rc02"
 # AndroidX
 androidx-annotation = { module = "androidx.annotation:annotation", version = "1.9.0" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version = "1.7.0" }
+androidx-browser = { module = "androidx.browser:browser", version.ref = "browser" }
 androidx-core = { module = "androidx.core:core", version = "1.13.1" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version = "1.13.1" }
 androidx-desugar = { module = "com.android.tools:desugar_jdk_libs", version = "2.1.2" }
