@@ -59,7 +59,7 @@ fun SocialCard(modifier: Modifier = Modifier) {
     SocialItem(
       icon = ImageVector.vectorResource(drawables.ic_telegram),
       title = "Telegram",
-      url = "https://t.me/vc_space"
+      url = "https://t.me/visualcodespace"
     )
   )
 
