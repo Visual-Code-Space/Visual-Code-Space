@@ -303,22 +303,6 @@ class EditorActivity : BaseComposeActivity() {
     )
   }
 
-  @Composable
-  private fun ObserveLifecycleEvents(onStateChanged: (Lifecycle.Event) -> Unit) {
-    val lifecycleOwner = LocalLifecycleOwner.current
-    DisposableEffect(lifecycleOwner) {
-      val observer = LifecycleEventObserver { _, event ->
-        onStateChanged(event)
-      }
-
-      lifecycleOwner.lifecycle.addObserver(observer)
-
-      onDispose {
-        lifecycleOwner.lifecycle.removeObserver(observer)
-      }
-    }
-  }
-
   private fun clearCache(): Boolean {
     return FileUtils.deleteAllInDir(cacheDir).also {
       Log.i(TAG, "Cache cleared 😊")

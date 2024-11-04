@@ -25,6 +25,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -46,7 +47,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.teixeira.vcspace.extensions.formatSize
 import com.teixeira.vcspace.github.Content
 import com.teixeira.vcspace.resources.R
-import com.teixeira.vcspace.ui.LoadingDialog
 import com.teixeira.vcspace.ui.LocalToastHostState
 import com.teixeira.vcspace.ui.screens.plugin.PluginViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -69,7 +69,12 @@ fun ExplorePluginList(
   var clickedPlugin by remember { mutableStateOf<Content?>(null) }
 
   if (isLoading) {
-    LoadingDialog(message = "Loading")
+    Box(
+      modifier = Modifier.fillMaxSize(),
+      contentAlignment = Alignment.Center
+    ) {
+      CircularProgressIndicator()
+    }
   } else if (plugins.isEmpty()) {
     NothingToShowHere()
   } else {

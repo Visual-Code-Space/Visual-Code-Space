@@ -237,7 +237,7 @@ public final class VirtualKeysView extends GridLayout {
     mSpecialButtons = specialButtons;
     mSpecialButtonsKeys =
         this.mSpecialButtons.keySet().stream()
-            .map(SpecialButton::getKey)
+            .map(SpecialButton::key)
             .collect(Collectors.toSet());
   }
 

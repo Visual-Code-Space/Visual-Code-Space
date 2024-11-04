@@ -1,27 +1,37 @@
 package com.teixeira.vcspace.activities
 
-import android.os.Bundle
+import android.graphics.Color
 import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
-import androidx.activity.OnBackPressedCallback
-import androidx.core.content.ContextCompat
-import androidx.core.view.WindowCompat.getInsetsController
+import androidx.activity.SystemBarStyle
+import androidx.activity.compose.BackHandler
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.viewinterop.AndroidViewBinding
+import androidx.lifecycle.Lifecycle
 import com.blankj.utilcode.util.ClipboardUtils
 import com.blankj.utilcode.util.KeyboardUtils
 import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.SizeUtils
 import com.blankj.utilcode.util.ThreadUtils
 import com.teixeira.vcspace.BuildConfig
-import com.teixeira.vcspace.activities.base.BaseActivity
+import com.teixeira.vcspace.activities.base.BaseComposeActivity
+import com.teixeira.vcspace.app.DoNothing
 import com.teixeira.vcspace.databinding.ActivityTerminalBinding
 import com.teixeira.vcspace.ui.virtualkeys.SpecialButton
 import com.teixeira.vcspace.ui.virtualkeys.VirtualKeyButton
 import com.teixeira.vcspace.ui.virtualkeys.VirtualKeysConstants
 import com.teixeira.vcspace.ui.virtualkeys.VirtualKeysInfo
+import com.teixeira.vcspace.ui.virtualkeys.VirtualKeysView
 import com.teixeira.vcspace.ui.virtualkeys.VirtualKeysView.IVirtualKeysView
 import com.teixeira.vcspace.utils.Logger
 import com.teixeira.vcspace.utils.TerminalPythonCommands
@@ -31,22 +41,19 @@ import com.termux.terminal.TerminalSessionClient
 import com.termux.terminal.TextStyle
 import com.termux.view.TerminalView
 import com.termux.view.TerminalViewClient
-import java.io.File
 import org.json.JSONException
+import java.io.File
+import kotlin.time.times
 
 /**
- * @see <a
- *   href="https://github.com/AndroidIDEOfficial/AndroidIDE/blob/dev/app/src/main/java/com/itsaky/androidide/activities/TerminalActivity.java">TerminalActivity</a>
+ * @see <a href="https://github.com/AndroidIDEOfficial/AndroidIDE/blob/dev/app/src/main/java/com/itsaky/androidide/activities/TerminalActivity.java">TerminalActivity</a>
  */
-class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClient {
+class TerminalActivity : BaseComposeActivity(), TerminalViewClient, TerminalSessionClient {
   private val logger = Logger.newInstance("TerminalActivity")
 
-  private var _binding: ActivityTerminalBinding? = null
-  private var fontSize = SizeUtils.dp2px(14f)
+  private var fontSize = SizeUtils.dp2px(14f).toFloat()
   private lateinit var terminal: TerminalView
-
-  private val binding: ActivityTerminalBinding
-    get() = checkNotNull(_binding) { "Activity has been destroyed!" }
+  private lateinit var virtualKeys: VirtualKeysView
 
   private val workingDirectory: String
     get() {
@@ -59,53 +66,65 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
       return PathUtils.getRootPathExternalFirst()
     }
 
-  override val navigationBarColor: Int
-    get() = ContextCompat.getColor(this, android.R.color.black)
+  @Composable
+  override fun MainScreen() {
+    Surface(
+      modifier = Modifier
+        .fillMaxSize()
+        .systemBarsPadding()
+        .imePadding()
+    ) {
+      BackHandler {
+        terminal.mTermSession.finishIfRunning()
+        finish()
+      }
 
-  override val statusBarColor: Int
-    get() = ContextCompat.getColor(this, android.R.color.black)
+      ObserveLifecycleEvents {
+        when (it) {
+          Lifecycle.Event.ON_CREATE -> {
+            enableEdgeToEdge(
+              statusBarStyle = SystemBarStyle.dark(Color.BLACK),
+              navigationBarStyle = SystemBarStyle.dark(Color.BLACK)
+            )
+            setupTerminalView()
+            compilePython()
+          }
 
-  override fun getLayout(): View {
-    _binding = ActivityTerminalBinding.inflate(layoutInflater)
-    return binding.root
-  }
+          Lifecycle.Event.ON_START -> DoNothing
+          Lifecycle.Event.ON_RESUME -> {
+            showSoftInput()
+            setTerminalCursorBlinkingState(true)
+          }
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    window?.also {
-      val controller = getInsetsController(it, it.decorView)
-      controller.isAppearanceLightNavigationBars = false
-      controller.isAppearanceLightStatusBars = false
-    }
-    super.onCreate(savedInstanceState)
+          Lifecycle.Event.ON_PAUSE -> DoNothing
+          Lifecycle.Event.ON_STOP -> {
+            setTerminalCursorBlinkingState(false)
+          }
 
-    onBackPressedDispatcher.addCallback(
-      this,
-      object : OnBackPressedCallback(true) {
-        override fun handleOnBackPressed() {
-          terminal.mTermSession.finishIfRunning()
-          finish()
+          Lifecycle.Event.ON_DESTROY -> DoNothing
+          Lifecycle.Event.ON_ANY -> DoNothing
         }
-      },
-    )
+      }
 
-    setupTerminalView()
-    compilePython()
-  }
-
-  override fun onResume() {
-    super.onResume()
-    showSoftInput()
-    setTerminalCursorBlinkingState(true)
-  }
-
-  override fun onStop() {
-    super.onStop()
-    setTerminalCursorBlinkingState(false)
-  }
-
-  override fun onDestroy() {
-    super.onDestroy()
-    _binding = null
+      AndroidViewBinding(ActivityTerminalBinding::inflate) {
+        val params = LinearLayout.LayoutParams(-1, 0)
+        params.weight = 1f
+        root.addView(terminal, 0, params)
+        root.setBackgroundColor(
+          terminal.mTermSession.emulator?.mColors?.mCurrentColors?.get(TextStyle.COLOR_INDEX_BACKGROUND)
+            ?: 0
+        )
+        try {
+          this@TerminalActivity.virtualKeys = virtualKeys
+          virtualKeys.virtualKeysViewClient = KeyListener(terminal)
+          virtualKeys.reload(
+            VirtualKeysInfo(VIRTUAL_KEYS, "", VirtualKeysConstants.CONTROL_CHARS_ALIASES)
+          )
+        } catch (e: JSONException) {
+          logger.e("Unable to parse terminal virtual keys json data", e)
+        }
+      }
+    }
   }
 
   private fun setupTerminalView() {
@@ -113,18 +132,7 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
     terminal.setTerminalViewClient(this)
     terminal.attachSession(createSession())
     terminal.keepScreenOn = true
-    terminal.setTextSize(fontSize)
-    val params = LinearLayout.LayoutParams(-1, 0)
-    params.weight = 1f
-    binding.root.addView(terminal, 0, params)
-    try {
-      binding.virtualKeys.virtualKeysViewClient = KeyListener(terminal)
-      binding.virtualKeys.reload(
-        VirtualKeysInfo(VIRTUAL_KEYS, "", VirtualKeysConstants.CONTROL_CHARS_ALIASES)
-      )
-    } catch (e: JSONException) {
-      logger.e("Unable to parse terminal virtual keys json data", e)
-    }
+    terminal.setTextSize(fontSize.toInt())
   }
 
   private fun createSession(): TerminalSession {
@@ -133,12 +141,12 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
       shell = "/system/bin/sh"
     }
     return TerminalSession(
-      shell,
-      workingDirectory,
-      arrayOf(),
-      arrayOf(),
-      TerminalEmulator.DEFAULT_TERMINAL_TRANSCRIPT_ROWS,
-      this,
+      /* shellPath = */ shell,
+      /* cwd = */ workingDirectory,
+      /* args = */ arrayOf(),
+      /* env = */ arrayOf(),
+      /* transcriptRows = */ TerminalEmulator.DEFAULT_TERMINAL_TRANSCRIPT_ROWS,
+      /* client = */ this,
     )
   }
 
@@ -227,7 +235,8 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
   }
 
   override fun onScale(scale: Float): Float {
-    return fontSize.toFloat()
+    fontSize *= scale
+    return fontSize
   }
 
   override fun onSingleTapUp(e: MotionEvent) {
@@ -269,12 +278,12 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
   }
 
   override fun readControlKey(): Boolean {
-    val state = binding.virtualKeys.readSpecialButton(SpecialButton.CTRL, true)
+    val state = virtualKeys.readSpecialButton(SpecialButton.CTRL, true)
     return state != null && state
   }
 
   override fun readAltKey(): Boolean {
-    val state = binding.virtualKeys.readSpecialButton(SpecialButton.ALT, true)
+    val state = virtualKeys.readSpecialButton(SpecialButton.ALT, true)
     return state != null && state
   }
 
@@ -292,9 +301,6 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
 
   override fun onEmulatorSet() {
     setTerminalCursorBlinkingState(true)
-    binding.root.setBackgroundColor(
-      terminal.mTermSession.emulator.mColors.mCurrentColors[TextStyle.COLOR_INDEX_BACKGROUND]
-    )
   }
 
   private fun setTerminalCursorBlinkingState(start: Boolean) {
@@ -317,20 +323,30 @@ class TerminalActivity : BaseActivity(), TerminalViewClient, TerminalSessionClie
         var shiftDown = false
         var fnDown = false
         for (key in keys) {
-          if (SpecialButton.CTRL.key == key) {
-            ctrlDown = true
-          } else if (SpecialButton.ALT.key == key) {
-            altDown = true
-          } else if (SpecialButton.SHIFT.key == key) {
-            shiftDown = true
-          } else if (SpecialButton.FN.key == key) {
-            fnDown = true
-          } else {
-            onTerminalExtraKeyButtonClick(key, ctrlDown, altDown, shiftDown, fnDown)
-            ctrlDown = false
-            altDown = false
-            shiftDown = false
-            fnDown = false
+          when (key) {
+            SpecialButton.CTRL.key() -> {
+              ctrlDown = true
+            }
+
+            SpecialButton.ALT.key() -> {
+              altDown = true
+            }
+
+            SpecialButton.SHIFT.key() -> {
+              shiftDown = true
+            }
+
+            SpecialButton.FN.key() -> {
+              fnDown = true
+            }
+
+            else -> {
+              onTerminalExtraKeyButtonClick(key, ctrlDown, altDown, shiftDown, fnDown)
+              ctrlDown = false
+              altDown = false
+              shiftDown = false
+              fnDown = false
+            }
           }
         }
       } else {

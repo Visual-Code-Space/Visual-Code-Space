@@ -79,7 +79,7 @@ data class Command(
         "," -> Key.Comma
         "-" -> Key.Minus
         "=" -> Key.Equals
-        "+" -> Key.Equals
+        "+" -> Key.Plus
         "[" -> Key.LeftBracket
         "]" -> Key.RightBracket
         else -> null // Return null if no match is found

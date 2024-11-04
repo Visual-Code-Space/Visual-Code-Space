@@ -104,7 +104,7 @@ fun PluginsScreen(
       }
     }
   ) { innerPadding ->
-    val currentRoute = navBackStackEntry?.destination?.route ?: PluginScreens.Explore.route
+    val currentRoute = navBackStackEntry?.destination?.route ?: PluginScreens.Installed.route
 
     Column(
       modifier = modifier.padding(innerPadding)
@@ -116,7 +116,7 @@ fun PluginsScreen(
 
       NavHost(
         navController = navController,
-        startDestination = PluginScreens.Explore.route
+        startDestination = PluginScreens.Installed.route
       ) {
         composable(PluginScreens.Explore.route) {
           ExplorePluginList(
