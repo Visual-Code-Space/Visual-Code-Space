@@ -15,7 +15,6 @@
 
 package com.teixeira.vcspace.ui.screens.editor.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,6 +28,7 @@ import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Terminal
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.ErrorOutline
 import androidx.compose.material.icons.rounded.Folder
 import androidx.compose.material.icons.rounded.Refresh
@@ -52,17 +52,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.blankj.utilcode.util.ClipboardUtils
 import com.blankj.utilcode.util.FileUtils
+import com.blankj.utilcode.util.ToastUtils
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
 import com.teixeira.vcspace.activities.SettingsActivity
 import com.teixeira.vcspace.activities.TerminalActivity
 import com.teixeira.vcspace.activities.base.LocalLifecycleScope
+import com.teixeira.vcspace.app.DoNothing
+import com.teixeira.vcspace.app.drawables
 import com.teixeira.vcspace.core.components.Tooltip
 import com.teixeira.vcspace.core.components.editor.FileOptionsSheet
 import com.teixeira.vcspace.core.components.editor.NavigationSpace
@@ -76,6 +81,7 @@ import com.teixeira.vcspace.extensions.open
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.resources.R.string
 import com.teixeira.vcspace.ui.LocalToastHostState
+import com.teixeira.vcspace.ui.components.git.CloneRepositoryDialog
 import com.teixeira.vcspace.ui.screens.editor.EditorViewModel
 import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
 import com.teixeira.vcspace.utils.launchWithProgressDialog
@@ -94,6 +100,7 @@ fun EditorDrawerSheet(
 ) {
   val context = LocalContext.current
   val drawerState = LocalEditorDrawerState.current
+  val toastHostState = LocalToastHostState.current
   val scope = rememberCoroutineScope()
   val selectedItem by remember { mutableIntStateOf(0) }
 
@@ -112,6 +119,8 @@ fun EditorDrawerSheet(
     Icons.Rounded.Terminal,
     Icons.Rounded.Settings
   )
+
+  val currentPath by fileExplorerViewModel.currentPath.collectAsStateWithLifecycle()
 
   fun closeDrawer() {
     scope.launch {
@@ -195,6 +204,8 @@ fun EditorDrawerSheet(
 
       val refresh = stringResource(string.refresh)
       val add = stringResource(string.add)
+      val clone = stringResource(string.git_clone)
+      val cloneIcon = ImageVector.vectorResource(drawables.ic_git)
 
       val navigationSpaceState = rememberNavigationSpaceState()
       LaunchedEffect(Unit) {
@@ -213,10 +224,18 @@ fun EditorDrawerSheet(
               title = add
             )
           )
+          add(
+            NavigationSpaceItem(
+              id = 2,
+              icon = cloneIcon,
+              title = clone
+            )
+          )
         }
       }
 
       var showNewFileDialog by remember { mutableStateOf(false) }
+      var showGitCloneDialog by remember { mutableStateOf(false) }
       var renamableFile by remember { mutableStateOf<File?>(null) }
       var deletableFile by remember { mutableStateOf<File?>(null) }
 
@@ -224,6 +243,7 @@ fun EditorDrawerSheet(
         when (it.id) {
           0 -> fileExplorerViewModel.refreshFiles(showHiddenFiles = showHiddenFiles)
           1 -> showNewFileDialog = true
+          2 -> showGitCloneDialog = true
         }
       }
 
@@ -232,13 +252,40 @@ fun EditorDrawerSheet(
           NewFileDialog(fileExplorerViewModel) { showNewFileDialog = false }
         }
 
+        showGitCloneDialog -> {
+          CloneRepositoryDialog(
+            url = ClipboardUtils.getText().toString(),
+            path = currentPath,
+            onDismissRequest = { showGitCloneDialog = false },
+            onSuccessfulClone = {
+              scope.launch {
+                toastHostState.showToast(
+                  message = "Successfully cloned",
+                  icon = Icons.Rounded.Check
+                )
+              }
+              fileExplorerViewModel.refreshFiles(showHiddenFiles = showHiddenFiles)
+            },
+            onFailedClone = {
+              showGitCloneDialog = false
+              it.printStackTrace()
+              scope.launch {
+                toastHostState.showToast(
+                  message = it.message ?: "Error",
+                  icon = Icons.Rounded.ErrorOutline
+                )
+              }
+            }
+          )
+        }
+
         selectedFile != null -> {
           FileOptionsSheet(onDismissRequest = { selectedFile = null }) {
             when (it) {
               0 -> ClipboardUtils.copyText(selectedFile!!.absolutePath)
               1 -> renamableFile = selectedFile
               2 -> deletableFile = selectedFile
-              else -> {}
+              else -> DoNothing
             }
           }
         }

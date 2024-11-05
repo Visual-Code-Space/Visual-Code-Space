@@ -24,13 +24,13 @@ import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.key
 import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.PathUtils
-import com.teixeira.vcspace.keyboard.model.Command
-import com.teixeira.vcspace.keyboard.model.Command.Companion.toKey
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.teixeira.vcspace.keyboard.model.Command
+import com.teixeira.vcspace.keyboard.model.Command.Companion.toKey
 import java.io.File
 
-class CommandPaletteManager {
+class CommandPaletteManager private constructor() {
   companion object {
     @JvmStatic
     val instance by lazy { CommandPaletteManager() }

@@ -78,9 +78,9 @@ import kotlin.math.max
 @SuppressLint("SimpleDateFormat")
 @Composable
 fun FileList(
+  modifier: Modifier = Modifier,
   files: List<File>,
   selectedFile: EditorViewModel.OpenedFile? = null,
-  modifier: Modifier = Modifier,
   itemModifier: Modifier = Modifier,
   onFileLongClick: ((File) -> Unit)? = null,
   onFileClick: (File) -> Unit,

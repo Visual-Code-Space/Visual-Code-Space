@@ -144,6 +144,7 @@ dependencies {
   implementation(libs.tree.sitter.java)
 
   implementation(libs.bsh)
+  implementation(libs.org.eclipse.jgit)
 
   implementation(libs.retrofit)
   implementation(libs.retrofit.converter.gson)
