@@ -48,6 +48,7 @@ import com.blankj.utilcode.util.ToastUtils
 import com.blankj.utilcode.util.UriUtils
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
 import com.teixeira.vcspace.activities.base.BaseComposeActivity
+import com.teixeira.vcspace.app.DoNothing
 import com.teixeira.vcspace.app.noLocalProvidedFor
 import com.teixeira.vcspace.keyboard.CommandPaletteManager
 import com.teixeira.vcspace.keyboard.model.Command.Companion.newCommand
@@ -246,10 +247,10 @@ class EditorActivity : BaseComposeActivity() {
           clearCache()
         }
 
-        Lifecycle.Event.ON_START -> {}
-        Lifecycle.Event.ON_RESUME -> {}
-        Lifecycle.Event.ON_STOP -> clearCache()
-        Lifecycle.Event.ON_ANY -> {}
+        Lifecycle.Event.ON_START -> DoNothing
+        Lifecycle.Event.ON_RESUME -> DoNothing
+        Lifecycle.Event.ON_STOP -> DoNothing
+        Lifecycle.Event.ON_ANY -> DoNothing
       }
     }
 
