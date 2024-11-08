@@ -15,33 +15,16 @@
 
 package com.teixeira.vcspace.ui.screens.editor.components
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.MenuOpen
-import androidx.compose.material.icons.outlined.Folder
-import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.outlined.Terminal
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.ErrorOutline
-import androidx.compose.material.icons.rounded.Folder
+import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.ContentCopy
+import androidx.compose.material.icons.rounded.DeleteForever
+import androidx.compose.material.icons.rounded.DriveFileRenameOutline
 import androidx.compose.material.icons.rounded.Refresh
-import androidx.compose.material.icons.rounded.Settings
-import androidx.compose.material.icons.rounded.Terminal
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationRail
-import androidx.compose.material3.NavigationRailItem
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -51,49 +34,37 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastForEachIndexed
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.blankj.utilcode.util.ClipboardUtils
-import com.blankj.utilcode.util.FileUtils
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerNavController
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
-import com.teixeira.vcspace.activities.SettingsActivity
-import com.teixeira.vcspace.activities.TerminalActivity
-import com.teixeira.vcspace.activities.base.LocalLifecycleScope
-import com.teixeira.vcspace.app.DoNothing
-import com.teixeira.vcspace.app.drawables
-import com.teixeira.vcspace.core.components.Tooltip
+import com.teixeira.vcspace.app.strings
+import com.teixeira.vcspace.core.components.editor.FileOptionItem
 import com.teixeira.vcspace.core.components.editor.FileOptionsSheet
 import com.teixeira.vcspace.core.components.editor.NavigationSpace
 import com.teixeira.vcspace.core.components.editor.NavigationSpaceItem
 import com.teixeira.vcspace.core.components.editor.rememberNavigationSpaceState
-import com.teixeira.vcspace.core.components.file.FileExplorer
-import com.teixeira.vcspace.core.settings.Settings.File.rememberShowHiddenFiles
-import com.teixeira.vcspace.events.OnDeleteFileEvent
-import com.teixeira.vcspace.events.OnRenameFileEvent
-import com.teixeira.vcspace.extensions.open
-import com.teixeira.vcspace.resources.R
+import com.teixeira.vcspace.events.OnCreateFileEvent
+import com.teixeira.vcspace.events.OnCreateFolderEvent
+import com.teixeira.vcspace.events.OnRefreshFolderEvent
+import com.teixeira.vcspace.extensions.openFile
 import com.teixeira.vcspace.resources.R.string
-import com.teixeira.vcspace.ui.LocalToastHostState
-import com.teixeira.vcspace.ui.navigateSingleTop
+import com.teixeira.vcspace.ui.filetree.FileTree
 import com.teixeira.vcspace.ui.screens.EditorDrawerScreens
 import com.teixeira.vcspace.ui.screens.editor.EditorViewModel
+import com.teixeira.vcspace.ui.screens.editor.components.drawer.Heading
+import com.teixeira.vcspace.ui.screens.editor.components.drawer.NavRail
+import com.teixeira.vcspace.ui.screens.editor.components.drawer.OpenFolderActions
 import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
-import com.teixeira.vcspace.utils.launchWithProgressDialog
-import com.teixeira.vcspace.utils.showShortToast
-import kotlinx.coroutines.Dispatchers
+import com.teixeira.vcspace.utils.ApkInstaller
+import com.teixeira.vcspace.utils.isValidTextFile
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import java.io.File
-import java.io.IOException
 
 @Composable
 fun EditorDrawerSheet(
@@ -105,25 +76,9 @@ fun EditorDrawerSheet(
   val navController = LocalEditorDrawerNavController.current
   val scope = rememberCoroutineScope()
   var selectedItem by remember { mutableIntStateOf(0) }
+  var title by remember { mutableStateOf("Files") }
 
-  val navigationRailItems = listOf(
-    stringResource(string.file_explorer),
-    stringResource(string.git),
-    stringResource(string.terminal),
-    stringResource(string.settings)
-  )
-  val navRailItemIconsUnselected = listOf(
-    Icons.Outlined.Folder,
-    ImageVector.vectorResource(drawables.ic_git),
-    Icons.Outlined.Terminal,
-    Icons.Outlined.Settings
-  )
-  val navRailItemIconsSelected = listOf(
-    Icons.Rounded.Folder,
-    ImageVector.vectorResource(drawables.ic_git),
-    Icons.Rounded.Terminal,
-    Icons.Rounded.Settings
-  )
+  val openedFolder by fileExplorerViewModel.openedFolder.collectAsStateWithLifecycle()
 
   fun closeDrawer() {
     scope.launch {
@@ -137,10 +92,12 @@ fun EditorDrawerSheet(
     when (destination.route) {
       EditorDrawerScreens.FileExplorer::class.qualifiedName -> {
         selectedItem = 0
+        title = "Files"
       }
 
       EditorDrawerScreens.GitManager::class.qualifiedName -> {
         selectedItem = 1
+        title = "Git"
       }
     }
   }
@@ -148,385 +105,216 @@ fun EditorDrawerSheet(
   Row(
     modifier = Modifier.fillMaxSize()
   ) {
-    NavigationRail(
-      modifier = Modifier.widthIn(max = 72.dp)
-    ) {
-      navigationRailItems.fastForEachIndexed { i, name ->
-        NavigationRailItem(
-          icon = {
-            Icon(
-              imageVector = if (selectedItem == i) navRailItemIconsSelected[i] else navRailItemIconsUnselected[i],
-              contentDescription = name
-            )
-          },
-          selected = selectedItem == i,
-          onClick = {
-            if (i < 2) {
-              selectedItem = i
-            }
+    NavRail(
+      selectedItemIndex = selectedItem
+    )
 
-            when (i) {
-              0 -> navController.navigateSingleTop(EditorDrawerScreens.FileExplorer)
-              1 -> navController.navigateSingleTop(EditorDrawerScreens.GitManager)
-              2 -> context.open(TerminalActivity::class.java)
-              3 -> context.open(SettingsActivity::class.java)
-            }
-          }
-        )
-      }
-    }
+    Column {
+      Heading(
+        title = title,
+        onCloseDrawerRequest = { closeDrawer() }
+      )
 
-    NavHost(
-      navController = LocalEditorDrawerNavController.current,
-      startDestination = EditorDrawerScreens.FileExplorer
-    ) {
-      composable<EditorDrawerScreens.FileExplorer> {
-        var selectedFile by remember { mutableStateOf<File?>(null) }
+      NavHost(
+        navController = LocalEditorDrawerNavController.current,
+        startDestination = EditorDrawerScreens.FileExplorer
+      ) {
+        composable<EditorDrawerScreens.FileExplorer> {
+          openedFolder?.let { folder ->
+            var selectedFile by remember { mutableStateOf<File?>(null) }
+            var showNewFileDialog by remember { mutableStateOf(false) }
 
-        Column(
-          modifier = Modifier.fillMaxSize()
-        ) {
-          Row {
-            Text(
-              text = stringResource(string.workspace),
-              style = MaterialTheme.typography.headlineSmall,
-              modifier = Modifier
-                .padding(5.dp)
-                .padding(start = 5.dp)
-                .fillMaxWidth()
-                .weight(1f),
-              color = MaterialTheme.colorScheme.tertiary
-            )
+            var selectedFolder by remember { mutableStateOf(folder) }
 
-            Tooltip(stringResource(string.close_drawer)) {
-              IconButton(
-                onClick = { closeDrawer() },
-                modifier = Modifier.padding(horizontal = 5.dp, vertical = 0.dp)
-              ) {
-                Icon(
-                  imageVector = Icons.AutoMirrored.Rounded.MenuOpen,
-                  contentDescription = stringResource(string.close_drawer)
-                )
-              }
-            }
-          }
-
-          val showHiddenFiles by rememberShowHiddenFiles()
-
-          val editorUiState by editorViewModel.uiState.collectAsStateWithLifecycle()
-          var currentFile by remember { mutableStateOf<File?>(null) }
-
-          FileExplorer(
-            viewModel = fileExplorerViewModel,
-            selectedFile = editorUiState.selectedFile,
-            editorViewModel = editorViewModel,
-            onFileClick = { file ->
-              currentFile = file
-              closeDrawer()
-            },
-            onFileLongClick = { selectedFile = it },
-            modifier = Modifier.weight(1f)
-          )
-
-          val refresh = stringResource(string.refresh)
-          val add = stringResource(string.add)
-
-          val navigationSpaceState = rememberNavigationSpaceState()
-          LaunchedEffect(Unit) {
-            navigationSpaceState.apply {
-              add(
-                NavigationSpaceItem(
-                  id = 0,
-                  icon = Icons.Rounded.Refresh,
-                  title = refresh
-                )
+            Column(
+              modifier = Modifier.fillMaxSize()
+            ) {
+              FileTree(
+                modifier = Modifier.weight(1f),
+                path = folder.absolutePath,
+                onFileClick = { file ->
+                  if (!file.isDirectory) {
+                    if (file.name.endsWith(".apk")) {
+                      ApkInstaller.installApplication(context, file)
+                    } else if (isValidTextFile(file)) {
+                      closeDrawer()
+                      editorViewModel.addFile(file)
+                    } else {
+                      context.openFile(file)
+                    }
+                  }
+                },
+                onFileLongClick = { selectedFile = it }
               )
-              add(
-                NavigationSpaceItem(
-                  id = 1,
-                  icon = Icons.Rounded.Add,
-                  title = add
-                )
-              )
-            }
-          }
 
-          var showNewFileDialog by remember { mutableStateOf(false) }
-          var renamableFile by remember { mutableStateOf<File?>(null) }
-          var deletableFile by remember { mutableStateOf<File?>(null) }
+              NavigationSpaceActions {
+                when (it.id) {
+                  0 -> EventBus.getDefault().post(OnRefreshFolderEvent(folder))
 
-          NavigationSpace(state = navigationSpaceState) {
-            when (it.id) {
-              0 -> fileExplorerViewModel.refreshFiles(showHiddenFiles = showHiddenFiles)
-              1 -> showNewFileDialog = true
-            }
-          }
+                  1 -> {
+                    selectedFolder = folder
+                    showNewFileDialog = true
+                  }
 
-          when {
-            showNewFileDialog -> {
-              NewFileDialog(fileExplorerViewModel) { showNewFileDialog = false }
-            }
-
-            selectedFile != null -> {
-              FileOptionsSheet(onDismissRequest = { selectedFile = null }) {
-                when (it) {
-                  0 -> ClipboardUtils.copyText(selectedFile!!.absolutePath)
-                  1 -> renamableFile = selectedFile
-                  2 -> deletableFile = selectedFile
-                  else -> DoNothing
+                  99 -> fileExplorerViewModel.closeFolder()
                 }
               }
-            }
 
-            deletableFile != null -> {
-              DeleteFileDialog(
-                file = deletableFile!!,
-                fileExplorerViewModel = fileExplorerViewModel,
-                onDismissRequest = { deletableFile = null }
+              FileActionDialogs(
+                selectedFile = selectedFile,
+                openedFolder = folder,
+                onAddFileClick = {
+                  selectedFolder = it
+                  showNewFileDialog = true
+                },
+                onDissmissRequest = { selectedFile = null }
               )
-            }
 
-            renamableFile != null -> {
-              RenameFileDialog(
-                file = renamableFile!!,
-                fileExplorerViewModel = fileExplorerViewModel,
-                onDismissRequest = { renamableFile = null }
-              )
+              if (showNewFileDialog) {
+                NewFileDialog(
+                  path = selectedFolder,
+                  onFileCreated = { EventBus.getDefault().post(OnCreateFileEvent(it, folder)) },
+                  onFolderCreated = { EventBus.getDefault().post(OnCreateFolderEvent(it, folder)) },
+                  onDismissRequest = { showNewFileDialog = false },
+                )
+              }
             }
+          } ?: run {
+            OpenFolderActions(
+              modifier = Modifier.fillMaxSize(),
+              fileExplorerViewModel = fileExplorerViewModel
+            )
           }
         }
-      }
 
-      composable<EditorDrawerScreens.GitManager> {
-        GitManager(fileExplorerViewModel = fileExplorerViewModel)
+        composable<EditorDrawerScreens.GitManager> {
+          GitManager(fileExplorerViewModel = fileExplorerViewModel)
+        }
       }
     }
   }
 }
 
 @Composable
-fun NewFileDialog(
-  fileExplorerViewModel: FileExplorerViewModel,
-  onDismissRequest: () -> Unit
+fun NavigationSpaceActions(
+  modifier: Modifier = Modifier,
+  onItemClick: (NavigationSpaceItem) -> Unit
 ) {
-  val showHiddenFiles by rememberShowHiddenFiles()
-  var fileName by remember { mutableStateOf("") }
-  val currentPath by fileExplorerViewModel.currentPath.collectAsStateWithLifecycle()
+  val refresh = stringResource(string.refresh)
+  val add = stringResource(string.add)
+  val close = stringResource(string.close)
 
-  val toastHostState = LocalToastHostState.current
-  val lifecycleScope = LocalLifecycleScope.current
-  val scope = rememberCoroutineScope()
-
-  AlertDialog(
-    onDismissRequest = onDismissRequest,
-    title = { Text(stringResource(string.create)) },
-    text = {
-      OutlinedTextField(
-        value = fileName,
-        onValueChange = { fileName = it },
-        isError = fileName.isEmpty(),
-        textStyle = MaterialTheme.typography.bodyLarge,
-        placeholder = { Text(stringResource(string.file_enter_name)) }
-      )
-    },
-    confirmButton = {
-      Row(
-        horizontalArrangement = Arrangement.spacedBy(2.dp)
-      ) {
-        TextButton(
-          onClick = {
-            with(File(currentPath, fileName)) {
-              try {
-                if (!exists()) {
-                  lifecycleScope.launch(Dispatchers.IO) {
-                    createNewFile()
-                  }.invokeOnCompletion {
-                    fileExplorerViewModel.refreshFiles(showHiddenFiles)
-                  }
-                } else {
-                  scope.launch {
-                    toastHostState.showToast(
-                      message = "Already exists",
-                      icon = Icons.Rounded.ErrorOutline
-                    )
-                  }
-                }
-              } catch (ioe: IOException) {
-                ioe.printStackTrace()
-                scope.launch {
-                  toastHostState.showToast(
-                    message = ioe.message ?: "Error",
-                    icon = Icons.Rounded.ErrorOutline
-                  )
-                }
-              }
-            }
-
-            onDismissRequest()
-          },
-          enabled = fileName.isNotEmpty()
-        ) {
-          Text(stringResource(string.file))
-        }
-        TextButton(
-          onClick = {
-            with(File(currentPath, fileName)) {
-              try {
-                if (!exists()) {
-                  lifecycleScope.launch(Dispatchers.IO) {
-                    mkdirs()
-                  }.invokeOnCompletion {
-                    fileExplorerViewModel.refreshFiles(showHiddenFiles)
-                  }
-                } else {
-                  scope.launch {
-                    toastHostState.showToast(
-                      message = "Already exists",
-                      icon = Icons.Rounded.ErrorOutline
-                    )
-                  }
-                }
-              } catch (ioe: IOException) {
-                ioe.printStackTrace()
-                scope.launch {
-                  toastHostState.showToast(
-                    message = ioe.message ?: "Error",
-                    icon = Icons.Rounded.ErrorOutline
-                  )
-                }
-              }
-            }
-
-            onDismissRequest()
-          },
-          enabled = fileName.isNotEmpty()
-        ) {
-          Text(stringResource(string.file_folder))
-        }
-      }
-    },
-    dismissButton = {
-      TextButton(onClick = onDismissRequest) {
-        Text(stringResource(string.no))
-      }
-    }
-  )
-}
-
-@Composable
-fun RenameFileDialog(
-  file: File,
-  fileExplorerViewModel: FileExplorerViewModel,
-  onDismissRequest: () -> Unit
-) {
-  var fileName by remember { mutableStateOf(file.name) }
-
-  val context = LocalContext.current
-  val scope = rememberCoroutineScope()
-
-  val showHiddenFiles by rememberShowHiddenFiles()
-
-  AlertDialog(
-    onDismissRequest = onDismissRequest,
-    title = { Text(stringResource(string.file_rename)) },
-    text = {
-      OutlinedTextField(
-        value = fileName,
-        onValueChange = { fileName = it },
-        isError = fileName.isEmpty(),
-        placeholder = { Text(stringResource(string.file_enter_name)) }
-      )
-    },
-    confirmButton = {
-      TextButton(
-        onClick = {
-          scope.launchWithProgressDialog(
-            uiContext = context,
-            configureBuilder = { builder ->
-              builder.setMessage(string.file_renaming)
-              builder.setCancelable(false)
-            },
-            action = { _, _ ->
-              val newFile = File(file.parentFile, fileName)
-              val renamed = file.renameTo(newFile)
-
-              if (!renamed) {
-                return@launchWithProgressDialog
-              }
-
-              EventBus.getDefault().post(OnRenameFileEvent(file, newFile))
-
-              withContext(Dispatchers.Main) {
-                showShortToast(context, context.getString(R.string.file_renamed))
-                fileExplorerViewModel.refreshFiles(showHiddenFiles)
-              }
-
-              onDismissRequest()
-            },
-          )
-        },
-        enabled = fileName.isNotEmpty()
-      ) {
-        Text(stringResource(string.yes))
-      }
-    },
-    dismissButton = {
-      TextButton(onClick = onDismissRequest) {
-        Text(stringResource(string.no))
-      }
-    }
-  )
-}
-
-@Composable
-fun DeleteFileDialog(
-  file: File,
-  fileExplorerViewModel: FileExplorerViewModel,
-  onDismissRequest: () -> Unit
-) {
-  val context = LocalContext.current
-  val toastHostState = LocalToastHostState.current
-  val scope = rememberCoroutineScope()
-
-  val showHiddenFiles by rememberShowHiddenFiles()
-
-  AlertDialog(
-    onDismissRequest = onDismissRequest,
-    title = { Text(stringResource(string.file_delete)) },
-    text = { Text(stringResource(string.file_delete_message, file.name)) },
-    confirmButton = {
-      TextButton(onClick = {
-        scope.launchWithProgressDialog(
-          uiContext = context,
-          configureBuilder = { builder ->
-            builder.setMessage(R.string.file_deleting)
-            builder.setCancelable(false)
-          },
-          action = { _, _ ->
-            val deleted = FileUtils.delete(file)
-
-            if (!deleted) {
-              return@launchWithProgressDialog
-            }
-
-            EventBus.getDefault().post(OnDeleteFileEvent(file))
-
-            withContext(Dispatchers.Main) {
-              showShortToast(context, context.getString(string.file_deleted))
-              // FIX: Not working
-              // scope.launch { toastHostState.showToast(context.getString(string.file_deleted)) }
-              fileExplorerViewModel.refreshFiles(showHiddenFiles)
-            }
-
-            onDismissRequest()
-          },
+  val navigationSpaceState = rememberNavigationSpaceState()
+  LaunchedEffect(Unit) {
+    navigationSpaceState.apply {
+      add(
+        NavigationSpaceItem(
+          id = 99,
+          icon = Icons.Rounded.Close,
+          title = close
         )
-      }) { Text(stringResource(string.yes)) }
-    },
-    dismissButton = {
-      TextButton(onClick = onDismissRequest) {
-        Text(stringResource(string.no))
-      }
+      )
+      add(
+        NavigationSpaceItem(
+          id = 0,
+          icon = Icons.Rounded.Refresh,
+          title = refresh
+        )
+      )
+      add(
+        NavigationSpaceItem(
+          id = 1,
+          icon = Icons.Rounded.Add,
+          title = add
+        )
+      )
     }
+  }
+
+  NavigationSpace(
+    modifier = modifier,
+    state = navigationSpaceState,
+    onItemClick = onItemClick
   )
+}
+
+@Composable
+fun FileActionDialogs(
+  selectedFile: File?,
+  onAddFileClick: (File) -> Unit = {},
+  openedFolder: File,
+  onDissmissRequest: () -> Unit
+) {
+  var renamableFile by remember { mutableStateOf<File?>(null) }
+  var deletableFile by remember { mutableStateOf<File?>(null) }
+
+  val add = stringResource(strings.add)
+  val copyPath = stringResource(strings.file_copy_path)
+  val deleteFile = stringResource(strings.file_delete)
+  val renameFile = stringResource(strings.file_rename)
+
+  val addIcon = Icons.Rounded.Add
+  val copyPathIcon = Icons.Rounded.ContentCopy
+  val deleteFileIcon = Icons.Rounded.DeleteForever
+  val renameFileIcon = Icons.Rounded.DriveFileRenameOutline
+
+  when {
+    selectedFile != null -> {
+      FileOptionsSheet(onDismissRequest = onDissmissRequest,
+        options = {
+          mutableListOf<FileOptionItem>().apply {
+            if (selectedFile.isDirectory) {
+              add(
+                FileOptionItem(
+                  name = add,
+                  icon = addIcon,
+                  onClick = { onAddFileClick(selectedFile) }
+                )
+              )
+            }
+
+            add(
+              FileOptionItem(
+                name = copyPath,
+                icon = copyPathIcon,
+                onClick = { ClipboardUtils.copyText(selectedFile.absolutePath) }
+              )
+            )
+
+            add(
+              FileOptionItem(
+                name = renameFile,
+                icon = renameFileIcon,
+                onClick = { renamableFile = selectedFile }
+              )
+            )
+
+            add(
+              FileOptionItem(
+                name = deleteFile,
+                icon = deleteFileIcon,
+                onClick = { deletableFile = selectedFile }
+              )
+            )
+          }
+        }
+      )
+    }
+
+    deletableFile != null -> {
+      DeleteFileDialog(
+        file = deletableFile!!,
+        openedFolder = openedFolder,
+        onDismissRequest = { deletableFile = null }
+      )
+    }
+
+    renamableFile != null -> {
+      RenameFileDialog(
+        file = renamableFile!!,
+        openedFolder = openedFolder,
+        onDismissRequest = { renamableFile = null }
+      )
+    }
+  }
 }

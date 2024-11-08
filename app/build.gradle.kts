@@ -145,6 +145,7 @@ dependencies {
 
   implementation(libs.bsh)
   implementation(libs.org.eclipse.jgit)
+  implementation(libs.treeview)
 
   implementation(libs.retrofit)
   implementation(libs.retrofit.converter.gson)

@@ -29,10 +29,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 
 fun <T : Any> NavHostController.navigateSingleTop(route: T) {
   navigate(route) {
+    this@navigateSingleTop.graph.findStartDestination().id.let {
+      popUpTo(it) {
+        saveState = true
+      }
+    }
     launchSingleTop = true
     restoreState = true
   }

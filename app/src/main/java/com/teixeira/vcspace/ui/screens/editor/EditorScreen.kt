@@ -15,7 +15,6 @@
 
 package com.teixeira.vcspace.ui.screens.editor
 
-import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -49,7 +48,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.teixeira.vcspace.activities.Editor.LocalCommandPaletteManager
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
-import com.teixeira.vcspace.keyboard.CommandPaletteManager
 import com.teixeira.vcspace.core.components.editor.FileTabLayout
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberColorScheme
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberDeleteIndentOnBackspace
@@ -63,15 +61,13 @@ import com.teixeira.vcspace.core.settings.Settings.Editor.rememberStickyScroll
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberUseTab
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberWordWrap
 import com.teixeira.vcspace.core.settings.Settings.File.rememberLastOpenedFile
-import com.teixeira.vcspace.core.settings.Settings.File.rememberShowHiddenFiles
 import com.teixeira.vcspace.core.settings.Settings.General.rememberFollowSystemTheme
 import com.teixeira.vcspace.core.settings.Settings.General.rememberIsDarkMode
-import com.teixeira.vcspace.core.settings.Settings.General.rememberIsDynamicColor
 import com.teixeira.vcspace.editor.VCSpaceEditor
+import com.teixeira.vcspace.keyboard.CommandPaletteManager
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.ui.components.keyboard.CommandPalette
 import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
-import com.teixeira.vcspace.ui.theme.atLeastS
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 import kotlinx.coroutines.launch
@@ -79,9 +75,9 @@ import java.io.File
 
 @Composable
 fun EditorScreen(
+  modifier: Modifier = Modifier,
   viewModel: EditorViewModel = viewModel(),
-  fileExplorerViewModel: FileExplorerViewModel = viewModel(),
-  modifier: Modifier = Modifier
+  fileExplorerViewModel: FileExplorerViewModel = viewModel()
 ) {
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
   val editorConfigMap = remember { viewModel.editorConfigMap }
@@ -94,14 +90,11 @@ fun EditorScreen(
   }
 
   val openLastFiles by rememberLastOpenedFile()
-  val showHiddenFiles by rememberShowHiddenFiles()
-  val isDynamicColor by rememberIsDynamicColor()
 
   DisposableEffect(openLastFiles) {
     /*if (openLastFiles) {*/
     for (file in viewModel.lastOpenedFiles()) {
       viewModel.addFile(file)
-      fileExplorerViewModel.setCurrentPath(file.absolutePath, showHiddenFiles)
     }
     /*}*/
 
@@ -138,10 +131,7 @@ fun EditorScreen(
       val editorView = viewModel.getEditorForFile(context, fileEntry.file)
 
       key(editorConfigMap[fileEntry.file.path]) {
-        configureEditor(editorView.editor)
-        if (isDynamicColor && atLeastS) {
-          editorView.applyDynamicColor(context as Activity)
-        }
+        ConfigureEditor(editorView.editor)
         viewModel.setEditorConfiguredForFile(fileEntry.file)
       }
 
@@ -199,15 +189,15 @@ fun NoOpenedFiles() {
 }
 
 @Composable
-private fun configureEditor(editor: VCSpaceEditor) {
-  configureFontSettings(editor)
-  configureColorScheme(editor)
-  configureIndentation(editor)
-  configureMiscSettings(editor)
+private fun ConfigureEditor(editor: VCSpaceEditor) {
+  ConfigureFontSettings(editor)
+  ConfigureColorScheme(editor)
+  ConfigureIndentation(editor)
+  ConfigureMiscSettings(editor)
 }
 
 @Composable
-private fun configureFontSettings(editor: VCSpaceEditor) {
+private fun ConfigureFontSettings(editor: VCSpaceEditor) {
   val fontFamily by rememberFontFamily()
   val fontSize by rememberFontSize()
 
@@ -231,7 +221,7 @@ private fun configureFontSettings(editor: VCSpaceEditor) {
 }
 
 @Composable
-private fun configureColorScheme(editor: VCSpaceEditor) {
+private fun ConfigureColorScheme(editor: VCSpaceEditor) {
   val colorScheme by rememberColorScheme()
   val isDarkTheme = isSystemInDarkTheme()
 
@@ -259,7 +249,7 @@ private fun configureColorScheme(editor: VCSpaceEditor) {
 }
 
 @Composable
-private fun configureIndentation(editor: VCSpaceEditor) {
+private fun ConfigureIndentation(editor: VCSpaceEditor) {
   val indentSize by rememberIndentSize()
   val useTab by rememberUseTab()
 
@@ -273,7 +263,7 @@ private fun configureIndentation(editor: VCSpaceEditor) {
 }
 
 @Composable
-private fun configureMiscSettings(editor: VCSpaceEditor) {
+private fun ConfigureMiscSettings(editor: VCSpaceEditor) {
   val stickyScroll by rememberStickyScroll()
   val fontLigatures by rememberFontLigatures()
   val wordWrap by rememberWordWrap()

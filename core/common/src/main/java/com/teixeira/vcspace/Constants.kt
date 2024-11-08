@@ -29,13 +29,7 @@ const val ORGANIZATION_NAME = "Visual-Code-Space"
 const val APPLICATION_REPOSITORY_NAME = "Visual-Code-Space"
 
 object PreferenceKeys {
-  const val GENERAL_PREFERENCES = "pref_configure_general_key"
-  const val EDITOR_PREFERENCES = "pref_configure_editor_key"
-  const val FILE_PREFERENCES = "pref_configure_file_key"
-
-  const val PLUGINS_PREFERENCES = "pref_configure_plugins_key"
-
-  const val GITHUB_ABOUT_PREFERENCES = "pref_about_github_key"
+  const val RECENT_FOLDER = "recent_folder"
 
   const val PLUGINS_PATH = "plugins_path"
 }

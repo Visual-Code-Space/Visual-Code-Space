@@ -65,6 +65,7 @@
 
   <!-- Files -->
   <string name="file">File</string>
+  <string name="files">Files</string>
   <string name="file_folder">Folder</string>
   <string name="file_explorer">File Explorer</string>
   <string name="file_empty_folder">Empty folder</string>
@@ -81,6 +82,8 @@
   <string name="file_deleted">File deleted</string>
   <string name="file_copy_path">Copy path</string>
   <string name="file_open">Open file</string>
+  <string name="open_folder">Open Folder</string>
+  <string name="open_recent">Open Recent</string>
   <string name="file_save">Save</string>
   <string name="file_save_as">Save as</string>
   <string name="file_save_all">Save all</string>

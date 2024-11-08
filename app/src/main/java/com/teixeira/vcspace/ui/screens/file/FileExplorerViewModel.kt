@@ -15,69 +15,27 @@
 
 package com.teixeira.vcspace.ui.screens.file
 
+import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.blankj.utilcode.util.PathUtils
-import com.teixeira.vcspace.extensions.toFile
-import com.teixeira.vcspace.utils.getParentDirPath
-import kotlinx.coroutines.Dispatchers
+import com.teixeira.vcspace.PreferenceKeys
+import com.teixeira.vcspace.preferences.defaultPrefs
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import java.io.File
-import java.util.Arrays
 
 class FileExplorerViewModel : ViewModel() {
-  private val _files = MutableStateFlow<List<File>>(emptyList())
-  private val _currentPath = MutableStateFlow(PathUtils.getRootPathExternalFirst())
+  private val _openedFolder = MutableStateFlow<File?>(null)
+  val openedFolder get() = _openedFolder.asStateFlow()
 
-  val files get() = _files.asStateFlow()
-  val currentPath get() = _currentPath.asStateFlow()
-
-  fun backPath(showHiddenFiles: Boolean) {
-    if (_currentPath.value.equals(PathUtils.getRootPathExternalFirst())) {
-      return
+  fun openFolder(path: File) {
+    defaultPrefs.edit(commit = true) {
+      putString(PreferenceKeys.RECENT_FOLDER, path.absolutePath)
     }
-    setCurrentPath(getParentDirPath(_currentPath.value), showHiddenFiles)
+    _openedFolder.update { path }
   }
 
-  fun setCurrentPath(path: String, showHiddenFiles: Boolean) {
-    _currentPath.value = path
-    refreshFiles(showHiddenFiles)
-  }
-
-  fun refreshFiles(showHiddenFiles: Boolean) {
-    viewModelScope.launch(Dispatchers.IO) {
-      val dir = if (_currentPath.value.toFile().isDirectory) {
-        _currentPath.value.toFile()
-      } else if (_currentPath.value.startsWith("/data")) {
-        PathUtils.getExternalStoragePath().toFile()
-      } else {
-        _currentPath.value.toFile().parentFile
-      }
-
-      val listFiles = dir?.listFiles()
-
-      _files.update {
-        val files = mutableListOf<File>()
-
-        if (listFiles != null) {
-          Arrays.sort(listFiles, FOLDER_FIRST_ORDER)
-          for (file in listFiles) {
-            if (file.isHidden && !showHiddenFiles) {
-              continue
-            }
-            files.add(file)
-          }
-        }
-        files
-      }
-    }
-  }
-
-  companion object {
-    val FOLDER_FIRST_ORDER: Comparator<File> =
-      compareBy<File> { file -> if (file.isFile) 1 else 0 }.thenBy { it.name.lowercase() }
+  fun closeFolder() {
+    _openedFolder.update { null }
   }
 }

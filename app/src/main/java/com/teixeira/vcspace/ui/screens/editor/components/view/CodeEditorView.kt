@@ -1,14 +1,12 @@
 package com.teixeira.vcspace.ui.screens.editor.components.view
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import com.blankj.utilcode.util.FileIOUtils
-import com.google.android.material.color.DynamicColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.teixeira.vcspace.editor.VCSpaceEditor
 import com.teixeira.vcspace.editor.databinding.LayoutCodeEditorBinding
@@ -93,10 +91,6 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
     addView(binding.root, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
   }
 
-  fun applyDynamicColor(activity: Activity) {
-    DynamicColors.applyToActivityIfAvailable(activity)
-  }
-
   private fun readFile(file: File) {
     setLoading(true)
     editorScope.launch(Dispatchers.IO) {
@@ -169,8 +163,8 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
     editor.release()
   }
 
-  suspend fun saveFile(): Boolean {
-    return if (modified && FileIOUtils.writeFileFromString(file, editor.text.toString())) {
+  suspend fun saveFile() = withContext(Dispatchers.IO) {
+    if (modified && FileIOUtils.writeFileFromString(file, editor.text.toString())) {
       setModified(false)
       true
     } else false

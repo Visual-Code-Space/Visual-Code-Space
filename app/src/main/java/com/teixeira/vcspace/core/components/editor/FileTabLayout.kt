@@ -37,15 +37,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.teixeira.vcspace.core.settings.Settings.File.rememberShowHiddenFiles
 import com.teixeira.vcspace.ui.screens.editor.EditorViewModel
-import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
 
 @Composable
 fun FileTabLayout(
   modifier: Modifier = Modifier,
-  editorViewModel: EditorViewModel,
-  fileExplorerViewModel: FileExplorerViewModel
+  editorViewModel: EditorViewModel
 ) {
   val uiState by editorViewModel.uiState.collectAsStateWithLifecycle()
 
@@ -57,8 +54,6 @@ fun FileTabLayout(
 
   var showTabMenu by remember { mutableStateOf(false) }
   var tabPosition by remember { mutableStateOf<TabPosition?>(null) }
-
-  val showHiddenFiles by rememberShowHiddenFiles()
 
   @Composable
   fun tabOffset(position: TabPosition?): State<Dp> {
@@ -110,10 +105,6 @@ fun FileTabLayout(
             showTabMenu = true
           } else {
             editorViewModel.selectFile(index)
-            fileExplorerViewModel.setCurrentPath(
-              path = openedFile.file.absolutePath,
-              showHiddenFiles = showHiddenFiles
-            )
           }
         },
         text = {

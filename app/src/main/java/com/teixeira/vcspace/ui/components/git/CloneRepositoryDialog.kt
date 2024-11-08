@@ -46,9 +46,9 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.UriUtils
+import com.teixeira.vcspace.APP_EXTERNAL_DIR
 import com.teixeira.vcspace.activities.base.LocalLifecycleScope
 import com.teixeira.vcspace.app.strings
-import com.teixeira.vcspace.extensions.toFile
 import com.teixeira.vcspace.git.GitManager
 import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
 import kotlinx.coroutines.Dispatchers
@@ -63,15 +63,17 @@ fun CloneRepositoryDialog(
   onSuccessfulClone: () -> Unit,
   onFailedClone: (Throwable) -> Unit
 ) {
-  val path by fileExplorerViewModel.currentPath.collectAsStateWithLifecycle()
+  val appDir = remember { APP_EXTERNAL_DIR }
+
+  val path by fileExplorerViewModel.openedFolder.collectAsStateWithLifecycle()
   var currentPath by remember {
     mutableStateOf(
-      if (path.toFile().isFile) {
-        path.toFile().parentFile?.absolutePath ?: ""
-      } else if (path.startsWith("/data")) {
-        PathUtils.getExternalStoragePath()
+      if (path?.isFile == true) {
+        path?.parentFile?.absolutePath ?: appDir
+      } else if (path?.startsWith("/data") == true) {
+        appDir
       } else {
-        path
+        path?.absolutePath ?: appDir
       }
     )
   }

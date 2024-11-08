@@ -15,7 +15,11 @@
 
 package com.teixeira.vcspace.app
 
+import android.content.res.Resources
 import com.teixeira.vcspace.resources.R
 
 typealias strings = R.string
 typealias drawables = R.drawable
+
+inline val Int.dp: Int
+  get() = (Resources.getSystem().displayMetrics.density * this + 0.5f).toInt()

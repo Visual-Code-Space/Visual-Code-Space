@@ -1,51 +1,51 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
-  <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
-    <item name="colorPrimary">@color/light_primary</item>
-    <item name="colorOnPrimary">@color/light_onPrimary</item>
-    <item name="colorPrimaryContainer">@color/light_primaryContainer</item>
-    <item name="colorOnPrimaryContainer">@color/light_onPrimaryContainer</item>
-    <item name="colorSecondary">@color/light_secondary</item>
-    <item name="colorOnSecondary">@color/light_onSecondary</item>
-    <item name="colorSecondaryContainer">@color/light_secondaryContainer</item>
-    <item name="colorOnSecondaryContainer">@color/light_onSecondaryContainer</item>
-    <item name="colorTertiary">@color/light_tertiary</item>
-    <item name="colorOnTertiary">@color/light_onTertiary</item>
-    <item name="colorTertiaryContainer">@color/light_tertiaryContainer</item>
-    <item name="colorOnTertiaryContainer">@color/light_onTertiaryContainer</item>
-    <item name="colorError">@color/light_error</item>
-    <item name="colorErrorContainer">@color/light_errorContainer</item>
-    <item name="colorOnError">@color/light_onError</item>
-    <item name="colorOnErrorContainer">@color/light_onErrorContainer</item>
-    <item name="android:colorBackground">@color/light_background</item>
-    <item name="colorOnBackground">@color/light_onBackground</item>
-    <item name="colorSurface">@color/light_surface</item>
-    <item name="colorOnSurface">@color/light_onSurface</item>
-    <item name="colorSurfaceVariant">@color/light_surfaceVariant</item>
-    <item name="colorOnSurfaceVariant">@color/light_onSurfaceVariant</item>
-    <item name="colorOutline">@color/light_outline</item>
-    <item name="colorOnSurfaceInverse">@color/light_inverseOnSurface</item>
-    <item name="colorSurfaceInverse">@color/light_inverseSurface</item>
-    <item name="colorPrimaryInverse">@color/light_inversePrimary</item>
-
-<!--    <item name="android:statusBarColor">?attr/colorSurface</item>-->
-<!--    <item name="android:navigationBarColor">?attr/colorSurface</item>-->
-    <item name="android:windowLightStatusBar">true</item>
-    <item name="android:windowLightNavigationBar" tools:ignore="NewApi">true</item>
-    <item name="android:fontFamily">@font/josefin_sans</item>
-    <item name="switchPreferenceCompatStyle">@style/AppTheme.SwitchPreference</item>
-    <item name="dialogCornerRadius">28dp</item>
-
-    <item name="android:windowActivityTransitions">true</item>
-    <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
-    <item name="android:windowExitAnimation">@android:anim/fade_out</item>
-  </style>
-
-  <style name="AppTheme.SwitchPreference" parent="Preference.SwitchPreference.Material">
-    <item name="android:widgetLayout">@layout/layout_material_switch_style</item>
-  </style>
-
-  <style name="TabLayout.TextStyle" parent="@android:style/TextAppearance.Widget.TabWidget">
-    <item name="android:fontFamily">@font/josefin_sans</item>
+  <style name="AppTheme" parent="Theme.Material3.Light.NoActionBar">
+    <item name="colorPrimary">@color/primary</item>
+    <item name="colorOnPrimary">@color/onPrimary</item>
+    <item name="colorPrimaryContainer">@color/primaryContainer</item>
+    <item name="colorOnPrimaryContainer">@color/onPrimaryContainer</item>
+    <item name="colorSecondary">@color/secondary</item>
+    <item name="colorOnSecondary">@color/onSecondary</item>
+    <item name="colorSecondaryContainer">@color/secondaryContainer</item>
+    <item name="colorOnSecondaryContainer">@color/onSecondaryContainer</item>
+    <item name="colorTertiary">@color/tertiary</item>
+    <item name="colorOnTertiary">@color/onTertiary</item>
+    <item name="colorTertiaryContainer">@color/tertiaryContainer</item>
+    <item name="colorOnTertiaryContainer">@color/onTertiaryContainer</item>
+    <item name="colorError">@color/error</item>
+    <item name="colorOnError">@color/onError</item>
+    <item name="colorErrorContainer">@color/errorContainer</item>
+    <item name="colorOnErrorContainer">@color/onErrorContainer</item>
+    <item name="android:colorBackground">@color/background</item>
+    <item name="colorOnBackground">@color/onBackground</item>
+    <item name="colorSurface">@color/surface</item>
+    <item name="colorOnSurface">@color/onSurface</item>
+    <item name="colorSurfaceVariant">@color/surfaceVariant</item>
+    <item name="colorOnSurfaceVariant">@color/onSurfaceVariant</item>
+    <item name="colorOutline">@color/outline</item>
+    <item name="colorOutlineVariant">@color/outlineVariant</item>
+    <item name="colorSurfaceInverse">@color/inverseSurface</item>
+    <item name="colorOnSurfaceInverse">@color/inverseOnSurface</item>
+    <item name="colorPrimaryInverse">@color/inversePrimary</item>
+    <item name="colorPrimaryFixed">@color/primaryFixed</item>
+    <item name="colorOnPrimaryFixed">@color/onPrimaryFixed</item>
+    <item name="colorPrimaryFixedDim">@color/primaryFixedDim</item>
+    <item name="colorOnPrimaryFixedVariant">@color/onPrimaryFixedVariant</item>
+    <item name="colorSecondaryFixed">@color/secondaryFixed</item>
+    <item name="colorOnSecondaryFixed">@color/onSecondaryFixed</item>
+    <item name="colorSecondaryFixedDim">@color/secondaryFixedDim</item>
+    <item name="colorOnSecondaryFixedVariant">@color/onSecondaryFixedVariant</item>
+    <item name="colorTertiaryFixed">@color/tertiaryFixed</item>
+    <item name="colorOnTertiaryFixed">@color/onTertiaryFixed</item>
+    <item name="colorTertiaryFixedDim">@color/tertiaryFixedDim</item>
+    <item name="colorOnTertiaryFixedVariant">@color/onTertiaryFixedVariant</item>
+    <item name="colorSurfaceDim">@color/surfaceDim</item>
+    <item name="colorSurfaceBright">@color/surfaceBright</item>
+    <item name="colorSurfaceContainerLowest">@color/surfaceContainerLowest</item>
+    <item name="colorSurfaceContainerLow">@color/surfaceContainerLow</item>
+    <item name="colorSurfaceContainer">@color/surfaceContainer</item>
+    <item name="colorSurfaceContainerHigh">@color/surfaceContainerHigh</item>
+    <item name="colorSurfaceContainerHighest">@color/surfaceContainerHighest</item>
   </style>
 </resources>

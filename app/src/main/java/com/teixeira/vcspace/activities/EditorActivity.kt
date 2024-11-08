@@ -220,22 +220,12 @@ class EditorActivity : BaseComposeActivity() {
                 "$pluginPath/${manifest.scripts.first().name}".toFile()
               )
               editorViewModel.addFiles(*filesToOpen)
-              fileExplorerViewModel.setCurrentPath(
-                filesToOpen.last().absolutePath,
-                showHiddenFiles
-              )
             }
           }
 
           val externalFileUri = intent.data
           if (externalFileUri != null) {
             editorViewModel.addFile(UriUtils.uri2File(externalFileUri))
-            externalFileUri.path?.let {
-              fileExplorerViewModel.setCurrentPath(
-                path = it,
-                showHiddenFiles = showHiddenFiles
-              )
-            }
           }
 
           onCreate()
@@ -269,7 +259,7 @@ class EditorActivity : BaseComposeActivity() {
           ModalDrawerSheet(
             drawerState = LocalEditorDrawerState.current,
             modifier = Modifier
-              .fillMaxWidth(fraction = 0.8f)
+              .fillMaxWidth(fraction = 0.85f)
           ) {
             EditorDrawerSheet(
               fileExplorerViewModel = fileExplorerViewModel,
