@@ -26,7 +26,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -36,17 +35,11 @@ import com.teixeira.vcspace.app.BaseApplication
 import com.teixeira.vcspace.app.strings
 import com.teixeira.vcspace.extensions.open
 import com.teixeira.vcspace.resources.R.string
+import com.teixeira.vcspace.ui.navigateSingleTop
 import com.teixeira.vcspace.ui.screens.SettingScreens
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import me.zhanghai.compose.preference.preference
 import me.zhanghai.compose.preference.preferenceCategory
-
-private fun <T : Any> NavHostController.navigateSingleTop(route: T) {
-  navigate(route) {
-    launchSingleTop = true
-    restoreState = true
-  }
-}
 
 @Composable
 fun SettingsScreen(modifier: Modifier = Modifier) {

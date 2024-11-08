@@ -28,7 +28,6 @@ import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Terminal
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.ErrorOutline
 import androidx.compose.material.icons.rounded.Folder
 import androidx.compose.material.icons.rounded.Refresh
@@ -59,9 +58,11 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import com.blankj.utilcode.util.ClipboardUtils
 import com.blankj.utilcode.util.FileUtils
-import com.blankj.utilcode.util.ToastUtils
+import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerNavController
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
 import com.teixeira.vcspace.activities.SettingsActivity
 import com.teixeira.vcspace.activities.TerminalActivity
@@ -81,7 +82,8 @@ import com.teixeira.vcspace.extensions.open
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.resources.R.string
 import com.teixeira.vcspace.ui.LocalToastHostState
-import com.teixeira.vcspace.ui.components.git.CloneRepositoryDialog
+import com.teixeira.vcspace.ui.navigateSingleTop
+import com.teixeira.vcspace.ui.screens.EditorDrawerScreens
 import com.teixeira.vcspace.ui.screens.editor.EditorViewModel
 import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
 import com.teixeira.vcspace.utils.launchWithProgressDialog
@@ -100,27 +102,28 @@ fun EditorDrawerSheet(
 ) {
   val context = LocalContext.current
   val drawerState = LocalEditorDrawerState.current
-  val toastHostState = LocalToastHostState.current
+  val navController = LocalEditorDrawerNavController.current
   val scope = rememberCoroutineScope()
-  val selectedItem by remember { mutableIntStateOf(0) }
+  var selectedItem by remember { mutableIntStateOf(0) }
 
   val navigationRailItems = listOf(
     stringResource(string.file_explorer),
+    stringResource(string.git),
     stringResource(string.terminal),
     stringResource(string.settings)
   )
   val navRailItemIconsUnselected = listOf(
     Icons.Outlined.Folder,
+    ImageVector.vectorResource(drawables.ic_git),
     Icons.Outlined.Terminal,
     Icons.Outlined.Settings
   )
   val navRailItemIconsSelected = listOf(
     Icons.Rounded.Folder,
+    ImageVector.vectorResource(drawables.ic_git),
     Icons.Rounded.Terminal,
     Icons.Rounded.Settings
   )
-
-  val currentPath by fileExplorerViewModel.currentPath.collectAsStateWithLifecycle()
 
   fun closeDrawer() {
     scope.launch {
@@ -130,7 +133,17 @@ fun EditorDrawerSheet(
     }
   }
 
-  var selectedFile by remember { mutableStateOf<File?>(null) }
+  navController.addOnDestinationChangedListener { _, destination, _ ->
+    when (destination.route) {
+      EditorDrawerScreens.FileExplorer::class.qualifiedName -> {
+        selectedItem = 0
+      }
+
+      EditorDrawerScreens.GitManager::class.qualifiedName -> {
+        selectedItem = 1
+      }
+    }
+  }
 
   Row(
     modifier = Modifier.fillMaxSize()
@@ -148,163 +161,153 @@ fun EditorDrawerSheet(
           },
           selected = selectedItem == i,
           onClick = {
+            if (i < 2) {
+              selectedItem = i
+            }
+
             when (i) {
-              1 -> context.open(TerminalActivity::class.java)
-              2 -> context.open(SettingsActivity::class.java)
+              0 -> navController.navigateSingleTop(EditorDrawerScreens.FileExplorer)
+              1 -> navController.navigateSingleTop(EditorDrawerScreens.GitManager)
+              2 -> context.open(TerminalActivity::class.java)
+              3 -> context.open(SettingsActivity::class.java)
             }
           }
         )
       }
     }
 
-    Column(
-      modifier = Modifier.fillMaxSize()
+    NavHost(
+      navController = LocalEditorDrawerNavController.current,
+      startDestination = EditorDrawerScreens.FileExplorer
     ) {
-      Row {
-        Text(
-          text = stringResource(string.workspace),
-          style = MaterialTheme.typography.headlineSmall,
-          modifier = Modifier
-            .padding(5.dp)
-            .padding(start = 5.dp)
-            .fillMaxWidth()
-            .weight(1f),
-          color = MaterialTheme.colorScheme.tertiary
-        )
+      composable<EditorDrawerScreens.FileExplorer> {
+        var selectedFile by remember { mutableStateOf<File?>(null) }
 
-        Tooltip(stringResource(string.close_drawer)) {
-          IconButton(
-            onClick = { closeDrawer() },
-            modifier = Modifier.padding(horizontal = 5.dp, vertical = 0.dp)
-          ) {
-            Icon(
-              imageVector = Icons.AutoMirrored.Rounded.MenuOpen,
-              contentDescription = stringResource(string.close_drawer)
+        Column(
+          modifier = Modifier.fillMaxSize()
+        ) {
+          Row {
+            Text(
+              text = stringResource(string.workspace),
+              style = MaterialTheme.typography.headlineSmall,
+              modifier = Modifier
+                .padding(5.dp)
+                .padding(start = 5.dp)
+                .fillMaxWidth()
+                .weight(1f),
+              color = MaterialTheme.colorScheme.tertiary
             )
-          }
-        }
-      }
 
-      val showHiddenFiles by rememberShowHiddenFiles()
-
-      val editorUiState by editorViewModel.uiState.collectAsStateWithLifecycle()
-      var currentFile by remember { mutableStateOf<File?>(null) }
-
-      FileExplorer(
-        viewModel = fileExplorerViewModel,
-        selectedFile = editorUiState.selectedFile,
-        editorViewModel = editorViewModel,
-        onFileClick = { file ->
-          currentFile = file
-          closeDrawer()
-        },
-        onFileLongClick = { selectedFile = it },
-        modifier = Modifier.weight(1f)
-      )
-
-      val refresh = stringResource(string.refresh)
-      val add = stringResource(string.add)
-      val clone = stringResource(string.git_clone)
-      val cloneIcon = ImageVector.vectorResource(drawables.ic_git)
-
-      val navigationSpaceState = rememberNavigationSpaceState()
-      LaunchedEffect(Unit) {
-        navigationSpaceState.apply {
-          add(
-            NavigationSpaceItem(
-              id = 0,
-              icon = Icons.Rounded.Refresh,
-              title = refresh
-            )
-          )
-          add(
-            NavigationSpaceItem(
-              id = 1,
-              icon = Icons.Rounded.Add,
-              title = add
-            )
-          )
-          add(
-            NavigationSpaceItem(
-              id = 2,
-              icon = cloneIcon,
-              title = clone
-            )
-          )
-        }
-      }
-
-      var showNewFileDialog by remember { mutableStateOf(false) }
-      var showGitCloneDialog by remember { mutableStateOf(false) }
-      var renamableFile by remember { mutableStateOf<File?>(null) }
-      var deletableFile by remember { mutableStateOf<File?>(null) }
-
-      NavigationSpace(state = navigationSpaceState) {
-        when (it.id) {
-          0 -> fileExplorerViewModel.refreshFiles(showHiddenFiles = showHiddenFiles)
-          1 -> showNewFileDialog = true
-          2 -> showGitCloneDialog = true
-        }
-      }
-
-      when {
-        showNewFileDialog -> {
-          NewFileDialog(fileExplorerViewModel) { showNewFileDialog = false }
-        }
-
-        showGitCloneDialog -> {
-          CloneRepositoryDialog(
-            url = ClipboardUtils.getText().toString(),
-            path = currentPath,
-            onDismissRequest = { showGitCloneDialog = false },
-            onSuccessfulClone = {
-              scope.launch {
-                toastHostState.showToast(
-                  message = "Successfully cloned",
-                  icon = Icons.Rounded.Check
+            Tooltip(stringResource(string.close_drawer)) {
+              IconButton(
+                onClick = { closeDrawer() },
+                modifier = Modifier.padding(horizontal = 5.dp, vertical = 0.dp)
+              ) {
+                Icon(
+                  imageVector = Icons.AutoMirrored.Rounded.MenuOpen,
+                  contentDescription = stringResource(string.close_drawer)
                 )
               }
-              fileExplorerViewModel.refreshFiles(showHiddenFiles = showHiddenFiles)
+            }
+          }
+
+          val showHiddenFiles by rememberShowHiddenFiles()
+
+          val editorUiState by editorViewModel.uiState.collectAsStateWithLifecycle()
+          var currentFile by remember { mutableStateOf<File?>(null) }
+
+          FileExplorer(
+            viewModel = fileExplorerViewModel,
+            selectedFile = editorUiState.selectedFile,
+            editorViewModel = editorViewModel,
+            onFileClick = { file ->
+              currentFile = file
+              closeDrawer()
             },
-            onFailedClone = {
-              showGitCloneDialog = false
-              it.printStackTrace()
-              scope.launch {
-                toastHostState.showToast(
-                  message = it.message ?: "Error",
-                  icon = Icons.Rounded.ErrorOutline
+            onFileLongClick = { selectedFile = it },
+            modifier = Modifier.weight(1f)
+          )
+
+          val refresh = stringResource(string.refresh)
+          val add = stringResource(string.add)
+          val clone = stringResource(string.git_clone)
+          val cloneIcon = ImageVector.vectorResource(drawables.ic_git)
+
+          val navigationSpaceState = rememberNavigationSpaceState()
+          LaunchedEffect(Unit) {
+            navigationSpaceState.apply {
+              add(
+                NavigationSpaceItem(
+                  id = 0,
+                  icon = Icons.Rounded.Refresh,
+                  title = refresh
                 )
+              )
+              add(
+                NavigationSpaceItem(
+                  id = 1,
+                  icon = Icons.Rounded.Add,
+                  title = add
+                )
+              )
+              add(
+                NavigationSpaceItem(
+                  id = 2,
+                  icon = cloneIcon,
+                  title = clone
+                )
+              )
+            }
+          }
+
+          var showNewFileDialog by remember { mutableStateOf(false) }
+          var renamableFile by remember { mutableStateOf<File?>(null) }
+          var deletableFile by remember { mutableStateOf<File?>(null) }
+
+          NavigationSpace(state = navigationSpaceState) {
+            when (it.id) {
+              0 -> fileExplorerViewModel.refreshFiles(showHiddenFiles = showHiddenFiles)
+              1 -> showNewFileDialog = true
+            }
+          }
+
+          when {
+            showNewFileDialog -> {
+              NewFileDialog(fileExplorerViewModel) { showNewFileDialog = false }
+            }
+
+            selectedFile != null -> {
+              FileOptionsSheet(onDismissRequest = { selectedFile = null }) {
+                when (it) {
+                  0 -> ClipboardUtils.copyText(selectedFile!!.absolutePath)
+                  1 -> renamableFile = selectedFile
+                  2 -> deletableFile = selectedFile
+                  else -> DoNothing
+                }
               }
             }
-          )
-        }
 
-        selectedFile != null -> {
-          FileOptionsSheet(onDismissRequest = { selectedFile = null }) {
-            when (it) {
-              0 -> ClipboardUtils.copyText(selectedFile!!.absolutePath)
-              1 -> renamableFile = selectedFile
-              2 -> deletableFile = selectedFile
-              else -> DoNothing
+            deletableFile != null -> {
+              DeleteFileDialog(
+                file = deletableFile!!,
+                fileExplorerViewModel = fileExplorerViewModel,
+                onDismissRequest = { deletableFile = null }
+              )
+            }
+
+            renamableFile != null -> {
+              RenameFileDialog(
+                file = renamableFile!!,
+                fileExplorerViewModel = fileExplorerViewModel,
+                onDismissRequest = { renamableFile = null }
+              )
             }
           }
         }
+      }
 
-        deletableFile != null -> {
-          DeleteFileDialog(
-            file = deletableFile!!,
-            fileExplorerViewModel = fileExplorerViewModel,
-            onDismissRequest = { deletableFile = null }
-          )
-        }
-
-        renamableFile != null -> {
-          RenameFileDialog(
-            file = renamableFile!!,
-            fileExplorerViewModel = fileExplorerViewModel,
-            onDismissRequest = { renamableFile = null }
-          )
-        }
+      composable<EditorDrawerScreens.GitManager> {
+        GitManager(fileExplorerViewModel = fileExplorerViewModel)
       }
     }
   }

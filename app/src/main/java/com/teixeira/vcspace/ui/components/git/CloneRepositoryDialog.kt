@@ -15,11 +15,17 @@
 
 package com.teixeira.vcspace.ui.components.git
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Folder
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -32,39 +38,70 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
+import androidx.documentfile.provider.DocumentFile
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.blankj.utilcode.util.PathUtils
+import com.blankj.utilcode.util.UriUtils
 import com.teixeira.vcspace.activities.base.LocalLifecycleScope
 import com.teixeira.vcspace.app.strings
+import com.teixeira.vcspace.extensions.toFile
 import com.teixeira.vcspace.git.GitManager
+import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
 fun CloneRepositoryDialog(
   modifier: Modifier = Modifier,
+  fileExplorerViewModel: FileExplorerViewModel,
   url: String,
-  path: String,
   onDismissRequest: () -> Unit,
   onSuccessfulClone: () -> Unit,
   onFailedClone: (Throwable) -> Unit
 ) {
+  val path by fileExplorerViewModel.currentPath.collectAsStateWithLifecycle()
+  var currentPath by remember {
+    mutableStateOf(
+      if (path.toFile().isFile) {
+        path.toFile().parentFile?.absolutePath ?: ""
+      } else if (path.startsWith("/data")) {
+        PathUtils.getExternalStoragePath()
+      } else {
+        path
+      }
+    )
+  }
+
   var gitUrl by remember { mutableStateOf(url) }
-  var destination by remember { mutableStateOf(path) }
+  var destination by remember { mutableStateOf(currentPath) }
 
   var isCloning by remember { mutableStateOf(false) }
   var progress by remember { mutableIntStateOf(0) }
   var statusMessage by remember { mutableStateOf("Starting clone...") }
 
+  val context = LocalContext.current
+  val openFolder = rememberLauncherForActivityResult(
+    contract = ActivityResultContracts.OpenDocumentTree()
+  ) { uri ->
+    if (uri != null) DocumentFile.fromTreeUri(context, uri)?.let {
+      currentPath = UriUtils.uri2File(it.uri).absolutePath
+    }
+  }
+
   val scope = LocalLifecycleScope.current
 
-  LaunchedEffect(gitUrl) {
-    var dest = "$path/${gitUrl.substringAfterLast("/")}"
-    if (dest.endsWith(".git")) {
-      dest = dest.substringBeforeLast(".")
+  LaunchedEffect(gitUrl, currentPath) {
+    if (gitUrl.isNotEmpty()) {
+      var dest = "$currentPath/${gitUrl.substringAfterLast("/")}"
+      if (dest.endsWith(".git")) {
+        dest = dest.substringBeforeLast(".")
+      }
+      destination = dest
     }
-    destination = dest
   }
 
   AlertDialog(
@@ -83,11 +120,24 @@ fun CloneRepositoryDialog(
           )
         }
       } else {
-        OutlinedTextField(
-          value = gitUrl,
-          onValueChange = { gitUrl = it },
-          label = { Text("Git URL") }
-        )
+        Column {
+          OutlinedTextField(
+            value = gitUrl,
+            onValueChange = { gitUrl = it },
+            label = { Text("Git URL") }
+          )
+          Spacer(modifier = Modifier.height(8.dp))
+          OutlinedTextField(
+            value = destination,
+            onValueChange = { destination = it },
+            label = { Text("Destination Path") },
+            trailingIcon = {
+              IconButton(onClick = {
+                openFolder.launch(null)
+              }) { Icon(Icons.Rounded.Folder, contentDescription = null) }
+            }
+          )
+        }
       }
     },
     confirmButton = {
@@ -111,7 +161,7 @@ fun CloneRepositoryDialog(
             }.onFailure(onFailedClone)
           }
         },
-        enabled = gitUrl.isNotEmpty() && !isCloning
+        enabled = gitUrl.isNotEmpty() && !isCloning && destination.isNotEmpty()
       ) {
         Text(if (isCloning) "Cloning..." else stringResource(strings.git_clone))
       }

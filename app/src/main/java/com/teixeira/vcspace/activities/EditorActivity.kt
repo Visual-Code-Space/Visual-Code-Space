@@ -30,28 +30,26 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.blankj.utilcode.util.ClipboardUtils
 import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.blankj.utilcode.util.UriUtils
+import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerNavController
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
 import com.teixeira.vcspace.activities.base.BaseComposeActivity
 import com.teixeira.vcspace.app.DoNothing
 import com.teixeira.vcspace.app.noLocalProvidedFor
-import com.teixeira.vcspace.keyboard.CommandPaletteManager
-import com.teixeira.vcspace.keyboard.model.Command.Companion.newCommand
 import com.teixeira.vcspace.core.settings.Settings.File.rememberShowHiddenFiles
 import com.teixeira.vcspace.editor.addBlockComment
 import com.teixeira.vcspace.editor.addSingleComment
@@ -59,6 +57,8 @@ import com.teixeira.vcspace.editor.events.OnContentChangeEvent
 import com.teixeira.vcspace.editor.events.OnKeyBindingEvent
 import com.teixeira.vcspace.extensions.open
 import com.teixeira.vcspace.extensions.toFile
+import com.teixeira.vcspace.keyboard.CommandPaletteManager
+import com.teixeira.vcspace.keyboard.model.Command.Companion.newCommand
 import com.teixeira.vcspace.plugins.Manifest
 import com.teixeira.vcspace.preferences.pluginsPath
 import com.teixeira.vcspace.ui.screens.editor.EditorScreen
@@ -81,6 +81,10 @@ object Editor {
 
   val LocalCommandPaletteManager = staticCompositionLocalOf {
     CommandPaletteManager.instance
+  }
+
+  val LocalEditorDrawerNavController = compositionLocalOf<NavHostController> {
+    noLocalProvidedFor("LocalEditorDrawerNavController")
   }
 }
 
@@ -297,9 +301,11 @@ class EditorActivity : BaseComposeActivity() {
   @Composable
   private fun ProvideEditorCompositionLocals(content: @Composable () -> Unit) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val drawerNavController = rememberNavController()
 
     CompositionLocalProvider(
       LocalEditorDrawerState provides drawerState,
+      LocalEditorDrawerNavController provides drawerNavController,
       content = content
     )
   }

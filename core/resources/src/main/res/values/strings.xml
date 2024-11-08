@@ -222,4 +222,5 @@
   <string name="copied_to_clipboard">Copied to clipboard</string>
   <string name="reload_plugins">Reload Plugins</string>
   <string name="git_clone">Clone</string>
+  <string name="git">Git</string>
 </resources>

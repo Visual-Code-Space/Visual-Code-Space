@@ -34,6 +34,7 @@ class GitManager private constructor() {
     _git = git
   }
 
+  @JvmOverloads
   fun clone(
     url: String,
     destination: String,
