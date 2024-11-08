@@ -230,8 +230,6 @@ fun EditorDrawerSheet(
 
           val refresh = stringResource(string.refresh)
           val add = stringResource(string.add)
-          val clone = stringResource(string.git_clone)
-          val cloneIcon = ImageVector.vectorResource(drawables.ic_git)
 
           val navigationSpaceState = rememberNavigationSpaceState()
           LaunchedEffect(Unit) {
@@ -248,13 +246,6 @@ fun EditorDrawerSheet(
                   id = 1,
                   icon = Icons.Rounded.Add,
                   title = add
-                )
-              )
-              add(
-                NavigationSpaceItem(
-                  id = 2,
-                  icon = cloneIcon,
-                  title = clone
                 )
               )
             }
