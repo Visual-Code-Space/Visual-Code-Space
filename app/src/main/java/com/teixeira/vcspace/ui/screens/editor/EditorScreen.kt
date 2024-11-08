@@ -121,8 +121,7 @@ fun EditorScreen(
     false
   }) {
     FileTabLayout(
-      editorViewModel = viewModel,
-      fileExplorerViewModel = fileExplorerViewModel
+      editorViewModel = viewModel
     )
 
     val openedFile = openedFiles.getOrNull(selectedFileIndex)
