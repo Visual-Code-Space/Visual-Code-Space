@@ -16,6 +16,7 @@
 package com.teixeira.vcspace.plugins
 
 import java.io.Serializable
+import java.util.Locale
 
 data class Script @JvmOverloads constructor(
   val name: String,

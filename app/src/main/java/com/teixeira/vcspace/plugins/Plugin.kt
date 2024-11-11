@@ -43,9 +43,9 @@ class Plugin(
     try {
       interpreter = Interpreter().apply {
         setClassLoader(app.classLoader)
-        /* strictJava = true */
+        strictJava = true
         nameSpace.importClass("com.teixeira.vcspace.plugins.helper.FileHelper")
-        nameSpace.importClass("android.widget.Toast")
+        nameSpace.importClass("com.teixeira.vcspace.plugins.extension.Extension")
         nameSpace.loadDefaultImports()
 
         set("app", app)

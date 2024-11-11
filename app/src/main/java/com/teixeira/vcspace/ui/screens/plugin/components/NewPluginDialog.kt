@@ -33,6 +33,7 @@ import com.teixeira.vcspace.preferences.pluginsPath
 import com.teixeira.vcspace.ui.ErrorMessage
 import com.teixeira.vcspace.ui.InputField
 import java.io.File
+import java.util.Locale
 
 @Composable
 fun NewPluginDialog(
@@ -109,8 +110,11 @@ fun NewPluginDialog(
               description = description.ifEmpty { defaultDescription },
               scripts = arrayOf(
                 Script(
-                  name = "main.bsh",
-                  entryPoint = "init"
+                  name = if (name.contains("_")) {
+                    name.split(" ").joinToString { word ->
+                      word.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+                    }
+                  } else name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
                 )
               )
             )

@@ -61,14 +61,13 @@ fun CommandPalette(
   onCommandSelected: (Command) -> Unit = {},
   onDismissRequest: () -> Unit
 ) {
-  val softwareKeyboardController = LocalSoftwareKeyboardController.current
   val focusRequester = remember { FocusRequester() }
 
   // Combine recently used commands with the rest of the commands, removing duplicates
   val sortedCommands = remember {
     val allCommands = recentlyUsedCommands + commands.filter {
       it !in recentlyUsedCommands
-    }.toMutableList().apply { sortBy { it.name } }
+    }.toMutableList().apply { sortBy { it.name.lowercase() } }
 
     allCommands
   }

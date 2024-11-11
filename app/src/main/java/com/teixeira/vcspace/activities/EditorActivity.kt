@@ -45,6 +45,7 @@ import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.blankj.utilcode.util.UriUtils
+import com.teixeira.vcspace.APP_EXTERNAL_DIR
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerNavController
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
 import com.teixeira.vcspace.activities.base.BaseComposeActivity
@@ -60,6 +61,7 @@ import com.teixeira.vcspace.extensions.toFile
 import com.teixeira.vcspace.keyboard.CommandPaletteManager
 import com.teixeira.vcspace.keyboard.model.Command.Companion.newCommand
 import com.teixeira.vcspace.plugins.Manifest
+import com.teixeira.vcspace.plugins.wasm.WasmLoader
 import com.teixeira.vcspace.preferences.pluginsPath
 import com.teixeira.vcspace.ui.screens.editor.EditorScreen
 import com.teixeira.vcspace.ui.screens.editor.EditorViewModel
@@ -68,11 +70,13 @@ import com.teixeira.vcspace.ui.screens.editor.components.EditorTopBar
 import com.teixeira.vcspace.ui.screens.editor.components.view.CodeEditorView
 import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
 import io.github.rosemoe.sora.event.ContentChangeEvent
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.io.File
+import kotlin.system.exitProcess
 
 object Editor {
   val LocalEditorDrawerState = compositionLocalOf<DrawerState> {
@@ -91,6 +95,10 @@ object Editor {
 class EditorActivity : BaseComposeActivity() {
   companion object {
     private const val TAG = "EditorActivity"
+
+    init {
+      System.loadLibrary("vcspace")
+    }
 
     const val EXTRA_KEY_PLUGIN_MANIFEST = "plugin_manifest"
 
@@ -204,6 +212,13 @@ class EditorActivity : BaseComposeActivity() {
     ObserveLifecycleEvents { event ->
       when (event) {
         Lifecycle.Event.ON_CREATE -> {
+          if (WasmLoader.init(this) != 0) {
+            Log.e(TAG, "Failed to initialize WasmLoader")
+            finish()
+            exitProcess(33)
+          }
+          Log.i(TAG, "WasmLoader initialized successfully")
+
           EventBus.getDefault().register(this@EditorActivity)
 
           // Open plugin files if opened from PluginsActivity
@@ -229,6 +244,14 @@ class EditorActivity : BaseComposeActivity() {
           }
 
           onCreate()
+
+          lifecycleScope.launch(Dispatchers.IO) {
+            runCatching {
+              WasmLoader.runWasm("$APP_EXTERNAL_DIR/test.wasm")
+            }.onFailure {
+              ToastUtils.showShort("Failed to run wasm: ${it.message}")
+            }
+          }
         }
 
         Lifecycle.Event.ON_PAUSE -> {
