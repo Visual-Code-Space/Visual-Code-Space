@@ -1,0 +1,3 @@
+[submodule "app/src/main/cpp/third-party/wasm3"]
+	path = app/src/main/cpp/third-party/wasm3
+	url = https://github.com/wasm3/wasm3.git
