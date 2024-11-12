@@ -59,7 +59,7 @@ void VCSpace::JNIHelper::cleanup() {
   initialized = false;
 }
 
-void VCSpace::JNIHelper::throwJavaException(const char* message...) {
+void VCSpace::JNIHelper::throwJavaException(const char* message) {
   JNIEnv* env = getEnv();
   jclass exceptionClass = env->FindClass("com/teixeira/vcspace/plugins/wasm/WasmRuntimeException");
   env->ThrowNew(exceptionClass, message);

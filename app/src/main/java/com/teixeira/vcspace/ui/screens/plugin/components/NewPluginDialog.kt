@@ -110,11 +110,8 @@ fun NewPluginDialog(
               description = description.ifEmpty { defaultDescription },
               scripts = arrayOf(
                 Script(
-                  name = if (name.contains("_")) {
-                    name.split(" ").joinToString { word ->
-                      word.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
-                    }
-                  } else name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+                  name = "main.bsh",
+                  entryPoint = "init"
                 )
               )
             )

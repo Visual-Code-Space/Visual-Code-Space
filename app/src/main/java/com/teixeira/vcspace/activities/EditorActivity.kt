@@ -247,7 +247,7 @@ class EditorActivity : BaseComposeActivity() {
 
           lifecycleScope.launch(Dispatchers.IO) {
             runCatching {
-              WasmLoader.runWasm("$APP_EXTERNAL_DIR/test.wasm")
+              WasmLoader.runWasm("$APP_EXTERNAL_DIR/test.wasm", "call_toast")
             }.onFailure {
               ToastUtils.showShort("Failed to run wasm: ${it.message}")
             }

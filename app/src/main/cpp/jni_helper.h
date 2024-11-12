@@ -31,7 +31,7 @@ namespace VCSpace {
 
     void initialize(JNIEnv* env, jobject editorActivity);
 
-    void throwJavaException(const char* message...);
+    void throwJavaException(const char* message);
 
     std::vector<std::string> jobjectArrayToVector(jobjectArray jArray);
 
