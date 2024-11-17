@@ -62,6 +62,7 @@ import androidx.compose.ui.platform.LocalAccessibilityManager
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.teixeira.vcspace.app.noLocalProvidedFor
 import com.teixeira.vcspace.ui.extensions.harmonizeWithPrimary
 import kotlinx.coroutines.CancellableContinuation
@@ -135,6 +136,7 @@ fun Toast(
         )
         .imePadding()
         .systemBarsPadding()
+        .zIndex(10000f)
         .alpha(0.95f),
     shape = shape
   ) {

@@ -24,9 +24,11 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.contentColorFor
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -61,7 +63,6 @@ import com.teixeira.vcspace.extensions.toFile
 import com.teixeira.vcspace.keyboard.CommandPaletteManager
 import com.teixeira.vcspace.keyboard.model.Command.Companion.newCommand
 import com.teixeira.vcspace.plugins.Manifest
-import com.teixeira.vcspace.plugins.wasm.WasmLoader
 import com.teixeira.vcspace.preferences.pluginsPath
 import com.teixeira.vcspace.ui.screens.editor.EditorScreen
 import com.teixeira.vcspace.ui.screens.editor.EditorViewModel
@@ -95,10 +96,6 @@ object Editor {
 class EditorActivity : BaseComposeActivity() {
   companion object {
     private const val TAG = "EditorActivity"
-
-    init {
-      System.loadLibrary("vcspace")
-    }
 
     const val EXTRA_KEY_PLUGIN_MANIFEST = "plugin_manifest"
 
@@ -212,13 +209,6 @@ class EditorActivity : BaseComposeActivity() {
     ObserveLifecycleEvents { event ->
       when (event) {
         Lifecycle.Event.ON_CREATE -> {
-          if (WasmLoader.init(this) != 0) {
-            Log.e(TAG, "Failed to initialize WasmLoader")
-            finish()
-            exitProcess(33)
-          }
-          Log.i(TAG, "WasmLoader initialized successfully")
-
           EventBus.getDefault().register(this@EditorActivity)
 
           // Open plugin files if opened from PluginsActivity
@@ -244,14 +234,6 @@ class EditorActivity : BaseComposeActivity() {
           }
 
           onCreate()
-
-          lifecycleScope.launch(Dispatchers.IO) {
-            runCatching {
-              WasmLoader.runWasm("$APP_EXTERNAL_DIR/test.wasm", "call_toast")
-            }.onFailure {
-              ToastUtils.showShort("Failed to run wasm: ${it.message}")
-            }
-          }
         }
 
         Lifecycle.Event.ON_PAUSE -> {
@@ -281,8 +263,9 @@ class EditorActivity : BaseComposeActivity() {
         drawerContent = {
           ModalDrawerSheet(
             drawerState = LocalEditorDrawerState.current,
-            modifier = Modifier
-              .fillMaxWidth(fraction = 0.85f)
+            modifier = Modifier.fillMaxWidth(fraction = 0.85f),
+            drawerContainerColor = MaterialTheme.colorScheme.background,
+            drawerContentColor = contentColorFor(MaterialTheme.colorScheme.background)
           ) {
             EditorDrawerSheet(
               fileExplorerViewModel = fileExplorerViewModel,

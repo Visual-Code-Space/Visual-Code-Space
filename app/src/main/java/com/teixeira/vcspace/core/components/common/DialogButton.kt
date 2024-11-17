@@ -13,17 +13,19 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.plugins.wasm
+package com.teixeira.vcspace.core.components.common
 
-import android.widget.Toast
-import com.blankj.utilcode.util.ThreadUtils.runOnUiThread
-import com.teixeira.vcspace.app.VCSpaceApplication
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
 
-object WasmModuleProvider {
-  @JvmStatic
-  fun toast(message: String) {
-    runOnUiThread {
-      Toast.makeText(VCSpaceApplication.getInstance(), message, Toast.LENGTH_SHORT).show()
-    }
+@Composable
+fun DialogButton(
+  text: String,
+  enabled: Boolean = true,
+  onClick: () -> Unit
+) {
+  TextButton(onClick = onClick, enabled = enabled) {
+    Text(text = text)
   }
 }

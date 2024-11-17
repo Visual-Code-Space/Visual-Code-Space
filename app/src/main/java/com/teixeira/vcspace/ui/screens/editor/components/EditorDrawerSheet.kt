@@ -37,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.blankj.utilcode.util.ClipboardUtils
@@ -52,6 +53,7 @@ import com.teixeira.vcspace.events.OnCreateFileEvent
 import com.teixeira.vcspace.events.OnCreateFolderEvent
 import com.teixeira.vcspace.events.OnRefreshFolderEvent
 import com.teixeira.vcspace.extensions.openFile
+import com.teixeira.vcspace.git.GitViewModel
 import com.teixeira.vcspace.resources.R.string
 import com.teixeira.vcspace.ui.filetree.FileTree
 import com.teixeira.vcspace.ui.screens.EditorDrawerScreens
@@ -69,7 +71,8 @@ import java.io.File
 @Composable
 fun EditorDrawerSheet(
   fileExplorerViewModel: FileExplorerViewModel,
-  editorViewModel: EditorViewModel
+  editorViewModel: EditorViewModel,
+  gitViewModel: GitViewModel = viewModel()
 ) {
   val context = LocalContext.current
   val drawerState = LocalEditorDrawerState.current
@@ -156,7 +159,10 @@ fun EditorDrawerSheet(
                     showNewFileDialog = true
                   }
 
-                  99 -> fileExplorerViewModel.closeFolder()
+                  99 -> {
+                    fileExplorerViewModel.closeFolder()
+                    gitViewModel.close()
+                  }
                 }
               }
 

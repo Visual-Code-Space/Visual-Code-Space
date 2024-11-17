@@ -37,7 +37,9 @@
     android:layout_height="20dp"
     android:layout_gravity="center_vertical"
     android:contentDescription="@null"
-    android:src="@drawable/ic_chevron_right" />
+    android:src="@drawable/ic_chevron_right"
+    app:tint="?colorOnSurface"
+    app:tintMode="src_in" />
 
   <com.google.android.material.textview.MaterialTextView
     android:id="@+id/tv_name"
@@ -45,7 +47,10 @@
     android:layout_height="match_parent"
     android:drawablePadding="6dp"
     android:gravity="center_vertical"
+    android:textColor="?colorOnSurface"
     android:textSize="14sp"
     app:drawableLeftCompat="@drawable/ic_folder"
+    app:drawableTint="?colorOnSurface"
+    app:drawableTintMode="src_in"
     tools:text="@string/app_name" />
 </LinearLayout>

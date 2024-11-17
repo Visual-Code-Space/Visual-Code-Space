@@ -224,6 +224,20 @@
   <string name="no_plugins_found">No plugins found</string>
   <string name="copied_to_clipboard">Copied to clipboard</string>
   <string name="reload_plugins">Reload Plugins</string>
+  <string name="or">Or</string>
   <string name="git_clone">Clone</string>
+  <string name="git_cloning">Cloning…</string>
+  <string name="initializing">Initializing…</string>
+  <string name="initialize">Initialize</string>
   <string name="git">Git</string>
+  <string name="no_git_repo_found">No Git repository found</string>
+  <string name="initialize_git_repo">Initialize Git repository</string>
+  <string name="initialized_empty_git_repo_in">Initialized empty Git repository in %1$s</string>
+  <string name="git_init">Git init</string>
+  <string name="git_init_message">Do you want to initialize a new Git repository in this folder?</string>
+  <string name="git_clone_repo">Clone Repository</string>
+  <string name="git_url">Git URL</string>
+  <string name="git_destination_path">Destination Path</string>
+  <string name="git_commit_message">Commit message</string>
+  <string name="git_commit">Commit</string>
 </resources>

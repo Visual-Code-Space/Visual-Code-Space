@@ -38,7 +38,10 @@
     android:layout_marginStart="20dp"
     android:drawablePadding="6dp"
     android:gravity="center_vertical"
+    android:textColor="?colorOnSurface"
     android:textSize="14sp"
     app:drawableLeftCompat="@drawable/ic_file_document"
+    app:drawableTint="?colorOnSurface"
+    app:drawableTintMode="src_in"
     tools:text="@string/app_name" />
 </LinearLayout>

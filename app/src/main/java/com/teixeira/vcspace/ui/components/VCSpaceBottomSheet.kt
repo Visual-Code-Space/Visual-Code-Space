@@ -13,18 +13,28 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.plugins.wasm
+package com.teixeira.vcspace.ui.components
 
-/**
- * Represents a runtime exception that occurs during the execution of WebAssembly code.
- * This exception is a subclass of [RuntimeException] and can be thrown for various reasons,
- * such as invalid WebAssembly instructions, memory access violations, or other runtime errors.
- *
- * @param message The detail message, can be null.
- * @param cause The cause of this exception, can be null.
- */
-class WasmRuntimeException : RuntimeException {
-  constructor(message: String) : super(message)
-  constructor(cause: Throwable) : super(cause)
-  constructor(message: String, cause: Throwable) : super(message, cause)
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import com.teixeira.vcspace.ui.theme.VCSpaceTheme
+
+@Composable
+fun VCSpaceBottomSheet(
+  modifier: Modifier = Modifier
+) {
+  VCSpaceTheme {
+    Box(modifier) {
+      Text(text = "VCSpaceBottomSheet")
+    }
+  }
+}
+
+@Preview(name = "VCSpaceBottomSheet")
+@Composable
+private fun PreviewVCSpaceBottomSheet() {
+  VCSpaceBottomSheet()
 }

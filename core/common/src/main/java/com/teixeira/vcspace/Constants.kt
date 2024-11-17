@@ -28,6 +28,9 @@ val APP_EXTERNAL_DIR = "${PathUtils.getExternalStoragePath()}/VCSpace"
 const val ORGANIZATION_NAME = "Visual-Code-Space"
 const val APPLICATION_REPOSITORY_NAME = "Visual-Code-Space"
 
+const val KEY_GIT_USERNAME = "git_username"
+const val KEY_GIT_PASSWORD = "git_password"
+
 object PreferenceKeys {
   const val RECENT_FOLDER = "recent_folder"
 
