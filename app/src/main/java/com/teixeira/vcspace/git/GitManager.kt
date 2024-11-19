@@ -46,7 +46,6 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
 import org.eclipse.jgit.util.io.NullOutputStream
 import java.io.File
 import java.io.IOException
-import java.net.URISyntaxException
 import java.time.Duration
 
 class GitManager private constructor() {
@@ -190,9 +189,11 @@ class GitManager private constructor() {
     return git.remoteList().call().any { it.name == remoteName }
   }
 
-  @Throws(URISyntaxException::class, GitAPIException::class)
-  fun addOrigin(url: String) {
-    git.remoteAdd().setName(GitConstants.DEFAULT_REMOTE_NAME).setUri(URIish(url)).call()
+  fun addRemote(
+    remoteUrl: String,
+    remoteName: String = Constants.DEFAULT_REMOTE_NAME
+  ) {
+    git.remoteAdd().setUri(URIish(remoteUrl)).setName(remoteName).call()
   }
 
   @Throws(
@@ -208,6 +209,41 @@ class GitManager private constructor() {
       .setRemote(GitConstants.DEFAULT_REMOTE_NAME)
       .setCredentialsProvider(UsernamePasswordCredentialsProvider(username, password))
       .call()
+  }
+
+  fun fetch(
+    remoteName: String = Constants.DEFAULT_REMOTE_NAME,
+    onUpdate: (progress: Int, taskName: String) -> Unit = { _, _ -> }
+  ) {
+    git.fetch().setRemote(remoteName).setProgressMonitor(object : BatchingProgressMonitor() {
+      override fun onUpdate(taskName: String?, workCurr: Int, duration: Duration?) {
+
+      }
+
+      override fun onUpdate(
+        taskName: String,
+        workCurr: Int,
+        workTotal: Int,
+        percentDone: Int,
+        duration: Duration
+      ) {
+        onUpdate(percentDone, taskName)
+      }
+
+      override fun onEndTask(taskName: String?, workCurr: Int, duration: Duration?) {
+
+      }
+
+      override fun onEndTask(
+        taskName: String?,
+        workCurr: Int,
+        workTotal: Int,
+        percentDone: Int,
+        duration: Duration?
+      ) {
+
+      }
+    }).call()
   }
 
   fun getUncommittedChangesStats(): ChangeStats {

@@ -34,7 +34,6 @@ import androidx.compose.material.icons.sharp.ChevronRight
 import androidx.compose.material.icons.sharp.Download
 import androidx.compose.material.icons.sharp.ErrorOutline
 import androidx.compose.material.icons.sharp.Refresh
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -42,11 +41,10 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
@@ -69,6 +67,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.blankj.utilcode.util.ClipboardUtils
+import com.blankj.utilcode.util.ToastUtils
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerNavController
 import com.teixeira.vcspace.app.drawables
 import com.teixeira.vcspace.app.strings
@@ -78,6 +77,7 @@ import com.teixeira.vcspace.git.GitViewModel
 import com.teixeira.vcspace.ui.LocalToastHostState
 import com.teixeira.vcspace.ui.ToastDuration
 import com.teixeira.vcspace.ui.extensions.harmonizeWithPrimary
+import com.teixeira.vcspace.ui.git.AddRemoteSheet
 import com.teixeira.vcspace.ui.git.GitCloneDialog
 import com.teixeira.vcspace.ui.git.GitCommitSheet
 import com.teixeira.vcspace.ui.git.GitInitSheet
@@ -88,7 +88,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.eclipse.jgit.revwalk.RevCommit
-import com.teixeira.vcspace.git.GitManager.Companion.instance as git
 
 @Composable
 fun GitManager(
@@ -221,7 +220,8 @@ fun GitManager(
 
   if (showGitInitDialog) {
     openedFolder?.let { folder ->
-      val successMessage = stringResource(strings.initialized_empty_git_repo_in, folder.absolutePath)
+      val successMessage =
+        stringResource(strings.initialized_empty_git_repo_in, folder.absolutePath)
 
       GitInitSheet(
         folder = folder,
@@ -261,7 +261,7 @@ private fun GitManagerContent(
   unpushedCommits: List<RevCommit>,
   onUncommitedChangesClick: () -> Unit = {},
   onUnpushedCommitsClick: () -> Unit = {},
-  onSetRemoteUrl: (String) -> Unit = {}
+  onSetRemoteUrl: () -> Unit = {}
 ) {
   var showSetRemoteDialog by remember { mutableStateOf(false) }
 
@@ -273,16 +273,24 @@ private fun GitManagerContent(
     topBar = {
       TopAppBar(
         title = {
-          Text(
-            text = repoName ?: "remote not set",
-            fontWeight = FontWeight.SemiBold,
-            textAlign = TextAlign.Start,
-            modifier = Modifier.clickable {
-              if (repoName == null) {
-                showSetRemoteDialog = true
-              }
-            },
-          )
+          Column {
+            Text(
+              text = repoName ?: "remote not set",
+              fontWeight = FontWeight.SemiBold,
+              textAlign = TextAlign.Start,
+              modifier = Modifier.clickable {
+                if (repoName == null) {
+                  showSetRemoteDialog = true
+                }
+              },
+            )
+            /*Spacer(modifier = Modifier.height(8.dp))
+            LinearProgressIndicator(
+              modifier = Modifier
+                .fillMaxWidth()
+                .padding(end = 8.dp)
+            )*/
+          }
         }
       )
     }
@@ -350,9 +358,12 @@ private fun GitManagerContent(
   }
 
   if (showSetRemoteDialog) {
-    SetRemoteUrlDialog(
+    AddRemoteSheet(
       onDismissRequest = { showSetRemoteDialog = false },
-      onSetRemoteUrl = onSetRemoteUrl
+      onSuccess = { onSetRemoteUrl() },
+      onFailure = {
+        ToastUtils.showLong(it.message ?: "Error")
+      }
     )
   }
 }
@@ -379,51 +390,6 @@ private fun GitActionButton(action: GitAction) {
       Icon(action.icon, contentDescription = action.text)
     }
   }
-}
-
-@Composable
-private fun SetRemoteUrlDialog(
-  onDismissRequest: () -> Unit,
-  onSetRemoteUrl: (String) -> Unit
-) {
-  var url by remember { mutableStateOf("") }
-
-  val scope = rememberCoroutineScope()
-
-  AlertDialog(
-    onDismissRequest = onDismissRequest,
-    title = {
-      Text("Set Remote")
-    },
-    text = {
-      OutlinedTextField(
-        value = url,
-        onValueChange = { url = it },
-        label = { Text("Remote URL") },
-        isError = url.isEmpty() || !URLUtil.isValidUrl(url)
-      )
-    },
-    confirmButton = {
-      TextButton(
-        onClick = {
-          scope.launch {
-            git.addOrigin(url)
-            onSetRemoteUrl(url)
-
-            onDismissRequest()
-          }
-        },
-        enabled = url.isNotEmpty() || URLUtil.isValidUrl(url)
-      ) {
-        Text("OK")
-      }
-    },
-    dismissButton = {
-      TextButton(onClick = onDismissRequest) {
-        Text(stringResource(strings.cancel))
-      }
-    }
-  )
 }
 
 data class GitAction(

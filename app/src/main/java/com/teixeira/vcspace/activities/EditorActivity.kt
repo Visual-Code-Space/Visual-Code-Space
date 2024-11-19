@@ -28,12 +28,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.contentColorFor
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
@@ -47,10 +50,10 @@ import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.blankj.utilcode.util.UriUtils
-import com.teixeira.vcspace.APP_EXTERNAL_DIR
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerNavController
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
 import com.teixeira.vcspace.activities.base.BaseComposeActivity
+import com.teixeira.vcspace.activities.base.ObserveLifecycleEvents
 import com.teixeira.vcspace.app.DoNothing
 import com.teixeira.vcspace.app.noLocalProvidedFor
 import com.teixeira.vcspace.core.settings.Settings.File.rememberShowHiddenFiles
@@ -71,13 +74,11 @@ import com.teixeira.vcspace.ui.screens.editor.components.EditorTopBar
 import com.teixeira.vcspace.ui.screens.editor.components.view.CodeEditorView
 import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
 import io.github.rosemoe.sora.event.ContentChangeEvent
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.io.File
-import kotlin.system.exitProcess
 
 object Editor {
   val LocalEditorDrawerState = compositionLocalOf<DrawerState> {
@@ -253,6 +254,8 @@ class EditorActivity : BaseComposeActivity() {
       }
     }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+
     ProvideEditorCompositionLocals {
       ModalNavigationDrawer(
         modifier = Modifier
@@ -280,7 +283,8 @@ class EditorActivity : BaseComposeActivity() {
             EditorTopBar(
               editorViewModel = editorViewModel
             )
-          }
+          },
+          snackbarHost = { SnackbarHost(snackbarHostState) }
         ) { innerPadding ->
           EditorScreen(
             viewModel = editorViewModel,

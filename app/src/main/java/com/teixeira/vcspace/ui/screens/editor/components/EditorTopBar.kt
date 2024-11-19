@@ -85,6 +85,7 @@ import com.teixeira.vcspace.PYTHON_PACKAGE_URL_64_BIT
 import com.teixeira.vcspace.activities.Editor.LocalCommandPaletteManager
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
 import com.teixeira.vcspace.activities.TerminalActivity
+import com.teixeira.vcspace.activities.base.ObserveLifecycleEvents
 import com.teixeira.vcspace.app.VCSpaceApplication
 import com.teixeira.vcspace.app.strings
 import com.teixeira.vcspace.core.components.Tooltip
@@ -172,8 +173,13 @@ fun EditorTopBar(
   val view = LocalView.current
 
   var isKeyboardOpen by remember { mutableStateOf(KeyboardUtils.isSoftInputVisible(context as Activity)) }
-  KeyboardUtils.registerSoftInputChangedListener(context as Activity) {
-    isKeyboardOpen = KeyboardUtils.isSoftInputVisible(context)
+
+  ObserveLifecycleEvents {
+    if (it == Lifecycle.Event.ON_CREATE) {
+      KeyboardUtils.registerSoftInputChangedListener(context as Activity) {
+        isKeyboardOpen = KeyboardUtils.isSoftInputVisible(context)
+      }
+    }
   }
 
   var server: LocalHttpServer? = null

@@ -247,22 +247,6 @@ abstract class BaseComposeActivity : ComponentActivity() {
     }
   }
 
-  @Composable
-  fun ObserveLifecycleEvents(onStateChanged: (Lifecycle.Event) -> Unit) {
-    val lifecycleOwner = LocalLifecycleOwner.current
-    DisposableEffect(lifecycleOwner) {
-      val observer = LifecycleEventObserver { _, event ->
-        onStateChanged(event)
-      }
-
-      lifecycleOwner.lifecycle.addObserver(observer)
-
-      onDispose {
-        lifecycleOwner.lifecycle.removeObserver(observer)
-      }
-    }
-  }
-
   private fun setupKotlinStdlib() {
     val filesDir = PathUtils.getExternalAppFilesPath()
     val kotlinStdlib = "$filesDir/kotlin-stdlib.jar"
@@ -276,5 +260,21 @@ abstract class BaseComposeActivity : ComponentActivity() {
     }
 
     System.setProperty("kotlin.java.stdlib.jar", kotlinStdlib)
+  }
+}
+
+@Composable
+fun ObserveLifecycleEvents(onStateChanged: (Lifecycle.Event) -> Unit) {
+  val lifecycleOwner = LocalLifecycleOwner.current
+  DisposableEffect(lifecycleOwner) {
+    val observer = LifecycleEventObserver { _, event ->
+      onStateChanged(event)
+    }
+
+    lifecycleOwner.lifecycle.addObserver(observer)
+
+    onDispose {
+      lifecycleOwner.lifecycle.removeObserver(observer)
+    }
   }
 }
