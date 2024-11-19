@@ -112,6 +112,7 @@ dependencies {
   implementation(libs.google.guava)
   implementation(libs.google.gson)
   implementation(libs.google.accompanist.permissions)
+  implementation(libs.google.accompanist.systemuicontroller)
 
   implementation(libs.common.editor)
   implementation(libs.common.editor.lsp)

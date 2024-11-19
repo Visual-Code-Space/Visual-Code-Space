@@ -1,21 +1,24 @@
 package com.teixeira.vcspace.activities
 
-import android.graphics.Color
+import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
-import androidx.activity.SystemBarStyle
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
-import androidx.activity.enableEdgeToEdge
+import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import androidx.lifecycle.Lifecycle
 import com.blankj.utilcode.util.ClipboardUtils
@@ -23,11 +26,12 @@ import com.blankj.utilcode.util.KeyboardUtils
 import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.SizeUtils
 import com.blankj.utilcode.util.ThreadUtils
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.teixeira.vcspace.BuildConfig
-import com.teixeira.vcspace.activities.base.BaseComposeActivity
 import com.teixeira.vcspace.activities.base.ObserveLifecycleEvents
 import com.teixeira.vcspace.app.DoNothing
 import com.teixeira.vcspace.databinding.ActivityTerminalBinding
+import com.teixeira.vcspace.ui.theme.VCSpaceTerminalTheme
 import com.teixeira.vcspace.ui.virtualkeys.SpecialButton
 import com.teixeira.vcspace.ui.virtualkeys.VirtualKeyButton
 import com.teixeira.vcspace.ui.virtualkeys.VirtualKeysConstants
@@ -44,12 +48,11 @@ import com.termux.view.TerminalView
 import com.termux.view.TerminalViewClient
 import org.json.JSONException
 import java.io.File
-import kotlin.time.times
 
 /**
  * @see <a href="https://github.com/AndroidIDEOfficial/AndroidIDE/blob/dev/app/src/main/java/com/itsaky/androidide/activities/TerminalActivity.java">TerminalActivity</a>
  */
-class TerminalActivity : BaseComposeActivity(), TerminalViewClient, TerminalSessionClient {
+class TerminalActivity : ComponentActivity(), TerminalViewClient, TerminalSessionClient {
   private val logger = Logger.newInstance("TerminalActivity")
 
   private var fontSize = SizeUtils.dp2px(14f).toFloat()
@@ -67,62 +70,78 @@ class TerminalActivity : BaseComposeActivity(), TerminalViewClient, TerminalSess
       return PathUtils.getRootPathExternalFirst()
     }
 
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+
+    setContent {
+      MainScreen()
+    }
+  }
+
   @Composable
-  override fun MainScreen() {
-    Surface(
-      modifier = Modifier
-        .fillMaxSize()
-        .systemBarsPadding()
-        .imePadding()
-    ) {
-      BackHandler {
-        terminal.mTermSession.finishIfRunning()
-        finish()
+  fun MainScreen() {
+    VCSpaceTerminalTheme {
+      val backgroundColor =  MaterialTheme.colorScheme.background
+      @Suppress("DEPRECATION")
+      val systemUiController = rememberSystemUiController()
+
+      DisposableEffect(systemUiController) {
+        systemUiController.setSystemBarsColor(backgroundColor)
+        onDispose { }
       }
 
-      ObserveLifecycleEvents {
-        when (it) {
-          Lifecycle.Event.ON_CREATE -> {
-            enableEdgeToEdge(
-              statusBarStyle = SystemBarStyle.dark(Color.BLACK),
-              navigationBarStyle = SystemBarStyle.dark(Color.BLACK)
-            )
-            setupTerminalView()
-            compilePython()
-          }
-
-          Lifecycle.Event.ON_START -> DoNothing
-          Lifecycle.Event.ON_RESUME -> {
-            showSoftInput()
-            setTerminalCursorBlinkingState(true)
-          }
-
-          Lifecycle.Event.ON_PAUSE -> DoNothing
-          Lifecycle.Event.ON_STOP -> {
-            setTerminalCursorBlinkingState(false)
-          }
-
-          Lifecycle.Event.ON_DESTROY -> DoNothing
-          Lifecycle.Event.ON_ANY -> DoNothing
+      Surface(
+        modifier = Modifier
+          .fillMaxSize()
+          .systemBarsPadding()
+          .imePadding(),
+        color =backgroundColor
+      ) {
+        BackHandler {
+          terminal.mTermSession.finishIfRunning()
+          finish()
         }
-      }
 
-      AndroidViewBinding(ActivityTerminalBinding::inflate) {
-        val params = LinearLayout.LayoutParams(-1, 0)
-        params.weight = 1f
-        root.addView(terminal, 0, params)
-        root.setBackgroundColor(
-          terminal.mTermSession.emulator?.mColors?.mCurrentColors?.get(TextStyle.COLOR_INDEX_BACKGROUND)
-            ?: 0
-        )
-        try {
-          this@TerminalActivity.virtualKeys = virtualKeys
-          virtualKeys.virtualKeysViewClient = KeyListener(terminal)
-          virtualKeys.reload(
-            VirtualKeysInfo(VIRTUAL_KEYS, "", VirtualKeysConstants.CONTROL_CHARS_ALIASES)
+        ObserveLifecycleEvents {
+          when (it) {
+            Lifecycle.Event.ON_CREATE -> {
+              setupTerminalView()
+              compilePython()
+            }
+
+            Lifecycle.Event.ON_START -> DoNothing
+            Lifecycle.Event.ON_RESUME -> {
+              showSoftInput()
+              setTerminalCursorBlinkingState(true)
+            }
+
+            Lifecycle.Event.ON_PAUSE -> DoNothing
+            Lifecycle.Event.ON_STOP -> {
+              setTerminalCursorBlinkingState(false)
+            }
+
+            Lifecycle.Event.ON_DESTROY -> DoNothing
+            Lifecycle.Event.ON_ANY -> DoNothing
+          }
+        }
+
+        AndroidViewBinding(ActivityTerminalBinding::inflate) {
+          val params = LinearLayout.LayoutParams(-1, 0)
+          params.weight = 1f
+          root.addView(terminal, 0, params)
+          root.setBackgroundColor(
+            terminal.mTermSession.emulator?.mColors?.mCurrentColors?.get(TextStyle.COLOR_INDEX_BACKGROUND)
+              ?: 0
           )
-        } catch (e: JSONException) {
-          logger.e("Unable to parse terminal virtual keys json data", e)
+          try {
+            this@TerminalActivity.virtualKeys = virtualKeys
+            virtualKeys.virtualKeysViewClient = KeyListener(terminal)
+            virtualKeys.reload(
+              VirtualKeysInfo(VIRTUAL_KEYS, "", VirtualKeysConstants.CONTROL_CHARS_ALIASES)
+            )
+          } catch (e: JSONException) {
+            logger.e("Unable to parse terminal virtual keys json data", e)
+          }
         }
       }
     }

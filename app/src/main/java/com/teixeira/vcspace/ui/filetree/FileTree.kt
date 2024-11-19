@@ -16,6 +16,7 @@
 package com.teixeira.vcspace.ui.filetree
 
 import android.os.Environment
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -38,6 +39,8 @@ fun FileTree(
   val fileListLoader = rememberSaveable { FileListLoader() }
   val tree = remember { createTree(fileListLoader, path) }
 
+  val onSurfaceColor = MaterialTheme.colorScheme.onSurface
+
   val lifecycleScope = LocalLifecycleScope.current
   AndroidViewBinding(LayoutFileTreeBinding::inflate, modifier) {
     @Suppress("UNCHECKED_CAST")
@@ -49,7 +52,8 @@ fun FileTree(
         fileTreeBinding = this@AndroidViewBinding,
         fileListLoader = fileListLoader,
         onFileLongClick = onFileLongClick,
-        onFileClick = onFileClick
+        onFileClick = onFileClick,
+        onSurfaceColor = onSurfaceColor
       )
       nodeEventListener = binder as FileViewBinder
       selectionMode = TreeView.SelectionMode.MULTIPLE_WITH_CHILDREN
