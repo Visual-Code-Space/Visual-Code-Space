@@ -73,6 +73,7 @@ import com.teixeira.vcspace.app.drawables
 import com.teixeira.vcspace.app.strings
 import com.teixeira.vcspace.extensions.makePluralIf
 import com.teixeira.vcspace.git.ChangeStats
+import com.teixeira.vcspace.git.GitActionStatus
 import com.teixeira.vcspace.git.GitViewModel
 import com.teixeira.vcspace.ui.LocalToastHostState
 import com.teixeira.vcspace.ui.ToastDuration
@@ -87,7 +88,6 @@ import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.eclipse.jgit.revwalk.RevCommit
 
 @Composable
 fun GitManager(
@@ -107,9 +107,6 @@ fun GitManager(
 
   val workingTree by gitViewModel.workingTree.collectAsStateWithLifecycle()
   val changes by gitViewModel.changes.collectAsStateWithLifecycle(context = Dispatchers.IO)
-  val repoName by gitViewModel.repoName.collectAsStateWithLifecycle(context = Dispatchers.IO)
-  val unpushedCommits by gitViewModel.unpushedCommits.collectAsStateWithLifecycle(context = Dispatchers.IO)
-  val gitChangeStats by gitViewModel.changeStats.collectAsStateWithLifecycle(context = Dispatchers.IO)
 
   LaunchedEffect(key1 = isGitRepo, workingTree) {
     if (isGitRepo && workingTree != null) {
@@ -144,32 +141,10 @@ fun GitManager(
 
   var showGitCloneDialog by remember { mutableStateOf(false) }
   var showGitInitDialog by remember { mutableStateOf(false) }
-  var showCommitDialog by remember { mutableStateOf(false) }
 
   openedFolder?.let {
     if (isGitRepo) {
-      GitManagerContent(
-        repoName = repoName,
-        changeStats = gitChangeStats.changeStats,
-        loadingChangeStats = gitChangeStats.isLoading,
-        unpushedCommits = unpushedCommits,
-        onUncommitedChangesClick = {
-          if (repoName == null) {
-            scope.launch {
-              toastHostState.showToast(
-                message = "Set remote first",
-                icon = Icons.Sharp.ErrorOutline
-              )
-            }
-          } else {
-            showCommitDialog = true
-          }
-        },
-        onUnpushedCommitsClick = {
-          scope.launch { toastHostState.showToast("Not yet implemented") }
-        },
-        onSetRemoteUrl = { scope.launch { gitViewModel.loadRepoName() } }
-      )
+      GitManagerContent(gitViewModel = gitViewModel)
     } else {
       NoRepoFound(
         onInitClick = { showGitInitDialog = true },
@@ -244,26 +219,21 @@ fun GitManager(
       )
     }
   }
-
-  if (showCommitDialog) {
-    GitCommitSheet(
-      onDismissRequest = { showCommitDialog = false }
-    )
-  }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun GitManagerContent(
-  repoName: String?,
-  changeStats: ChangeStats?,
-  loadingChangeStats: Boolean,
-  unpushedCommits: List<RevCommit>,
-  onUncommitedChangesClick: () -> Unit = {},
-  onUnpushedCommitsClick: () -> Unit = {},
-  onSetRemoteUrl: () -> Unit = {}
+  gitViewModel: GitViewModel
 ) {
+  val repoName by gitViewModel.repoName.collectAsStateWithLifecycle(context = Dispatchers.IO)
+  val unpushedCommits by gitViewModel.unpushedCommits.collectAsStateWithLifecycle(context = Dispatchers.IO)
+  val gitChangeStats by gitViewModel.changeStats.collectAsStateWithLifecycle(context = Dispatchers.IO)
+
+  val gitActionStatus by gitViewModel.gitStatus.collectAsStateWithLifecycle()
+
   var showSetRemoteDialog by remember { mutableStateOf(false) }
+  var showCommitDialog by remember { mutableStateOf(false) }
 
   val scope = rememberCoroutineScope { Dispatchers.Main }
   val toastHostState = LocalToastHostState.current
@@ -284,12 +254,30 @@ private fun GitManagerContent(
                 }
               },
             )
-            /*Spacer(modifier = Modifier.height(8.dp))
-            LinearProgressIndicator(
-              modifier = Modifier
-                .fillMaxWidth()
-                .padding(end = 8.dp)
-            )*/
+
+            if (gitActionStatus is GitActionStatus.Loading) {
+              val (progress, message) = gitActionStatus as GitActionStatus.Loading
+
+              Text(
+                text = message,
+                fontSize = 12.sp
+              )
+
+              if (progress != null) {
+                LinearProgressIndicator(
+                  modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 8.dp),
+                  progress = { progress / 100f }
+                )
+              } else {
+                LinearProgressIndicator(
+                  modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 8.dp)
+                )
+              }
+            }
           }
         }
       )
@@ -302,7 +290,9 @@ private fun GitManagerContent(
     ) {
       // Git Status Items
       Column {
-        val (filesChanged, totalAdditions, totalDeletions) = changeStats ?: ChangeStats(0, 0, 0)
+        val (filesChanged, totalAdditions, totalDeletions) = gitChangeStats.changeStats
+          ?: ChangeStats(0, 0, 0)
+        val loadingChangeStats = gitChangeStats.isLoading
 
         val changeText = if (loadingChangeStats) {
           "... file"
@@ -321,13 +311,26 @@ private fun GitManagerContent(
             title = "Uncommitted changes",
             subtitle = "$changeText, $additionsText, $deletionsText",
             icon = if (filesChanged != 0) Icons.Sharp.Check else Icons.Sharp.ErrorOutline,
-            onClick = onUncommitedChangesClick
+            onClick = {
+              if (repoName == null) {
+                scope.launch {
+                  toastHostState.showToast(
+                    message = "Set remote first",
+                    icon = Icons.Sharp.ErrorOutline
+                  )
+                }
+              } else {
+                showCommitDialog = true
+              }
+            }
           ),
           StatusItem(
             title = "Unpushed commits",
             subtitle = "${unpushedCommits.size} commit" makePluralIf (unpushedCommits.size > 1),
             icon = if (unpushedCommits.isNotEmpty()) Icons.Sharp.Check else Icons.Sharp.ErrorOutline,
-            onClick = onUnpushedCommitsClick
+            onClick = {
+              scope.launch { toastHostState.showToast("Not yet implemented") }
+            }
           ),
         )
 
@@ -360,10 +363,16 @@ private fun GitManagerContent(
   if (showSetRemoteDialog) {
     AddRemoteSheet(
       onDismissRequest = { showSetRemoteDialog = false },
-      onSuccess = { onSetRemoteUrl() },
+      onSuccess = { gitViewModel.loadRepoName() },
       onFailure = {
         ToastUtils.showLong(it.message ?: "Error")
       }
+    )
+  }
+
+  if (showCommitDialog) {
+    GitCommitSheet(
+      onDismissRequest = { showCommitDialog = false }
     )
   }
 }

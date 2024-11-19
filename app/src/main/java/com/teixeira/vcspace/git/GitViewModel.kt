@@ -31,6 +31,9 @@ class GitViewModel : ViewModel() {
   private val _workingTree = MutableStateFlow<File?>(null)
   val workingTree get() = _workingTree.asStateFlow()
 
+  private val _gitStatus = MutableStateFlow<GitActionStatus>(GitActionStatus.Idle)
+  val gitStatus get() = _gitStatus.asStateFlow()
+
   fun open(folder: File, onFailure: OnFailureListener = {}) {
     _workingTree.value = folder
     runCatching { git.initialize(folder) }.onFailure(onFailure)
@@ -48,6 +51,7 @@ class GitViewModel : ViewModel() {
     _changes.update {
       it.copy(isLoading = true)
     }
+    _gitStatus.update { GitActionStatus.Loading(null, "Loading changes") }
 
     withContext(Dispatchers.IO) {
       runCatching {
@@ -56,6 +60,7 @@ class GitViewModel : ViewModel() {
         _changes.update {
           it.copy(isLoading = false, fileChanges = changes)
         }
+        _gitStatus.update { GitActionStatus.Success }
       }.onFailure { throwable ->
         withContext(Dispatchers.Main) {
           onFailure(throwable)
@@ -64,6 +69,7 @@ class GitViewModel : ViewModel() {
         _changes.update {
           it.copy(isLoading = false, fileChanges = emptyList())
         }
+        _gitStatus.update { GitActionStatus.Failure(throwable) }
       }
     }
   }
@@ -72,12 +78,18 @@ class GitViewModel : ViewModel() {
   val repoName get() = _repoName.asStateFlow()
 
   suspend fun loadRepoName(onFailure: OnFailureListener = {}) {
+    _gitStatus.update { GitActionStatus.Loading(null, "Loading repository name") }
+
     withContext(Dispatchers.IO) {
       runCatching {
         git.getRepositoryName()
       }.onSuccess { name ->
         _repoName.update { name }
+
+        _gitStatus.update { GitActionStatus.Success }
       }.onFailure { throwable ->
+        _gitStatus.update { GitActionStatus.Failure(throwable) }
+
         withContext(Dispatchers.Main) {
           onFailure(throwable)
         }
@@ -109,6 +121,7 @@ class GitViewModel : ViewModel() {
     _changeStats.update {
       it.copy(isLoading = true)
     }
+    _gitStatus.update { GitActionStatus.Loading(null, "Loading changes stats") }
 
     withContext(Dispatchers.IO) {
       runCatching {
@@ -117,10 +130,12 @@ class GitViewModel : ViewModel() {
         _changeStats.update {
           it.copy(isLoading = false, changeStats = stats)
         }
+        _gitStatus.update { GitActionStatus.Success }
       }.onFailure { throwable ->
         _changeStats.update {
           it.copy(isLoading = false)
         }
+        _gitStatus.update { GitActionStatus.Failure(throwable) }
 
         withContext(Dispatchers.Main) {
           onFailure(throwable)
