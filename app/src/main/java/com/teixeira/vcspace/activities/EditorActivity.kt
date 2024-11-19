@@ -51,6 +51,7 @@ import com.teixeira.vcspace.APP_EXTERNAL_DIR
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerNavController
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
 import com.teixeira.vcspace.activities.base.BaseComposeActivity
+import com.teixeira.vcspace.activities.base.ObserveLifecycleEvents
 import com.teixeira.vcspace.app.DoNothing
 import com.teixeira.vcspace.app.noLocalProvidedFor
 import com.teixeira.vcspace.core.settings.Settings.File.rememberShowHiddenFiles

@@ -309,6 +309,17 @@ fun VCSpaceTheme(
   )
 }
 
+@Composable
+fun VCSpaceTerminalTheme(
+  content: @Composable () -> Unit
+) {
+  MaterialTheme(
+    colorScheme = darkScheme,
+    typography = Typography,
+    content = content
+  )
+}
+
 private fun ColorScheme.maybeAmoled(isAmoledMode: Boolean): ColorScheme {
   return if (isAmoledMode) {
     copy(

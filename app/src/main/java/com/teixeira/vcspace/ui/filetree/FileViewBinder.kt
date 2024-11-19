@@ -15,14 +15,17 @@
 
 package com.teixeira.vcspace.ui.filetree
 
+import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Space
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.core.view.isInvisible
-import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
+import androidx.core.widget.TextViewCompat
 import com.teixeira.vcspace.R
 import com.teixeira.vcspace.app.dp
 import com.teixeira.vcspace.app.drawables
@@ -50,7 +53,8 @@ class FileViewBinder(
   private val fileTreeBinding: LayoutFileTreeBinding,
   private val fileListLoader: FileListLoader,
   private val onFileLongClick: (File) -> Unit = {},
-  private val onFileClick: (File) -> Unit
+  private val onFileClick: (File) -> Unit = {},
+  private val onSurfaceColor: Color
 ) : TreeViewBinder<File>(), TreeNodeEventListener<File> {
 
   override fun bindView(
@@ -99,6 +103,7 @@ class FileViewBinder(
       /* resId = */ FileIconProvider.findFileIconResource(node.requireData())
     )!!
     icon.setBounds(0, 0, 16.dp, 16.dp)
+    icon.setTint(onSurfaceColor.toArgb())
 
     binding.tvName.apply {
       text = node.name.toString()
@@ -108,6 +113,8 @@ class FileViewBinder(
         /* right = */ null,
         /* bottom = */ null
       )
+      TextViewCompat.setCompoundDrawableTintList(this, ColorStateList.valueOf(onSurfaceColor.toArgb()))
+      setTextColor(onSurfaceColor.toArgb())
     }
   }
 
@@ -118,14 +125,19 @@ class FileViewBinder(
       /* resId = */ drawables.ic_folder
     )!!
     icon.setBounds(0, 0, 16.dp, 16.dp)
+    icon.setTint(onSurfaceColor.toArgb())
 
-    binding.tvName.text = node.name.toString()
-    binding.tvName.setCompoundDrawables(
-      /* left = */ icon,
-      /* top = */ null,
-      /* right = */ null,
-      /* bottom = */ null
-    )
+    binding.tvName.apply {
+      text = node.name.toString()
+      setCompoundDrawables(
+        /* left = */ icon,
+        /* top = */ null,
+        /* right = */ null,
+        /* bottom = */ null
+      )
+      TextViewCompat.setCompoundDrawableTintList(this, ColorStateList.valueOf(onSurfaceColor.toArgb()))
+      setTextColor(onSurfaceColor.toArgb())
+    }
 
     binding
       .ivArrow
@@ -133,6 +145,8 @@ class FileViewBinder(
       .rotation(if (node.expand) 90f else 0f)
       .setDuration(200)
       .start()
+
+    binding.ivArrow.imageTintList = ColorStateList.valueOf(onSurfaceColor.toArgb())
   }
 
   override fun onClick(node: TreeNode<File>, holder: TreeView.ViewHolder) {

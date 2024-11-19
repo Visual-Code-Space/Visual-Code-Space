@@ -51,6 +51,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -118,22 +119,13 @@ abstract class BaseComposeActivity : ComponentActivity() {
         )
         var hasPermission by remember { mutableStateOf(isStoragePermissionGranted()) }
 
-        val lifecycleOwner = LocalLifecycleOwner.current
-        DisposableEffect(lifecycleOwner) {
-          val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-              hasPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                Environment.isExternalStorageManager()
-              } else {
-                storagePermissionsState.allPermissionsGranted
-              }
+        ObserveLifecycleEvents { event ->
+          if (event == Lifecycle.Event.ON_RESUME) {
+            hasPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+              Environment.isExternalStorageManager()
+            } else {
+              storagePermissionsState.allPermissionsGranted
             }
-          }
-
-          lifecycleOwner.lifecycle.addObserver(observer)
-
-          onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
           }
         }
 
@@ -247,22 +239,6 @@ abstract class BaseComposeActivity : ComponentActivity() {
     }
   }
 
-  @Composable
-  fun ObserveLifecycleEvents(onStateChanged: (Lifecycle.Event) -> Unit) {
-    val lifecycleOwner = LocalLifecycleOwner.current
-    DisposableEffect(lifecycleOwner) {
-      val observer = LifecycleEventObserver { _, event ->
-        onStateChanged(event)
-      }
-
-      lifecycleOwner.lifecycle.addObserver(observer)
-
-      onDispose {
-        lifecycleOwner.lifecycle.removeObserver(observer)
-      }
-    }
-  }
-
   private fun setupKotlinStdlib() {
     val filesDir = PathUtils.getExternalAppFilesPath()
     val kotlinStdlib = "$filesDir/kotlin-stdlib.jar"
@@ -276,5 +252,23 @@ abstract class BaseComposeActivity : ComponentActivity() {
     }
 
     System.setProperty("kotlin.java.stdlib.jar", kotlinStdlib)
+  }
+}
+
+@Composable
+fun ObserveLifecycleEvents(onStateChanged: (Lifecycle.Event) -> Unit) {
+  val currentOnStateChanged by rememberUpdatedState(onStateChanged)
+
+  val lifecycleOwner = LocalLifecycleOwner.current
+  DisposableEffect(lifecycleOwner) {
+    val observer = LifecycleEventObserver { _, event ->
+      currentOnStateChanged(event)
+    }
+
+    lifecycleOwner.lifecycle.addObserver(observer)
+
+    onDispose {
+      lifecycleOwner.lifecycle.removeObserver(observer)
+    }
   }
 }
