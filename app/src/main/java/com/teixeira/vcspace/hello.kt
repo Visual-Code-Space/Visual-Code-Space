@@ -13,11 +13,8 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.git
+package com.teixeira.vcspace
 
-sealed class GitActionStatus {
-  data object Idle : GitActionStatus()
-  data object Success : GitActionStatus()
-  data class Failure(val throwable: Throwable) : GitActionStatus()
-  data class Loading(val progress: Int?, val message: String) : GitActionStatus()
+fun hello() {
+  println("Hello, World!")
 }

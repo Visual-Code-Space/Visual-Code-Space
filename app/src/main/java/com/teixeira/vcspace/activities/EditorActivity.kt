@@ -50,6 +50,7 @@ import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.blankj.utilcode.util.UriUtils
+import com.teixeira.vcspace.BuildConfig
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerNavController
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
 import com.teixeira.vcspace.activities.base.BaseComposeActivity
@@ -63,6 +64,7 @@ import com.teixeira.vcspace.editor.events.OnContentChangeEvent
 import com.teixeira.vcspace.editor.events.OnKeyBindingEvent
 import com.teixeira.vcspace.extensions.open
 import com.teixeira.vcspace.extensions.toFile
+import com.teixeira.vcspace.github.auth.Api
 import com.teixeira.vcspace.keyboard.CommandPaletteManager
 import com.teixeira.vcspace.keyboard.model.Command.Companion.newCommand
 import com.teixeira.vcspace.plugins.Manifest
@@ -124,6 +126,8 @@ class EditorActivity : BaseComposeActivity() {
   }
 
   private fun onCreate() {
+    CommandPaletteManager.instance.clear()
+
     CommandPaletteManager.instance.addCommand(
       newCommand("Paste", "Ctrl+V") {
         val editor = currentEditor?.editor
@@ -205,7 +209,7 @@ class EditorActivity : BaseComposeActivity() {
     val editorUiState by editorViewModel.uiState.collectAsStateWithLifecycle()
     val openedFiles = editorUiState.openedFiles
 
-    val showHiddenFiles by rememberShowHiddenFiles()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     ObserveLifecycleEvents { event ->
       when (event) {
@@ -230,7 +234,9 @@ class EditorActivity : BaseComposeActivity() {
           }
 
           val externalFileUri = intent.data
-          if (externalFileUri != null) {
+          if (externalFileUri != null &&
+            !externalFileUri.toString().startsWith(BuildConfig.OAUTH_REDIRECT_URL)
+          ) {
             editorViewModel.addFile(UriUtils.uri2File(externalFileUri))
           }
 
@@ -248,13 +254,39 @@ class EditorActivity : BaseComposeActivity() {
         }
 
         Lifecycle.Event.ON_START -> DoNothing
-        Lifecycle.Event.ON_RESUME -> DoNothing
+        Lifecycle.Event.ON_RESUME -> {
+          val code = intent?.data?.getQueryParameter("code")
+
+          if (!code.isNullOrEmpty()) {
+            lifecycleScope.launch {
+              Api.exchangeCodeForToken(
+                code = code,
+                onSuccess = { accessToken ->
+                  Api.getUserInfo(
+                    token = accessToken.accessToken,
+                    onSuccess = { user ->
+                      Api.saveUser(user, accessToken)
+                      snackbarHostState.showSnackbar("Logged in as ${user.username}")
+                    },
+                    onFailure = {
+                      it.printStackTrace()
+                      ToastUtils.showShort("Error: ${it.message}")
+                    }
+                  )
+                },
+                onFailure = {
+                  it.printStackTrace()
+                  ToastUtils.showShort("Error: ${it.message}")
+                }
+              )
+            }
+          }
+        }
+
         Lifecycle.Event.ON_STOP -> DoNothing
         Lifecycle.Event.ON_ANY -> DoNothing
       }
     }
-
-    val snackbarHostState = remember { SnackbarHostState() }
 
     ProvideEditorCompositionLocals {
       ModalNavigationDrawer(

@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        build-type: [debug, release]
+        build-type: [release]
     steps:
       - name: Cancel previous runs
         uses: styfle/cancel-workflow-action@0.12.1
@@ -29,8 +29,15 @@ jobs:
         with:
           submodules: 'true'
 
-      - name: Get token.properties from secrets
-        run: echo "${{ secrets.VCSPACE_TOKEN }}" > $GITHUB_WORKSPACE/token.properties
+      - name: Prepare token.properties file
+        run: |
+          if [ -f "$GITHUB_WORKSPACE/token.properties" ]; then
+            rm $GITHUB_WORKSPACE/token.properties
+          fi
+          echo "VCSPACE_TOKEN=${{ secrets.VCSPACE_TOKEN }}" >> $GITHUB_WORKSPACE/token.properties
+          echo "CLIENT_SECRET=${{ secrets.CLIENT_SECRET }}" >> $GITHUB_WORKSPACE/token.properties
+          echo "CLIENT_ID=${{ secrets.CLIENT_ID }}" >> $GITHUB_WORKSPACE/token.properties
+          echo "RELEASE_TOPIC_ID=${{ secrets.RELEASE_TOPIC_ID }}" >> $GITHUB_WORKSPACE/token.properties
 
       - name: Debug token.properties creation
         run: ls -la $GITHUB_WORKSPACE

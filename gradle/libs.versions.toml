@@ -17,6 +17,7 @@ lsp4j = "0.23.1"
 jgit = "7.0.0.202409031743-r"
 prdownloader = "1.0.1"
 retrofit = "2.11.0"
+security-crypto = "1.1.0-alpha06"
 termux = "0.118.1"
 p7zip = "v1.7.2"
 lifecycle-runtime-ktx = "2.8.6"
@@ -47,6 +48,7 @@ androidx-nav-fragment = { module = "androidx.navigation:navigation-fragment-ktx"
 androidx-nav-ui = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "androidx-navigation" }
 androidx-nav-dynamic_features = { module = "androidx.navigation:navigation-dynamic-features-fragment", version.ref = "androidx-navigation" }
 androidx-datastore-prefs = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
+androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "security-crypto" }
 
 # Google
 google-guava = { module = "com.google.guava:guava", version = "33.2.1-jre" }

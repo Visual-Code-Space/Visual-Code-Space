@@ -17,9 +17,10 @@ package com.teixeira.vcspace.activities
 
 import android.os.Build
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.PredictiveBackHandler
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.CopyAll
+import androidx.compose.material.icons.outlined.ContentCopy
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -29,12 +30,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.ClipboardUtils
@@ -42,10 +45,10 @@ import com.blankj.utilcode.util.DeviceUtils
 import com.teixeira.vcspace.BuildConfig
 import com.teixeira.vcspace.activities.base.BaseComposeActivity
 import com.teixeira.vcspace.app.strings
-import com.teixeira.vcspace.ui.screens.crash.CrashScreen
-import com.teixeira.vcspace.ui.screens.crash.components.CrashTopBar
 import com.teixeira.vcspace.ui.ToastHost
 import com.teixeira.vcspace.ui.rememberToastHostState
+import com.teixeira.vcspace.ui.screens.crash.CrashScreen
+import com.teixeira.vcspace.ui.screens.crash.components.CrashTopBar
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.Date
@@ -92,6 +95,7 @@ class CrashActivity : BaseComposeActivity() {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
       state = rememberTopAppBarState()
     )
+    val uriHandler = LocalUriHandler.current
 
     val errorString = buildString {
       append("$softwareInfo\n")
@@ -103,11 +107,13 @@ class CrashActivity : BaseComposeActivity() {
     val scope = rememberCoroutineScope()
     val toastHostState = rememberToastHostState()
 
-    scope.launch {
-      toastHostState.showToast(
-        message = "App crashed",
-        icon = Icons.Outlined.ErrorOutline
-      )
+    SideEffect {
+      scope.launch {
+        toastHostState.showToast(
+          message = "App crashed",
+          icon = Icons.Outlined.ErrorOutline
+        )
+      }
     }
 
     val copiedMessage = stringResource(strings.copied_to_clipboard)
@@ -126,17 +132,19 @@ class CrashActivity : BaseComposeActivity() {
               scope.launch {
                 toastHostState.showToast(
                   message = copiedMessage,
-                  icon = Icons.Outlined.CopyAll
+                  icon = Icons.Outlined.ContentCopy
                 )
               }
             }
+
+            uriHandler.openUri("https://github.com/Visual-Code-Space/Visual-Code-Space/issues/new?assignees=&labels=bug&projects=&template=bug_report.md&title=")
           },
           text = {
-            Text(stringResource(strings.copy))
+            Text(stringResource(strings.copy_and_report))
           },
           icon = {
             Icon(
-              imageVector = Icons.Outlined.CopyAll,
+              imageVector = Icons.Outlined.ContentCopy,
               contentDescription = stringResource(strings.copy)
             )
           }
@@ -147,7 +155,7 @@ class CrashActivity : BaseComposeActivity() {
 
       CrashScreen(
         modifier = Modifier.padding(innerPadding),
-        error = error
+        error = error,
       )
 
       BackHandler(onBack = AppUtils::exitApp)

@@ -60,6 +60,8 @@ class CommandPaletteManager private constructor() {
     _allCommands.addAll(command)
   }
 
+  val clear = { _allCommands.clear() }
+
   private var _recentlyUsedCommands = mutableListOf<Command>()
   val recentlyUsedCommands get() = _recentlyUsedCommands.toList()
 

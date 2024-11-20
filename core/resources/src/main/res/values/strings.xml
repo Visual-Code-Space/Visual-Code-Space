@@ -11,6 +11,7 @@
   <string name="close_others">Close others</string>
   <string name="close_app">Close app</string>
   <string name="copy">Copy</string>
+  <string name="copy_and_report">Copy and Report</string>
   <string name="refresh">Refresh</string>
   <string name="cancel">Cancel</string>
   <string name="save">Save</string>

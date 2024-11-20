@@ -31,6 +31,7 @@ const val PREF_FILE_SHOWHIDDENFILES_KEY = "pref_file_showhiddenfiles_key"
 
 val app = BaseApplication.instance
 val defaultPrefs = app.defaultPrefs
+val encryptedPrefs = app.encryptedPrefs
 
 // General
 val appearanceUIMode: Int

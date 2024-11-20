@@ -17,7 +17,10 @@ package com.teixeira.vcspace.ui.screens.settings
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
@@ -25,11 +28,13 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
@@ -39,13 +44,18 @@ import androidx.core.content.edit
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import coil3.compose.AsyncImage
 import com.teixeira.vcspace.KEY_GIT_PASSWORD
 import com.teixeira.vcspace.KEY_GIT_USERNAME
 import com.teixeira.vcspace.activities.AboutActivity
 import com.teixeira.vcspace.activities.PluginsActivity
 import com.teixeira.vcspace.app.BaseApplication
 import com.teixeira.vcspace.app.strings
+import com.teixeira.vcspace.extensions.isNotNull
+import com.teixeira.vcspace.extensions.isNull
 import com.teixeira.vcspace.extensions.open
+import com.teixeira.vcspace.github.User
+import com.teixeira.vcspace.github.auth.Api
 import com.teixeira.vcspace.preferences.defaultPrefs
 import com.teixeira.vcspace.resources.R.string
 import com.teixeira.vcspace.ui.navigateSingleTop
@@ -60,7 +70,10 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
   val uriHandler = LocalUriHandler.current
   val navController = rememberNavController()
 
-  var showGitCredentialDialog by remember { mutableStateOf(false) }
+  var user: User? by remember { mutableStateOf(null) }
+  LaunchedEffect(key1 = true) {
+    user = Api.getUser()
+  }
 
   NavHost(navController, startDestination = SettingScreens.Default) {
     composable<SettingScreens.Default> {
@@ -109,10 +122,40 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
 
           preference(
             key = "pref_configure_git_key",
-            title = { Text(stringResource(strings.git)) },
-            summary = { Text("Configure git") },
-            onClick = {
-              showGitCredentialDialog = true
+            title = {
+              Text(
+                text = if (user.isNull()) {
+                  "Login with GitHub"
+                } else {
+                  "Logged in as ${user!!.username} (${user!!.name ?: ""})"
+                }
+              )
+            },
+            icon = if (user.isNotNull()) {
+              {
+                AsyncImage(
+                  model = user!!.avatarUrl,
+                  contentDescription = null,
+                  modifier = Modifier
+                    .padding(end = 16.dp)
+                    .clip(CircleShape)
+                    .size(40.dp)
+                )
+              }
+            } else null,
+            summary = if (user.isNotNull()) {
+              {
+                Text(
+                  text = user!!.email ?: ""
+                )
+              }
+            } else null,
+            onClick = if (user.isNull()) {
+              {
+                Api.startLogin(uriHandler)
+              }
+            } else {
+              {}
             }
           )
 
@@ -170,10 +213,6 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
         )
       }
     }
-  }
-
-  if (showGitCredentialDialog) {
-    GitCredentialDialog { showGitCredentialDialog = false }
   }
 }
 

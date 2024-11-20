@@ -21,14 +21,15 @@ android {
       abiFilters += listOf("arm64-v8a", "x86_64", "armeabi-v7a")
     }
 
-    val file = project.rootProject.file("token.properties")
-
-    val githubToken = if (file.exists()) {
-      val properties = Properties().also { it.load(file.inputStream()) }
-      properties.getProperty("VCSPACE_TOKEN") ?: ""
-    } else ""
+    val githubToken = getSecretProperty("VCSPACE_TOKEN")
+    val clientId = getSecretProperty("CLIENT_ID")
+    val clientSecret = getSecretProperty("CLIENT_SECRET")
+    val callbackUrl = getSecretProperty("OAUTH_REDIRECT_URL")
 
     buildConfigField("String", "GITHUB_TOKEN", "\"$githubToken\"")
+    buildConfigField("String", "CLIENT_ID", "\"$clientId\"")
+    buildConfigField("String", "CLIENT_SECRET", "\"$clientSecret\"")
+    buildConfigField("String", "OAUTH_REDIRECT_URL", "\"$callbackUrl\"")
   }
 
   signingConfigs {
@@ -44,12 +45,18 @@ android {
     release {
       isMinifyEnabled = false
       signingConfig = signingConfigs.getByName("general")
-      proguardFiles("proguard-rules.pro")
+      proguardFiles(
+        getDefaultProguardFile("proguard-android-optimize.txt"),
+        "proguard-rules.pro"
+      )
     }
     debug {
       isMinifyEnabled = false
       signingConfig = signingConfigs.getByName("general")
-      proguardFiles("proguard-rules.pro")
+      proguardFiles(
+        getDefaultProguardFile("proguard-android-optimize.txt"),
+        "proguard-rules.pro"
+      )
     }
   }
 
@@ -159,4 +166,13 @@ dependencies {
   debugImplementation(libs.common.leakcanary)
   debugImplementation(libs.androidx.ui.tooling)
   debugImplementation(libs.androidx.ui.test.manifest)
+}
+
+private fun getSecretProperty(name: String): String {
+  val file = project.rootProject.file("token.properties")
+
+  return if (file.exists()) {
+    val properties = Properties().also { it.load(file.inputStream()) }
+    properties.getProperty(name) ?: ""
+  } else ""
 }

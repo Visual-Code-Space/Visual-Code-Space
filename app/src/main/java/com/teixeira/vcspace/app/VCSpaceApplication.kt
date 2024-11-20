@@ -7,7 +7,6 @@ import com.blankj.utilcode.util.ThreadUtils
 import com.blankj.utilcode.util.ThrowableUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.downloader.PRDownloader
-import com.itsaky.androidide.treesitter.TreeSitter
 import com.teixeira.vcspace.activities.CrashActivity
 import com.teixeira.vcspace.activities.EditorActivity
 import com.teixeira.vcspace.extensions.doIfNull
@@ -45,8 +44,6 @@ class VCSpaceApplication : BaseApplication() {
     Thread.setDefaultUncaughtExceptionHandler(this::uncaughtException)
     super.onCreate()
     appInstance = this
-
-    TreeSitter.loadLibrary()
 
     registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
       override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {

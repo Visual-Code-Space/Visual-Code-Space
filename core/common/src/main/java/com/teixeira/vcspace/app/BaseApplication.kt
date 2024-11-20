@@ -20,6 +20,8 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import androidx.preference.PreferenceManager
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
 
 open class BaseApplication : Application() {
 
@@ -33,6 +35,20 @@ open class BaseApplication : Application() {
 
   val defaultPrefs: SharedPreferences by lazy {
     PreferenceManager.getDefaultSharedPreferences(this)
+  }
+
+  val encryptedPrefs: SharedPreferences by lazy {
+    val masterKey = MasterKey.Builder(this)
+      .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+      .build()
+
+    EncryptedSharedPreferences.create(
+      this,
+      "encrypted_prefs",
+      masterKey,
+      EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+      EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+    )
   }
 
   override fun onCreate() {

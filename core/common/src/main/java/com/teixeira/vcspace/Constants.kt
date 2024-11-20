@@ -30,6 +30,8 @@ const val APPLICATION_REPOSITORY_NAME = "Visual-Code-Space"
 
 const val KEY_GIT_USERNAME = "git_username"
 const val KEY_GIT_PASSWORD = "git_password"
+const val KEY_GIT_USER_INFO = "git_user_info"
+const val KEY_GIT_USER_ACCESS_TOKEN = "git_user_access_token"
 
 object PreferenceKeys {
   const val RECENT_FOLDER = "recent_folder"
