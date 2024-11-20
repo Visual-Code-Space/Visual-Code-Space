@@ -37,7 +37,7 @@ jobs:
           echo "VCSPACE_TOKEN=${{ secrets.VCSPACE_TOKEN }}" >> $GITHUB_WORKSPACE/token.properties
           echo "CLIENT_SECRET=${{ secrets.CLIENT_SECRET }}" >> $GITHUB_WORKSPACE/token.properties
           echo "CLIENT_ID=${{ secrets.CLIENT_ID }}" >> $GITHUB_WORKSPACE/token.properties
-          echo "RELEASE_TOPIC_ID=${{ secrets.RELEASE_TOPIC_ID }}" >> $GITHUB_WORKSPACE/token.properties
+          echo "OAUTH_REDIRECT_URL=${{ secrets.OAUTH_REDIRECT_URL }}" >> $GITHUB_WORKSPACE/token.properties
 
       - name: Debug token.properties creation
         run: ls -la $GITHUB_WORKSPACE
