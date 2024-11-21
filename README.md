@@ -28,7 +28,7 @@
 
 ## 📦 Installation
 
-You can download the latest release of Visual Code Space from the [releases page](https://github.com/Visual-Code-Space/Visual-Code-Space/releases).
+You can download the latest APK of Visual Code Space from the [Telegram Channel](https://t.me/visualcodespace).
 
 ## 📖 Documentation
 
