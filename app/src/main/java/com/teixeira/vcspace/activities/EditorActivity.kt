@@ -65,6 +65,7 @@ import com.teixeira.vcspace.editor.events.OnKeyBindingEvent
 import com.teixeira.vcspace.extensions.open
 import com.teixeira.vcspace.extensions.toFile
 import com.teixeira.vcspace.github.auth.Api
+import com.teixeira.vcspace.github.auth.UserInfo
 import com.teixeira.vcspace.keyboard.CommandPaletteManager
 import com.teixeira.vcspace.keyboard.model.Command.Companion.newCommand
 import com.teixeira.vcspace.plugins.Manifest
@@ -262,10 +263,10 @@ class EditorActivity : BaseComposeActivity() {
               Api.exchangeCodeForToken(
                 code = code,
                 onSuccess = { accessToken ->
-                  Api.getUserInfo(
+                  Api.getUser(
                     token = accessToken.accessToken,
                     onSuccess = { user ->
-                      Api.saveUser(user, accessToken)
+                      Api.saveUser(UserInfo(user, accessToken))
                       snackbarHostState.showSnackbar("Logged in as ${user.username}")
                     },
                     onFailure = {

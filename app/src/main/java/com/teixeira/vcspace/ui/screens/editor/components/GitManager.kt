@@ -26,6 +26,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.ErrorOutline
@@ -33,6 +35,7 @@ import androidx.compose.material.icons.sharp.Check
 import androidx.compose.material.icons.sharp.ChevronRight
 import androidx.compose.material.icons.sharp.Download
 import androidx.compose.material.icons.sharp.ErrorOutline
+import androidx.compose.material.icons.sharp.NotInterested
 import androidx.compose.material.icons.sharp.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -50,6 +53,7 @@ import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -57,6 +61,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -71,9 +76,10 @@ import com.blankj.utilcode.util.ToastUtils
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerNavController
 import com.teixeira.vcspace.app.drawables
 import com.teixeira.vcspace.app.strings
+import com.teixeira.vcspace.compose.clipUrl
 import com.teixeira.vcspace.extensions.makePluralIf
-import com.teixeira.vcspace.git.ChangeStats
 import com.teixeira.vcspace.git.GitActionStatus
+import com.teixeira.vcspace.git.GitManager.Companion.instance
 import com.teixeira.vcspace.git.GitViewModel
 import com.teixeira.vcspace.ui.LocalToastHostState
 import com.teixeira.vcspace.ui.ToastDuration
@@ -82,12 +88,17 @@ import com.teixeira.vcspace.ui.git.AddRemoteSheet
 import com.teixeira.vcspace.ui.git.GitCloneDialog
 import com.teixeira.vcspace.ui.git.GitCommitSheet
 import com.teixeira.vcspace.ui.git.GitInitSheet
+import com.teixeira.vcspace.ui.git.PushChangesSheet
 import com.teixeira.vcspace.ui.navigateSingleTop
 import com.teixeira.vcspace.ui.screens.EditorDrawerScreens
 import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.eclipse.jgit.api.Status
+import java.io.File
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun GitManager(
@@ -161,10 +172,10 @@ fun GitManager(
   }
 
   if (showGitCloneDialog) {
-    val clip = ClipboardUtils.getText().toString()
+    val url = clipUrl()
 
     GitCloneDialog(
-      remoteUrl = if (URLUtil.isValidUrl(clip)) clip else "",
+      remoteUrl = url ?: "",
       initialFolder = openedFolder,
       onDismissRequest = { showGitCloneDialog = false },
       onCloneSuccess = {
@@ -209,6 +220,13 @@ fun GitManager(
             message = successMessage,
             icon = Icons.Sharp.Check
           )
+
+          runCatching { instance.addMainBranch() }.onFailure {
+            toastHostState.showToast(
+              message = it.message ?: "Error",
+              icon = Icons.Sharp.ErrorOutline
+            )
+          }
         },
         onFailure = { throwable ->
           toastHostState.showToast(
@@ -229,10 +247,31 @@ private fun GitManagerContent(
   val repoName by gitViewModel.repoName.collectAsStateWithLifecycle(context = Dispatchers.IO)
   val unpushedCommits by gitViewModel.unpushedCommits.collectAsStateWithLifecycle(context = Dispatchers.IO)
   val gitChangeStats by gitViewModel.changeStats.collectAsStateWithLifecycle(context = Dispatchers.IO)
+  val workingTree by gitViewModel.workingTree.collectAsStateWithLifecycle(context = Dispatchers.IO)
 
   val gitActionStatus by gitViewModel.gitStatus.collectAsStateWithLifecycle()
+  var showSuccessMessage by remember { mutableStateOf(false) }
+  var successMessage by remember { mutableStateOf("") }
 
-  var showSetRemoteDialog by remember { mutableStateOf(false) }
+  LaunchedEffect(gitActionStatus) {
+    if (gitActionStatus is GitActionStatus.Success) {
+      successMessage = (gitActionStatus as GitActionStatus.Success).message
+      showSuccessMessage = true
+    }
+
+    delay(700.milliseconds)
+    showSuccessMessage = false
+  }
+
+  var status: Status? by remember { mutableStateOf(null) }
+  LaunchedEffect(key1 = true) {
+    withContext(Dispatchers.IO) {
+      status = instance.git.status().call()
+    }
+  }
+
+  var showSetRemoteSheet by remember { mutableStateOf(false) }
+  var showPushChangesSheet by remember { mutableStateOf(false) }
   var showCommitDialog by remember { mutableStateOf(false) }
 
   val scope = rememberCoroutineScope { Dispatchers.Main }
@@ -250,16 +289,25 @@ private fun GitManagerContent(
               textAlign = TextAlign.Start,
               modifier = Modifier.clickable {
                 if (repoName == null) {
-                  showSetRemoteDialog = true
+                  showSetRemoteSheet = true
                 }
               },
             )
 
+            if (showSuccessMessage && gitActionStatus !is GitActionStatus.Loading && gitActionStatus !is GitActionStatus.Failure) {
+              Text(
+                text = successMessage.ifEmpty { "Success" },
+                fontSize = 12.sp,
+                color = Color.Green.harmonizeWithPrimary()
+              )
+            }
+
             if (gitActionStatus is GitActionStatus.Loading) {
               val (progress, message) = gitActionStatus as GitActionStatus.Loading
+              val msgFormat = if (progress != null) "$message ($progress)" else message
 
               Text(
-                text = message,
+                text = msgFormat,
                 fontSize = 12.sp
               )
 
@@ -277,6 +325,18 @@ private fun GitManagerContent(
                     .padding(end = 8.dp)
                 )
               }
+            } else if (gitActionStatus is GitActionStatus.Failure) {
+              val (error) = gitActionStatus as GitActionStatus.Failure
+
+              error.message?.let {
+                Text(
+                  text = it,
+                  fontSize = 12.sp,
+                  color = MaterialTheme.colorScheme.error,
+                  style = MaterialTheme.typography.bodySmall,
+                  modifier = Modifier.verticalScroll(rememberScrollState())
+                )
+              }
             }
           }
         }
@@ -290,9 +350,14 @@ private fun GitManagerContent(
     ) {
       // Git Status Items
       Column {
-        val (filesChanged, totalAdditions, totalDeletions) = gitChangeStats.changeStats
-          ?: ChangeStats(0, 0, 0)
         val loadingChangeStats = gitChangeStats.isLoading
+        val changeStats = gitChangeStats.changeStats
+
+        var filesChanged by remember { mutableIntStateOf(changeStats?.filesChanged ?: 0) }
+        var totalAdditions by remember { mutableIntStateOf(changeStats?.filesChanged ?: 0) }
+
+        @Suppress("CanBeVal")
+        var totalDeletions by remember { mutableIntStateOf(changeStats?.filesChanged ?: 0) }
 
         val changeText = if (loadingChangeStats) {
           "... file"
@@ -305,6 +370,20 @@ private fun GitManagerContent(
         val deletionsText = if (loadingChangeStats) {
           "... deletion"
         } else "$totalDeletions deletion" makePluralIf (totalDeletions > 1)
+
+        LaunchedEffect(status) {
+          status?.let { gitStatus ->
+            if (gitStatus.added.isEmpty() || workingTree == null) return@LaunchedEffect
+
+            filesChanged += gitStatus.added.map { it }.size
+
+            gitStatus.added.map { it }.forEach {
+              runCatching {
+                totalAdditions += File(workingTree, it).readLines().size
+              }.onFailure(::println)
+            }
+          }
+        }
 
         val statusItems = listOf(
           StatusItem(
@@ -319,6 +398,13 @@ private fun GitManagerContent(
                     icon = Icons.Sharp.ErrorOutline
                   )
                 }
+              } else if (filesChanged == 0) {
+                scope.launch {
+                  toastHostState.showToast(
+                    message = "Nothing to commit",
+                    icon = Icons.Sharp.NotInterested
+                  )
+                }
               } else {
                 showCommitDialog = true
               }
@@ -329,7 +415,16 @@ private fun GitManagerContent(
             subtitle = "${unpushedCommits.size} commit" makePluralIf (unpushedCommits.size > 1),
             icon = if (unpushedCommits.isNotEmpty()) Icons.Sharp.Check else Icons.Sharp.ErrorOutline,
             onClick = {
-              scope.launch { toastHostState.showToast("Not yet implemented") }
+              if (unpushedCommits.isEmpty()) {
+                scope.launch {
+                  toastHostState.showToast(
+                    message = "Nothing to push",
+                    icon = Icons.Sharp.NotInterested
+                  )
+                }
+              } else {
+                showPushChangesSheet = true
+              }
             }
           ),
         )
@@ -343,13 +438,13 @@ private fun GitManagerContent(
       Column(modifier = Modifier.padding(top = 16.dp)) {
         val gitActions = listOf(
           GitAction("Refresh", Icons.Sharp.Refresh) {
-            scope.launch { toastHostState.showToast("Not yet implemented") }
+            scope.launch { gitViewModel.refresh() }
           },
           GitAction("Pull", ImageVector.vectorResource(drawables.source_pull)) {
-            scope.launch { toastHostState.showToast("Not yet implemented") }
+            scope.launch { gitViewModel.pull() }
           },
           GitAction("Fetch", Icons.Sharp.Download) {
-            scope.launch { toastHostState.showToast("Not yet implemented") }
+            scope.launch { gitViewModel.fetch() }
           }
         )
 
@@ -360,19 +455,44 @@ private fun GitManagerContent(
     }
   }
 
-  if (showSetRemoteDialog) {
+  if (showSetRemoteSheet) {
     AddRemoteSheet(
-      onDismissRequest = { showSetRemoteDialog = false },
-      onSuccess = { gitViewModel.loadRepoName() },
+      onDismissRequest = { showSetRemoteSheet = false },
+      onSuccess = {
+        gitViewModel.refresh()
+        // gitViewModel.pull()
+      },
       onFailure = {
         ToastUtils.showLong(it.message ?: "Error")
       }
     )
   }
 
+  if (showPushChangesSheet) {
+    PushChangesSheet(
+      onDismissRequest = { showPushChangesSheet = false },
+      commits = unpushedCommits,
+      onPushClick = {
+        scope.launch {
+          gitViewModel.push()
+        }
+      }
+    )
+  }
+
   if (showCommitDialog) {
     GitCommitSheet(
-      onDismissRequest = { showCommitDialog = false }
+      onDismissRequest = { showCommitDialog = false },
+      gitViewModel = gitViewModel,
+      onSuccess = {
+        gitViewModel.refresh()
+      },
+      onFailure = {
+        toastHostState.showToast(
+          message = it.message ?: "Error",
+          icon = Icons.Sharp.ErrorOutline
+        )
+      }
     )
   }
 }

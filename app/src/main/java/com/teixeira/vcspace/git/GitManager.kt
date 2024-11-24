@@ -15,8 +15,11 @@
 
 package com.teixeira.vcspace.git
 
-import com.teixeira.vcspace.app.DoNothing
 import com.teixeira.vcspace.extensions.toFile
+import com.teixeira.vcspace.github.auth.UserInfo
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import org.eclipse.jgit.api.CreateBranchCommand
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.Status
 import org.eclipse.jgit.api.errors.AbortedByHookException
@@ -30,23 +33,20 @@ import org.eclipse.jgit.api.errors.ServiceUnavailableException
 import org.eclipse.jgit.api.errors.TransportException
 import org.eclipse.jgit.api.errors.UnmergedPathsException
 import org.eclipse.jgit.api.errors.WrongRepositoryStateException
-import org.eclipse.jgit.diff.DiffFormatter
 import org.eclipse.jgit.errors.IncorrectObjectTypeException
 import org.eclipse.jgit.errors.MissingObjectException
-import org.eclipse.jgit.lib.BatchingProgressMonitor
 import org.eclipse.jgit.lib.Constants
+import org.eclipse.jgit.lib.PersonIdent
 import org.eclipse.jgit.lib.Repository
-import org.eclipse.jgit.merge.ContentMergeStrategy
-import org.eclipse.jgit.merge.MergeStrategy
+import org.eclipse.jgit.lib.SubmoduleConfig
 import org.eclipse.jgit.revwalk.RevCommit
 import org.eclipse.jgit.revwalk.RevWalk
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
 import org.eclipse.jgit.transport.URIish
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
-import org.eclipse.jgit.util.io.NullOutputStream
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
-import java.time.Duration
 
 class GitManager private constructor() {
   companion object {
@@ -90,36 +90,10 @@ class GitManager private constructor() {
   ): Git {
     _git = Git.cloneRepository()
       .setURI(url)
-      .setProgressMonitor(object : BatchingProgressMonitor() {
-        override fun onUpdate(
-          taskName: String,
-          workCurr: Int,
-          duration: Duration
-        ) = DoNothing
-
-        override fun onUpdate(
-          taskName: String,
-          workCurr: Int,
-          workTotal: Int,
-          percentDone: Int,
-          duration: Duration
-        ) {
-          onUpdate(percentDone, taskName)
+      .setProgressMonitor(object : SimpleProgressMonitor() {
+        override fun onUpdate(progress: Int, taskName: String) {
+          onUpdate(progress, taskName)
         }
-
-        override fun onEndTask(
-          taskName: String,
-          workCurr: Int,
-          duration: Duration
-        ) = DoNothing
-
-        override fun onEndTask(
-          taskName: String,
-          workCurr: Int,
-          workTotal: Int,
-          percentDone: Int,
-          duration: Duration
-        ) = DoNothing
       })
       .setDirectory(destination.toFile())
       .call()
@@ -135,6 +109,27 @@ class GitManager private constructor() {
   @Throws(GitAPIException::class)
   fun getBranches(): List<String> {
     return git.branchList().call().map { it.name }
+  }
+
+  fun getDefaultBranch(): String? {
+    return git.repository.branch
+  }
+
+  fun addMainBranch() {
+    if (getBranches().contains(VCSGitConstants.MAIN)) return
+
+    if (getBranches().contains(GitConstants.MASTER)) {
+      git.branchRename()
+        .setOldName(GitConstants.MASTER)
+        .setNewName(VCSGitConstants.MAIN)
+        .call()
+    } else {
+      git.branchCreate()
+        .setName(VCSGitConstants.MAIN)
+        .setForce(true)
+        .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM)
+        .call()
+    }
   }
 
   @Throws(GitAPIException::class)
@@ -166,6 +161,7 @@ class GitManager private constructor() {
   )
   fun commit(
     message: String,
+    userInfo: UserInfo,
     amend: Boolean = false,
     sign: Boolean = false,
     vararg only: String
@@ -174,6 +170,13 @@ class GitManager private constructor() {
       setMessage(message)
       setAmend(amend)
       setSign(sign)
+      setCredentialsProvider(
+        UsernamePasswordCredentialsProvider(
+          userInfo.user.username,
+          userInfo.accessToken.accessToken
+        )
+      )
+      setAuthor(PersonIdent(userInfo.user.name, userInfo.user.email))
 
       only.forEach { setOnly(it) }
     }.call()
@@ -203,76 +206,78 @@ class GitManager private constructor() {
   )
   fun push(
     username: String,
-    password: String
+    password: String,
+    remoteName: String = GitConstants.DEFAULT_REMOTE_NAME,
+    branchName: String = VCSGitConstants.MAIN,
+    onUpdate: (progress: Int, taskName: String) -> Unit = { _, _ -> }
   ) {
     git.push()
-      .setRemote(GitConstants.DEFAULT_REMOTE_NAME)
+      .setRemote(remoteName)
+      .add("refs/heads/$branchName")
+      .setPushOptions(listOf("--set-upstream"))
       .setCredentialsProvider(UsernamePasswordCredentialsProvider(username, password))
+      .setProgressMonitor(object : SimpleProgressMonitor() {
+        override fun onUpdate(progress: Int, taskName: String) {
+          onUpdate(progress, taskName)
+        }
+      })
       .call()
   }
 
   fun fetch(
+    username: String,
+    password: String,
     remoteName: String = Constants.DEFAULT_REMOTE_NAME,
     onUpdate: (progress: Int, taskName: String) -> Unit = { _, _ -> }
   ) {
-    git.fetch().setRemote(remoteName).setProgressMonitor(object : BatchingProgressMonitor() {
-      override fun onUpdate(taskName: String?, workCurr: Int, duration: Duration?) {
-
-      }
-
-      override fun onUpdate(
-        taskName: String,
-        workCurr: Int,
-        workTotal: Int,
-        percentDone: Int,
-        duration: Duration
-      ) {
-        onUpdate(percentDone, taskName)
-      }
-
-      override fun onEndTask(taskName: String?, workCurr: Int, duration: Duration?) {
-
-      }
-
-      override fun onEndTask(
-        taskName: String?,
-        workCurr: Int,
-        workTotal: Int,
-        percentDone: Int,
-        duration: Duration?
-      ) {
-
-      }
-    }).call()
+    git.fetch()
+      .setRemote(remoteName)
+      .setProgressMonitor(object : SimpleProgressMonitor() {
+        override fun onUpdate(progress: Int, taskName: String) {
+          onUpdate(progress, taskName)
+        }
+      })
+      .setCredentialsProvider(UsernamePasswordCredentialsProvider(username, password))
+      .call()
   }
 
-  fun getUncommittedChangesStats(): ChangeStats {
-    var totalInsertions = 0
-    var totalDeletions = 0
-    var totalFilesChanged: Int
-
-    git.use {
-      val diffs = it.diff().setShowNameAndStatusOnly(true).call()
-      totalFilesChanged = diffs.size
-
-      DiffFormatter(NullOutputStream.INSTANCE).use { diffFormatter ->
-        diffFormatter.setRepository(it.repository)
-
-        for (entry in diffs) {
-          val editList = diffFormatter.toFileHeader(entry).toEditList()
-          for (edit in editList) {
-            totalInsertions += edit.endB - edit.beginB
-            totalDeletions += edit.endA - edit.beginA
-          }
+  fun refresh(
+    username: String,
+    password: String,
+    force: Boolean = false,
+    remoteName: String = Constants.DEFAULT_REMOTE_NAME,
+    onUpdate: (progress: Int, taskName: String) -> Unit = { _, _ -> }
+  ) {
+    git.fetch()
+      .setCheckFetchedObjects(true)
+      .setRecurseSubmodules(SubmoduleConfig.FetchRecurseSubmodulesMode.ON_DEMAND)
+      .setRemote(remoteName)
+      .setRemoveDeletedRefs(true)
+      .setProgressMonitor(object : SimpleProgressMonitor() {
+        override fun onUpdate(progress: Int, taskName: String) {
+          onUpdate(progress, taskName)
         }
-      }
-    }
+      })
+      .setCredentialsProvider(UsernamePasswordCredentialsProvider(username, password))
+      .setForceUpdate(force)
+      .call()
+  }
 
-    return ChangeStats(
-      filesChanged = totalFilesChanged,
-      insertions = totalInsertions,
-      deletions = totalDeletions
-    )
+  fun pull(
+    username: String,
+    password: String,
+    remoteName: String = Constants.DEFAULT_REMOTE_NAME,
+    onUpdate: (progress: Int, taskName: String) -> Unit = { _, _ -> }
+  ) {
+    git.pull()
+      .setRemote(remoteName)
+      .setProgressMonitor(object : SimpleProgressMonitor() {
+        override fun onUpdate(progress: Int, taskName: String) {
+          onUpdate(progress, taskName)
+        }
+      })
+      .setCredentialsProvider(UsernamePasswordCredentialsProvider(username, password))
+      .call()
   }
 
   fun getRepositoryName(): String? {
@@ -319,80 +324,51 @@ class GitManager private constructor() {
     return unpushedCommits
   }
 
-  fun pull(
-    username: String,
-    password: String,
+  fun getUncommittedChangesStats(
     onUpdate: (progress: Int, taskName: String) -> Unit = { _, _ -> }
-  ) {
-    git.pull()
-      .setRemote(GitConstants.DEFAULT_REMOTE_NAME)
-      .setRemoteBranchName(GitConstants.MASTER)
-      .setProgressMonitor(object : BatchingProgressMonitor() {
-        override fun onUpdate(taskName: String?, workCurr: Int, duration: Duration?) = DoNothing
+  ): ChangeStats {
+    var insertion = 0
+    var deletion = 0
+    var filesChanged: Int
 
-        override fun onUpdate(
-          taskName: String,
-          workCurr: Int,
-          workTotal: Int,
-          percentDone: Int,
-          duration: Duration
-        ) {
-          onUpdate(percentDone, taskName)
+    ByteArrayOutputStream().use { out ->
+      val diffs = git.diff()
+        .setOutputStream(out)
+        .setProgressMonitor(object : SimpleProgressMonitor() {
+          override fun onUpdate(progress: Int, taskName: String) {
+            onUpdate(progress, taskName)
+          }
+        })
+        /*.setCached(true)*/
+        .call()
+      filesChanged = diffs.size
+
+      val output = out.toString("UTF-8")
+
+      output.reader().use {
+        it.forEachLine { line ->
+          if (line.startsWith("+") && !line.startsWith("+++ ") && !line.startsWith("++")) {
+            insertion++
+          } else if (line.startsWith("-") && !line.startsWith("--- ") && !line.startsWith("--")) {
+            deletion++
+          }
         }
+      }
+    }
 
-        override fun onEndTask(taskName: String?, workCurr: Int, duration: Duration?) = DoNothing
-
-        override fun onEndTask(
-          taskName: String?,
-          workCurr: Int,
-          workTotal: Int,
-          percentDone: Int,
-          duration: Duration?
-        ) = DoNothing
-      })
-      .setContentMergeStrategy(ContentMergeStrategy.OURS)
-      .setStrategy(MergeStrategy.RESOLVE)
-      .setCredentialsProvider(UsernamePasswordCredentialsProvider(username, password))
-      .call()
+    return ChangeStats(
+      filesChanged = filesChanged,
+      insertions = insertion,
+      deletions = deletion
+    )
   }
 
-  fun fetch(
-    username: String,
-    password: String
-  ) {
-    git.fetch()
-      .setRemote(GitConstants.DEFAULT_REMOTE_NAME)
-      .setCredentialsProvider(UsernamePasswordCredentialsProvider(username, password))
-      .setProgressMonitor(object : BatchingProgressMonitor() {
-        override fun onUpdate(taskName: String?, workCurr: Int, duration: Duration?) {
-          TODO("Not yet implemented")
-        }
-
-        override fun onUpdate(
-          taskName: String?,
-          workCurr: Int,
-          workTotal: Int,
-          percentDone: Int,
-          duration: Duration?
-        ) {
-          TODO("Not yet implemented")
-        }
-
-        override fun onEndTask(taskName: String?, workCurr: Int, duration: Duration?) {
-          TODO("Not yet implemented")
-        }
-
-        override fun onEndTask(
-          taskName: String?,
-          workCurr: Int,
-          workTotal: Int,
-          percentDone: Int,
-          duration: Duration?
-        ) {
-          TODO("Not yet implemented")
-        }
-
-      })
+  suspend fun getLastCommitMessage(): String = withContext(Dispatchers.IO) {
+    RevWalk(git.repository).use { revWalk ->
+      val headCommit = git.repository.resolve("HEAD")
+      val commit = revWalk.parseCommit(headCommit)
+      commit.fullMessage
+    }
   }
 }
 

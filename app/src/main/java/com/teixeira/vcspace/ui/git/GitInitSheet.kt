@@ -49,13 +49,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.teixeira.vcspace.app.Folder
 import com.teixeira.vcspace.app.strings
-import com.teixeira.vcspace.git.VCSGit
 import com.teixeira.vcspace.ui.LocalToastHostState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.teixeira.vcspace.git.GitManager.Companion.instance as git
 
 @Composable
 fun GitInitSheet(
@@ -183,8 +183,8 @@ private fun doInit(
 ) {
   scope.launch {
     runCatching {
-      VCSGit.instance.init(folder)
-      VCSGit.instance.addAll()
+      git.init(folder)
+      git.addAll()
     }.onSuccess { onSuccess() }.onFailure(onFailure)
   }
 }

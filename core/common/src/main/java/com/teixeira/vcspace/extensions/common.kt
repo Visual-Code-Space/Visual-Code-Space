@@ -13,8 +13,10 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
+
 package com.teixeira.vcspace.extensions
 
-fun Any?.isNotNull() = this != null
+inline fun Any?.isNotNull() = this != null
 
-fun Any?.isNull() = this == null
+inline fun Any?.isNull() = this == null

@@ -13,24 +13,8 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.ui.extensions
+package com.teixeira.vcspace.git
 
-import androidx.annotation.FloatRange
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
-import androidx.core.graphics.ColorUtils
-
-fun Color.blend(
-  color: Color,
-  @FloatRange(from = 0.0, to = 1.0) fraction: Float = 0.2f
-): Color = Color(ColorUtils.blendARGB(this.toArgb(), color.toArgb(), fraction))
-
-@Composable
-fun Color.harmonizeWithPrimary(
-  @FloatRange(
-    from = 0.0,
-    to = 1.0
-  ) fraction: Float = 0.2f
-): Color = blend(MaterialTheme.colorScheme.primary, fraction)
+object VCSGitConstants {
+  const val MAIN = "main"
+}

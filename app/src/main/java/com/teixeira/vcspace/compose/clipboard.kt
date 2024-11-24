@@ -17,8 +17,10 @@ package com.teixeira.vcspace.compose
 
 import android.webkit.URLUtil
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.platform.LocalClipboardManager
 
+@ReadOnlyComposable
 @Composable
 fun clipUrl(): String? {
   val clipboardManager = LocalClipboardManager.current

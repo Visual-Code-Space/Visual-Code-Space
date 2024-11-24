@@ -69,6 +69,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.blankj.utilcode.util.FileUtils
@@ -171,20 +172,22 @@ fun EditorTopBar(
 
   val context = LocalContext.current
   val view = LocalView.current
+  val lifecycleOwner = LocalLifecycleOwner.current
 
   var isKeyboardOpen by remember { mutableStateOf(KeyboardUtils.isSoftInputVisible(context as Activity)) }
 
-  ObserveLifecycleEvents {
-    if (it == Lifecycle.Event.ON_CREATE) {
-      KeyboardUtils.registerSoftInputChangedListener(context as Activity) {
-        isKeyboardOpen = KeyboardUtils.isSoftInputVisible(context)
-      }
+  LifecycleStartEffect(key1 = lifecycleOwner) {
+    KeyboardUtils.registerSoftInputChangedListener(context as Activity) {
+      isKeyboardOpen = KeyboardUtils.isSoftInputVisible(context)
+    }
+
+    onStopOrDispose {
+      KeyboardUtils.unregisterSoftInputChangedListener(context.window)
     }
   }
 
   var server: LocalHttpServer? = null
 
-  val lifecycleOwner = LocalLifecycleOwner.current
   DisposableEffect(lifecycleOwner) {
     val observer = LifecycleEventObserver { _, event ->
       if (event == Lifecycle.Event.ON_DESTROY) {

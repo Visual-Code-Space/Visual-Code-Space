@@ -61,6 +61,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.blankj.utilcode.util.AppUtils
@@ -119,14 +120,14 @@ abstract class BaseComposeActivity : ComponentActivity() {
         )
         var hasPermission by remember { mutableStateOf(isStoragePermissionGranted()) }
 
-        ObserveLifecycleEvents { event ->
-          if (event == Lifecycle.Event.ON_RESUME) {
-            hasPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-              Environment.isExternalStorageManager()
-            } else {
-              storagePermissionsState.allPermissionsGranted
-            }
+        LifecycleResumeEffect(hasPermission) {
+          hasPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            Environment.isExternalStorageManager()
+          } else {
+            storagePermissionsState.allPermissionsGranted
           }
+
+          onPauseOrDispose { }
         }
 
         ProvideBaseCompositionLocals {

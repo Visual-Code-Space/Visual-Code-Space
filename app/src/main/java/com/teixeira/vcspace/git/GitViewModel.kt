@@ -16,6 +16,7 @@
 package com.teixeira.vcspace.git
 
 import androidx.lifecycle.ViewModel
+import com.teixeira.vcspace.github.auth.Api
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -60,7 +61,7 @@ class GitViewModel : ViewModel() {
         _changes.update {
           it.copy(isLoading = false, fileChanges = changes)
         }
-        _gitStatus.update { GitActionStatus.Success }
+        _gitStatus.update { GitActionStatus.Success("Loading changes success") }
       }.onFailure { throwable ->
         withContext(Dispatchers.Main) {
           onFailure(throwable)
@@ -86,7 +87,7 @@ class GitViewModel : ViewModel() {
       }.onSuccess { name ->
         _repoName.update { name }
 
-        _gitStatus.update { GitActionStatus.Success }
+        _gitStatus.update { GitActionStatus.Success("Loading repository name success") }
       }.onFailure { throwable ->
         _gitStatus.update { GitActionStatus.Failure(throwable) }
 
@@ -130,11 +131,151 @@ class GitViewModel : ViewModel() {
         _changeStats.update {
           it.copy(isLoading = false, changeStats = stats)
         }
-        _gitStatus.update { GitActionStatus.Success }
+        _gitStatus.update { GitActionStatus.Success("Loading changes stats success") }
       }.onFailure { throwable ->
         _changeStats.update {
           it.copy(isLoading = false)
         }
+        _gitStatus.update { GitActionStatus.Failure(throwable) }
+
+        withContext(Dispatchers.Main) {
+          onFailure(throwable)
+        }
+      }
+    }
+  }
+
+  suspend fun fetch(onFailure: OnFailureListener = {}) {
+    val userInfo = Api.getUserInfo()
+    if (userInfo == null) {
+      _gitStatus.update { GitActionStatus.Failure(RuntimeException("Login first.")) }
+      return
+    }
+
+    val user = userInfo.user
+    val accessToken = userInfo.accessToken
+
+    _gitStatus.update { GitActionStatus.Loading(null, "Fetching...") }
+
+    withContext(Dispatchers.IO) {
+      runCatching {
+        git.fetch(
+          username = user.username,
+          password = accessToken.accessToken,
+          onUpdate = { progress, taskName ->
+            _gitStatus.update { GitActionStatus.Loading(progress, taskName) }
+          }
+        )
+      }.onSuccess {
+        _gitStatus.update { GitActionStatus.Success("Fetch success") }
+      }.onFailure { throwable ->
+        _gitStatus.update { GitActionStatus.Failure(throwable) }
+
+        withContext(Dispatchers.Main) {
+          onFailure(throwable)
+        }
+      }
+    }
+  }
+
+  suspend fun pull(onFailure: OnFailureListener = {}) {
+    val userInfo = Api.getUserInfo()
+    if (userInfo == null) {
+      _gitStatus.update { GitActionStatus.Failure(RuntimeException("Login first.")) }
+      return
+    }
+
+    val user = userInfo.user
+    val accessToken = userInfo.accessToken
+
+    _gitStatus.update { GitActionStatus.Loading(null, "Pulling changes...") }
+
+    withContext(Dispatchers.IO) {
+      runCatching {
+        git.pull(
+          username = user.username,
+          password = accessToken.accessToken,
+          onUpdate = { progress, taskName ->
+            _gitStatus.update { GitActionStatus.Loading(progress, taskName) }
+          }
+        )
+      }.onSuccess {
+        _gitStatus.update { GitActionStatus.Success("Pull changes success") }
+      }.onFailure { throwable ->
+        _gitStatus.update { GitActionStatus.Failure(throwable) }
+
+        withContext(Dispatchers.Main) {
+          onFailure(throwable)
+        }
+      }
+    }
+  }
+
+  suspend fun refresh(onFailure: OnFailureListener = {}) {
+    val userInfo = Api.getUserInfo()
+    if (userInfo == null) {
+      _gitStatus.update { GitActionStatus.Failure(RuntimeException("Login first.")) }
+      return
+    }
+
+    val user = userInfo.user
+    val accessToken = userInfo.accessToken
+
+    _gitStatus.update { GitActionStatus.Loading(null, "Refreshing...") }
+
+    withContext(Dispatchers.IO) {
+      runCatching {
+        loadRepoName()
+        git.addMainBranch()
+        git.refresh(
+          username = user.username,
+          password = accessToken.accessToken,
+          onUpdate = { progress, taskName ->
+            _gitStatus.update { GitActionStatus.Loading(progress, taskName) }
+          }
+        )
+        loadUnpushedCommits()
+        loadChanges()
+        loadChangeStats()
+      }.onSuccess {
+        _gitStatus.update { GitActionStatus.Success("Refreshing success") }
+      }.onFailure { throwable ->
+        _gitStatus.update { GitActionStatus.Failure(throwable) }
+
+        withContext(Dispatchers.Main) {
+          onFailure(throwable)
+        }
+      }
+    }
+  }
+
+  suspend fun push(onFailure: OnFailureListener = {}) {
+    val userInfo = Api.getUserInfo()
+    if (userInfo == null) {
+      _gitStatus.update { GitActionStatus.Failure(RuntimeException("Login first.")) }
+      return
+    }
+
+    val user = userInfo.user
+    val accessToken = userInfo.accessToken
+
+    _gitStatus.update { GitActionStatus.Loading(null, "Pushing...") }
+
+    withContext(Dispatchers.IO) {
+      runCatching {
+        git.push(
+          username = user.username,
+          password = accessToken.accessToken,
+          branchName = git.getDefaultBranch() ?: VCSGitConstants.MAIN,
+          onUpdate = { progress, taskName ->
+            _gitStatus.update { GitActionStatus.Loading(progress, taskName) }
+          }
+        )
+      }.onSuccess {
+        _gitStatus.update { GitActionStatus.Success("Successfully pushed") }
+      }.onFailure { throwable ->
+        throwable.printStackTrace()
+
         _gitStatus.update { GitActionStatus.Failure(throwable) }
 
         withContext(Dispatchers.Main) {

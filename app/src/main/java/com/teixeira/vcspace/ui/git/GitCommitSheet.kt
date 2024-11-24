@@ -37,6 +37,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
@@ -49,6 +50,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -64,18 +66,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.teixeira.vcspace.KEY_GIT_PASSWORD
-import com.teixeira.vcspace.KEY_GIT_USERNAME
+import com.teixeira.vcspace.extensions.isNull
 import com.teixeira.vcspace.git.ChangeStats
+import com.teixeira.vcspace.git.GitManager
 import com.teixeira.vcspace.git.GitViewModel
-import com.teixeira.vcspace.preferences.defaultPrefs
+import com.teixeira.vcspace.github.auth.Api
+import com.teixeira.vcspace.github.auth.UserInfo
 import com.teixeira.vcspace.ui.LocalToastHostState
 import com.teixeira.vcspace.ui.rememberSheetState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.eclipse.jgit.api.Status
+import java.io.File
+import kotlin.time.Duration.Companion.seconds
 import com.teixeira.vcspace.git.GitManager.Companion.instance as git
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -87,12 +94,13 @@ fun GitCommitSheet(
   onSuccess: suspend CoroutineScope.() -> Unit = {},
   onFailure: suspend CoroutineScope.(Throwable) -> Unit = {}
 ) {
-  val username = defaultPrefs.getString(KEY_GIT_USERNAME, "") ?: ""
-  val password = defaultPrefs.getString(KEY_GIT_PASSWORD, "") ?: ""
-
+  var userInfo: UserInfo? by remember { mutableStateOf(null) }
   var isCredentialError by remember { mutableStateOf(false) }
-  LaunchedEffect(Unit) {
-    if (username.isEmpty() || password.isEmpty()) {
+
+  LaunchedEffect(key1 = true) {
+    userInfo = Api.getUserInfo()
+
+    if (userInfo.isNull()) {
       isCredentialError = true
     }
   }
@@ -101,7 +109,7 @@ fun GitCommitSheet(
     AlertDialog(
       onDismissRequest = { isCredentialError = false },
       title = { Text(text = "Credential Error") },
-      text = { Text(text = "Please set your Git username and password in settings.") },
+      text = { Text(text = "Please login with GitHub from settings.") },
       confirmButton = {
         TextButton(onClick = { isCredentialError = false }) {
           Text(text = "OK")
@@ -112,6 +120,7 @@ fun GitCommitSheet(
 
   var commitMessage by rememberSaveable { mutableStateOf("") }
 
+  val workingTree by gitViewModel.workingTree.collectAsStateWithLifecycle(context = Dispatchers.IO)
   val changes by gitViewModel.changes.collectAsStateWithLifecycle(context = Dispatchers.IO)
   val changesToBeCommited = remember { mutableStateListOf<String>() }
   LaunchedEffect(key1 = true) {
@@ -122,21 +131,22 @@ fun GitCommitSheet(
     }
   }
 
-  var changeStats: ChangeStats? by remember { mutableStateOf(null) }
-  var loadingChangeStats by remember { mutableStateOf(false) }
-  LaunchedEffect(key1 = true) {
-    loadingChangeStats = true
-    runCatching {
-      git.getUncommittedChangesStats()
-    }.onSuccess { changeStats = it }.onFailure {
-      it.printStackTrace()
-      commitMessage = it.message.toString()
-    }
-    loadingChangeStats = false
-  }
+  val gitChangeStats by gitViewModel.changeStats.collectAsStateWithLifecycle(context = Dispatchers.IO)
 
   var amendCommit by remember { mutableStateOf(false) }
   var signOff by remember { mutableStateOf(false) }
+
+  LaunchedEffect(key1 = true) {
+    runCatching { git.getLastCommitMessage() }.onFailure { commitMessage = "Initial commit" }
+  }
+
+  LaunchedEffect(amendCommit) {
+    if (amendCommit) {
+      runCatching {
+        git.getLastCommitMessage()
+      }.onSuccess { commitMessage = it }.onFailure { amendCommit = false }
+    }
+  }
 
   val sheetState = rememberSheetState(
     initialValue = SheetValue.Expanded,
@@ -154,6 +164,11 @@ fun GitCommitSheet(
         }
       }
     }
+  }
+
+  var status: Status? by remember { mutableStateOf(null) }
+  LaunchedEffect(key1 = true) {
+    status = GitManager.instance.git.status().call()
   }
 
   ModalBottomSheet(
@@ -193,7 +208,28 @@ fun GitCommitSheet(
         Spacer(modifier = Modifier.height(8.dp))
 
         Row(verticalAlignment = Alignment.CenterVertically) {
-          val (filesChanged, totalAdditions, totalDeletions) = changeStats ?: ChangeStats(0, 0, 0)
+          val loadingChangeStats = gitChangeStats.isLoading
+          val changeStats = gitChangeStats.changeStats
+          
+          var filesChanged by remember { mutableIntStateOf(changeStats?.filesChanged ?: 0) }
+          var totalAdditions by remember { mutableIntStateOf(changeStats?.filesChanged ?: 0) }
+
+          @Suppress("CanBeVal")
+          var totalDeletions by remember { mutableIntStateOf(changeStats?.filesChanged ?: 0) }
+
+          LaunchedEffect(key1 = true) {
+            status?.let { gitStatus ->
+              if (gitStatus.added.isEmpty() || workingTree == null) return@LaunchedEffect
+
+              filesChanged += gitStatus.added.map { it }.size
+
+              gitStatus.added.map { it }.forEach {
+                runCatching {
+                  totalAdditions += File(workingTree, it).readLines().size
+                }.onFailure(::println)
+              }
+            }
+          }
 
           Checkbox(
             checked = true,
@@ -242,15 +278,25 @@ fun GitCommitSheet(
           text = "Amend previous commit",
           description = "Amend the last commit with the current changes",
           checked = amendCommit,
-          onCheckedChange = { /*amendCommit = it*/ }
+          onCheckedChange = { amendCommit = it }
         )
         OptionRow(
           text = "Sign-off",
-          description = "Record a sign-off line in the commit log.",
+          description = if (signOff) "This feature is not available right now" else "Record a sign-off line in the commit log.",
           checked = signOff,
           onCheckedChange = {
-            /*signOff = it*/
-            scope.launch { toastHostState.showToast("Not yet implemented") }
+            signOff = it
+
+            scope.launch(Dispatchers.Main) {
+              delay(1.seconds)
+              signOff = !it
+              toastHostState.showToast("Not yet implemented")
+            }
+          },
+          descriptionColor = if (signOff) {
+            MaterialTheme.colorScheme.error
+          } else {
+            MaterialTheme.colorScheme.onSurfaceVariant
           }
         )
 
@@ -270,28 +316,33 @@ fun GitCommitSheet(
         Button(
           onClick = {
             scope.launch(Dispatchers.IO) {
-              doCommit(
-                message = commitMessage,
-                amend = amendCommit,
-                sign = signOff,
-                only = changesToBeCommited.toTypedArray(),
-                onSuccess = {
-                  scope.launch {
-                    hide()
+              userInfo?.let {
+                doCommit(
+                  message = commitMessage,
+                  amend = amendCommit,
+                  sign = signOff,
+                  only = changesToBeCommited.toTypedArray(),
+                  userInfo = it,
+                  onSuccess = {
+                    scope.launch {
+                      hide()
 
-                    withContext(Dispatchers.Main.immediate + SupervisorJob()) {
-                      onSuccess()
+                      withContext(Dispatchers.Main.immediate + SupervisorJob()) {
+                        onSuccess()
+                      }
+                    }
+                  },
+                  onFailure = {
+                    scope.launch {
+                      hide()
+
+                      onFailure(it)
                     }
                   }
-                },
-                onFailure = {
-                  scope.launch {
-                    hide()
-
-                    onFailure(it)
-                  }
-                }
-              )
+                )
+              } ?: run {
+                isCredentialError = true
+              }
             }
           },
           modifier = Modifier.fillMaxWidth(),
@@ -352,6 +403,8 @@ private fun OptionRow(
   text: String,
   description: String,
   checked: Boolean = false,
+  textColor: Color = MaterialTheme.colorScheme.onSurface,
+  descriptionColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
   onCheckedChange: (Boolean) -> Unit = {}
 ) {
   ListItem(
@@ -368,7 +421,11 @@ private fun OptionRow(
       .toggleable(
         value = checked,
         onValueChange = onCheckedChange
-      )
+      ),
+    colors = ListItemDefaults.colors(
+      headlineColor = textColor,
+      supportingColor = descriptionColor
+    )
   )
 }
 
@@ -377,6 +434,7 @@ private fun doCommit(
   amend: Boolean,
   sign: Boolean,
   only: Array<String>,
+  userInfo: UserInfo,
   onSuccess: () -> Unit = {},
   onFailure: (Throwable) -> Unit = {}
 ) {
@@ -385,7 +443,8 @@ private fun doCommit(
       message = message,
       amend = amend,
       sign = sign,
-      only = only
+      only = only,
+      userInfo = userInfo
     )
   }.onSuccess { onSuccess() }.onFailure(onFailure)
 }

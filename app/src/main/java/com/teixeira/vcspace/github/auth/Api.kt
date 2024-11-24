@@ -21,6 +21,7 @@ import com.google.gson.Gson
 import com.teixeira.vcspace.BuildConfig
 import com.teixeira.vcspace.KEY_GIT_USER_ACCESS_TOKEN
 import com.teixeira.vcspace.KEY_GIT_USER_INFO
+import com.teixeira.vcspace.extensions.isNotNull
 import com.teixeira.vcspace.github.User
 import com.teixeira.vcspace.plugins.internal.awaitResult
 import com.teixeira.vcspace.preferences.encryptedPrefs
@@ -77,7 +78,7 @@ object Api {
     }
   }
 
-  suspend fun getUserInfo(
+  suspend fun getUser(
     token: String,
     onSuccess: suspend CoroutineScope.(User) -> Unit = {},
     onFailure: suspend CoroutineScope.(Throwable) -> Unit = {}
@@ -97,10 +98,10 @@ object Api {
     }
   }
 
-  val saveUser: (User, AccessToken) -> Unit = { user, accessToken ->
+  val saveUser: (UserInfo) -> Unit = { userInfo ->
     encryptedPrefs.edit(commit = true) {
-      putString(KEY_GIT_USER_INFO, Gson().toJson(user))
-      putString("$KEY_GIT_USER_ACCESS_TOKEN${user.username}", Gson().toJson(accessToken))
+      putString(KEY_GIT_USER_INFO, Gson().toJson(userInfo.user))
+      putString("$KEY_GIT_USER_ACCESS_TOKEN${userInfo.user.username}", Gson().toJson(userInfo.accessToken))
     }
   }
 
@@ -111,9 +112,11 @@ object Api {
     }
   }
 
-  val getUser = {
+  val getUserInfo = {
     val userJson = encryptedPrefs.getString(KEY_GIT_USER_INFO, null)
-    userJson?.let { Gson().fromJson(it, User::class.java) }
+    val user = userJson?.let { Gson().fromJson(it, User::class.java) }
+
+    if (user.isNotNull()) UserInfo(user!!, getUserAccessToken(user)) else null
   }
 
   val getUserAccessToken: (User) -> AccessToken = { user ->
@@ -121,3 +124,5 @@ object Api {
     Gson().fromJson(accessTokenJson, AccessToken::class.java)
   }
 }
+
+data class UserInfo(val user: User, val accessToken: AccessToken)

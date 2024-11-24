@@ -15,9 +15,31 @@
 
 package com.teixeira.vcspace.git
 
-sealed class GitActionStatus {
-  data object Idle : GitActionStatus()
-  data class Success(val message: String = "") : GitActionStatus()
-  data class Failure(val throwable: Throwable) : GitActionStatus()
-  data class Loading(val progress: Int?, val message: String) : GitActionStatus()
+import org.eclipse.jgit.lib.BatchingProgressMonitor
+import java.time.Duration
+
+abstract class SimpleProgressMonitor : BatchingProgressMonitor() {
+  override fun onUpdate(taskName: String?, workCurr: Int, duration: Duration?) {}
+
+  override fun onUpdate(
+    taskName: String,
+    workCurr: Int,
+    workTotal: Int,
+    percentDone: Int,
+    duration: Duration?
+  ) {
+    onUpdate(percentDone, taskName)
+  }
+
+  override fun onEndTask(taskName: String?, workCurr: Int, duration: Duration?) {}
+
+  override fun onEndTask(
+    taskName: String?,
+    workCurr: Int,
+    workTotal: Int,
+    percentDone: Int,
+    duration: Duration?
+  ) {}
+
+  abstract fun onUpdate(progress: Int, taskName: String)
 }

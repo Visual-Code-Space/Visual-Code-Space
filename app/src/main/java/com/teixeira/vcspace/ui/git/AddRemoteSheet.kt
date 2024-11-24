@@ -139,12 +139,6 @@ fun AddRemoteSheet(
                 remoteUrl = remoteUrl,
                 remoteName = remoteName
               )
-
-              git.fetch(
-                onUpdate = { progress, taskName ->
-
-                }
-              )
             }.onSuccess {
               isLoading = false
               hide()
