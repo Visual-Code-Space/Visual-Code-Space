@@ -40,17 +40,18 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.blankj.utilcode.util.FileUtils
 import com.google.gson.GsonBuilder
+import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.app.VCSpaceApplication
+import com.teixeira.vcspace.plugins.Plugin
 import com.teixeira.vcspace.preferences.pluginsPath
 import com.teixeira.vcspace.ui.LocalToastHostState
 import com.teixeira.vcspace.ui.screens.PluginScreens
-import com.teixeira.vcspace.ui.screens.plugin.components.NewPluginDialog
 import com.teixeira.vcspace.ui.screens.plugin.components.ExplorePluginList
 import com.teixeira.vcspace.ui.screens.plugin.components.InstalledPluginList
 import com.teixeira.vcspace.ui.screens.plugin.components.NewPluginButton
+import com.teixeira.vcspace.ui.screens.plugin.components.NewPluginDialog
 import com.teixeira.vcspace.ui.screens.plugin.components.PluginTabs
 import com.teixeira.vcspace.ui.screens.plugin.components.PluginTopBar
-import com.teixeira.vcspace.plugins.Plugin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.io.File
@@ -70,6 +71,7 @@ fun PluginsScreen(
   var showNewPluginDialog by remember { mutableStateOf(false) }
 
   val toastHostState = LocalToastHostState.current
+  val context = LocalContext.current
 
   LaunchedEffect(Unit) {
     viewModel.loadInstalledPlugins()
@@ -86,7 +88,7 @@ fun PluginsScreen(
 
           coroutineScope.launch {
             toastHostState.showToast(
-              message = "Saved",
+              message = context.getString(R.string.saved),
               icon = Icons.Rounded.Check
             )
           }
@@ -137,8 +139,6 @@ fun PluginsScreen(
   }
 
   if (showNewPluginDialog) {
-    val context = LocalContext.current
-
     NewPluginDialog(
       onCreate = { manifest ->
         showNewPluginDialog = false
@@ -167,7 +167,7 @@ fun PluginsScreen(
 
         coroutineScope.launch {
           toastHostState.showToast(
-            message = "Plugin created successfully",
+            message = context.getString(R.string.plugin_created_successfully),
             icon = Icons.Rounded.Check
           )
         }

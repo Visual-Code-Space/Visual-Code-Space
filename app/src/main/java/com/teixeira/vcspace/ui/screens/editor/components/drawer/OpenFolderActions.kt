@@ -29,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.documentfile.provider.DocumentFile
 import com.blankj.utilcode.util.UriUtils
 import com.teixeira.vcspace.PreferenceKeys
+import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.app.strings
 import com.teixeira.vcspace.preferences.defaultPrefs
 import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
@@ -65,7 +66,7 @@ fun OpenFolderActions(
         val treeUri = DocumentFile.fromFile(File(recentFolder)).uri
         fileExplorerViewModel.openFolder(UriUtils.uri2File(treeUri))
       } else {
-        showShortToast(context, "No recent folder found")
+        showShortToast(context, context.getString(R.string.no_recent_folder_found))
       }
     }) {
       Text(text = stringResource(strings.open_recent))

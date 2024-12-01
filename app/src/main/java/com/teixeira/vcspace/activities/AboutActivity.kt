@@ -31,8 +31,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.teixeira.vcspace.activities.base.BaseComposeActivity
+import com.teixeira.vcspace.app.strings
 import com.teixeira.vcspace.core.components.common.VCSpaceLargeTopBar
 import com.teixeira.vcspace.ui.screens.about.ContributorsCard
 import com.teixeira.vcspace.ui.screens.about.SocialCard
@@ -53,7 +55,7 @@ class AboutActivity : BaseComposeActivity() {
         .nestedScroll(scrollBehavior.nestedScrollConnection),
       topBar = {
         VCSpaceLargeTopBar(
-          title = "About",
+          title = stringResource(strings.about),
           navigationIcon = {
             IconButton(onClick = {
               backPressedDispatcher?.onBackPressed()

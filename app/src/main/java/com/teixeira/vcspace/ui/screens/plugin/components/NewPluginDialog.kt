@@ -27,13 +27,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.plugins.Manifest
 import com.teixeira.vcspace.plugins.Script
 import com.teixeira.vcspace.preferences.pluginsPath
 import com.teixeira.vcspace.ui.ErrorMessage
 import com.teixeira.vcspace.ui.InputField
 import java.io.File
-import java.util.Locale
 
 @Composable
 fun NewPluginDialog(
@@ -61,36 +62,36 @@ fun NewPluginDialog(
   AlertDialog(
     modifier = modifier,
     onDismissRequest = onDismiss,
-    title = { Text("New Plugin") },
+    title = { Text(stringResource(R.string.new_plugin)) },
     text = {
       Column {
         InputField(
-          label = "Name",
+          label = stringResource(R.string.name),
           value = name,
           onValueChange = { name = it }
         )
 
         InputField(
-          label = "Package Name",
+          label = stringResource(R.string.package_name),
           value = packageName,
           placeholder = { Text(defaultPackageName) },
           onValueChange = { packageName = it },
           isError = !isValidPackageName
         )
 
-        (if (!isValidPackageName) "Package name already exists" else null)?.let {
+        (if (!isValidPackageName) stringResource(R.string.package_name_already_exists) else null)?.let {
           ErrorMessage(message = it)
         }
 
         InputField(
-          label = "Author",
+          label = stringResource(R.string.author),
           value = author,
           placeholder = { Text(defaultAuthorName) },
           onValueChange = { author = it }
         )
 
         InputField(
-          label = "Description",
+          label = stringResource(R.string.description),
           value = description,
           placeholder = { Text(defaultDescription) },
           onValueChange = { description = it },
@@ -120,12 +121,12 @@ fun NewPluginDialog(
         },
         enabled = isValid
       ) {
-        Text("Create")
+        Text(stringResource(R.string.create))
       }
     },
     dismissButton = {
       OutlinedButton(onClick = onDismiss) {
-        Text("Cancel")
+        Text(stringResource(R.string.cancel))
       }
     }
   )

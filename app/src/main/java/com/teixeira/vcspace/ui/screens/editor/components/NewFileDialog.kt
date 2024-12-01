@@ -30,11 +30,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.teixeira.vcspace.activities.base.LocalLifecycleScope
-import com.teixeira.vcspace.core.settings.Settings.File.rememberShowHiddenFiles
 import com.teixeira.vcspace.resources.R
+import com.teixeira.vcspace.resources.R.string
 import com.teixeira.vcspace.ui.LocalToastHostState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -53,6 +54,7 @@ fun NewFileDialog(
 
   val toastHostState = LocalToastHostState.current
   val lifecycleScope = LocalLifecycleScope.current
+  val context = LocalContext.current
   val scope = rememberCoroutineScope()
 
   AlertDialog(
@@ -86,7 +88,7 @@ fun NewFileDialog(
                 } else {
                   scope.launch {
                     toastHostState.showToast(
-                      message = "Already exists",
+                      message = context.getString(string.already_exists),
                       icon = Icons.Rounded.ErrorOutline
                     )
                   }
@@ -95,7 +97,7 @@ fun NewFileDialog(
                 ioe.printStackTrace()
                 scope.launch {
                   toastHostState.showToast(
-                    message = ioe.message ?: "Error",
+                    message = ioe.message ?: context.getString(string.error),
                     icon = Icons.Rounded.ErrorOutline
                   )
                 }
@@ -123,7 +125,7 @@ fun NewFileDialog(
                 } else {
                   scope.launch {
                     toastHostState.showToast(
-                      message = "Already exists",
+                      message = context.getString(string.already_exists),
                       icon = Icons.Rounded.ErrorOutline
                     )
                   }
@@ -132,7 +134,7 @@ fun NewFileDialog(
                 ioe.printStackTrace()
                 scope.launch {
                   toastHostState.showToast(
-                    message = ioe.message ?: "Error",
+                    message = ioe.message ?: context.getString(string.error),
                     icon = Icons.Rounded.ErrorOutline
                   )
                 }

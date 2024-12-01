@@ -107,10 +107,11 @@ class CrashActivity : BaseComposeActivity() {
     val scope = rememberCoroutineScope()
     val toastHostState = rememberToastHostState()
 
+    val appCrashedMessage = stringResource(strings.app_crashed)
     SideEffect {
       scope.launch {
         toastHostState.showToast(
-          message = "App crashed",
+          message = appCrashedMessage,
           icon = Icons.Outlined.ErrorOutline
         )
       }

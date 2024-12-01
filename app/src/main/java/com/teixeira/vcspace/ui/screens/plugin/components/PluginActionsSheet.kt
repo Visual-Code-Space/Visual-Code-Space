@@ -34,15 +34,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import com.teixeira.vcspace.app.drawables
 import com.teixeira.vcspace.extensions.toFile
+import com.teixeira.vcspace.plugins.Plugin
+import com.teixeira.vcspace.plugins.internal.PluginManager
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.ui.LoadingDialog
 import com.teixeira.vcspace.ui.LocalToastHostState
 import com.teixeira.vcspace.ui.screens.plugin.PluginViewModel
-import com.teixeira.vcspace.plugins.Plugin
-import com.teixeira.vcspace.plugins.internal.PluginManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -60,6 +63,7 @@ fun PluginActionsSheet(
   var showUploadDialog by remember { mutableStateOf(false) }
 
   val toastHostState = LocalToastHostState.current
+  val context = LocalContext.current
 
   ModalBottomSheet(
     modifier = modifier,
@@ -72,7 +76,7 @@ fun PluginActionsSheet(
           onClick = { showDeleteDialog = true }
         ) {
           ListItem(
-            headlineContent = { Text("Delete Plugin") },
+            headlineContent = { Text(stringResource(R.string.delete_plugin)) },
             leadingContent = { Icon(Icons.Rounded.Delete, contentDescription = null) }
           )
         }
@@ -93,7 +97,7 @@ fun PluginActionsSheet(
                   viewModel.loadPlugins()
                   scope.launch {
                     toastHostState.showToast(
-                      message = "Plugin uploaded successfully",
+                      message = context.getString(R.string.plugin_uploaded_successfully),
                       icon = Icons.Outlined.CheckCircle
                     )
                   }
@@ -114,10 +118,10 @@ fun PluginActionsSheet(
           }
         ) {
           ListItem(
-            headlineContent = { Text("Upload to server") },
+            headlineContent = { Text(stringResource(R.string.upload_to_server)) },
             leadingContent = {
               Icon(
-                ImageVector.vectorResource(R.drawable.ic_cloud_upload),
+                ImageVector.vectorResource(drawables.ic_cloud_upload),
                 contentDescription = null
               )
             }
@@ -136,7 +140,7 @@ fun PluginActionsSheet(
         viewModel.loadInstalledPlugins()
         scope.launch {
           toastHostState.showToast(
-            message = "Plugin deleted successfully",
+            message = context.getString(R.string.plugin_deleted_successfully),
             icon = Icons.Outlined.CheckCircle
           )
         }
@@ -146,6 +150,6 @@ fun PluginActionsSheet(
   }
 
   if (showUploadDialog) {
-    LoadingDialog(message = "Uploading")
+    LoadingDialog(message = stringResource(R.string.uploading))
   }
 }

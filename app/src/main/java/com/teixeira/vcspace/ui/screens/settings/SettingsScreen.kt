@@ -48,7 +48,7 @@ import com.teixeira.vcspace.extensions.isNull
 import com.teixeira.vcspace.extensions.open
 import com.teixeira.vcspace.github.User
 import com.teixeira.vcspace.github.auth.Api
-import com.teixeira.vcspace.resources.R.string
+import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.ui.navigateSingleTop
 import com.teixeira.vcspace.ui.screens.SettingScreens
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
@@ -72,13 +72,13 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
         LazyColumn(modifier = modifier.fillMaxSize()) {
           preferenceCategory(
             key = "pref_category_configure",
-            title = { Text(stringResource(string.pref_category_configure)) }
+            title = { Text(stringResource(strings.pref_category_configure)) }
           )
 
           preference(
             key = "pref_configure_general_key",
-            title = { Text(stringResource(string.pref_configure_general)) },
-            summary = { Text(stringResource(string.pref_configure_general_summary)) },
+            title = { Text(stringResource(strings.pref_configure_general)) },
+            summary = { Text(stringResource(strings.pref_configure_general_summary)) },
             onClick = {
               navController.navigateSingleTop(SettingScreens.General)
             }
@@ -86,8 +86,8 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
 
           preference(
             key = "pref_configure_editor_key",
-            title = { Text(stringResource(string.pref_configure_editor)) },
-            summary = { Text(stringResource(string.pref_configure_editor_summary)) },
+            title = { Text(stringResource(strings.pref_configure_editor)) },
+            summary = { Text(stringResource(strings.pref_configure_editor_summary)) },
             onClick = {
               navController.navigateSingleTop(SettingScreens.Editor)
             }
@@ -95,8 +95,8 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
 
           preference(
             key = "pref_configure_file_key",
-            title = { Text(stringResource(string.pref_configure_file_explorer)) },
-            summary = { Text(stringResource(string.pref_configure_file_explorer_summary)) },
+            title = { Text(stringResource(strings.pref_configure_file_explorer)) },
+            summary = { Text(stringResource(strings.pref_configure_file_explorer_summary)) },
             onClick = {
               navController.navigateSingleTop(SettingScreens.File)
             }
@@ -104,8 +104,8 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
 
           preference(
             key = "pref_configure_plugins_key",
-            title = { Text(stringResource(string.pref_configure_plugins)) },
-            summary = { Text(stringResource(string.pref_configure_plugins_summary)) },
+            title = { Text(stringResource(strings.pref_configure_plugins)) },
+            summary = { Text(stringResource(strings.pref_configure_plugins_summary)) },
             onClick = {
               context.open(PluginsActivity::class.java)
             }
@@ -116,9 +116,9 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
             title = {
               Text(
                 text = if (user.isNull()) {
-                  "Login with GitHub"
+                  stringResource(R.string.login_with_github)
                 } else {
-                  "Logged in as ${user!!.username} (${user!!.name ?: ""})"
+                  stringResource(R.string.logged_in_as, user!!.username, user!!.name ?: "")
                 }
               )
             },
@@ -154,13 +154,13 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
 
           preferenceCategory(
             key = "pref_category_about",
-            title = { Text(stringResource(string.pref_category_about)) }
+            title = { Text(stringResource(strings.pref_category_about)) }
           )
 
           preference(
             key = "pref_about_github_key",
-            title = { Text(stringResource(string.pref_about_github)) },
-            summary = { Text(stringResource(string.pref_about_github_summary)) },
+            title = { Text(stringResource(strings.pref_about_github)) },
+            summary = { Text(stringResource(strings.pref_about_github_summary)) },
             onClick = {
               uriHandler.openUri(BaseApplication.REPO_URL)
             }

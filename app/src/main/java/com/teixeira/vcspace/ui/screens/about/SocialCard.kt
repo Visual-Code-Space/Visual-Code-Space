@@ -37,9 +37,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.app.drawables
 import com.teixeira.vcspace.ui.extensions.harmonizeWithPrimary
 
@@ -48,17 +50,17 @@ fun SocialCard(modifier: Modifier = Modifier) {
   val socials = listOf(
     SocialItem(
       icon = Icons.Rounded.Language,
-      title = "Website",
+      title = stringResource(R.string.website),
       url = "https://visualcodespace.com.br/"
     ),
     SocialItem(
       icon = Icons.Rounded.MailOutline,
-      title = "Email",
+      title = stringResource(R.string.email),
       url = "contact@visualcodespace.com.br"
     ),
     SocialItem(
       icon = ImageVector.vectorResource(drawables.ic_telegram),
-      title = "Telegram",
+      title = stringResource(R.string.telegram),
       url = "https://t.me/visualcodespace"
     )
   )
@@ -66,7 +68,7 @@ fun SocialCard(modifier: Modifier = Modifier) {
   OutlinedCard(modifier = modifier) {
     Column {
       Text(
-        text = "Socials",
+        text = stringResource(R.string.socials),
         modifier = Modifier.padding(16.dp),
         style = MaterialTheme.typography.bodyLarge,
         fontWeight = FontWeight.SemiBold
@@ -95,11 +97,13 @@ fun SocialListItem(
 ) {
   val uriHandler = LocalUriHandler.current
 
+  val emailText = stringResource(R.string.email)
+
   Row(
     modifier = modifier
       .clip(RoundedCornerShape(16.dp))
       .clickable {
-        if (title == "Email") {
+        if (title == emailText) {
           uriHandler.openUri("mailto:${url}")
         } else {
           uriHandler.openUri(url)

@@ -41,6 +41,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.blankj.utilcode.util.ClipboardUtils
+import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerNavController
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
 import com.teixeira.vcspace.app.strings
@@ -95,12 +96,12 @@ fun EditorDrawerSheet(
     when (destination.route) {
       EditorDrawerScreens.FileExplorer::class.qualifiedName -> {
         selectedItem = 0
-        title = "Files"
+        title = context.getString(R.string.files)
       }
 
       EditorDrawerScreens.GitManager::class.qualifiedName -> {
         selectedItem = 1
-        title = "Git"
+        title = context.getString(R.string.git)
       }
     }
   }

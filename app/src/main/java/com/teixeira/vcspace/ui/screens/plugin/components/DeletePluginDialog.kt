@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.teixeira.vcspace.resources.R
+import com.teixeira.vcspace.resources.R.string
 
 @Composable
 fun DeletePluginDialog(
@@ -31,9 +32,10 @@ fun DeletePluginDialog(
   onDismiss: () -> Unit
 ) {
   AlertDialog(
+    modifier = modifier,
     onDismissRequest = onDismiss,
-    title = { Text("Delete Plugin") },
-    text = { Text("Are you sure you want to delete this plugin?") },
+    title = { Text(stringResource(string.delete_plugin)) },
+    text = { Text(stringResource(string.delete_plugin_msg)) },
     confirmButton = {
       Button(onClick = onConfirm) { Text(stringResource(R.string.confirm)) }
     },

@@ -42,6 +42,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.blankj.utilcode.util.ClipboardUtils
 import com.teixeira.vcspace.BuildConfig
+import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.app.drawables
 import com.teixeira.vcspace.app.strings
 import com.teixeira.vcspace.ui.extensions.harmonizeWithPrimary
@@ -69,7 +70,7 @@ fun VersionCard(modifier: Modifier = Modifier) {
         fontFamily = FontFamily.SansSerif
       )
       Text(
-        text = "A modern code editor for Android.",
+        text = stringResource(R.string.app_description),
         style = MaterialTheme.typography.titleMedium,
         fontFamily = FontFamily.SansSerif,
         fontWeight = FontWeight.Light

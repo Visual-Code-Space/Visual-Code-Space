@@ -83,10 +83,10 @@ import com.google.android.material.snackbar.Snackbar
 import com.hzy.libp7zip.P7ZipApi
 import com.teixeira.vcspace.PYTHON_PACKAGE_URL_32_BIT
 import com.teixeira.vcspace.PYTHON_PACKAGE_URL_64_BIT
+import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.activities.Editor.LocalCommandPaletteManager
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
 import com.teixeira.vcspace.activities.TerminalActivity
-import com.teixeira.vcspace.activities.base.ObserveLifecycleEvents
 import com.teixeira.vcspace.app.VCSpaceApplication
 import com.teixeira.vcspace.app.strings
 import com.teixeira.vcspace.core.components.Tooltip
@@ -267,7 +267,12 @@ fun EditorTopBar(
                       )
                     }.onFailure {
                       Log.e("ServerError", "Failed to start server: ${it.message}")
-                      ToastUtils.showLong("Failed to start server: ${it.message}")
+                      ToastUtils.showLong(
+                        context.getString(
+                          R.string.failed_to_start_server,
+                          it.message
+                        )
+                      )
                     }
                   }
                 }
@@ -690,7 +695,7 @@ private fun downloadPythonPackage(
 
           Snackbar.make(
             view,
-            if (error.isConnectionError) "Connection failed!" else if (error.isServerError) "Server error!" else "Download failed! Something went wrong.",
+            if (error.isConnectionError) context.getString(R.string.connection_failed) else if (error.isServerError) "Server error!" else "Download failed! Something went wrong.",
             Snackbar.LENGTH_SHORT
           ).setAnimationMode(Snackbar.ANIMATION_MODE_FADE).show()
         }

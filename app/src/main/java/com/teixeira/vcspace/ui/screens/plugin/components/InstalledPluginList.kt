@@ -41,7 +41,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.teixeira.vcspace.extensions.getEmptyActivityBundle
 import com.teixeira.vcspace.resources.R
-import com.teixeira.vcspace.ui.LoadingDialog
 import com.teixeira.vcspace.ui.LocalToastHostState
 import com.teixeira.vcspace.activities.EditorActivity
 import com.teixeira.vcspace.ui.screens.plugin.PluginViewModel
@@ -96,7 +95,7 @@ fun InstalledPluginList(
           onEnabledOrDisabledCallback = {
             scope.launch {
               toastHostState.showToast(
-                message = "Restart application",
+                message = context.getString(R.string.restart_application),
                 icon = Icons.Rounded.Refresh
               )
             }

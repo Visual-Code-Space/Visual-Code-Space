@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.teixeira.vcspace.compose.clipUrl
 import com.teixeira.vcspace.git.GitConstants
+import com.teixeira.vcspace.resources.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -88,7 +89,7 @@ fun AddRemoteSheet(
       horizontalAlignment = Alignment.Start
     ) {
       Text(
-        text = "Add Remote",
+        text = stringResource(R.string.add_remote),
         fontSize = 22.sp,
         fontWeight = FontWeight.Bold,
         lineHeight = 28.sp,
@@ -104,7 +105,7 @@ fun AddRemoteSheet(
       }
 
       Text(
-        text = "This will add a remote repository to your local repository. You can then push and pull changes to and from the remote repository.",
+        text = stringResource(R.string.add_remote_msg),
         fontSize = 16.sp,
         lineHeight = 20.sp
       )
@@ -115,7 +116,7 @@ fun AddRemoteSheet(
         value = remoteUrl,
         onValueChange = { remoteUrl = it },
         modifier = Modifier.fillMaxWidth(),
-        label = { Text(text = "Remote URL") }
+        label = { Text(text = stringResource(R.string.remote_url)) }
       )
 
       Spacer(modifier = Modifier.height(16.dp))
@@ -124,7 +125,7 @@ fun AddRemoteSheet(
         value = remoteName,
         onValueChange = { remoteName = it },
         modifier = Modifier.fillMaxWidth(),
-        label = { Text(text = "Remote Name") }
+        label = { Text(text = stringResource(R.string.remote_name)) }
       )
 
       Spacer(modifier = Modifier.height(16.dp))

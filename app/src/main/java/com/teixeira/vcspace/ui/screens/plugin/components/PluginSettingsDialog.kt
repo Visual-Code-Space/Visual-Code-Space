@@ -29,10 +29,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import com.teixeira.vcspace.extensions.toFile
 import com.teixeira.vcspace.resources.R
+import com.teixeira.vcspace.resources.R.string
 import com.teixeira.vcspace.ui.ErrorMessage
 import java.io.File
 
@@ -43,6 +45,8 @@ fun PluginSettingsDialog(
   onSettingsChanged: ((PluginSettings) -> Unit)? = null,
   onDismiss: () -> Unit
 ) {
+  val context = LocalContext.current
+
   var path by remember { mutableStateOf(settings.pluginPath) }
   var errorMessage: String? by remember { mutableStateOf(null) }
   var showCreateDirDialog by remember { mutableStateOf(false) }
@@ -50,8 +54,8 @@ fun PluginSettingsDialog(
   fun checkError(path: String) {
     val file = File(path)
     errorMessage = when {
-      !file.isAbsolute -> "Invalid folder path"
-      !file.isDirectory && file.exists() -> "Path is not a directory"
+      !file.isAbsolute -> context.getString(string.invalid_folder_path)
+      !file.isDirectory && file.exists() -> context.getString(string.path_is_not_a_directory)
       else -> null
     }
   }

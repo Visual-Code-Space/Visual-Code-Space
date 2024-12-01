@@ -41,12 +41,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.teixeira.vcspace.extensions.formatSize
 import com.teixeira.vcspace.github.Content
 import com.teixeira.vcspace.resources.R
+import com.teixeira.vcspace.resources.R.string
 import com.teixeira.vcspace.ui.LocalToastHostState
 import com.teixeira.vcspace.ui.screens.plugin.PluginViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -65,6 +68,7 @@ fun ExplorePluginList(
   val plugins = pluginState.plugins
 
   val toastHostState = LocalToastHostState.current
+  val context = LocalContext.current
 
   var clickedPlugin by remember { mutableStateOf<Content?>(null) }
 
@@ -129,14 +133,24 @@ fun ExplorePluginList(
             clickedPlugin = null
 
             scope.launch {
-              toastHostState.showToast("Plugin ${plugin.manifest.name} downloaded successfully")
+              toastHostState.showToast(
+                context.getString(
+                  string.plugin_downloaded_successfully,
+                  plugin.manifest.name
+                )
+              )
             }
           },
           onFailure = {
             clickedPlugin = null
 
             scope.launch {
-              toastHostState.showToast("Failed to download plugin: ${it.message}")
+              toastHostState.showToast(
+                context.getString(
+                  string.failed_to_download_plugin,
+                  it.message
+                )
+              )
             }
           }
         )
@@ -153,7 +167,7 @@ fun NothingToShowHere(modifier: Modifier = Modifier) {
     contentAlignment = Alignment.Center
   ) {
     Text(
-      text = "Nothing to show here",
+      text = stringResource(string.nothing_to_show_here),
       style = MaterialTheme.typography.bodyLarge,
       color = MaterialTheme.colorScheme.onBackground
     )
@@ -172,22 +186,22 @@ fun ConfirmPluginDownload(
     onDismissRequest = onDismiss,
     title = {
       Text(
-        text = "Download Plugin"
+        text = stringResource(string.download_plugin)
       )
     },
     text = {
       Text(
-        text = "Do you want to download ${plugin.name.substringBefore(" -")}?"
+        text = stringResource(string.download_plugin_msg, plugin.name.substringBefore(" -"))
       )
     },
     confirmButton = {
       TextButton(onClick = onConfirm) {
-        Text(text = "Yes")
+        Text(text = stringResource(R.string.yes))
       }
     },
     dismissButton = {
       TextButton(onClick = onDismiss) {
-        Text(text = "No")
+        Text(text = stringResource(R.string.no))
       }
     }
   )

@@ -85,7 +85,7 @@ abstract class BaseComposeActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     enableEdgeToEdge()
-    setupKotlinStdlib()
+    // setupKotlinStdlib()
 
     setContent {
       VCSpaceTheme {

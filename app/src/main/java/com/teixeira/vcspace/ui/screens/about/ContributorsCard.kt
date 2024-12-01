@@ -42,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -51,6 +52,7 @@ import com.teixeira.vcspace.ORGANIZATION_NAME
 import com.teixeira.vcspace.github.Contributor
 import com.teixeira.vcspace.github.GitHubService
 import com.teixeira.vcspace.github.User
+import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.ui.extensions.harmonizeWithPrimary
 import retrofit2.Call
 import retrofit2.Callback
@@ -89,7 +91,7 @@ fun ContributorsCard(modifier: Modifier = Modifier) {
 
   OutlinedCard(modifier = modifier) {
     Text(
-      text = "Contributors",
+      text = stringResource(R.string.contributors),
       modifier = Modifier.padding(16.dp),
       style = MaterialTheme.typography.bodyLarge,
       fontWeight = FontWeight.SemiBold

@@ -62,6 +62,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -71,6 +72,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.blankj.utilcode.util.ToastUtils
+import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerNavController
 import com.teixeira.vcspace.app.drawables
 import com.teixeira.vcspace.app.strings
@@ -114,14 +116,17 @@ fun GitManager(
   }
 
   val workingTree by gitViewModel.workingTree.collectAsStateWithLifecycle()
-  val changes by gitViewModel.changes.collectAsStateWithLifecycle(context = Dispatchers.IO)
 
+  val context = LocalContext.current
   LaunchedEffect(key1 = isGitRepo, workingTree) {
     if (isGitRepo && workingTree != null) {
       gitViewModel.loadChangeStats {
         scope.launch {
           val errorMessage =
-            "Failed to retrieve uncommitted changes stats: ${it.message ?: "Unknown error occurred"}."
+            context.getString(
+              R.string.failed_to_retrieve_uncommitted_change_stats,
+              it.message ?: context.getString(R.string.unknown_error_occurred)
+            )
           toastHostState.showToast(
             message = errorMessage,
             duration = ToastDuration.Long
@@ -178,7 +183,7 @@ fun GitManager(
       onCloneSuccess = {
         scope.launch {
           toastHostState.showToast(
-            message = "Successfully cloned",
+            message = context.getString(R.string.successfully_cloned),
             icon = Icons.Rounded.Check
           )
           fileExplorerViewModel.openFolder(it)
@@ -193,7 +198,7 @@ fun GitManager(
         it.printStackTrace()
         scope.launch {
           toastHostState.showToast(
-            message = it.message ?: "Error",
+            message = it.message ?: context.getString(R.string.error),
             icon = Icons.Rounded.ErrorOutline
           )
         }
@@ -220,14 +225,14 @@ fun GitManager(
 
           runCatching { instance.addMainBranch() }.onFailure {
             toastHostState.showToast(
-              message = it.message ?: "Error",
+              message = it.message ?: context.getString(R.string.error),
               icon = Icons.Sharp.ErrorOutline
             )
           }
         },
         onFailure = { throwable ->
           toastHostState.showToast(
-            message = throwable.message ?: "Error",
+            message = throwable.message ?: context.getString(R.string.error),
             icon = Icons.Sharp.ErrorOutline
           )
         }
@@ -241,6 +246,8 @@ fun GitManager(
 private fun GitManagerContent(
   gitViewModel: GitViewModel
 ) {
+  val context = LocalContext.current
+
   val repoName by gitViewModel.repoName.collectAsStateWithLifecycle(context = Dispatchers.IO)
   val unpushedCommits by gitViewModel.unpushedCommits.collectAsStateWithLifecycle(context = Dispatchers.IO)
   val workingTree by gitViewModel.workingTree.collectAsStateWithLifecycle(context = Dispatchers.IO)
@@ -307,7 +314,7 @@ private fun GitManagerContent(
 
             if (showSuccessMessage && (gitActionStatus !is GitActionStatus.Loading) && (gitActionStatus !is GitActionStatus.Failure)) {
               Text(
-                text = successMessage.ifEmpty { "Success" },
+                text = successMessage.ifEmpty { stringResource(R.string.success) },
                 fontSize = 12.sp,
                 color = Color.Green.harmonizeWithPrimary()
               )
@@ -372,28 +379,28 @@ private fun GitManagerContent(
 
               "${"$fileCount file" makePluralIf (fileCount > 1)} changed"
             } else {
-              "No uncommitted changes"
+              context.getString(R.string.no_uncommitted_changes)
             }
           }
         }
 
         val statusItems = listOf(
           StatusItem(
-            title = "Uncommitted changes",
-            subtitle = statusMessage.ifEmpty { "Loading..." },
+            title = stringResource(R.string.uncommitted_changes),
+            subtitle = statusMessage.ifEmpty { stringResource(R.string.loading) },
             icon = if (status?.hasUncommittedChanges() == true) Icons.Sharp.Check else Icons.Sharp.ErrorOutline,
             onClick = {
               if (repoName == null) {
                 scope.launch {
                   toastHostState.showToast(
-                    message = "Set remote first",
+                    message = context.getString(R.string.set_remote_first),
                     icon = Icons.Sharp.ErrorOutline
                   )
                 }
               } else if ((status?.hasUncommittedChanges() == false) || statusMessage.isEmpty() || (status?.isClean == true)) {
                 scope.launch {
                   toastHostState.showToast(
-                    message = "Nothing to commit",
+                    message = context.getString(R.string.nothing_to_commit),
                     icon = Icons.Sharp.NotInterested
                   )
                 }
@@ -403,14 +410,14 @@ private fun GitManagerContent(
             }
           ),
           StatusItem(
-            title = "Unpushed commits",
+            title = stringResource(R.string.unpushed_commits),
             subtitle = "${unpushedCommits.size} commit" makePluralIf (unpushedCommits.size > 1),
             icon = if (unpushedCommits.isNotEmpty()) Icons.Sharp.Check else Icons.Sharp.ErrorOutline,
             onClick = {
               if (unpushedCommits.isEmpty()) {
                 scope.launch {
                   toastHostState.showToast(
-                    message = "Nothing to push",
+                    message = context.getString(R.string.nothing_to_push),
                     icon = Icons.Sharp.NotInterested
                   )
                 }
@@ -429,7 +436,7 @@ private fun GitManagerContent(
       // Git Actions
       Column(modifier = Modifier.padding(top = 16.dp)) {
         val gitActions = listOf(
-          GitAction("Refresh", Icons.Sharp.Refresh) {
+          GitAction(stringResource(R.string.refresh), Icons.Sharp.Refresh) {
             scope.launch {
               withContext(Dispatchers.IO) {
                 status = instance.git.status().call()
@@ -437,10 +444,13 @@ private fun GitManagerContent(
               gitViewModel.refresh()
             }
           },
-          GitAction("Pull", ImageVector.vectorResource(drawables.source_pull)) {
+          GitAction(
+            stringResource(R.string.pull),
+            ImageVector.vectorResource(drawables.source_pull)
+          ) {
             scope.launch { gitViewModel.pull() }
           },
-          GitAction("Fetch", Icons.Sharp.Download) {
+          GitAction(stringResource(R.string.fetch), Icons.Sharp.Download) {
             scope.launch { gitViewModel.fetch() }
           }
         )
@@ -460,7 +470,7 @@ private fun GitManagerContent(
         // gitViewModel.pull()
       },
       onFailure = {
-        ToastUtils.showLong(it.message ?: "Error")
+        ToastUtils.showLong(it.message ?: context.getString(R.string.error))
       }
     )
   }
@@ -486,7 +496,7 @@ private fun GitManagerContent(
       },
       onFailure = {
         toastHostState.showToast(
-          message = it.message ?: "Error",
+          message = it.message ?: context.getString(R.string.error),
           icon = Icons.Sharp.ErrorOutline
         )
       }
@@ -564,7 +574,7 @@ fun NoRepoFound(
       .padding(16.dp)
   ) {
     Text(
-      text = "Initialize a new git repository or clone an existing one",
+      text = stringResource(R.string.init_or_clone_repo),
       fontWeight = FontWeight.SemiBold,
       style = MaterialTheme.typography.titleLarge
     )
@@ -572,8 +582,8 @@ fun NoRepoFound(
     Spacer(modifier = Modifier.height(12.dp))
 
     val options = listOf(
-      "Initialize a new git repository" to onInitClick,
-      "Clone a repository from the internet" to onCloneClick
+      stringResource(R.string.initialize_git_repository) to onInitClick,
+      stringResource(R.string.clone_a_repository) to onCloneClick
     )
 
     options.forEach { (text, onClick) ->

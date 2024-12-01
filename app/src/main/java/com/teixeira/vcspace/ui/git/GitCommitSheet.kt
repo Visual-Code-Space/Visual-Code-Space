@@ -60,14 +60,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.teixeira.vcspace.resources.R
+import com.teixeira.vcspace.app.strings
 import com.teixeira.vcspace.extensions.isNull
-import com.teixeira.vcspace.git.ChangeStats
 import com.teixeira.vcspace.git.GitManager
 import com.teixeira.vcspace.git.GitViewModel
 import com.teixeira.vcspace.github.auth.Api
@@ -94,6 +97,7 @@ fun GitCommitSheet(
   onSuccess: suspend CoroutineScope.() -> Unit = {},
   onFailure: suspend CoroutineScope.(Throwable) -> Unit = {}
 ) {
+  val context = LocalContext.current
   var userInfo: UserInfo? by remember { mutableStateOf(null) }
   var isCredentialError by remember { mutableStateOf(false) }
 
@@ -108,11 +112,11 @@ fun GitCommitSheet(
   if (isCredentialError) {
     AlertDialog(
       onDismissRequest = { isCredentialError = false },
-      title = { Text(text = "Credential Error") },
-      text = { Text(text = "Please login with GitHub from settings.") },
+      title = { Text(text = stringResource(R.string.credential_error)) },
+      text = { Text(text = stringResource(R.string.credential_error_msg)) },
       confirmButton = {
         TextButton(onClick = { isCredentialError = false }) {
-          Text(text = "OK")
+          Text(text = stringResource(strings.ok))
         }
       }
     )
@@ -180,7 +184,7 @@ fun GitCommitSheet(
     Scaffold(
       topBar = {
         TopAppBar(
-          title = { Text("Commit") },
+          title = { Text(stringResource(R.string.commit)) },
           navigationIcon = {
             IconButton(onClick = { scope.launch { hide() } }) {
               Icon(Icons.AutoMirrored.Sharp.ArrowBack, contentDescription = null)
@@ -200,7 +204,7 @@ fun GitCommitSheet(
         horizontalAlignment = Alignment.Start
       ) {
         Text(
-          "Changes to be committed",
+          text = stringResource(R.string.changes_to_be_committed),
           fontSize = 22.sp,
           fontWeight = FontWeight.Bold
         )
@@ -246,7 +250,7 @@ fun GitCommitSheet(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text("Review changes", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color.White)
+        Text(stringResource(R.string.review_changes), fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color.White)
         Spacer(modifier = Modifier.height(8.dp))
 
         if (changes.isLoading) {
@@ -271,18 +275,18 @@ fun GitCommitSheet(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text("Options", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color.White)
+        Text(stringResource(R.string.options), fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color.White)
         Spacer(modifier = Modifier.height(8.dp))
 
         OptionRow(
-          text = "Amend previous commit",
-          description = "Amend the last commit with the current changes",
+          text = stringResource(R.string.amend_previous_commit),
+          description = stringResource(R.string.amend_previous_commit_msg),
           checked = amendCommit,
           onCheckedChange = { amendCommit = it }
         )
         OptionRow(
-          text = "Sign-off",
-          description = if (signOff) "This feature is not available right now" else "Record a sign-off line in the commit log.",
+          text = stringResource(R.string.sign_off),
+          description = if (signOff) stringResource(R.string.feature_not_available) else stringResource(R.string.sign_off_msg),
           checked = signOff,
           onCheckedChange = {
             signOff = it
@@ -290,7 +294,7 @@ fun GitCommitSheet(
             scope.launch(Dispatchers.Main) {
               delay(1.seconds)
               signOff = !it
-              toastHostState.showToast("Not yet implemented")
+              toastHostState.showToast(context.getString(R.string.not_yet_implemented))
             }
           },
           descriptionColor = if (signOff) {
@@ -305,9 +309,9 @@ fun GitCommitSheet(
         OutlinedTextField(
           value = commitMessage,
           onValueChange = { commitMessage = it },
-          label = { Text("Message") },
+          label = { Text(stringResource(R.string.message)) },
           modifier = Modifier.fillMaxWidth(),
-          placeholder = { Text("Enter the commit message") },
+          placeholder = { Text(stringResource(R.string.enter_commit_message)) },
           minLines = 6
         )
 
@@ -348,7 +352,7 @@ fun GitCommitSheet(
           modifier = Modifier.fillMaxWidth(),
           enabled = commitMessage.isNotEmpty()
         ) {
-          Text("Commit", fontWeight = FontWeight.Bold)
+          Text(stringResource(R.string.commit), fontWeight = FontWeight.Bold)
         }
       }
     }

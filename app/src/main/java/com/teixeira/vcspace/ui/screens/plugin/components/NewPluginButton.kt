@@ -22,6 +22,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.teixeira.vcspace.resources.R
 
 @Composable
 fun NewPluginButton(
@@ -31,7 +33,7 @@ fun NewPluginButton(
 ) {
   ExtendedFloatingActionButton(
     onClick = onClick,
-    text = { Text("New Plugin") },
+    text = { Text(stringResource(R.string.new_plugin)) },
     icon = { Icon(Icons.Rounded.Add, contentDescription = "add plugin") },
     expanded = expanded,
     modifier = modifier

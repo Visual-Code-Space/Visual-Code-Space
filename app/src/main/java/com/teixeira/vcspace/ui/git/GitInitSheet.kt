@@ -43,10 +43,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.app.Folder
 import com.teixeira.vcspace.app.strings
 import com.teixeira.vcspace.ui.LocalToastHostState
@@ -66,6 +68,7 @@ fun GitInitSheet(
   onFailure: suspend CoroutineScope.(Throwable) -> Unit = {}
 ) {
   val toastHostState = LocalToastHostState.current
+  val context = LocalContext.current
 
   val ioScope = rememberCoroutineScope { Dispatchers.IO }
   var isInitializing by rememberSaveable { mutableStateOf(false) }
@@ -94,7 +97,7 @@ fun GitInitSheet(
       horizontalAlignment = Alignment.Start
     ) {
       Text(
-        text = "Initialize a new Git repository",
+        text = stringResource(R.string.initialize_git_repository),
         fontSize = 22.sp,
         fontWeight = FontWeight.Bold,
         lineHeight = 28.sp,
@@ -104,7 +107,7 @@ fun GitInitSheet(
       Spacer(modifier = Modifier.height(8.dp))
 
       Text(
-        text = "This will create a .git folder in the selected directory. You can start tracking changes and make your first commit.",
+        text = stringResource(R.string.initialize_git_repository_msg),
         fontSize = 16.sp,
         lineHeight = 20.sp
       )
@@ -115,12 +118,12 @@ fun GitInitSheet(
         value = folder.canonicalPath,
         onValueChange = { /* No direct input, only through the bottom sheet */ },
         modifier = Modifier.fillMaxWidth(),
-        label = { Text(text = "Select folder") },
+        label = { Text(text = stringResource(R.string.select_folder)) },
         trailingIcon = {
           IconButton(onClick = {
             ioScope.launch(Dispatchers.Main) {
               toastHostState.showToast(
-                message = "Not yet implemented",
+                message = context.getString(R.string.not_yet_implemented),
                 icon = Icons.Default.NotInterested
               )
             }

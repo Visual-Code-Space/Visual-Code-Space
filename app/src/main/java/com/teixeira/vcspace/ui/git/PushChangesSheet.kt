@@ -31,10 +31,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import com.teixeira.vcspace.resources.R
 import kotlinx.coroutines.launch
 import org.eclipse.jgit.revwalk.RevCommit
 
@@ -70,7 +72,7 @@ fun PushChangesSheet(
       horizontalAlignment = Alignment.Start
     ) {
       Text(
-        text = "Push Commits",
+        text = stringResource(R.string.push_commits),
         fontSize = 22.sp,
         fontWeight = FontWeight.Bold,
         lineHeight = 28.sp,
@@ -80,7 +82,7 @@ fun PushChangesSheet(
       Spacer(modifier = Modifier.height(8.dp))
 
       Text(
-        text = "This will upload your local commits to the remote repository.",
+        text = stringResource(R.string.push_commits_msg),
         fontSize = 16.sp,
         lineHeight = 20.sp
       )
@@ -107,7 +109,7 @@ fun PushChangesSheet(
         enabled = commits.isNotEmpty()
       ) {
         Text(
-          text = "Push",
+          text = stringResource(R.string.push),
           fontWeight = FontWeight.SemiBold,
           letterSpacing = (0.015).em
         )
