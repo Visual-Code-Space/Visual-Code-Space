@@ -44,7 +44,6 @@ import org.eclipse.jgit.revwalk.RevWalk
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
 import org.eclipse.jgit.transport.URIish
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 
@@ -327,40 +326,15 @@ class GitManager private constructor() {
   fun getUncommittedChangesStats(
     onUpdate: (progress: Int, taskName: String) -> Unit = { _, _ -> }
   ): ChangeStats {
-    var insertion = 0
-    var deletion = 0
-    var filesChanged: Int
-
-    ByteArrayOutputStream().use { out ->
-      val diffs = git.diff()
-        .setOutputStream(out)
-        .setProgressMonitor(object : SimpleProgressMonitor() {
-          override fun onUpdate(progress: Int, taskName: String) {
-            onUpdate(progress, taskName)
-          }
-        })
-        /*.setCached(true)*/
-        .call()
-      filesChanged = diffs.size
-
-      val output = out.toString("UTF-8")
-
-      output.reader().use {
-        it.forEachLine { line ->
-          if (line.startsWith("+") && !line.startsWith("+++ ") && !line.startsWith("++")) {
-            insertion++
-          } else if (line.startsWith("-") && !line.startsWith("--- ") && !line.startsWith("--")) {
-            deletion++
-          }
+    val status = git.status()
+      .setProgressMonitor(object : SimpleProgressMonitor() {
+        override fun onUpdate(progress: Int, taskName: String) {
+          onUpdate(progress, taskName)
         }
-      }
-    }
+      }).call()
 
-    return ChangeStats(
-      filesChanged = filesChanged,
-      insertions = insertion,
-      deletions = deletion
-    )
+    val changes = status.uncommittedChanges
+    return ChangeStats(changes.size, 0, 0)
   }
 
   suspend fun getLastCommitMessage(): String = withContext(Dispatchers.IO) {

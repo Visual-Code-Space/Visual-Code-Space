@@ -15,7 +15,6 @@
 
 package com.teixeira.vcspace.ui.screens.editor.components
 
-import android.webkit.URLUtil
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +25,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -53,7 +53,6 @@ import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -71,7 +70,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.blankj.utilcode.util.ClipboardUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerNavController
 import com.teixeira.vcspace.app.drawables
@@ -97,7 +95,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.eclipse.jgit.api.Status
-import java.io.File
 import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
@@ -246,7 +243,6 @@ private fun GitManagerContent(
 ) {
   val repoName by gitViewModel.repoName.collectAsStateWithLifecycle(context = Dispatchers.IO)
   val unpushedCommits by gitViewModel.unpushedCommits.collectAsStateWithLifecycle(context = Dispatchers.IO)
-  val gitChangeStats by gitViewModel.changeStats.collectAsStateWithLifecycle(context = Dispatchers.IO)
   val workingTree by gitViewModel.workingTree.collectAsStateWithLifecycle(context = Dispatchers.IO)
 
   val gitActionStatus by gitViewModel.gitStatus.collectAsStateWithLifecycle()
@@ -283,18 +279,33 @@ private fun GitManagerContent(
       TopAppBar(
         title = {
           Column {
-            Text(
-              text = repoName ?: "remote not set",
-              fontWeight = FontWeight.SemiBold,
-              textAlign = TextAlign.Start,
-              modifier = Modifier.clickable {
-                if (repoName == null) {
-                  showSetRemoteSheet = true
-                }
-              },
-            )
+            Row(
+              horizontalArrangement = Arrangement.spacedBy(3.dp),
+              verticalAlignment = Alignment.CenterVertically,
+              modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+            ) {
+              Text(
+                text = repoName ?: "remote not set",
+                fontWeight = FontWeight.SemiBold,
+                textAlign = TextAlign.Start,
+                modifier = Modifier.clickable {
+                  if (repoName == null) {
+                    showSetRemoteSheet = true
+                  }
+                },
+              )
 
-            if (showSuccessMessage && gitActionStatus !is GitActionStatus.Loading && gitActionStatus !is GitActionStatus.Failure) {
+              if (repoName != null) {
+                Text(
+                  text = instance.getDefaultBranch()?.let { "($it)" } ?: "",
+                  fontSize = 16.sp
+                )
+              }
+            }
+
+            if (showSuccessMessage && (gitActionStatus !is GitActionStatus.Loading) && (gitActionStatus !is GitActionStatus.Failure)) {
               Text(
                 text = successMessage.ifEmpty { "Success" },
                 fontSize = 12.sp,
@@ -304,7 +315,7 @@ private fun GitManagerContent(
 
             if (gitActionStatus is GitActionStatus.Loading) {
               val (progress, message) = gitActionStatus as GitActionStatus.Loading
-              val msgFormat = if (progress != null) "$message ($progress)" else message
+              val msgFormat = if (progress != null) "$message ($progress%)" else message
 
               Text(
                 text = msgFormat,
@@ -350,37 +361,18 @@ private fun GitManagerContent(
     ) {
       // Git Status Items
       Column {
-        val loadingChangeStats = gitChangeStats.isLoading
-        val changeStats = gitChangeStats.changeStats
-
-        var filesChanged by remember { mutableIntStateOf(changeStats?.filesChanged ?: 0) }
-        var totalAdditions by remember { mutableIntStateOf(changeStats?.filesChanged ?: 0) }
-
-        @Suppress("CanBeVal")
-        var totalDeletions by remember { mutableIntStateOf(changeStats?.filesChanged ?: 0) }
-
-        val changeText = if (loadingChangeStats) {
-          "... file"
-        } else "$filesChanged file" makePluralIf (filesChanged > 1)
-
-        val additionsText = if (loadingChangeStats) {
-          "... insertion"
-        } else "$totalAdditions insertion" makePluralIf (totalAdditions > 1)
-
-        val deletionsText = if (loadingChangeStats) {
-          "... deletion"
-        } else "$totalDeletions deletion" makePluralIf (totalDeletions > 1)
+        var statusMessage by remember { mutableStateOf("") }
 
         LaunchedEffect(status) {
           status?.let { gitStatus ->
-            if (gitStatus.added.isEmpty() || workingTree == null) return@LaunchedEffect
+            if (workingTree == null) return@LaunchedEffect
 
-            filesChanged += gitStatus.added.map { it }.size
+            statusMessage = if (gitStatus.hasUncommittedChanges()) {
+              val fileCount = gitStatus.uncommittedChanges.size
 
-            gitStatus.added.map { it }.forEach {
-              runCatching {
-                totalAdditions += File(workingTree, it).readLines().size
-              }.onFailure(::println)
+              "${"$fileCount file" makePluralIf (fileCount > 1)} changed"
+            } else {
+              "No uncommitted changes"
             }
           }
         }
@@ -388,8 +380,8 @@ private fun GitManagerContent(
         val statusItems = listOf(
           StatusItem(
             title = "Uncommitted changes",
-            subtitle = "$changeText, $additionsText, $deletionsText",
-            icon = if (filesChanged != 0) Icons.Sharp.Check else Icons.Sharp.ErrorOutline,
+            subtitle = statusMessage.ifEmpty { "Loading..." },
+            icon = if (status?.hasUncommittedChanges() == true) Icons.Sharp.Check else Icons.Sharp.ErrorOutline,
             onClick = {
               if (repoName == null) {
                 scope.launch {
@@ -398,7 +390,7 @@ private fun GitManagerContent(
                     icon = Icons.Sharp.ErrorOutline
                   )
                 }
-              } else if (filesChanged == 0) {
+              } else if ((status?.hasUncommittedChanges() == false) || statusMessage.isEmpty() || (status?.isClean == true)) {
                 scope.launch {
                   toastHostState.showToast(
                     message = "Nothing to commit",
@@ -438,7 +430,12 @@ private fun GitManagerContent(
       Column(modifier = Modifier.padding(top = 16.dp)) {
         val gitActions = listOf(
           GitAction("Refresh", Icons.Sharp.Refresh) {
-            scope.launch { gitViewModel.refresh() }
+            scope.launch {
+              withContext(Dispatchers.IO) {
+                status = instance.git.status().call()
+              }
+              gitViewModel.refresh()
+            }
           },
           GitAction("Pull", ImageVector.vectorResource(drawables.source_pull)) {
             scope.launch { gitViewModel.pull() }
@@ -521,19 +518,6 @@ private fun GitActionButton(action: GitAction) {
   }
 }
 
-data class GitAction(
-  val text: String,
-  val icon: ImageVector,
-  val onClick: () -> Unit
-)
-
-data class StatusItem(
-  val title: String,
-  val subtitle: String,
-  val icon: ImageVector,
-  val onClick: () -> Unit
-)
-
 @Composable
 fun StatusRow(item: StatusItem) {
   Card(
@@ -597,7 +581,7 @@ fun NoRepoFound(
         modifier = Modifier
           .fillMaxWidth()
           .clip(MaterialTheme.shapes.small)
-          .clickable { onClick() },
+          .clickable(onClick = onClick),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
       ) {
@@ -614,3 +598,16 @@ fun NoRepoFound(
     }
   }
 }
+
+data class GitAction(
+  val text: String,
+  val icon: ImageVector,
+  val onClick: () -> Unit
+)
+
+data class StatusItem(
+  val title: String,
+  val subtitle: String,
+  val icon: ImageVector,
+  val onClick: () -> Unit
+)

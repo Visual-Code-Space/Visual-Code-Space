@@ -212,10 +212,10 @@ fun GitCommitSheet(
           val changeStats = gitChangeStats.changeStats
           
           var filesChanged by remember { mutableIntStateOf(changeStats?.filesChanged ?: 0) }
-          var totalAdditions by remember { mutableIntStateOf(changeStats?.filesChanged ?: 0) }
+          var totalAdditions by remember { mutableIntStateOf(changeStats?.insertions ?: 0) }
 
           @Suppress("CanBeVal")
-          var totalDeletions by remember { mutableIntStateOf(changeStats?.filesChanged ?: 0) }
+          var totalDeletions by remember { mutableIntStateOf(changeStats?.deletions ?: 0) }
 
           LaunchedEffect(key1 = true) {
             status?.let { gitStatus ->
@@ -241,7 +241,7 @@ fun GitCommitSheet(
           val additionsText = if (loadingChangeStats) "..." else "$totalAdditions insertions(+)"
           val deletionsText = if (loadingChangeStats) "..." else "$totalDeletions deletions(-)"
 
-          Text(text = "$changeText, $additionsText, $deletionsText")
+          Text(text = changeText)
         }
 
         Spacer(modifier = Modifier.height(16.dp))
