@@ -51,7 +51,7 @@ object Api {
     val clientId = BuildConfig.CLIENT_ID
     val callback = BuildConfig.OAUTH_REDIRECT_URL
     val url =
-      "https://github.com/login/oauth/authorize?client_id=$clientId&redirect_uri=$callback&scope=user"
+      "https://github.com/login/oauth/authorize?client_id=$clientId&redirect_uri=$callback&scope=repo"
 
     uriHandler.openUri(url)
   }

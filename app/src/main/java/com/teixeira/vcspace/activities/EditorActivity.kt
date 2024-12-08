@@ -57,7 +57,6 @@ import com.teixeira.vcspace.activities.base.BaseComposeActivity
 import com.teixeira.vcspace.activities.base.ObserveLifecycleEvents
 import com.teixeira.vcspace.app.DoNothing
 import com.teixeira.vcspace.app.noLocalProvidedFor
-import com.teixeira.vcspace.core.settings.Settings.File.rememberShowHiddenFiles
 import com.teixeira.vcspace.editor.addBlockComment
 import com.teixeira.vcspace.editor.addSingleComment
 import com.teixeira.vcspace.editor.events.OnContentChangeEvent
@@ -259,27 +258,38 @@ class EditorActivity : BaseComposeActivity() {
           val code = intent?.data?.getQueryParameter("code")
 
           if (!code.isNullOrEmpty()) {
-            lifecycleScope.launch {
-              Api.exchangeCodeForToken(
-                code = code,
-                onSuccess = { accessToken ->
-                  Api.getUser(
-                    token = accessToken.accessToken,
-                    onSuccess = { user ->
-                      Api.saveUser(UserInfo(user, accessToken))
-                      snackbarHostState.showSnackbar("Logged in as ${user.username}")
-                    },
-                    onFailure = {
-                      it.printStackTrace()
-                      ToastUtils.showShort("Error: ${it.message}")
-                    }
-                  )
-                },
-                onFailure = {
-                  it.printStackTrace()
-                  ToastUtils.showShort("Error: ${it.message}")
-                }
-              )
+            runCatching {
+              lifecycleScope.launch {
+                Api.exchangeCodeForToken(
+                  code = code,
+                  onSuccess = { accessToken ->
+                    Api.getUser(
+                      token = accessToken.accessToken,
+                      onSuccess = { user ->
+                        runCatching {
+                          Api.saveUser(UserInfo(user, accessToken))
+                          snackbarHostState.showSnackbar("Logged in as ${user.username}")
+                        }.onFailure {
+                          snackbarHostState.showSnackbar("Error: ${it.message}")
+                        }
+                      },
+                      onFailure = {
+                        it.printStackTrace()
+                        ToastUtils.showShort("Error: ${it.message}")
+                      }
+                    )
+                  },
+                  onFailure = {
+                    it.printStackTrace()
+                    ToastUtils.showShort("Error: ${it.message}")
+                  }
+                )
+              }
+            }.onFailure {
+              it.printStackTrace()
+              lifecycleScope.launch {
+                snackbarHostState.showSnackbar(it.message ?: "")
+              }
             }
           }
         }
