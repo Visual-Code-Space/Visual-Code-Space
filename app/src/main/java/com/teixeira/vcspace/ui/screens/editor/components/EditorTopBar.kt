@@ -79,6 +79,7 @@ import com.blankj.utilcode.util.UriUtils
 import com.downloader.Error
 import com.downloader.OnDownloadListener
 import com.downloader.PRDownloader
+import com.google.ai.client.generativeai.type.asTextOrNull
 import com.google.android.material.snackbar.Snackbar
 import com.hzy.libp7zip.P7ZipApi
 import com.teixeira.vcspace.PYTHON_PACKAGE_URL_32_BIT
@@ -89,6 +90,8 @@ import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
 import com.teixeira.vcspace.activities.TerminalActivity
 import com.teixeira.vcspace.app.VCSpaceApplication
 import com.teixeira.vcspace.app.strings
+import com.teixeira.vcspace.core.Secrets
+import com.teixeira.vcspace.core.ai.Gemini
 import com.teixeira.vcspace.core.components.Tooltip
 import com.teixeira.vcspace.core.components.common.VCSpaceTopBar
 import com.teixeira.vcspace.core.settings.Settings.EditorTabs.rememberAutoSave
@@ -109,6 +112,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import java.io.File
 import java.nio.file.Files
@@ -430,6 +434,18 @@ fun EditorTopBar(
                   )
                 }
               )
+              scope.launch {
+                val response = Gemini.explainCode("""
+                  fun hello() {
+                    println("Hello, World!")
+                  }
+                """.trimIndent()
+                )
+
+                withContext(Dispatchers.Main) {
+                  ToastUtils.showLong(response.candidates[0].content.parts[0].asTextOrNull())
+                }
+              }
               showMenu = false
             },
             leadingIcon = {

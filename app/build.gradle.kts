@@ -30,6 +30,13 @@ android {
     buildConfigField("String", "CLIENT_ID", "\"$clientId\"")
     buildConfigField("String", "CLIENT_SECRET", "\"$clientSecret\"")
     buildConfigField("String", "OAUTH_REDIRECT_URL", "\"$callbackUrl\"")
+
+    @Suppress("UnstableApiUsage")
+    externalNativeBuild {
+      cmake {
+        cppFlags += ""
+      }
+    }
   }
 
   signingConfigs {
@@ -82,6 +89,13 @@ android {
     buildConfig = true
     compose = true
   }
+
+  externalNativeBuild {
+    cmake {
+      path = file("src/main/cpp/CMakeLists.txt")
+      version = "3.22.1"
+    }
+  }
 }
 
 dependencies {
@@ -120,6 +134,7 @@ dependencies {
   implementation(libs.google.gson)
   implementation(libs.google.accompanist.permissions)
   implementation(libs.google.accompanist.systemuicontroller)
+  implementation("com.google.ai.client.generativeai:generativeai:0.7.0")
 
   implementation(libs.common.editor)
   implementation(libs.common.editor.lsp)
@@ -162,6 +177,7 @@ dependencies {
   implementation(libs.nanohttpd)
   implementation(libs.coil.compose)
   implementation(libs.coil.network.okhttp)
+  implementation("com.github.jeziellago:compose-markdown:0.5.4")
 
   debugImplementation(libs.common.leakcanary)
   debugImplementation(libs.androidx.ui.tooling)

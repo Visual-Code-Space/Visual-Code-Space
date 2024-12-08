@@ -38,12 +38,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.teixeira.vcspace.resources.R
-import com.teixeira.vcspace.app.drawables
 import com.teixeira.vcspace.ui.extensions.harmonizeWithPrimary
+import com.teixeira.vcspace.ui.icons.Telegram
 
 @Composable
 fun SocialCard(modifier: Modifier = Modifier) {
@@ -59,7 +58,7 @@ fun SocialCard(modifier: Modifier = Modifier) {
       url = "contact@visualcodespace.com.br"
     ),
     SocialItem(
-      icon = ImageVector.vectorResource(drawables.ic_telegram),
+      icon = Telegram,
       title = stringResource(R.string.telegram),
       url = "https://t.me/visualcodespace"
     )

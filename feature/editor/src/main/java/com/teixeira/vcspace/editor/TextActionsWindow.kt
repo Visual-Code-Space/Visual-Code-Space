@@ -36,7 +36,7 @@ import io.github.rosemoe.sora.widget.base.EditorPopupWindow
 import kotlin.math.max
 import kotlin.math.min
 
-class TextActionsWindow(editor: VCSpaceEditor) :
+class TextActionsWindow(private val editor: VCSpaceEditor) :
   EditorPopupWindow(editor, FEATURE_SHOW_OUTSIDE_VIEW_ALLOWED) {
 
   companion object {
@@ -61,6 +61,10 @@ class TextActionsWindow(editor: VCSpaceEditor) :
           R.drawable.ic_format_align_left,
           R.string.editor_action_format,
         ), // Format Text Action
+        TextAction(
+          R.drawable.frame_source,
+          R.string.editor_action_explain_code
+        ) // Explain Code Action
       )
     const val DELAY: Long = 200
   }
@@ -115,7 +119,7 @@ class TextActionsWindow(editor: VCSpaceEditor) :
   fun executeTextAction(action: TextAction) {
     when (action.text) {
       R.string.editor_action_comment_line -> {
-        val commentRule = (editor as VCSpaceEditor).commentRule
+        val commentRule = editor.commentRule
         if (!editor.cursor.isSelected) {
           addSingleComment(commentRule, editor.text)
         } else {
@@ -123,27 +127,36 @@ class TextActionsWindow(editor: VCSpaceEditor) :
         }
         editor.setSelection(editor.cursor.rightLine, editor.cursor.rightColumn)
       }
+
       R.string.editor_action_select_all -> {
         editor.selectAll()
         return
       }
+
       R.string.editor_action_long_select -> editor.beginLongSelect()
       R.string.editor_action_copy -> {
         editor.copyText()
         editor.setSelection(editor.cursor.rightLine, editor.cursor.rightColumn)
       }
+
       R.string.editor_action_paste -> {
         editor.pasteText()
         editor.setSelection(editor.cursor.rightLine, editor.cursor.rightColumn)
       }
+
       R.string.editor_action_cut -> {
         if (editor.cursor.isSelected) {
           editor.cutText()
         }
       }
+
       R.string.editor_action_format -> {
         editor.setSelection(editor.cursor.rightLine, editor.cursor.rightColumn)
         editor.formatCodeAsync()
+      }
+
+      R.string.editor_action_explain_code -> {
+        editor.onExplainCodeListener?.onExplain(editor.text)
       }
     }
     dismiss()
@@ -169,9 +182,9 @@ class TextActionsWindow(editor: VCSpaceEditor) :
         override fun run() {
           if (
             !eventHandler.hasAnyHeldHandle() &&
-              !editor.snippetController.isInSnippet() &&
-              System.currentTimeMillis() - lastScroll > DELAY &&
-              eventHandler.scroller.isFinished
+            !editor.snippetController.isInSnippet() &&
+            System.currentTimeMillis() - lastScroll > DELAY &&
+            eventHandler.scroller.isFinished
           ) {
             displayWindow()
           } else {
@@ -195,9 +208,9 @@ class TextActionsWindow(editor: VCSpaceEditor) :
       var show = false
       if (
         event.cause == SelectionChangeEvent.CAUSE_TAP &&
-          event.left.index == lastPosition &&
-          !isShowing &&
-          !editor.text.isInBatchEdit
+        event.left.index == lastPosition &&
+        !isShowing &&
+        !editor.text.isInBatchEdit
       ) {
         editor.postInLifecycle { displayWindow() }
         show = true
@@ -269,6 +282,8 @@ class TextActionsWindow(editor: VCSpaceEditor) :
 
       // Format action
       updateAction(6, editor.isEditable)
+
+      updateAction(7, editor.cursor.isSelected, editor.cursor.isSelected)
 
       refreshActions()
     }

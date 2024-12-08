@@ -43,6 +43,7 @@
   <string name="editor_action_cut">Cut</string>
   <string name="editor_action_paste">Paste</string>
   <string name="editor_action_format">Format</string>
+  <string name="editor_action_explain_code">Explain Code</string>
   <string name="editor_redo">Redo</string>
   <string name="editor_undo">Undo</string>
   <string name="editor_reload">Reload editor</string>

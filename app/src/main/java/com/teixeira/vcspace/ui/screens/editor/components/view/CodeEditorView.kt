@@ -7,10 +7,14 @@ import android.widget.LinearLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import com.blankj.utilcode.util.FileIOUtils
+import com.blankj.utilcode.util.ToastUtils
+import com.google.ai.client.generativeai.type.asTextOrNull
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.teixeira.vcspace.core.ai.Gemini
 import com.teixeira.vcspace.editor.VCSpaceEditor
 import com.teixeira.vcspace.editor.databinding.LayoutCodeEditorBinding
 import com.teixeira.vcspace.editor.language.java.JavaLanguage
+import com.teixeira.vcspace.editor.listener.OnExplainCodeListener
 import com.teixeira.vcspace.events.OnPreferenceChangeEvent
 import com.teixeira.vcspace.preferences.PREF_APPEARANCE_UI_MODE_KEY
 import com.teixeira.vcspace.preferences.PREF_EDITOR_COLORSCHEME_KEY
@@ -39,6 +43,7 @@ import com.teixeira.vcspace.providers.GrammarProvider
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.utils.cancelIfActive
 import com.teixeira.vcspace.utils.isDarkMode
+import com.teixeira.vcspace.utils.launchWithProgressDialog
 import io.github.rosemoe.sora.lang.EmptyLanguage
 import io.github.rosemoe.sora.lang.Language
 import io.github.rosemoe.sora.langs.textmate.TextMateColorScheme

@@ -28,6 +28,10 @@ class VCSpaceApplication : BaseApplication() {
   companion object {
     private var appInstance: VCSpaceApplication? = null
 
+    init {
+      System.loadLibrary("vcspace")
+    }
+
     @JvmStatic
     @Synchronized
     fun getInstance(): VCSpaceApplication {
