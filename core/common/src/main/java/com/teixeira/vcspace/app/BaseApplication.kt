@@ -38,17 +38,23 @@ open class BaseApplication : Application() {
   }
 
   val encryptedPrefs: SharedPreferences by lazy {
-    val masterKey = MasterKey.Builder(this)
-      .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-      .build()
+    try {
+      val masterKey = MasterKey.Builder(this)
+        .setUserAuthenticationRequired(true)
+        .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+        .build()
 
-    EncryptedSharedPreferences.create(
-      this,
-      "encrypted_prefs",
-      masterKey,
-      EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-      EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-    )
+      EncryptedSharedPreferences.create(
+        this,
+        "encrypted_prefs",
+        masterKey,
+        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+      )
+    } catch (err: Exception) {
+      err.printStackTrace()
+      defaultPrefs
+    }
   }
 
   override fun onCreate() {
