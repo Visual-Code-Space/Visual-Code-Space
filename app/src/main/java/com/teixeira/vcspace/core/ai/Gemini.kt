@@ -22,6 +22,8 @@ import com.google.ai.client.generativeai.type.HarmCategory
 import com.google.ai.client.generativeai.type.SafetySetting
 import com.google.ai.client.generativeai.type.content
 import com.google.ai.client.generativeai.type.generationConfig
+import com.teixeira.vcspace.app.BaseApplication
+import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.core.Secrets
 
 object Gemini {
@@ -45,11 +47,8 @@ object Gemini {
 
     return model.generateContent(
       content {
-        text("""
-          Explain the following code in simple terms:
-          
-          $code
-        """.trimIndent()
+        text(
+          BaseApplication.instance.getString(R.string.explain_code_msg, code)
         )
       }
     )

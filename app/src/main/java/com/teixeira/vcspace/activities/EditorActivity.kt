@@ -53,6 +53,7 @@ import com.blankj.utilcode.util.UriUtils
 import com.teixeira.vcspace.BuildConfig
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerNavController
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
+import com.teixeira.vcspace.activities.Editor.LocalEditorSnackbarHostState
 import com.teixeira.vcspace.activities.base.BaseComposeActivity
 import com.teixeira.vcspace.activities.base.ObserveLifecycleEvents
 import com.teixeira.vcspace.app.DoNothing
@@ -93,6 +94,10 @@ object Editor {
 
   val LocalEditorDrawerNavController = compositionLocalOf<NavHostController> {
     noLocalProvidedFor("LocalEditorDrawerNavController")
+  }
+
+  val LocalEditorSnackbarHostState = compositionLocalOf<SnackbarHostState> {
+    noLocalProvidedFor("LocalEditorSnackbarHostState")
   }
 }
 
@@ -203,103 +208,103 @@ class EditorActivity : BaseComposeActivity() {
 
   @Composable
   override fun MainScreen() {
-    val fileExplorerViewModel: FileExplorerViewModel = viewModel()
-    val editorViewModel: EditorViewModel = viewModel()
-
-    val editorUiState by editorViewModel.uiState.collectAsStateWithLifecycle()
-    val openedFiles = editorUiState.openedFiles
-
-    val snackbarHostState = remember { SnackbarHostState() }
-
-    ObserveLifecycleEvents { event ->
-      when (event) {
-        Lifecycle.Event.ON_CREATE -> {
-          EventBus.getDefault().register(this@EditorActivity)
-
-          // Open plugin files if opened from PluginsActivity
-          run {
-            @Suppress("DEPRECATION")
-            val manifest = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-              intent.getSerializableExtra(EXTRA_KEY_PLUGIN_MANIFEST, Manifest::class.java)
-            } else intent.getSerializableExtra(EXTRA_KEY_PLUGIN_MANIFEST) as? Manifest
-
-            if (manifest != null) {
-              val pluginPath = "$pluginsPath/${manifest.packageName}"
-              val filesToOpen = arrayOf(
-                "$pluginPath/manifest.json".toFile(),
-                "$pluginPath/${manifest.scripts.first().name}".toFile()
-              )
-              editorViewModel.addFiles(*filesToOpen)
-            }
-          }
-
-          val externalFileUri = intent.data
-          if (externalFileUri != null &&
-            !externalFileUri.toString().startsWith(BuildConfig.OAUTH_REDIRECT_URL)
-          ) {
-            editorViewModel.addFile(UriUtils.uri2File(externalFileUri))
-          }
-
-          onCreate()
-        }
-
-        Lifecycle.Event.ON_PAUSE -> {
-          editorViewModel.rememberLastFiles()
-        }
-
-        Lifecycle.Event.ON_DESTROY -> {
-          editorViewModel.rememberLastFiles()
-          EventBus.getDefault().unregister(this@EditorActivity)
-          clearCache()
-        }
-
-        Lifecycle.Event.ON_START -> DoNothing
-        Lifecycle.Event.ON_RESUME -> {
-          val code = intent?.data?.getQueryParameter("code")
-
-          if (!code.isNullOrEmpty()) {
-            runCatching {
-              lifecycleScope.launch {
-                Api.exchangeCodeForToken(
-                  code = code,
-                  onSuccess = { accessToken ->
-                    Api.getUser(
-                      token = accessToken.accessToken,
-                      onSuccess = { user ->
-                        runCatching {
-                          Api.saveUser(UserInfo(user, accessToken))
-                          snackbarHostState.showSnackbar("Logged in as ${user.username}")
-                        }.onFailure {
-                          snackbarHostState.showSnackbar("Error: ${it.message}")
-                        }
-                      },
-                      onFailure = {
-                        it.printStackTrace()
-                        ToastUtils.showShort("Error: ${it.message}")
-                      }
-                    )
-                  },
-                  onFailure = {
-                    it.printStackTrace()
-                    ToastUtils.showShort("Error: ${it.message}")
-                  }
-                )
-              }
-            }.onFailure {
-              it.printStackTrace()
-              lifecycleScope.launch {
-                snackbarHostState.showSnackbar(it.message ?: "")
-              }
-            }
-          }
-        }
-
-        Lifecycle.Event.ON_STOP -> DoNothing
-        Lifecycle.Event.ON_ANY -> DoNothing
-      }
-    }
-
     ProvideEditorCompositionLocals {
+      val fileExplorerViewModel: FileExplorerViewModel = viewModel()
+      val editorViewModel: EditorViewModel = viewModel()
+
+      val editorUiState by editorViewModel.uiState.collectAsStateWithLifecycle()
+      val openedFiles = editorUiState.openedFiles
+
+      val snackbarHostState = LocalEditorSnackbarHostState.current
+
+      ObserveLifecycleEvents { event ->
+        when (event) {
+          Lifecycle.Event.ON_CREATE -> {
+            EventBus.getDefault().register(this@EditorActivity)
+
+            // Open plugin files if opened from PluginsActivity
+            run {
+              @Suppress("DEPRECATION")
+              val manifest = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intent.getSerializableExtra(EXTRA_KEY_PLUGIN_MANIFEST, Manifest::class.java)
+              } else intent.getSerializableExtra(EXTRA_KEY_PLUGIN_MANIFEST) as? Manifest
+
+              if (manifest != null) {
+                val pluginPath = "$pluginsPath/${manifest.packageName}"
+                val filesToOpen = arrayOf(
+                  "$pluginPath/manifest.json".toFile(),
+                  "$pluginPath/${manifest.scripts.first().name}".toFile()
+                )
+                editorViewModel.addFiles(*filesToOpen)
+              }
+            }
+
+            val externalFileUri = intent.data
+            if (externalFileUri != null &&
+              !externalFileUri.toString().startsWith(BuildConfig.OAUTH_REDIRECT_URL)
+            ) {
+              editorViewModel.addFile(UriUtils.uri2File(externalFileUri))
+            }
+
+            onCreate()
+          }
+
+          Lifecycle.Event.ON_PAUSE -> {
+            editorViewModel.rememberLastFiles()
+          }
+
+          Lifecycle.Event.ON_DESTROY -> {
+            editorViewModel.rememberLastFiles()
+            EventBus.getDefault().unregister(this@EditorActivity)
+            clearCache()
+          }
+
+          Lifecycle.Event.ON_START -> DoNothing
+          Lifecycle.Event.ON_RESUME -> {
+            val code = intent?.data?.getQueryParameter("code")
+
+            if (!code.isNullOrEmpty()) {
+              runCatching {
+                lifecycleScope.launch {
+                  Api.exchangeCodeForToken(
+                    code = code,
+                    onSuccess = { accessToken ->
+                      Api.getUser(
+                        token = accessToken.accessToken,
+                        onSuccess = { user ->
+                          runCatching {
+                            Api.saveUser(UserInfo(user, accessToken))
+                            snackbarHostState.showSnackbar("Logged in as ${user.username}")
+                          }.onFailure {
+                            snackbarHostState.showSnackbar("Error: ${it.message}")
+                          }
+                        },
+                        onFailure = {
+                          it.printStackTrace()
+                          ToastUtils.showShort("Error: ${it.message}")
+                        }
+                      )
+                    },
+                    onFailure = {
+                      it.printStackTrace()
+                      ToastUtils.showShort("Error: ${it.message}")
+                    }
+                  )
+                }
+              }.onFailure {
+                it.printStackTrace()
+                lifecycleScope.launch {
+                  snackbarHostState.showSnackbar(it.message ?: "")
+                }
+              }
+            }
+          }
+
+          Lifecycle.Event.ON_STOP -> DoNothing
+          Lifecycle.Event.ON_ANY -> DoNothing
+        }
+      }
+
       ModalNavigationDrawer(
         modifier = Modifier
           .fillMaxSize()
@@ -345,10 +350,12 @@ class EditorActivity : BaseComposeActivity() {
   private fun ProvideEditorCompositionLocals(content: @Composable () -> Unit) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val drawerNavController = rememberNavController()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     CompositionLocalProvider(
       LocalEditorDrawerState provides drawerState,
       LocalEditorDrawerNavController provides drawerNavController,
+      LocalEditorSnackbarHostState provides snackbarHostState,
       content = content
     )
   }

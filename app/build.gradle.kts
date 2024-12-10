@@ -12,6 +12,11 @@ plugins {
 android {
   namespace = "com.teixeira.vcspace"
 
+  androidResources {
+    @Suppress("UnstableApiUsage")
+    generateLocaleConfig = true
+  }
+
   defaultConfig {
     applicationId = "com.teixeira.vcspace"
 

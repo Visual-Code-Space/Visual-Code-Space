@@ -21,6 +21,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.sharp.ErrorOutline
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -48,7 +50,9 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.blankj.utilcode.util.NetworkUtils
 import com.google.ai.client.generativeai.type.asTextOrNull
+import com.teixeira.vcspace.activities.Editor
 import com.teixeira.vcspace.activities.Editor.LocalCommandPaletteManager
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
 import com.teixeira.vcspace.core.ai.Gemini
@@ -71,6 +75,7 @@ import com.teixeira.vcspace.editor.VCSpaceEditor
 import com.teixeira.vcspace.editor.listener.OnExplainCodeListener
 import com.teixeira.vcspace.keyboard.CommandPaletteManager
 import com.teixeira.vcspace.resources.R
+import com.teixeira.vcspace.ui.LocalToastHostState
 import com.teixeira.vcspace.ui.components.keyboard.CommandPalette
 import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
 import com.teixeira.vcspace.utils.launchWithProgressDialog
@@ -113,6 +118,7 @@ fun EditorScreen(
   val context = LocalContext.current
   val scope = rememberCoroutineScope()
   val commandPaletteManager = LocalCommandPaletteManager.current
+  val toastHostState = LocalToastHostState.current
 
   var codeExplanation: String? by remember { mutableStateOf(null) }
 
@@ -148,17 +154,31 @@ fun EditorScreen(
 
       key(editorConfigMap[fileEntry.file.path]) {
         ConfigureEditor(editorView.editor, onExplainCodeListener = { code ->
-          scope.launchWithProgressDialog(
-            context = Dispatchers.IO,
-            uiContext = context,
-            configureBuilder = { builder ->
-              builder.setMessage("Analyzing Code")
+          NetworkUtils.isAvailableAsync { available ->
+            if (available) {
+              scope.launchWithProgressDialog(
+                context = Dispatchers.IO,
+                uiContext = context,
+                configureBuilder = { builder ->
+                  builder.apply {
+                    setMessage("Analyzing Code")
+                    setCancelable(false)
+                  }
+                }
+              ) { _, _ ->
+                val response = Gemini.explainCode(
+                  code.substring(code.cursor.left, code.cursor.right)
+                )
+                codeExplanation = response.candidates[0].content.parts[0].asTextOrNull()
+              }
+            } else {
+              scope.launch {
+                toastHostState.showToast(
+                  message = "Network error",
+                  icon = Icons.Sharp.ErrorOutline
+                )
+              }
             }
-          ) { _, _ ->
-            val response = Gemini.explainCode(
-              code.substring(code.cursor.left, code.cursor.right)
-            )
-            codeExplanation = response.candidates[0].content.parts[0].asTextOrNull()
           }
         })
         viewModel.setEditorConfiguredForFile(fileEntry.file)

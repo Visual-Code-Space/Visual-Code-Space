@@ -23,11 +23,11 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
-import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -80,7 +80,7 @@ import com.teixeira.vcspace.ui.theme.VCSpaceTheme
 import com.teixeira.vcspace.utils.isStoragePermissionGranted
 import java.io.File
 
-abstract class BaseComposeActivity : ComponentActivity() {
+abstract class BaseComposeActivity : AppCompatActivity() {
   @OptIn(ExperimentalPermissionsApi::class)
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)

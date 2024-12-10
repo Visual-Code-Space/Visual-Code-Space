@@ -319,4 +319,6 @@
   <string name="path_is_not_a_directory">Path is not a directory</string>
   <string name="login_with_github">Login with GitHub</string>
   <string name="logged_in_as">Logged in as %1$s (%2$s)</string>
+
+  <string name="explain_code_msg">"Explain the following code in simple terms:\n\n%1$s\n"</string>
 </resources>
