@@ -51,6 +51,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.blankj.utilcode.util.NetworkUtils
+import com.google.ai.client.generativeai.type.GenerateContentResponse
 import com.google.ai.client.generativeai.type.asTextOrNull
 import com.teixeira.vcspace.activities.Editor
 import com.teixeira.vcspace.activities.Editor.LocalCommandPaletteManager
@@ -120,12 +121,12 @@ fun EditorScreen(
   val commandPaletteManager = LocalCommandPaletteManager.current
   val toastHostState = LocalToastHostState.current
 
-  var codeExplanation: String? by remember { mutableStateOf(null) }
+  var codeExplanationResponse: GenerateContentResponse? by remember { mutableStateOf(null) }
 
-  codeExplanation?.let {
+  codeExplanationResponse?.let {
     CodeExplanationSheet(
-      text = it,
-      onDismissRequest = { codeExplanation = null }
+      response = it,
+      onDismissRequest = { codeExplanationResponse = null }
     )
   }
 
@@ -169,7 +170,7 @@ fun EditorScreen(
                 val response = Gemini.explainCode(
                   code.substring(code.cursor.left, code.cursor.right)
                 )
-                codeExplanation = response.candidates[0].content.parts[0].asTextOrNull()
+                codeExplanationResponse = response
               }
             } else {
               scope.launch {

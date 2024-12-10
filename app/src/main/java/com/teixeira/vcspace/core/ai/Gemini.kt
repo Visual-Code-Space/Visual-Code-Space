@@ -29,7 +29,7 @@ import com.teixeira.vcspace.core.Secrets
 object Gemini {
   suspend fun explainCode(code: String): GenerateContentResponse {
     val model = GenerativeModel(
-      modelName = "gemini-1.5-flash-001",
+      modelName = "gemini-1.5-flash-latest",
       apiKey = Secrets.getGenerativeAiApiKey(),
       generationConfig = generationConfig {
         temperature = 0.15f

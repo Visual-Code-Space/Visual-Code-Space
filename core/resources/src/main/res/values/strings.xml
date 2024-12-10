@@ -321,4 +321,5 @@
   <string name="logged_in_as">Logged in as %1$s (%2$s)</string>
 
   <string name="explain_code_msg">Explain the following code in simple terms:\n\n%1$s\n</string>
+  <string name="code_explanation">Code Explanation</string>
 </resources>
