@@ -22,6 +22,7 @@ import android.view.inputmethod.EditorInfo
 import com.teixeira.vcspace.editor.completion.CompletionListAdapter
 import com.teixeira.vcspace.editor.completion.CustomCompletionLayout
 import com.teixeira.vcspace.editor.listener.OnExplainCodeListener
+import com.teixeira.vcspace.editor.listener.OnImportComponentListener
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage
 import io.github.rosemoe.sora.lsp.editor.LspEditor
 import io.github.rosemoe.sora.lsp.editor.LspProject
@@ -47,6 +48,7 @@ class VCSpaceEditor @JvmOverloads constructor(
   var modified: Boolean = false
 
   var onExplainCodeListener: OnExplainCodeListener? = null
+  var onImportComponentListener: OnImportComponentListener? = null
 
   val commentRule: CommentRule?
     get() = (editorLanguage as? TextMateLanguage)?.languageConfiguration?.comments

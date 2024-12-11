@@ -58,6 +58,7 @@ import com.teixeira.vcspace.activities.base.BaseComposeActivity
 import com.teixeira.vcspace.activities.base.ObserveLifecycleEvents
 import com.teixeira.vcspace.app.DoNothing
 import com.teixeira.vcspace.app.noLocalProvidedFor
+import com.teixeira.vcspace.app.strings
 import com.teixeira.vcspace.editor.addBlockComment
 import com.teixeira.vcspace.editor.addSingleComment
 import com.teixeira.vcspace.editor.events.OnContentChangeEvent
@@ -202,6 +203,10 @@ class EditorActivity : BaseComposeActivity() {
       },
       newCommand("Manage Plugins", "Ctrl+P") {
         open(PluginsActivity::class.java)
+      },
+      newCommand(getString(strings.editor_action_import_components), "Ctrl+Shift+I") {
+        val editor = currentEditor?.editor
+        editor?.onImportComponentListener?.onImport(editor.text)
       }
     )
   }

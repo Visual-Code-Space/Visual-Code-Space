@@ -64,7 +64,11 @@ class TextActionsWindow(private val editor: VCSpaceEditor) :
         TextAction(
           R.drawable.frame_source,
           R.string.editor_action_explain_code
-        ) // Explain Code Action
+        ), // Explain Code Action
+        TextAction(
+          R.drawable.application_import,
+          R.string.editor_action_import_components
+        ) // Import Action
       )
     const val DELAY: Long = 200
   }
@@ -156,7 +160,15 @@ class TextActionsWindow(private val editor: VCSpaceEditor) :
       }
 
       R.string.editor_action_explain_code -> {
-        editor.onExplainCodeListener?.onExplain(editor.text)
+        val content = editor.text
+        val cursor = content.cursor
+        editor.onExplainCodeListener?.onExplain(content.substring(cursor.left, cursor.right))
+      }
+
+      R.string.editor_action_import_components -> {
+        val content = editor.text
+        val cursor = content.cursor
+        editor.onImportComponentListener?.onImport(content.substring(cursor.left, cursor.right))
       }
     }
     dismiss()
@@ -283,7 +295,11 @@ class TextActionsWindow(private val editor: VCSpaceEditor) :
       // Format action
       updateAction(6, editor.isEditable)
 
+      // Explain Code Action
       updateAction(7, editor.cursor.isSelected, editor.cursor.isSelected)
+
+      // Import Action
+      updateAction(8, editor.cursor.isSelected, editor.cursor.isSelected)
 
       refreshActions()
     }

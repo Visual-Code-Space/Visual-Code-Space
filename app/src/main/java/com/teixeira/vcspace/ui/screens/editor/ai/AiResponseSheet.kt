@@ -13,7 +13,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.ui.screens.editor
+package com.teixeira.vcspace.ui.screens.editor.ai
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
@@ -40,21 +40,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.ai.client.generativeai.type.GenerateContentResponse
 import com.google.ai.client.generativeai.type.asTextOrNull
-import com.teixeira.vcspace.app.strings
 import dev.jeziellago.compose.markdowntext.MarkdownText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CodeExplanationSheet(
+fun AiResponseSheet(
+  title: String,
   response: GenerateContentResponse,
   onDismissRequest: () -> Unit,
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
+  subtitle: (@Composable () -> Unit)? = null,
 ) {
   val text = response.candidates[0].content.parts[0].asTextOrNull().toString()
   val usageMetadata = response.usageMetadata
@@ -72,12 +72,18 @@ fun CodeExplanationSheet(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(bottom = 16.dp)
       ) {
-        Text(
-          text = stringResource(strings.code_explanation),
-          style = MaterialTheme.typography.titleLarge,
-          fontWeight = FontWeight.Bold,
+        Column(
           modifier = Modifier.weight(1f)
-        )
+        ) {
+          Text(
+            text = title,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 4.dp)
+          )
+
+          subtitle?.invoke()
+        }
 
         AnimatedVisibility(visible = !showUsageMetadata) {
           IconButton(

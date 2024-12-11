@@ -52,8 +52,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.blankj.utilcode.util.NetworkUtils
 import com.google.ai.client.generativeai.type.GenerateContentResponse
-import com.google.ai.client.generativeai.type.asTextOrNull
-import com.teixeira.vcspace.activities.Editor
 import com.teixeira.vcspace.activities.Editor.LocalCommandPaletteManager
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
 import com.teixeira.vcspace.core.ai.Gemini
@@ -74,10 +72,13 @@ import com.teixeira.vcspace.core.settings.Settings.General.rememberFollowSystemT
 import com.teixeira.vcspace.core.settings.Settings.General.rememberIsDarkMode
 import com.teixeira.vcspace.editor.VCSpaceEditor
 import com.teixeira.vcspace.editor.listener.OnExplainCodeListener
+import com.teixeira.vcspace.editor.listener.OnImportComponentListener
 import com.teixeira.vcspace.keyboard.CommandPaletteManager
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.ui.LocalToastHostState
 import com.teixeira.vcspace.ui.components.keyboard.CommandPalette
+import com.teixeira.vcspace.ui.screens.editor.ai.CodeExplanationSheet
+import com.teixeira.vcspace.ui.screens.editor.ai.ImportComponentsSheet
 import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
 import com.teixeira.vcspace.utils.launchWithProgressDialog
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage
@@ -122,11 +123,19 @@ fun EditorScreen(
   val toastHostState = LocalToastHostState.current
 
   var codeExplanationResponse: GenerateContentResponse? by remember { mutableStateOf(null) }
+  var importComponentResponse: GenerateContentResponse? by remember { mutableStateOf(null) }
 
   codeExplanationResponse?.let {
     CodeExplanationSheet(
       response = it,
       onDismissRequest = { codeExplanationResponse = null }
+    )
+  }
+
+  importComponentResponse?.let {
+    ImportComponentsSheet(
+      response = it,
+      onDismissRequest = { importComponentResponse = null }
     )
   }
 
@@ -154,34 +163,68 @@ fun EditorScreen(
       val editorView = viewModel.getEditorForFile(context, fileEntry.file)
 
       key(editorConfigMap[fileEntry.file.path]) {
-        ConfigureEditor(editorView.editor, onExplainCodeListener = { code ->
-          NetworkUtils.isAvailableAsync { available ->
-            if (available) {
-              scope.launchWithProgressDialog(
-                context = Dispatchers.IO,
-                uiContext = context,
-                configureBuilder = { builder ->
-                  builder.apply {
-                    setMessage("Analyzing Code")
-                    setCancelable(false)
+        ConfigureEditor(
+          editorView.editor, onExplainCodeListener = { code ->
+            NetworkUtils.isAvailableAsync { available ->
+              if (available) {
+                scope.launchWithProgressDialog(
+                  context = Dispatchers.IO,
+                  uiContext = context,
+                  configureBuilder = { builder ->
+                    builder.apply {
+                      setMessage("Analyzing Code")
+                      setCancelable(false)
+                    }
                   }
+                ) { _, _ ->
+                  val response = Gemini.explainCode(code.toString())
+                  codeExplanationResponse = response
                 }
-              ) { _, _ ->
-                val response = Gemini.explainCode(
-                  code.substring(code.cursor.left, code.cursor.right)
-                )
-                codeExplanationResponse = response
-              }
-            } else {
-              scope.launch {
-                toastHostState.showToast(
-                  message = "Network error",
-                  icon = Icons.Sharp.ErrorOutline
-                )
+              } else {
+                scope.launch {
+                  toastHostState.showToast(
+                    message = "Network error",
+                    icon = Icons.Sharp.ErrorOutline
+                  )
+                }
               }
             }
-          }
-        })
+          },
+          onImportComponentListener = { code ->
+            NetworkUtils.isAvailableAsync { available ->
+              if (available) {
+                scope.launchWithProgressDialog(
+                  context = Dispatchers.IO,
+                  uiContext = context,
+                  configureBuilder = { builder ->
+                    builder.apply {
+                      setMessage("Analyzing Code")
+                      setCancelable(false)
+                    }
+                  }
+                ) { _, _ ->
+                  runCatching {
+                    val response = Gemini.importComponents(code.toString())
+                    importComponentResponse = response
+                  }.onFailure {
+                    scope.launch {
+                      toastHostState.showToast(
+                        message = it.message ?: "Error",
+                        icon = Icons.Sharp.ErrorOutline
+                      )
+                    }
+                  }
+                }
+              } else {
+                scope.launch {
+                  toastHostState.showToast(
+                    message = "Network error",
+                    icon = Icons.Sharp.ErrorOutline
+                  )
+                }
+              }
+            }
+          })
         viewModel.setEditorConfiguredForFile(fileEntry.file)
       }
 
@@ -241,9 +284,11 @@ fun NoOpenedFiles() {
 @Composable
 private fun ConfigureEditor(
   editor: VCSpaceEditor,
-  onExplainCodeListener: OnExplainCodeListener? = null
+  onExplainCodeListener: OnExplainCodeListener? = null,
+  onImportComponentListener: OnImportComponentListener? = null
 ) {
   editor.onExplainCodeListener = onExplainCodeListener
+  editor.onImportComponentListener = onImportComponentListener
 
   ConfigureFontSettings(editor)
   ConfigureColorScheme(editor)

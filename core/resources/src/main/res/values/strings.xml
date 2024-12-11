@@ -44,6 +44,7 @@
   <string name="editor_action_paste">Paste</string>
   <string name="editor_action_format">Format</string>
   <string name="editor_action_explain_code">Explain Code</string>
+  <string name="editor_action_import_components">Import Compose Components</string>
   <string name="editor_redo">Redo</string>
   <string name="editor_undo">Undo</string>
   <string name="editor_reload">Reload editor</string>
@@ -320,6 +321,11 @@
   <string name="login_with_github">Login with GitHub</string>
   <string name="logged_in_as">Logged in as %1$s (%2$s)</string>
 
-  <string name="explain_code_msg">Explain the following code in simple terms:\n\n%1$s\n</string>
   <string name="code_explanation">Code Explanation</string>
+  <string name="explain_code_msg">Explain the following code in simple terms:\n\n%1$s\n</string>
+  <string name="import_components">Import Components</string>
+  <string name="import_compose_components_msg">Provide the necessary Jetpack Compose imports for the following code snippet, ensuring all required components are included (only provide code):\n\n%1$s\n</string>
+
+  <string name="caution_code_explanation">**Caution:** The explanation provided by the AI may not always be accurate or complete. Please review the explanation carefully and use it as a starting point for your understanding.</string>
+  <string name="caution_import_compose_components">**Caution:** The imports provided by the AI may not always be accurate or complete. Please review the suggestions carefully before applying them to your code.</string>
 </resources>
