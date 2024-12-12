@@ -28,7 +28,7 @@ import com.teixeira.vcspace.resources.R
 
 object Gemini {
   private val model = GenerativeModel(
-    modelName = "gemini-1.5-flash-latest",
+    modelName = "gemini-2.0-flash-exp",
     apiKey = Secrets.getGenerativeAiApiKey(),
     generationConfig = generationConfig {
       temperature = 0.15f

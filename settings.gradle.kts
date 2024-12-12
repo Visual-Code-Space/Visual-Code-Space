@@ -5,6 +5,7 @@ pluginManagement {
     gradlePluginPortal()
     google()
     mavenCentral()
+    maven("https://cache-redirector.jetbrains.com/kotlin.bintray.com/kotlin-plugin")
   }
 }
 

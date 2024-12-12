@@ -24,8 +24,6 @@ import com.teixeira.vcspace.editor.completion.CustomCompletionLayout
 import com.teixeira.vcspace.editor.listener.OnExplainCodeListener
 import com.teixeira.vcspace.editor.listener.OnImportComponentListener
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage
-import io.github.rosemoe.sora.lsp.editor.LspEditor
-import io.github.rosemoe.sora.lsp.editor.LspProject
 import io.github.rosemoe.sora.widget.CodeEditor
 import io.github.rosemoe.sora.widget.component.EditorAutoCompletion
 import io.github.rosemoe.sora.widget.component.EditorTextActionWindow
@@ -40,9 +38,6 @@ class VCSpaceEditor @JvmOverloads constructor(
 ) : CodeEditor(context, attrs, defStyleAttr, defStyleRes) {
 
   private var textActions: TextActionsWindow? = TextActionsWindow(this)
-
-  private lateinit var lspEditor: LspEditor
-  private lateinit var lspProject: LspProject
 
   var file: File? = null
   var modified: Boolean = false

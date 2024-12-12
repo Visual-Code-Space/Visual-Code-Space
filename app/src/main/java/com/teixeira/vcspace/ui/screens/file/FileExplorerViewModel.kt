@@ -18,6 +18,7 @@ package com.teixeira.vcspace.ui.screens.file
 import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import com.teixeira.vcspace.PreferenceKeys
+import com.teixeira.vcspace.events.OnOpenFolderEvent
 import com.teixeira.vcspace.events.OnRefreshFolderEvent
 import com.teixeira.vcspace.git.GitManager
 import com.teixeira.vcspace.preferences.defaultPrefs
@@ -39,6 +40,7 @@ class FileExplorerViewModel : ViewModel() {
       putString(PreferenceKeys.RECENT_FOLDER, path.absolutePath)
     }
     _openedFolder.update { path }
+    EventBus.getDefault().post(OnOpenFolderEvent(path))
   }
 
   fun closeFolder() {

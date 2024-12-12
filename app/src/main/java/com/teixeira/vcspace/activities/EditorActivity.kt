@@ -63,6 +63,7 @@ import com.teixeira.vcspace.editor.addBlockComment
 import com.teixeira.vcspace.editor.addSingleComment
 import com.teixeira.vcspace.editor.events.OnContentChangeEvent
 import com.teixeira.vcspace.editor.events.OnKeyBindingEvent
+import com.teixeira.vcspace.events.OnOpenFolderEvent
 import com.teixeira.vcspace.extensions.open
 import com.teixeira.vcspace.extensions.toFile
 import com.teixeira.vcspace.github.auth.Api
@@ -209,6 +210,12 @@ class EditorActivity : BaseComposeActivity() {
         editor?.onImportComponentListener?.onImport(editor.text)
       }
     )
+  }
+
+  @Subscribe(threadMode = ThreadMode.ASYNC)
+  fun onFolderOpened(event: OnOpenFolderEvent) {
+    currentEditor ?: return
+    val editor = currentEditor!!.editor
   }
 
   @Composable

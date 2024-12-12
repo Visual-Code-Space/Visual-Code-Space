@@ -139,7 +139,7 @@ dependencies {
   implementation(libs.google.gson)
   implementation(libs.google.accompanist.permissions)
   implementation(libs.google.accompanist.systemuicontroller)
-  implementation("com.google.ai.client.generativeai:generativeai:0.7.0")
+  implementation(libs.google.generativeai)
 
   implementation(libs.common.editor)
   implementation(libs.common.editor.lsp)
@@ -182,7 +182,7 @@ dependencies {
   implementation(libs.nanohttpd)
   implementation(libs.coil.compose)
   implementation(libs.coil.network.okhttp)
-  implementation("com.github.jeziellago:compose-markdown:0.5.4")
+  implementation(libs.compose.markdown)
 
   debugImplementation(libs.common.leakcanary)
   debugImplementation(libs.androidx.ui.tooling)
