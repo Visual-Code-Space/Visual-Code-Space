@@ -19,19 +19,19 @@
 <br>
 
 <div align="center">
-  <img src="images/vcspace_1.jpg" width="33%"  alt="Screenshot 1"/>
-  <img src="images/vcspace_2.jpg" width="33%"  alt="Screenshot 2"/>
-  <img src="images/vcspace_3.jpg" width="33%"  alt="Screenshot 3"/>
+  <img src="images/vcspace_1.jpg" width="32%"  alt="Screenshot 1"/>
+  <img src="images/vcspace_2.jpg" width="32%"  alt="Screenshot 2"/>
+  <img src="images/vcspace_3.jpg" width="32%"  alt="Screenshot 3"/>
 </div>
 <div align="center">
-  <img src="images/vcspace_4.jpg" width="33%"  alt="Screenshot 4"/>
-  <img src="images/vcspace_5.jpg" width="33%"  alt="Screenshot 5"/>
-  <img src="images/vcspace_6.jpg" width="33%"  alt="Screenshot 6"/>
+  <img src="images/vcspace_4.jpg" width="32%"  alt="Screenshot 4"/>
+  <img src="images/vcspace_5.jpg" width="32%"  alt="Screenshot 5"/>
+  <img src="images/vcspace_6.jpg" width="32%"  alt="Screenshot 6"/>
 </div>
 <div align="center">
-  <img src="images/vcspace_7.jpg" width="33%"  alt="Screenshot 7"/>
-  <img src="images/vcspace_8.jpg" width="33%"  alt="Screenshot 8"/>
-  <img src="images/vcspace_9.jpg" width="33%"  alt="Screenshot 9"/>
+  <img src="images/vcspace_7.jpg" width="32%"  alt="Screenshot 7"/>
+  <img src="images/vcspace_8.jpg" width="32%"  alt="Screenshot 8"/>
+  <img src="images/vcspace_9.jpg" width="32%"  alt="Screenshot 9"/>
 </div>
 <br>
 <em>A glimpse of Visual Code Space in action.</em>
