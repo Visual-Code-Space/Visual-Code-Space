@@ -1,11 +1,13 @@
+<!--suppress HtmlDeprecatedAttribute, CheckImageSize -->
+
 <div align="center">
-  <img src="./images/ic_launcher.png" alt="Visual Code Space" width="90" height="90"/>
+  <img src="./images/ic_launcher.png" alt="Visual Code Space" width="120" height="120"/>
 </div>
 
 <h1 align="center"><b>Visual Code Space</b></h1>
 <p align="center"><b>A Modern Code Editor for Android</b></p>
 
-<div style="text-align: center;">
+<div align="center">
   <a href="https://github.com/Visual-Code-Space/Visual-Code-Space/actions/workflows/androidci.yml">
     <img src="https://img.shields.io/github/actions/workflow/status/Visual-Code-Space/Visual-Code-Space/androidci.yml?branch=main" alt="Android CI">
   </a>
@@ -14,57 +16,107 @@
   </a>
 </div>
 
-## 📚 Overview
+<br>
 
-**Visual Code Space** is a powerful and feature-rich code editor designed for Android devices. With support for multiple programming languages, a tabbed editor, and a terminal emulator, it provides an efficient coding environment without any ads.
+<div align="center">
+  <img src="images/vcspace_1.jpg" width="33%"  alt="Screenshot 1"/>
+  <img src="images/vcspace_2.jpg" width="33%"  alt="Screenshot 2"/>
+  <img src="images/vcspace_3.jpg" width="33%"  alt="Screenshot 3"/>
+</div>
+<div align="center">
+  <img src="images/vcspace_4.jpg" width="33%"  alt="Screenshot 4"/>
+  <img src="images/vcspace_5.jpg" width="33%"  alt="Screenshot 5"/>
+  <img src="images/vcspace_6.jpg" width="33%"  alt="Screenshot 6"/>
+</div>
+<div align="center">
+  <img src="images/vcspace_7.jpg" width="33%"  alt="Screenshot 7"/>
+  <img src="images/vcspace_8.jpg" width="33%"  alt="Screenshot 8"/>
+  <img src="images/vcspace_9.jpg" width="33%"  alt="Screenshot 9"/>
+</div>
+<br>
+<em>A glimpse of Visual Code Space in action.</em>
 
-## 🚀 Features
+<br>
 
-- **Fast File Explorer**: Quickly navigate through your project files.
-- **Multi-Language Support**: Code with syntax highlighting for various programming languages.
-- **Tabbed Editor**: Manage multiple files with ease using a tabbed interface.
-- **Terminal Emulator**: Access a terminal directly within the app.
-- **No Ads**: Enjoy an uninterrupted coding experience.
+## 🚀 Elevate Your Mobile Coding Experience
+
+**Visual Code Space** is a cutting-edge code editor meticulously crafted for Android devices. It
+empowers you to code on the go with a seamless and efficient environment. Forget about cumbersome
+setups; dive straight into coding with our intuitive interface and powerful features.
+
+## ✨ Key Features
+
+- **⚡ Blazing Fast File Explorer:** Navigate your project directories with speed and ease.
+- **🎨 Multi-Language Syntax Highlighting:** Enjoy syntax highlighting for a wide array of
+  programming languages, making your code more readable and less error-prone.
+- **📑 Tabbed Editor:** Manage multiple files simultaneously with our convenient tabbed interface.
+- **💻 Integrated Terminal Emulator:** Execute commands directly within the app using our built-in
+  terminal emulator.
+- **🚫 Ad-Free Experience:** Focus on your code without any distractions.
+- **🔌 Plugin Support:** Extend the functionality of Visual Code Space with custom plugins written in
+  BeanShell.
 
 ## 📦 Installation
 
-You can download the latest release of Visual Code Space from the [releases page](https://github.com/Visual-Code-Space/Visual-Code-Space/releases).
+Ready to start coding? Download the latest version of Visual Code Space from
+our [releases page](https://github.com/Visual-Code-Space/Visual-Code-Space/releases)
+or [telegram group]().
 
-## 📖 Documentation
+## 📖 Plugin Development
 
-### Creating Plugins
+### Unleash the Power of Customization
 
-Visual Code Space supports custom plugins written in BeanShell. To create a plugin:
+Visual Code Space supports custom plugins written in BeanShell, allowing you to tailor the editor to
+your specific needs.
 
-1. **Create the Plugin Directory**:
-    - Create a plugin through the application settings. The plugin directory will be located at `/storage/emulated/0/VCSpace/plugins/<your-plugin-package>`.
+#### Getting Started
 
-2. **Modify the Entry Point (Optional)**:
-    - To use a different function as the entry point, update the `entryPoint` field in the `manifest.json` file to the name of the desired function. For instance, if you want `startPlugin` as the entry point, set `entryPoint` to `"startPlugin"` in the manifest.
+1. **Create a Plugin Directory:**
 
-3. **Run the Plugin**:
-    - Once the plugin is configured, the Visual Code Space app will automatically load and execute the plugin when the application starts.
+* Use the application settings to create a new plugin. The plugin directory will be located at
+  `/storage/emulated/0/VCSpace/plugins/<your-plugin-package>`.
 
-For detailed instructions and examples, refer to the [Create a Plugin](docs/create_plugin.md) documentation.
+2. **Modify the Entry Point (Optional):**
+
+* To use a different function as the entry point, update the `entryPoint` field in the
+  `manifest.json` file to the name of the desired function. For example, to use `startPlugin`, set
+  `entryPoint` to `"startPlugin"`.
+
+3. **Run Your Plugin:**
+
+* Visual Code Space will automatically load and execute your plugin upon application startup.
+
+For detailed instructions and examples, please refer to our [Create a Plugin](docs/create_plugin.md)
+documentation.
 
 ## 🤝 Contributing
 
-We welcome contributions to Visual Code Space! Please see our [CONTRIBUTING.md](https://github.com/Visual-Code-Space/Visual-Code-Space/blob/main/CONTRIBUTING.md) for guidelines on how to get involved.
+We are always looking for ways to improve Visual Code Space and welcome contributions from the
+community. Please see
+our [CONTRIBUTING.md](https://github.com/Visual-Code-Space/Visual-Code-Space/blob/main/CONTRIBUTING.md)
+for guidelines on how to get involved.
 
-## 💖 Thanks to
+## 💖 Special Thanks
 
-- [Rosemoe](https://github.com/Rosemoe) for the [sora-editor](https://github.com/Rosemoe/sora-editor)
-- [VSCode](https://github.com/microsoft/vscode) for the [TextMate files](https://github.com/microsoft/vscode/tree/main/extensions)
-- [Termux](https://github.com/termux) for the [Terminal Emulator](https://github.com/termux/termux-app)
-- [Akash Yadav](https://github.com/itsaky) for the awesome [AndroidIDE](https://github.com/AndroidIDEOfficial/AndroidIDE)
+We extend our gratitude to the following projects and individuals for their invaluable
+contributions:
 
-## ✨️ Contributors
+- [Rosemoe](https://github.com/Rosemoe) for
+  the [sora-editor](https://github.com/Rosemoe/sora-editor)
+- [VSCode](https://github.com/microsoft/vscode) for
+  the [TextMate files](https://github.com/microsoft/vscode/tree/main/extensions)
+- [Termux](https://github.com/termux) for
+  the [Terminal Emulator](https://github.com/termux/termux-app)
+- [Akash Yadav](https://github.com/itsaky) for the
+  awesome [AndroidIDE](https://github.com/AndroidIDEOfficial/AndroidIDE)
+
+## 🧑‍💻 Contributors
 
 <a href="https://github.com/Visual-Code-Space/Visual-Code-Space/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=Visual-Code-Space/Visual-Code-Space"  alt="Contributors"/>
+  <img src="https://contrib.rocks/image?repo=Visual-Code-Space/Visual-Code-Space" alt="Contributors"/>
 </a>
 
-## License
+## 📜 License
 
 ```
 Visual Code Space is free software: you can redistribute it and/or modify
