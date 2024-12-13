@@ -60,7 +60,7 @@ setups; dive straight into coding with our intuitive interface and powerful feat
 
 Ready to start coding? Download the latest version of Visual Code Space from
 our [releases page](https://github.com/Visual-Code-Space/Visual-Code-Space/releases)
-or [telegram group]().
+or [telegram group](https://t.me/visualcodespace).
 
 ## 📖 Plugin Development
 
