@@ -15,9 +15,9 @@
 
 package com.teixeira.vcspace.plugins.helper;
 
-import com.teixeira.vcspace.keyboard.model.Command;
 import com.teixeira.vcspace.keyboard.CommandAction;
 import com.teixeira.vcspace.keyboard.CommandPaletteManager;
+import com.teixeira.vcspace.keyboard.model.Command;
 
 public class CommandManager {
   private final CommandPaletteManager commandPaletteManager = CommandPaletteManager.getInstance();
@@ -38,7 +38,7 @@ public class CommandManager {
     addCommand(Command.getNewCommand().invoke(
       name,
       keybinding,
-      command -> {
+      (command, compositionContext) -> {
         action.performAction(command);
         return null;
       }

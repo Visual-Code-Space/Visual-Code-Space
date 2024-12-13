@@ -1,18 +1,19 @@
 package com.teixeira.vcspace.keyboard.model
 
+import androidx.compose.runtime.CompositionContext
 import androidx.compose.ui.input.key.Key
 
 data class Command(
   val name: String,
   val description: String? = null,
   val keybinding: String,
-  val action: Command.() -> Unit
+  val action: Command.(compositionContext: CompositionContext) -> Unit
 ) {
 
   companion object {
 
     @JvmStatic
-    val newCommand = { name: String, keybinding: String, action: Command.() -> Unit ->
+    val newCommand = { name: String, keybinding: String, action: Command.(compositionContext: CompositionContext) -> Unit ->
       Command(
         name = name,
         keybinding = keybinding,

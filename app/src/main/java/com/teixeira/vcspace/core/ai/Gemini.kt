@@ -25,6 +25,8 @@ import com.google.ai.client.generativeai.type.generationConfig
 import com.teixeira.vcspace.app.BaseApplication
 import com.teixeira.vcspace.core.Secrets
 import com.teixeira.vcspace.resources.R
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 object Gemini {
   private val model = GenerativeModel(
@@ -44,14 +46,14 @@ object Gemini {
     )
   )
 
-  suspend fun explainCode(code: String): GenerateContentResponse {
-    return model.generateContent(
-      content {
-        text(
-          BaseApplication.instance.getString(R.string.explain_code_msg, code)
-        )
-      }
+  private suspend fun generateContent(prompt: String) = withContext(Dispatchers.IO) {
+    model.generateContent(
+      content { text(prompt) }
     )
+  }
+
+  suspend fun explainCode(code: String): GenerateContentResponse {
+    return generateContent(BaseApplication.instance.getString(R.string.explain_code_msg, code))
   }
 
   suspend fun importComponents(code: String): GenerateContentResponse {
@@ -59,12 +61,11 @@ object Gemini {
       throw IllegalArgumentException("The provided code does not appear to be Jetpack Compose code.")
     }
 
-    return model.generateContent(
-      content {
-        text(
-          BaseApplication.instance.getString(R.string.import_compose_components_msg, code)
-        )
-      }
+    return generateContent(
+      BaseApplication.instance.getString(
+        R.string.import_compose_components_msg,
+        code
+      )
     )
   }
 
@@ -75,5 +76,26 @@ object Gemini {
     )
 
     return composeKeywords.any { keyword -> code.contains(keyword) }
+  }
+
+  suspend fun generateCode(prompt: String, fileExtension: String? = null): GenerateContentResponse {
+    return generateContent("Write the code on based on my prompt${if (!fileExtension.isNullOrEmpty()) " for file extension $fileExtension" else ""} and provide me only code:\nThe prompt:\n\n$prompt")
+  }
+
+  fun removeBackticksFromMarkdownCodeBlock(codeWithBackticks: String?): String {
+    codeWithBackticks ?: return ""
+
+    val trimmedCode = codeWithBackticks.trim()
+
+    if (trimmedCode.startsWith("```") && trimmedCode.endsWith("```")) {
+      val firstNewlineIndex = trimmedCode.indexOf("\n")
+      return if (firstNewlineIndex > 3) {
+        trimmedCode.substring(firstNewlineIndex + 1, trimmedCode.length - 3).trim()
+      } else {
+        trimmedCode.substring(3, trimmedCode.length - 3).trim()
+      }
+    }
+
+    return codeWithBackticks
   }
 }

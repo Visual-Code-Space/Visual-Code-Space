@@ -36,6 +36,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCompositionContext
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -71,6 +72,8 @@ fun CommandPalette(
 
     allCommands
   }
+
+  val currentCompositonContext = rememberCompositionContext()
 
   Popup(
     onDismissRequest = onDismissRequest,
@@ -114,7 +117,7 @@ fun CommandPalette(
           CommandItem(command, isRecentlyUsed = isRecentlyUsed) {
             CommandPaletteManager.instance.addRecentlyUsedCommand(command)
 
-            it.action(command)
+            it.action(command, currentCompositonContext)
             onCommandSelected(it)
           }
         }

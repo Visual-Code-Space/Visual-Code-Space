@@ -17,28 +17,38 @@ package com.teixeira.vcspace.activities
 
 import android.os.Build
 import android.util.Log
+import android.view.ViewGroup
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.contentColorFor
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -50,6 +60,7 @@ import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.blankj.utilcode.util.UriUtils
+import com.google.ai.client.generativeai.type.asTextOrNull
 import com.teixeira.vcspace.BuildConfig
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerNavController
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
@@ -59,6 +70,7 @@ import com.teixeira.vcspace.activities.base.ObserveLifecycleEvents
 import com.teixeira.vcspace.app.DoNothing
 import com.teixeira.vcspace.app.noLocalProvidedFor
 import com.teixeira.vcspace.app.strings
+import com.teixeira.vcspace.core.ai.Gemini
 import com.teixeira.vcspace.editor.addBlockComment
 import com.teixeira.vcspace.editor.addSingleComment
 import com.teixeira.vcspace.editor.events.OnContentChangeEvent
@@ -78,8 +90,11 @@ import com.teixeira.vcspace.ui.screens.editor.components.EditorDrawerSheet
 import com.teixeira.vcspace.ui.screens.editor.components.EditorTopBar
 import com.teixeira.vcspace.ui.screens.editor.components.view.CodeEditorView
 import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
+import com.teixeira.vcspace.utils.launchWithProgressDialog
 import io.github.rosemoe.sora.event.ContentChangeEvent
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -208,6 +223,80 @@ class EditorActivity : BaseComposeActivity() {
       newCommand(getString(strings.editor_action_import_components), "Ctrl+Shift+I") {
         val editor = currentEditor?.editor
         editor?.onImportComponentListener?.onImport(editor.text)
+      },
+      newCommand(getString(strings.generate_code), "Alt+I") { compositionContext ->
+        currentEditor ?: return@newCommand
+        val editor = currentEditor!!.editor
+
+        val composeView = ComposeView(this@EditorActivity).apply {
+          setParentCompositionContext(compositionContext)
+          setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindowOrReleasedFromPool)
+          setContent {
+            var prompt by remember { mutableStateOf("") }
+            var showDialog by remember { mutableStateOf(true) }
+
+            if (showDialog) {
+              AlertDialog(
+                onDismissRequest = { showDialog = false },
+                title = {
+                  Text(text = stringResource(strings.generate_code))
+                },
+                text = {
+                  OutlinedTextField(
+                    value = prompt,
+                    onValueChange = { prompt = it },
+                    label = { Text(stringResource(strings.tell_me_what_you_want_to_generate)) },
+                    modifier = Modifier.fillMaxWidth()
+                  )
+                },
+                dismissButton = {
+                  TextButton(onClick = { showDialog = false }) {
+                    Text(stringResource(strings.cancel))
+                  }
+                },
+                confirmButton = {
+                  TextButton(onClick = {
+                    if (prompt.isNotEmpty()) {
+                      lifecycleScope.launchWithProgressDialog(
+                        uiContext = this@EditorActivity,
+                        configureBuilder = {
+                          it.apply {
+                            setMessage(strings.generating_code)
+                            setCancelable(false)
+                          }
+                        }
+                      ) { _, _ ->
+                        val response = Gemini.generateCode(
+                          prompt = prompt,
+                          editor.file?.extension
+                        )
+                        val text = response.candidates.first().content.parts.first().asTextOrNull()
+
+                        withContext(Dispatchers.Main) {
+                          val cursor = editor.cursor
+                          val content = editor.text
+                          content.insert(
+                            cursor.leftLine,
+                            cursor.leftColumn,
+                            Gemini.removeBackticksFromMarkdownCodeBlock(text)
+                          )
+                        }
+                      }
+                      showDialog = false
+                    } else {
+                      ToastUtils.showShort(getString(strings.enter_prompt))
+                    }
+                  }) {
+                    Text(stringResource(strings.generate))
+                  }
+                }
+              )
+            }
+          }
+        }
+
+        val rootView = findViewById<ViewGroup>(android.R.id.content)
+        rootView.addView(composeView)
       }
     )
   }

@@ -325,7 +325,12 @@
   <string name="explain_code_msg">Explain the following code in simple terms:\n\n%1$s\n</string>
   <string name="import_components">Import Components</string>
   <string name="import_compose_components_msg">Provide the necessary Jetpack Compose imports for the following code snippet, ensuring all required components are included (only provide code):\n\n%1$s\n</string>
-
   <string name="caution_code_explanation">**Caution:** The explanation provided by the AI may not always be accurate or complete. Please review the explanation carefully and use it as a starting point for your understanding.</string>
   <string name="caution_import_compose_components">**Caution:** The imports provided by the AI may not always be accurate or complete. Please review the suggestions carefully before applying them to your code.</string>
+
+  <string name="generate_code">Generate Code</string>
+  <string name="generate">Generate</string>
+  <string name="enter_prompt">Please enter a prompt</string>
+  <string name="generating_code">Generating code…</string>
+  <string name="tell_me_what_you_want_to_generate">Tell me what you want to generate…</string>
 </resources>

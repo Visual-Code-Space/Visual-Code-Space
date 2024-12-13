@@ -15,6 +15,7 @@
 
 package com.teixeira.vcspace.keyboard
 
+import androidx.compose.runtime.CompositionContext
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
@@ -101,7 +102,7 @@ class CommandPaletteManager private constructor() {
     }
   }
 
-  fun applyKeyBindings(event: KeyEvent) {
+  fun applyKeyBindings(event: KeyEvent, compositionContext: CompositionContext) {
     val pressedKey = event.key
 
     val isCtrlPressed = event.isCtrlPressed
@@ -132,7 +133,7 @@ class CommandPaletteManager private constructor() {
         pressedKey == bindingKey
       ) {
         println("Keybinding '${keyBinding}' is pressed")
-        command.action(command)
+        command.action(command, compositionContext)
       }
     }
   }

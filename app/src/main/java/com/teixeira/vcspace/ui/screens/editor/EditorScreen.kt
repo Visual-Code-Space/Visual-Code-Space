@@ -28,11 +28,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.InternalComposeApi
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.currentComposer
+import androidx.compose.runtime.currentCompositionLocalContext
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCompositionContext
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -87,6 +91,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
 
+@OptIn(InternalComposeApi::class)
 @Composable
 fun EditorScreen(
   modifier: Modifier = Modifier,
@@ -139,6 +144,8 @@ fun EditorScreen(
     )
   }
 
+  val compositionContext = rememberCompositionContext()
+
   Column(modifier = modifier.onKeyEvent {
     if (it.isCtrlPressed && it.isShiftPressed && it.key == Key.P) {
       println("Ctrl + Shift + P is pressed")
@@ -147,7 +154,7 @@ fun EditorScreen(
     }
 
     if (it.type == KeyEventType.KeyDown) {
-      CommandPaletteManager.instance.applyKeyBindings(it)
+      CommandPaletteManager.instance.applyKeyBindings(it, compositionContext)
       return@onKeyEvent true
     }
 
