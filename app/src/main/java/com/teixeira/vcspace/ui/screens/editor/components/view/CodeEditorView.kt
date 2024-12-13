@@ -7,14 +7,9 @@ import android.widget.LinearLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import com.blankj.utilcode.util.FileIOUtils
-import com.blankj.utilcode.util.ToastUtils
-import com.google.ai.client.generativeai.type.asTextOrNull
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.teixeira.vcspace.core.ai.Gemini
 import com.teixeira.vcspace.editor.VCSpaceEditor
 import com.teixeira.vcspace.editor.databinding.LayoutCodeEditorBinding
-import com.teixeira.vcspace.editor.language.java.JavaLanguage
-import com.teixeira.vcspace.editor.listener.OnExplainCodeListener
 import com.teixeira.vcspace.events.OnPreferenceChangeEvent
 import com.teixeira.vcspace.preferences.PREF_APPEARANCE_UI_MODE_KEY
 import com.teixeira.vcspace.preferences.PREF_EDITOR_COLORSCHEME_KEY
@@ -42,8 +37,6 @@ import com.teixeira.vcspace.preferences.editorWordWrap
 import com.teixeira.vcspace.providers.GrammarProvider
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.utils.cancelIfActive
-import com.teixeira.vcspace.utils.isDarkMode
-import com.teixeira.vcspace.utils.launchWithProgressDialog
 import io.github.rosemoe.sora.lang.EmptyLanguage
 import io.github.rosemoe.sora.lang.Language
 import io.github.rosemoe.sora.langs.textmate.TextMateColorScheme
@@ -52,8 +45,6 @@ import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 import io.github.rosemoe.sora.text.LineSeparator
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme
-import io.github.rosemoe.sora.widget.schemes.SchemeEclipse
-import io.github.rosemoe.sora.widget.schemes.SchemeVS2019
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -102,15 +93,7 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
       val content = FileIOUtils.readFile2String(file)
       val language = createLanguage()
 
-      if (language is JavaLanguage) withContext(Dispatchers.Main) {
-        editor.colorScheme = when (context.isDarkMode()) {
-          true -> SchemeVS2019()
-          false -> SchemeEclipse()
-        }
-        editor.setText(content, null)
-        editor.setEditorLanguage(language)
-        setLoading(false)
-      } else withContext(Dispatchers.Main) {
+      withContext(Dispatchers.Main) {
         editor.colorScheme = TextMateColorScheme.create(ThemeRegistry.getInstance())
         editor.setText(content, null)
         editor.setEditorLanguage(language)
@@ -273,10 +256,6 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
   }
 
   private suspend fun createLanguage(): Language {
-    if (file?.extension == "java" || file?.extension == "bsh") {
-      return JavaLanguage()
-    }
-
     val scopeName: String? = GrammarProvider.findScopeByFileExtension(file?.extension)
 
     return if (scopeName != null) {
