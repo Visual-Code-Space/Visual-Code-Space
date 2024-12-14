@@ -85,6 +85,7 @@ import com.teixeira.vcspace.PYTHON_PACKAGE_URL_32_BIT
 import com.teixeira.vcspace.PYTHON_PACKAGE_URL_64_BIT
 import com.teixeira.vcspace.activities.Editor.LocalCommandPaletteManager
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
+import com.teixeira.vcspace.activities.MarkdownPreviewActivity
 import com.teixeira.vcspace.activities.TerminalActivity
 import com.teixeira.vcspace.app.VCSpaceApplication
 import com.teixeira.vcspace.app.strings
@@ -290,6 +291,15 @@ fun EditorTopBar(
                       )
                     }
                   )
+                }
+
+                "md" -> {
+                  context.startActivity(Intent(context, MarkdownPreviewActivity::class.java).apply {
+                    putExtra(
+                      MarkdownPreviewActivity.EXTRA_FILE_PATH,
+                      selectedEditor.file!!.absolutePath
+                    )
+                  })
                 }
               }
             }

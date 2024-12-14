@@ -37,7 +37,11 @@ class FileExplorerViewModel : ViewModel() {
 
   fun openFolder(path: File) {
     defaultPrefs.edit(commit = true) {
-      putString(PreferenceKeys.RECENT_FOLDER, path.absolutePath)
+      putString(PreferenceKeys.RECENT_FOLDER_5, defaultPrefs.getString(PreferenceKeys.RECENT_FOLDER_4, ""))
+      putString(PreferenceKeys.RECENT_FOLDER_4, defaultPrefs.getString(PreferenceKeys.RECENT_FOLDER_3, ""))
+      putString(PreferenceKeys.RECENT_FOLDER_3, defaultPrefs.getString(PreferenceKeys.RECENT_FOLDER_2, ""))
+      putString(PreferenceKeys.RECENT_FOLDER_2, defaultPrefs.getString(PreferenceKeys.RECENT_FOLDER_1, ""))
+      putString(PreferenceKeys.RECENT_FOLDER_1, path.absolutePath)
     }
     _openedFolder.update { path }
     EventBus.getDefault().post(OnOpenFolderEvent(path))

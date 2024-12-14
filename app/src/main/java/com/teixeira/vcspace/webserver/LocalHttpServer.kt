@@ -21,7 +21,8 @@ import java.io.IOException
 
 class LocalHttpServer(
   private val directory: String,
-  port: Int = 0
+  port: Int = 0,
+  private val serve: ((File, IHTTPSession) -> Response?)? = null
 ) : NanoHTTPD(port) {
   val assignedPort: Int
     get() = listeningPort
@@ -32,6 +33,13 @@ class LocalHttpServer(
       File(directory, "index.html").normalize()
     } else {
       File(directory, requestedUri).normalize()
+    }
+
+    if (serve != null) {
+      val response = serve.invoke(file, session)
+      if (response != null) {
+        return response
+      }
     }
 
     if (

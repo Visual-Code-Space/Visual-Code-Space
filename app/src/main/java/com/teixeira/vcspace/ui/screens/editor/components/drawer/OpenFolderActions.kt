@@ -17,21 +17,42 @@ package com.teixeira.vcspace.ui.screens.editor.components.drawer
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.sharp.Folder
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.documentfile.provider.DocumentFile
 import com.blankj.utilcode.util.UriUtils
 import com.teixeira.vcspace.PreferenceKeys
-import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.app.strings
+import com.teixeira.vcspace.extensions.toFile
 import com.teixeira.vcspace.preferences.defaultPrefs
+import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
 import com.teixeira.vcspace.utils.showShortToast
 import java.io.File
@@ -51,6 +72,8 @@ fun OpenFolderActions(
     }
   }
 
+  var showRecentFoldersDialog by remember { mutableStateOf(false) }
+
   Column(
     modifier = modifier,
     verticalArrangement = Arrangement.Center,
@@ -60,16 +83,92 @@ fun OpenFolderActions(
       Text(text = stringResource(strings.open_folder))
     }
 
-    Button(onClick = {
-      val recentFolder = defaultPrefs.getString(PreferenceKeys.RECENT_FOLDER, "") ?: ""
-      if (recentFolder.isNotEmpty()) {
-        val treeUri = DocumentFile.fromFile(File(recentFolder)).uri
-        fileExplorerViewModel.openFolder(UriUtils.uri2File(treeUri))
-      } else {
-        showShortToast(context, context.getString(R.string.no_recent_folder_found))
-      }
-    }) {
+    Button(onClick = { showRecentFoldersDialog = true }) {
       Text(text = stringResource(strings.open_recent))
     }
   }
+
+  if (showRecentFoldersDialog) {
+    RecentFoldersDialog(
+      onDismissRequest = { showRecentFoldersDialog = false },
+      onOpenFolder = {
+        val treeUri = DocumentFile.fromFile(it).uri
+        fileExplorerViewModel.openFolder(UriUtils.uri2File(treeUri))
+        showRecentFoldersDialog = false
+      }
+    )
+  }
+}
+
+@Composable
+fun RecentFoldersDialog(
+  onDismissRequest: () -> Unit,
+  onOpenFolder: (File) -> Unit,
+  modifier: Modifier = Modifier
+) {
+  val context = LocalContext.current
+
+  val recentFolders = listOfNotNull(
+    defaultPrefs.getString(PreferenceKeys.RECENT_FOLDER_1, ""),
+    defaultPrefs.getString(PreferenceKeys.RECENT_FOLDER_2, ""),
+    defaultPrefs.getString(PreferenceKeys.RECENT_FOLDER_3, ""),
+    defaultPrefs.getString(PreferenceKeys.RECENT_FOLDER_4, ""),
+    defaultPrefs.getString(PreferenceKeys.RECENT_FOLDER_5, "")
+  ).filter { it.isNotEmpty() }.distinct()
+
+  SideEffect {
+    if (recentFolders.isEmpty()) {
+      showShortToast(context, context.getString(R.string.no_recent_folder_found))
+      onDismissRequest()
+    }
+  }
+
+  AlertDialog(
+    modifier = modifier,
+    onDismissRequest = onDismissRequest,
+    title = { Text(text = stringResource(strings.open_recent)) },
+    text = {
+      LazyColumn {
+        items(recentFolders) { folderPath ->
+          val folder = folderPath.toFile()
+
+          ListItem(
+            headlineContent = {
+              Text(text = folder.name)
+            },
+            modifier = Modifier
+              .clip(MaterialTheme.shapes.small)
+              .clickable(
+                onClick = { onOpenFolder(folder) },
+                role = Role.Button
+              ),
+            supportingContent = {
+              Text(
+                text = folder.absolutePath,
+                maxLines = 1,
+                modifier = Modifier.basicMarquee()
+              )
+            },
+            leadingContent = {
+              Icon(
+                Icons.Sharp.Folder,
+                contentDescription = null
+              )
+            },
+            colors = ListItemDefaults.colors(
+              containerColor = AlertDialogDefaults.containerColor,
+              headlineColor = AlertDialogDefaults.titleContentColor,
+              supportingColor = AlertDialogDefaults.textContentColor,
+              leadingIconColor = AlertDialogDefaults.iconContentColor
+            )
+          )
+        }
+      }
+    },
+    confirmButton = {
+      TextButton(onClick = onDismissRequest) {
+        Text(text = stringResource(strings.cancel))
+      }
+    }
+  )
 }

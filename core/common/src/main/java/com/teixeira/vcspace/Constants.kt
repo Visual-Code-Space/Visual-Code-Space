@@ -34,7 +34,11 @@ const val KEY_GIT_USER_INFO = "git_user_info"
 const val KEY_GIT_USER_ACCESS_TOKEN = "git_user_access_token"
 
 object PreferenceKeys {
-  const val RECENT_FOLDER = "recent_folder"
+  const val RECENT_FOLDER_1 = "recent_folder_1"
+  const val RECENT_FOLDER_2 = "recent_folder_2"
+  const val RECENT_FOLDER_3 = "recent_folder_3"
+  const val RECENT_FOLDER_4 = "recent_folder_4"
+  const val RECENT_FOLDER_5 = "recent_folder_5"
 
   const val PLUGINS_PATH = "plugins_path"
 }

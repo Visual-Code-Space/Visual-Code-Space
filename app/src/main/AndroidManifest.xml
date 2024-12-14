@@ -80,6 +80,10 @@
       android:name=".activities.AboutActivity"
       android:exported="false" />
 
+    <activity
+      android:name=".activities.MarkdownPreviewActivity"
+      android:exported="false" />
+
     <provider
       android:name="androidx.core.content.FileProvider"
       android:authorities="${applicationId}.provider"
