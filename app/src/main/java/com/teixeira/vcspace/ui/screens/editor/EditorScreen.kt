@@ -30,8 +30,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.InternalComposeApi
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.currentComposer
-import androidx.compose.runtime.currentCompositionLocalContext
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -54,7 +52,6 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.blankj.utilcode.util.NetworkUtils
 import com.google.ai.client.generativeai.type.GenerateContentResponse
 import com.teixeira.vcspace.activities.Editor.LocalCommandPaletteManager
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
@@ -172,64 +169,45 @@ fun EditorScreen(
       key(editorConfigMap[fileEntry.file.path]) {
         ConfigureEditor(
           editorView.editor, onExplainCodeListener = { code ->
-            NetworkUtils.isAvailableAsync { available ->
-              if (available) {
-                scope.launchWithProgressDialog(
-                  context = Dispatchers.IO,
-                  uiContext = context,
-                  configureBuilder = { builder ->
-                    builder.apply {
-                      setMessage("Analyzing Code")
-                      setCancelable(false)
-                    }
-                  }
-                ) { _, _ ->
-                  val response = Gemini.explainCode(code.toString())
-                  codeExplanationResponse = response
+            scope.launchWithProgressDialog(
+              context = Dispatchers.IO,
+              uiContext = context,
+              configureBuilder = { builder ->
+                builder.apply {
+                  setMessage("Analyzing Code")
+                  setCancelable(false)
                 }
-              } else {
-                scope.launch {
+              }
+            ) { _, _ ->
+              Gemini.explainCode(code.toString())
+                .onSuccess { codeExplanationResponse = it }
+                .onFailure {
                   toastHostState.showToast(
-                    message = "Network error",
+                    message = it.message ?: "Error",
                     icon = Icons.Sharp.ErrorOutline
                   )
                 }
-              }
             }
           },
           onImportComponentListener = { code ->
-            NetworkUtils.isAvailableAsync { available ->
-              if (available) {
-                scope.launchWithProgressDialog(
-                  context = Dispatchers.IO,
-                  uiContext = context,
-                  configureBuilder = { builder ->
-                    builder.apply {
-                      setMessage("Analyzing Code")
-                      setCancelable(false)
-                    }
-                  }
-                ) { _, _ ->
-                  runCatching {
-                    val response = Gemini.importComponents(code.toString())
-                    importComponentResponse = response
-                  }.onFailure {
-                    scope.launch {
-                      toastHostState.showToast(
-                        message = it.message ?: "Error",
-                        icon = Icons.Sharp.ErrorOutline
-                      )
-                    }
-                  }
+            scope.launchWithProgressDialog(
+              context = Dispatchers.IO,
+              uiContext = context,
+              configureBuilder = { builder ->
+                builder.apply {
+                  setMessage("Analyzing Code")
+                  setCancelable(false)
                 }
-              } else {
-                scope.launch {
+              }
+            ) { _, _ ->
+              Gemini.explainCode(code.toString())
+                .onSuccess { importComponentResponse = it }
+                .onFailure {
                   toastHostState.showToast(
-                    message = "Network error",
+                    message = it.message ?: "Error",
                     icon = Icons.Sharp.ErrorOutline
                   )
                 }
-              }
             }
           })
         viewModel.setEditorConfiguredForFile(fileEntry.file)

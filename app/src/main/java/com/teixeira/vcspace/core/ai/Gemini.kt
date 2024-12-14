@@ -47,16 +47,18 @@ object Gemini {
   )
 
   private suspend fun generateContent(prompt: String) = withContext(Dispatchers.IO) {
-    model.generateContent(
-      content { text(prompt) }
-    )
+    runCatching {
+      model.generateContent(
+        content { text(prompt) }
+      )
+    }
   }
 
-  suspend fun explainCode(code: String): GenerateContentResponse {
+  suspend fun explainCode(code: String): Result<GenerateContentResponse> {
     return generateContent(BaseApplication.instance.getString(R.string.explain_code_msg, code))
   }
 
-  suspend fun importComponents(code: String): GenerateContentResponse {
+  suspend fun importComponents(code: String): Result<GenerateContentResponse> {
     if (!isJetpackComposeCode(code)) {
       throw IllegalArgumentException("The provided code does not appear to be Jetpack Compose code.")
     }
@@ -78,7 +80,7 @@ object Gemini {
     return composeKeywords.any { keyword -> code.contains(keyword) }
   }
 
-  suspend fun generateCode(prompt: String, fileExtension: String? = null): GenerateContentResponse {
+  suspend fun generateCode(prompt: String, fileExtension: String? = null): Result<GenerateContentResponse> {
     return generateContent("Write the code on based on my prompt${if (!fileExtension.isNullOrEmpty()) " for file extension $fileExtension" else ""} and provide me only code:\nThe prompt:\n\n$prompt")
   }
 

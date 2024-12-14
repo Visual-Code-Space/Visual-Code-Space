@@ -481,7 +481,15 @@ fun FileMenu(
         createFile.launch("filename.txt")
       },
       newCommand("Open File", "Ctrl+O") {
-        openFile.launch(arrayOf("text/*"))
+        openFile.launch(
+          arrayOf(
+            "text/*",
+            "application/octet-stream",
+            "application/javascript",
+            "application/json",
+            "application/xml",
+          )
+        )
       },
       newCommand("Save File", "Ctrl+S") {
         scope.launch {
@@ -531,7 +539,15 @@ fun FileMenu(
         Text("Ctrl+O")
       },
       onClick = {
-        openFile.launch(arrayOf("text/*"))
+        openFile.launch(
+          arrayOf(
+            "text/*",
+            "application/octet-stream",
+            "application/javascript",
+            "application/json",
+            "application/xml",
+          )
+        )
         showFileMenu.value = false
       }
     )
