@@ -64,8 +64,10 @@ fun ExplorePluginList(
 ) {
   val pluginState by viewModel.pluginState.collectAsStateWithLifecycle()
 
-  val isLoading = pluginState.isLoading
-  val plugins = pluginState.plugins
+  // val isLoading = pluginState.isLoading
+  val isLoading = false
+  // val plugins = pluginState.plugins
+  val plugins = emptyList<Content>()
 
   val toastHostState = LocalToastHostState.current
   val context = LocalContext.current

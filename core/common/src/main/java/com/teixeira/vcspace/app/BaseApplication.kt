@@ -40,7 +40,6 @@ open class BaseApplication : Application() {
   val encryptedPrefs: SharedPreferences by lazy {
     try {
       val masterKey = MasterKey.Builder(this)
-        .setUserAuthenticationRequired(true)
         .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
         .build()
 

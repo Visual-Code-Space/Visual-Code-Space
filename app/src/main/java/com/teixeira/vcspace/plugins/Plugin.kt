@@ -45,7 +45,6 @@ class Plugin(
         setClassLoader(app.classLoader)
         strictJava = true
         nameSpace.importClass("com.teixeira.vcspace.plugins.helper.FileHelper")
-        nameSpace.importClass("com.teixeira.vcspace.plugins.extension.Extension")
         nameSpace.loadDefaultImports()
 
         set("app", app)
