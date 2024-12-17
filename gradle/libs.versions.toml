@@ -22,7 +22,7 @@ retrofit = "2.11.0"
 security-crypto = "1.1.0-alpha06"
 termux = "0.118.1"
 p7zip = "v1.7.2"
-lifecycle-runtime-ktx = "2.8.6"
+lifecycle-runtime = "2.8.7"
 activity-compose = "1.9.3"
 kotlin = "2.0.20"
 compose-bom = "2024.12.01"
@@ -85,7 +85,8 @@ bsh = { module = "org.beanshell:bsh", version.ref = "bsh" }
 android-tree-sitter = { module = "com.itsaky.androidide.treesitter:android-tree-sitter", version.ref = "android-tree-sitter" }
 tree-sitter-java = { module = "com.itsaky.androidide.treesitter:tree-sitter-java", version.ref = "android-tree-sitter" }
 
-androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle-runtime-ktx" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle-runtime" }
+androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle-runtime" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui" }

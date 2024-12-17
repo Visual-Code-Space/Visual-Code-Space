@@ -28,10 +28,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.InternalComposeApi
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCompositionContext
@@ -60,6 +60,7 @@ import com.teixeira.vcspace.core.components.editor.FileTabLayout
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberColorScheme
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberDeleteIndentOnBackspace
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberDeleteLineOnBackspace
+import com.teixeira.vcspace.core.settings.Settings.Editor.rememberEditorTextActionWindowExpandThreshold
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberFontFamily
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberFontLigatures
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberFontSize
@@ -71,9 +72,15 @@ import com.teixeira.vcspace.core.settings.Settings.Editor.rememberWordWrap
 import com.teixeira.vcspace.core.settings.Settings.File.rememberLastOpenedFile
 import com.teixeira.vcspace.core.settings.Settings.General.rememberFollowSystemTheme
 import com.teixeira.vcspace.core.settings.Settings.General.rememberIsDarkMode
+import com.teixeira.vcspace.editor.TextActionsWindow
 import com.teixeira.vcspace.editor.VCSpaceEditor
+import com.teixeira.vcspace.editor.addBlockComment
+import com.teixeira.vcspace.editor.addSingleComment
 import com.teixeira.vcspace.editor.listener.OnExplainCodeListener
 import com.teixeira.vcspace.editor.listener.OnImportComponentListener
+import com.teixeira.vcspace.editor.textaction.EditorTextActionItem
+import com.teixeira.vcspace.editor.textaction.actionItems
+import com.teixeira.vcspace.editor.textaction.editorTextActionWindow
 import com.teixeira.vcspace.keyboard.CommandPaletteManager
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.ui.LocalToastHostState
@@ -88,7 +95,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
 
-@OptIn(InternalComposeApi::class)
 @Composable
 fun EditorScreen(
   modifier: Modifier = Modifier,
@@ -182,10 +188,12 @@ fun EditorScreen(
               Gemini.explainCode(code.toString())
                 .onSuccess { codeExplanationResponse = it }
                 .onFailure {
-                  toastHostState.showToast(
-                    message = it.message ?: "Error",
-                    icon = Icons.Sharp.ErrorOutline
-                  )
+                  scope.launch {
+                    toastHostState.showToast(
+                      message = it.message ?: "Error",
+                      icon = Icons.Sharp.ErrorOutline
+                    )
+                  }
                 }
             }
           },
@@ -200,13 +208,15 @@ fun EditorScreen(
                 }
               }
             ) { _, _ ->
-              Gemini.explainCode(code.toString())
+              Gemini.importComponents(code.toString())
                 .onSuccess { importComponentResponse = it }
                 .onFailure {
-                  toastHostState.showToast(
-                    message = it.message ?: "Error",
-                    icon = Icons.Sharp.ErrorOutline
-                  )
+                  scope.launch {
+                    toastHostState.showToast(
+                      message = it.message ?: "Error",
+                      icon = Icons.Sharp.ErrorOutline
+                    )
+                  }
                 }
             }
           })
@@ -221,6 +231,7 @@ fun EditorScreen(
       }
     } ?: run {
       val tempFile = File(context.cacheDir, "untitled.txt")
+      tempFile.deleteOnExit()
       viewModel.addFile(tempFile)
 
       // NoOpenedFiles()
@@ -272,8 +283,110 @@ private fun ConfigureEditor(
   onExplainCodeListener: OnExplainCodeListener? = null,
   onImportComponentListener: OnImportComponentListener? = null
 ) {
+  val items = remember {
+    mutableStateListOf<EditorTextActionItem>().apply {
+      addAll(actionItems)
+    }
+  }
+  val editorTextActionWindowExpandThreshold by rememberEditorTextActionWindowExpandThreshold()
+
+  val editorTextActionWindow = editorTextActionWindow(
+    items = items,
+    editorTextActionWindowExpandThreshold = editorTextActionWindowExpandThreshold
+  ) {
+    if (it.id != R.string.editor_action_select_all) {
+      editor.textActions?.dismiss()
+    }
+
+    when (it.id) {
+      R.string.editor_action_comment_line -> {
+        val commentRule = editor.commentRule
+        if (!editor.cursor.isSelected) {
+          addSingleComment(commentRule, editor.text)
+        } else {
+          addBlockComment(commentRule, editor.text)
+        }
+        editor.setSelection(editor.cursor.rightLine, editor.cursor.rightColumn)
+      }
+
+      R.string.editor_action_select_all -> {
+        editor.selectAll()
+      }
+
+      R.string.editor_action_long_select -> editor.beginLongSelect()
+
+      R.string.editor_action_copy -> {
+        editor.copyText()
+        editor.setSelection(editor.cursor.rightLine, editor.cursor.rightColumn)
+      }
+
+      R.string.editor_action_paste -> {
+        editor.pasteText()
+        editor.setSelection(editor.cursor.rightLine, editor.cursor.rightColumn)
+      }
+
+      R.string.editor_action_cut -> {
+        if (editor.cursor.isSelected) {
+          editor.cutText()
+        }
+      }
+
+      R.string.editor_action_format -> {
+        editor.setSelection(editor.cursor.rightLine, editor.cursor.rightColumn)
+        editor.formatCodeAsync()
+      }
+
+      R.string.editor_action_explain_code -> {
+        val content = editor.text
+        val cursor = content.cursor
+        editor.onExplainCodeListener?.onExplain(content.substring(cursor.left, cursor.right))
+      }
+
+      R.string.editor_action_import_components -> {
+        val content = editor.text
+        val cursor = content.cursor
+        editor.onImportComponentListener?.onImport(content.substring(cursor.left, cursor.right))
+      }
+    }
+  }
+
   editor.onExplainCodeListener = onExplainCodeListener
   editor.onImportComponentListener = onImportComponentListener
+  editor.setTextActionWindow {
+    TextActionsWindow(it, editorTextActionWindow) {
+      fun updateAction(index: Int, visible: Boolean, clickable: Boolean = true) {
+        items[index] = items[index].copy(visible = visible, clickable = clickable)
+      }
+
+      // Comment action
+      val commentRule = editor.commentRule
+      updateAction(0, commentRule != null && editor.isEditable)
+
+      // Select all action
+      updateAction(1, true)
+
+      // Long select action
+      updateAction(2, editor.isEditable)
+
+      // Cut action
+      updateAction(3, editor.isEditable && editor.cursor.isSelected)
+
+      // Copy action
+      updateAction(4, editor.cursor.isSelected, editor.cursor.isSelected)
+
+      // Paste action
+      updateAction(5, true, editor.hasClip())
+
+      // Format action
+      updateAction(6, editor.isEditable)
+
+      // Explain Code Action
+      updateAction(7, editor.cursor.isSelected, editor.cursor.isSelected)
+
+      // Import Action
+      updateAction(8, editor.cursor.isSelected, editor.cursor.isSelected)
+    }
+  }
 
   ConfigureFontSettings(editor)
   ConfigureColorScheme(editor)

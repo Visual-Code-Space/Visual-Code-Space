@@ -60,7 +60,7 @@ object Gemini {
 
   suspend fun importComponents(code: String): Result<GenerateContentResponse> {
     if (!isJetpackComposeCode(code)) {
-      throw IllegalArgumentException("The provided code does not appear to be Jetpack Compose code.")
+      return Result.failure(IllegalArgumentException("The provided code does not appear to be Jetpack Compose code."))
     }
 
     return generateContent(

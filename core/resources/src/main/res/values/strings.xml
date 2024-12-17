@@ -213,6 +213,8 @@
   <string name="delete_indent_on_backspace">Delete Indent on Backspace</string>
   <string name="delete_indent_on_backspace_enabled">Deletes indent when backspace is pressed</string>
   <string name="delete_indent_on_backspace_disabled">Normal backspace behavior</string>
+  <string name="editor_text_action_window_expand_threshold">Editor Text Action Window Expand Threshold</string>
+  <string name="editor_text_action_window_expand_threshold_summary">Threshold for expanding the text action window</string>
   <string name="tabs_category">Tabs</string>
   <string name="auto_save">Auto Save</string>
   <string name="auto_save_enabled">Auto save is enabled</string>

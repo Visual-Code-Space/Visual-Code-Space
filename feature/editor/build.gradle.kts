@@ -1,6 +1,7 @@
 plugins {
   id("com.android.library")
   id("kotlin-android")
+  alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -13,7 +14,10 @@ android {
     }
   }
 
-  buildFeatures { viewBinding = true }
+  buildFeatures {
+    viewBinding = true
+    compose = true
+  }
 }
 
 dependencies {
@@ -30,12 +34,15 @@ dependencies {
   implementation(libs.common.utilcode)
   implementation(libs.common.jsoup)
 
+  implementation(libs.androidx.lifecycle.runtime.ktx)
+  implementation(libs.androidx.lifecycle.runtime.compose)
   implementation(platform(libs.androidx.compose.bom))
   implementation(libs.androidx.ui)
   implementation(libs.androidx.ui.graphics)
   implementation(libs.androidx.ui.viewbinding)
   implementation(libs.androidx.ui.tooling.preview)
   implementation(libs.androidx.material3)
+  implementation(libs.androidx.material.icons.extended)
 
   implementation(libs.org.eclipse.lsp4j)
   implementation(libs.org.eclipse.lsp4j.jsonrpc)

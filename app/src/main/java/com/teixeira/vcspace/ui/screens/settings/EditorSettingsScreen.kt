@@ -27,6 +27,7 @@ import androidx.compose.material.icons.automirrored.filled.FormatIndentDecrease
 import androidx.compose.material.icons.automirrored.filled.FormatIndentIncrease
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.automirrored.filled.WrapText
+import androidx.compose.material.icons.filled.Expand
 import androidx.compose.material.icons.filled.FontDownload
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Save
@@ -44,9 +45,22 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastRoundToInt
+import com.teixeira.vcspace.core.settings.Settings.Editor.COLOR_SCHEME
+import com.teixeira.vcspace.core.settings.Settings.Editor.DELETE_INDENT_ON_BACKSPACE
+import com.teixeira.vcspace.core.settings.Settings.Editor.DELETE_LINE_ON_BACKSPACE
+import com.teixeira.vcspace.core.settings.Settings.Editor.EDITOR_TEXT_ACTION_WINDOW_EXPAND_THRESHOLD
+import com.teixeira.vcspace.core.settings.Settings.Editor.FONT_FAMILY
+import com.teixeira.vcspace.core.settings.Settings.Editor.FONT_LIGATURES
+import com.teixeira.vcspace.core.settings.Settings.Editor.FONT_SIZE
+import com.teixeira.vcspace.core.settings.Settings.Editor.INDENT_SIZE
+import com.teixeira.vcspace.core.settings.Settings.Editor.LINE_NUMBER
+import com.teixeira.vcspace.core.settings.Settings.Editor.STICKY_SCROLL
+import com.teixeira.vcspace.core.settings.Settings.Editor.USE_TAB
+import com.teixeira.vcspace.core.settings.Settings.Editor.WORD_WRAP
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberColorScheme
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberDeleteIndentOnBackspace
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberDeleteLineOnBackspace
+import com.teixeira.vcspace.core.settings.Settings.Editor.rememberEditorTextActionWindowExpandThreshold
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberFontFamily
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberFontLigatures
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberFontSize
@@ -55,12 +69,14 @@ import com.teixeira.vcspace.core.settings.Settings.Editor.rememberLineNumber
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberStickyScroll
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberUseTab
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberWordWrap
+import com.teixeira.vcspace.core.settings.Settings.EditorTabs.AUTO_SAVE
 import com.teixeira.vcspace.core.settings.Settings.EditorTabs.rememberAutoSave
 import com.teixeira.vcspace.resources.R
 import me.zhanghai.compose.preference.listPreference
 import me.zhanghai.compose.preference.preferenceCategory
 import me.zhanghai.compose.preference.sliderPreference
 import me.zhanghai.compose.preference.switchPreference
+import me.zhanghai.compose.preference.textFieldPreference
 
 @Composable
 fun EditorSettingsScreen(
@@ -80,6 +96,7 @@ fun EditorSettingsScreen(
   val useTab = rememberUseTab()
   val deleteLineOnBackspace = rememberDeleteLineOnBackspace()
   val deleteIndentOnBackspace = rememberDeleteIndentOnBackspace()
+  val editorTextActionWindowExpandThreshold = rememberEditorTextActionWindowExpandThreshold()
 
   val autoSave = rememberAutoSave()
 
@@ -100,7 +117,7 @@ fun EditorSettingsScreen(
     )
 
     sliderPreference(
-      key = "font_size_preference",
+      key = FONT_SIZE.name,
       title = { Text(text = stringResource(R.string.font_size)) },
       defaultValue = fontSize.value,
       rememberState = { fontSize },
@@ -114,7 +131,7 @@ fun EditorSettingsScreen(
     )
 
     listPreference(
-      key = "indent_size_preference",
+      key = INDENT_SIZE.name,
       title = { Text(stringResource(R.string.indent_size)) },
       summary = { Text(stringResource(R.string.indent_size_summary, indentSize.value)) },
       rememberState = { indentSize },
@@ -127,7 +144,7 @@ fun EditorSettingsScreen(
     )
 
     listPreference(
-      key = "font_family_preference",
+      key = FONT_FAMILY.name,
       title = { Text(stringResource(R.string.font_family)) },
       summary = { Text(stringResource(R.string.font_family_summary)) },
       rememberState = { fontFamily },
@@ -143,7 +160,7 @@ fun EditorSettingsScreen(
     )
 
     listPreference(
-      key = "color_scheme_preference",
+      key = COLOR_SCHEME.name,
       title = { Text(stringResource(R.string.color_scheme)) },
       summary = { Text(stringResource(R.string.color_scheme_summary)) },
       rememberState = { colorScheme },
@@ -162,7 +179,7 @@ fun EditorSettingsScreen(
     )
 
     switchPreference(
-      key = "font_ligatures_preference",
+      key = FONT_LIGATURES.name,
       title = { Text(text = stringResource(R.string.font_ligatures)) },
       summary = {
         Text(
@@ -180,7 +197,7 @@ fun EditorSettingsScreen(
     )
 
     switchPreference(
-      key = "sticky_scroll_preference",
+      key = STICKY_SCROLL.name,
       title = { Text(text = stringResource(R.string.sticky_scroll)) },
       summary = {
         Text(
@@ -198,7 +215,7 @@ fun EditorSettingsScreen(
     )
 
     switchPreference(
-      key = "word_wrap_preference",
+      key = WORD_WRAP.name,
       title = { Text(text = stringResource(R.string.word_wrap)) },
       summary = {
         Text(
@@ -216,7 +233,7 @@ fun EditorSettingsScreen(
     )
 
     switchPreference(
-      key = "line_numbers_preference",
+      key = LINE_NUMBER.name,
       title = { Text(text = stringResource(R.string.line_numbers)) },
       summary = {
         Text(
@@ -234,7 +251,7 @@ fun EditorSettingsScreen(
     )
 
     switchPreference(
-      key = "use_tabs_preference",
+      key = USE_TAB.name,
       title = { Text(text = stringResource(R.string.use_tabs)) },
       summary = {
         Text(
@@ -252,7 +269,7 @@ fun EditorSettingsScreen(
     )
 
     switchPreference(
-      key = "delete_line_on_backspace_preference",
+      key = DELETE_LINE_ON_BACKSPACE.name,
       title = { Text(text = stringResource(R.string.delete_line_on_backspace)) },
       summary = {
         Text(
@@ -270,7 +287,7 @@ fun EditorSettingsScreen(
     )
 
     switchPreference(
-      key = "delete_indent_on_backspace_preference",
+      key = DELETE_INDENT_ON_BACKSPACE.name,
       title = { Text(text = stringResource(R.string.delete_indent_on_backspace)) },
       summary = {
         Text(
@@ -288,6 +305,24 @@ fun EditorSettingsScreen(
         )
       },
       modifier = Modifier
+        .clip(PreferenceShape.Middle)
+        .background(backgroundColor)
+    )
+
+    textFieldPreference(
+      key = EDITOR_TEXT_ACTION_WINDOW_EXPAND_THRESHOLD.name,
+      title = { Text(text = stringResource(R.string.editor_text_action_window_expand_threshold)) },
+      summary = { Text(text = stringResource(R.string.editor_text_action_window_expand_threshold_summary)) },
+      rememberState = { editorTextActionWindowExpandThreshold },
+      defaultValue = editorTextActionWindowExpandThreshold.value,
+      textToValue = { it.toIntOrNull() },
+      icon = {
+        Icon(
+          imageVector = Icons.Default.Expand,
+          contentDescription = null
+        )
+      },
+      modifier = Modifier
         .clip(PreferenceShape.Bottom)
         .background(backgroundColor)
     )
@@ -298,7 +333,7 @@ fun EditorSettingsScreen(
     )
 
     switchPreference(
-      key = "auto_save_preference",
+      key = AUTO_SAVE.name,
       title = { Text(text = stringResource(R.string.auto_save)) },
       summary = {
         Text(

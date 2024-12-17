@@ -108,17 +108,19 @@ object Settings {
   }
 
   object Editor {
-    private val FONT_SIZE = floatPreferencesKey("font_size")
-    private val INDENT_SIZE = intPreferencesKey("indent_size")
-    private val FONT_FAMILY = stringPreferencesKey("font_family")
-    private val COLOR_SCHEME = stringPreferencesKey("color_scheme")
-    private val STICKY_SCROLL = booleanPreferencesKey("sticky_scroll")
-    private val FONT_LIGATURES = booleanPreferencesKey("font_ligatures")
-    private val WORD_WRAP = booleanPreferencesKey("word_wrap")
-    private val LINE_NUMBER = booleanPreferencesKey("line_number")
-    private val USE_TAB = booleanPreferencesKey("use_tab")
-    private val DELETE_LINE_ON_BACKSPACE = booleanPreferencesKey("delete_line_on_backspace")
-    private val DELETE_INDENT_ON_BACKSPACE = booleanPreferencesKey("delete_indent_on_backspace")
+    val FONT_SIZE = floatPreferencesKey("font_size")
+    val INDENT_SIZE = intPreferencesKey("indent_size")
+    val FONT_FAMILY = stringPreferencesKey("font_family")
+    val COLOR_SCHEME = stringPreferencesKey("color_scheme")
+    val STICKY_SCROLL = booleanPreferencesKey("sticky_scroll")
+    val FONT_LIGATURES = booleanPreferencesKey("font_ligatures")
+    val WORD_WRAP = booleanPreferencesKey("word_wrap")
+    val LINE_NUMBER = booleanPreferencesKey("line_number")
+    val USE_TAB = booleanPreferencesKey("use_tab")
+    val DELETE_LINE_ON_BACKSPACE = booleanPreferencesKey("delete_line_on_backspace")
+    val DELETE_INDENT_ON_BACKSPACE = booleanPreferencesKey("delete_indent_on_backspace")
+    val EDITOR_TEXT_ACTION_WINDOW_EXPAND_THRESHOLD =
+      intPreferencesKey("editor_text_action_window_expand_threshold")
 
     @Composable
     fun rememberFontSize() = rememberPreference(key = FONT_SIZE, defaultValue = 14f)
@@ -158,10 +160,16 @@ object Settings {
       key = DELETE_INDENT_ON_BACKSPACE,
       defaultValue = false
     )
+
+    @Composable
+    fun rememberEditorTextActionWindowExpandThreshold() = rememberPreference(
+      key = EDITOR_TEXT_ACTION_WINDOW_EXPAND_THRESHOLD,
+      defaultValue = 10
+    )
   }
 
   object EditorTabs {
-    private val AUTO_SAVE = booleanPreferencesKey("auto_save")
+    val AUTO_SAVE = booleanPreferencesKey("auto_save")
 
     @Composable
     fun rememberAutoSave() = rememberPreference(key = AUTO_SAVE, defaultValue = false)

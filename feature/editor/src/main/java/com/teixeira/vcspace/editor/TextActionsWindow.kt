@@ -15,167 +15,83 @@
 
 package com.teixeira.vcspace.editor
 
-import android.animation.LayoutTransition
-import android.annotation.SuppressLint
 import android.graphics.RectF
-import android.graphics.drawable.GradientDrawable
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RelativeLayout
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import android.view.WindowManager
+import android.widget.LinearLayout
 import com.blankj.utilcode.util.SizeUtils
-import com.teixeira.vcspace.editor.databinding.LayoutTextActionItemBinding
-import com.teixeira.vcspace.resources.R
-import com.teixeira.vcspace.utils.getAttrColor
 import io.github.rosemoe.sora.event.HandleStateChangeEvent
+import io.github.rosemoe.sora.event.InterceptTarget
+import io.github.rosemoe.sora.event.LongPressEvent
 import io.github.rosemoe.sora.event.ScrollEvent
 import io.github.rosemoe.sora.event.SelectionChangeEvent
 import io.github.rosemoe.sora.widget.base.EditorPopupWindow
 import kotlin.math.max
 import kotlin.math.min
 
-class TextActionsWindow(private val editor: VCSpaceEditor) :
-  EditorPopupWindow(editor, FEATURE_SHOW_OUTSIDE_VIEW_ALLOWED) {
+class TextActionsWindow(
+  private val editor: VCSpaceEditor,
+  private val rootView: View? = null,
+  private val onUpdateButtonRequest: () -> Unit = {}
+) : EditorPopupWindow(editor, FEATURE_SHOW_OUTSIDE_VIEW_ALLOWED) {
 
   companion object {
-    private val actions =
-      listOf(
-        TextAction(
-          R.drawable.ic_comment_text_outline,
-          R.string.editor_action_comment_line,
-        ), // Comment Action
-        TextAction(
-          R.drawable.ic_select_all,
-          R.string.editor_action_select_all,
-        ), // Select All Text Action
-        TextAction(
-          R.drawable.ic_text_select_start,
-          R.string.editor_action_long_select,
-        ), // Long Select Action
-        TextAction(R.drawable.ic_cut, R.string.editor_action_cut), // Cut Text Action
-        TextAction(R.drawable.ic_copy, R.string.editor_action_copy), // Copy Text Action
-        TextAction(R.drawable.ic_paste, R.string.editor_action_paste), // Paste Text Action
-        TextAction(
-          R.drawable.ic_format_align_left,
-          R.string.editor_action_format,
-        ), // Format Text Action
-        TextAction(
-          R.drawable.frame_source,
-          R.string.editor_action_explain_code
-        ), // Explain Code Action
-        TextAction(
-          R.drawable.application_import,
-          R.string.editor_action_import_components
-        ) // Import Action
-      )
-    const val DELAY: Long = 200
+    private const val DELAY = 200L
   }
 
   private val eventHandler = editor.eventHandler
-  private val rootView = RelativeLayout(editor.context)
-  private val recyclerView = RecyclerView(editor.context)
-  private val actionsAdapter = TextActionListAdapter(this)
+  private val eventManager = editor.createSubEventManager()
+
+  private val view = LinearLayout(editor.context)
 
   private var lastScroll: Long = 0
   private var lastPosition: Int = 0
   private var lastCause: Int = 0
 
   init {
-    recyclerView.apply {
-      layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-      adapter = actionsAdapter
-    }
-
-    rootView.background =
-      GradientDrawable().apply {
-        setStroke(2, rootView.context.getAttrColor(com.google.android.material.R.attr.colorOutline))
-        setColor(rootView.context.getAttrColor(com.google.android.material.R.attr.colorSurface))
-        setCornerRadius(25f)
-      }
-    rootView.setLayoutTransition(
-      LayoutTransition().apply { enableTransitionType(LayoutTransition.CHANGING) }
+    view.layoutParams = ViewGroup.LayoutParams(
+      ViewGroup.LayoutParams.WRAP_CONTENT,
+      ViewGroup.LayoutParams.WRAP_CONTENT
     )
-    rootView.addView(recyclerView)
-
-    popup.contentView = rootView
+    rootView?.let { (view as ViewGroup).addView(it) }
+    popup.contentView = view
     popup.animationStyle = io.github.rosemoe.sora.R.style.text_action_popup_animation
-    setSize(0, (editor.dpUnit * 48).toInt())
+    setSize(0, WindowManager.LayoutParams.WRAP_CONTENT)
 
-    editor.subscribeEvent(SelectionChangeEvent::class.java) { event, _ ->
-      onSelectionChanged(event)
-    }
-    editor.subscribeEvent(ScrollEvent::class.java) { _, _ ->
-      val last = lastScroll
-      lastScroll = System.currentTimeMillis()
-      if (lastScroll - last < DELAY) {
-        postDisplay()
+    eventManager.subscribeAlways(SelectionChangeEvent::class.java, ::onSelectionChanged)
+    eventManager.subscribeAlways(ScrollEvent::class.java, ::onEditorScroll)
+    eventManager.subscribeAlways(HandleStateChangeEvent::class.java, ::onHandleStateChange)
+    eventManager.subscribeAlways(LongPressEvent::class.java, ::onEditorLongPress)
+  }
+
+  private fun onEditorLongPress(event: LongPressEvent) {
+    if (editor.cursor.isSelected && lastCause == SelectionChangeEvent.CAUSE_SEARCH) {
+      val idx = event.index
+      if (idx >= editor.cursor.left && idx <= editor.cursor.right) {
+        lastCause = 0
+        displayWindow()
       }
-    }
-    editor.subscribeEvent(HandleStateChangeEvent::class.java) { event, _ ->
-      if (event.isHeld) {
-        postDisplay()
-      }
+      event.intercept(InterceptTarget.TARGET_EDITOR)
     }
   }
 
-  fun executeTextAction(action: TextAction) {
-    when (action.text) {
-      R.string.editor_action_comment_line -> {
-        val commentRule = editor.commentRule
-        if (!editor.cursor.isSelected) {
-          addSingleComment(commentRule, editor.text)
-        } else {
-          addBlockComment(commentRule, editor.text)
-        }
-        editor.setSelection(editor.cursor.rightLine, editor.cursor.rightColumn)
-      }
-
-      R.string.editor_action_select_all -> {
-        editor.selectAll()
-        return
-      }
-
-      R.string.editor_action_long_select -> editor.beginLongSelect()
-      R.string.editor_action_copy -> {
-        editor.copyText()
-        editor.setSelection(editor.cursor.rightLine, editor.cursor.rightColumn)
-      }
-
-      R.string.editor_action_paste -> {
-        editor.pasteText()
-        editor.setSelection(editor.cursor.rightLine, editor.cursor.rightColumn)
-      }
-
-      R.string.editor_action_cut -> {
-        if (editor.cursor.isSelected) {
-          editor.cutText()
-        }
-      }
-
-      R.string.editor_action_format -> {
-        editor.setSelection(editor.cursor.rightLine, editor.cursor.rightColumn)
-        editor.formatCodeAsync()
-      }
-
-      R.string.editor_action_explain_code -> {
-        val content = editor.text
-        val cursor = content.cursor
-        editor.onExplainCodeListener?.onExplain(content.substring(cursor.left, cursor.right))
-      }
-
-      R.string.editor_action_import_components -> {
-        val content = editor.text
-        val cursor = content.cursor
-        editor.onImportComponentListener?.onImport(content.substring(cursor.left, cursor.right))
-      }
+  private fun onEditorScroll(event: ScrollEvent) {
+    val last = lastScroll
+    lastScroll = System.currentTimeMillis()
+    if (lastScroll - last < DELAY) {
+      postDisplay()
     }
-    dismiss()
+  }
+
+  private fun onHandleStateChange(event: HandleStateChangeEvent) {
+    if (event.isHeld) {
+      postDisplay()
+    }
   }
 
   override fun show() {
-    if (editor.snippetController.isInSnippet()) {
+    if (editor.snippetController.isInSnippet() || editor.isInMouseMode) {
       return
     }
     super.show()
@@ -204,7 +120,7 @@ class TextActionsWindow(private val editor: VCSpaceEditor) :
           }
         }
       },
-      DELAY,
+      DELAY
     )
   }
 
@@ -240,8 +156,8 @@ class TextActionsWindow(private val editor: VCSpaceEditor) :
 
   private fun selectTop(rect: RectF): Int {
     val rowHeight = editor.rowHeight
-    return if (rect.top - rowHeight * 3 / 2F > height) {
-      (rect.top - rowHeight * 3 / 2 - height).toInt()
+    return if (rect.top - rowHeight * 9 / 2F > height) {
+      (rect.top - rowHeight * 9 / 2 - height).toInt()
     } else {
       (rect.bottom + rowHeight / 2).toInt()
     }
@@ -265,110 +181,24 @@ class TextActionsWindow(private val editor: VCSpaceEditor) :
     top = max(0, min(top, editor.height - height - 5))
     val handleLeftX = editor.getOffset(editor.cursor.leftLine, editor.cursor.leftColumn)
     val handleRightX = editor.getOffset(editor.cursor.rightLine, editor.cursor.rightColumn)
-    val panelX = ((handleLeftX + handleRightX) / 2f - rootView.measuredWidth / 2f).toInt()
+    val panelX =
+      ((handleLeftX + handleRightX) / 2f - (rootView?.measuredWidth ?: width) / 2f).toInt()
     setLocationAbsolutely(panelX, top)
     show()
   }
 
   private fun updateActions() {
-    actionsAdapter.apply {
-
-      // Comment action
-      val commentRule = (editor as VCSpaceEditor).commentRule
-      updateAction(0, commentRule != null && editor.isEditable)
-
-      // Select all action
-      updateAction(1, true)
-
-      // Long select action
-      updateAction(2, editor.isEditable)
-
-      // Cut action
-      updateAction(3, editor.isEditable && editor.cursor.isSelected)
-
-      // Copy action
-      updateAction(4, editor.cursor.isSelected, editor.cursor.isSelected)
-
-      // Paste action
-      updateAction(5, true, editor.hasClip())
-
-      // Format action
-      updateAction(6, editor.isEditable)
-
-      // Explain Code Action
-      updateAction(7, editor.cursor.isSelected, editor.cursor.isSelected)
-
-      // Import Action
-      updateAction(8, editor.cursor.isSelected, editor.cursor.isSelected)
-
-      refreshActions()
-    }
+    onUpdateButtonRequest()
 
     val dp8 = SizeUtils.dp2px(8f)
-    val dp16 = dp8 * 2
-    rootView.measure(
-      View.MeasureSpec.makeMeasureSpec(editor.width - dp16 * 2, View.MeasureSpec.AT_MOST),
+    val dp32 = dp8 * 4
+    rootView?.measure(
+      View.MeasureSpec.makeMeasureSpec(editor.width - dp32 * 5, View.MeasureSpec.AT_MOST),
       View.MeasureSpec.makeMeasureSpec(
-        (260 * editor.dpUnit).toInt() - dp16 * 2,
+        (260 * editor.dpUnit).toInt() - dp32 * 5,
         View.MeasureSpec.AT_MOST,
       ),
     )
-    setSize(rootView.measuredWidth, height)
+    rootView?.measuredWidth?.let { setSize(it, height) }
   }
-
-  class TextActionListAdapter(val textActions: TextActionsWindow) :
-    RecyclerView.Adapter<TextActionListAdapter.TextActionViewHolder>() {
-    private val visibleActions = mutableListOf<TextAction>()
-
-    inner class TextActionViewHolder(internal val binding: LayoutTextActionItemBinding) :
-      RecyclerView.ViewHolder(binding.root)
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TextActionViewHolder {
-      return TextActionViewHolder(
-        LayoutTextActionItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-      )
-    }
-
-    override fun onBindViewHolder(holder: TextActionViewHolder, position: Int) {
-      holder.binding.item.apply {
-        val action = visibleActions[position]
-
-        setIconResource(action.icon)
-
-        isClickable = action.clickable
-        tooltipText = context.getString(action.text)
-
-        setOnClickListener { textActions.executeTextAction(action) }
-      }
-    }
-
-    override fun getItemCount(): Int {
-      return visibleActions.size
-    }
-
-    fun updateAction(pos: Int, visible: Boolean, clickable: Boolean = true) {
-      actions[pos].apply {
-        this.visible = visible
-        this.clickable = clickable
-      }
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun refreshActions() {
-      visibleActions.clear()
-      for (action in actions) {
-        if (action.visible) {
-          visibleActions.add(action)
-        }
-      }
-      notifyDataSetChanged()
-    }
-  }
-
-  class TextAction(
-    val icon: Int,
-    val text: Int,
-    var visible: Boolean = true,
-    var clickable: Boolean = true,
-  )
 }

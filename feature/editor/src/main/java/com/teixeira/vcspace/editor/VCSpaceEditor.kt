@@ -37,7 +37,7 @@ class VCSpaceEditor @JvmOverloads constructor(
   defStyleRes: Int = 0,
 ) : CodeEditor(context, attrs, defStyleAttr, defStyleRes) {
 
-  private var textActions: TextActionsWindow? = TextActionsWindow(this)
+  var textActions: TextActionsWindow? = TextActionsWindow(this)
 
   var file: File? = null
   var modified: Boolean = false
@@ -69,6 +69,10 @@ class VCSpaceEditor @JvmOverloads constructor(
     super.release()
     textActions = null
     file = null
+  }
+
+  fun setTextActionWindow(window: (VCSpaceEditor) -> TextActionsWindow) {
+    textActions = window(this)
   }
 
   companion object {
