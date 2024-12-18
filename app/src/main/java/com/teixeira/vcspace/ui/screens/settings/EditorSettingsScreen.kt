@@ -27,8 +27,10 @@ import androidx.compose.material.icons.automirrored.filled.FormatIndentDecrease
 import androidx.compose.material.icons.automirrored.filled.FormatIndentIncrease
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.automirrored.filled.WrapText
+import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Expand
 import androidx.compose.material.icons.filled.FontDownload
+import androidx.compose.material.icons.filled.Keyboard
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Tab
@@ -42,10 +44,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastRoundToInt
 import com.teixeira.vcspace.core.settings.Settings.Editor.COLOR_SCHEME
+import com.teixeira.vcspace.core.settings.Settings.Editor.CURRENT_EDITOR
 import com.teixeira.vcspace.core.settings.Settings.Editor.DELETE_INDENT_ON_BACKSPACE
 import com.teixeira.vcspace.core.settings.Settings.Editor.DELETE_LINE_ON_BACKSPACE
 import com.teixeira.vcspace.core.settings.Settings.Editor.EDITOR_TEXT_ACTION_WINDOW_EXPAND_THRESHOLD
@@ -58,6 +63,7 @@ import com.teixeira.vcspace.core.settings.Settings.Editor.STICKY_SCROLL
 import com.teixeira.vcspace.core.settings.Settings.Editor.USE_TAB
 import com.teixeira.vcspace.core.settings.Settings.Editor.WORD_WRAP
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberColorScheme
+import com.teixeira.vcspace.core.settings.Settings.Editor.rememberCurrentEditor
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberDeleteIndentOnBackspace
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberDeleteLineOnBackspace
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberEditorTextActionWindowExpandThreshold
@@ -73,6 +79,7 @@ import com.teixeira.vcspace.core.settings.Settings.EditorTabs.AUTO_SAVE
 import com.teixeira.vcspace.core.settings.Settings.EditorTabs.rememberAutoSave
 import com.teixeira.vcspace.resources.R
 import me.zhanghai.compose.preference.listPreference
+import me.zhanghai.compose.preference.preference
 import me.zhanghai.compose.preference.preferenceCategory
 import me.zhanghai.compose.preference.sliderPreference
 import me.zhanghai.compose.preference.switchPreference
@@ -84,7 +91,9 @@ fun EditorSettingsScreen(
   onNavigateUp: () -> Unit
 ) {
   val context = LocalContext.current
+  val uriHandler = LocalUriHandler.current
 
+  val currentEditor = rememberCurrentEditor()
   val fontSize = rememberFontSize()
   val indentSize = rememberIndentSize()
   val fontFamily = rememberFontFamily()
@@ -111,6 +120,54 @@ fun EditorSettingsScreen(
       .padding(bottom = 12.dp),
     verticalArrangement = Arrangement.spacedBy(3.dp)
   ) {
+    preferenceCategory(
+      key = "editor_category",
+      title = { Text(text = stringResource(R.string.editor)) }
+    )
+
+    listPreference(
+      key = CURRENT_EDITOR.name,
+      title = { Text(text = "${stringResource(R.string.current_editor)} ($it Editor)") },
+      summary = { Text(text = getEditorDescription(it)) },
+      rememberState = { currentEditor },
+      defaultValue = currentEditor.value,
+      values = listOf("Sora", "Monaco"),
+      valueToText = { AnnotatedString("$it Editor") },
+      icon = { Icon(Icons.Default.Code, contentDescription = null) },
+      modifier = Modifier
+        .clip(PreferenceShape.Top)
+        .background(backgroundColor)
+    )
+
+    preference(
+      key = "keyboard_suggestion",
+      title = {
+        Text(
+          text = when (currentEditor.value) {
+            "Monaco" -> "Enhance Your Monaco Experience"
+            else -> "Typing Tip"
+          }
+        )
+      },
+      summary = {
+        Text(
+          text = when (currentEditor.value) {
+            "Monaco" -> "Consider using a keyboard with extra keys like Hacker's Keyboard for a more efficient coding workflow. (Click to learn more)"
+            else -> "For optimal typing efficiency, explore keyboard customization options."
+          }
+        )
+      },
+      onClick = {
+        if (currentEditor.value == "Monaco") {
+          uriHandler.openUri("https://play.google.com/store/apps/details?id=org.pocketworkstation.pckeyboard")
+        }
+      },
+      icon = { Icon(Icons.Default.Keyboard, contentDescription = null) },
+      modifier = Modifier
+        .clip(PreferenceShape.Bottom)
+        .background(backgroundColor)
+    )
+
     preferenceCategory(
       key = "editor_settings_category",
       title = { Text(text = stringResource(R.string.editor_settings)) }
@@ -352,5 +409,13 @@ fun EditorSettingsScreen(
         .clip(PreferenceShape.Alone)
         .background(backgroundColor)
     )
+  }
+}
+
+private fun getEditorDescription(editorName: String): String {
+  return when (editorName.lowercase()) {
+    "sora" -> "Prioritizes stability for a smooth editing experience."
+    "monaco" -> "Offers more advanced features, but may be less stable. Some settings may not be fully supported."
+    else -> ""
   }
 }

@@ -15,8 +15,11 @@
 
 package com.teixeira.vcspace.ui.screens.editor
 
+import android.view.ViewGroup
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,6 +35,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCompositionContext
@@ -52,12 +56,14 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.blankj.utilcode.util.ToastUtils
 import com.google.ai.client.generativeai.type.GenerateContentResponse
 import com.teixeira.vcspace.activities.Editor.LocalCommandPaletteManager
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
 import com.teixeira.vcspace.core.ai.Gemini
 import com.teixeira.vcspace.core.components.editor.FileTabLayout
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberColorScheme
+import com.teixeira.vcspace.core.settings.Settings.Editor.rememberCurrentEditor
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberDeleteIndentOnBackspace
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberDeleteLineOnBackspace
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberEditorTextActionWindowExpandThreshold
@@ -78,6 +84,10 @@ import com.teixeira.vcspace.editor.addBlockComment
 import com.teixeira.vcspace.editor.addSingleComment
 import com.teixeira.vcspace.editor.listener.OnExplainCodeListener
 import com.teixeira.vcspace.editor.listener.OnImportComponentListener
+import com.teixeira.vcspace.editor.monaco.MonacoEditor
+import com.teixeira.vcspace.editor.monaco.MonacoLanguage
+import com.teixeira.vcspace.editor.monaco.option.minimap.MinimapOptions
+import com.teixeira.vcspace.editor.monaco.util.MonacoLanguageMapper
 import com.teixeira.vcspace.editor.textaction.EditorTextActionItem
 import com.teixeira.vcspace.editor.textaction.actionItems
 import com.teixeira.vcspace.editor.textaction.editorTextActionWindow
@@ -87,6 +97,7 @@ import com.teixeira.vcspace.ui.LocalToastHostState
 import com.teixeira.vcspace.ui.components.keyboard.CommandPalette
 import com.teixeira.vcspace.ui.screens.editor.ai.CodeExplanationSheet
 import com.teixeira.vcspace.ui.screens.editor.ai.ImportComponentsSheet
+import com.teixeira.vcspace.ui.screens.editor.components.view.CodeEditorView
 import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
 import com.teixeira.vcspace.utils.launchWithProgressDialog
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage
@@ -112,6 +123,7 @@ fun EditorScreen(
   }
 
   val openLastFiles by rememberLastOpenedFile()
+  val currentEditor by rememberCurrentEditor()
 
   DisposableEffect(openLastFiles) {
     /*if (openLastFiles) {*/
@@ -148,6 +160,7 @@ fun EditorScreen(
   }
 
   val compositionContext = rememberCompositionContext()
+  val showMonacoEditor = remember { mutableStateMapOf<String, Boolean>() }
 
   Column(modifier = modifier.onKeyEvent {
     if (it.isCtrlPressed && it.isShiftPressed && it.key == Key.P) {
@@ -170,64 +183,134 @@ fun EditorScreen(
     val openedFile = openedFiles.getOrNull(selectedFileIndex)
 
     openedFile?.let { fileEntry ->
-      val editorView = viewModel.getEditorForFile(context, fileEntry.file)
+      val editorView = viewModel.getEditorForFile(context, fileEntry.file, isAdvancedEditor = currentEditor.lowercase() == "monaco")
 
       key(editorConfigMap[fileEntry.file.path]) {
-        ConfigureEditor(
-          editorView.editor, onExplainCodeListener = { code ->
-            scope.launchWithProgressDialog(
-              context = Dispatchers.IO,
-              uiContext = context,
-              configureBuilder = { builder ->
-                builder.apply {
-                  setMessage("Analyzing Code")
-                  setCancelable(false)
-                }
-              }
-            ) { _, _ ->
-              Gemini.explainCode(code.toString())
-                .onSuccess { codeExplanationResponse = it }
-                .onFailure {
-                  scope.launch {
-                    toastHostState.showToast(
-                      message = it.message ?: "Error",
-                      icon = Icons.Sharp.ErrorOutline
-                    )
+        if (editorView is CodeEditorView) {
+          ConfigureEditor(
+            editorView.editor, onExplainCodeListener = { code ->
+              scope.launchWithProgressDialog(
+                context = Dispatchers.IO,
+                uiContext = context,
+                configureBuilder = { builder ->
+                  builder.apply {
+                    setMessage("Analyzing Code")
+                    setCancelable(false)
                   }
                 }
-            }
-          },
-          onImportComponentListener = { code ->
-            scope.launchWithProgressDialog(
-              context = Dispatchers.IO,
-              uiContext = context,
-              configureBuilder = { builder ->
-                builder.apply {
-                  setMessage("Analyzing Code")
-                  setCancelable(false)
-                }
+              ) { _, _ ->
+                Gemini.explainCode(code.toString())
+                  .onSuccess { codeExplanationResponse = it }
+                  .onFailure {
+                    scope.launch {
+                      toastHostState.showToast(
+                        message = it.message ?: "Error",
+                        icon = Icons.Sharp.ErrorOutline
+                      )
+                    }
+                  }
               }
-            ) { _, _ ->
-              Gemini.importComponents(code.toString())
-                .onSuccess { importComponentResponse = it }
-                .onFailure {
-                  scope.launch {
-                    toastHostState.showToast(
-                      message = it.message ?: "Error",
-                      icon = Icons.Sharp.ErrorOutline
-                    )
+            },
+            onImportComponentListener = { code ->
+              scope.launchWithProgressDialog(
+                context = Dispatchers.IO,
+                uiContext = context,
+                configureBuilder = { builder ->
+                  builder.apply {
+                    setMessage("Analyzing Code")
+                    setCancelable(false)
                   }
                 }
+              ) { _, _ ->
+                Gemini.importComponents(code.toString())
+                  .onSuccess { importComponentResponse = it }
+                  .onFailure {
+                    scope.launch {
+                      toastHostState.showToast(
+                        message = it.message ?: "Error",
+                        icon = Icons.Sharp.ErrorOutline
+                      )
+                    }
+                  }
+              }
             }
-          })
+          )
+        } else if (editorView is MonacoEditor) {
+          val file = fileEntry.file
+
+          LaunchedEffect(editorView) {
+            showMonacoEditor[file.absolutePath] = true
+
+            editorView.addOnEditorLoadCallback {
+              editorView.setText("Loading...")
+              editorView.setLanguage(MonacoLanguage.Plaintext)
+
+              editorView.apply {
+                if (file.exists()) {
+                  setLanguage(MonacoLanguageMapper.getLanguageByExtension(file.extension))
+                  setText(file.readText())
+                } else {
+                  //delay(1000)
+                  setText("")
+                }
+                setFontSize(14)
+                setMinimapOptions(MinimapOptions(enabled = false))
+              }
+            }
+          }
+        }
         viewModel.setEditorConfiguredForFile(fileEntry.file)
       }
 
       key(fileEntry.file.path) {
-        AndroidView(
-          factory = { editorView },
-          modifier = Modifier.fillMaxSize()
-        )
+        if (editorView is MonacoEditor) {
+          AnimatedVisibility(
+            visible = showMonacoEditor[fileEntry.file.absolutePath] == true,
+          ) {
+            AndroidView(
+              factory = {
+                editorView.apply {
+                  layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                  )
+                }
+              },
+              update = {
+                it.apply {
+                  layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                  )
+                }
+              },
+              modifier = Modifier.fillMaxSize()
+            )
+          }
+
+          AnimatedVisibility(
+            visible = showMonacoEditor[fileEntry.file.absolutePath] == false,
+          ) {
+            Box(
+              modifier = Modifier.fillMaxSize(),
+              contentAlignment = Alignment.TopStart
+            ) {
+              Text("Loading...")
+            }
+          }
+        } else {
+          AndroidView(
+            factory = {
+              editorView.apply {
+                layoutParams = ViewGroup.LayoutParams(
+                  ViewGroup.LayoutParams.MATCH_PARENT,
+                  ViewGroup.LayoutParams.MATCH_PARENT
+                )
+              }
+            },
+            modifier = Modifier.fillMaxSize()
+          )
+        }
       }
     } ?: run {
       val tempFile = File(context.cacheDir, "untitled.txt")

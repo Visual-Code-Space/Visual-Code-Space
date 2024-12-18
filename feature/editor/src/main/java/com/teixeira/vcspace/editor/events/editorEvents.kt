@@ -15,12 +15,10 @@
 
 package com.teixeira.vcspace.editor.events
 
-import io.github.rosemoe.sora.event.ContentChangeEvent
 import java.io.File
 
 data class OnContentChangeEvent(
-  val file: File?,
-  val event: ContentChangeEvent
+  val file: File?
 )
 
 data class OnKeyBindingEvent(

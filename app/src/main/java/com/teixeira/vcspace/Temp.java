@@ -15,5 +15,11 @@
 
 package com.teixeira.vcspace;
 
+import com.teixeira.vcspace.editor.monaco.MonacoWebInterface;
+
 public class Temp {
+  static {
+    var inter = new MonacoWebInterface(null);
+    inter.setModified(true);
+  }
 }

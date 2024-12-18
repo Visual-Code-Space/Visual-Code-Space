@@ -19,6 +19,7 @@
     android:name=".app.VCSpaceApplication"
     android:allowBackup="true"
     android:enableOnBackInvokedCallback="true"
+    android:hardwareAccelerated="true"
     android:icon="@mipmap/ic_launcher"
     android:label="@string/app_name"
     android:largeHeap="true"
@@ -83,6 +84,10 @@
     <activity
       android:name=".activities.MarkdownPreviewActivity"
       android:exported="false" />
+
+    <activity
+      android:name=".activities.WebActivity"
+      android:exported="true" />
 
     <provider
       android:name="androidx.core.content.FileProvider"

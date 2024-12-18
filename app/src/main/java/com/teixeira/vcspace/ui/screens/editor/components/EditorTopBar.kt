@@ -128,12 +128,14 @@ fun EditorTopBar(
   val showFileMenu = remember { mutableStateOf(false) }
 
   val editors = editorViewModel.editors
+  val monacoEditors = editorViewModel.monacoEditors
   val uiState by editorViewModel.uiState.collectAsStateWithLifecycle()
 
   val selectedFileIndex = uiState.selectedFileIndex
   val selectedFile = uiState.openedFiles.getOrNull(selectedFileIndex)
 
   val selectedEditor = selectedFile?.let { editors[it.file.path] }
+  val selectedMonacoEditor = selectedFile?.let { monacoEditors[it.file.path] }
 
   var canUndo by remember { mutableStateOf(false) }
   var canRedo by remember { mutableStateOf(false) }
@@ -146,14 +148,15 @@ fun EditorTopBar(
 
   val autoSave by rememberAutoSave()
 
-  LaunchedEffect(selectedEditor, autoSave) {
+  LaunchedEffect(selectedEditor, selectedMonacoEditor, autoSave) {
     selectedEditor?.let { editorView ->
       canUndo = editorView.canUndo()
       canRedo = editorView.canRedo()
 
       editorView.editor.subscribeEvent(ContentChangeEvent::class.java) { event, _ ->
-        EventBus.getDefault().post(OnContentChangeEvent(selectedFile.file, event))
+        EventBus.getDefault().post(OnContentChangeEvent(selectedFile.file))
         editorView.setModified(event.action != ContentChangeEvent.ACTION_SET_NEW_TEXT)
+        editorViewModel.setModified(selectedFile.file, editorView.modified)
         canUndo = editorView.canUndo()
         canRedo = editorView.canRedo()
 
@@ -167,6 +170,25 @@ fun EditorTopBar(
 
       editorView.editor.subscribeEvent(KeyBindingEvent::class.java) { event, _ ->
         EventBus.getDefault().post(OnKeyBindingEvent(event.canEditorHandle()))
+      }
+    }
+
+    selectedMonacoEditor?.let { editor ->
+      canUndo = editor.canUndo()
+      canRedo = editor.canRedo()
+
+      editor.onContentChange = {
+        EventBus.getDefault().post(OnContentChangeEvent(selectedFile.file))
+        editorViewModel.setModified(selectedFile.file, true)
+        canUndo = editor.canUndo()
+        canRedo = editor.canRedo()
+
+        if (autoSave) {
+          scope.launch {
+            delay(100)
+            editorViewModel.saveFile()
+          }
+        }
       }
     }
   }
@@ -235,14 +257,14 @@ fun EditorTopBar(
     },
     actions = {
       AnimatedVisibility(
-        visible = isFileRunnable(selectedEditor?.file)
+        visible = isFileRunnable(selectedFile?.file)
       ) {
         Tooltip(stringResource(id = strings.execute)) {
           IconButton(
             onClick = {
-              when (selectedEditor?.file?.extension) {
+              when (selectedFile?.file?.extension) {
                 "html", "htm" -> {
-                  selectedEditor.file?.parent?.let { directory ->
+                  selectedFile.file.parent?.let { directory ->
                     server?.let {
                       if (it.isAlive || it.wasStarted()) {
                         it.closeAllConnections()
@@ -264,7 +286,7 @@ fun EditorTopBar(
 
                       customTabs.launchUrl(
                         context,
-                        "http://localhost:$assignedPort/${selectedEditor.file?.name ?: ""}".toUri()
+                        "http://localhost:$assignedPort/${selectedFile.file.name ?: ""}".toUri()
                       )
                     }.onFailure {
                       Log.e("ServerError", "Failed to start server: ${it.message}")
@@ -287,7 +309,7 @@ fun EditorTopBar(
                     Intent(context, TerminalActivity::class.java).apply {
                       putExtra(
                         TerminalActivity.KEY_PYTHON_FILE_PATH,
-                        selectedEditor.file?.absolutePath
+                        selectedFile.file.absolutePath
                       )
                     }
                   )
@@ -297,7 +319,7 @@ fun EditorTopBar(
                   context.startActivity(Intent(context, MarkdownPreviewActivity::class.java).apply {
                     putExtra(
                       MarkdownPreviewActivity.EXTRA_FILE_PATH,
-                      selectedEditor.file!!.absolutePath
+                      selectedFile.file.absolutePath
                     )
                   })
                 }
@@ -318,7 +340,7 @@ fun EditorTopBar(
         Row {
           Tooltip(stringResource(id = strings.editor_undo)) {
             IconButton(
-              onClick = { selectedEditor?.undo() },
+              onClick = { selectedEditor?.undo() ?: selectedMonacoEditor?.undo() },
               enabled = canUndo
             ) {
               Icon(
@@ -330,7 +352,7 @@ fun EditorTopBar(
 
           Tooltip(stringResource(id = strings.editor_redo)) {
             IconButton(
-              onClick = { selectedEditor?.redo() },
+              onClick = { selectedEditor?.redo() ?: selectedMonacoEditor?.redo() },
               enabled = canRedo
             ) {
               Icon(
@@ -503,7 +525,7 @@ fun FileMenu(
       },
       newCommand("Save File", "Ctrl+S") {
         scope.launch {
-          editorViewModel.saveFile(editor)
+          editorViewModel.saveFile()
         }
       },
       newCommand("Save All Files", "Ctrl+Shift+S") {

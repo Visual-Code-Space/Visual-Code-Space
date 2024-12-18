@@ -16,12 +16,15 @@
 package com.teixeira.vcspace.ui.screens.editor
 
 import android.content.Context
+import android.view.View
+import android.view.ViewGroup
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.FileUtils
 import com.google.gson.Gson
 import com.teixeira.vcspace.activities.EditorActivity.Companion.LAST_OPENED_FILES_JSON_PATH
+import com.teixeira.vcspace.editor.monaco.MonacoEditor
 import com.teixeira.vcspace.extensions.toFile
 import com.teixeira.vcspace.models.FileHistory
 import com.teixeira.vcspace.ui.screens.editor.components.view.CodeEditorView
@@ -51,6 +54,9 @@ class EditorViewModel : ViewModel() {
   private val _editors = mutableStateMapOf<String, CodeEditorView>()
   val editors get() = _editors
 
+  private val _monacoEditors = mutableStateMapOf<String, MonacoEditor>()
+  val monacoEditors get() = _monacoEditors
+
   private val _editorConfigMap = mutableStateMapOf<String, Boolean>()
   val editorConfigMap get() = _editorConfigMap
 
@@ -67,10 +73,22 @@ class EditorViewModel : ViewModel() {
 
   fun getEditorForFile(
     context: Context,
-    file: File
-  ): CodeEditorView {
-    return _editors.getOrPut(file.path) {
-      CodeEditorView(context, file)
+    file: File,
+    isAdvancedEditor: Boolean = false
+  ): View {
+    return if (isAdvancedEditor) {
+      _monacoEditors.getOrPut(file.path) {
+        MonacoEditor(context).apply {
+          layoutParams = ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+          )
+        }
+      }
+    } else {
+      _editors.getOrPut(file.path) {
+        CodeEditorView(context, file)
+      }
     }
   }
 
@@ -78,8 +96,9 @@ class EditorViewModel : ViewModel() {
     return _editors[file.path]
   }
 
-  fun getSelectedEditor(): CodeEditorView? {
-    return _editors[uiState.value.openedFiles[uiState.value.selectedFileIndex].file.path]
+  fun getSelectedEditor(): View? {
+    return _monacoEditors[uiState.value.openedFiles[uiState.value.selectedFileIndex].file.path]
+      ?: _editors[uiState.value.openedFiles[uiState.value.selectedFileIndex].file.path]
   }
 
   fun rememberLastFiles() {
@@ -115,9 +134,17 @@ class EditorViewModel : ViewModel() {
     }
   }
 
-  suspend fun saveFile(editorView: CodeEditorView? = null) {
-    editorView?.saveFile() ?: getSelectedEditor()?.saveFile()
-    (editorView?.file ?: getSelectedEditor()?.file)?.let { setModified(it, false) }
+  suspend fun saveFile(editorView: View? = null) {
+    val editor = getSelectedEditor() ?: editorView
+    if (editor is CodeEditorView) {
+      editor.saveFile()
+      editor.file?.let { setModified(it, false) }
+    } else if (editor is MonacoEditor) {
+      uiState.value.selectedFile?.file?.let {
+        it.writeText(editor.getText())
+        setModified(it, false)
+      }
+    }
   }
 
   suspend fun saveAll() {

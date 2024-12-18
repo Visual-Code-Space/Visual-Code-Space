@@ -184,6 +184,7 @@
   <string name="remember_last_opened_file_summary_false">Will not remember the last opened file</string>
 
   <string name="editor_settings">Editor Settings</string>
+  <string name="current_editor">Current Editor</string>
   <string name="font_size">Font Size</string>
   <string name="font_size_value">%1$d sp</string>
   <string name="indent_size">Indent Size</string>

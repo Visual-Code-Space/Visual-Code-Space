@@ -23,36 +23,25 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.contentColorFor
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.ViewCompositionStrategy
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -62,7 +51,6 @@ import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.blankj.utilcode.util.UriUtils
-import com.google.ai.client.generativeai.type.asTextOrNull
 import com.teixeira.vcspace.BuildConfig
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerNavController
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
@@ -72,7 +60,6 @@ import com.teixeira.vcspace.activities.base.ObserveLifecycleEvents
 import com.teixeira.vcspace.app.DoNothing
 import com.teixeira.vcspace.app.noLocalProvidedFor
 import com.teixeira.vcspace.app.strings
-import com.teixeira.vcspace.core.ai.Gemini
 import com.teixeira.vcspace.editor.addBlockComment
 import com.teixeira.vcspace.editor.addSingleComment
 import com.teixeira.vcspace.editor.events.OnContentChangeEvent
@@ -93,11 +80,7 @@ import com.teixeira.vcspace.ui.screens.editor.components.EditorDrawerSheet
 import com.teixeira.vcspace.ui.screens.editor.components.EditorTopBar
 import com.teixeira.vcspace.ui.screens.editor.components.view.CodeEditorView
 import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
-import com.teixeira.vcspace.utils.launchWithProgressDialog
-import io.github.rosemoe.sora.event.ContentChangeEvent
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -134,15 +117,8 @@ class EditorActivity : BaseComposeActivity() {
   private val editorViewModel: EditorViewModel by viewModels()
 
   @Subscribe(threadMode = ThreadMode.MAIN)
-  fun onContentChangeEvent(e: OnContentChangeEvent) {
-    Log.d("EditorActivity", "Content change event received: ${e.file?.name}")
-
-    if (e.file != null) {
-      editorViewModel.setModified(
-        e.file!!,
-        e.event.action != ContentChangeEvent.ACTION_SET_NEW_TEXT
-      )
-    }
+  fun onContentChangeEvent(event: OnContentChangeEvent) {
+    Log.d("EditorActivity", "Content change event received: ${event.file?.name}")
   }
 
   @Subscribe(threadMode = ThreadMode.MAIN)
@@ -414,7 +390,7 @@ class EditorActivity : BaseComposeActivity() {
     }
   }
 
-  val currentEditor get() = editorViewModel.getSelectedEditor()
+  val currentEditor get() = editorViewModel.getSelectedEditor() as? CodeEditorView
   val selectedFileIndex get() = editorViewModel.uiState.value.selectedFileIndex
   val canEditorHandleCurrentKeyBinding get() = editorViewModel.canEditorHandleCurrentKeyBinding.value
 

@@ -108,6 +108,7 @@ object Settings {
   }
 
   object Editor {
+    val CURRENT_EDITOR = stringPreferencesKey("current_editor")
     val FONT_SIZE = floatPreferencesKey("font_size")
     val INDENT_SIZE = intPreferencesKey("indent_size")
     val FONT_FAMILY = stringPreferencesKey("font_family")
@@ -119,8 +120,10 @@ object Settings {
     val USE_TAB = booleanPreferencesKey("use_tab")
     val DELETE_LINE_ON_BACKSPACE = booleanPreferencesKey("delete_line_on_backspace")
     val DELETE_INDENT_ON_BACKSPACE = booleanPreferencesKey("delete_indent_on_backspace")
-    val EDITOR_TEXT_ACTION_WINDOW_EXPAND_THRESHOLD =
-      intPreferencesKey("editor_text_action_window_expand_threshold")
+    val EDITOR_TEXT_ACTION_WINDOW_EXPAND_THRESHOLD = intPreferencesKey("editor_text_action_window_expand_threshold")
+
+    @Composable
+    fun rememberCurrentEditor() = rememberPreference(key = CURRENT_EDITOR, defaultValue = "Sora")
 
     @Composable
     fun rememberFontSize() = rememberPreference(key = FONT_SIZE, defaultValue = 14f)
