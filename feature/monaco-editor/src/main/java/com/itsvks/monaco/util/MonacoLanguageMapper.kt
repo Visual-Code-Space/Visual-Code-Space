@@ -13,9 +13,9 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.editor.monaco.util
+package com.itsvks.monaco.util
 
-import com.teixeira.vcspace.editor.monaco.MonacoLanguage
+import com.itsvks.monaco.MonacoLanguage
 
 object MonacoLanguageMapper {
   private val extensionToLanguageMap = mapOf(

@@ -13,23 +13,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.editor.monaco
+package com.itsvks.monaco.option.minimap
 
-import android.util.Log
-import android.webkit.JavascriptInterface
-import com.teixeira.vcspace.utils.showShortToast
-
-class MonacoWebInterface(private val editor: MonacoEditor) {
-  @set:JavascriptInterface var value = ""
-  @set:JavascriptInterface var canUndo = false
-  @set:JavascriptInterface var canRedo = false
-  @set:JavascriptInterface var isModified = false
-
-  @JavascriptInterface
-  fun showToast(message: String) = showShortToast(editor.context, message)
-
-  @JavascriptInterface
-  fun onTextChanged(content: String) {
-    editor.onContentChange(content)
+@JvmInline
+value class ShowSlider private constructor(val value: String) {
+  companion object {
+    val Always = ShowSlider("always")
+    val Mouseover = ShowSlider("mouseover")
   }
 }

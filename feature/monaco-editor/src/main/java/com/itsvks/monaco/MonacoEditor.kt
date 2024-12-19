@@ -13,7 +13,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.editor.monaco
+package com.itsvks.monaco
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -24,11 +24,12 @@ import android.view.View
 import android.webkit.ConsoleMessage
 import android.webkit.WebChromeClient
 import android.webkit.WebView
-import com.teixeira.vcspace.editor.monaco.option.TextEditorCursorStyle
-import com.teixeira.vcspace.editor.monaco.option.WordBreak
-import com.teixeira.vcspace.editor.monaco.option.WordWrap
-import com.teixeira.vcspace.editor.monaco.option.WrappingStrategy
-import com.teixeira.vcspace.editor.monaco.option.minimap.MinimapOptions
+import com.itsvks.monaco.option.TextEditorCursorBlinkingStyle
+import com.itsvks.monaco.option.TextEditorCursorStyle
+import com.itsvks.monaco.option.WordBreak
+import com.itsvks.monaco.option.WordWrap
+import com.itsvks.monaco.option.WrappingStrategy
+import com.itsvks.monaco.option.minimap.MinimapOptions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -162,5 +163,16 @@ class MonacoEditor @JvmOverloads constructor(
 
   suspend fun setMinimapOptions(minimapOptions: MinimapOptions) {
     loadJs("applyMinimapOptions(`${minimapOptions.toJson()}`);")
+  }
+
+  suspend fun setGlyphMargin(glyphMargin: Boolean) = setEditorOption("glyphMargin", glyphMargin)
+  suspend fun setFolding(folding: Boolean) = setEditorOption("folding", folding)
+  suspend fun setInDiffEditor(inDiffEditor: Boolean) = setEditorOption("inDiffEditor", inDiffEditor)
+  suspend fun setLetterSpacing(letterSpacing: Number) = setEditorOption("letterSpacing", letterSpacing)
+  suspend fun setLineDecorationsWidth(lineDecorationsWidth: Number) = setEditorOption("lineDecorationsWidth", lineDecorationsWidth)
+  suspend fun setLineNumbersMinChars(lineNumbersMinChars: Number) = setEditorOption("lineNumbersMinChars", lineNumbersMinChars)
+
+  suspend fun setCursorBlinkingStyle(cursorBlinkingStyle: TextEditorCursorBlinkingStyle) {
+    loadJs("setCursorBlinkingStyle(${cursorBlinkingStyle.value});")
   }
 }

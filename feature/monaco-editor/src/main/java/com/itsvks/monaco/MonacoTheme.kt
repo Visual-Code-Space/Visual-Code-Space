@@ -13,7 +13,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.editor.monaco
+package com.itsvks.monaco
 
 @JvmInline
 value class MonacoTheme private constructor(val value: String) {

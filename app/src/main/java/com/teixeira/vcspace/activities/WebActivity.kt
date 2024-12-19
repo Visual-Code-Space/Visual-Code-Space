@@ -24,16 +24,15 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.lifecycleScope
 import com.blankj.utilcode.util.ToastUtils
+import com.itsvks.monaco.MonacoEditor
+import com.itsvks.monaco.MonacoLanguage
+import com.itsvks.monaco.MonacoTheme
+import com.itsvks.monaco.option.TextEditorCursorBlinkingStyle
+import com.itsvks.monaco.option.TextEditorCursorStyle
+import com.itsvks.monaco.option.WordWrap
+import com.itsvks.monaco.option.minimap.MinimapOptions
 import com.teixeira.vcspace.activities.base.BaseComposeActivity
-import com.teixeira.vcspace.editor.monaco.MonacoEditor
-import com.teixeira.vcspace.editor.monaco.MonacoLanguage
-import com.teixeira.vcspace.editor.monaco.MonacoTheme
-import com.teixeira.vcspace.editor.monaco.option.TextEditorCursorStyle
-import com.teixeira.vcspace.editor.monaco.option.WordWrap
-import com.teixeira.vcspace.editor.monaco.option.minimap.MinimapOptions
-import kotlinx.coroutines.launch
 
 class WebActivity : BaseComposeActivity() {
   @SuppressLint("SetJavaScriptEnabled")
@@ -56,17 +55,18 @@ class WebActivity : BaseComposeActivity() {
             )
           }
         },
-        update = {
-          it.apply {
+        update = { editor ->
+          editor.apply {
             addOnEditorLoadCallback {
               setText("function example() {\n\tconsole.log('Hello, World!');\n}")
-              setLanguage(MonacoLanguage.CSS)
+              setLanguage(MonacoLanguage.Javascript)
               setFontSize(14)
-              setTheme(MonacoTheme.HighContrastLight)
+              setTheme(MonacoTheme.VisualStudioDark)
               setWordWrap(WordWrap.On)
               setReadOnly(false)
               setMinimapOptions(MinimapOptions(enabled = false))
               setCursorStyle(TextEditorCursorStyle.Line)
+              setCursorBlinkingStyle(TextEditorCursorBlinkingStyle.Phase)
               ToastUtils.showShort(it.getText())
             }
           }

@@ -13,30 +13,30 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.editor.monaco.option
+package com.itsvks.monaco
 
-@JvmInline
-value class WordWrap private constructor(val value: String) {
-  companion object {
-    val On = WordWrap("on")
-    val Off = WordWrap("off")
-    val WordWrapColumn = WordWrap("wordWrapColumn")
-    val Bounded = WordWrap("bounded")
+import android.webkit.JavascriptInterface
+
+class MonacoWebInterface(private val editor: MonacoEditor) {
+  @set:JavascriptInterface
+  var value = ""
+
+  @set:JavascriptInterface
+  var canUndo = false
+
+  @set:JavascriptInterface
+  var canRedo = false
+
+  @set:JavascriptInterface
+  var isModified = false
+
+  @JavascriptInterface
+  fun showToast(message: String) {
+
   }
-}
 
-@JvmInline
-value class WrappingStrategy private constructor(val value: String) {
-  companion object {
-    val Simple = WrappingStrategy("simple")
-    val Advanced = WrappingStrategy("advanced")
-  }
-}
-
-@JvmInline
-value class WordBreak private constructor(val value: String) {
-  companion object {
-    val Normal = WordBreak("normal")
-    val KeepAll = WordBreak("keepAll")
+  @JavascriptInterface
+  fun onTextChanged(content: String) {
+    editor.onContentChange(content)
   }
 }

@@ -13,13 +13,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.editor.monaco.option.minimap
+package com.itsvks.monaco.option.minimap
 
 @JvmInline
-value class Size private constructor(val value: String) {
+value class Side private constructor(val value: String) {
   companion object {
-    val Fit = Size("fit")
-    val Fill = Size("fill")
-    val Proportional = Size("proportional")
+    val Left = Side("left")
+    val Right = Side("right")
   }
 }

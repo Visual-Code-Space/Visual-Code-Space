@@ -13,12 +13,25 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.editor.monaco.option.minimap
+package com.itsvks.monaco.option.minimap
 
-@JvmInline
-value class ShowSlider private constructor(val value: String) {
-  companion object {
-    val Always = ShowSlider("always")
-    val Mouseover = ShowSlider("mouseover")
+import com.google.gson.Gson
+
+data class MinimapOptions(
+  val enabled: Boolean? = null,
+  val autohide: Boolean? = null,
+  val side: Side? = null,
+  val size: Size? = null,
+  val showSlider: ShowSlider? = null,
+  val renderCharacters: Boolean? = null,
+  val maxColumn: Number? = null,
+  val scale: Number? = null,
+  val showRegionSectionHeaders: Boolean? = null,
+  val showMarkSectionHeaders: Boolean? = null,
+  val sectionHeaderFontSize: Number? = null,
+  val sectionHeaderLetterSpacing: Number? = null
+) {
+  fun toJson(): String {
+    return Gson().toJson(this)
   }
 }

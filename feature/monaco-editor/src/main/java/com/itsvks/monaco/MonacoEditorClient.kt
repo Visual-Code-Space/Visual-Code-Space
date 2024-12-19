@@ -13,7 +13,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.editor.monaco
+package com.itsvks.monaco
 
 import android.view.View
 import android.webkit.WebResourceRequest

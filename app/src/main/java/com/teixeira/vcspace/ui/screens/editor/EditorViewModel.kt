@@ -23,8 +23,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.FileUtils
 import com.google.gson.Gson
+import com.itsvks.monaco.MonacoEditor
 import com.teixeira.vcspace.activities.EditorActivity.Companion.LAST_OPENED_FILES_JSON_PATH
-import com.teixeira.vcspace.editor.monaco.MonacoEditor
 import com.teixeira.vcspace.extensions.toFile
 import com.teixeira.vcspace.models.FileHistory
 import com.teixeira.vcspace.ui.screens.editor.components.view.CodeEditorView

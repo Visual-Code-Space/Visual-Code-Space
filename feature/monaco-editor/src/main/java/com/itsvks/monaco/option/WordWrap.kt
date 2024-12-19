@@ -13,25 +13,30 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.editor.monaco.option.minimap
+package com.itsvks.monaco.option
 
-import com.google.gson.Gson
+@JvmInline
+value class WordWrap private constructor(val value: String) {
+  companion object {
+    val On = WordWrap("on")
+    val Off = WordWrap("off")
+    val WordWrapColumn = WordWrap("wordWrapColumn")
+    val Bounded = WordWrap("bounded")
+  }
+}
 
-data class MinimapOptions(
-  val enabled: Boolean? = null,
-  val autohide: Boolean? = null,
-  val side: Side? = null,
-  val size: Size? = null,
-  val showSlider: ShowSlider? = null,
-  val renderCharacters: Boolean? = null,
-  val maxColumn: Number? = null,
-  val scale: Number? = null,
-  val showRegionSectionHeaders: Boolean? = null,
-  val showMarkSectionHeaders: Boolean? = null,
-  val sectionHeaderFontSize: Number? = null,
-  val sectionHeaderLetterSpacing: Number? = null
-) {
-  fun toJson(): String {
-    return Gson().toJson(this)
+@JvmInline
+value class WrappingStrategy private constructor(val value: String) {
+  companion object {
+    val Simple = WrappingStrategy("simple")
+    val Advanced = WrappingStrategy("advanced")
+  }
+}
+
+@JvmInline
+value class WordBreak private constructor(val value: String) {
+  companion object {
+    val Normal = WordBreak("normal")
+    val KeepAll = WordBreak("keepAll")
   }
 }

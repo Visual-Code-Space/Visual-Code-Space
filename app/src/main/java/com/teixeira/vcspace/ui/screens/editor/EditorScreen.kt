@@ -56,8 +56,13 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.blankj.utilcode.util.ToastUtils
 import com.google.ai.client.generativeai.type.GenerateContentResponse
+import com.itsvks.monaco.MonacoEditor
+import com.itsvks.monaco.MonacoLanguage
+import com.itsvks.monaco.option.TextEditorCursorBlinkingStyle
+import com.itsvks.monaco.option.TextEditorCursorStyle
+import com.itsvks.monaco.option.minimap.MinimapOptions
+import com.itsvks.monaco.util.MonacoLanguageMapper
 import com.teixeira.vcspace.activities.Editor.LocalCommandPaletteManager
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
 import com.teixeira.vcspace.core.ai.Gemini
@@ -84,10 +89,6 @@ import com.teixeira.vcspace.editor.addBlockComment
 import com.teixeira.vcspace.editor.addSingleComment
 import com.teixeira.vcspace.editor.listener.OnExplainCodeListener
 import com.teixeira.vcspace.editor.listener.OnImportComponentListener
-import com.teixeira.vcspace.editor.monaco.MonacoEditor
-import com.teixeira.vcspace.editor.monaco.MonacoLanguage
-import com.teixeira.vcspace.editor.monaco.option.minimap.MinimapOptions
-import com.teixeira.vcspace.editor.monaco.util.MonacoLanguageMapper
 import com.teixeira.vcspace.editor.textaction.EditorTextActionItem
 import com.teixeira.vcspace.editor.textaction.actionItems
 import com.teixeira.vcspace.editor.textaction.editorTextActionWindow
@@ -183,7 +184,11 @@ fun EditorScreen(
     val openedFile = openedFiles.getOrNull(selectedFileIndex)
 
     openedFile?.let { fileEntry ->
-      val editorView = viewModel.getEditorForFile(context, fileEntry.file, isAdvancedEditor = currentEditor.lowercase() == "monaco")
+      val editorView = viewModel.getEditorForFile(
+        context,
+        fileEntry.file,
+        isAdvancedEditor = currentEditor.lowercase() == "monaco"
+      )
 
       key(editorConfigMap[fileEntry.file.path]) {
         if (editorView is CodeEditorView) {
@@ -253,8 +258,12 @@ fun EditorScreen(
                   //delay(1000)
                   setText("")
                 }
-                setFontSize(14)
+                setCursorStyle(TextEditorCursorStyle.Line)
+                setCursorBlinkingStyle(TextEditorCursorBlinkingStyle.Phase)
                 setMinimapOptions(MinimapOptions(enabled = false))
+                setFontSize(14)
+                setLineDecorationsWidth(1)
+                setLineNumbersMinChars(1)
               }
             }
           }

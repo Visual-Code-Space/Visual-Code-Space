@@ -35,7 +35,7 @@ require(["vs/editor/editor.main"], function () {
             const content = editor.getValue();
             const model = editor.getModel();
             const isModified = model.getAlternativeVersionId() !== model.getVersionId();
-            
+
             window.MonacoAndroid.setModified(isModified);
             window.MonacoAndroid.setValue(content);
             window.MonacoAndroid.setCanUndo(editor.getModel().canUndo());
@@ -91,6 +91,24 @@ function setCursorStyle(styleValue) {
         editor.updateOptions({ cursorStyle });
     } else {
         console.error('Invalid cursor style value:', styleValue);
+    }
+}
+
+function setCursorBlinkingStyle(styleValue) {
+    const blinkingStyleMap = {
+        0: 'hidden',
+        1: 'blink',
+        2: 'smooth',
+        3: 'phase',
+        4: 'expand',
+        5: 'solid'
+    };
+
+    const cursorBlinking = blinkingStyleMap[styleValue];
+    if (cursorBlinking) {
+        editor.updateOptions({ cursorBlinking });
+    } else {
+        console.error('Invalid cursor blinking style value:', styleValue);
     }
 }
 

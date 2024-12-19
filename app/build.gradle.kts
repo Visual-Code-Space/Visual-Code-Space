@@ -164,6 +164,7 @@ dependencies {
   implementation(project(":core:common"))
   implementation(project(":core:resources"))
   implementation(project(":feature:editor"))
+  implementation(project(":feature:monaco-editor"))
   implementation(project(":feature:preferences"))
 
   implementation(libs.kotlinx.coroutines.android)

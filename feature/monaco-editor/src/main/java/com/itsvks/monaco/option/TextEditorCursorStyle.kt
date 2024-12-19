@@ -13,7 +13,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.editor.monaco.option
+package com.itsvks.monaco.option
 
 @JvmInline
 value class TextEditorCursorStyle private constructor(val value: Int) {

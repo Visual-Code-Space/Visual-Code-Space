@@ -15,7 +15,7 @@
 
 package com.teixeira.vcspace;
 
-import com.teixeira.vcspace.editor.monaco.MonacoWebInterface;
+import com.itsvks.monaco.MonacoWebInterface;
 
 public class Temp {
   static {
