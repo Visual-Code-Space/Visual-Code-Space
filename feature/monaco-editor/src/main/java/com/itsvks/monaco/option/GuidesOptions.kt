@@ -15,28 +15,32 @@
 
 package com.itsvks.monaco.option
 
+import com.google.gson.Gson
+
+data class GuidesOptions(
+  val bracketPairs: BracketPairs? = null,
+  val bracketPairsHorizontal: BracketPairs? = null,
+  val highlightActiveBracketPair: Boolean? = null,
+  val indentation: Boolean? = null,
+  val highlightActiveIndentation: HighlightActiveIndentation? = null,
+) {
+  fun toJson() = Gson().toJson(this)
+}
+
 @JvmInline
-value class WordWrap private constructor(override val value: String) : Option<String> {
+value class BracketPairs private constructor(override val value: String) : Option<String> {
   companion object {
-    val On = WordWrap("on")
-    val Off = WordWrap("off")
-    val WordWrapColumn = WordWrap("wordWrapColumn")
-    val Bounded = WordWrap("bounded")
+    val On = BracketPairs("true")
+    val Off = BracketPairs("false")
+    val Active = BracketPairs("active")
   }
 }
 
 @JvmInline
-value class WrappingStrategy private constructor(override val value: String) : Option<String> {
+value class HighlightActiveIndentation private constructor(override val value: String) : Option<String> {
   companion object {
-    val Simple = WrappingStrategy("simple")
-    val Advanced = WrappingStrategy("advanced")
-  }
-}
-
-@JvmInline
-value class WordBreak private constructor(override val value: String) : Option<String> {
-  companion object {
-    val Normal = WordBreak("normal")
-    val KeepAll = WordBreak("keepAll")
+    val True = HighlightActiveIndentation("true")
+    val False = HighlightActiveIndentation("false")
+    val Always = HighlightActiveIndentation("always")
   }
 }

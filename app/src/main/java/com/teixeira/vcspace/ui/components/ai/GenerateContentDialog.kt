@@ -15,6 +15,7 @@
 
 package com.teixeira.vcspace.ui.components.ai
 
+import android.view.View
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.OutlinedTextField
@@ -31,16 +32,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.blankj.utilcode.util.ToastUtils
 import com.google.ai.client.generativeai.type.asTextOrNull
+import com.itsvks.monaco.MonacoEditor
 import com.teixeira.vcspace.app.strings
 import com.teixeira.vcspace.core.ai.Gemini
 import com.teixeira.vcspace.editor.VCSpaceEditor
+import com.teixeira.vcspace.ui.screens.editor.components.view.CodeEditorView
 import com.teixeira.vcspace.utils.launchWithProgressDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @Composable
 fun GenerateContentDialog(
-  editor: VCSpaceEditor,
+  editor: View,
+  fileExtension: String? = null,
   modifier: Modifier = Modifier
 ) {
   val scope = rememberCoroutineScope()
@@ -82,18 +86,27 @@ fun GenerateContentDialog(
             ) { _, _ ->
               Gemini.generateCode(
                 prompt = prompt,
-                editor.file?.extension
+               fileExtension = fileExtension
               ).onSuccess { response ->
                 val text = response.candidates.first().content.parts.first().asTextOrNull()
 
                 withContext(Dispatchers.Main) {
-                  val cursor = editor.cursor
-                  val content = editor.text
-                  content.insert(
-                    cursor.leftLine,
-                    cursor.leftColumn,
-                    Gemini.removeBackticksFromMarkdownCodeBlock(text)
-                  )
+                  if (editor is MonacoEditor) {
+                    val position = editor.getPosition()
+                    editor.insert(
+                      text = Gemini.removeBackticksFromMarkdownCodeBlock(text),
+                      position = position
+                    )
+                  } else if (editor is CodeEditorView) {
+                    val vcSpaceEditor = editor.editor
+                    val cursor = vcSpaceEditor.cursor
+                    val content = vcSpaceEditor.text
+                    content.insert(
+                      cursor.leftLine,
+                      cursor.leftColumn,
+                      Gemini.removeBackticksFromMarkdownCodeBlock(text)
+                    )
+                  }
                 }
               }.onFailure {
                 ToastUtils.showShort(it.message)

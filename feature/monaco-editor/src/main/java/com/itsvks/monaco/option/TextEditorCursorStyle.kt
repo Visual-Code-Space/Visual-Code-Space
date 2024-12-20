@@ -16,7 +16,7 @@
 package com.itsvks.monaco.option
 
 @JvmInline
-value class TextEditorCursorStyle private constructor(val value: Int) {
+value class TextEditorCursorStyle private constructor(override val value: Int) : Option<Int> {
   companion object {
     /**
      * As a vertical line (sitting between two characters).

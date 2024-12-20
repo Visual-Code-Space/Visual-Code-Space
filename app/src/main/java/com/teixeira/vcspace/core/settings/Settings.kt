@@ -109,6 +109,8 @@ object Settings {
 
   object Editor {
     val CURRENT_EDITOR = stringPreferencesKey("current_editor")
+    val SHOW_INPUT_METHOD_PICKER_AT_START = booleanPreferencesKey("show_input_method_picker_at_start")
+
     val FONT_SIZE = floatPreferencesKey("font_size")
     val INDENT_SIZE = intPreferencesKey("indent_size")
     val FONT_FAMILY = stringPreferencesKey("font_family")
@@ -124,6 +126,9 @@ object Settings {
 
     @Composable
     fun rememberCurrentEditor() = rememberPreference(key = CURRENT_EDITOR, defaultValue = "Sora")
+
+    @Composable
+    fun rememberShowInputMethodPickerAtStart() = rememberPreference(key = SHOW_INPUT_METHOD_PICKER_AT_START, defaultValue = false)
 
     @Composable
     fun rememberFontSize() = rememberPreference(key = FONT_SIZE, defaultValue = 14f)

@@ -13,36 +13,18 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.itsvks.monaco
+package com.itsvks.monaco.option
 
-import android.webkit.JavascriptInterface
-
-class MonacoWebInterface(private val editor: MonacoEditor) {
-  @set:JavascriptInterface
-  var value = ""
-
-  @set:JavascriptInterface
-  var canUndo = false
-
-  @set:JavascriptInterface
-  var canRedo = false
-
-  @set:JavascriptInterface
-  var isModified = false
-
-  @set:JavascriptInterface
-  var lineNumber: Int = 1
-
-  @set:JavascriptInterface
-  var column: Int = 1
-
-  @JavascriptInterface
-  fun showToast(message: String) {
-
-  }
-
-  @JavascriptInterface
-  fun onTextChanged(content: String) {
-    editor.onContentChange(content)
+/**
+ * Configuration options for auto indentation in the editor
+ */
+@JvmInline
+value class EditorAutoIndentStrategy private constructor(override val value: Int) : Option<Int> {
+  companion object {
+    val None = EditorAutoIndentStrategy(0)
+    val Keep = EditorAutoIndentStrategy(1)
+    val Brackets = EditorAutoIndentStrategy(2)
+    val Advanced = EditorAutoIndentStrategy(3)
+    val Full = EditorAutoIndentStrategy(4)
   }
 }

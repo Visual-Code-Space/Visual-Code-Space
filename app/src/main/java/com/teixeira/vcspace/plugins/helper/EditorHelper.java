@@ -29,7 +29,11 @@ public class EditorHelper {
   }
 
   public CodeEditorView getCurrentEditorView() {
-    return editorActivity.getCurrentEditor();
+    if (editorActivity.getCurrentEditor() instanceof CodeEditorView) {
+      return (CodeEditorView) editorActivity.getCurrentEditor();
+    }
+
+    return null;
   }
 
   public CodeEditorView getEditorViewForFile(File file) {

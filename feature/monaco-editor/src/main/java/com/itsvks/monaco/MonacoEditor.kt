@@ -24,6 +24,10 @@ import android.view.View
 import android.webkit.ConsoleMessage
 import android.webkit.WebChromeClient
 import android.webkit.WebView
+import com.itsvks.monaco.option.AcceptSuggestionOnEnter
+import com.itsvks.monaco.option.MatchBrackets
+import com.itsvks.monaco.option.Option
+import com.itsvks.monaco.option.Position
 import com.itsvks.monaco.option.TextEditorCursorBlinkingStyle
 import com.itsvks.monaco.option.TextEditorCursorStyle
 import com.itsvks.monaco.option.WordBreak
@@ -114,8 +118,16 @@ class MonacoEditor @JvmOverloads constructor(
     }
   }
 
-  private suspend fun setEditorOption(option: String, value: Any) {
+  private suspend fun setEditorOptionInternal(option: String, value: Any) {
     loadJs("setEditorOptions(`$option`, `$value`);")
+  }
+
+  suspend fun <T : Option<Any>> setEditorOption(option: IEditorOption<T>) {
+    setEditorOptionInternal(option.option.name, option.defaultValue.value)
+  }
+
+  suspend fun <T : Option<Any>> setEditorOption(option: EditorOption, value: T) {
+    setEditorOption(IEditorOption(option, value))
   }
 
   suspend fun focusEditor() {
@@ -135,22 +147,28 @@ class MonacoEditor @JvmOverloads constructor(
   fun canRedo() = webInterface.canRedo
   val isContentModified = webInterface.isModified
 
+  fun getPosition() = Position(webInterface.lineNumber, webInterface.column)
+
   suspend fun setLanguage(language: MonacoLanguage) = loadJs("setLanguage(`${language.value}`);")
 
-  suspend fun setFontSize(fontSize: Int) = setEditorOption("fontSize", fontSize)
+  suspend fun setFontSize(fontSize: Int) = setEditorOptionInternal("fontSize", fontSize)
 
   suspend fun setTheme(theme: MonacoTheme) = loadJs("setTheme(`${theme.value}`);")
 
   suspend fun setWordWrap(wordWrap: WordWrap) {
-    setEditorOption("wordWrap", wordWrap.value)
+    setEditorOption(EditorOption.wordWrap, wordWrap)
   }
 
   suspend fun setWrappingStrategy(wrappingStrategy: WrappingStrategy) {
-    setEditorOption("wrappingStrategy", wrappingStrategy.value)
+    setEditorOption(EditorOption.wrappingStrategy, wrappingStrategy)
   }
 
   suspend fun setWordBreak(wordBreak: WordBreak) {
-    setEditorOption("wordBreak", wordBreak.value)
+    setEditorOption(EditorOption.wordBreak, wordBreak)
+  }
+
+  suspend fun setMatchBrackets(matchBrackets: MatchBrackets) {
+    setEditorOption(EditorOption.matchBrackets, matchBrackets)
   }
 
   suspend fun setCursorStyle(cursorStyle: TextEditorCursorStyle) {
@@ -158,21 +176,52 @@ class MonacoEditor @JvmOverloads constructor(
   }
 
   suspend fun setReadOnly(readOnly: Boolean) {
-    setEditorOption("readOnly", readOnly)
+    setEditorOptionInternal("readOnly", readOnly)
   }
 
   suspend fun setMinimapOptions(minimapOptions: MinimapOptions) {
     loadJs("applyMinimapOptions(`${minimapOptions.toJson()}`);")
   }
 
-  suspend fun setGlyphMargin(glyphMargin: Boolean) = setEditorOption("glyphMargin", glyphMargin)
-  suspend fun setFolding(folding: Boolean) = setEditorOption("folding", folding)
-  suspend fun setInDiffEditor(inDiffEditor: Boolean) = setEditorOption("inDiffEditor", inDiffEditor)
-  suspend fun setLetterSpacing(letterSpacing: Number) = setEditorOption("letterSpacing", letterSpacing)
-  suspend fun setLineDecorationsWidth(lineDecorationsWidth: Number) = setEditorOption("lineDecorationsWidth", lineDecorationsWidth)
-  suspend fun setLineNumbersMinChars(lineNumbersMinChars: Number) = setEditorOption("lineNumbersMinChars", lineNumbersMinChars)
+  suspend fun setGlyphMargin(glyphMargin: Boolean) {
+    setEditorOptionInternal("glyphMargin", glyphMargin)
+  }
+
+  suspend fun setFolding(folding: Boolean) = setEditorOptionInternal("folding", folding)
+
+  suspend fun setInDiffEditor(inDiffEditor: Boolean) {
+    setEditorOptionInternal("inDiffEditor", inDiffEditor)
+  }
+
+  suspend fun setLetterSpacing(letterSpacing: Number) {
+    setEditorOptionInternal("letterSpacing", letterSpacing)
+  }
+
+  suspend fun setLineDecorationsWidth(lineDecorationsWidth: Number) {
+    setEditorOptionInternal("lineDecorationsWidth", lineDecorationsWidth)
+  }
+
+  suspend fun setLineNumbersMinChars(lineNumbersMinChars: Number) {
+    setEditorOptionInternal("lineNumbersMinChars", lineNumbersMinChars)
+  }
+
+  suspend fun setAcceptSuggestionOnCommitCharacter(acceptSuggestionOnCommitCharacter: Boolean) {
+    setEditorOptionInternal("acceptSuggestionOnCommitCharacter", acceptSuggestionOnCommitCharacter)
+  }
+
+  suspend fun setAcceptSuggestionOnEnter(acceptSuggestionOnEnter: AcceptSuggestionOnEnter) {
+    setEditorOptionInternal("acceptSuggestionOnEnter", acceptSuggestionOnEnter.value)
+  }
 
   suspend fun setCursorBlinkingStyle(cursorBlinkingStyle: TextEditorCursorBlinkingStyle) {
     loadJs("setCursorBlinkingStyle(${cursorBlinkingStyle.value});")
+  }
+
+  suspend fun insert(text: CharSequence, position: Position) {
+    loadJs("insert(`$text`, ${position.lineNumber}, ${position.column});")
+  }
+
+  suspend fun insert(text: CharSequence, lineNumber: Int, column: Int = 1) {
+    insert(text, Position(lineNumber, column))
   }
 }

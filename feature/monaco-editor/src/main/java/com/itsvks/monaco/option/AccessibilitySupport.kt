@@ -13,36 +13,16 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.itsvks.monaco
+package com.itsvks.monaco.option
 
-import android.webkit.JavascriptInterface
-
-class MonacoWebInterface(private val editor: MonacoEditor) {
-  @set:JavascriptInterface
-  var value = ""
-
-  @set:JavascriptInterface
-  var canUndo = false
-
-  @set:JavascriptInterface
-  var canRedo = false
-
-  @set:JavascriptInterface
-  var isModified = false
-
-  @set:JavascriptInterface
-  var lineNumber: Int = 1
-
-  @set:JavascriptInterface
-  var column: Int = 1
-
-  @JavascriptInterface
-  fun showToast(message: String) {
-
-  }
-
-  @JavascriptInterface
-  fun onTextChanged(content: String) {
-    editor.onContentChange(content)
+@JvmInline
+value class AccessibilitySupport private constructor(val value: Int) {
+  companion object {
+    /**
+     * This should be the browser case where it is not known if a screen reader is attached or no.
+     */
+    val Unknown = AccessibilitySupport(0)
+    val Disabled = AccessibilitySupport(1)
+    val Enabled = AccessibilitySupport(2)
   }
 }

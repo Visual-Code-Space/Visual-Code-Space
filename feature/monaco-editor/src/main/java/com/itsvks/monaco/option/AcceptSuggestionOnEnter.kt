@@ -13,36 +13,13 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.itsvks.monaco
+package com.itsvks.monaco.option
 
-import android.webkit.JavascriptInterface
-
-class MonacoWebInterface(private val editor: MonacoEditor) {
-  @set:JavascriptInterface
-  var value = ""
-
-  @set:JavascriptInterface
-  var canUndo = false
-
-  @set:JavascriptInterface
-  var canRedo = false
-
-  @set:JavascriptInterface
-  var isModified = false
-
-  @set:JavascriptInterface
-  var lineNumber: Int = 1
-
-  @set:JavascriptInterface
-  var column: Int = 1
-
-  @JavascriptInterface
-  fun showToast(message: String) {
-
-  }
-
-  @JavascriptInterface
-  fun onTextChanged(content: String) {
-    editor.onContentChange(content)
+@JvmInline
+value class AcceptSuggestionOnEnter private constructor(override val value: String) : Option<String> {
+  companion object {
+    val On = AcceptSuggestionOnEnter("on")
+    val Off = AcceptSuggestionOnEnter("off")
+    val Smart = AcceptSuggestionOnEnter("smart")
   }
 }

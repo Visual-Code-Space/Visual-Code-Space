@@ -31,6 +31,7 @@ import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Expand
 import androidx.compose.material.icons.filled.FontDownload
 import androidx.compose.material.icons.filled.Keyboard
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Tab
@@ -59,6 +60,7 @@ import com.teixeira.vcspace.core.settings.Settings.Editor.FONT_LIGATURES
 import com.teixeira.vcspace.core.settings.Settings.Editor.FONT_SIZE
 import com.teixeira.vcspace.core.settings.Settings.Editor.INDENT_SIZE
 import com.teixeira.vcspace.core.settings.Settings.Editor.LINE_NUMBER
+import com.teixeira.vcspace.core.settings.Settings.Editor.SHOW_INPUT_METHOD_PICKER_AT_START
 import com.teixeira.vcspace.core.settings.Settings.Editor.STICKY_SCROLL
 import com.teixeira.vcspace.core.settings.Settings.Editor.USE_TAB
 import com.teixeira.vcspace.core.settings.Settings.Editor.WORD_WRAP
@@ -72,6 +74,7 @@ import com.teixeira.vcspace.core.settings.Settings.Editor.rememberFontLigatures
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberFontSize
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberIndentSize
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberLineNumber
+import com.teixeira.vcspace.core.settings.Settings.Editor.rememberShowInputMethodPickerAtStart
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberStickyScroll
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberUseTab
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberWordWrap
@@ -94,6 +97,8 @@ fun EditorSettingsScreen(
   val uriHandler = LocalUriHandler.current
 
   val currentEditor = rememberCurrentEditor()
+  val showInputMethodPickerAtStart = rememberShowInputMethodPickerAtStart()
+
   val fontSize = rememberFontSize()
   val indentSize = rememberIndentSize()
   val fontFamily = rememberFontFamily()
@@ -163,6 +168,18 @@ fun EditorSettingsScreen(
         }
       },
       icon = { Icon(Icons.Default.Keyboard, contentDescription = null) },
+      modifier = Modifier
+        .clip(PreferenceShape.Middle)
+        .background(backgroundColor)
+    )
+
+    switchPreference(
+      key = SHOW_INPUT_METHOD_PICKER_AT_START.name,
+      title = { Text(text = "Show Input Method Picker at Start") },
+      summary = { Text(text = "Show the input method picker at start.") },
+      rememberState = { showInputMethodPickerAtStart },
+      defaultValue = showInputMethodPickerAtStart.value,
+      icon = { Icon(Icons.Default.Language, contentDescription = null) },
       modifier = Modifier
         .clip(PreferenceShape.Bottom)
         .background(backgroundColor)

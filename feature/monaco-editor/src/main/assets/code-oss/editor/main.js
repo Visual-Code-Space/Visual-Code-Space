@@ -31,11 +31,12 @@ require(["vs/editor/editor.main"], function () {
     window.MonacoAndroid.setCanRedo(editor.getModel().canRedo());
 
     editor.onDidChangeModelContent(() => {
-        if (window.MonacoAndroid && window.MonacoAndroid.onTextChanged) {
+        if (window.MonacoAndroid) {
             const content = editor.getValue();
             const model = editor.getModel();
             const isModified = model.getAlternativeVersionId() !== model.getVersionId();
 
+            window.updateCursorInfo();
             window.MonacoAndroid.setModified(isModified);
             window.MonacoAndroid.setValue(content);
             window.MonacoAndroid.setCanUndo(editor.getModel().canUndo());
@@ -43,6 +44,12 @@ require(["vs/editor/editor.main"], function () {
             window.MonacoAndroid.onTextChanged(content);
         }
     });
+
+    window.updateCursorInfo = function () {
+        const position = editor.getPosition();
+        window.MonacoAndroid.setLineNumber(position.lineNumber);
+        window.MonacoAndroid.setColumn(position.column);
+    };
 });
 
 function setText(content) {
@@ -148,3 +155,13 @@ function redo() {
     }
 }
 
+function insert(text, line, column) {
+    const position = { lineNumber: line, column: column };
+    editor.executeEdits(null, [
+        {
+            range: new monaco.Range(position.lineNumber, position.column, position.lineNumber, position.column),
+            text: text,
+            forceMoveMarkers: true
+        }
+    ]);
+}
