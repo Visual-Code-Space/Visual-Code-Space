@@ -117,6 +117,7 @@ object Settings {
     val COLOR_SCHEME = stringPreferencesKey("color_scheme")
     val STICKY_SCROLL = booleanPreferencesKey("sticky_scroll")
     val FONT_LIGATURES = booleanPreferencesKey("font_ligatures")
+    val SYMBOLS = stringPreferencesKey("symbols")
     val WORD_WRAP = booleanPreferencesKey("word_wrap")
     val LINE_NUMBER = booleanPreferencesKey("line_number")
     val USE_TAB = booleanPreferencesKey("use_tab")
@@ -147,6 +148,9 @@ object Settings {
 
     @Composable
     fun rememberFontLigatures() = rememberPreference(key = FONT_LIGATURES, defaultValue = false)
+
+    @Composable
+    fun rememberSymbols() = rememberPreference(key = SYMBOLS, defaultValue = "!@#$%^&*()_+{}:\"<>?;=-[]\\/.,")
 
     @Composable
     fun rememberWordWrap() = rememberPreference(key = WORD_WRAP, defaultValue = false)

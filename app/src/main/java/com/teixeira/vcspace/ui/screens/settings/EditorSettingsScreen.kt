@@ -28,6 +28,7 @@ import androidx.compose.material.icons.automirrored.filled.FormatIndentIncrease
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.automirrored.filled.WrapText
 import androidx.compose.material.icons.filled.Code
+import androidx.compose.material.icons.filled.DataArray
 import androidx.compose.material.icons.filled.Expand
 import androidx.compose.material.icons.filled.FontDownload
 import androidx.compose.material.icons.filled.Keyboard
@@ -62,6 +63,7 @@ import com.teixeira.vcspace.core.settings.Settings.Editor.INDENT_SIZE
 import com.teixeira.vcspace.core.settings.Settings.Editor.LINE_NUMBER
 import com.teixeira.vcspace.core.settings.Settings.Editor.SHOW_INPUT_METHOD_PICKER_AT_START
 import com.teixeira.vcspace.core.settings.Settings.Editor.STICKY_SCROLL
+import com.teixeira.vcspace.core.settings.Settings.Editor.SYMBOLS
 import com.teixeira.vcspace.core.settings.Settings.Editor.USE_TAB
 import com.teixeira.vcspace.core.settings.Settings.Editor.WORD_WRAP
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberColorScheme
@@ -76,6 +78,7 @@ import com.teixeira.vcspace.core.settings.Settings.Editor.rememberIndentSize
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberLineNumber
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberShowInputMethodPickerAtStart
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberStickyScroll
+import com.teixeira.vcspace.core.settings.Settings.Editor.rememberSymbols
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberUseTab
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberWordWrap
 import com.teixeira.vcspace.core.settings.Settings.EditorTabs.AUTO_SAVE
@@ -104,6 +107,7 @@ fun EditorSettingsScreen(
   val fontFamily = rememberFontFamily()
   val colorScheme = rememberColorScheme()
   val fontLigatures = rememberFontLigatures()
+  val symbols = rememberSymbols()
   val stickyScroll = rememberStickyScroll()
   val wordWrap = rememberWordWrap()
   val lineNumber = rememberLineNumber()
@@ -265,6 +269,24 @@ fun EditorSettingsScreen(
       rememberState = { fontLigatures },
       defaultValue = fontLigatures.value,
       icon = { Icon(imageVector = Icons.Default.FontDownload, contentDescription = null) },
+      modifier = Modifier
+        .clip(PreferenceShape.Middle)
+        .background(backgroundColor)
+    )
+
+    textFieldPreference(
+      key = SYMBOLS.name,
+      title = { Text(text = "Symbols") },
+      summary = { Text(text = it) },
+      rememberState = { symbols },
+      defaultValue = symbols.value,
+      textToValue = { it },
+      icon = {
+        Icon(
+          imageVector = Icons.Default.DataArray,
+          contentDescription = null
+        )
+      },
       modifier = Modifier
         .clip(PreferenceShape.Middle)
         .background(backgroundColor)

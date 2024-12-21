@@ -22,7 +22,6 @@ import android.webkit.WebView
 import androidx.webkit.WebViewAssetLoader
 import androidx.webkit.WebViewAssetLoader.AssetsPathHandler
 import androidx.webkit.WebViewClientCompat
-import kotlinx.coroutines.launch
 
 class MonacoEditorClient(private val editor: MonacoEditor) : WebViewClientCompat() {
   private val assetLoader = WebViewAssetLoader.Builder()
@@ -44,9 +43,7 @@ class MonacoEditorClient(private val editor: MonacoEditor) : WebViewClientCompat
     super.onPageFinished(view, url)
     view.requestFocus(View.FOCUS_DOWN)
     editor.apply {
-      editorScope.launch {
-        onEditorLoadCallbacks.forEach { callback -> callback(this@apply) }
-      }
+      onEditorLoadCallbacks.forEach { callback -> callback(this@apply) }
     }
   }
 }

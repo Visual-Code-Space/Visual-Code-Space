@@ -58,7 +58,7 @@ class WebActivity : BaseComposeActivity() {
         update = { editor ->
           editor.apply {
             addOnEditorLoadCallback {
-              setText("function example() {\n\tconsole.log('Hello, World!');\n}")
+              text = "function example() {\n\tconsole.log('Hello, World!');\n}"
               setLanguage(MonacoLanguage.Javascript)
               setFontSize(14)
               setTheme(MonacoTheme.VisualStudioDark)
@@ -67,7 +67,7 @@ class WebActivity : BaseComposeActivity() {
               setMinimapOptions(MinimapOptions(enabled = false))
               setCursorStyle(TextEditorCursorStyle.Line)
               setCursorBlinkingStyle(TextEditorCursorBlinkingStyle.Phase)
-              ToastUtils.showShort(it.getText())
+              ToastUtils.showShort(it.text)
             }
           }
         }

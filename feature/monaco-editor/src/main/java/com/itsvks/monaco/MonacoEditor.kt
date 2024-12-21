@@ -24,6 +24,7 @@ import android.view.View
 import android.webkit.ConsoleMessage
 import android.webkit.WebChromeClient
 import android.webkit.WebView
+import com.blankj.utilcode.util.ToastUtils
 import com.itsvks.monaco.option.AcceptSuggestionOnEnter
 import com.itsvks.monaco.option.MatchBrackets
 import com.itsvks.monaco.option.Option
@@ -62,7 +63,7 @@ class MonacoEditor @JvmOverloads constructor(
   private val client = MonacoEditorClient(this)
   private val webInterface = MonacoWebInterface(this)
 
-  var onEditorLoadCallbacks = mutableListOf<suspend CoroutineScope.(MonacoEditor) -> Unit>()
+  var onEditorLoadCallbacks = mutableListOf<(MonacoEditor) -> Unit>()
   var onContentChange: (String) -> Unit = {}
 
   val editorScope = CoroutineScope(Dispatchers.Unconfined)
@@ -78,7 +79,12 @@ class MonacoEditor @JvmOverloads constructor(
           ConsoleMessage.MessageLevel.DEBUG -> Log.d(TAG, consoleMessage.message())
           ConsoleMessage.MessageLevel.TIP -> Log.i(TAG, consoleMessage.message())
           ConsoleMessage.MessageLevel.WARNING -> Log.w(TAG, consoleMessage.message())
-          ConsoleMessage.MessageLevel.ERROR -> Log.e(TAG, consoleMessage.message())
+
+          ConsoleMessage.MessageLevel.ERROR -> {
+            Log.e(TAG, consoleMessage.message())
+            // ToastUtils.showShort(consoleMessage.message())
+            // insert(consoleMessage.message(), position)
+          }
         }
         return super.onConsoleMessage(consoleMessage)
       }
@@ -108,120 +114,142 @@ class MonacoEditor @JvmOverloads constructor(
     }
   }
 
-  fun addOnEditorLoadCallback(callback: suspend CoroutineScope.(MonacoEditor) -> Unit) {
+  fun addOnEditorLoadCallback(callback: (MonacoEditor) -> Unit) {
     onEditorLoadCallbacks.add(callback)
   }
 
-  private suspend fun loadJs(script: String, resultCallback: (String) -> Unit = {}) {
-    withContext(Dispatchers.Unconfined) {
-      evaluateJavascript(script, resultCallback)
+  private fun loadJs(script: String, resultCallback: (String) -> Unit = {}) {
+    editorScope.launch {
+      withContext(Dispatchers.Unconfined) {
+        evaluateJavascript(script, resultCallback)
+      }
     }
   }
 
-  private suspend fun setEditorOptionInternal(option: String, value: Any) {
+  private fun setEditorOptionInternal(option: String, value: Any) {
     loadJs("setEditorOptions(`$option`, `$value`);")
   }
 
-  suspend fun <T : Option<Any>> setEditorOption(option: IEditorOption<T>) {
+  fun <T : Option<Any>> setEditorOption(option: IEditorOption<T>) {
     setEditorOptionInternal(option.option.name, option.defaultValue.value)
   }
 
-  suspend fun <T : Option<Any>> setEditorOption(option: EditorOption, value: T) {
+  fun <T : Option<Any>> setEditorOption(option: EditorOption, value: T) {
     setEditorOption(IEditorOption(option, value))
   }
 
-  suspend fun focusEditor() {
+  fun setEditorOption(option: EditorOption, value: String) {
+    setEditorOptionInternal(option.name, value)
+  }
+
+  fun setEditorOption(option: EditorOption, value: Number) {
+    setEditorOptionInternal(option.name, value)
+  }
+
+  fun setEditorOption(option: EditorOption, value: Boolean) {
+    setEditorOptionInternal(option.name, value)
+  }
+
+  fun focusEditor() {
     loadJs("focusEditor();")
   }
 
   fun undo() = editorScope.launch { loadJs("undo();") }
   fun redo() = editorScope.launch { loadJs("redo();") }
 
-  suspend fun setText(text: CharSequence) {
-    webInterface.value = text.toString()
-    loadJs("setText(`$text`);")
-  }
-
-  fun getText() = webInterface.value
-  fun canUndo() = webInterface.canUndo
-  fun canRedo() = webInterface.canRedo
+  var text
+    get() = webInterface.value
+    set(text) {
+      webInterface.value = text
+      loadJs("setText(`$text`);")
+    }
+  val canUndo get() = webInterface.canUndo
+  val canRedo get() = webInterface.canRedo
   val isContentModified = webInterface.isModified
 
-  fun getPosition() = Position(webInterface.lineNumber, webInterface.column)
+  val position get() = Position(webInterface.lineNumber, webInterface.column)
 
-  suspend fun setLanguage(language: MonacoLanguage) = loadJs("setLanguage(`${language.value}`);")
+  fun setLanguage(language: MonacoLanguage) = loadJs("setLanguage(`${language.value}`);")
 
-  suspend fun setFontSize(fontSize: Int) = setEditorOptionInternal("fontSize", fontSize)
+  fun setFontSize(fontSize: Int) = setEditorOptionInternal("fontSize", fontSize)
 
-  suspend fun setTheme(theme: MonacoTheme) = loadJs("setTheme(`${theme.value}`);")
+  fun setTheme(theme: MonacoTheme) = loadJs("setTheme(`${theme.value}`);")
 
-  suspend fun setWordWrap(wordWrap: WordWrap) {
+  fun setWordWrap(wordWrap: WordWrap) {
     setEditorOption(EditorOption.wordWrap, wordWrap)
   }
 
-  suspend fun setWrappingStrategy(wrappingStrategy: WrappingStrategy) {
+  fun setWrappingStrategy(wrappingStrategy: WrappingStrategy) {
     setEditorOption(EditorOption.wrappingStrategy, wrappingStrategy)
   }
 
-  suspend fun setWordBreak(wordBreak: WordBreak) {
+  fun setWordBreak(wordBreak: WordBreak) {
     setEditorOption(EditorOption.wordBreak, wordBreak)
   }
 
-  suspend fun setMatchBrackets(matchBrackets: MatchBrackets) {
+  fun setMatchBrackets(matchBrackets: MatchBrackets) {
     setEditorOption(EditorOption.matchBrackets, matchBrackets)
   }
 
-  suspend fun setCursorStyle(cursorStyle: TextEditorCursorStyle) {
+  fun setCursorStyle(cursorStyle: TextEditorCursorStyle) {
     loadJs("setCursorStyle(${cursorStyle.value});")
   }
 
-  suspend fun setReadOnly(readOnly: Boolean) {
+  fun setReadOnly(readOnly: Boolean) {
     setEditorOptionInternal("readOnly", readOnly)
   }
 
-  suspend fun setMinimapOptions(minimapOptions: MinimapOptions) {
+  fun setMinimapOptions(minimapOptions: MinimapOptions) {
     loadJs("applyMinimapOptions(`${minimapOptions.toJson()}`);")
   }
 
-  suspend fun setGlyphMargin(glyphMargin: Boolean) {
+  fun setGlyphMargin(glyphMargin: Boolean) {
     setEditorOptionInternal("glyphMargin", glyphMargin)
   }
 
-  suspend fun setFolding(folding: Boolean) = setEditorOptionInternal("folding", folding)
+  fun setFolding(folding: Boolean) = setEditorOptionInternal("folding", folding)
 
-  suspend fun setInDiffEditor(inDiffEditor: Boolean) {
+  fun setInDiffEditor(inDiffEditor: Boolean) {
     setEditorOptionInternal("inDiffEditor", inDiffEditor)
   }
 
-  suspend fun setLetterSpacing(letterSpacing: Number) {
+  fun setLetterSpacing(letterSpacing: Number) {
     setEditorOptionInternal("letterSpacing", letterSpacing)
   }
 
-  suspend fun setLineDecorationsWidth(lineDecorationsWidth: Number) {
+  fun setLineDecorationsWidth(lineDecorationsWidth: Number) {
     setEditorOptionInternal("lineDecorationsWidth", lineDecorationsWidth)
   }
 
-  suspend fun setLineNumbersMinChars(lineNumbersMinChars: Number) {
+  fun setLineNumbersMinChars(lineNumbersMinChars: Number) {
     setEditorOptionInternal("lineNumbersMinChars", lineNumbersMinChars)
   }
 
-  suspend fun setAcceptSuggestionOnCommitCharacter(acceptSuggestionOnCommitCharacter: Boolean) {
+  fun setAcceptSuggestionOnCommitCharacter(acceptSuggestionOnCommitCharacter: Boolean) {
     setEditorOptionInternal("acceptSuggestionOnCommitCharacter", acceptSuggestionOnCommitCharacter)
   }
 
-  suspend fun setAcceptSuggestionOnEnter(acceptSuggestionOnEnter: AcceptSuggestionOnEnter) {
+  fun setAcceptSuggestionOnEnter(acceptSuggestionOnEnter: AcceptSuggestionOnEnter) {
     setEditorOptionInternal("acceptSuggestionOnEnter", acceptSuggestionOnEnter.value)
   }
 
-  suspend fun setCursorBlinkingStyle(cursorBlinkingStyle: TextEditorCursorBlinkingStyle) {
+  fun setCursorBlinkingStyle(cursorBlinkingStyle: TextEditorCursorBlinkingStyle) {
     loadJs("setCursorBlinkingStyle(${cursorBlinkingStyle.value});")
   }
 
-  suspend fun insert(text: CharSequence, position: Position) {
+  fun insert(text: CharSequence, position: Position) {
     loadJs("insert(`$text`, ${position.lineNumber}, ${position.column});")
   }
 
-  suspend fun insert(text: CharSequence, lineNumber: Int, column: Int = 1) {
+  fun insert(text: CharSequence, lineNumber: Int, column: Int = 1) {
     insert(text, Position(lineNumber, column))
+  }
+
+  fun dispatchKey(key: String) {
+    if (key == "\\") {
+      loadJs("simulateKeyPress(`\\\\`);")
+      return
+    }
+    loadJs("simulateKeyPress(`$key`);")
   }
 }

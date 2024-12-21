@@ -174,14 +174,14 @@ fun EditorTopBar(
     }
 
     selectedMonacoEditor?.let { editor ->
-      canUndo = editor.canUndo()
-      canRedo = editor.canRedo()
+      canUndo = editor.canUndo
+      canRedo = editor.canRedo
 
       editor.onContentChange = {
         EventBus.getDefault().post(OnContentChangeEvent(selectedFile.file))
         editorViewModel.setModified(selectedFile.file, true)
-        canUndo = editor.canUndo()
-        canRedo = editor.canRedo()
+        canUndo = editor.canUndo
+        canRedo = editor.canRedo
 
         if (autoSave) {
           scope.launch {

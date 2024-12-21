@@ -17,17 +17,18 @@ package com.teixeira.vcspace.ui.screens.editor
 
 import android.view.ViewGroup
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.ErrorOutline
-import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -51,7 +52,6 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -64,7 +64,6 @@ import com.itsvks.monaco.option.TextEditorCursorStyle
 import com.itsvks.monaco.option.minimap.MinimapOptions
 import com.itsvks.monaco.util.MonacoLanguageMapper
 import com.teixeira.vcspace.activities.Editor.LocalCommandPaletteManager
-import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
 import com.teixeira.vcspace.core.ai.Gemini
 import com.teixeira.vcspace.core.components.editor.FileTabLayout
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberColorScheme
@@ -98,6 +97,7 @@ import com.teixeira.vcspace.ui.LocalToastHostState
 import com.teixeira.vcspace.ui.components.keyboard.CommandPalette
 import com.teixeira.vcspace.ui.screens.editor.ai.CodeExplanationSheet
 import com.teixeira.vcspace.ui.screens.editor.ai.ImportComponentsSheet
+import com.teixeira.vcspace.ui.screens.editor.components.Symbols
 import com.teixeira.vcspace.ui.screens.editor.components.view.CodeEditorView
 import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
 import com.teixeira.vcspace.utils.launchWithProgressDialog
@@ -192,80 +192,17 @@ fun EditorScreen(
 
       key(editorConfigMap[fileEntry.file.path]) {
         if (editorView is CodeEditorView) {
-          ConfigureEditor(
-            editorView.editor, onExplainCodeListener = { code ->
-              scope.launchWithProgressDialog(
-                context = Dispatchers.IO,
-                uiContext = context,
-                configureBuilder = { builder ->
-                  builder.apply {
-                    setMessage("Analyzing Code")
-                    setCancelable(false)
-                  }
-                }
-              ) { _, _ ->
-                Gemini.explainCode(code.toString())
-                  .onSuccess { codeExplanationResponse = it }
-                  .onFailure {
-                    scope.launch {
-                      toastHostState.showToast(
-                        message = it.message ?: "Error",
-                        icon = Icons.Sharp.ErrorOutline
-                      )
-                    }
-                  }
-              }
-            },
-            onImportComponentListener = { code ->
-              scope.launchWithProgressDialog(
-                context = Dispatchers.IO,
-                uiContext = context,
-                configureBuilder = { builder ->
-                  builder.apply {
-                    setMessage("Analyzing Code")
-                    setCancelable(false)
-                  }
-                }
-              ) { _, _ ->
-                Gemini.importComponents(code.toString())
-                  .onSuccess { importComponentResponse = it }
-                  .onFailure {
-                    scope.launch {
-                      toastHostState.showToast(
-                        message = it.message ?: "Error",
-                        icon = Icons.Sharp.ErrorOutline
-                      )
-                    }
-                  }
-              }
-            }
+          SoraEditor(
+            editorView = editorView,
+            onExplainCodeResponse = { codeExplanationResponse = it },
+            onImportComponentResponse = { importComponentResponse = it }
           )
         } else if (editorView is MonacoEditor) {
           val file = fileEntry.file
 
           LaunchedEffect(editorView) {
             showMonacoEditor[file.absolutePath] = true
-
-            editorView.addOnEditorLoadCallback {
-              editorView.setText("Loading...")
-              editorView.setLanguage(MonacoLanguage.Plaintext)
-
-              editorView.apply {
-                if (file.exists()) {
-                  setLanguage(MonacoLanguageMapper.getLanguageByExtension(file.extension))
-                  setText(file.readText())
-                } else {
-                  //delay(1000)
-                  setText("")
-                }
-                setCursorStyle(TextEditorCursorStyle.Line)
-                setCursorBlinkingStyle(TextEditorCursorBlinkingStyle.Phase)
-                setMinimapOptions(MinimapOptions(enabled = false))
-                setFontSize(14)
-                setLineDecorationsWidth(1)
-                setLineNumbersMinChars(1)
-              }
-            }
+            configureMonacoEditor(editorView, file)
           }
         }
         viewModel.setEditorConfiguredForFile(fileEntry.file)
@@ -293,7 +230,9 @@ fun EditorScreen(
                   )
                 }
               },
-              modifier = Modifier.fillMaxSize()
+              modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(fraction = 0.92f)
             )
           }
 
@@ -317,16 +256,18 @@ fun EditorScreen(
                 )
               }
             },
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+              .fillMaxWidth()
+              .fillMaxHeight(fraction = 0.92f)
           )
         }
+
+        Symbols(editorView, modifier = Modifier.fillMaxWidth())
       }
     } ?: run {
       val tempFile = File(context.cacheDir, "untitled.txt")
       tempFile.deleteOnExit()
       viewModel.addFile(tempFile)
-
-      // NoOpenedFiles()
     }
 
     if (commandPaletteManager.showCommandPalette.value) {
@@ -344,29 +285,88 @@ fun EditorScreen(
   }
 }
 
-@Composable
-fun NoOpenedFiles() {
-  val drawerState = LocalEditorDrawerState.current
-  val scope = rememberCoroutineScope()
+private fun configureMonacoEditor(editorView: MonacoEditor, file: File) {
+  editorView.addOnEditorLoadCallback {
+    editorView.text = "Loading..."
+    editorView.setReadOnly(true)
+    editorView.setLanguage(MonacoLanguage.Plaintext)
 
-  Column(
-    modifier = Modifier.fillMaxSize(),
-    horizontalAlignment = Alignment.CenterHorizontally,
-    verticalArrangement = Arrangement.Center
-  ) {
-    Text(
-      text = "No opened files",
-      style = MaterialTheme.typography.titleLarge
-    )
-
-    Spacer(modifier = Modifier.height(5.dp))
-
-    ElevatedButton(onClick = {
-      scope.launch { drawerState.open() }
-    }) {
-      Text("Open files")
+    editorView.apply {
+      if (file.exists()) {
+        setLanguage(MonacoLanguageMapper.getLanguageByExtension(file.extension))
+        setReadOnly(false)
+        text = file.readText()
+      } else {
+        text = ""
+      }
+      setCursorStyle(TextEditorCursorStyle.Line)
+      setCursorBlinkingStyle(TextEditorCursorBlinkingStyle.Phase)
+      setMinimapOptions(MinimapOptions(enabled = false))
+      setFontSize(14)
+      setLineDecorationsWidth(1)
+      setLineNumbersMinChars(1)
     }
   }
+}
+
+@Composable
+fun SoraEditor(
+  editorView: CodeEditorView,
+  onExplainCodeResponse: (GenerateContentResponse) -> Unit = {},
+  onImportComponentResponse: (GenerateContentResponse) -> Unit = {}
+) {
+  val context = LocalContext.current
+  val toastHostState = LocalToastHostState.current
+  val scope = rememberCoroutineScope()
+
+  ConfigureEditor(
+    editorView.editor, onExplainCodeListener = { code ->
+      scope.launchWithProgressDialog(
+        context = Dispatchers.IO,
+        uiContext = context,
+        configureBuilder = { builder ->
+          builder.apply {
+            setMessage("Analyzing Code")
+            setCancelable(false)
+          }
+        }
+      ) { _, _ ->
+        Gemini.explainCode(code.toString())
+          .onSuccess(onExplainCodeResponse)
+          .onFailure {
+            scope.launch {
+              toastHostState.showToast(
+                message = it.message ?: "Error",
+                icon = Icons.Sharp.ErrorOutline
+              )
+            }
+          }
+      }
+    },
+    onImportComponentListener = { code ->
+      scope.launchWithProgressDialog(
+        context = Dispatchers.IO,
+        uiContext = context,
+        configureBuilder = { builder ->
+          builder.apply {
+            setMessage("Analyzing Code")
+            setCancelable(false)
+          }
+        }
+      ) { _, _ ->
+        Gemini.importComponents(code.toString())
+          .onSuccess(onImportComponentResponse)
+          .onFailure {
+            scope.launch {
+              toastHostState.showToast(
+                message = it.message ?: "Error",
+                icon = Icons.Sharp.ErrorOutline
+              )
+            }
+          }
+      }
+    }
+  )
 }
 
 @Composable

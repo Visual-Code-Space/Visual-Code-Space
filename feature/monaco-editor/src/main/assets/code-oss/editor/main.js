@@ -165,3 +165,7 @@ function insert(text, line, column) {
         }
     ]);
 }
+
+function simulateKeyPress(key, options = {}) {
+    editor.trigger('keyboard', 'type', {text: key})
+}

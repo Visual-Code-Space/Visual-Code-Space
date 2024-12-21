@@ -141,7 +141,7 @@ class EditorViewModel : ViewModel() {
       editor.file?.let { setModified(it, false) }
     } else if (editor is MonacoEditor) {
       uiState.value.selectedFile?.file?.let {
-        it.writeText(editor.getText())
+        it.writeText(editor.text)
         setModified(it, false)
       }
     }

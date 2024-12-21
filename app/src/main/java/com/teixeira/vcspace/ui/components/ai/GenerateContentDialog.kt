@@ -35,7 +35,6 @@ import com.google.ai.client.generativeai.type.asTextOrNull
 import com.itsvks.monaco.MonacoEditor
 import com.teixeira.vcspace.app.strings
 import com.teixeira.vcspace.core.ai.Gemini
-import com.teixeira.vcspace.editor.VCSpaceEditor
 import com.teixeira.vcspace.ui.screens.editor.components.view.CodeEditorView
 import com.teixeira.vcspace.utils.launchWithProgressDialog
 import kotlinx.coroutines.Dispatchers
@@ -44,8 +43,8 @@ import kotlinx.coroutines.withContext
 @Composable
 fun GenerateContentDialog(
   editor: View,
+  modifier: Modifier = Modifier,
   fileExtension: String? = null,
-  modifier: Modifier = Modifier
 ) {
   val scope = rememberCoroutineScope()
   val context = LocalContext.current
@@ -86,13 +85,13 @@ fun GenerateContentDialog(
             ) { _, _ ->
               Gemini.generateCode(
                 prompt = prompt,
-               fileExtension = fileExtension
+                fileExtension = fileExtension
               ).onSuccess { response ->
                 val text = response.candidates.first().content.parts.first().asTextOrNull()
 
                 withContext(Dispatchers.Main) {
                   if (editor is MonacoEditor) {
-                    val position = editor.getPosition()
+                    val position = editor.position
                     editor.insert(
                       text = Gemini.removeBackticksFromMarkdownCodeBlock(text),
                       position = position
