@@ -17,16 +17,12 @@ package com.teixeira.vcspace.ui.screens.editor
 
 import android.view.ViewGroup
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.ErrorOutline
 import androidx.compose.material3.Text
@@ -59,8 +55,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.ai.client.generativeai.type.GenerateContentResponse
 import com.itsvks.monaco.MonacoEditor
 import com.itsvks.monaco.MonacoLanguage
+import com.itsvks.monaco.MonacoTheme
+import com.itsvks.monaco.option.AcceptSuggestionOnEnter
+import com.itsvks.monaco.option.MatchBrackets
 import com.itsvks.monaco.option.TextEditorCursorBlinkingStyle
 import com.itsvks.monaco.option.TextEditorCursorStyle
+import com.itsvks.monaco.option.WordBreak
+import com.itsvks.monaco.option.WordWrap
+import com.itsvks.monaco.option.WrappingStrategy
 import com.itsvks.monaco.option.minimap.MinimapOptions
 import com.itsvks.monaco.util.MonacoLanguageMapper
 import com.teixeira.vcspace.activities.Editor.LocalCommandPaletteManager
@@ -82,6 +84,20 @@ import com.teixeira.vcspace.core.settings.Settings.Editor.rememberWordWrap
 import com.teixeira.vcspace.core.settings.Settings.File.rememberLastOpenedFile
 import com.teixeira.vcspace.core.settings.Settings.General.rememberFollowSystemTheme
 import com.teixeira.vcspace.core.settings.Settings.General.rememberIsDarkMode
+import com.teixeira.vcspace.core.settings.Settings.Monaco
+import com.teixeira.vcspace.core.settings.Settings.Monaco.rememberAcceptSuggestionOnCommitCharacter
+import com.teixeira.vcspace.core.settings.Settings.Monaco.rememberAcceptSuggestionOnEnter
+import com.teixeira.vcspace.core.settings.Settings.Monaco.rememberCursorBlinkingStyle
+import com.teixeira.vcspace.core.settings.Settings.Monaco.rememberCursorStyle
+import com.teixeira.vcspace.core.settings.Settings.Monaco.rememberFolding
+import com.teixeira.vcspace.core.settings.Settings.Monaco.rememberGlyphMargin
+import com.teixeira.vcspace.core.settings.Settings.Monaco.rememberLetterSpacing
+import com.teixeira.vcspace.core.settings.Settings.Monaco.rememberLineDecorationsWidth
+import com.teixeira.vcspace.core.settings.Settings.Monaco.rememberLineNumbersMinChars
+import com.teixeira.vcspace.core.settings.Settings.Monaco.rememberMatchBrackets
+import com.teixeira.vcspace.core.settings.Settings.Monaco.rememberMonacoTheme
+import com.teixeira.vcspace.core.settings.Settings.Monaco.rememberWordBreak
+import com.teixeira.vcspace.core.settings.Settings.Monaco.rememberWrappingStrategy
 import com.teixeira.vcspace.editor.TextActionsWindow
 import com.teixeira.vcspace.editor.VCSpaceEditor
 import com.teixeira.vcspace.editor.addBlockComment
@@ -202,7 +218,10 @@ fun EditorScreen(
 
           LaunchedEffect(editorView) {
             showMonacoEditor[file.absolutePath] = true
-            configureMonacoEditor(editorView, file)
+          }
+
+          key(editorView) {
+            ConfigureMonacoEditor(editorView, file)
           }
         }
         viewModel.setEditorConfiguredForFile(fileEntry.file)
@@ -285,7 +304,24 @@ fun EditorScreen(
   }
 }
 
-private fun configureMonacoEditor(editorView: MonacoEditor, file: File) {
+@Composable
+private fun ConfigureMonacoEditor(editorView: MonacoEditor, file: File) {
+  val theme by rememberMonacoTheme()
+  val fontSize by Monaco.rememberFontSize()
+  val lineNumbersMinChars by rememberLineNumbersMinChars()
+  val lineDecorationsWidth by rememberLineDecorationsWidth()
+  val letterSpacing by rememberLetterSpacing()
+  val matchBrackets by rememberMatchBrackets()
+  val acceptSuggestionOnCommitCharacter by rememberAcceptSuggestionOnCommitCharacter()
+  val acceptSuggestionOnEnter by rememberAcceptSuggestionOnEnter()
+  val folding by rememberFolding()
+  val glyphMargin by rememberGlyphMargin()
+  val wordWrap by Monaco.rememberWordWrap()
+  val wordBreak by rememberWordBreak()
+  val wrappingStrategy by rememberWrappingStrategy()
+  val cursorStyle by rememberCursorStyle()
+  val cursorBlinkingStyle by rememberCursorBlinkingStyle()
+
   editorView.addOnEditorLoadCallback {
     editorView.text = "Loading..."
     editorView.setReadOnly(true)
@@ -299,12 +335,22 @@ private fun configureMonacoEditor(editorView: MonacoEditor, file: File) {
       } else {
         text = ""
       }
-      setCursorStyle(TextEditorCursorStyle.Line)
-      setCursorBlinkingStyle(TextEditorCursorBlinkingStyle.Phase)
+      setTheme(MonacoTheme.of(theme))
+      setFontSize(fontSize)
+      setLineNumbersMinChars(lineNumbersMinChars)
+      setLineDecorationsWidth(lineDecorationsWidth)
+      setLetterSpacing(letterSpacing)
+      setMatchBrackets(MatchBrackets.fromValue(matchBrackets))
+      setAcceptSuggestionOnCommitCharacter(acceptSuggestionOnCommitCharacter)
+      setAcceptSuggestionOnEnter(AcceptSuggestionOnEnter.fromValue(acceptSuggestionOnEnter))
+      setFolding(folding)
+      setGlyphMargin(glyphMargin)
+      setWordWrap(WordWrap.fromValue(wordWrap))
+      setWordBreak(WordBreak.fromValue(wordBreak))
+      setWrappingStrategy(WrappingStrategy.fromValue(wrappingStrategy))
+      setCursorStyle(TextEditorCursorStyle.fromValue(cursorStyle))
+      setCursorBlinkingStyle(TextEditorCursorBlinkingStyle.fromValue(cursorBlinkingStyle))
       setMinimapOptions(MinimapOptions(enabled = false))
-      setFontSize(14)
-      setLineDecorationsWidth(1)
-      setLineNumbersMinChars(1)
     }
   }
 }

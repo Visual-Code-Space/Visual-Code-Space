@@ -18,6 +18,14 @@ package com.itsvks.monaco.option
 @JvmInline
 value class WordWrap private constructor(override val value: String) : Option<String> {
   companion object {
+    fun fromValue(value: String) = when (value) {
+      "on" -> On
+      "off" -> Off
+      "wordWrapColumn" -> WordWrapColumn
+      "bounded" -> Bounded
+      else -> throw IllegalArgumentException("Unknown value: $value")
+    }
+
     val On = WordWrap("on")
     val Off = WordWrap("off")
     val WordWrapColumn = WordWrap("wordWrapColumn")
@@ -28,6 +36,12 @@ value class WordWrap private constructor(override val value: String) : Option<St
 @JvmInline
 value class WrappingStrategy private constructor(override val value: String) : Option<String> {
   companion object {
+    fun fromValue(value: String) = when (value) {
+      "simple" -> Simple
+      "advanced" -> Advanced
+      else -> throw IllegalArgumentException("Unknown value: $value")
+    }
+
     val Simple = WrappingStrategy("simple")
     val Advanced = WrappingStrategy("advanced")
   }
@@ -36,6 +50,12 @@ value class WrappingStrategy private constructor(override val value: String) : O
 @JvmInline
 value class WordBreak private constructor(override val value: String) : Option<String> {
   companion object {
+    fun fromValue(value: String) = when (value) {
+      "normal" -> Normal
+      "keepAll" -> KeepAll
+      else -> throw IllegalArgumentException("Unknown value: $value")
+    }
+
     val Normal = WordBreak("normal")
     val KeepAll = WordBreak("keepAll")
   }

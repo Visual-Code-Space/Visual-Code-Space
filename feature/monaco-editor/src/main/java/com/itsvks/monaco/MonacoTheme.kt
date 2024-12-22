@@ -17,7 +17,19 @@ package com.itsvks.monaco
 
 @JvmInline
 value class MonacoTheme private constructor(val value: String) {
+  override fun toString(): String {
+    return when (value) {
+      VisualStudioLight.value -> "VisualStudioLight"
+      VisualStudioDark.value -> "VisualStudioDark"
+      HighContrastLight.value -> "HighContrastLight"
+      HighContrastDark.value -> "HighContrastDark"
+      else -> super.toString()
+    }
+  }
+
   companion object {
+    fun of(value: String) = MonacoTheme(value)
+
     val VisualStudioLight = MonacoTheme("vs-light")
     val VisualStudioDark = MonacoTheme("vs-dark")
     val HighContrastLight = MonacoTheme("hc-light")

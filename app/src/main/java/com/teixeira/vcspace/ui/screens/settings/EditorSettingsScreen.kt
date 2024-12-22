@@ -93,8 +93,9 @@ import me.zhanghai.compose.preference.textFieldPreference
 
 @Composable
 fun EditorSettingsScreen(
+  onNavigateUp: () -> Unit,
+  onNavigateToMonacoEditorSettings: () -> Unit,
   modifier: Modifier = Modifier,
-  onNavigateUp: () -> Unit
 ) {
   val context = LocalContext.current
   val uriHandler = LocalUriHandler.current
@@ -147,6 +148,19 @@ fun EditorSettingsScreen(
         .clip(PreferenceShape.Top)
         .background(backgroundColor)
     )
+
+    if (currentEditor.value.lowercase() == "monaco") {
+      preference(
+        key = "monaco_settings",
+        title = { Text(text = "Monaco Editor Settings") },
+        summary = { Text(text = "Open Monaco editor settings.") },
+        onClick = onNavigateToMonacoEditorSettings,
+        icon = { Icon(Icons.Default.Code, contentDescription = null) },
+        modifier = Modifier
+          .clip(PreferenceShape.Middle)
+          .background(backgroundColor)
+      )
+    }
 
     preference(
       key = "keyboard_suggestion",

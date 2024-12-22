@@ -20,7 +20,29 @@ package com.itsvks.monaco.option
  */
 @JvmInline
 value class TextEditorCursorBlinkingStyle private constructor(val value: Int) {
+  override fun toString(): String {
+    return when (value) {
+      0 -> "Hidden"
+      1 -> "Blink"
+      2 -> "Smooth"
+      3 -> "Phase"
+      4 -> "Expand"
+      5 -> "Solid"
+      else -> throw IllegalArgumentException("Unknown value: $value")
+    }
+  }
+
   companion object {
+    fun fromValue(value: Int) = when (value) {
+      0 -> Hidden
+      1 -> Blink
+      2 -> Smooth
+      3 -> Phase
+      4 -> Expand
+      5 -> Solid
+      else -> throw IllegalArgumentException("Unknown value: $value")
+    }
+
     /**
      * Hidden
      */

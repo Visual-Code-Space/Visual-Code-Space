@@ -200,6 +200,16 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
       ProvidePreferenceLocals {
         EditorSettingsScreen(
           modifier = modifier,
+          onNavigateUp = navController::navigateUp,
+          onNavigateToMonacoEditorSettings = { navController.navigateSingleTop(SettingScreens.MonacoEditor) }
+        )
+      }
+    }
+
+    composable<SettingScreens.MonacoEditor> {
+      ProvidePreferenceLocals {
+        MonacoEditorSettingsScreen(
+          modifier = modifier,
           onNavigateUp = navController::navigateUp
         )
       }

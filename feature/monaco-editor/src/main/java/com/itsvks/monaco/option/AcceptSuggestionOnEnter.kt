@@ -18,6 +18,13 @@ package com.itsvks.monaco.option
 @JvmInline
 value class AcceptSuggestionOnEnter private constructor(override val value: String) : Option<String> {
   companion object {
+    fun fromValue(value: String) = when (value) {
+      "on" -> On
+      "off" -> Off
+      "smart" -> Smart
+      else -> throw IllegalArgumentException("Unknown value: $value")
+    }
+
     val On = AcceptSuggestionOnEnter("on")
     val Off = AcceptSuggestionOnEnter("off")
     val Smart = AcceptSuggestionOnEnter("smart")

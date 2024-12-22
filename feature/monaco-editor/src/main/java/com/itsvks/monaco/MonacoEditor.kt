@@ -24,7 +24,6 @@ import android.view.View
 import android.webkit.ConsoleMessage
 import android.webkit.WebChromeClient
 import android.webkit.WebView
-import com.blankj.utilcode.util.ToastUtils
 import com.itsvks.monaco.option.AcceptSuggestionOnEnter
 import com.itsvks.monaco.option.MatchBrackets
 import com.itsvks.monaco.option.Option
@@ -46,6 +45,8 @@ import kotlinx.coroutines.withContext
  * This class provides a way to embed the Monaco Editor within an Android application,
  * allowing for rich code editing capabilities. It uses a WebView to display the editor
  * and communicates with it using JavaScript.
+ *
+ * Configure editor only when editor is loaded successfully. see [addOnEditorLoadCallback]
  *
  * @param context The application context.
  * @param attrs The attribute set for the view.
@@ -171,7 +172,7 @@ class MonacoEditor @JvmOverloads constructor(
 
   fun setLanguage(language: MonacoLanguage) = loadJs("setLanguage(`${language.value}`);")
 
-  fun setFontSize(fontSize: Int) = setEditorOptionInternal("fontSize", fontSize)
+  fun setFontSize(fontSize: Int) = setEditorOption(EditorOption.fontSize, fontSize)
 
   fun setTheme(theme: MonacoTheme) = loadJs("setTheme(`${theme.value}`);")
 
@@ -196,7 +197,7 @@ class MonacoEditor @JvmOverloads constructor(
   }
 
   fun setReadOnly(readOnly: Boolean) {
-    setEditorOptionInternal("readOnly", readOnly)
+    setEditorOption(EditorOption.readOnly, readOnly)
   }
 
   fun setMinimapOptions(minimapOptions: MinimapOptions) {
@@ -204,33 +205,36 @@ class MonacoEditor @JvmOverloads constructor(
   }
 
   fun setGlyphMargin(glyphMargin: Boolean) {
-    setEditorOptionInternal("glyphMargin", glyphMargin)
+    setEditorOption(EditorOption.glyphMargin, glyphMargin)
   }
 
-  fun setFolding(folding: Boolean) = setEditorOptionInternal("folding", folding)
+  fun setFolding(folding: Boolean) = setEditorOption(EditorOption.folding, folding)
 
   fun setInDiffEditor(inDiffEditor: Boolean) {
-    setEditorOptionInternal("inDiffEditor", inDiffEditor)
+    setEditorOption(EditorOption.inDiffEditor, inDiffEditor)
   }
 
   fun setLetterSpacing(letterSpacing: Number) {
-    setEditorOptionInternal("letterSpacing", letterSpacing)
+    setEditorOption(EditorOption.letterSpacing, letterSpacing)
   }
 
   fun setLineDecorationsWidth(lineDecorationsWidth: Number) {
-    setEditorOptionInternal("lineDecorationsWidth", lineDecorationsWidth)
+    setEditorOption(EditorOption.lineDecorationsWidth, lineDecorationsWidth)
   }
 
   fun setLineNumbersMinChars(lineNumbersMinChars: Number) {
-    setEditorOptionInternal("lineNumbersMinChars", lineNumbersMinChars)
+    setEditorOption(EditorOption.lineNumbersMinChars, lineNumbersMinChars)
   }
 
   fun setAcceptSuggestionOnCommitCharacter(acceptSuggestionOnCommitCharacter: Boolean) {
-    setEditorOptionInternal("acceptSuggestionOnCommitCharacter", acceptSuggestionOnCommitCharacter)
+    setEditorOption(
+      EditorOption.acceptSuggestionOnCommitCharacter,
+      acceptSuggestionOnCommitCharacter
+    )
   }
 
   fun setAcceptSuggestionOnEnter(acceptSuggestionOnEnter: AcceptSuggestionOnEnter) {
-    setEditorOptionInternal("acceptSuggestionOnEnter", acceptSuggestionOnEnter.value)
+    setEditorOption(EditorOption.acceptSuggestionOnEnter, acceptSuggestionOnEnter)
   }
 
   fun setCursorBlinkingStyle(cursorBlinkingStyle: TextEditorCursorBlinkingStyle) {

@@ -30,6 +30,14 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.itsvks.monaco.MonacoTheme
+import com.itsvks.monaco.option.AcceptSuggestionOnEnter
+import com.itsvks.monaco.option.MatchBrackets
+import com.itsvks.monaco.option.TextEditorCursorBlinkingStyle
+import com.itsvks.monaco.option.TextEditorCursorStyle
+import com.itsvks.monaco.option.WordBreak
+import com.itsvks.monaco.option.WordWrap
+import com.itsvks.monaco.option.WrappingStrategy
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
@@ -185,5 +193,68 @@ object Settings {
 
     @Composable
     fun rememberAutoSave() = rememberPreference(key = AUTO_SAVE, defaultValue = false)
+  }
+
+  object Monaco {
+    val MONACO_THEME = stringPreferencesKey("monaco_theme")
+    val FONT_SIZE = intPreferencesKey("monaco_font_size")
+    val LINE_NUMBERS_MIN_CHARS = intPreferencesKey("line_numbers_min_chars")
+    val LINE_DECORATIONS_WIDTH = intPreferencesKey("line_decorations_width")
+    val LETTER_SPACING = floatPreferencesKey("letter_spacing")
+    val MATCH_BRACKETS = stringPreferencesKey("match_brackets")
+    val ACCEPT_SUGGESTION_ON_COMMIT_CHARACTER = booleanPreferencesKey("accept_suggestion_on_commit_character")
+    val ACCEPT_SUGGESTION_ON_ENTER = stringPreferencesKey("accept_suggestion_on_enter")
+    val FOLDING = booleanPreferencesKey("folding")
+    val GLYPH_MARGIN = booleanPreferencesKey("glyph_margin")
+    val WORD_WRAP = stringPreferencesKey("monaco_word_wrap")
+    val WORD_BREAK = stringPreferencesKey("monaco_word_break")
+    val WRAPPING_STRATEGY = stringPreferencesKey("wrapping_strategy")
+    val CURSOR_STYLE = intPreferencesKey("monaco_cursor_style")
+    val CURSOR_BLINKING_STYLE = intPreferencesKey("monaco_cursor_blinking_style")
+
+    @Composable
+    fun rememberMonacoTheme() = rememberPreference(key = MONACO_THEME, defaultValue = MonacoTheme.VisualStudioDark.value)
+
+    @Composable
+    fun rememberFontSize() = rememberPreference(key = FONT_SIZE, defaultValue = 14)
+
+    @Composable
+    fun rememberLineNumbersMinChars() = rememberPreference(key = LINE_NUMBERS_MIN_CHARS, defaultValue = 1)
+
+    @Composable
+    fun rememberLineDecorationsWidth() = rememberPreference(key = LINE_DECORATIONS_WIDTH, defaultValue = 1)
+
+    @Composable
+    fun rememberLetterSpacing() = rememberPreference(key = LETTER_SPACING, defaultValue = 0f)
+
+    @Composable
+    fun rememberMatchBrackets() = rememberPreference(key = MATCH_BRACKETS, defaultValue = MatchBrackets.Always.value)
+
+    @Composable
+    fun rememberAcceptSuggestionOnCommitCharacter() = rememberPreference(key = ACCEPT_SUGGESTION_ON_COMMIT_CHARACTER, defaultValue = true)
+
+    @Composable
+    fun rememberAcceptSuggestionOnEnter() = rememberPreference(key = ACCEPT_SUGGESTION_ON_ENTER, defaultValue = AcceptSuggestionOnEnter.On.value)
+
+    @Composable
+    fun rememberWordWrap() = rememberPreference(key = WORD_WRAP, defaultValue = WordWrap.On.value)
+
+    @Composable
+    fun rememberWordBreak() = rememberPreference(key = WORD_BREAK, defaultValue = WordBreak.Normal.value)
+
+    @Composable
+    fun rememberWrappingStrategy() = rememberPreference(key = WRAPPING_STRATEGY, defaultValue = WrappingStrategy.Advanced.value)
+
+    @Composable
+    fun rememberCursorStyle() = rememberPreference(key = CURSOR_STYLE, defaultValue = TextEditorCursorStyle.Line.value)
+
+    @Composable
+    fun rememberCursorBlinkingStyle() = rememberPreference(key = CURSOR_BLINKING_STYLE, defaultValue = TextEditorCursorBlinkingStyle.Phase.value)
+
+    @Composable
+    fun rememberFolding() = rememberPreference(key = FOLDING, defaultValue = true)
+
+    @Composable
+    fun rememberGlyphMargin() = rememberPreference(key = GLYPH_MARGIN, defaultValue = true)
   }
 }
