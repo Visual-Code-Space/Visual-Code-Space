@@ -63,6 +63,7 @@ android {
       )
     }
     debug {
+      applicationIdSuffix = ".debug"
       isMinifyEnabled = false
       signingConfig = signingConfigs.getByName("general")
       proguardFiles(
