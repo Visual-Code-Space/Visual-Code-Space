@@ -186,7 +186,7 @@ private fun doInit(
 ) {
   scope.launch {
     runCatching {
-      git.init(folder)
+      git.init(folder.asRawFile() ?: error("can't handle documents from other apps"))
       git.addAll()
     }.onSuccess { onSuccess() }.onFailure(onFailure)
   }

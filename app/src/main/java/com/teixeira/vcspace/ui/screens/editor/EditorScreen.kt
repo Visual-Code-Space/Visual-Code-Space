@@ -107,6 +107,9 @@ import com.teixeira.vcspace.editor.listener.OnImportComponentListener
 import com.teixeira.vcspace.editor.textaction.EditorTextActionItem
 import com.teixeira.vcspace.editor.textaction.actionItems
 import com.teixeira.vcspace.editor.textaction.editorTextActionWindow
+import com.teixeira.vcspace.file.File
+import com.teixeira.vcspace.file.extension
+import com.teixeira.vcspace.file.wrapFile
 import com.teixeira.vcspace.keyboard.CommandPaletteManager
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.ui.LocalToastHostState
@@ -121,7 +124,7 @@ import io.github.rosemoe.sora.langs.textmate.TextMateLanguage
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.io.File
+import kotlinx.coroutines.withContext
 
 @Composable
 fun EditorScreen(
@@ -284,9 +287,11 @@ fun EditorScreen(
         Symbols(editorView, modifier = Modifier.fillMaxWidth())
       }
     } ?: run {
-      val tempFile = File(context.cacheDir, "untitled.txt")
+      val tempFile = java.io.File(context.cacheDir, "untitled.txt")
       tempFile.deleteOnExit()
-      viewModel.addFile(tempFile)
+      viewModel.addFile(tempFile.wrapFile())
+
+      // NoOpenedFiles()
     }
 
     if (commandPaletteManager.showCommandPalette.value) {
@@ -321,6 +326,7 @@ private fun ConfigureMonacoEditor(editorView: MonacoEditor, file: File) {
   val wrappingStrategy by rememberWrappingStrategy()
   val cursorStyle by rememberCursorStyle()
   val cursorBlinkingStyle by rememberCursorBlinkingStyle()
+  val scope = rememberCoroutineScope()
 
   editorView.addOnEditorLoadCallback {
     editorView.text = "Loading..."
@@ -331,7 +337,12 @@ private fun ConfigureMonacoEditor(editorView: MonacoEditor, file: File) {
       if (file.exists()) {
         setLanguage(MonacoLanguageMapper.getLanguageByExtension(file.extension))
         setReadOnly(false)
-        text = file.readText()
+        scope.launch(Dispatchers.IO) {
+          val contents = file.readFile2String(context) ?: ""
+          withContext(Dispatchers.Main) {
+            text = contents
+          }
+        }
       } else {
         text = ""
       }

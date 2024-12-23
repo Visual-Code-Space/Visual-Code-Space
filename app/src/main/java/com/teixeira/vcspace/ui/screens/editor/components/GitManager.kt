@@ -78,6 +78,7 @@ import com.teixeira.vcspace.app.drawables
 import com.teixeira.vcspace.app.strings
 import com.teixeira.vcspace.compose.clipUrl
 import com.teixeira.vcspace.extensions.makePluralIf
+import com.teixeira.vcspace.file.wrapFile
 import com.teixeira.vcspace.git.GitActionStatus
 import com.teixeira.vcspace.git.GitManager.Companion.instance
 import com.teixeira.vcspace.git.GitViewModel
@@ -147,8 +148,9 @@ fun GitManager(
   }
 
   LaunchedEffect(openedFolder, isGitRepo) {
-    if (isGitRepo && openedFolder != null) {
-      gitViewModel.open(openedFolder ?: return@LaunchedEffect)
+    val jOpenedFolder = openedFolder?.asRawFile()
+    if (isGitRepo && jOpenedFolder != null) {
+      gitViewModel.open(jOpenedFolder)
     }
   }
 
@@ -173,12 +175,13 @@ fun GitManager(
     }
   }
 
-  if (showGitCloneDialog) {
+  val rawOpenedFolder = openedFolder?.asRawFile()
+  if (showGitCloneDialog && rawOpenedFolder != null ) {
     val url = clipUrl()
 
     GitCloneDialog(
       remoteUrl = url ?: "",
-      initialFolder = openedFolder,
+      initialFolder = rawOpenedFolder,
       onDismissRequest = { showGitCloneDialog = false },
       onCloneSuccess = {
         scope.launch {
@@ -186,7 +189,7 @@ fun GitManager(
             message = context.getString(R.string.successfully_cloned),
             icon = Icons.Rounded.Check
           )
-          fileExplorerViewModel.openFolder(it)
+          fileExplorerViewModel.openFolder(it.wrapFile())
 
           withContext(Dispatchers.Main) {
             navController.navigateSingleTop(EditorDrawerScreens.FileExplorer)

@@ -15,7 +15,7 @@
 
 package com.teixeira.vcspace.app
 
-import java.io.File
+import com.teixeira.vcspace.file.File
 
 typealias DoNothing = Unit
 typealias Folder = File

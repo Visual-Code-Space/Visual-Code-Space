@@ -6,11 +6,12 @@ import android.view.LayoutInflater
 import android.widget.LinearLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
-import com.blankj.utilcode.util.FileIOUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.teixeira.vcspace.editor.VCSpaceEditor
 import com.teixeira.vcspace.editor.databinding.LayoutCodeEditorBinding
 import com.teixeira.vcspace.events.OnPreferenceChangeEvent
+import com.teixeira.vcspace.file.File
+import com.teixeira.vcspace.file.extension
 import com.teixeira.vcspace.preferences.PREF_APPEARANCE_UI_MODE_KEY
 import com.teixeira.vcspace.preferences.PREF_EDITOR_COLORSCHEME_KEY
 import com.teixeira.vcspace.preferences.PREF_EDITOR_DELETELINEONBACKSPACE_KEY
@@ -52,7 +53,6 @@ import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.io.File
 
 @SuppressLint("ViewConstructor")
 class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
@@ -82,15 +82,15 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
       this.file = file
     }
     configureEditor()
-    readFile(file)
+    readFile(context, file)
 
     addView(binding.root, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
   }
 
-  private fun readFile(file: File) {
+  private fun readFile(context: Context, file: File) {
     setLoading(true)
     editorScope.launch(Dispatchers.IO) {
-      val content = FileIOUtils.readFile2String(file)
+      val content = file.readFile2String(context)
       val language = createLanguage()
 
       withContext(Dispatchers.Main) {
@@ -107,10 +107,10 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
       MaterialAlertDialogBuilder(context)
         .setTitle(R.string.file_reload)
         .setMessage(R.string.file_reload_unsaved_message)
-        .setPositiveButton(R.string.yes) { _, _ -> readFile(file!!) }
+        .setPositiveButton(R.string.yes) { _, _ -> readFile(context, file!!) }
         .setNegativeButton(R.string.no, null)
         .show()
-    } else readFile(file!!)
+    } else readFile(context, file!!)
   }
 
   fun undo() = editor.undo()
@@ -129,7 +129,7 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
     this.file = file
 
     if (updateContent) {
-      readFile(file)
+      readFile(context, file)
     } else updateLanguage()
   }
 
@@ -152,7 +152,8 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
   }
 
   suspend fun saveFile() = withContext(Dispatchers.IO) {
-    if (modified && FileIOUtils.writeFileFromString(file, editor.text.toString())) {
+    val file = file
+    if (file != null && modified && file.write(context, editor.text.toString())) {
       setModified(false)
       true
     } else false

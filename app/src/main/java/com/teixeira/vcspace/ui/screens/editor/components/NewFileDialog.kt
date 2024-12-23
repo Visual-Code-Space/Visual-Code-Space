@@ -34,13 +34,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.teixeira.vcspace.activities.base.LocalLifecycleScope
+import com.teixeira.vcspace.file.File
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.resources.R.string
 import com.teixeira.vcspace.ui.LocalToastHostState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
 import java.io.IOException
 
 @Composable
@@ -75,32 +75,30 @@ fun NewFileDialog(
       ) {
         TextButton(
           onClick = {
-            with(File(path, fileName)) {
-              try {
-                if (!exists()) {
-                  lifecycleScope.launch(Dispatchers.IO) {
-                    if (createNewFile()) {
-                      withContext(Dispatchers.Main) {
-                        onFileCreated(this@with)
-                      }
+            try {
+              if (!path.childExists(fileName)) {
+                lifecycleScope.launch(Dispatchers.IO) {
+                  path.createNewFile(fileName)?.let{
+                    withContext(Dispatchers.Main) {
+                      onFileCreated(it)
                     }
                   }
-                } else {
-                  scope.launch {
-                    toastHostState.showToast(
-                      message = context.getString(string.already_exists),
-                      icon = Icons.Rounded.ErrorOutline
-                    )
-                  }
                 }
-              } catch (ioe: IOException) {
-                ioe.printStackTrace()
+              } else {
                 scope.launch {
                   toastHostState.showToast(
-                    message = ioe.message ?: context.getString(string.error),
+                    message = context.getString(string.already_exists),
                     icon = Icons.Rounded.ErrorOutline
                   )
                 }
+              }
+            } catch (ioe: IOException) {
+              ioe.printStackTrace()
+              scope.launch {
+                toastHostState.showToast(
+                  message = ioe.message ?: context.getString(string.error),
+                  icon = Icons.Rounded.ErrorOutline
+                )
               }
             }
 
@@ -112,35 +110,32 @@ fun NewFileDialog(
         }
         TextButton(
           onClick = {
-            with(File(path, fileName)) {
-              try {
-                if (!exists()) {
-                  lifecycleScope.launch(Dispatchers.IO) {
-                    if (mkdirs()) {
-                      withContext(Dispatchers.Main) {
-                        onFolderCreated(this@with)
-                      }
+            try {
+              if (!path.childExists(fileName)) {
+                lifecycleScope.launch(Dispatchers.IO) {
+                  path.createNewDirectory(fileName)?.let {
+                    withContext(Dispatchers.Main) {
+                      onFolderCreated(it)
                     }
                   }
-                } else {
-                  scope.launch {
-                    toastHostState.showToast(
-                      message = context.getString(string.already_exists),
-                      icon = Icons.Rounded.ErrorOutline
-                    )
-                  }
                 }
-              } catch (ioe: IOException) {
-                ioe.printStackTrace()
+              } else {
                 scope.launch {
                   toastHostState.showToast(
-                    message = ioe.message ?: context.getString(string.error),
+                    message = context.getString(string.already_exists),
                     icon = Icons.Rounded.ErrorOutline
                   )
                 }
               }
+            } catch (ioe: IOException) {
+              ioe.printStackTrace()
+              scope.launch {
+                toastHostState.showToast(
+                  message = ioe.message ?: context.getString(string.error),
+                  icon = Icons.Rounded.ErrorOutline
+                )
+              }
             }
-
             onDismissRequest()
           },
           enabled = fileName.isNotEmpty()

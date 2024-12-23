@@ -1,7 +1,7 @@
 package com.teixeira.vcspace.events
 
 import com.teixeira.vcspace.app.Folder
-import java.io.File
+import com.teixeira.vcspace.file.File
 
 data class OnDeleteFileEvent(val file: File, val openedFolder: File)
 

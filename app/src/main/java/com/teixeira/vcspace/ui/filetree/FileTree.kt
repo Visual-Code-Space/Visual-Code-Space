@@ -15,29 +15,31 @@
 
 package com.teixeira.vcspace.ui.filetree
 
-import android.os.Environment
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.teixeira.vcspace.activities.base.LocalLifecycleScope
 import com.teixeira.vcspace.databinding.LayoutFileTreeBinding
+import com.teixeira.vcspace.file.File
 import io.github.dingyi222666.view.treeview.Tree
 import io.github.dingyi222666.view.treeview.TreeView
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import java.io.File
 
 @Composable
 fun FileTree(
   modifier: Modifier = Modifier,
-  path: String = Environment.getExternalStorageDirectory().absolutePath,
+  path: File,
   onFileLongClick: (File) -> Unit = {},
   onFileClick: (File) -> Unit
 ) {
-  val fileListLoader = rememberSaveable { FileListLoader() }
-  val tree = remember { createTree(fileListLoader, path) }
+  val coroutineScope = rememberCoroutineScope()
+  val fileListLoader = rememberSaveable(saver = FileListLoader.FileListLoaderSaver) { FileListLoader() }
+  val tree = remember { createTree(coroutineScope, fileListLoader, path) }
 
   val onSurfaceColor = MaterialTheme.colorScheme.onSurface
 
@@ -60,21 +62,23 @@ fun FileTree(
     }
 
     lifecycleScope.launch {
-      fileListLoader.loadFileList(path)
+      fileListLoader.loadFileList(coroutineScope, path)
       treeview.refresh()
     }
   }
 }
 
 private fun createTree(
+  prefetchScope: CoroutineScope,
   fileListLoader: FileListLoader,
-  rootPath: String
+  rootPath: File
 ): Tree<File> {
   val tree = Tree.createTree<File>()
 
   tree.apply {
     this.generator = FileNodeGenerator(
-      File(rootPath),
+      prefetchScope,
+      rootPath,
       fileListLoader
     )
 

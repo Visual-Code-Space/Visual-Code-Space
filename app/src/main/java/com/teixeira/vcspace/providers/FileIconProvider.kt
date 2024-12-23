@@ -3,10 +3,11 @@ package com.teixeira.vcspace.providers
 import android.annotation.SuppressLint
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.teixeira.vcspace.file.File
+import com.teixeira.vcspace.file.extension
 import com.teixeira.vcspace.app.BaseApplication.Companion.instance as app
 import com.teixeira.vcspace.models.FileIcon
 import com.teixeira.vcspace.resources.R
-import java.io.File
 
 /**
  * Class to provide File icons

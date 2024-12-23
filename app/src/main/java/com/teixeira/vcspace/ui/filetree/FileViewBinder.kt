@@ -36,6 +36,7 @@ import com.teixeira.vcspace.events.OnCreateFileEvent
 import com.teixeira.vcspace.events.OnCreateFolderEvent
 import com.teixeira.vcspace.events.OnDeleteFileEvent
 import com.teixeira.vcspace.events.OnRefreshFolderEvent
+import com.teixeira.vcspace.file.File
 import com.teixeira.vcspace.providers.FileIconProvider
 import io.github.dingyi222666.view.treeview.TreeNode
 import io.github.dingyi222666.view.treeview.TreeNodeEventListener
@@ -47,7 +48,6 @@ import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.io.File
 
 class FileViewBinder(
   private val fileTreeBinding: LayoutFileTreeBinding,

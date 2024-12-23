@@ -67,10 +67,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.offset
+import com.teixeira.vcspace.file.File
 import com.teixeira.vcspace.providers.FileIconProvider
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.ui.screens.editor.EditorViewModel
-import java.io.File
 import java.text.SimpleDateFormat
 import kotlin.math.max
 

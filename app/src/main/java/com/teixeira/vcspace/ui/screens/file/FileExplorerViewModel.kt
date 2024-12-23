@@ -20,13 +20,13 @@ import androidx.lifecycle.ViewModel
 import com.teixeira.vcspace.PreferenceKeys
 import com.teixeira.vcspace.events.OnOpenFolderEvent
 import com.teixeira.vcspace.events.OnRefreshFolderEvent
+import com.teixeira.vcspace.file.File
 import com.teixeira.vcspace.git.GitManager
 import com.teixeira.vcspace.preferences.defaultPrefs
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import org.greenrobot.eventbus.EventBus
-import java.io.File
 
 class FileExplorerViewModel : ViewModel() {
   private val _openedFolder = MutableStateFlow<File?>(null)
@@ -53,7 +53,9 @@ class FileExplorerViewModel : ViewModel() {
 
   private fun updateGitRepoStatus(file: File) {
     _isGitRepo.update {
-      GitManager.isGitRepository(file).also { if (it) GitManager.instance.initialize(file) }
+      file.asRawFile()?.let { jfile ->
+        GitManager.isGitRepository(jfile).also { if (it) GitManager.instance.initialize(jfile) }
+      } ?: false
     }
   }
 

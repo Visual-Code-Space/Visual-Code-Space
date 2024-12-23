@@ -17,9 +17,8 @@ package com.teixeira.vcspace.plugins.helper;
 
 import com.teixeira.vcspace.activities.EditorActivity;
 import com.teixeira.vcspace.editor.VCSpaceEditor;
+import com.teixeira.vcspace.file.File;
 import com.teixeira.vcspace.ui.screens.editor.components.view.CodeEditorView;
-
-import java.io.File;
 
 public class EditorHelper {
   private final EditorActivity editorActivity;

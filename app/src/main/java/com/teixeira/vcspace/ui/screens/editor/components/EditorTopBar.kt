@@ -94,6 +94,8 @@ import com.teixeira.vcspace.core.components.common.VCSpaceTopBar
 import com.teixeira.vcspace.core.settings.Settings.EditorTabs.rememberAutoSave
 import com.teixeira.vcspace.editor.events.OnContentChangeEvent
 import com.teixeira.vcspace.editor.events.OnKeyBindingEvent
+import com.teixeira.vcspace.file.extension
+import com.teixeira.vcspace.file.wrapFile
 import com.teixeira.vcspace.keyboard.model.Command.Companion.newCommand
 import com.teixeira.vcspace.plugins.internal.PluginManager
 import com.teixeira.vcspace.preferences.pythonDownloaded
@@ -111,7 +113,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
-import java.io.File
+import java.io.File as JFile
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
@@ -498,11 +500,11 @@ fun FileMenu(
   val createFile = rememberLauncherForActivityResult(
     ActivityResultContracts.CreateDocument("text/*")
   ) {
-    if (it != null) editorViewModel.addFile(UriUtils.uri2File(it))
+    if (it != null) editorViewModel.addFile(UriUtils.uri2File(it).wrapFile())
   }
 
   val openFile = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) {
-    if (it != null) editorViewModel.addFile(UriUtils.uri2File(it))
+    if (it != null) editorViewModel.addFile(UriUtils.uri2File(it).wrapFile())
   }
 
   val commandPaletteManager = LocalCommandPaletteManager.current
@@ -678,8 +680,8 @@ private fun extractPythonFile(
         }
       }
     ) { _, _ ->
-      File(filePath).inputStream().use { temp7zStream ->
-        val file = File("${context.filesDir.absolutePath}/python.7z").apply { createNewFile() }
+      JFile(filePath).inputStream().use { temp7zStream ->
+        val file = JFile("${context.filesDir.absolutePath}/python.7z").apply { createNewFile() }
         Files.copy(temp7zStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING)
         val exitCode =
           P7ZipApi.executeCommand("7z x ${file.absolutePath} -o${context.filesDir.absolutePath}")
@@ -706,7 +708,7 @@ private fun downloadPythonPackage(
   }
 
   val url = if (Process.is64Bit()) PYTHON_PACKAGE_URL_64_BIT else PYTHON_PACKAGE_URL_32_BIT
-  val outputFile = File(context.filesDir, "python.7z")
+  val outputFile = JFile(context.filesDir, "python.7z")
 
   scope.launchWithProgressDialog(
     uiContext = context,
