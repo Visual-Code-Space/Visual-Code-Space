@@ -21,7 +21,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.FileProvider
-import java.io.File
+import com.teixeira.vcspace.file.File
 
 fun <T> Context.open(clazz: Class<T>, newTask: Boolean = false) {
   val intent = Intent(this, clazz)
@@ -40,7 +40,7 @@ fun Context.getEmptyActivityBundle(): Bundle? {
 }
 
 fun Context.openFile(file: File) {
-  val uri = uriFromFile(file)
+  val uri = file.uri(this)
   val mimeType = contentResolver.getType(uri)
 
   Intent(Intent.ACTION_VIEW).apply {
@@ -49,9 +49,3 @@ fun Context.openFile(file: File) {
     startActivity(this)
   }
 }
-
-fun Context.uriFromFile(file: File): Uri = FileProvider.getUriForFile(
-  this,
-  "$packageName.provider",
-  file
-)

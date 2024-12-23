@@ -24,13 +24,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.blankj.utilcode.util.FileUtils
 import com.teixeira.vcspace.events.OnDeleteFileEvent
+import com.teixeira.vcspace.file.File
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.utils.launchWithProgressDialog
 import com.teixeira.vcspace.utils.showShortToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
-import java.io.File
 
 @Composable
 fun DeleteFileDialog(
@@ -54,7 +54,7 @@ fun DeleteFileDialog(
             builder.setCancelable(false)
           },
           action = { _, _ ->
-            val deleted = FileUtils.delete(file)
+            val deleted = file.delete()
 
             if (!deleted) {
               return@launchWithProgressDialog

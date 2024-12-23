@@ -15,16 +15,21 @@
 
 package com.teixeira.vcspace.ui.filetree
 
-import android.os.Parcelable
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.SaverScope
+import com.teixeira.vcspace.file.File
+import com.teixeira.vcspace.file.wrapFile
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
-import kotlinx.parcelize.Parcelize
-import java.io.File
+import kotlinx.coroutines.launch
+import java.io.File as JFile
 
-@Parcelize
 class FileListLoader(
-  private val cacheFiles: MutableMap<String, MutableList<File>> = mutableMapOf()
-) : Parcelable {
+  private val cacheFiles: MutableMap<String, CacheEntry> = mutableMapOf()
+) {
 
   private fun getFileList(file: File): List<File> {
     return (file.listFiles() ?: emptyArray()).run {
@@ -32,25 +37,37 @@ class FileListLoader(
     }
   }
 
-  suspend fun loadFileList(path: String) = withContext(Dispatchers.IO) {
-    val result = cacheFiles[path] ?: run {
-      val files = getFileList(File(path))
-      cacheFiles[path] = files.toMutableList()
-
-      // load sub directory, but only load one level
-      files.forEach {
-        if (it.isDirectory) {
-          cacheFiles[it.absolutePath] = getFileList(it).toMutableList()
+  suspend fun loadFileList(
+	  prefetchScope: CoroutineScope,
+	  path: File,
+	  additionalDepth: Int = 1): List<File> = withContext(Dispatchers.Main) {
+    when (val value = cacheFiles[path.absolutePath]) {
+      null -> {
+        val deferred = async(Dispatchers.IO) {
+          getFileList(path).toMutableList()
         }
+        cacheFiles[path.absolutePath] = Loading(deferred)
+        val res = deferred.await()
+        cacheFiles[path.absolutePath] = Loaded(res)
+        if (additionalDepth > 0) {
+          res.forEach { child ->
+		        prefetchScope.launch {
+		  	      loadFileList(prefetchScope, child, additionalDepth - 1)
+		        }
+          }
+        }
+        res
       }
-
-      files.toMutableList()
+      is Loading -> {
+        value.deferred.await()
+      }
+      is Loaded -> {
+        value.children
+      }
     }
-
-    result
   }
 
-  fun getCacheFileList(path: String) = cacheFiles[path] ?: emptyList()
+  fun getCacheFileList(path: File) = cacheFiles[path.absolutePath]?.getFiles() ?: emptyList()
 
   fun removeFileInCache(currentFile: File): Boolean {
     if (currentFile.isDirectory) {
@@ -59,12 +76,45 @@ class FileListLoader(
 
     val parent = currentFile.parentFile
     val parentPath = parent?.absolutePath
-    val parentFiles = cacheFiles[parentPath]
+    val parentFiles = (cacheFiles[parentPath] as? Loaded)?.children
     return parentFiles?.remove(currentFile) ?: false
   }
 
 
   override fun toString(): String {
     return "FileListLoader(cacheFiles=$cacheFiles)"
+  }
+
+  sealed interface CacheEntry {
+    fun getFiles(): List<File>
+  }
+  data class Loaded(val children: MutableList<File>): CacheEntry {
+    override fun getFiles(): List<File> = children
+  }
+
+  data class Loading(val deferred: Deferred<MutableList<File>>) : CacheEntry {
+    override fun getFiles(): List<File> = emptyList()
+  }
+
+  object FileListLoaderSaver : Saver<FileListLoader, Map<String, List<JFile>>> {
+    override fun restore(value: Map<String, List<JFile>>): FileListLoader? {
+      return FileListLoader(mutableMapOf<String, CacheEntry>().also { cache ->
+        value.mapValuesTo(cache) { entry ->
+          Loaded(mutableListOf<File>().also { list ->
+            entry.value.mapTo(list) { it.wrapFile() }
+          })
+        }
+      })
+    }
+    override fun SaverScope.save(value: FileListLoader): Map<String, List<JFile>>{
+      val res = mutableMapOf<String, List<JFile>>()
+      value.cacheFiles.entries.forEach { entry ->
+        val cached = (entry.value as? Loaded)?.children?.mapNotNull { it.asRawFile() }
+        if (!cached.isNullOrEmpty()) {
+          res[entry.key] = cached
+        }
+      }
+      return res
+    }
   }
 }

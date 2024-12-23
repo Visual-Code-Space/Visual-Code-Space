@@ -21,7 +21,9 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Environment
 import androidx.core.content.ContextCompat
-import java.io.File
+import com.teixeira.vcspace.file.File
+import com.teixeira.vcspace.file.extension
+import java.io.File as JFile
 import java.nio.file.Files
 import java.nio.file.Paths
 
@@ -31,7 +33,7 @@ val INVALID_TEXT_FILES_REGEX =
     ".*\\.(bin|ttf|png|jpe?g|bmp|mp4|mp3|m4a|iso|so|zip|rar|jar|dex|odex|vdex|7z|apk|apks|xapk)$"
   )
 
-fun isValidTextFile(file: File): Boolean {
+fun isValidTextFile(file: JFile): Boolean {
   val type = Files.probeContentType(Paths.get(file.absolutePath))
 
   // A comprehensive list of known text-based MIME types

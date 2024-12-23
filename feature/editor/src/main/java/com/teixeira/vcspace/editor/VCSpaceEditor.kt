@@ -23,12 +23,12 @@ import com.teixeira.vcspace.editor.completion.CompletionListAdapter
 import com.teixeira.vcspace.editor.completion.CustomCompletionLayout
 import com.teixeira.vcspace.editor.listener.OnExplainCodeListener
 import com.teixeira.vcspace.editor.listener.OnImportComponentListener
+import com.teixeira.vcspace.file.File
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage
 import io.github.rosemoe.sora.widget.CodeEditor
 import io.github.rosemoe.sora.widget.component.EditorAutoCompletion
 import io.github.rosemoe.sora.widget.component.EditorTextActionWindow
 import org.eclipse.tm4e.languageconfiguration.internal.model.CommentRule
-import java.io.File
 
 class VCSpaceEditor @JvmOverloads constructor(
   context: Context,

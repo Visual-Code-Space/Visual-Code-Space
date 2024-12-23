@@ -15,7 +15,7 @@
 
 package com.teixeira.vcspace.editor.events
 
-import java.io.File
+import com.teixeira.vcspace.file.File
 
 data class OnContentChangeEvent(
   val file: File?

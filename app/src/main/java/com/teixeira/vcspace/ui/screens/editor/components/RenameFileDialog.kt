@@ -28,13 +28,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.teixeira.vcspace.events.OnRenameFileEvent
+import com.teixeira.vcspace.file.File
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.utils.launchWithProgressDialog
 import com.teixeira.vcspace.utils.showShortToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
-import java.io.File
 
 @Composable
 fun RenameFileDialog(
@@ -68,14 +68,9 @@ fun RenameFileDialog(
               builder.setCancelable(false)
             },
             action = { _, _ ->
-              val newFile = File(file.parentFile, fileName)
-              val renamed = file.renameTo(newFile)
+              val renamedFile = file.renameTo(fileName) ?: return@launchWithProgressDialog
 
-              if (!renamed) {
-                return@launchWithProgressDialog
-              }
-
-              EventBus.getDefault().post(OnRenameFileEvent(file, newFile, openedFolder))
+              EventBus.getDefault().post(OnRenameFileEvent(file, renamedFile, openedFolder))
 
               withContext(Dispatchers.Main) {
                 showShortToast(context, context.getString(R.string.file_renamed))

@@ -54,6 +54,7 @@ import com.teixeira.vcspace.events.OnCreateFileEvent
 import com.teixeira.vcspace.events.OnCreateFolderEvent
 import com.teixeira.vcspace.events.OnRefreshFolderEvent
 import com.teixeira.vcspace.extensions.openFile
+import com.teixeira.vcspace.file.File
 import com.teixeira.vcspace.git.GitViewModel
 import com.teixeira.vcspace.resources.R.string
 import com.teixeira.vcspace.ui.filetree.FileTree
@@ -64,10 +65,8 @@ import com.teixeira.vcspace.ui.screens.editor.components.drawer.NavRail
 import com.teixeira.vcspace.ui.screens.editor.components.drawer.OpenFolderActions
 import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
 import com.teixeira.vcspace.utils.ApkInstaller
-import com.teixeira.vcspace.utils.isValidTextFile
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
-import java.io.File
 
 @Composable
 fun EditorDrawerSheet(
@@ -135,12 +134,12 @@ fun EditorDrawerSheet(
             ) {
               FileTree(
                 modifier = Modifier.weight(1f),
-                path = folder.absolutePath,
+                path = folder,
                 onFileClick = { file ->
                   if (!file.isDirectory) {
                     if (file.name.endsWith(".apk")) {
                       ApkInstaller.installApplication(context, file)
-                    } else if (isValidTextFile(file)) {
+                    } else if (file.isValidText) {
                       closeDrawer()
                       editorViewModel.addFile(file)
                     } else {
