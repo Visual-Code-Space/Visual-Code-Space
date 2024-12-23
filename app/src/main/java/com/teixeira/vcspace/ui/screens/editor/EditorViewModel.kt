@@ -104,7 +104,9 @@ class EditorViewModel : ViewModel() {
   }
 
   fun rememberLastFiles() {
-    val lastOpenedFiles = Gson().toJson(FileHistory(uiState.value.openedFiles.map { it.file.path }))
+    val lastOpenedFiles = Gson().toJson(FileHistory(uiState.value.openedFiles.mapNotNull{
+      if (it.file.canRestoreFromPath) it.file.path else null
+    }))
 
     viewModelScope.launch(Dispatchers.IO) {
       JFile(LAST_OPENED_FILES_JSON_PATH).apply {

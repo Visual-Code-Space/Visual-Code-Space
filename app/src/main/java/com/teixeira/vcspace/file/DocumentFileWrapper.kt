@@ -15,6 +15,7 @@
 
 package com.teixeira.vcspace.file
 
+import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
@@ -32,6 +33,8 @@ data class DocumentFileWrapper(
     get() = raw.uri.toString()
   override val canonicalPath: String
     get() = raw.uri.toString()
+  override val canRestoreFromPath: Boolean
+    get() = false
   private val _isDirectory = lazy { raw.isDirectory }
   override val isDirectory: Boolean
     get() = _isDirectory.value
@@ -104,5 +107,17 @@ data class DocumentFileWrapper(
       outputStream?.close()
     }
     true
+  }
+
+  companion object {
+    /**
+     * true if [DocumentFileWrapper] should be used.
+     *
+     * The implementation is conservative as a lot of functionality stops working
+     * when [DocumentFileWrapper] is used. The target implementation will accept all
+     * content uris for custom [androidx.core.content.FileProvider]s.
+     */
+    fun shouldWrap(uri: Uri): Boolean
+      = ContentResolver.SCHEME_CONTENT == uri.scheme && "com.termux.documents" == uri.host
   }
 }
