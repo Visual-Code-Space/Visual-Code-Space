@@ -42,6 +42,10 @@ import java.io.File as JFile
 interface File {
   val absolutePath: String
   val canonicalPath: String
+  /**
+   * true if this file can be restored from path
+   */
+  val canRestoreFromPath: Boolean
   val isDirectory: Boolean
   val isFile: Boolean
   val isValidText: Boolean

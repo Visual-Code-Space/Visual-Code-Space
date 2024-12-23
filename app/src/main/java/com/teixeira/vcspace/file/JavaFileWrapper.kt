@@ -33,6 +33,8 @@ internal data class JavaFileWrapper(
     get() = raw.absolutePath
   override val canonicalPath: String
     get() = raw.canonicalPath
+  override val canRestoreFromPath: Boolean
+    get() = true
   override val isDirectory: Boolean
     get() = raw.isDirectory
   override val isFile: Boolean

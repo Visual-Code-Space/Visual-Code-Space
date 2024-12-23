@@ -71,7 +71,7 @@ fun OpenFolderActions(
     contract = ActivityResultContracts.OpenDocumentTree()
   ) { uri ->
     if (uri != null) DocumentFile.fromTreeUri(context, uri)?.let {
-      val file = if (ContentResolver.SCHEME_CONTENT == it.uri.scheme) {
+      val file = if (DocumentFileWrapper.shouldWrap(uri)) {
         DocumentFileWrapper(it)
       } else {
         UriUtils.uri2File(it.uri).wrapFile()
