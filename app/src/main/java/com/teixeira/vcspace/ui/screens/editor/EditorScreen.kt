@@ -15,7 +15,6 @@
 
 package com.teixeira.vcspace.ui.screens.editor
 
-import android.util.Log
 import android.view.ViewGroup
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -220,7 +219,9 @@ fun EditorScreen(
         } else if (editorView is MonacoEditor) {
           val file = fileEntry.file
 
-          ConfigureMonacoEditor(editorView, file)
+          ConfigureMonacoEditor(editorView, file) { editor ->
+            viewModel.setModified(file, false)
+          }
         }
         viewModel.setEditorConfiguredForFile(fileEntry.file)
       }
@@ -305,7 +306,11 @@ fun EditorScreen(
 }
 
 @Composable
-private fun ConfigureMonacoEditor(editorView: MonacoEditor, file: File) {
+private fun ConfigureMonacoEditor(
+  editorView: MonacoEditor,
+  file: File,
+  onConfigure: (MonacoEditor) -> Unit = {}
+) {
   val theme by rememberMonacoTheme()
   val fontSize by Monaco.rememberFontSize()
   val lineNumbersMinChars by rememberLineNumbersMinChars()
@@ -354,6 +359,8 @@ private fun ConfigureMonacoEditor(editorView: MonacoEditor, file: File) {
         } else {
           text = ""
         }
+
+        onConfigure(this)
       }
     }
   }
@@ -390,6 +397,8 @@ private fun ConfigureMonacoEditor(editorView: MonacoEditor, file: File) {
       } else {
         text = ""
       }
+
+      onConfigure(this)
     }
   }
 }

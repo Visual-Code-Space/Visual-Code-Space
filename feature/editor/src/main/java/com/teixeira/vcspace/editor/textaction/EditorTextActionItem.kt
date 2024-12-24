@@ -81,5 +81,5 @@ val actionItems = listOf(
     id = R.string.editor_action_import_components,
     icon = Icons.AutoMirrored.Rounded.ManageSearch,
     description = "Import components (Jetpack Compose)."
-  ),
+  )
 )

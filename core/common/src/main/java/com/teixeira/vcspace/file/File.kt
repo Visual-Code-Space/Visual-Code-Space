@@ -42,6 +42,7 @@ import java.io.File as JFile
 interface File {
   val absolutePath: String
   val canonicalPath: String
+
   /**
    * true if this file can be restored from path
    */
@@ -70,7 +71,7 @@ interface File {
     context: Context,
     content: String,
     ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
-    ): Boolean
+  ): Boolean
 }
 
 val File.extension: String

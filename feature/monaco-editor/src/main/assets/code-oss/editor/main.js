@@ -1,4 +1,5 @@
 let editor;
+let currentValue = ""; // Initialize currentValue before use
 
 require.config({
     paths: {
@@ -17,7 +18,6 @@ let proxy = URL.createObjectURL(new Blob([`
     importScripts('https://appassets.androidplatform.net/assets/code-oss/editor/monaco-editor/min/vs/base/worker/workerMain.js');
 `], { type: 'text/javascript' }));
 
-
 // Create the editor
 require(["vs/editor/editor.main"], function () {
     editor = monaco.editor.create(document.getElementById("container"), {
@@ -31,18 +31,21 @@ require(["vs/editor/editor.main"], function () {
     window.MonacoAndroid.setCanRedo(editor.getModel().canRedo());
 
     editor.onDidChangeModelContent(() => {
-        if (window.MonacoAndroid) {
-            const content = editor.getValue();
-            const model = editor.getModel();
-            const isModified = model.getAlternativeVersionId() !== model.getVersionId();
-
-            window.updateCursorInfo();
-            window.MonacoAndroid.setModified(isModified);
-            window.MonacoAndroid.setValue(content);
-            window.MonacoAndroid.setCanUndo(editor.getModel().canUndo());
-            window.MonacoAndroid.setCanRedo(editor.getModel().canRedo());
-            window.MonacoAndroid.onTextChanged(content);
+        const newValue = editor.getValue();
+        if (currentValue !== newValue) {
+            currentValue = newValue;
+            window.MonacoAndroid.onTextChanged(newValue);
         }
+
+        const content = editor.getValue();
+        const model = editor.getModel();
+        const isModified = model.getAlternativeVersionId() !== model.getVersionId();
+
+        window.updateCursorInfo();
+        window.MonacoAndroid.setModified(isModified);
+        window.MonacoAndroid.setValue(content);
+        window.MonacoAndroid.setCanUndo(model.canUndo());
+        window.MonacoAndroid.setCanRedo(model.canRedo());
     });
 
     window.updateCursorInfo = function () {
@@ -54,6 +57,7 @@ require(["vs/editor/editor.main"], function () {
 
 function setText(content) {
     if (editor) {
+        currentValue = content;
         editor.setValue(content);
     }
 }
@@ -96,8 +100,6 @@ function setCursorStyle(styleValue) {
     const cursorStyle = cursorStyleMap[styleValue];
     if (cursorStyle) {
         editor.updateOptions({ cursorStyle });
-    } else {
-        console.error('Invalid cursor style value:', styleValue);
     }
 }
 
@@ -114,8 +116,6 @@ function setCursorBlinkingStyle(styleValue) {
     const cursorBlinking = blinkingStyleMap[styleValue];
     if (cursorBlinking) {
         editor.updateOptions({ cursorBlinking });
-    } else {
-        console.error('Invalid cursor blinking style value:', styleValue);
     }
 }
 
@@ -166,6 +166,6 @@ function insert(text, line, column) {
     ]);
 }
 
-function simulateKeyPress(key, options = {}) {
-    editor.trigger('keyboard', 'type', {text: key})
+function simulateKeyPress(key) {
+    editor.trigger('keyboard', 'type', { text: key });
 }
