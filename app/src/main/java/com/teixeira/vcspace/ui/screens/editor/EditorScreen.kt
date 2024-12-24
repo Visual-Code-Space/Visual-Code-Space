@@ -350,7 +350,7 @@ private fun ConfigureMonacoEditor(editorView: MonacoEditor, file: File) {
         if (file.exists()) {
           setLanguage(MonacoLanguageMapper.getLanguageByExtension(file.extension))
           setReadOnly(false)
-          text = file.readText()
+          text = file.asRawFile()?.readText() ?: ""
         } else {
           text = ""
         }

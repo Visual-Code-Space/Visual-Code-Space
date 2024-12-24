@@ -210,7 +210,7 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
       ProvidePreferenceLocals {
         MonacoEditorSettingsScreen(
           modifier = modifier,
-          onNavigateUp = navController::navigateUp
+          onNavigateUp = { navController.navigateSingleTop(SettingScreens.Editor) }
         )
       }
     }
