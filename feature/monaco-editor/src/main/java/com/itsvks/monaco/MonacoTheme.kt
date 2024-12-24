@@ -28,11 +28,19 @@ value class MonacoTheme private constructor(val value: String) {
   }
 
   companion object {
-    fun of(value: String) = MonacoTheme(value)
+    fun fromString(value: String): MonacoTheme {
+      return when (value) {
+        "vs" -> VisualStudioLight
+        "vs-dark" -> VisualStudioDark
+        "hc-light" -> HighContrastLight
+        "hc-black" -> HighContrastDark
+        else -> VisualStudioDark
+      }
+    }
 
-    val VisualStudioLight = MonacoTheme("vs-light")
+    val VisualStudioLight = MonacoTheme("vs")
     val VisualStudioDark = MonacoTheme("vs-dark")
     val HighContrastLight = MonacoTheme("hc-light")
-    val HighContrastDark = MonacoTheme("hc-dark")
+    val HighContrastDark = MonacoTheme("hc-black")
   }
 }

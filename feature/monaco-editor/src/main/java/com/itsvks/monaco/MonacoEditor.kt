@@ -64,6 +64,7 @@ class MonacoEditor @JvmOverloads constructor(
   private val client = MonacoEditorClient(this)
   private val webInterface = MonacoWebInterface(this)
 
+  var isLoaded = false
   var onEditorLoadCallbacks = mutableListOf<(MonacoEditor) -> Unit>()
   var onContentChange: (String) -> Unit = {}
 
@@ -117,6 +118,12 @@ class MonacoEditor @JvmOverloads constructor(
 
   fun addOnEditorLoadCallback(callback: (MonacoEditor) -> Unit) {
     onEditorLoadCallbacks.add(callback)
+    Log.i(TAG, "addOnEditorLoadCallback: $callback")
+    Log.i(TAG, "Total callbacks: ${onEditorLoadCallbacks.size}, $onEditorLoadCallbacks")
+  }
+
+  override fun reload() {
+    loadUrl("https://appassets.androidplatform.net/assets/code-oss/editor/index.html")
   }
 
   private fun loadJs(script: String, resultCallback: (String) -> Unit = {}) {

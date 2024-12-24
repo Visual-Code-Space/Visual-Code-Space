@@ -41,6 +41,7 @@ class MonacoEditorClient(private val editor: MonacoEditor) : WebViewClientCompat
 
   override fun onPageFinished(view: WebView, url: String) {
     super.onPageFinished(view, url)
+    editor.isLoaded = true
     view.requestFocus(View.FOCUS_DOWN)
     editor.apply {
       onEditorLoadCallbacks.forEach { callback -> callback(this@apply) }

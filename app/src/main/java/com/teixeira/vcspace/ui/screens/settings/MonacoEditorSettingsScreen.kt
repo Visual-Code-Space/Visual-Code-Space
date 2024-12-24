@@ -136,7 +136,7 @@ fun MonacoEditorSettingsScreen(
         MonacoTheme.HighContrastLight.value,
         MonacoTheme.HighContrastDark.value
       ),
-      valueToText = { AnnotatedString(MonacoTheme.of(it).toString()) },
+      valueToText = { AnnotatedString(MonacoTheme.fromString(it).toString()) },
       icon = { Icon(Icons.Sharp.Palette, contentDescription = null) },
       modifier = Modifier
         .clip(PreferenceShape.Alone)

@@ -15,6 +15,7 @@
 
 package com.teixeira.vcspace.ui.screens.editor
 
+import android.util.Log
 import android.view.ViewGroup
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -219,13 +220,7 @@ fun EditorScreen(
         } else if (editorView is MonacoEditor) {
           val file = fileEntry.file
 
-          LaunchedEffect(editorView) {
-            showMonacoEditor[file.absolutePath] = true
-          }
-
-          key(editorView) {
-            ConfigureMonacoEditor(editorView, file)
-          }
+          ConfigureMonacoEditor(editorView, file)
         }
         viewModel.setEditorConfiguredForFile(fileEntry.file)
       }
@@ -233,7 +228,7 @@ fun EditorScreen(
       key(fileEntry.file.path) {
         if (editorView is MonacoEditor) {
           AnimatedVisibility(
-            visible = showMonacoEditor[fileEntry.file.absolutePath] == true,
+            visible = true,
           ) {
             AndroidView(
               factory = {
@@ -259,7 +254,7 @@ fun EditorScreen(
           }
 
           AnimatedVisibility(
-            visible = showMonacoEditor[fileEntry.file.absolutePath] == false,
+            visible = false,
           ) {
             Box(
               modifier = Modifier.fillMaxSize(),
@@ -328,10 +323,59 @@ private fun ConfigureMonacoEditor(editorView: MonacoEditor, file: File) {
   val cursorBlinkingStyle by rememberCursorBlinkingStyle()
   val scope = rememberCoroutineScope()
 
-  editorView.addOnEditorLoadCallback {
-    editorView.text = "Loading..."
-    editorView.setReadOnly(true)
-    editorView.setLanguage(MonacoLanguage.Plaintext)
+  LaunchedEffect(Unit) {
+    editorView.addOnEditorLoadCallback {
+      editorView.text = "Loading..."
+      editorView.setReadOnly(true)
+      editorView.setLanguage(MonacoLanguage.Plaintext)
+
+      editorView.apply {
+        setTheme(MonacoTheme.fromString(theme))
+        setFontSize(fontSize)
+        setLineNumbersMinChars(lineNumbersMinChars)
+        setLineDecorationsWidth(lineDecorationsWidth)
+        setLetterSpacing(letterSpacing)
+        setMatchBrackets(MatchBrackets.fromValue(matchBrackets))
+        setAcceptSuggestionOnCommitCharacter(acceptSuggestionOnCommitCharacter)
+        setAcceptSuggestionOnEnter(AcceptSuggestionOnEnter.fromValue(acceptSuggestionOnEnter))
+        setFolding(folding)
+        setGlyphMargin(glyphMargin)
+        setWordWrap(WordWrap.fromValue(wordWrap))
+        setWordBreak(WordBreak.fromValue(wordBreak))
+        setWrappingStrategy(WrappingStrategy.fromValue(wrappingStrategy))
+        setCursorStyle(TextEditorCursorStyle.fromValue(cursorStyle))
+        setCursorBlinkingStyle(TextEditorCursorBlinkingStyle.fromValue(cursorBlinkingStyle))
+        setMinimapOptions(MinimapOptions(enabled = false))
+
+        if (file.exists()) {
+          setLanguage(MonacoLanguageMapper.getLanguageByExtension(file.extension))
+          setReadOnly(false)
+          text = file.readText()
+        } else {
+          text = ""
+        }
+      }
+    }
+  }
+
+  LaunchedEffect(
+    theme,
+    fontSize,
+    lineNumbersMinChars,
+    lineDecorationsWidth,
+    letterSpacing,
+    matchBrackets,
+    acceptSuggestionOnCommitCharacter,
+    acceptSuggestionOnEnter,
+    folding,
+    glyphMargin,
+    wordWrap,
+    wordBreak,
+    wrappingStrategy,
+    cursorStyle,
+    cursorBlinkingStyle
+  ) {
+    editorView.reload()
 
     editorView.apply {
       if (file.exists()) {
@@ -346,22 +390,6 @@ private fun ConfigureMonacoEditor(editorView: MonacoEditor, file: File) {
       } else {
         text = ""
       }
-      setTheme(MonacoTheme.of(theme))
-      setFontSize(fontSize)
-      setLineNumbersMinChars(lineNumbersMinChars)
-      setLineDecorationsWidth(lineDecorationsWidth)
-      setLetterSpacing(letterSpacing)
-      setMatchBrackets(MatchBrackets.fromValue(matchBrackets))
-      setAcceptSuggestionOnCommitCharacter(acceptSuggestionOnCommitCharacter)
-      setAcceptSuggestionOnEnter(AcceptSuggestionOnEnter.fromValue(acceptSuggestionOnEnter))
-      setFolding(folding)
-      setGlyphMargin(glyphMargin)
-      setWordWrap(WordWrap.fromValue(wordWrap))
-      setWordBreak(WordBreak.fromValue(wordBreak))
-      setWrappingStrategy(WrappingStrategy.fromValue(wrappingStrategy))
-      setCursorStyle(TextEditorCursorStyle.fromValue(cursorStyle))
-      setCursorBlinkingStyle(TextEditorCursorBlinkingStyle.fromValue(cursorBlinkingStyle))
-      setMinimapOptions(MinimapOptions(enabled = false))
     }
   }
 }

@@ -61,7 +61,7 @@ class WebActivity : BaseComposeActivity() {
               text = "function example() {\n\tconsole.log('Hello, World!');\n}"
               setLanguage(MonacoLanguage.Javascript)
               setFontSize(14)
-              setTheme(MonacoTheme.VisualStudioDark)
+              setTheme(MonacoTheme.HighContrastDark)
               setWordWrap(WordWrap.On)
               setReadOnly(false)
               setMinimapOptions(MinimapOptions(enabled = false))
