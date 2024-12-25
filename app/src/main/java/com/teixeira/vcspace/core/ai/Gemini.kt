@@ -24,6 +24,7 @@ import com.google.ai.client.generativeai.type.content
 import com.google.ai.client.generativeai.type.generationConfig
 import com.teixeira.vcspace.app.BaseApplication
 import com.teixeira.vcspace.core.Secrets
+import com.teixeira.vcspace.file.File
 import com.teixeira.vcspace.resources.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -99,5 +100,9 @@ object Gemini {
     }
 
     return codeWithBackticks
+  }
+
+  suspend fun completeCode(file: File): Result<GenerateContentResponse> {
+    return Result.failure(IllegalArgumentException("Not yet implemented"))
   }
 }

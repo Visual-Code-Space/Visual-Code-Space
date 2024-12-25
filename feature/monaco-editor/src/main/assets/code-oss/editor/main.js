@@ -1,5 +1,5 @@
 let editor;
-let currentValue = ""; // Initialize currentValue before use
+let currentValue = "";
 
 require.config({
     paths: {
@@ -24,7 +24,11 @@ require(["vs/editor/editor.main"], function () {
         value: "",
         language: "plaintext",
         theme: "vs-dark",
-        fontFamily: 'JetBrains Mono'
+        fontFamily: 'JetBrains Mono',
+//        quickSuggestions: {
+//            comments: true,
+//            strings: true
+//        }
     });
 
     window.MonacoAndroid.setCanUndo(editor.getModel().canUndo());
