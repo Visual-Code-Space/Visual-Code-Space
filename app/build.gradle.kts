@@ -167,6 +167,7 @@ dependencies {
   implementation(project(":feature:editor"))
   implementation(project(":feature:monaco-editor"))
   implementation(project(":feature:preferences"))
+  implementation(project(":feature:plugins"))
 
   implementation(libs.kotlinx.coroutines.android)
   implementation(libs.kotlinx.serialization.json)

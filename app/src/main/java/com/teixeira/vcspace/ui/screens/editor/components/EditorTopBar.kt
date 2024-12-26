@@ -30,18 +30,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.Redo
 import androidx.compose.material.icons.automirrored.rounded.Undo
-import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.ElectricalServices
-import androidx.compose.material.icons.rounded.FileOpen
 import androidx.compose.material.icons.rounded.Folder
 import androidx.compose.material.icons.rounded.KeyboardCommandKey
 import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.PlayArrow
-import androidx.compose.material.icons.rounded.Refresh
-import androidx.compose.material.icons.rounded.Save
-import androidx.compose.material.icons.rounded.SaveAs
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -89,6 +84,7 @@ import com.teixeira.vcspace.activities.MarkdownPreviewActivity
 import com.teixeira.vcspace.activities.TerminalActivity
 import com.teixeira.vcspace.app.VCSpaceApplication
 import com.teixeira.vcspace.app.strings
+import com.teixeira.vcspace.compose.LocalMenuManager
 import com.teixeira.vcspace.core.components.Tooltip
 import com.teixeira.vcspace.core.components.common.VCSpaceTopBar
 import com.teixeira.vcspace.core.settings.Settings.EditorTabs.rememberAutoSave
@@ -113,9 +109,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
-import java.io.File as JFile
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
+import java.io.File as JFile
 
 @Composable
 fun EditorTopBar(
@@ -125,6 +121,7 @@ fun EditorTopBar(
   val scope = rememberCoroutineScope()
   val drawerState = LocalEditorDrawerState.current
   val commandPaletteManager = LocalCommandPaletteManager.current
+  val menuManager = LocalMenuManager.current
 
   var showMenu by remember { mutableStateOf(false) }
   val showFileMenu = remember { mutableStateOf(false) }
@@ -473,6 +470,27 @@ fun EditorTopBar(
               )
             }
           )
+
+          menuManager.menuItems.forEach { menu ->
+            AnimatedVisibility(menu.visible) {
+              DropdownMenuItem(
+                text = { Text(menu.title) },
+                onClick = {
+                  menu.onClick()
+                  showMenu = false
+                },
+                leadingIcon = menu.icon?.let {
+                  { Icon(it, contentDescription = null) }
+                },
+                enabled = menu.enabled,
+                trailingIcon = menu.shortcut?.let {
+                  { Text(it) }
+                } ?: menu.trailingIcon?.let {
+                  { Icon(it, contentDescription = null) }
+                }
+              )
+            }
+          }
         }
 
         FileMenu(
@@ -507,35 +525,62 @@ fun FileMenu(
     if (it != null) editorViewModel.addFile(UriUtils.uri2File(it).wrapFile())
   }
 
+  val context = LocalContext.current
   val commandPaletteManager = LocalCommandPaletteManager.current
+  val menuManager = LocalMenuManager.current
+
+  val launchFileCreate = remember {
+    { createFile.launch("filename.txt") }
+  }
+
+  val launchOpenFile = remember {
+    {
+      openFile.launch(
+        arrayOf(
+          "text/*",
+          "application/octet-stream",
+          "application/javascript",
+          "application/json",
+          "application/xml",
+        )
+      )
+    }
+  }
+
+  val saveFile = remember {
+    {
+      scope.launch {
+        editorViewModel.saveFile()
+      }
+    }
+  }
+
+  val saveAll = remember {
+    {
+      scope.launch {
+        editorViewModel.saveAll()
+      }
+    }
+  }
 
   LaunchedEffect(Unit) {
     commandPaletteManager.addCommand(
-      newCommand("New File", "Ctrl+N") {
-        createFile.launch("filename.txt")
-      },
-      newCommand("Open File", "Ctrl+O") {
-        openFile.launch(
-          arrayOf(
-            "text/*",
-            "application/octet-stream",
-            "application/javascript",
-            "application/json",
-            "application/xml",
-          )
-        )
-      },
-      newCommand("Save File", "Ctrl+S") {
-        scope.launch {
-          editorViewModel.saveFile()
-        }
-      },
-      newCommand("Save All Files", "Ctrl+Shift+S") {
-        scope.launch {
-          editorViewModel.saveAll()
-        }
-      }
+      newCommand("New File", "Ctrl+N") { launchFileCreate() },
+      newCommand("Open File", "Ctrl+O") { launchOpenFile() },
+      newCommand("Save File", "Ctrl+S") { saveFile() },
+      newCommand("Save All Files", "Ctrl+Shift+S") { saveAll() }
     )
+
+    menuManager.loadDefaultFileMenu(context) {
+      when (it.id) {
+        0 -> launchFileCreate()
+        1 -> launchOpenFile()
+        2 -> saveFile()
+        3 -> {}
+        4 -> saveAll()
+        5 -> editor?.confirmReload()
+      }
+    }
   }
 
   DropdownMenu(
@@ -544,116 +589,30 @@ fun FileMenu(
     offset = DpOffset((-5).dp, 0.dp),
     onDismissRequest = { showFileMenu.value = false }
   ) {
-    DropdownMenuItem(
-      text = { Text(stringResource(id = strings.file_new)) },
-      leadingIcon = {
-        Icon(
-          Icons.Rounded.Add,
-          contentDescription = null
-        )
-      },
-      trailingIcon = {
-        Text("Ctrl+N")
-      },
-      onClick = {
-        createFile.launch("filename.txt")
-        showFileMenu.value = false
+    menuManager.fileMenuItems.forEach { menu ->
+      menu.enabled = when (menu.id) {
+        2 -> modified
+        3 -> false
+        4 -> areModifiedFiles
+        5 -> editor != null
+        else -> true
       }
-    )
 
-    DropdownMenuItem(
-      text = { Text(stringResource(id = strings.file_open)) },
-      leadingIcon = {
-        Icon(
-          Icons.Rounded.FileOpen,
-          contentDescription = null
-        )
-      },
-      trailingIcon = {
-        Text("Ctrl+O")
-      },
-      onClick = {
-        openFile.launch(
-          arrayOf(
-            "text/*",
-            "application/octet-stream",
-            "application/javascript",
-            "application/json",
-            "application/xml",
-          )
-        )
-        showFileMenu.value = false
-      }
-    )
-
-    DropdownMenuItem(
-      text = { Text(stringResource(id = strings.file_save)) },
-      leadingIcon = {
-        Icon(
-          Icons.Rounded.Save,
-          contentDescription = null
-        )
-      },
-      enabled = modified,
-      trailingIcon = {
-        Text("Ctrl+S")
-      },
-      onClick = {
-        scope.launch {
-          editorViewModel.saveFile(editor)
+      DropdownMenuItem(
+        text = { Text(menu.title) },
+        leadingIcon = menu.icon?.let {
+          { Icon(it, contentDescription = null) }
+        },
+        trailingIcon = menu.shortcut?.let {
+          { Text(it) }
+        },
+        enabled = menu.enabled,
+        onClick = {
+          menu.onClick()
+          showFileMenu.value = false
         }
-        showFileMenu.value = false
-      }
-    )
-
-    DropdownMenuItem(
-      text = { Text(stringResource(id = strings.file_save_as)) },
-      leadingIcon = {
-        Icon(
-          Icons.Rounded.SaveAs,
-          contentDescription = null
-        )
-      },
-      enabled = false,
-      onClick = {
-        showFileMenu.value = false
-        // implement save as
-      }
-    )
-
-    DropdownMenuItem(
-      text = { Text(stringResource(id = strings.file_save_all)) },
-      leadingIcon = {
-        Icon(
-          Icons.Rounded.Save,
-          contentDescription = null
-        )
-      },
-      enabled = areModifiedFiles,
-      trailingIcon = {
-        Text("Ctrl+Shift+S")
-      },
-      onClick = {
-        scope.launch {
-          editorViewModel.saveAll()
-        }
-        showFileMenu.value = false
-      }
-    )
-
-    DropdownMenuItem(
-      text = { Text(stringResource(id = strings.file_reload)) },
-      leadingIcon = {
-        Icon(
-          Icons.Rounded.Refresh,
-          contentDescription = null
-        )
-      },
-      enabled = editor != null,
-      onClick = {
-        editor?.confirmReload()
-      }
-    )
+      )
+    }
   }
 }
 

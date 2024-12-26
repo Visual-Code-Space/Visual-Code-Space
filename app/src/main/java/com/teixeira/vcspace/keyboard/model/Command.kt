@@ -6,14 +6,14 @@ import androidx.compose.ui.input.key.Key
 data class Command(
   val name: String,
   val description: String? = null,
-  val keybinding: String,
+  val keybinding: String?,
   val action: Command.(compositionContext: CompositionContext) -> Unit
 ) {
 
   companion object {
 
     @JvmStatic
-    val newCommand = { name: String, keybinding: String, action: Command.(compositionContext: CompositionContext) -> Unit ->
+    val newCommand = { name: String, keybinding: String?, action: Command.(compositionContext: CompositionContext) -> Unit ->
       Command(
         name = name,
         keybinding = keybinding,

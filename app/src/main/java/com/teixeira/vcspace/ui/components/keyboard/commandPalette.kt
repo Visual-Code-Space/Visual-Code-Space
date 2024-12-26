@@ -164,12 +164,14 @@ private fun LazyItemScope.CommandItem(
         )
       }
 
-      Text(
-        text = command.keybinding,
-        color = Color(0xFF1369FF).harmonizeWithPrimary(fraction = 0.5f),
-        fontSize = 11.sp,
-        fontFamily = FontFamily.Monospace
-      )
+      command.keybinding?.let {
+        Text(
+          text = it,
+          color = Color(0xFF1369FF).harmonizeWithPrimary(fraction = 0.5f),
+          fontSize = 11.sp,
+          fontFamily = FontFamily.Monospace
+        )
+      }
     }
   }
 }

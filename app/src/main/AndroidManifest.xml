@@ -86,7 +86,7 @@
       android:exported="false" />
 
     <activity
-      android:name=".activities.WebActivity"
+      android:name=".activities.TestActivity"
       android:exported="true" />
 
     <provider

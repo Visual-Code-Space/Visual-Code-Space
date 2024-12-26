@@ -26,4 +26,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "VCSpace"
 
-include(":app", ":core:common", ":core:resources", ":feature:editor", ":feature:preferences", ":feature:monaco-editor")
+include(":app", ":core:common", ":core:resources", ":feature:editor", ":feature:preferences", ":feature:monaco-editor", ":feature:plugins")
