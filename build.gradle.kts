@@ -45,6 +45,7 @@ subprojects {
       languageVersion = KotlinVersion.KOTLIN_2_0
       jvmTarget = JvmTarget.JVM_17
       jvmTargetValidationMode = JvmTargetValidationMode.WARNING
+      freeCompilerArgs.add("-Xjvm-default=all")
     }
   }
 }

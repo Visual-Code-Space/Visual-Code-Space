@@ -111,19 +111,21 @@ class CommandPaletteManager private constructor() {
 
     for (command in allCommands) {
       val keyBinding = command.keybinding
-      val keys = keyBinding.split("+")
+      val keys = keyBinding?.split("+")
 
       var isCtrlRequired = false
       var isShiftRequired = false
       var isAltRequired = false
       var bindingKey: Key? = null
 
-      for (key in keys) {
-        when (key) {
-          "Ctrl" -> isCtrlRequired = true
-          "Shift" -> isShiftRequired = true
-          "Alt" -> isAltRequired = true
-          else -> bindingKey = key.toKey() // This is the actual key (e.g., "P", "V", etc.)
+      if (keys != null) {
+        for (key in keys) {
+          when (key) {
+            "Ctrl" -> isCtrlRequired = true
+            "Shift" -> isShiftRequired = true
+            "Alt" -> isAltRequired = true
+            else -> bindingKey = key.toKey() // This is the actual key (e.g., "P", "V", etc.)
+          }
         }
       }
 

@@ -55,6 +55,7 @@ import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.blankj.utilcode.util.UriUtils
+import com.teixeira.vcspace.APP_EXTERNAL_DIR
 import com.teixeira.vcspace.BuildConfig
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerNavController
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
@@ -80,6 +81,8 @@ import com.teixeira.vcspace.github.auth.UserInfo
 import com.teixeira.vcspace.keyboard.CommandPaletteManager
 import com.teixeira.vcspace.keyboard.model.Command.Companion.newCommand
 import com.teixeira.vcspace.plugins.Manifest
+import com.teixeira.vcspace.plugins.PluginLoader
+import com.teixeira.vcspace.plugins.impl.PluginContextImpl
 import com.teixeira.vcspace.preferences.pluginsPath
 import com.teixeira.vcspace.ui.components.ai.GenerateContentDialog
 import com.teixeira.vcspace.ui.screens.editor.EditorScreen
@@ -88,7 +91,9 @@ import com.teixeira.vcspace.ui.screens.editor.components.EditorDrawerSheet
 import com.teixeira.vcspace.ui.screens.editor.components.EditorTopBar
 import com.teixeira.vcspace.ui.screens.editor.components.view.CodeEditorView
 import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -122,6 +127,7 @@ class EditorActivity : BaseComposeActivity() {
   }
 
   private val editorViewModel: EditorViewModel by viewModels()
+  private val pluginContext by lazy { PluginContextImpl(this, editorViewModel) }
 
   @Subscribe(threadMode = ThreadMode.MAIN)
   fun onContentChangeEvent(event: OnContentChangeEvent) {
@@ -134,7 +140,7 @@ class EditorActivity : BaseComposeActivity() {
   }
 
   private fun onCreate() {
-    CommandPaletteManager.instance.clear()
+    //CommandPaletteManager.instance.clear()
 
     CommandPaletteManager.instance.addCommand(
       newCommand("Paste", "Ctrl+V") {
@@ -348,7 +354,18 @@ class EditorActivity : BaseComposeActivity() {
     ObserveLifecycleEvents { event ->
       when (event) {
         Lifecycle.Event.ON_CREATE -> {
+          onCreate()
           EventBus.getDefault().register(this@EditorActivity)
+
+          lifecycleScope.launch {
+            val pluginFile = java.io.File("$APP_EXTERNAL_DIR/plugins", "plugin.jar")
+            if (pluginFile.exists()) {
+              val file = copyPluginToInternalStorage(pluginFile)
+              val plugin = PluginLoader.loadPlugin(this@EditorActivity, file.absolutePath, "org.example.SamplePlugin")
+
+              plugin?.onPluginLoaded(pluginContext)
+            }
+          }
 
           // Open plugin files if opened from PluginsActivity
           run {
@@ -373,8 +390,6 @@ class EditorActivity : BaseComposeActivity() {
           ) {
             editorViewModel.addFile(UriUtils.uri2File(externalFileUri).wrapFile())
           }
-
-          onCreate()
         }
 
         Lifecycle.Event.ON_PAUSE -> {
@@ -459,6 +474,22 @@ class EditorActivity : BaseComposeActivity() {
   fun saveFile(codeEditorView: CodeEditorView? = null) {
     lifecycleScope.launch {
       editorViewModel.saveFile(codeEditorView)
+    }
+  }
+
+  private suspend fun copyPluginToInternalStorage(pluginFile: java.io.File): java.io.File {
+    return withContext(Dispatchers.IO) {
+      val path = "${PathUtils.getInternalAppFilesPath()}/plugins/${pluginFile.nameWithoutExtension}/${pluginFile.name}"
+      val internalFile = path.toFile()
+      if (internalFile.exists()) internalFile.delete()
+
+      FileUtils.createOrExistsFile(path)
+
+      internalFile.outputStream().use { it.write(pluginFile.readBytes()) }
+      println("Copied ${pluginFile.name} to ${internalFile.absolutePath}")
+      internalFile.setWritable(false)
+      internalFile.setReadable(true, true)
+      internalFile
     }
   }
 }

@@ -11,7 +11,7 @@
       <SelectionState runConfigName="PreviewVCSpaceBottomSheet">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="WebActivity">
+      <SelectionState runConfigName="TestActivity">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
