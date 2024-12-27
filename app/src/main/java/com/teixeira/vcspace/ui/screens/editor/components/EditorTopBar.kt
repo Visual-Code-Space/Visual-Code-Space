@@ -104,6 +104,7 @@ import com.teixeira.vcspace.utils.launchWithProgressDialog
 import com.teixeira.vcspace.webserver.LocalHttpServer
 import io.github.rosemoe.sora.event.ContentChangeEvent
 import io.github.rosemoe.sora.event.KeyBindingEvent
+import io.github.rosemoe.sora.widget.component.EditorAutoCompletion
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -153,6 +154,14 @@ fun EditorTopBar(
       canRedo = editorView.canRedo()
 
       editorView.editor.subscribeEvent(ContentChangeEvent::class.java) { event, _ ->
+        when (event.action) {
+          ContentChangeEvent.ACTION_SET_NEW_TEXT,
+          ContentChangeEvent.ACTION_INSERT,
+          ContentChangeEvent.ACTION_DELETE -> {
+            //editorView.editor.getComponent(EditorAutoCompletion::class.java).requireCompletion()
+          }
+        }
+
         EventBus.getDefault().post(OnContentChangeEvent(selectedFile.file))
         editorView.setModified(event.action != ContentChangeEvent.ACTION_SET_NEW_TEXT)
         editorViewModel.setModified(selectedFile.file, editorView.modified)

@@ -24,6 +24,7 @@ import android.view.View
 import android.webkit.ConsoleMessage
 import android.webkit.WebChromeClient
 import android.webkit.WebView
+import com.itsvks.monaco.completion.InlineCompletionProvider
 import com.itsvks.monaco.option.AcceptSuggestionOnEnter
 import com.itsvks.monaco.option.MatchBrackets
 import com.itsvks.monaco.option.Option
@@ -69,6 +70,7 @@ class MonacoEditor @JvmOverloads constructor(
   var onContentChange: (String) -> Unit = {}
 
   val editorScope = CoroutineScope(Dispatchers.Unconfined)
+  var inlineCompletionProvider: InlineCompletionProvider? = null
 
   init {
     addJavascriptInterface(webInterface, "MonacoAndroid")

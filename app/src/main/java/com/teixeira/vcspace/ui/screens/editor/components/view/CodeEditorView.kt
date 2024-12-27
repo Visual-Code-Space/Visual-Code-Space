@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.teixeira.vcspace.editor.VCSpaceEditor
 import com.teixeira.vcspace.editor.databinding.LayoutCodeEditorBinding
+import com.teixeira.vcspace.editor.language.textmate.VCSpaceTMLanguage
 import com.teixeira.vcspace.events.OnPreferenceChangeEvent
 import com.teixeira.vcspace.file.File
 import com.teixeira.vcspace.file.extension
@@ -41,7 +42,6 @@ import com.teixeira.vcspace.utils.cancelIfActive
 import io.github.rosemoe.sora.lang.EmptyLanguage
 import io.github.rosemoe.sora.lang.Language
 import io.github.rosemoe.sora.langs.textmate.TextMateColorScheme
-import io.github.rosemoe.sora.langs.textmate.TextMateLanguage
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 import io.github.rosemoe.sora.text.LineSeparator
@@ -211,12 +211,12 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
   }
 
   private fun updateEditorIndent() {
-    (editor.editorLanguage as? TextMateLanguage)?.tabSize = editorIndent
+    (editor.editorLanguage as? VCSpaceTMLanguage)?.tabSize = editorIndent
     editor.tabWidth = editorIndent
   }
 
   private fun updateEditorUseTab() {
-    (editor.editorLanguage as? TextMateLanguage)?.useTab(editorUseTab)
+    (editor.editorLanguage as? VCSpaceTMLanguage)?.useTab(editorUseTab)
   }
 
   private fun updateStickyScroll() {
@@ -260,7 +260,7 @@ class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
     val scopeName: String? = GrammarProvider.findScopeByFileExtension(file?.extension)
 
     return if (scopeName != null) {
-      TextMateLanguage.create(scopeName, GrammarRegistry.getInstance(), true).apply {
+      VCSpaceTMLanguage.create(scopeName, GrammarRegistry.getInstance(), true).apply {
         tabSize = editorIndent
         useTab(editorUseTab)
       }

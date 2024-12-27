@@ -15,13 +15,22 @@
 
 package com.teixeira.vcspace.editor.completion
 
+import android.graphics.drawable.GradientDrawable
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.PopupWindow
+import android.widget.TextView
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.core.view.setPadding
+import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import com.blankj.utilcode.util.SizeUtils
 import com.teixeira.vcspace.editor.databinding.LayoutCompletionItemBinding
+import com.teixeira.vcspace.utils.getAttrColor
 import io.github.rosemoe.sora.lang.completion.SimpleCompletionItem
 import io.github.rosemoe.sora.widget.component.EditorCompletionAdapter
 
@@ -59,6 +68,40 @@ class CompletionListAdapter : EditorCompletionAdapter() {
         top = SizeUtils.dp2px(4f),
         bottom = SizeUtils.dp2px(4f)
       )
+
+//      root.setOnLongClickListener {
+//        PopupWindow(context).apply {
+//          setBackgroundDrawable(GradientDrawable().apply {
+//            setStroke(
+//              2,
+//              context.getAttrColor(com.google.android.material.R.attr.colorOutline),
+//            )
+//            setColor(Color(0xFF212121).copy(alpha = 0.9f).toArgb())
+//            setCornerRadius(10f)
+//          })
+//          contentView = LinearLayout(context).apply {
+//            layoutParams = ViewGroup.LayoutParams(
+//              ViewGroup.LayoutParams.WRAP_CONTENT,
+//              ViewGroup.LayoutParams.WRAP_CONTENT
+//            )
+//
+//            addView(TextView(context).apply {
+//              layoutParams = ViewGroup.LayoutParams(
+//                ViewGroup.LayoutParams.WRAP_CONTENT,
+//                ViewGroup.LayoutParams.WRAP_CONTENT
+//              )
+//
+//              updateLayoutParams<ViewGroup.LayoutParams> {
+//                setPadding(SizeUtils.dp2px(20f))
+//              }
+//              text = item.label
+//            })
+//          }
+//
+//          isOutsideTouchable = true
+//        }.showAsDropDown(root)
+//        true
+//      }
     }
     return binding.root
   }

@@ -37,12 +37,16 @@ class MonacoWebInterface(private val editor: MonacoEditor) {
   var column: Int = 1
 
   @JavascriptInterface
-  fun showToast(message: String) {
-
+  fun onTextChanged(content: String) {
+    editor.onContentChange(content)
   }
 
   @JavascriptInterface
-  fun onTextChanged(content: String) {
-    editor.onContentChange(content)
+  fun onInlineCompletion(
+    language: String,
+    textBeforeCursor: String,
+    textAfterCursor: String
+  ): String? {
+    return editor.inlineCompletionProvider?.provide(language, textBeforeCursor, textAfterCursor)
   }
 }

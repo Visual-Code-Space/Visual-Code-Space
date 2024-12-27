@@ -24,7 +24,7 @@ import io.github.rosemoe.sora.widget.CodeEditor
 abstract class VCSpaceCompletionItem(
   val completionKind: CompletionItemKind,
   label: CharSequence,
-  desc: CharSequence,
+  desc: CharSequence?,
 ) : CompletionItem(label, desc, null)
 
 class SimpleCompletionItem(
@@ -41,6 +41,16 @@ class SimpleCompletionItem(
       return
     }
     text.replace(line, column - prefixLength, line, column, commitText)
+  }
+}
+
+class AICompletionItem(
+  label: CharSequence,
+  desc: CharSequence?,
+  private val commitText: String,
+) : VCSpaceCompletionItem(CompletionItemKind.AI_GENERATED, label, desc) {
+  override fun performCompletion(editor: CodeEditor, text: Content, line: Int, column: Int) {
+    text.insert(line, column, commitText)
   }
 }
 
@@ -69,6 +79,7 @@ class SimpleSnippetCompletionItem(
 }
 
 enum class CompletionItemKind {
+  AI_GENERATED,
   VALUE,
   KEYWORD,
   SNIPPET,

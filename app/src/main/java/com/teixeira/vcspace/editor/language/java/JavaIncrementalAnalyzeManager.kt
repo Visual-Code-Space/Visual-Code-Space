@@ -139,7 +139,7 @@ class JavaIncrementalAnalyzeManager :
   }
 
   override fun stateEquals(state: State, another: State): Boolean {
-    return state.equals(another)
+    return state == another
   }
 
   override fun onAddState(state: State) {
@@ -167,7 +167,7 @@ class JavaIncrementalAnalyzeManager :
     line: CharSequence,
     state: State,
     lineIndex: Int
-  ): LineTokenizeResult<State, HighlightToken?>? {
+  ): LineTokenizeResult<State, HighlightToken?> {
     val tokens = ArrayList<HighlightToken>()
     var newState = 0
     val stateObj = State()

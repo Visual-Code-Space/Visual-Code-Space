@@ -24,7 +24,6 @@ import com.google.ai.client.generativeai.type.content
 import com.google.ai.client.generativeai.type.generationConfig
 import com.teixeira.vcspace.app.BaseApplication
 import com.teixeira.vcspace.core.Secrets
-import com.teixeira.vcspace.file.File
 import com.teixeira.vcspace.resources.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -81,7 +80,10 @@ object Gemini {
     return composeKeywords.any { keyword -> code.contains(keyword) }
   }
 
-  suspend fun generateCode(prompt: String, fileExtension: String? = null): Result<GenerateContentResponse> {
+  suspend fun generateCode(
+    prompt: String,
+    fileExtension: String? = null
+  ): Result<GenerateContentResponse> {
     return generateContent("Write the code on based on my prompt${if (!fileExtension.isNullOrEmpty()) " for file extension $fileExtension" else ""} and provide me only code:\nThe prompt:\n\n$prompt")
   }
 
@@ -102,7 +104,18 @@ object Gemini {
     return codeWithBackticks
   }
 
-  suspend fun completeCode(file: File): Result<GenerateContentResponse> {
-    return Result.failure(IllegalArgumentException("Not yet implemented"))
+  suspend fun completeCode(completionMetadata: CompletionMetadata): Result<GenerateContentResponse> {
+    return generateContent(
+      """
+      Please complete the following ${completionMetadata.language} code:
+      
+      ${completionMetadata.textBeforeCursor}
+      <cursor>
+      ${completionMetadata.textAfterCursor}
+      
+      Use modern ${completionMetadata.language} practices and hooks where appropriate. Please provide only the completed part of the
+      code without additional comments or explanations.
+    """.trimIndent()
+    )
   }
 }

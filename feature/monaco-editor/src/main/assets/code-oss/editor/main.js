@@ -24,11 +24,7 @@ require(["vs/editor/editor.main"], function () {
         value: "",
         language: "plaintext",
         theme: "vs-dark",
-        fontFamily: 'JetBrains Mono',
-//        quickSuggestions: {
-//            comments: true,
-//            strings: true
-//        }
+        fontFamily: 'JetBrains Mono'
     });
 
     window.MonacoAndroid.setCanUndo(editor.getModel().canUndo());
@@ -69,6 +65,42 @@ function setText(content) {
 function setLanguage(language) {
     if (editor) {
         monaco.editor.setModelLanguage(editor.getModel(), language);
+        monaco.languages.registerInlineCompletionsProvider(language, {
+            provideInlineCompletions: async function (model, position, context, token) {
+                console.log('Provide new completion', position, context, token);
+
+                let textBeforeCursor = model.getValueInRange({
+                    startLineNumber: 1,
+                    startColumn: 1,
+                    endLineNumber: position.lineNumber,
+                    endColumn: position.column
+                });
+
+                let textAfterCursor = model.getValueInRange({
+                    startLineNumber: position.lineNumber,
+                    startColumn: position.column,
+                    endLineNumber: model.getLineCount(),
+                    endColumn: model.getLineMaxColumn(model.getLineCount())
+                });
+
+                // Fetch suggestions from Android
+                const suggestions = await window.MonacoAndroid.onInlineCompletion(language, textBeforeCursor, textAfterCursor);
+
+                // Ensure suggestions are valid
+                const validSuggestions = suggestions ? [{
+                    insertText: suggestions
+                }] : [];
+
+                return {
+                    items: [
+                        ...validSuggestions
+                    ]
+                };
+            },
+            freeInlineCompletions: function (completions) {
+                console.log(completions);
+            },
+        });
     }
 }
 

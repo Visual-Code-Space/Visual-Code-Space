@@ -79,9 +79,7 @@ class JavaLanguage : Language {
     publisher: CompletionPublisher,
     extraArguments: Bundle
   ) {
-    val prefix = CompletionHelper.computePrefix(
-      content, position
-    ) { key: Char -> MyCharacter.isJavaIdentifierPart(key) }
+    val prefix = CompletionHelper.computePrefix(content, position, MyCharacter::isJavaIdentifierPart)
 
     snippetController.javaSnippets.fastForEach { snippet ->
       if (snippet.trigger.startsWith(prefix) && prefix.isNotEmpty()) {

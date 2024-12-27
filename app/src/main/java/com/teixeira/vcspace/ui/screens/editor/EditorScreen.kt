@@ -56,6 +56,7 @@ import com.google.ai.client.generativeai.type.GenerateContentResponse
 import com.itsvks.monaco.MonacoEditor
 import com.itsvks.monaco.MonacoLanguage
 import com.itsvks.monaco.MonacoTheme
+import com.itsvks.monaco.completion.InlineCompletionProvider
 import com.itsvks.monaco.option.AcceptSuggestionOnEnter
 import com.itsvks.monaco.option.MatchBrackets
 import com.itsvks.monaco.option.TextEditorCursorBlinkingStyle
@@ -351,6 +352,9 @@ private fun ConfigureMonacoEditor(
         setCursorStyle(TextEditorCursorStyle.fromValue(cursorStyle))
         setCursorBlinkingStyle(TextEditorCursorBlinkingStyle.fromValue(cursorBlinkingStyle))
         setMinimapOptions(MinimapOptions(enabled = false))
+
+        inlineCompletionProvider =
+          InlineCompletionProvider { language, textBeforeCursor, textAfterCursor -> language }
 
         if (file.exists()) {
           setLanguage(MonacoLanguageMapper.getLanguageByExtension(file.extension))
