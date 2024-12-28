@@ -73,6 +73,9 @@ class MonacoEditor @JvmOverloads constructor(
   var inlineCompletionProvider: InlineCompletionProvider? = null
 
   init {
+    settings.mixedContentMode = 0
+    setLayerType(View.LAYER_TYPE_HARDWARE, null)
+
     addJavascriptInterface(webInterface, "MonacoAndroid")
     webViewClient = client
     webChromeClient = object : WebChromeClient() {
