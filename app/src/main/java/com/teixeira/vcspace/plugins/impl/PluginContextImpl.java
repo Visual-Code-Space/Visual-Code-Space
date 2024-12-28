@@ -23,6 +23,7 @@ import androidx.annotation.Nullable;
 import com.itsvks.monaco.MonacoEditor;
 import com.teixeira.vcspace.activities.EditorActivity;
 import com.teixeira.vcspace.core.MenuManager;
+import com.teixeira.vcspace.file.JavaFileWrapperKt;
 import com.teixeira.vcspace.keyboard.CommandPaletteManager;
 import com.teixeira.vcspace.keyboard.model.Command;
 import com.teixeira.vcspace.ui.screens.editor.EditorViewModel;
@@ -85,6 +86,17 @@ public class PluginContextImpl implements PluginContext {
     ));
   }
 
+  @NonNull
+  @Override
+  public Editor getEditor() {
+    return editor;
+  }
+
+  @Override
+  public void openFile(@NonNull File file) {
+    activity.openFile.invoke(JavaFileWrapperKt.wrapFile(file));
+  }
+
   private class EditorListener implements EditorImpl.Listener {
     @Nullable
     @Override
@@ -112,6 +124,17 @@ public class PluginContextImpl implements PluginContext {
         return new Position(cursor.getLeftLine(), cursor.getLeftColumn());
       }
       return new Position();
+    }
+
+    @Override
+    public void setCursorPosition(@NonNull Position position) {
+      var editor = activity.getCurrentEditor();
+      if (editor instanceof MonacoEditor) {
+        ((MonacoEditor) editor).setPosition(new com.itsvks.monaco.option.Position(position.getLineNumber(), position.getColumn()));
+      } else if (editor instanceof CodeEditorView) {
+        var cursor = ((CodeEditorView) editor).getEditor().getCursor();
+        cursor.set(position.getLineNumber(), position.getColumn());
+      }
     }
   }
 

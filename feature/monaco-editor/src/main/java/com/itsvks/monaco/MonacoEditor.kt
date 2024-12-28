@@ -29,6 +29,7 @@ import com.itsvks.monaco.option.AcceptSuggestionOnEnter
 import com.itsvks.monaco.option.MatchBrackets
 import com.itsvks.monaco.option.Option
 import com.itsvks.monaco.option.Position
+import com.itsvks.monaco.option.Range
 import com.itsvks.monaco.option.TextEditorCursorBlinkingStyle
 import com.itsvks.monaco.option.TextEditorCursorStyle
 import com.itsvks.monaco.option.WordBreak
@@ -180,7 +181,24 @@ class MonacoEditor @JvmOverloads constructor(
   val canRedo get() = webInterface.canRedo
   val isContentModified = webInterface.isModified
 
-  val position get() = Position(webInterface.lineNumber, webInterface.column)
+  var position
+    get() = Position(webInterface.lineNumber, webInterface.column)
+    set(value) = loadJs(
+      """
+      if (editor) {
+        let position = { lineNumber: ${value.lineNumber}, column: ${value.column}};
+        editor.setPosition(position);
+      }
+    """.trimIndent()
+    )
+
+  fun selectText(range: Range) {
+    loadJs("selectText(${range.startLineNumber}, ${range.startColumn}, ${range.endLineNumber}, ${range.endColumn});")
+  }
+
+  fun replaceSelectedText(newText: String) = loadJs("replaceSelectedText($newText);")
+
+  fun scrollToSelection() = loadJs("editor.revealRangeInCenter(editor.getSelection());")
 
   fun setLanguage(language: MonacoLanguage) = loadJs("setLanguage(`${language.value}`);")
 

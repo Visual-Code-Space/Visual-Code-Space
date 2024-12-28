@@ -33,4 +33,6 @@ public interface Editor {
 
   @NonNull
   Position getCursorPosition();
+
+  void setCursorPosition(@NonNull Position position);
 }

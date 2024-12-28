@@ -165,7 +165,7 @@ class EditorViewModel : ViewModel() {
 
     newOpenedFiles.remove(
       newOpenedFiles.find {
-        it.file.name.equals("untitled.txt") && !it.isModified
+        it.file.name == "untitled.txt" && !it.isModified
       }
     )
 

@@ -18,8 +18,10 @@ package com.vcspace.plugins
 import android.content.Context
 import android.util.Log
 import com.vcspace.plugins.command.EditorCommand
+import com.vcspace.plugins.editor.Position
 import com.vcspace.plugins.menu.MenuAction
 import com.vcspace.plugins.menu.MenuItem
+import java.io.File
 
 interface PluginContext {
   companion object {
@@ -27,10 +29,21 @@ interface PluginContext {
   }
 
   val appContext: Context
+  val editor: Editor
 
   fun registerCommand(command: EditorCommand)
 
   fun addMenu(menuItem: MenuItem)
+
+  fun openFile(file: File)
+
+  fun setCursorPosition(position: Position) {
+    editor.cursorPosition = position
+  }
+
+  fun openFile(filePath: String) {
+    openFile(File(filePath))
+  }
 
   fun addMenu(title: String, id: Int, action: MenuAction) {
     addMenu(MenuItem(title, id = id, action = action))

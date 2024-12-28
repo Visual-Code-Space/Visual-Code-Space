@@ -12,33 +12,12 @@
  * You should have received a copy of the GNU General Public License along with Visual Code Space.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-package com.teixeira.vcspace.plugins.impl
 
-import android.content.Context
-import com.vcspace.plugins.Editor
-import com.vcspace.plugins.editor.Position
-import java.io.File
+package com.itsvks.monaco.option
 
-class EditorImpl(private val listener: Listener) : Editor {
-  override fun getCurrentFile(): File? {
-    return listener.currentFile
-  }
-
-  override fun getContext(): Context {
-    return listener.context
-  }
-
-  override fun getCursorPosition(): Position {
-    return listener.cursorPosition
-  }
-
-  override fun setCursorPosition(position: Position) {
-    listener.cursorPosition = position
-  }
-
-  interface Listener {
-    val currentFile: File?
-    val context: Context
-    var cursorPosition: Position
-  }
-}
+data class Range(
+  val startLineNumber: Int,
+  val startColumn: Int,
+  val endLineNumber: Int,
+  val endColumn: Int
+)

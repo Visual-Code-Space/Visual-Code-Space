@@ -205,3 +205,20 @@ function insert(text, line, column) {
 function simulateKeyPress(key) {
     editor.trigger('keyboard', 'type', { text: key });
 }
+
+function selectText(startLineNumber, startColumn, endLineNumber, endColumn) {
+    const range = new monaco.Range(startLineNumber, startColumn, endLineNumber, endColumn);
+    editor.setSelection(range);
+    editor.focus();
+}
+
+function replaceSelectedText(text) {
+    const selection = editor.getSelection();
+    editor.executeEdits(null, [
+        {
+            range: selection,
+            text: text,
+            forceMoveMarkers: true
+        }
+    ]);
+}
