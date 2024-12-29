@@ -15,6 +15,12 @@
 
 package com.vcspace.plugins.menu
 
+/**
+ * Represents an action that can be performed when a menu item is selected.
+ *
+ * This is a functional interface, meaning it can be implemented using a lambda expression.
+ */
 fun interface MenuAction {
+  /** Performs the action associated with this menu item. */
   fun doAction()
 }

@@ -15,6 +15,14 @@
 
 package com.vcspace.plugins.menu
 
+/**
+ * Represents a menu item.
+ *
+ * @property title The title of the menu item.
+ * @property id The ID of the menu item.
+ * @property shortcut The shortcut for the menu item (optional).
+ * @property action The action to perform when the menu item is selected.
+ */
 data class MenuItem @JvmOverloads constructor(
   val title: String,
   val id: Int,

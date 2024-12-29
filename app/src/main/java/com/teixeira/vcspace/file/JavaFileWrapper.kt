@@ -103,7 +103,7 @@ internal data class JavaFileWrapper(
   override fun uri(context: Context): Uri =
     FileProvider.getUriForFile(
       context,
-      "$context.packageName.provider",
+      "${context.packageName}.provider",
       raw
     )
 

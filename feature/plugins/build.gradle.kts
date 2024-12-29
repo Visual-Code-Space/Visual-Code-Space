@@ -42,13 +42,3 @@ dependencies {
   androidTestImplementation(libs.androidx.junit)
   androidTestImplementation(libs.androidx.espresso.core)
 }
-
-tasks.register<Copy>("createJar") {
-  from("${layout.buildDirectory}/intermediates/aar_main_jar/release") {
-    include("**/*.jar")
-  }
-  into("${layout.buildDirectory}/libs/")
-  rename { fileName ->
-    fileName.replace("classes.jar", "library.jar")
-  }
-}

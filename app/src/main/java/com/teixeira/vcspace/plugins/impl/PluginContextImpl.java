@@ -133,7 +133,7 @@ public class PluginContextImpl implements PluginContext {
         ((MonacoEditor) editor).setPosition(new com.itsvks.monaco.option.Position(position.getLineNumber(), position.getColumn()));
       } else if (editor instanceof CodeEditorView) {
         var cursor = ((CodeEditorView) editor).getEditor().getCursor();
-        cursor.set(position.getLineNumber(), position.getColumn());
+        cursor.set(Math.max(position.getLineNumber() - 1, 0), Math.max(position.getColumn() - 1, 0));
       }
     }
   }

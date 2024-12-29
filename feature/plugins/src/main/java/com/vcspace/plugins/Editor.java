@@ -24,15 +24,39 @@ import com.vcspace.plugins.editor.Position;
 
 import java.io.File;
 
+/**
+ * Represents the editor within the application.
+ */
 public interface Editor {
+
+  /**
+   * Gets the currently opened file in the editor.
+   *
+   * @return the currently opened file, or null if no file is open.
+   */
   @Nullable
   File getCurrentFile();
 
+  /**
+   * Gets the application/activity context of the editor.
+   *
+   * @return the application/activity context.
+   */
   @NonNull
   Context getContext();
 
+  /**
+   * Gets the current cursor position in the editor.
+   *
+   * @return the current cursor position.
+   */
   @NonNull
   Position getCursorPosition();
 
+  /**
+   * Sets the cursor position in the editor.
+   *
+   * @param position the new cursor position.
+   */
   void setCursorPosition(@NonNull Position position);
 }
