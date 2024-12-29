@@ -1,7 +1,17 @@
+## Table of Contents
+1. Introduction 
+2. What are Plugins?
+3. Plugin Structure and Key Components
+    - The `Plugin` Interface
+    - The `PluginContext` Interface
+    - The `Editor` Interface
+    - The `Position` Class
+    - `MenuAction` and `MenuItem` for Menu Integration
+4. Creating Your First Plugin: "Hello, Plugin!"
+5. Example: Adding a Menu Item
 
-# Creating Plugins for Visual Code Space (VCSpace) - Beginner's Guide
-
-This guide provides a comprehensive introduction to creating plugins for VCSpace. It's designed for beginners with basic Java knowledge.
+# Introduction
+This guide provides a comprehensive introduction to creating plugins for VCSpace, a powerful and flexible code editor designed for Android devices. It is designed for beginners with basic Java knowledge.
 
 ## What are Plugins?
 
