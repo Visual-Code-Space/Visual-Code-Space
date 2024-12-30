@@ -48,6 +48,15 @@ class PluginInfo(private val file: File) {
       updateProperties()
     }
 
+  var icon: String?
+    get() = properties.getProperty("icon")
+    set(value) {
+      if (value == null) {
+        properties.remove("icon")
+      } else properties.setProperty("icon", value)
+      updateProperties()
+    }
+
   var id: String
     get() = properties.getProperty("id", name)
     set(value) {

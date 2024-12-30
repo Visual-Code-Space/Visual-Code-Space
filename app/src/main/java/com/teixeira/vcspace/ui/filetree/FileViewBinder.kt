@@ -178,7 +178,7 @@ class FileViewBinder(
   fun onRefreshFolderEvent(event: OnRefreshFolderEvent) {
     CoroutineScope(Dispatchers.Main).launch {
       fileListLoader.removeFileInCache(event.openedFolder)
-      fileTreeBinding.treeview.refresh(fastRefresh = true)
+      fileTreeBinding.treeview.refresh(withExpandable = true)
     }
   }
 
@@ -186,7 +186,7 @@ class FileViewBinder(
   fun onDeleteFileEvent(event: OnDeleteFileEvent) {
     CoroutineScope(Dispatchers.Main).launch {
       fileListLoader.removeFileInCache(event.openedFolder)
-      fileTreeBinding.treeview.refresh(fastRefresh = true)
+      fileTreeBinding.treeview.refresh(withExpandable = true)
     }
   }
 
@@ -194,7 +194,7 @@ class FileViewBinder(
   fun onCreateFileEvent(event: OnCreateFileEvent) {
     CoroutineScope(Dispatchers.Main).launch {
       fileListLoader.removeFileInCache(event.openedFolder)
-      fileTreeBinding.treeview.refresh(fastRefresh = true)
+      fileTreeBinding.treeview.refresh(withExpandable = true)
     }
   }
 
@@ -202,7 +202,7 @@ class FileViewBinder(
   fun onCreateFolderEvent(event: OnCreateFolderEvent) {
     CoroutineScope(Dispatchers.Main).launch {
       fileListLoader.removeFileInCache(event.openedFolder)
-      fileTreeBinding.treeview.refresh(fastRefresh = true)
+      fileTreeBinding.treeview.refresh(withExpandable = true)
     }
   }
 }

@@ -93,7 +93,7 @@ fun NewPluginSheet(
   var isValidClassName by remember { mutableStateOf(true) }
 
   LaunchedEffect(name, packageName, id, mainClass) {
-    val packageFile = File("$directory/$id")
+    val packageFile = File("$directory/$name")
     isValidPackageName = packageName.isNotBlank()
     isValidClassName = mainClass.isNotBlank() && !mainClass.contains(" ")
     isValid = isValidPackageName && name.isNotBlank() && isValidClassName && !packageFile.exists()
@@ -150,7 +150,14 @@ fun NewPluginSheet(
           modifier = Modifier.fillMaxWidth(),
           label = { Text(stringResource(R.string.name)) },
           value = name,
-          onValueChange = { name = it }
+          onValueChange = {
+            name = it
+            id = it.lowercase().replace(" ", "")
+            packageName = "${packageName.substringBeforeLast(".")}.${
+              it.lowercase().replace(" ", "_").replace("-", "_").replace(".", "")
+            }"
+            mainClass = it.replace(" ", "")
+          }
         )
 
         OutlinedTextField(
@@ -217,7 +224,7 @@ fun NewPluginSheet(
           label = { Text("ID") },
           value = id,
           onValueChange = { id = it.lowercase().replace(" ", "") },
-          isError = "$directory/$id".toFile().exists()
+          isError = id.isBlank()
         )
 
         OutlinedTextField(
@@ -259,7 +266,7 @@ fun NewPluginSheet(
                   this.author = author.ifBlank { null }
                   this.description = description.ifBlank { null }
                   this.mainClass = "$packageName.$mainClass"
-                  this.version = version
+                  this.version = version.ifBlank { defaultVersion }
                   this.id = id
                   this.website = website.ifBlank { null }
                   this.license = license.ifBlank { null }
