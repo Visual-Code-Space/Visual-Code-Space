@@ -38,12 +38,9 @@ import com.teixeira.vcspace.resources.R
 
 @Composable
 fun PluginTopBar(
-  modifier: Modifier = Modifier,
-  onSettingsChanged: ((PluginSettings) -> Unit)? = null
+  modifier: Modifier = Modifier
 ) {
   val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
-
-  var showPluginSettings by remember { mutableStateOf(false) }
 
   VCSpaceTopBar(
     title = {
@@ -64,21 +61,6 @@ fun PluginTopBar(
       ) {
         Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "back")
       }
-    },
-    actions = {
-      IconButton(
-        onClick = { showPluginSettings = true }
-      ) {
-        Icon(Icons.Rounded.Settings, contentDescription = "settings")
-      }
     }
   )
-
-  if (showPluginSettings) {
-    PluginSettingsDialog(
-      settings = PluginSettings(),
-      onSettingsChanged = onSettingsChanged,
-      onDismiss = { showPluginSettings = false }
-    )
-  }
 }

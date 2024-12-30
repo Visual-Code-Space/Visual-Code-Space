@@ -15,117 +15,26 @@
 
 package com.teixeira.vcspace.ui.screens.plugin
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.teixeira.vcspace.github.Content
-import com.teixeira.vcspace.plugins.Plugin
-import com.teixeira.vcspace.plugins.internal.PluginManager
+import com.teixeira.vcspace.plugins.PluginLoader
+import com.teixeira.vcspace.plugins.internal.PluginInfo
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-data class InstalledPluginState(
-  val plugins: List<Plugin> = emptyList(),
-  val isLoading: Boolean = false
-)
-
-data class PluginState(
-  val plugins: List<Content> = emptyList(),
-  val isLoading: Boolean = false
-)
-
 class PluginViewModel : ViewModel() {
-  private val _installedPluginState = MutableStateFlow(InstalledPluginState())
-  private val _pluginState = MutableStateFlow(PluginState())
+  private val _installedPlugins = MutableStateFlow(mutableListOf<PluginInfo>())
+  val installedPlugins = _installedPlugins.asStateFlow()
 
-  val installedPluginState = _installedPluginState.asStateFlow()
-  val pluginState = _pluginState.asStateFlow()
-
-  fun loadInstalledPlugins() {
-    _installedPluginState.update { it.copy(isLoading = true) }
-
-    viewModelScope.launch {
-      // Fetch installed plugins asynchronously
-      val installedPlugins = PluginManager.getPlugins().toList()
-      _installedPluginState.update {
-        it.copy(plugins = installedPlugins, isLoading = false)
+  fun loadInstalledPlugins(context: Context) {
+    viewModelScope.launch(Dispatchers.IO) {
+      _installedPlugins.update {
+        PluginLoader.loadPlugins(context).map { it.first }.toMutableList()
       }
-    }
-  }
-
-  fun addNewInstalledPlugin(plugin: Plugin) {
-    _installedPluginState.update {
-      val updatedList = it.plugins.toMutableList().apply { add(plugin) }
-      it.copy(plugins = updatedList)
-    }
-  }
-
-  // Load Available Plugins
-  fun loadPlugins() {
-    _pluginState.update { it.copy(isLoading = true) }
-
-    viewModelScope.launch {
-      val pluginList = mutableListOf<Content>()
-
-      PluginManager.fetchPluginsFromGithub(
-        onSuccess = { contents ->
-          val dirs = contents.filter { it.type == "dir" }
-
-          if (dirs.isEmpty()) {
-            _pluginState.update { it.copy(isLoading = false) }
-          } else {
-            dirs.forEach { content ->
-              viewModelScope.launch {
-                PluginManager.getPluginSize(
-                  path = content.path,
-                  onSuccess = { size ->
-                    pluginList.add(content.copy(size = size))
-
-                    // When all plugins are loaded, update the state
-                    if (pluginList.size == dirs.size) {
-                      _pluginState.update {
-                        it.copy(plugins = pluginList, isLoading = false)
-                      }
-                    }
-                  },
-                  onFailure = {
-                    it.printStackTrace()
-                  }
-                )
-              }
-            }
-          }
-        },
-        onFailure = {
-          it.printStackTrace()
-        }
-      )
-    }
-  }
-
-  fun downloadPlugin(
-    plugin: Content,
-    onSuccess: (Plugin) -> Unit,
-    onFailure: (Throwable) -> Unit
-  ) {
-    viewModelScope.launch {
-      _installedPluginState.update { it.copy(isLoading = true) }
-      _pluginState.update { it.copy(isLoading = true) }
-
-      PluginManager.downloadPlugin(
-        plugin = plugin,
-        onSuccess = { result ->
-          loadInstalledPlugins()
-          _pluginState.update { it.copy(isLoading = false) }
-          onSuccess(result)
-        },
-        onFailure = { error ->
-          loadInstalledPlugins()
-          _pluginState.update { it.copy(isLoading = false) }
-          onFailure(error)
-        }
-      )
     }
   }
 }

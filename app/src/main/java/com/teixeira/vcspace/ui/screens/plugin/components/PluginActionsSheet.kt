@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,34 +32,28 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.teixeira.vcspace.app.drawables
+import com.teixeira.vcspace.PluginConstants
 import com.teixeira.vcspace.extensions.toFile
-import com.teixeira.vcspace.plugins.Plugin
-import com.teixeira.vcspace.plugins.internal.PluginManager
+import com.teixeira.vcspace.plugins.internal.PluginInfo
 import com.teixeira.vcspace.resources.R
-import com.teixeira.vcspace.ui.LoadingDialog
 import com.teixeira.vcspace.ui.LocalToastHostState
 import com.teixeira.vcspace.ui.screens.plugin.PluginViewModel
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PluginActionsSheet(
   modifier: Modifier = Modifier,
-  plugin: Plugin,
+  pluginInfo: PluginInfo,
   viewModel: PluginViewModel,
   scope: CoroutineScope,
   onDismissSheet: () -> Unit,
 ) {
   var showDeleteDialog by remember { mutableStateOf(false) }
-  var showUploadDialog by remember { mutableStateOf(false) }
 
   val toastHostState = LocalToastHostState.current
   val context = LocalContext.current
@@ -81,63 +74,18 @@ fun PluginActionsSheet(
           )
         }
       }
-      item {
-        ElevatedCard(
-          modifier = Modifier.padding(5.dp),
-          onClick = {
-            showUploadDialog = true
-
-            scope.launch(Dispatchers.IO) {
-              PluginManager.uploadPlugin(
-                plugin = plugin,
-                onSuccess = {
-                  showUploadDialog = false
-                  onDismissSheet()
-
-                  viewModel.loadPlugins()
-                  scope.launch {
-                    toastHostState.showToast(
-                      message = context.getString(R.string.plugin_uploaded_successfully),
-                      icon = Icons.Outlined.CheckCircle
-                    )
-                  }
-                },
-                onFailure = {
-                  showUploadDialog = false
-                  onDismissSheet()
-
-                  scope.launch {
-                    toastHostState.showToast(
-                      message = it.message.toString(),
-                      icon = Icons.Outlined.Info
-                    )
-                  }
-                }
-              )
-            }
-          }
-        ) {
-          ListItem(
-            headlineContent = { Text(stringResource(R.string.upload_to_server)) },
-            leadingContent = {
-              Icon(
-                ImageVector.vectorResource(drawables.ic_cloud_upload),
-                contentDescription = null
-              )
-            }
-          )
-        }
-      }
     }
   }
 
   if (showDeleteDialog) {
     DeletePluginDialog(
       onConfirm = {
-        showDeleteDialog = false
-        plugin.fullPath.toFile().deleteRecursively()
+        val file = "${PluginConstants.PLUGIN_HOME_PATH}/${pluginInfo.name}".toFile()
+        if (file.exists()) {
+          file.deleteRecursively()
+        }
         onDismissSheet()
-        viewModel.loadInstalledPlugins()
+        viewModel.loadInstalledPlugins(context)
         scope.launch {
           toastHostState.showToast(
             message = context.getString(R.string.plugin_deleted_successfully),
@@ -147,9 +95,5 @@ fun PluginActionsSheet(
       },
       onDismiss = { showDeleteDialog = false }
     )
-  }
-
-  if (showUploadDialog) {
-    LoadingDialog(message = stringResource(R.string.uploading))
   }
 }

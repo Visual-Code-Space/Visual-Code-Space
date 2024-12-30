@@ -17,6 +17,7 @@ package com.vcspace.plugins
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import com.vcspace.plugins.command.EditorCommand
 import com.vcspace.plugins.editor.Position
 import com.vcspace.plugins.menu.MenuAction
@@ -102,5 +103,20 @@ interface PluginContext {
    */
   fun log(message: String) {
     Log.i(TAG, message)
+  }
+
+  /**
+   * Displays a short toast message to the user.
+   *
+   * Example Usage:
+   * ```kotlin
+   * toast("This is a toast message")
+   * ```
+   *
+   * @param message The message to be displayed in the toast.
+   *
+   */
+  fun toast(message: String) {
+    Toast.makeText(appContext, message, Toast.LENGTH_SHORT).show()
   }
 }

@@ -132,5 +132,5 @@ var pythonDownloaded: Boolean
   }
 
 var pluginsPath: String
-  get() = defaultPrefs.getString(PreferenceKeys.PLUGINS_PATH, PluginConstants.PLUGIN_HOME)!!
+  get() = defaultPrefs.getString(PreferenceKeys.PLUGINS_PATH, PluginConstants.PLUGIN_HOME_PATH)!!
   set(value) = defaultPrefs.edit().putString(PreferenceKeys.PLUGINS_PATH, value).apply()

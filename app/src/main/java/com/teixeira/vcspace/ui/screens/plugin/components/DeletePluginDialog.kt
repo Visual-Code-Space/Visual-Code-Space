@@ -37,7 +37,10 @@ fun DeletePluginDialog(
     title = { Text(stringResource(string.delete_plugin)) },
     text = { Text(stringResource(string.delete_plugin_msg)) },
     confirmButton = {
-      Button(onClick = onConfirm) { Text(stringResource(R.string.confirm)) }
+      Button(onClick = {
+        onDismiss()
+        onConfirm()
+      }) { Text(stringResource(R.string.confirm)) }
     },
     dismissButton = {
       OutlinedButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }

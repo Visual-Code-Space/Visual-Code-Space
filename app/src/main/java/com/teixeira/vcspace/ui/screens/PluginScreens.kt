@@ -26,14 +26,6 @@ sealed class PluginScreens(
   val title: String,
   val icon: (@Composable () -> Unit)? = null
 ) {
-  data object Explore : PluginScreens(
-    route = "explore",
-    title = "Explore",
-    icon = {
-      Icon(ImageVector.vectorResource(R.drawable.ic_explore), contentDescription = null)
-    }
-  )
-
   data object Installed : PluginScreens(
     route = "installed",
     title = "Installed",

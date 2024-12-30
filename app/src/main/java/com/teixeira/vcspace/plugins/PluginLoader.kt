@@ -12,58 +12,78 @@
  * You should have received a copy of the GNU General Public License along with Visual Code Space.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+package com.teixeira.vcspace.plugins
 
-package com.teixeira.vcspace.plugins;
+import android.content.Context
+import com.blankj.utilcode.util.FileUtils
+import com.blankj.utilcode.util.ToastUtils
+import com.teixeira.vcspace.PluginConstants
+import com.teixeira.vcspace.extensions.extractZipFile
+import com.teixeira.vcspace.extensions.toFile
+import com.teixeira.vcspace.plugins.internal.PluginInfo
+import com.teixeira.vcspace.utils.runOnUiThread
+import com.teixeira.vcspace.utils.showShortToast
+import com.vcspace.plugins.Plugin
+import dalvik.system.DexClassLoader
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-import android.content.Context;
+object PluginLoader {
+  fun loadPlugins(context: Context): List<Pair<PluginInfo, Plugin>> {
+    val plugins = mutableListOf<Plugin>()
+    val pluginInfos = mutableListOf<PluginInfo>()
 
-import androidx.annotation.Nullable;
+    val pluginsPath = PluginConstants.PLUGIN_HOME_PATH.toFile()
+    FileUtils.createOrExistsDir(pluginsPath)
 
-import com.vcspace.plugins.Plugin;
-
-import java.lang.reflect.Constructor;
-
-import dalvik.system.DexClassLoader;
-
-public class PluginLoader {
-
-  /**
-   * @noinspection CallToPrintStackTrace
-   */
-  @Nullable
-  public static Plugin loadPlugin(Context context, String jarFilePath, String className) {
-    try {
-      DexClassLoader dexClassLoader = new DexClassLoader(
-        jarFilePath,
-        null,
-        null,
-        context.getApplicationContext().getClassLoader()
-      );
-
-      Class<?> pluginClass = dexClassLoader.loadClass(className);
-
-      if (Plugin.class.isAssignableFrom(pluginClass)) {
-        Constructor<?> constructor = pluginClass.getConstructor();
-        return (Plugin) constructor.newInstance();
-      } else {
-        throw new IllegalArgumentException("Class does not implement Plugin interface");
+    pluginsPath.listFiles()?.forEach { file ->
+      val properties = file.resolve("plugin.properties")
+      if (!properties.exists()) {
+        throw IllegalArgumentException("Plugin file does not contain plugin.properties")
       }
-    } catch (ClassNotFoundException e) {
-      System.err.println("Plugin class not found: " + className);
-      e.printStackTrace();
-      return null;
-    } catch (IllegalAccessException | InstantiationException e) {
-      System.err.println("Unable to instantiate plugin class: " + className);
-      e.printStackTrace();
-      return null;
-    } catch (NoSuchMethodException e) {
-      System.err.println("Default constructor not found in plugin class: " + className);
-      e.printStackTrace();
-      return null;
-    } catch (Exception e) {
-      System.err.println("Unexpected error while loading plugin: " + className);
-      e.printStackTrace();
-      return null;
+
+      val pluginInfo = PluginInfo(properties)
+      pluginInfo.pluginFileName?.let {
+        val jarFilePath = file.resolve(it).apply {
+          setWritable(false)
+          setReadable(true, true)
+        }
+
+        val dexClassLoader = DexClassLoader(
+          jarFilePath.absolutePath,
+          null,
+          null,
+          context.applicationContext.classLoader
+        )
+
+        val pluginClass = dexClassLoader.loadClass(pluginInfo.mainClass)
+
+        if (Plugin::class.java.isAssignableFrom(pluginClass)) {
+          val constructor = pluginClass.getConstructor()
+          plugins.add(constructor.newInstance() as Plugin)
+          pluginInfos.add(pluginInfo)
+        } else {
+          throw IllegalArgumentException("Class does not implement Plugin interface")
+        }
+      } ?: runOnUiThread {
+        showShortToast(context, "Plugin file not found for ${file.name}")
+      }
+    }
+
+    return pluginInfos.zip(plugins)
+  }
+
+  suspend fun extractPluginZip(pluginZipFile: java.io.File) {
+    withContext(Dispatchers.IO) {
+      runCatching {
+        val path = "${PluginConstants.PLUGIN_HOME_PATH}/${pluginZipFile.nameWithoutExtension}"
+        val internalFile = path.toFile()
+
+        FileUtils.createOrExistsDir(internalFile)
+        pluginZipFile.extractZipFile(internalFile)
+      }.onFailure {
+        ToastUtils.showShort(it.message)
+      }
     }
   }
 }

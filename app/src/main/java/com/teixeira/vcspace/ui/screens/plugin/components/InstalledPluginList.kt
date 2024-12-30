@@ -15,7 +15,6 @@
 
 package com.teixeira.vcspace.ui.screens.plugin.components
 
-import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -25,7 +24,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Refresh
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,12 +37,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.teixeira.vcspace.extensions.getEmptyActivityBundle
+import com.teixeira.vcspace.plugins.internal.PluginInfo
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.ui.LocalToastHostState
-import com.teixeira.vcspace.activities.EditorActivity
 import com.teixeira.vcspace.ui.screens.plugin.PluginViewModel
-import com.teixeira.vcspace.plugins.Plugin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -55,23 +51,13 @@ fun InstalledPluginList(
   listState: LazyListState,
   scope: CoroutineScope
 ) {
-  val installedPluginState by viewModel.installedPluginState.collectAsStateWithLifecycle()
+  val plugins by viewModel.installedPlugins.collectAsStateWithLifecycle()
 
-  val isLoading = installedPluginState.isLoading
-  val plugins = installedPluginState.plugins
-
-  var selectedPlugin by remember { mutableStateOf<Plugin?>(null) }
+  var selectedPlugin by remember { mutableStateOf<PluginInfo?>(null) }
   val context = LocalContext.current
   val toastHostState = LocalToastHostState.current
 
-  if (isLoading) {
-    Box(
-      modifier = Modifier.fillMaxSize(),
-      contentAlignment = Alignment.Center
-    ) {
-      CircularProgressIndicator()
-    }
-  } else if (plugins.isEmpty()) {
+  if (plugins.isEmpty()) {
     NoPlugins()
   } else {
     LazyColumn(
@@ -80,17 +66,13 @@ fun InstalledPluginList(
       contentPadding = PaddingValues(vertical = 5.dp, horizontal = 5.dp),
       verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
-      items(plugins, key = { it.fullPath }) { plugin ->
+      items(plugins, key = { "${it.name}${it.pluginFileName}${it.version}" }) { plugin ->
         PluginListItem(
           modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null),
-          plugin = plugin,
+          pluginInfo = plugin,
           onLongClick = { selectedPlugin = it },
           onClick = {
-            val intent = Intent(context, EditorActivity::class.java).apply {
-              putExtra(EditorActivity.EXTRA_KEY_PLUGIN_MANIFEST, it.manifest)
-              flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            }
-            context.startActivity(intent, context.getEmptyActivityBundle())
+
           },
           onEnabledOrDisabledCallback = {
             scope.launch {
@@ -107,7 +89,7 @@ fun InstalledPluginList(
 
   selectedPlugin?.let {
     PluginActionsSheet(
-      plugin = it,
+      pluginInfo = it,
       viewModel = viewModel,
       scope = scope,
       onDismissSheet = { selectedPlugin = null },

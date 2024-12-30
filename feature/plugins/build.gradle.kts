@@ -42,3 +42,24 @@ dependencies {
   androidTestImplementation(libs.androidx.junit)
   androidTestImplementation(libs.androidx.espresso.core)
 }
+
+tasks.register<Copy>("copyJarToAssets") {
+  val sourceModuleName = "feature/plugins"
+  val targetModuleName = "app"
+  val jarFileName = "intermediates/full_jar/release/createFullJarRelease/full.jar"
+  val renamedFileName = "plugins-api.jar"
+
+  val sourceJar = file("$rootDir/$sourceModuleName/build/$jarFileName")
+
+  val destinationDir = file("$rootDir/$targetModuleName/src/main/assets/plugin")
+
+  from(sourceJar)
+  into(destinationDir)
+  rename { renamedFileName }
+
+  dependsOn("assembleRelease")
+
+  doFirst {
+    destinationDir.mkdirs()
+  }
+}

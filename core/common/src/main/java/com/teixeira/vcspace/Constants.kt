@@ -44,5 +44,5 @@ object PreferenceKeys {
 }
 
 object PluginConstants {
-  val PLUGIN_HOME = "$APP_EXTERNAL_DIR/plugins"
+  val PLUGIN_HOME_PATH = "${PathUtils.getInternalAppFilesPath()}/plugins"
 }

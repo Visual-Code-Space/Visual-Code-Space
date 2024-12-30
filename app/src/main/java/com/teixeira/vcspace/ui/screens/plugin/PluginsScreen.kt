@@ -15,6 +15,9 @@
 
 package com.teixeira.vcspace.ui.screens.plugin
 
+import android.webkit.MimeTypeMap
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -38,23 +41,20 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.blankj.utilcode.util.FileUtils
-import com.google.gson.GsonBuilder
-import com.teixeira.vcspace.resources.R
-import com.teixeira.vcspace.app.VCSpaceApplication
-import com.teixeira.vcspace.plugins.Plugin
-import com.teixeira.vcspace.preferences.pluginsPath
+import com.blankj.utilcode.util.UriUtils
+import com.teixeira.vcspace.app.strings
+import com.teixeira.vcspace.plugins.PluginLoader
 import com.teixeira.vcspace.ui.LocalToastHostState
 import com.teixeira.vcspace.ui.screens.PluginScreens
-import com.teixeira.vcspace.ui.screens.plugin.components.ExplorePluginList
 import com.teixeira.vcspace.ui.screens.plugin.components.InstalledPluginList
 import com.teixeira.vcspace.ui.screens.plugin.components.NewPluginButton
-import com.teixeira.vcspace.ui.screens.plugin.components.NewPluginDialog
+import com.teixeira.vcspace.ui.screens.plugin.components.NewPluginSheet
 import com.teixeira.vcspace.ui.screens.plugin.components.PluginTabs
 import com.teixeira.vcspace.ui.screens.plugin.components.PluginTopBar
+import com.teixeira.vcspace.utils.GradleJavaLibraryProjectCreator
+import com.teixeira.vcspace.utils.launchWithProgressDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import java.io.File
 
 @Composable
 fun PluginsScreen(
@@ -74,26 +74,22 @@ fun PluginsScreen(
   val context = LocalContext.current
 
   LaunchedEffect(Unit) {
-    viewModel.loadInstalledPlugins()
-    viewModel.loadPlugins()
+    viewModel.loadInstalledPlugins(context)
+  }
+
+  val openFile = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) {
+    if (it != null) {
+      coroutineScope.launch {
+        PluginLoader.extractPluginZip(UriUtils.uri2File(it))
+        viewModel.loadInstalledPlugins(context)
+      }
+    }
   }
 
   Scaffold(
     modifier = modifier.fillMaxSize(),
     topBar = {
-      PluginTopBar(
-        onSettingsChanged = { settings ->
-          pluginsPath = settings.pluginPath
-          viewModel.loadInstalledPlugins()
-
-          coroutineScope.launch {
-            toastHostState.showToast(
-              message = context.getString(R.string.saved),
-              icon = Icons.Rounded.Check
-            )
-          }
-        }
-      )
+      PluginTopBar()
     },
     floatingActionButton = {
       AnimatedVisibility(
@@ -101,7 +97,14 @@ fun PluginsScreen(
       ) {
         NewPluginButton(
           expanded = expandedFab,
-          onClick = { showNewPluginDialog = true }
+          onCreatePlugin = { showNewPluginDialog = true },
+          onImportPlugin = {
+            openFile.launch(
+              arrayOf(
+                MimeTypeMap.getSingleton().getMimeTypeFromExtension("zip") ?: "application/zip"
+              )
+            )
+          }
         )
       }
     }
@@ -120,13 +123,6 @@ fun PluginsScreen(
         navController = navController,
         startDestination = PluginScreens.Installed.route
       ) {
-        composable(PluginScreens.Explore.route) {
-          ExplorePluginList(
-            viewModel = viewModel,
-            scope = coroutineScope
-          )
-        }
-
         composable(PluginScreens.Installed.route) {
           InstalledPluginList(
             viewModel = viewModel,
@@ -139,37 +135,30 @@ fun PluginsScreen(
   }
 
   if (showNewPluginDialog) {
-    NewPluginDialog(
-      onCreate = { manifest ->
-        showNewPluginDialog = false
-
-        val newPluginPath = "$pluginsPath/${manifest.packageName}"
-        FileUtils.createOrExistsDir(newPluginPath)
-
-        val manifestFile = File("$newPluginPath/manifest.json")
-        FileUtils.createOrExistsFile(manifestFile)
-        manifestFile.writeText(GsonBuilder().setPrettyPrinting().create().toJson(manifest))
-
-        val pluginFile = File("$newPluginPath/main.bsh")
-        FileUtils.createOrExistsFile(pluginFile)
-
-        context.assets.open("plugin/main.java").bufferedReader().use {
-          pluginFile.writeText(it.readText())
-        }
-
-        viewModel.addNewInstalledPlugin(
-          Plugin(
-            manifest = manifest,
-            app = VCSpaceApplication.getInstance(),
-            fullPath = "$pluginsPath/${manifest.packageName}"
+    NewPluginSheet(
+      onCreate = { pluginInfo, pluginDir ->
+        coroutineScope.launchWithProgressDialog(
+          uiContext = context,
+          configureBuilder = {
+            it.apply {
+              setMessage("Creating plugin...")
+              setCancelable(false)
+            }
+          }
+        ) { _, _ ->
+          GradleJavaLibraryProjectCreator.createGradleJavaLibraryProject(
+            context = context,
+            baseDir = pluginDir,
+            packageName = pluginInfo.packageName!!,
+            fullClassName = pluginInfo.mainClass!!
           )
-        )
-
-        coroutineScope.launch {
-          toastHostState.showToast(
-            message = context.getString(R.string.plugin_created_successfully),
-            icon = Icons.Rounded.Check
-          )
+        }.invokeOnCompletion {
+          coroutineScope.launch {
+            toastHostState.showToast(
+              message = context.getString(strings.plugin_created_successfully),
+              icon = Icons.Rounded.Check
+            )
+          }
         }
       },
       onDismiss = { showNewPluginDialog = false }

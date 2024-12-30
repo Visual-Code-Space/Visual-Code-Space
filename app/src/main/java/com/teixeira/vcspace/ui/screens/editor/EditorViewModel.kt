@@ -22,6 +22,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.FileUtils
+import com.blankj.utilcode.util.ToastUtils
 import com.google.gson.Gson
 import com.itsvks.monaco.MonacoEditor
 import com.teixeira.vcspace.activities.EditorActivity.Companion.LAST_OPENED_FILES_JSON_PATH
@@ -159,24 +160,28 @@ class EditorViewModel : ViewModel() {
   }
 
   fun addFile(file: File) {
-    val openedFile = OpenedFile(file)
+    runCatching {
+      val openedFile = OpenedFile(file)
 
-    val newOpenedFiles = uiState.value.openedFiles.toMutableList()
+      val newOpenedFiles = uiState.value.openedFiles.toMutableList()
 
-    newOpenedFiles.remove(
-      newOpenedFiles.find {
-        it.file.name == "untitled.txt" && !it.isModified
-      }
-    )
+      newOpenedFiles.remove(
+        newOpenedFiles.find {
+          it.file.name == "untitled.txt" && !it.isModified
+        }
+      )
 
-    if (!newOpenedFiles.contains(openedFile)) newOpenedFiles.add(openedFile)
+      if (!newOpenedFiles.contains(openedFile)) newOpenedFiles.add(openedFile)
 
-    val newSelectedFileIndex = newOpenedFiles.indexOf(openedFile)
+      val newSelectedFileIndex = newOpenedFiles.indexOf(openedFile)
 
-    _uiState.value = uiState.value.copy(
-      openedFiles = newOpenedFiles,
-      selectedFileIndex = newSelectedFileIndex
-    )
+      _uiState.value = uiState.value.copy(
+        openedFiles = newOpenedFiles,
+        selectedFileIndex = newSelectedFileIndex
+      )
+    }.onFailure {
+      ToastUtils.showShort(it.message)
+    }
   }
 
   fun addFiles(files: List<File>) {

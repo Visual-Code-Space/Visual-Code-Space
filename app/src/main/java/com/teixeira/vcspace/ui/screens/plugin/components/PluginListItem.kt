@@ -39,45 +39,43 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
+import com.teixeira.vcspace.plugins.internal.PluginInfo
 import com.teixeira.vcspace.resources.R
-import com.teixeira.vcspace.plugins.Plugin
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PluginListItem(
   modifier: Modifier = Modifier,
-  plugin: Plugin,
-  onLongClick: ((Plugin) -> Unit)? = null,
-  onClick: ((Plugin) -> Unit)? = null,
+  pluginInfo: PluginInfo,
+  onLongClick: ((PluginInfo) -> Unit)? = null,
+  onClick: ((PluginInfo) -> Unit)? = null,
   onEnabledOrDisabledCallback: (() -> Unit)? = null
 ) {
-  val manifest = plugin.manifest
   val haptics = LocalHapticFeedback.current
-  var enabled by remember { mutableStateOf(manifest.enabled) }
+  var enabled by remember { mutableStateOf(pluginInfo.enabled) }
 
   ElevatedCard(
     modifier = modifier
       .clip(CardDefaults.elevatedShape)
       .combinedClickable(
         onClick = {
-          onClick?.invoke(plugin)
+          onClick?.invoke(pluginInfo)
         },
         onLongClick = {
           haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-          onLongClick?.invoke(plugin)
+          onLongClick?.invoke(pluginInfo)
         }
       )
   ) {
     ListItem(
-      headlineContent = { Text(manifest.name) },
-      supportingContent = { Text(manifest.description) },
+      headlineContent = { Text(pluginInfo.name.toString()) },
+      supportingContent = { Text(pluginInfo.description.toString()) },
       trailingContent = {
         Switch(
           checked = enabled,
           onCheckedChange = {
             enabled = it
-            val newManifest = manifest.copy(enabled = enabled)
-            plugin.saveManifest(newManifest)
+            pluginInfo.enabled = enabled
             onEnabledOrDisabledCallback?.invoke()
           },
           thumbContent = if (enabled) {
