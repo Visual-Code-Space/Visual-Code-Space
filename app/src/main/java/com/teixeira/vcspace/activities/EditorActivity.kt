@@ -369,23 +369,6 @@ class EditorActivity : BaseComposeActivity() {
             }
           }
 
-          // Open plugin files if opened from PluginsActivity
-          run {
-            @Suppress("DEPRECATION")
-            val manifest = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-              intent.getSerializableExtra(EXTRA_KEY_PLUGIN_MANIFEST, Manifest::class.java)
-            } else intent.getSerializableExtra(EXTRA_KEY_PLUGIN_MANIFEST) as? Manifest
-
-            if (manifest != null) {
-              val pluginPath = "$pluginsPath/${manifest.packageName}"
-              val filesToOpen = listOf(
-                "$pluginPath/manifest.json".toFile().wrapFile(),
-                "$pluginPath/${manifest.scripts.first().name}".toFile().wrapFile()
-              )
-              editorViewModel.addFiles(filesToOpen)
-            }
-          }
-
           val externalFileUri = intent.data
           if (externalFileUri != null &&
             !externalFileUri.toString().startsWith(BuildConfig.OAUTH_REDIRECT_URL)

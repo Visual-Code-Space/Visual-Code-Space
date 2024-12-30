@@ -53,15 +53,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.teixeira.vcspace.PluginConstants
 import com.teixeira.vcspace.extensions.toFile
 import com.teixeira.vcspace.plugins.internal.PluginInfo
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PluginListItem(
   modifier: Modifier = Modifier,
@@ -70,68 +71,20 @@ fun PluginListItem(
   onClick: ((PluginInfo) -> Unit)? = null,
   onEnabledOrDisabledCallback: (() -> Unit)? = null
 ) {
-  val haptics = LocalHapticFeedback.current
-  var enabled by remember { mutableStateOf(pluginInfo.enabled) }
-
   PluginCard(
     pluginInfo = pluginInfo,
+    modifier = modifier,
     onClick = onClick,
     onLongClick = onLongClick,
     onEnabledOrDisabledCallback = onEnabledOrDisabledCallback
   )
-
-//  ElevatedCard(
-//    modifier = modifier
-//      .clip(CardDefaults.elevatedShape)
-//      .combinedClickable(
-//        onClick = {
-//          onClick?.invoke(pluginInfo)
-//        },
-//        onLongClick = {
-//          haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-//          onLongClick?.invoke(pluginInfo)
-//        }
-//      )
-//  ) {
-//    ListItem(
-//      headlineContent = { Text(pluginInfo.name.toString()) },
-//      supportingContent = { Text(pluginInfo.description ?: "No description provided") },
-//      trailingContent = {
-//        Switch(
-//          checked = enabled,
-//          onCheckedChange = {
-//            enabled = it
-//            pluginInfo.enabled = enabled
-//            onEnabledOrDisabledCallback?.invoke()
-//          },
-//          thumbContent = if (enabled) {
-//            {
-//              Icon(
-//                imageVector = Icons.Rounded.Check,
-//                contentDescription = null,
-//                modifier = Modifier.size(SwitchDefaults.IconSize)
-//              )
-//            }
-//          } else null
-//        )
-//      },
-//      leadingContent = {
-//        Icon(
-//          painter = painterResource(R.drawable.ic_plugin),
-//          contentDescription = null
-//        )
-//      },
-//      colors = ListItemDefaults.colors(
-//        containerColor = MaterialTheme.colorScheme.surfaceContainer
-//      )
-//    )
-//  }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PluginCard(
   pluginInfo: PluginInfo,
+  modifier: Modifier=Modifier,
   onClick: ((PluginInfo) -> Unit)? = null,
   onLongClick: ((PluginInfo) -> Unit)? = null,
   onEnabledOrDisabledCallback: (() -> Unit)? = null
@@ -142,7 +95,7 @@ fun PluginCard(
   var enabled by remember { mutableStateOf(pluginInfo.enabled) }
 
   ElevatedCard(
-    modifier = Modifier
+    modifier = modifier
       .fillMaxWidth()
       .clip(CardDefaults.elevatedShape)
       .combinedClickable(
@@ -162,20 +115,23 @@ fun PluginCard(
   ) {
     Column(Modifier.padding(16.dp)) {
       Row(verticalAlignment = Alignment.CenterVertically) {
-        if (pluginInfo.icon != null && pluginInfo.icon?.toFile()?.exists() == true) {
+        val iconFile = "${PluginConstants.PLUGIN_HOME_PATH}/${pluginInfo.name}/${pluginInfo.icon}".toFile()
+        if (pluginInfo.icon != null && iconFile.exists()) {
           Image(
-            BitmapFactory.decodeFile(pluginInfo.icon).asImageBitmap(),
+            BitmapFactory.decodeFile(iconFile.absolutePath).asImageBitmap(),
             contentDescription = null,
             modifier = Modifier
-              .size(32.dp)
+              .size(50.dp)
               .padding(end = 12.dp)
-              .clip(RoundedCornerShape(4.dp))
+              .clip(RoundedCornerShape(4.dp)),
+            contentScale = ContentScale.Crop
           )
         } else {
           Icon(
             imageVector = Icons.Filled.ElectricalServices,
             contentDescription = "info",
-            modifier = Modifier.padding(end = 12.dp),
+            modifier = Modifier.padding(end = 12.dp)
+              .size(40.dp),
             tint = MaterialTheme.colorScheme.tertiary
           )
         }
