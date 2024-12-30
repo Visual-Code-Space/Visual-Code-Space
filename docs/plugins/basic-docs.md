@@ -9,6 +9,7 @@
     - `MenuAction` and `MenuItem` for Menu Integration
 4. Creating Your First Plugin: "Hello, Plugin!"
 5. Example: Adding a Menu Item
+6. Requesting Additional API or Functions
 
 # Introduction
 This guide provides a comprehensive introduction to creating plugins for VCSpace, a powerful and flexible code editor designed for Android devices. It is designed for beginners with basic Java knowledge.
@@ -181,3 +182,9 @@ public class FilePathPlugin implements Plugin {
     }
 }
 ```
+
+## Requesting Additional API or Functions
+
+If you need additional APIs or functions in the plugins API, you can request them in two ways:
+1. **Open an Issue:** Go to the [GitHub repository](https://github.com/Visual-Code-Space/Visual-Code-Space/issues) and open a new issue detailing the API or function you need.
+2. **Join the Telegram Group:** Join our [Telegram group](https://t.me/visualcodespace) and share your request with the community.

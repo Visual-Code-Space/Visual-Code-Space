@@ -66,27 +66,8 @@ or [telegram group](https://t.me/visualcodespace).
 
 ### Unleash the Power of Customization
 
-Visual Code Space supports custom plugins written in BeanShell, allowing you to tailor the editor to
-your specific needs.
-
-#### Getting Started
-
-1. **Create a Plugin Directory:**
-
-* Use the application settings to create a new plugin. The plugin directory will be located at
-  `/storage/emulated/0/VCSpace/plugins/<your-plugin-package>`.
-
-2. **Modify the Entry Point (Optional):**
-
-* To use a different function as the entry point, update the `entryPoint` field in the
-  `manifest.json` file to the name of the desired function. For example, to use `startPlugin`, set
-  `entryPoint` to `"startPlugin"`.
-
-3. **Run Your Plugin:**
-
-* Visual Code Space will automatically load and execute your plugin upon application startup.
-
-For detailed instructions and examples, please refer to our [Create a Plugin](docs/create_plugin.md)
+Visual Code Space supports custom plugins written in Java, allowing you to tailor the editor to
+your specific needs. For detailed instructions and examples, please refer to our [Basic Plugin](docs/plugins/basic-docs.md)
 documentation.
 
 ## 🤝 Contributing
