@@ -14,6 +14,7 @@ jobs:
       - uses: tgymnich/fork-sync@v2.0
         with:
           token: ${{ github.token }}
+          repo: Visual-Code-Space
           owner: Visual-Code-Space
           base: master
           head: master
