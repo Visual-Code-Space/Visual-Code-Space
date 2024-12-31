@@ -18,3 +18,4 @@ jobs:
           owner: scto
           base: main
           head: main
+          merge_method:	merge
