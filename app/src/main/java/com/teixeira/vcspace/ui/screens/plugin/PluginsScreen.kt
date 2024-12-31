@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.ErrorOutline
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -54,7 +55,9 @@ import com.teixeira.vcspace.ui.screens.plugin.components.PluginTopBar
 import com.teixeira.vcspace.utils.GradleJavaLibraryProjectCreator
 import com.teixeira.vcspace.utils.launchWithProgressDialog
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun PluginsScreen(
@@ -77,11 +80,29 @@ fun PluginsScreen(
     viewModel.loadInstalledPlugins(context)
   }
 
-  val openFile = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) {
-    if (it != null) {
+  val openFile = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+    if (uri != null) {
       coroutineScope.launch {
-        PluginLoader.extractPluginZip(UriUtils.uri2File(it))
-        viewModel.loadInstalledPlugins(context)
+        val pluginDir = PluginLoader.extractPluginZip(UriUtils.uri2File(uri))
+        viewModel.loadInstalledPlugins(
+          context = context,
+          onSuccessfullyLoaded = {
+            toastHostState.showToast(
+              message = "Plugin imported successfully",
+              icon = Icons.Rounded.Check
+            )
+          },
+          onError = {
+            withContext(Dispatchers.Main) {
+              toastHostState.showToast(
+                message = it.message ?: "Error loading plugin",
+                icon = Icons.Rounded.ErrorOutline
+              )
+            }
+
+            if (pluginDir.exists()) pluginDir.deleteRecursively()
+          }
+        )
       }
     }
   }

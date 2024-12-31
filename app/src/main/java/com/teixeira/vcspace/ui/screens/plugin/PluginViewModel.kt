@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.teixeira.vcspace.plugins.PluginLoader
 import com.teixeira.vcspace.plugins.internal.PluginInfo
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,11 +31,17 @@ class PluginViewModel : ViewModel() {
   private val _installedPlugins = MutableStateFlow(mutableListOf<PluginInfo>())
   val installedPlugins = _installedPlugins.asStateFlow()
 
-  fun loadInstalledPlugins(context: Context) {
+  fun loadInstalledPlugins(
+    context: Context,
+    onSuccessfullyLoaded: suspend CoroutineScope.() -> Unit = {},
+    onError: suspend CoroutineScope.(exception: Throwable) -> Unit = {}
+  ) {
     viewModelScope.launch(Dispatchers.IO) {
-      _installedPlugins.update {
-        PluginLoader.loadPlugins(context).map { it.first }.toMutableList()
-      }
+      runCatching {
+        _installedPlugins.update {
+          PluginLoader.loadPlugins(context).map { it.first }.toMutableList()
+        }
+      }.onSuccess { onSuccessfullyLoaded() }.onFailure { onError(it) }
     }
   }
 }

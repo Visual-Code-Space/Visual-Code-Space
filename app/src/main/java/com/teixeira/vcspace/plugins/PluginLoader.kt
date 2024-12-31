@@ -27,6 +27,7 @@ import com.vcspace.plugins.Plugin
 import dalvik.system.DexClassLoader
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.File
 
 object PluginLoader {
   fun loadPlugins(context: Context): List<Pair<PluginInfo, Plugin>> {
@@ -39,7 +40,7 @@ object PluginLoader {
     pluginsPath.listFiles()?.forEach { file ->
       val properties = file.resolve("plugin.properties")
       if (!properties.exists()) {
-        throw IllegalArgumentException("Plugin file does not contain plugin.properties")
+        throw IllegalArgumentException("Plugin directory ${file.name} does not contain plugin.properties")
       }
 
       val pluginInfo = PluginInfo(properties)
@@ -73,17 +74,18 @@ object PluginLoader {
     return pluginInfos.zip(plugins)
   }
 
-  suspend fun extractPluginZip(pluginZipFile: java.io.File) {
-    withContext(Dispatchers.IO) {
+  suspend fun extractPluginZip(pluginZipFile: File): File {
+    return withContext(Dispatchers.IO) {
+      val path = "${PluginConstants.PLUGIN_HOME_PATH}/${pluginZipFile.nameWithoutExtension}"
+      val internalFile = path.toFile()
       runCatching {
-        val path = "${PluginConstants.PLUGIN_HOME_PATH}/${pluginZipFile.nameWithoutExtension}"
-        val internalFile = path.toFile()
-
         FileUtils.createOrExistsDir(internalFile)
         pluginZipFile.extractZipFile(internalFile)
       }.onFailure {
         ToastUtils.showShort(it.message)
       }
+
+      internalFile
     }
   }
 }
