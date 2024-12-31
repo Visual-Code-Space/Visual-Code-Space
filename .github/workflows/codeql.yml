@@ -18,8 +18,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'java-kotlin' ]
-        build-mode: autobuild
+        include:
+          # Analyzes C and C++ code using the commands in `Build C and C++ code`
+          - language: java-kotlin
+            build-mode: autobuild
 
     steps:
       - name: Checkout repository
