@@ -17,11 +17,16 @@ package com.vcspace.plugins
 
 import android.content.Context
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import com.vcspace.plugins.command.EditorCommand
 import com.vcspace.plugins.editor.Position
 import com.vcspace.plugins.menu.MenuAction
 import com.vcspace.plugins.menu.MenuItem
+import com.vcspace.plugins.panel.ComposeFactory
+import com.vcspace.plugins.panel.Panel
+import com.vcspace.plugins.panel.ViewFactory
+import com.vcspace.plugins.panel.ViewUpdater
 import java.io.File
 
 /**
@@ -119,4 +124,30 @@ interface PluginContext {
   fun toast(message: String) {
     Toast.makeText(appContext, message, Toast.LENGTH_SHORT).show()
   }
+
+  fun createComposePanel(
+    title: String,
+    content: ComposeFactory,
+    dismissOnClickOutside: Boolean
+  ): Panel
+
+  fun createComposePanel(
+    title: String,
+    content: ComposeFactory
+  ): Panel = createComposePanel(title, content, true)
+
+  fun <T : View> createViewPanel(
+    title: String,
+    factory: ViewFactory<T>,
+    update: ViewUpdater<T>,
+    dismissOnClickOutside: Boolean
+  ): Panel
+
+  fun <T : View> createViewPanel(
+    title: String,
+    factory: ViewFactory<T>,
+    update: ViewUpdater<T>
+  ): Panel = createViewPanel(title, factory, update, true)
+
+  fun removePanel(panelId: String): Boolean
 }

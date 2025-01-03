@@ -13,9 +13,8 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.teixeira.vcspace.activities
+package com.teixeira.vcspace.core.components
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -24,15 +23,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -54,59 +49,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
-import com.teixeira.vcspace.activities.base.BaseComposeActivity
 import kotlinx.coroutines.launch
-
-class TestActivity : BaseComposeActivity() {
-  @SuppressLint("SetJavaScriptEnabled")
-  @Composable
-  override fun MainScreen() {
-    Box(
-      modifier = Modifier
-        .fillMaxSize()
-        .systemBarsPadding()
-    ) {
-      var showPopup by remember { mutableStateOf(false) }
-      var popupOffset by remember { mutableStateOf(Offset.Zero) }
-
-      Button(onClick = { showPopup = true }) {
-        Text("Show Panel")
-      }
-
-      if (showPopup) {
-        DraggableFloatingPanel(
-          offset = popupOffset,
-          onOffsetChange = { popupOffset = it },
-          onDismiss = { showPopup = false }
-        ) {
-          // Your panel content here
-          Column(Modifier.padding(16.dp)) {
-            Text("This is a floating panel!", style = MaterialTheme.typography.bodyLarge)
-            Spacer(Modifier.height(8.dp))
-            Text("You can drag it around.", style = MaterialTheme.typography.bodyMedium)
-          }
-        }
-      }
-    }
-  }
-}
 
 @Composable
 fun DraggableFloatingPanel(
   offset: Offset,
   onOffsetChange: (Offset) -> Unit,
   onDismiss: () -> Unit,
+  modifier: Modifier = Modifier,
+  title: String? = null,
+  dismissOnBackPress: Boolean = true,
+  dismissOnClickOutside: Boolean = true,
+  clippingEnabled: Boolean = true,
   content: @Composable () -> Unit
 ) {
   val hapticFeedback = LocalHapticFeedback.current
@@ -132,7 +95,12 @@ fun DraggableFloatingPanel(
   }
 
   Popup(
-    properties = PopupProperties(focusable = false),
+    properties = PopupProperties(
+      focusable = false,
+      dismissOnBackPress = dismissOnBackPress,
+      dismissOnClickOutside = dismissOnClickOutside,
+      clippingEnabled = clippingEnabled
+    ),
     onDismissRequest = {
       coroutineScope.launch {
         alpha.animateTo(0f, animationSpec = tween(300))
@@ -169,14 +137,12 @@ fun DraggableFloatingPanel(
             .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)),
           verticalAlignment = Alignment.CenterVertically
         ) {
-          CompositionLocalProvider(
-            LocalContentColor provides contentColorFor(
-              MaterialTheme.colorScheme.surfaceVariant.copy(
-                alpha = 0.5f
-              )
-            )
-          ) {
-            Spacer(Modifier.weight(1f))
+          CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant) {
+            if (title == null) {
+              Spacer(Modifier.weight(1f))
+            } else {
+              Text(text = title, modifier = Modifier.weight(1f).padding(start = 16.dp))
+            }
             IconButton(
               onClick = {
                 coroutineScope.launch {
@@ -192,7 +158,7 @@ fun DraggableFloatingPanel(
           }
         }
         CompositionLocalProvider(LocalContentColor provides contentColorFor(MaterialTheme.colorScheme.surfaceContainer)) {
-          content()
+          Box(modifier = modifier) { content() }
         }
       }
     }

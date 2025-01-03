@@ -15,7 +15,6 @@
 
 package com.teixeira.vcspace.activities
 
-import android.os.Build
 import android.util.Log
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
@@ -36,9 +35,13 @@ import androidx.compose.material3.contentColorFor
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCompositionContext
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
@@ -56,7 +59,6 @@ import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.blankj.utilcode.util.UriUtils
 import com.teixeira.vcspace.BuildConfig
-import com.teixeira.vcspace.PluginConstants
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerNavController
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
 import com.teixeira.vcspace.activities.Editor.LocalEditorSnackbarHostState
@@ -65,6 +67,8 @@ import com.teixeira.vcspace.activities.base.ObserveLifecycleEvents
 import com.teixeira.vcspace.app.DoNothing
 import com.teixeira.vcspace.app.noLocalProvidedFor
 import com.teixeira.vcspace.app.strings
+import com.teixeira.vcspace.core.PanelManager
+import com.teixeira.vcspace.core.components.DraggableFloatingPanel
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberShowInputMethodPickerAtStart
 import com.teixeira.vcspace.editor.addBlockComment
 import com.teixeira.vcspace.editor.addSingleComment
@@ -72,7 +76,6 @@ import com.teixeira.vcspace.editor.events.OnContentChangeEvent
 import com.teixeira.vcspace.editor.events.OnKeyBindingEvent
 import com.teixeira.vcspace.events.OnOpenFolderEvent
 import com.teixeira.vcspace.extensions.open
-import com.teixeira.vcspace.extensions.toFile
 import com.teixeira.vcspace.file.File
 import com.teixeira.vcspace.file.extension
 import com.teixeira.vcspace.file.wrapFile
@@ -80,10 +83,8 @@ import com.teixeira.vcspace.github.auth.Api
 import com.teixeira.vcspace.github.auth.UserInfo
 import com.teixeira.vcspace.keyboard.CommandPaletteManager
 import com.teixeira.vcspace.keyboard.model.Command.Companion.newCommand
-import com.teixeira.vcspace.plugins.Manifest
 import com.teixeira.vcspace.plugins.PluginLoader
 import com.teixeira.vcspace.plugins.impl.PluginContextImpl
-import com.teixeira.vcspace.preferences.pluginsPath
 import com.teixeira.vcspace.ui.components.ai.GenerateContentDialog
 import com.teixeira.vcspace.ui.screens.editor.EditorScreen
 import com.teixeira.vcspace.ui.screens.editor.EditorViewModel
@@ -91,6 +92,7 @@ import com.teixeira.vcspace.ui.screens.editor.components.EditorDrawerSheet
 import com.teixeira.vcspace.ui.screens.editor.components.EditorTopBar
 import com.teixeira.vcspace.ui.screens.editor.components.view.CodeEditorView
 import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
+import com.vcspace.plugins.panel.Panel
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -125,7 +127,6 @@ class EditorActivity : BaseComposeActivity() {
   }
 
   private val editorViewModel: EditorViewModel by viewModels()
-  private val pluginContext by lazy { PluginContextImpl(this, editorViewModel) }
 
   @Subscribe(threadMode = ThreadMode.MAIN)
   fun onContentChangeEvent(event: OnContentChangeEvent) {
@@ -265,6 +266,33 @@ class EditorActivity : BaseComposeActivity() {
 
   @Composable
   override fun MainScreen() {
+    @Composable
+    fun PanelComposable(panel: Panel, modifier: Modifier = Modifier) {
+      var internalOffset by remember { mutableStateOf(panel.offset) }
+
+      LaunchedEffect(panel.offset) {
+        internalOffset = panel.offset
+      }
+
+      DraggableFloatingPanel(
+        modifier = modifier,
+        offset = internalOffset,
+        onOffsetChange = { newOffset ->
+          internalOffset = newOffset
+          panel.offset = newOffset
+        },
+        onDismiss = { panel.hide() },
+        dismissOnClickOutside = false,
+        content = {panel.factory.Create()}
+      )
+    }
+
+    val panelManager = remember { PanelManager.instance }
+    panelManager.panels.forEach { (_, panel) ->
+//      if (panel.isVisible) {
+//        PanelComposable(panel)
+//      }
+    }
 
     ProvideEditorCompositionLocals {
       val fileExplorerViewModel: FileExplorerViewModel = viewModel()
@@ -348,6 +376,7 @@ class EditorActivity : BaseComposeActivity() {
   @Composable
   private fun DoLifecycleThings(editorViewModel: EditorViewModel) {
     val snackbarHostState = LocalEditorSnackbarHostState.current
+    val compositionContext = rememberCompositionContext()
 
     ObserveLifecycleEvents { event ->
       when (event) {
@@ -359,9 +388,15 @@ class EditorActivity : BaseComposeActivity() {
             runCatching {
               PluginLoader.loadPlugins(this@EditorActivity)
             }.onSuccess { plugins ->
-              plugins.forEach {
-                if (it.first.enabled) {
-                  it.second.onPluginLoaded(pluginContext)
+              val pluginContext =
+                PluginContextImpl(this@EditorActivity, editorViewModel, compositionContext)
+              plugins.forEach { pluginEntry ->
+                if (pluginEntry.first.enabled) {
+                  runCatching {
+                    pluginEntry.second.onPluginLoaded(pluginContext)
+                  }.onFailure {
+                    snackbarHostState.showSnackbar(it.message ?: "Error loading plugin")
+                  }
                 }
               }
             }.onFailure {
@@ -438,19 +473,19 @@ class EditorActivity : BaseComposeActivity() {
   val selectedFileIndex get() = editorViewModel.uiState.value.selectedFileIndex
   val canEditorHandleCurrentKeyBinding get() = editorViewModel.canEditorHandleCurrentKeyBinding.value
 
-  val editorForFile = { file: File -> editorViewModel.getEditorForFile(file) }
+  val editorForFile: (File) -> CodeEditorView? = { file -> editorViewModel.getEditorForFile(file) }
 
   @JvmField
-  val openFile = { file: File -> editorViewModel.addFile(file) }
+  val openFile: (File) -> Unit = { file -> editorViewModel.addFile(file) }
 
   @JvmField
-  val closeFile = { index: Int -> editorViewModel.closeFile(index) }
+  val closeFile: (Int) -> Unit = { index -> editorViewModel.closeFile(index) }
 
   @JvmField
   val closeAll = { editorViewModel.closeAll() }
 
   @JvmField
-  val closeOthers = { index: Int -> editorViewModel.closeOthers(index) }
+  val closeOthers: (Int) -> Unit = { index -> editorViewModel.closeOthers(index) }
 
   @JvmField
   val saveAll = { lifecycleScope.launch { editorViewModel.saveAll() } }

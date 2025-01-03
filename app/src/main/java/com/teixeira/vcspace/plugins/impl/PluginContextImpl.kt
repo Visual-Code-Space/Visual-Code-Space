@@ -12,133 +12,201 @@
  * You should have received a copy of the GNU General Public License along with Visual Code Space.
  * If not, see <https://www.gnu.org/licenses/>.
  */
+package com.teixeira.vcspace.plugins.impl
 
-package com.teixeira.vcspace.plugins.impl;
+import android.content.Context
+import android.view.View
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionContext
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.viewinterop.AndroidView
+import com.itsvks.monaco.MonacoEditor
+import com.teixeira.vcspace.activities.EditorActivity
+import com.teixeira.vcspace.app.rootView
+import com.teixeira.vcspace.core.MenuManager
+import com.teixeira.vcspace.core.PanelManager
+import com.teixeira.vcspace.core.components.DraggableFloatingPanel
+import com.teixeira.vcspace.file.wrapFile
+import com.teixeira.vcspace.keyboard.CommandPaletteManager
+import com.teixeira.vcspace.keyboard.model.Command
+import com.teixeira.vcspace.ui.screens.editor.EditorViewModel
+import com.teixeira.vcspace.ui.screens.editor.components.view.CodeEditorView
+import com.teixeira.vcspace.utils.runOnUiThread
+import com.vcspace.plugins.Editor
+import com.vcspace.plugins.PluginContext
+import com.vcspace.plugins.command.EditorCommand
+import com.vcspace.plugins.editor.Position
+import com.vcspace.plugins.menu.MenuItem
+import com.vcspace.plugins.panel.ComposeFactory
+import com.vcspace.plugins.panel.Panel
+import com.vcspace.plugins.panel.ViewFactory
+import com.vcspace.plugins.panel.ViewUpdater
+import java.io.File
+import java.util.UUID
+import kotlin.math.max
 
-import android.content.Context;
+class PluginContextImpl(
+  editorActivity: EditorActivity,
+  editorViewModel: EditorViewModel,
+  private val compositionContext: CompositionContext
+) : PluginContext {
+  override val appContext: Context = editorActivity
+  override val editor: Editor
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+  private val activity = editorActivity
+  private var editorViewModel: EditorViewModel
 
-import com.itsvks.monaco.MonacoEditor;
-import com.teixeira.vcspace.activities.EditorActivity;
-import com.teixeira.vcspace.core.MenuManager;
-import com.teixeira.vcspace.file.JavaFileWrapperKt;
-import com.teixeira.vcspace.keyboard.CommandPaletteManager;
-import com.teixeira.vcspace.keyboard.model.Command;
-import com.teixeira.vcspace.ui.screens.editor.EditorViewModel;
-import com.teixeira.vcspace.ui.screens.editor.components.view.CodeEditorView;
-import com.vcspace.plugins.Editor;
-import com.vcspace.plugins.PluginContext;
-import com.vcspace.plugins.command.EditorCommand;
-import com.vcspace.plugins.editor.Position;
-import com.vcspace.plugins.menu.MenuItem;
-
-import java.io.File;
-
-public class PluginContextImpl implements PluginContext {
-  private final Context context;
-  private final EditorActivity activity;
-  private final Editor editor;
-  private EditorViewModel editorViewModel;
-
-  public PluginContextImpl(EditorActivity editorActivity, EditorViewModel editorViewModel) {
-    this.context = editorActivity;
-    this.activity = editorActivity;
-    this.editorViewModel = editorViewModel;
-    this.editor = new EditorImpl(new EditorListener());
+  init {
+    this.editorViewModel = editorViewModel
+    this.editor = EditorImpl(EditorListener())
   }
 
-  @NonNull
-  @Override
-  public Context getAppContext() {
-    return context;
+  override fun registerCommand(command: EditorCommand) {
+    val commandManager = CommandPaletteManager.instance
+    commandManager.addCommand(Command.newCommand(command.name, command.keyBinding) {
+      command.execute(editor)
+    })
   }
 
-  @Override
-  public void registerCommand(@NonNull EditorCommand command) {
-    var commandManager = CommandPaletteManager.getInstance();
-    commandManager.addCommand(Command.getNewCommand().invoke(
-      command.getName(),
-      command.getKeyBinding(),
-      (cmd, compositionContext) -> {
-        command.execute(editor);
-        return null;
+  override fun addMenu(menuItem: MenuItem) {
+    val menuManager = MenuManager.instance
+    menuManager.addMenu(
+      com.teixeira.vcspace.core.menu.MenuItem(
+        menuItem.title,
+        menuItem.id,
+        visible = true,
+        enabled = true,
+        shortcut = menuItem.shortcut,
+        icon = null,
+        trailingIcon = null,
+        onClick = menuItem.action::doAction
+      )
+    )
+  }
+
+  override fun openFile(file: File) {
+    activity.openFile(file.wrapFile())
+  }
+
+  override fun createComposePanel(title: String, content: ComposeFactory, dismissOnClickOutside: Boolean): Panel {
+    return createComposePanelInternal(title, { content.Create() }, dismissOnClickOutside)
+  }
+
+  override fun <T : View> createViewPanel(
+    title: String,
+    factory: ViewFactory<T>,
+    update: ViewUpdater<T>,
+    dismissOnClickOutside: Boolean
+  ): Panel {
+    return createComposePanelInternal(title, @Composable {
+      AndroidView(
+        factory = factory::create,
+        modifier = Modifier.wrapContentSize(),
+        update = update::accept
+      )
+    }, dismissOnClickOutside)
+  }
+
+  override fun removePanel(panelId: String): Boolean {
+    val panelManager = PanelManager.instance
+    val panel = panelManager.getPanelById(panelId) ?: return false
+    panel.hide()
+
+    panelManager.removePanel(id = panelId)
+    return true
+  }
+
+  private fun createComposePanelInternal(
+    title: String,
+    content: @Composable () -> Unit,
+    dismissOnClickOutside: Boolean,
+  ): Panel {
+    val id = UUID.randomUUID().toString()
+    val panel = PanelManager.instance.addPanel(id, title) { content() }
+
+    @Composable
+    fun PanelComposable() {
+      val isVisible by remember { derivedStateOf { panel.isVisible } }
+      var internalOffset by remember { mutableStateOf(panel.offset) }
+      LaunchedEffect(panel.offset) {
+        internalOffset = panel.offset
       }
-    ));
-  }
 
-  @Override
-  public void addMenu(@NonNull MenuItem menuItem) {
-    MenuManager menuManager = MenuManager.getInstance();
-    menuManager.addMenu(new com.teixeira.vcspace.core.menu.MenuItem(
-      menuItem.getTitle(),
-      menuItem.getId(),
-      true,
-      true,
-      menuItem.getShortcut(),
-      null,
-      null,
-      () -> {
-        menuItem.getAction().doAction();
-        return null;
+      if (isVisible) {
+        DraggableFloatingPanel(
+          title = title,
+          offset = internalOffset,
+          onOffsetChange = { newOffset ->
+            internalOffset = newOffset
+            panel.offset = newOffset
+          },
+          onDismiss = { panel.hide() },
+          dismissOnClickOutside = dismissOnClickOutside,
+        ) {
+          content()
+        }
       }
-    ));
-  }
-
-  @NonNull
-  @Override
-  public Editor getEditor() {
-    return editor;
-  }
-
-  @Override
-  public void openFile(@NonNull File file) {
-    activity.openFile.invoke(JavaFileWrapperKt.wrapFile(file));
-  }
-
-  private class EditorListener implements EditorImpl.Listener {
-    @Nullable
-    @Override
-    public File getCurrentFile() {
-      var selectedFile = editorViewModel.getUiState().getValue().getSelectedFile();
-      if (selectedFile == null) return null;
-      return selectedFile.getFile().asRawFile();
     }
 
-    @NonNull
-    @Override
-    public Context getContext() {
-      return context;
+    runOnUiThread {
+      val composeView = ComposeView(activity).apply {
+        setParentCompositionContext(compositionContext)
+        setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindowOrReleasedFromPool)
+        setContent {
+          if (panel.isVisible) {
+            PanelComposable()
+          }
+        }
+      }
+      activity.rootView().addView(composeView)
     }
 
-    @NonNull
-    @Override
-    public Position getCursorPosition() {
-      var editor = activity.getCurrentEditor();
-      if (editor instanceof MonacoEditor) {
-        var position = ((MonacoEditor) editor).getPosition();
-        return new Position(position.getLineNumber(), position.getColumn());
-      } else if (editor instanceof CodeEditorView) {
-        var cursor = ((CodeEditorView) editor).getEditor().getCursor();
-        return new Position(cursor.getLeftLine(), cursor.getLeftColumn());
-      }
-      return new Position();
-    }
-
-    @Override
-    public void setCursorPosition(@NonNull Position position) {
-      var editor = activity.getCurrentEditor();
-      if (editor instanceof MonacoEditor) {
-        ((MonacoEditor) editor).setPosition(new com.itsvks.monaco.option.Position(position.getLineNumber(), position.getColumn()));
-      } else if (editor instanceof CodeEditorView) {
-        var cursor = ((CodeEditorView) editor).getEditor().getCursor();
-        cursor.set(Math.max(position.getLineNumber() - 1, 0), Math.max(position.getColumn() - 1, 0));
-      }
-    }
+    return panel
   }
 
-  public void setEditorViewModel(EditorViewModel editorViewModel) {
-    this.editorViewModel = editorViewModel;
+  private inner class EditorListener : EditorImpl.Listener {
+    override val currentFile: File?
+      get() {
+        val selectedFile = editorViewModel.uiState.value.selectedFile ?: return null
+        return selectedFile.file.asRawFile()
+      }
+
+    override val context: Context
+      get() = appContext
+
+    override var cursorPosition: Position
+      get() {
+        val editor = activity.currentEditor
+        if (editor is MonacoEditor) {
+          val position = editor.position
+          return Position(position.lineNumber, position.column)
+        } else if (editor is CodeEditorView) {
+          val cursor = editor.editor.cursor
+          return Position(cursor.leftLine, cursor.leftColumn)
+        }
+        return Position()
+      }
+      set(position) {
+        val editor = activity.currentEditor
+        if (editor is MonacoEditor) {
+          editor.position = com.itsvks.monaco.option.Position(position.lineNumber, position.column)
+        } else if (editor is CodeEditorView) {
+          val cursor = editor.editor.cursor
+          cursor.set(max(position.lineNumber - 1, 0), max(position.column - 1, 0))
+        }
+      }
+  }
+
+  fun setEditorViewModel(editorViewModel: EditorViewModel) {
+    this.editorViewModel = editorViewModel
   }
 }
