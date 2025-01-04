@@ -18,6 +18,7 @@ package com.vcspace.plugins
 import android.content.Context
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import com.vcspace.plugins.command.EditorCommand
 import com.vcspace.plugins.editor.Position
@@ -50,6 +51,8 @@ interface PluginContext {
    * @return the editor instance.
    */
   val editor: Editor
+
+  val rootView: ViewGroup
 
   /**
    * Registers a custom editor command in command palette.

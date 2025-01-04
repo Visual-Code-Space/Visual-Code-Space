@@ -16,7 +16,6 @@
 package com.teixeira.vcspace.activities
 
 import android.util.Log
-import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
@@ -35,13 +34,10 @@ import androidx.compose.material3.contentColorFor
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCompositionContext
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
@@ -66,9 +62,8 @@ import com.teixeira.vcspace.activities.base.BaseComposeActivity
 import com.teixeira.vcspace.activities.base.ObserveLifecycleEvents
 import com.teixeira.vcspace.app.DoNothing
 import com.teixeira.vcspace.app.noLocalProvidedFor
+import com.teixeira.vcspace.app.rootView
 import com.teixeira.vcspace.app.strings
-import com.teixeira.vcspace.core.PanelManager
-import com.teixeira.vcspace.core.components.DraggableFloatingPanel
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberShowInputMethodPickerAtStart
 import com.teixeira.vcspace.editor.addBlockComment
 import com.teixeira.vcspace.editor.addSingleComment
@@ -92,7 +87,6 @@ import com.teixeira.vcspace.ui.screens.editor.components.EditorDrawerSheet
 import com.teixeira.vcspace.ui.screens.editor.components.EditorTopBar
 import com.teixeira.vcspace.ui.screens.editor.components.view.CodeEditorView
 import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
-import com.vcspace.plugins.panel.Panel
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -119,8 +113,6 @@ object Editor {
 class EditorActivity : BaseComposeActivity() {
   companion object {
     private const val TAG = "EditorActivity"
-
-    const val EXTRA_KEY_PLUGIN_MANIFEST = "plugin_manifest"
 
     val LAST_OPENED_FILES_JSON_PATH =
       "${PathUtils.getExternalAppFilesPath()}/settings/lastOpenedFile.json"
@@ -253,8 +245,7 @@ class EditorActivity : BaseComposeActivity() {
           }
         }
 
-        val rootView = findViewById<ViewGroup>(android.R.id.content)
-        rootView.addView(composeView)
+        rootView().addView(composeView)
       }
     )
   }
@@ -266,34 +257,6 @@ class EditorActivity : BaseComposeActivity() {
 
   @Composable
   override fun MainScreen() {
-    @Composable
-    fun PanelComposable(panel: Panel, modifier: Modifier = Modifier) {
-      var internalOffset by remember { mutableStateOf(panel.offset) }
-
-      LaunchedEffect(panel.offset) {
-        internalOffset = panel.offset
-      }
-
-      DraggableFloatingPanel(
-        modifier = modifier,
-        offset = internalOffset,
-        onOffsetChange = { newOffset ->
-          internalOffset = newOffset
-          panel.offset = newOffset
-        },
-        onDismiss = { panel.hide() },
-        dismissOnClickOutside = false,
-        content = {panel.factory.Create()}
-      )
-    }
-
-    val panelManager = remember { PanelManager.instance }
-    panelManager.panels.forEach { (_, panel) ->
-//      if (panel.isVisible) {
-//        PanelComposable(panel)
-//      }
-    }
-
     ProvideEditorCompositionLocals {
       val fileExplorerViewModel: FileExplorerViewModel = viewModel()
       val editorViewModel: EditorViewModel = viewModel()

@@ -16,6 +16,7 @@ package com.teixeira.vcspace.plugins.impl
 
 import android.content.Context
 import android.view.View
+import android.view.ViewGroup
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionContext
@@ -61,6 +62,8 @@ class PluginContextImpl(
 ) : PluginContext {
   override val appContext: Context = editorActivity
   override val editor: Editor
+  override val rootView: ViewGroup
+    get() = activity.rootView()
 
   private val activity = editorActivity
   private var editorViewModel: EditorViewModel

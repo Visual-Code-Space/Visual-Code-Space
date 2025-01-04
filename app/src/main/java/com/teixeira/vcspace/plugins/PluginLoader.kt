@@ -85,7 +85,18 @@ object PluginLoader {
         ToastUtils.showShort(it.message)
       }
 
-      internalFile
+      val properties = internalFile.resolve("plugin.properties")
+      if (!properties.exists()) {
+        throw IllegalArgumentException("Plugin directory ${internalFile.name} does not contain plugin.properties")
+      }
+
+      val pluginInfo = PluginInfo(properties)
+      internalFile.apply {
+        if (pluginInfo.name.isNullOrBlank()) {
+          throw NullPointerException("Plugin name is empty.")
+        }
+        FileUtils.rename(this, pluginInfo.name)
+      }
     }
   }
 }
