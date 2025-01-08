@@ -53,6 +53,7 @@ interface PluginContext {
   val editor: Editor
 
   val rootView: ViewGroup
+  val openedFolder: File?
 
   /**
    * Registers a custom editor command in command palette.
@@ -153,4 +154,7 @@ interface PluginContext {
   ): Panel = createViewPanel(title, factory, update, true)
 
   fun removePanel(panelId: String): Boolean
+
+  fun doActionOnIOThread(action: Runnable)
+  fun doActionOnMainThread(action: Runnable)
 }

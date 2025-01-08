@@ -302,6 +302,7 @@
   <string name="saved">Saved</string>
   <string name="plugin_created_successfully">Plugin created successfully</string>
   <string name="delete_plugin">Delete Plugin</string>
+  <string name="update_plugin">Update Plugin</string>
   <string name="delete_plugin_msg">Are you sure you want to delete this plugin?</string>
   <string name="plugin_downloaded_successfully">Plugin %1$s downloaded successfully</string>
   <string name="failed_to_download_plugin">Failed to download plugin: %1$s</string>

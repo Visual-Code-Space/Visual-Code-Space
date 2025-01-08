@@ -119,6 +119,7 @@ class EditorActivity : BaseComposeActivity() {
   }
 
   private val editorViewModel: EditorViewModel by viewModels()
+  private val fileExplorerViewModel: FileExplorerViewModel by viewModels()
 
   @Subscribe(threadMode = ThreadMode.MAIN)
   fun onContentChangeEvent(event: OnContentChangeEvent) {
@@ -452,6 +453,8 @@ class EditorActivity : BaseComposeActivity() {
 
   @JvmField
   val saveAll = { lifecycleScope.launch { editorViewModel.saveAll() } }
+
+  val openedFolder = { fileExplorerViewModel.openedFolder.value }
 
   @JvmOverloads
   fun saveFile(codeEditorView: CodeEditorView? = null) {

@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.Update
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -52,6 +53,7 @@ fun PluginActionsSheet(
   viewModel: PluginViewModel,
   scope: CoroutineScope,
   onDismissSheet: () -> Unit,
+  onUpdateClick: () -> Unit
 ) {
   var showDeleteDialog by remember { mutableStateOf(false) }
 
@@ -63,6 +65,21 @@ fun PluginActionsSheet(
     onDismissRequest = onDismissSheet
   ) {
     LazyColumn {
+      item {
+        ElevatedCard(
+          modifier = Modifier.padding(5.dp),
+          onClick = {
+            onUpdateClick()
+            onDismissSheet()
+          }
+        ) {
+          ListItem(
+            headlineContent = { Text(stringResource(R.string.update_plugin)) },
+            leadingContent = { Icon(Icons.Rounded.Update, contentDescription = null) }
+          )
+        }
+      }
+
       item {
         ElevatedCard(
           modifier = Modifier.padding(5.dp),

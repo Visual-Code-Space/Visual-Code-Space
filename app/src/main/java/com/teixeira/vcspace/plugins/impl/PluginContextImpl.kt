@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.lifecycleScope
 import com.itsvks.monaco.MonacoEditor
 import com.teixeira.vcspace.activities.EditorActivity
 import com.teixeira.vcspace.app.rootView
@@ -51,6 +52,9 @@ import com.vcspace.plugins.panel.ComposeFactory
 import com.vcspace.plugins.panel.Panel
 import com.vcspace.plugins.panel.ViewFactory
 import com.vcspace.plugins.panel.ViewUpdater
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import java.io.File
 import java.util.UUID
 import kotlin.math.max
@@ -72,6 +76,9 @@ class PluginContextImpl(
     this.editorViewModel = editorViewModel
     this.editor = EditorImpl(EditorListener())
   }
+
+  override val openedFolder: File?
+    get() = activity.openedFolder()?.asRawFile()
 
   override fun registerCommand(command: EditorCommand) {
     val commandManager = CommandPaletteManager.instance
@@ -100,7 +107,11 @@ class PluginContextImpl(
     activity.openFile(file.wrapFile())
   }
 
-  override fun createComposePanel(title: String, content: ComposeFactory, dismissOnClickOutside: Boolean): Panel {
+  override fun createComposePanel(
+    title: String,
+    content: ComposeFactory,
+    dismissOnClickOutside: Boolean
+  ): Panel {
     return createComposePanelInternal(title, { content.Create() }, dismissOnClickOutside)
   }
 
@@ -126,6 +137,18 @@ class PluginContextImpl(
 
     panelManager.removePanel(id = panelId)
     return true
+  }
+
+  override fun doActionOnIOThread(action: Runnable) {
+    activity.lifecycleScope.launch(Dispatchers.IO + SupervisorJob()) {
+      action.run()
+    }
+  }
+
+  override fun doActionOnMainThread(action: Runnable) {
+    activity.lifecycleScope.launch(Dispatchers.Main.immediate + SupervisorJob()) {
+      action.run()
+    }
   }
 
   private fun createComposePanelInternal(

@@ -43,8 +43,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.blankj.utilcode.util.UriUtils
+import com.teixeira.vcspace.PluginConstants
 import com.teixeira.vcspace.app.strings
+import com.teixeira.vcspace.extensions.toFile
 import com.teixeira.vcspace.plugins.PluginLoader
+import com.teixeira.vcspace.plugins.internal.PluginInfo
 import com.teixeira.vcspace.ui.LocalToastHostState
 import com.teixeira.vcspace.ui.screens.PluginScreens
 import com.teixeira.vcspace.ui.screens.plugin.components.InstalledPluginList
@@ -80,17 +83,28 @@ fun PluginsScreen(
     viewModel.loadInstalledPlugins(context)
   }
 
+  var pluginToUpdate: PluginInfo? by remember { mutableStateOf(null) }
+
   val openFile = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
     if (uri != null) {
       coroutineScope.launch {
+        pluginToUpdate?.let {
+          val file = "${PluginConstants.PLUGIN_HOME_PATH}/${it.name}".toFile()
+          if (file.exists()) {
+            file.deleteRecursively()
+          }
+          viewModel.loadInstalledPlugins(context)
+        }
+
         val pluginDir = PluginLoader.extractPluginZip(UriUtils.uri2File(uri))
         viewModel.loadInstalledPlugins(
           context = context,
           onSuccessfullyLoaded = {
             toastHostState.showToast(
-              message = "Plugin imported successfully",
+              message = "Plugin ${if (pluginToUpdate != null) "updated" else "imported"} successfully",
               icon = Icons.Rounded.Check
             )
+            pluginToUpdate = null
           },
           onError = {
             withContext(Dispatchers.Main) {
@@ -101,6 +115,7 @@ fun PluginsScreen(
             }
 
             if (pluginDir.exists()) pluginDir.deleteRecursively()
+            pluginToUpdate = null
           }
         )
       }
@@ -148,7 +163,15 @@ fun PluginsScreen(
           InstalledPluginList(
             viewModel = viewModel,
             listState = installedPluginListState,
-            scope = coroutineScope
+            scope = coroutineScope,
+            onUpdateClick = {
+              pluginToUpdate = it
+              openFile.launch(
+                arrayOf(
+                  MimeTypeMap.getSingleton().getMimeTypeFromExtension("zip") ?: "application/zip"
+                )
+              )
+            }
           )
         }
       }

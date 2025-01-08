@@ -31,7 +31,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.Redo
 import androidx.compose.material.icons.automirrored.rounded.Undo
 import androidx.compose.material.icons.rounded.ChevronRight
-import androidx.compose.material.icons.rounded.ElectricalServices
 import androidx.compose.material.icons.rounded.Folder
 import androidx.compose.material.icons.rounded.KeyboardCommandKey
 import androidx.compose.material.icons.rounded.Menu
@@ -82,7 +81,6 @@ import com.teixeira.vcspace.activities.Editor.LocalCommandPaletteManager
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
 import com.teixeira.vcspace.activities.MarkdownPreviewActivity
 import com.teixeira.vcspace.activities.TerminalActivity
-import com.teixeira.vcspace.app.VCSpaceApplication
 import com.teixeira.vcspace.app.strings
 import com.teixeira.vcspace.compose.LocalMenuManager
 import com.teixeira.vcspace.core.components.Tooltip
@@ -93,7 +91,6 @@ import com.teixeira.vcspace.editor.events.OnKeyBindingEvent
 import com.teixeira.vcspace.file.extension
 import com.teixeira.vcspace.file.wrapFile
 import com.teixeira.vcspace.keyboard.model.Command.Companion.newCommand
-import com.teixeira.vcspace.plugins.internal.PluginManager
 import com.teixeira.vcspace.preferences.pythonDownloaded
 import com.teixeira.vcspace.preferences.pythonExtracted
 import com.teixeira.vcspace.resources.R
@@ -104,7 +101,6 @@ import com.teixeira.vcspace.utils.launchWithProgressDialog
 import com.teixeira.vcspace.webserver.LocalHttpServer
 import io.github.rosemoe.sora.event.ContentChangeEvent
 import io.github.rosemoe.sora.event.KeyBindingEvent
-import io.github.rosemoe.sora.widget.component.EditorAutoCompletion
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -453,30 +449,6 @@ fun EditorTopBar(
             onClick = {
               showFileMenu.value = !showFileMenu.value
               showMenu = false
-            }
-          )
-
-          DropdownMenuItem(
-            text = { Text(stringResource(strings.reload_plugins)) },
-            onClick = {
-              PluginManager.init(
-                application = VCSpaceApplication.getInstance(),
-                onError = { plugin, err ->
-                  ToastUtils.showLong(
-                    """
-                    Plugin "${plugin.manifest.name}" failed to start.
-                    Error: ${err.message}
-                  """.trimIndent().trim()
-                  )
-                }
-              )
-              showMenu = false
-            },
-            leadingIcon = {
-              Icon(
-                Icons.Rounded.ElectricalServices,
-                contentDescription = null
-              )
             }
           )
 

@@ -49,7 +49,8 @@ fun InstalledPluginList(
   modifier: Modifier = Modifier,
   viewModel: PluginViewModel,
   listState: LazyListState,
-  scope: CoroutineScope
+  scope: CoroutineScope,
+  onUpdateClick: (PluginInfo) -> Unit
 ) {
   val plugins by viewModel.installedPlugins.collectAsStateWithLifecycle()
 
@@ -93,6 +94,7 @@ fun InstalledPluginList(
       viewModel = viewModel,
       scope = scope,
       onDismissSheet = { selectedPlugin = null },
+      onUpdateClick = { onUpdateClick(it) }
     )
   }
 }

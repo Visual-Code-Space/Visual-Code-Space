@@ -10,7 +10,6 @@ import com.downloader.PRDownloader
 import com.teixeira.vcspace.activities.CrashActivity
 import com.teixeira.vcspace.activities.EditorActivity
 import com.teixeira.vcspace.extensions.doIfNull
-import com.teixeira.vcspace.plugins.internal.PluginManager
 import com.teixeira.vcspace.providers.GrammarProvider
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
@@ -67,26 +66,6 @@ class VCSpaceApplication : BaseApplication() {
     PRDownloader.initialize(applicationContext)
     GrammarProvider.initialize(this)
     loadDefaultThemes()
-
-    ThreadUtils.executeByIoWithDelay(object : ThreadUtils.Task<Unit>() {
-      override fun doInBackground() {
-        PluginManager.init(
-          application = this@VCSpaceApplication,
-          onError = { plugin, err ->
-            ToastUtils.showLong(
-              """
-              Plugin ${plugin.manifest.name} failed to start.
-              Error: ${err.message}
-            """.trimIndent().trim()
-            )
-          }
-        )
-      }
-
-      override fun onCancel() {}
-      override fun onFail(t: Throwable?) {}
-      override fun onSuccess(result: Unit?) {}
-    }, 2, TimeUnit.SECONDS)
   }
 
   private fun loadDefaultThemes() {

@@ -23,8 +23,8 @@ import com.teixeira.vcspace.KEY_GIT_USER_ACCESS_TOKEN
 import com.teixeira.vcspace.KEY_GIT_USER_INFO
 import com.teixeira.vcspace.extensions.isNotNull
 import com.teixeira.vcspace.github.User
-import com.teixeira.vcspace.plugins.internal.awaitResult
 import com.teixeira.vcspace.preferences.encryptedPrefs
+import com.teixeira.vcspace.utils.awaitResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
