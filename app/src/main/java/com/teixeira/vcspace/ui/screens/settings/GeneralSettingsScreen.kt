@@ -27,6 +27,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Brightness4
 import androidx.compose.material.icons.filled.InvertColors
 import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.rounded.Gesture
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -39,6 +40,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.teixeira.vcspace.core.settings.Settings.General.AMOLED_MODE
+import com.teixeira.vcspace.core.settings.Settings.General.DARK_MODE
+import com.teixeira.vcspace.core.settings.Settings.General.DYNAMIC_COLOR
+import com.teixeira.vcspace.core.settings.Settings.General.ENABLE_GESTURE_IN_DRAWER
+import com.teixeira.vcspace.core.settings.Settings.General.FOLLOW_SYSTEM_THEME
+import com.teixeira.vcspace.core.settings.Settings.General.rememberEnableGestureInDrawer
 import com.teixeira.vcspace.core.settings.Settings.General.rememberFollowSystemTheme
 import com.teixeira.vcspace.core.settings.Settings.General.rememberIsAmoledMode
 import com.teixeira.vcspace.core.settings.Settings.General.rememberIsDarkMode
@@ -59,6 +66,7 @@ fun GeneralSettingsScreen(
   val darkMode = rememberIsDarkMode()
   val amoledMode = rememberIsAmoledMode()
   val dynamicColor = rememberIsDynamicColor()
+  val enableGestureInDrawer = rememberEnableGestureInDrawer()
 
   BackHandler(onBack = onNavigateUp)
 
@@ -77,7 +85,7 @@ fun GeneralSettingsScreen(
     )
 
     switchPreference(
-      key = "follow_system_theme_preference",
+      key = FOLLOW_SYSTEM_THEME.name,
       title = { Text(text = stringResource(R.string.follow_system_theme_title)) },
       summary = {
         Text(
@@ -99,7 +107,7 @@ fun GeneralSettingsScreen(
     )
 
     switchPreference(
-      key = "dark_mode_preference",
+      key = DARK_MODE.name,
       title = { Text(text = stringResource(R.string.use_dark_mode_title)) },
       summary = {
         Text(
@@ -123,7 +131,7 @@ fun GeneralSettingsScreen(
     )
 
     switchPreference(
-      key = "amoled_mode_preference",
+      key = AMOLED_MODE.name,
       title = { Text(text = stringResource(R.string.use_amoled_mode_title)) },
       summary = {
         Text(
@@ -142,19 +150,13 @@ fun GeneralSettingsScreen(
         )
       },
       modifier = Modifier
-        .clip(
-          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PreferenceShape.Middle
-          } else {
-            PreferenceShape.Bottom
-          }
-        )
+        .clip(PreferenceShape.Middle)
         .background(backgroundColor)
     )
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
       switchPreference(
-        key = "dynamic_colors_preference",
+        key = DYNAMIC_COLOR.name,
         title = { Text(text = stringResource(R.string.dynamic_colors_title)) },
         summary = {
           Text(
@@ -171,9 +173,23 @@ fun GeneralSettingsScreen(
           )
         },
         modifier = Modifier
-          .clip(PreferenceShape.Bottom)
+          .clip(PreferenceShape.Middle)
           .background(backgroundColor)
       )
     }
+
+    switchPreference(
+      key = ENABLE_GESTURE_IN_DRAWER.name,
+      title = { Text(text = stringResource(R.string.enable_gesture_in_drawer_title)) },
+      summary = { Text(text = stringResource(R.string.enable_gesture_in_drawer_summary)) },
+      rememberState = { enableGestureInDrawer },
+      defaultValue = enableGestureInDrawer.value,
+      icon = {
+        Icon(Icons.Rounded.Gesture, contentDescription = null)
+      },
+      modifier = Modifier
+        .clip(PreferenceShape.Bottom)
+        .background(backgroundColor)
+    )
   }
 }

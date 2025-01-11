@@ -65,6 +65,7 @@ import com.teixeira.vcspace.app.noLocalProvidedFor
 import com.teixeira.vcspace.app.rootView
 import com.teixeira.vcspace.app.strings
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberShowInputMethodPickerAtStart
+import com.teixeira.vcspace.core.settings.Settings.General.rememberEnableGestureInDrawer
 import com.teixeira.vcspace.editor.addBlockComment
 import com.teixeira.vcspace.editor.addSingleComment
 import com.teixeira.vcspace.editor.events.OnContentChangeEvent
@@ -276,12 +277,14 @@ class EditorActivity : BaseComposeActivity() {
       val snackbarHostState = LocalEditorSnackbarHostState.current
       val drawerState = LocalEditorDrawerState.current
 
+      val enableGestureInDrawer by rememberEnableGestureInDrawer()
+
       ModalNavigationDrawer(
         modifier = Modifier
           .fillMaxSize()
           .imePadding(),
         drawerState = drawerState,
-        gesturesEnabled = drawerState.isOpen,
+        gesturesEnabled = if (enableGestureInDrawer) drawerState.isOpen else false,
         drawerContent = {
           ModalDrawerSheet(
             drawerState = drawerState,

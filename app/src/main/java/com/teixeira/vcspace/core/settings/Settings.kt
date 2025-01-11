@@ -77,10 +77,11 @@ object Settings {
   const val PREFERENCE_NAME = "settings"
 
   object General {
-    private val FOLLOW_SYSTEM_THEME = booleanPreferencesKey("follow_system_theme")
-    private val DARK_MODE = booleanPreferencesKey("dark_mode")
-    private val AMOLED_MODE = booleanPreferencesKey("amoled_mode")
-    private val DYNAMIC_COLOR = booleanPreferencesKey("dynamic_color")
+    val FOLLOW_SYSTEM_THEME = booleanPreferencesKey("follow_system_theme")
+    val DARK_MODE = booleanPreferencesKey("dark_mode")
+    val AMOLED_MODE = booleanPreferencesKey("amoled_mode")
+    val DYNAMIC_COLOR = booleanPreferencesKey("dynamic_color")
+    val ENABLE_GESTURE_IN_DRAWER = booleanPreferencesKey("enable_gesture_in_drawer")
 
     @Composable
     fun rememberFollowSystemTheme() = rememberPreference(
@@ -96,11 +97,17 @@ object Settings {
 
     @Composable
     fun rememberIsDynamicColor() = rememberPreference(key = DYNAMIC_COLOR, defaultValue = true)
+
+    @Composable
+    fun rememberEnableGestureInDrawer() = rememberPreference(
+      key = ENABLE_GESTURE_IN_DRAWER,
+      defaultValue = true
+    )
   }
 
   object File {
-    private val SHOW_HIDDEN_FILES = booleanPreferencesKey("show_hidden_files")
-    private val REMEMBER_LAST_OPENED_FILE = booleanPreferencesKey("__remember_last_opened_file__")
+    val SHOW_HIDDEN_FILES = booleanPreferencesKey("show_hidden_files")
+    val REMEMBER_LAST_OPENED_FILE = booleanPreferencesKey("__remember_last_opened_file__")
 
     @Composable
     fun rememberShowHiddenFiles() = rememberPreference(
@@ -117,7 +124,8 @@ object Settings {
 
   object Editor {
     val CURRENT_EDITOR = stringPreferencesKey("current_editor")
-    val SHOW_INPUT_METHOD_PICKER_AT_START = booleanPreferencesKey("show_input_method_picker_at_start")
+    val SHOW_INPUT_METHOD_PICKER_AT_START =
+      booleanPreferencesKey("show_input_method_picker_at_start")
 
     val FONT_SIZE = floatPreferencesKey("font_size")
     val INDENT_SIZE = intPreferencesKey("indent_size")
@@ -131,13 +139,15 @@ object Settings {
     val USE_TAB = booleanPreferencesKey("use_tab")
     val DELETE_LINE_ON_BACKSPACE = booleanPreferencesKey("delete_line_on_backspace")
     val DELETE_INDENT_ON_BACKSPACE = booleanPreferencesKey("delete_indent_on_backspace")
-    val EDITOR_TEXT_ACTION_WINDOW_EXPAND_THRESHOLD = intPreferencesKey("editor_text_action_window_expand_threshold")
+    val EDITOR_TEXT_ACTION_WINDOW_EXPAND_THRESHOLD =
+      intPreferencesKey("editor_text_action_window_expand_threshold")
 
     @Composable
     fun rememberCurrentEditor() = rememberPreference(key = CURRENT_EDITOR, defaultValue = "Sora")
 
     @Composable
-    fun rememberShowInputMethodPickerAtStart() = rememberPreference(key = SHOW_INPUT_METHOD_PICKER_AT_START, defaultValue = false)
+    fun rememberShowInputMethodPickerAtStart() =
+      rememberPreference(key = SHOW_INPUT_METHOD_PICKER_AT_START, defaultValue = false)
 
     @Composable
     fun rememberFontSize() = rememberPreference(key = FONT_SIZE, defaultValue = 14f)
@@ -158,7 +168,8 @@ object Settings {
     fun rememberFontLigatures() = rememberPreference(key = FONT_LIGATURES, defaultValue = false)
 
     @Composable
-    fun rememberSymbols() = rememberPreference(key = SYMBOLS, defaultValue = "!@#$%^&*()_+{}:\"<>?;=-[]\\/.,")
+    fun rememberSymbols() =
+      rememberPreference(key = SYMBOLS, defaultValue = "!@#$%^&*()_+{}:\"<>?;=-[]\\/.,")
 
     @Composable
     fun rememberWordWrap() = rememberPreference(key = WORD_WRAP, defaultValue = false)
@@ -202,7 +213,8 @@ object Settings {
     val LINE_DECORATIONS_WIDTH = intPreferencesKey("line_decorations_width")
     val LETTER_SPACING = floatPreferencesKey("letter_spacing")
     val MATCH_BRACKETS = stringPreferencesKey("match_brackets")
-    val ACCEPT_SUGGESTION_ON_COMMIT_CHARACTER = booleanPreferencesKey("accept_suggestion_on_commit_character")
+    val ACCEPT_SUGGESTION_ON_COMMIT_CHARACTER =
+      booleanPreferencesKey("accept_suggestion_on_commit_character")
     val ACCEPT_SUGGESTION_ON_ENTER = stringPreferencesKey("accept_suggestion_on_enter")
     val FOLDING = booleanPreferencesKey("folding")
     val GLYPH_MARGIN = booleanPreferencesKey("glyph_margin")
@@ -213,43 +225,57 @@ object Settings {
     val CURSOR_BLINKING_STYLE = intPreferencesKey("monaco_cursor_blinking_style")
 
     @Composable
-    fun rememberMonacoTheme() = rememberPreference(key = MONACO_THEME, defaultValue = MonacoTheme.VisualStudioDark.value)
+    fun rememberMonacoTheme() =
+      rememberPreference(key = MONACO_THEME, defaultValue = MonacoTheme.VisualStudioDark.value)
 
     @Composable
     fun rememberFontSize() = rememberPreference(key = FONT_SIZE, defaultValue = 14)
 
     @Composable
-    fun rememberLineNumbersMinChars() = rememberPreference(key = LINE_NUMBERS_MIN_CHARS, defaultValue = 1)
+    fun rememberLineNumbersMinChars() =
+      rememberPreference(key = LINE_NUMBERS_MIN_CHARS, defaultValue = 1)
 
     @Composable
-    fun rememberLineDecorationsWidth() = rememberPreference(key = LINE_DECORATIONS_WIDTH, defaultValue = 1)
+    fun rememberLineDecorationsWidth() =
+      rememberPreference(key = LINE_DECORATIONS_WIDTH, defaultValue = 1)
 
     @Composable
     fun rememberLetterSpacing() = rememberPreference(key = LETTER_SPACING, defaultValue = 0f)
 
     @Composable
-    fun rememberMatchBrackets() = rememberPreference(key = MATCH_BRACKETS, defaultValue = MatchBrackets.Always.value)
+    fun rememberMatchBrackets() =
+      rememberPreference(key = MATCH_BRACKETS, defaultValue = MatchBrackets.Always.value)
 
     @Composable
-    fun rememberAcceptSuggestionOnCommitCharacter() = rememberPreference(key = ACCEPT_SUGGESTION_ON_COMMIT_CHARACTER, defaultValue = true)
+    fun rememberAcceptSuggestionOnCommitCharacter() =
+      rememberPreference(key = ACCEPT_SUGGESTION_ON_COMMIT_CHARACTER, defaultValue = true)
 
     @Composable
-    fun rememberAcceptSuggestionOnEnter() = rememberPreference(key = ACCEPT_SUGGESTION_ON_ENTER, defaultValue = AcceptSuggestionOnEnter.On.value)
+    fun rememberAcceptSuggestionOnEnter() = rememberPreference(
+      key = ACCEPT_SUGGESTION_ON_ENTER,
+      defaultValue = AcceptSuggestionOnEnter.On.value
+    )
 
     @Composable
     fun rememberWordWrap() = rememberPreference(key = WORD_WRAP, defaultValue = WordWrap.On.value)
 
     @Composable
-    fun rememberWordBreak() = rememberPreference(key = WORD_BREAK, defaultValue = WordBreak.Normal.value)
+    fun rememberWordBreak() =
+      rememberPreference(key = WORD_BREAK, defaultValue = WordBreak.Normal.value)
 
     @Composable
-    fun rememberWrappingStrategy() = rememberPreference(key = WRAPPING_STRATEGY, defaultValue = WrappingStrategy.Advanced.value)
+    fun rememberWrappingStrategy() =
+      rememberPreference(key = WRAPPING_STRATEGY, defaultValue = WrappingStrategy.Advanced.value)
 
     @Composable
-    fun rememberCursorStyle() = rememberPreference(key = CURSOR_STYLE, defaultValue = TextEditorCursorStyle.Line.value)
+    fun rememberCursorStyle() =
+      rememberPreference(key = CURSOR_STYLE, defaultValue = TextEditorCursorStyle.Line.value)
 
     @Composable
-    fun rememberCursorBlinkingStyle() = rememberPreference(key = CURSOR_BLINKING_STYLE, defaultValue = TextEditorCursorBlinkingStyle.Phase.value)
+    fun rememberCursorBlinkingStyle() = rememberPreference(
+      key = CURSOR_BLINKING_STYLE,
+      defaultValue = TextEditorCursorBlinkingStyle.Phase.value
+    )
 
     @Composable
     fun rememberFolding() = rememberPreference(key = FOLDING, defaultValue = true)
