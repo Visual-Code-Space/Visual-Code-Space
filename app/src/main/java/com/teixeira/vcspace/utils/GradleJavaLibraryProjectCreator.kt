@@ -16,11 +16,23 @@
 package com.teixeira.vcspace.utils
 
 import android.content.Context
+import com.blankj.utilcode.util.PathUtils
+import com.blankj.utilcode.util.ToastUtils
+import com.downloader.Error
+import com.downloader.OnDownloadListener
+import com.downloader.PRDownloader
 import com.teixeira.vcspace.extensions.extractZipFile
 import com.teixeira.vcspace.extensions.toFile
+import com.teixeira.vcspace.resources.R
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import java.io.File
 import java.nio.file.Files
+
+const val ANDROID_JAR = "https://github.com/Sable/android-platforms/raw/refs/heads/master/android-35/android.jar"
+val ANDROID_JAR_PATH = "${PathUtils.getInternalAppFilesPath()}/android.jar"
 
 object GradleJavaLibraryProjectCreator {
   suspend fun createGradleJavaLibraryProject(
@@ -39,8 +51,20 @@ object GradleJavaLibraryProjectCreator {
       val libsPath = projectPath.resolve("libs")
       Files.createDirectories(libsPath.toPath())
 
-      context.assets.open("plugin/android.jar").use {
-        libsPath.resolve("android.jar").writeBytes(it.readBytes())
+      val androidJar = libsPath.resolve("android.jar")
+      val androidJarInternal = ANDROID_JAR_PATH.toFile()
+
+      if (androidJarInternal.exists()) {
+        androidJar.writeBytes(androidJarInternal.readBytes())
+      } else {
+        val file = File(context.filesDir, "android.jar")
+        runBlocking {
+          downloadAndroidJar(context, file) {
+            androidJarInternal.createNewFile()
+            androidJarInternal.writeBytes(it.readBytes())
+            androidJar.writeBytes(androidJarInternal.readBytes())
+          }
+        }
       }
 
       context.assets.open("plugin/plugins-api.jar").use {
@@ -201,6 +225,29 @@ object GradleJavaLibraryProjectCreator {
 
       buildPluginSh.writeText(buildPluginContent)
       buildPluginSh.setExecutable(true, false)
+    }
+  }
+
+  private suspend fun downloadAndroidJar(
+    context: Context,
+    outputFile: File,
+    onDownloadComplete: (File) -> Unit
+  ) {
+    withContext(currentCoroutineContext()) {
+      PRDownloader.download(ANDROID_JAR, outputFile.parent, outputFile.name)
+        .build().start(object : OnDownloadListener {
+          override fun onDownloadComplete() {
+            onDownloadComplete(outputFile)
+          }
+
+          override fun onError(error: Error) {
+            runOnUiThread {
+              ToastUtils.showShort(
+                if (error.isConnectionError) context.getString(R.string.connection_failed) else if (error.isServerError) "Server error!" else "Download failed! Something went wrong.",
+              )
+            }
+          }
+        })
     }
   }
 }

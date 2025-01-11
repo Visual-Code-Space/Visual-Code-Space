@@ -17,5 +17,29 @@ package com.teixeira.vcspace.utils
 
 import android.os.Handler
 import android.os.Looper
+import okhttp3.internal.notify
+import okhttp3.internal.wait
 
-fun runOnUiThread(block: () -> Unit) = Handler(Looper.getMainLooper()).post(block)
+fun <R> runOnUiThread(block: () -> R): R {
+  if (Looper.myLooper() == Looper.getMainLooper()) {
+    return block()
+  }
+
+  val lock = Any()
+  var result: R? = null
+
+  Handler(Looper.getMainLooper()).post {
+    synchronized(lock) {
+      result = block()
+      lock.notify()
+    }
+  }
+
+  synchronized(lock) {
+    while (result == null) {
+      lock.wait()
+    }
+  }
+
+  return result!!
+}

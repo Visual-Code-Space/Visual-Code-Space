@@ -72,6 +72,7 @@ import com.teixeira.vcspace.editor.events.OnContentChangeEvent
 import com.teixeira.vcspace.editor.events.OnKeyBindingEvent
 import com.teixeira.vcspace.events.OnOpenFolderEvent
 import com.teixeira.vcspace.extensions.open
+import com.teixeira.vcspace.extensions.toFile
 import com.teixeira.vcspace.file.File
 import com.teixeira.vcspace.file.extension
 import com.teixeira.vcspace.file.wrapFile
