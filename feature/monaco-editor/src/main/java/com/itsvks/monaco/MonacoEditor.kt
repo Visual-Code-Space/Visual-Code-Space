@@ -16,7 +16,9 @@
 package com.itsvks.monaco
 
 import android.annotation.SuppressLint
+import android.app.DownloadManager
 import android.content.Context
+import android.os.Environment
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
@@ -24,6 +26,7 @@ import android.view.View
 import android.webkit.ConsoleMessage
 import android.webkit.WebChromeClient
 import android.webkit.WebView
+import androidx.core.net.toUri
 import com.itsvks.monaco.completion.InlineCompletionProvider
 import com.itsvks.monaco.option.AcceptSuggestionOnEnter
 import com.itsvks.monaco.option.MatchBrackets
@@ -36,10 +39,13 @@ import com.itsvks.monaco.option.WordBreak
 import com.itsvks.monaco.option.WordWrap
 import com.itsvks.monaco.option.WrappingStrategy
 import com.itsvks.monaco.option.minimap.MinimapOptions
+import com.teixeira.vcspace.extensions.extractZipFile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.nio.file.Files
 
 /**
  * A WebView-based Monaco Editor component for Android.
@@ -61,6 +67,26 @@ class MonacoEditor @JvmOverloads constructor(
 ) : WebView(context, attrs) {
   companion object {
     private const val TAG = "MonacoEditor"
+
+    @JvmStatic
+    fun downloadMonaco(context: Context, url: String): Long {
+      val request = DownloadManager.Request(url.toUri())
+      request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "vcspace-monaco.zip")
+      request.setTitle("Visual Code Space")
+      request.setDescription("Downloading monaco editor for Visual Code Space")
+      request.setAllowedOverMetered(true)
+      val downloadManager = context.getSystemService(DownloadManager::class.java)
+      return downloadManager.enqueue(request)
+    }
+
+    @JvmStatic
+    suspend fun doSetup(context: Context, downloadedFile: File) {
+      withContext(Dispatchers.IO) {
+        if (downloadedFile.exists()) {
+          downloadedFile.extractZipFile(context.filesDir)
+        }
+      }
+    }
   }
 
   private val client = MonacoEditorClient(this)
@@ -111,7 +137,7 @@ class MonacoEditor @JvmOverloads constructor(
       setWebContentsDebuggingEnabled(true)
     }
 
-    loadUrl("https://appassets.androidplatform.net/assets/code-oss/editor/index.html")
+    loadUrl("https://appassets.androidplatform.net/monaco/index.html")
 
     setOnTouchListener { _, event ->
       if (event.actionMasked == MotionEvent.ACTION_UP) {
@@ -129,7 +155,7 @@ class MonacoEditor @JvmOverloads constructor(
   }
 
   override fun reload() {
-    loadUrl("https://appassets.androidplatform.net/assets/code-oss/editor/index.html")
+    loadUrl("https://appassets.androidplatform.net/monaco/index.html")
   }
 
   private fun loadJs(script: String, resultCallback: (String) -> Unit = {}) {

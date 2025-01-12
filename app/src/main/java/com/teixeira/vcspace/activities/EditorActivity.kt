@@ -54,6 +54,7 @@ import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.blankj.utilcode.util.UriUtils
+import com.itsvks.monaco.MonacoEditor
 import com.teixeira.vcspace.BuildConfig
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerNavController
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
@@ -61,6 +62,7 @@ import com.teixeira.vcspace.activities.Editor.LocalEditorSnackbarHostState
 import com.teixeira.vcspace.activities.base.BaseComposeActivity
 import com.teixeira.vcspace.activities.base.ObserveLifecycleEvents
 import com.teixeira.vcspace.app.DoNothing
+import com.teixeira.vcspace.app.MONACO_EDITOR_ARCHIVE
 import com.teixeira.vcspace.app.noLocalProvidedFor
 import com.teixeira.vcspace.app.rootView
 import com.teixeira.vcspace.app.strings
@@ -249,6 +251,9 @@ class EditorActivity : BaseComposeActivity() {
         }
 
         rootView().addView(composeView)
+      },
+      newCommand("Download monaco", null) {
+        MonacoEditor.downloadMonaco(this@EditorActivity, MONACO_EDITOR_ARCHIVE)
       }
     )
   }
@@ -353,6 +358,7 @@ class EditorActivity : BaseComposeActivity() {
           EventBus.getDefault().register(this@EditorActivity)
 
           lifecycleScope.launch {
+            //fileExplorerViewModel.openFolder(PathUtils.getInternalAppFilesPath().toFile().wrapFile())
             runCatching {
               PluginLoader.loadPlugins(this@EditorActivity)
             }.onSuccess { plugins ->

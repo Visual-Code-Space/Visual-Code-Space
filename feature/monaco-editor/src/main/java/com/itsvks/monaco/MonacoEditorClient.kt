@@ -21,11 +21,14 @@ import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import androidx.webkit.WebViewAssetLoader
 import androidx.webkit.WebViewAssetLoader.AssetsPathHandler
+import androidx.webkit.WebViewAssetLoader.InternalStoragePathHandler
 import androidx.webkit.WebViewClientCompat
+import com.blankj.utilcode.util.PathUtils
+import java.io.File
 
 class MonacoEditorClient(private val editor: MonacoEditor) : WebViewClientCompat() {
   private val assetLoader = WebViewAssetLoader.Builder()
-    .addPathHandler("/assets/", AssetsPathHandler(editor.context))
+    .addPathHandler("/monaco/", InternalStoragePathHandler(editor.context, File(editor.context.filesDir, "monaco-editor-main")))
     .build()
 
   override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {

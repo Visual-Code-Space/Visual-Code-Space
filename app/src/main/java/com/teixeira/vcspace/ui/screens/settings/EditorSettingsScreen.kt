@@ -15,6 +15,7 @@
 
 package com.teixeira.vcspace.ui.screens.settings
 
+import android.app.DownloadManager
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -43,6 +44,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
@@ -51,6 +54,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastRoundToInt
+import androidx.core.net.toFile
+import androidx.core.net.toUri
+import com.blankj.utilcode.util.ToastUtils
+import com.itsvks.monaco.MonacoEditor
+import com.teixeira.vcspace.app.MONACO_EDITOR_ARCHIVE
 import com.teixeira.vcspace.core.settings.Settings.Editor.COLOR_SCHEME
 import com.teixeira.vcspace.core.settings.Settings.Editor.CURRENT_EDITOR
 import com.teixeira.vcspace.core.settings.Settings.Editor.DELETE_INDENT_ON_BACKSPACE
@@ -84,12 +92,16 @@ import com.teixeira.vcspace.core.settings.Settings.Editor.rememberWordWrap
 import com.teixeira.vcspace.core.settings.Settings.EditorTabs.AUTO_SAVE
 import com.teixeira.vcspace.core.settings.Settings.EditorTabs.rememberAutoSave
 import com.teixeira.vcspace.resources.R
+import com.teixeira.vcspace.utils.runOnUiThread
+import kotlinx.coroutines.launch
 import me.zhanghai.compose.preference.listPreference
 import me.zhanghai.compose.preference.preference
 import me.zhanghai.compose.preference.preferenceCategory
 import me.zhanghai.compose.preference.sliderPreference
 import me.zhanghai.compose.preference.switchPreference
 import me.zhanghai.compose.preference.textFieldPreference
+import java.io.File
+import kotlin.concurrent.thread
 
 @Composable
 fun EditorSettingsScreen(
@@ -99,6 +111,7 @@ fun EditorSettingsScreen(
 ) {
   val context = LocalContext.current
   val uriHandler = LocalUriHandler.current
+  val coroutineScope = rememberCoroutineScope()
 
   val currentEditor = rememberCurrentEditor()
   val showInputMethodPickerAtStart = rememberShowInputMethodPickerAtStart()
@@ -116,6 +129,50 @@ fun EditorSettingsScreen(
   val deleteLineOnBackspace = rememberDeleteLineOnBackspace()
   val deleteIndentOnBackspace = rememberDeleteIndentOnBackspace()
   val editorTextActionWindowExpandThreshold = rememberEditorTextActionWindowExpandThreshold()
+
+  LaunchedEffect(currentEditor.value) {
+    if (currentEditor.value.lowercase() == "monaco") {
+      val internal = File(context.filesDir, "monaco-editor-main")
+
+      if (internal.exists().not()) {
+        runOnUiThread { ToastUtils.showShort("Downloading Monaco editor...") }
+        val id = MonacoEditor.downloadMonaco(context, MONACO_EDITOR_ARCHIVE)
+        val downloadManager = context.getSystemService(DownloadManager::class.java)
+        val query = DownloadManager.Query().setFilterById(id)
+
+        thread {
+          var downloading = true
+
+          while (downloading) {
+            val cursor = downloadManager.query(query)
+
+            if (cursor != null && cursor.moveToFirst()) {
+              val status = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS))
+              downloading = status == DownloadManager.STATUS_RUNNING || status == DownloadManager.STATUS_PAUSED || status == DownloadManager.STATUS_PENDING
+
+              if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                downloading = false
+                val filePath = cursor.getString(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_LOCAL_URI))
+                runOnUiThread { ToastUtils.showShort("Monaco editor downloaded successfully") }
+
+                coroutineScope.launch {
+                  MonacoEditor.doSetup(context, filePath.toUri().toFile())
+                }
+              } else if (status == DownloadManager.STATUS_FAILED) {
+                downloading = false
+                val reason = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_REASON))
+                runOnUiThread { ToastUtils.showShort("Monaco editor download failed: $reason") }
+              }
+            }
+
+            cursor?.close()
+
+            runCatching { Thread.sleep(1000) }
+          }
+        }
+      }
+    }
+  }
 
   val autoSave = rememberAutoSave()
 
