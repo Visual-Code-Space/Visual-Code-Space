@@ -1,3 +1,6 @@
 [submodule "app/src/main/cpp/third-party/tiny-AES-c"]
 	path = app/src/main/cpp/third-party/tiny-AES-c
 	url = https://github.com/kokke/tiny-AES-c
+[submodule "feature/monaco-editor/src/main/assets/code-oss/editor"]
+	path = feature/monaco-editor/src/main/assets/code-oss/editor
+	url = https://github.com/Visual-Code-Space/monaco-editor.git
