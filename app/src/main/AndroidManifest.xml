@@ -11,6 +11,7 @@
   <uses-permission android:name="android.permission.INTERNET" />
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
   <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
   <uses-permission android:name="com.termux.permission.RUN_COMMAND" />
@@ -18,7 +19,7 @@
   <application
     android:name=".app.VCSpaceApplication"
     android:allowBackup="true"
-    android:enableOnBackInvokedCallback="true"
+    android:enableOnBackInvokedCallback="false"
     android:hardwareAccelerated="true"
     android:icon="@mipmap/ic_launcher"
     android:label="@string/app_name"
@@ -78,6 +79,11 @@
       android:windowSoftInputMode="adjustResize" />
 
     <activity
+      android:name=".activities.XTerminalActivity"
+      android:exported="false"
+      android:windowSoftInputMode="adjustResize" />
+
+    <activity
       android:name=".activities.AboutActivity"
       android:exported="false" />
 
@@ -107,6 +113,11 @@
         android:name="autoStoreLocales"
         android:value="true" />
     </service>
+
+    <service
+      android:name=".terminal.service.TerminalService"
+      android:exported="false"
+      android:foregroundServiceType="specialUse" />
   </application>
 
   <queries>

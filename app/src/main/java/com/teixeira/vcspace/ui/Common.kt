@@ -100,31 +100,3 @@ fun LoadingIndicator() {
     CircularProgressIndicator()
   }
 }
-
-@Composable
-fun InputField(
-  modifier: Modifier = Modifier,
-  label: String,
-  value: String,
-  placeholder: @Composable (() -> Unit)? = null,
-  onValueChange: (String) -> Unit,
-  singleLine: Boolean = true,
-  maxLines: Int = 1,
-  isError: Boolean = false
-) {
-  OutlinedTextField(
-    value = value,
-    onValueChange = onValueChange,
-    label = { Text(label) },
-    placeholder = placeholder,
-    isError = isError,
-    modifier = modifier
-      .fillMaxWidth()
-      .padding(vertical = 4.dp),
-    singleLine = singleLine,
-    maxLines = maxLines,
-    keyboardOptions = KeyboardOptions(
-      imeAction = if (singleLine) ImeAction.Next else ImeAction.Default
-    )
-  )
-}
