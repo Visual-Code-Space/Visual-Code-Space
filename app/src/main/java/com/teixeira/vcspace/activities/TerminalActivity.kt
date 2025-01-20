@@ -69,6 +69,7 @@ import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.File
+import java.nio.file.Files
 
 class TerminalActivity : ComponentActivity() {
   var terminalBinder: TerminalService.TerminalBinder? = null
@@ -192,10 +193,12 @@ class TerminalActivity : ComponentActivity() {
             isSetupComplete = true
           },
           onError = { error ->
+            error.printStackTrace()
             ToastUtils.showShort("Setup Failed: ${error.message}")
             finish()
           })
       } catch (e: Exception) {
+        e.printStackTrace()
         ToastUtils.showShort("Setup Failed: ${e.message}")
         finish()
       }
@@ -307,6 +310,12 @@ class TerminalActivity : ComponentActivity() {
 
     Runtime.getRuntime().exec("tar -xf ${usr.absolutePath} -C $appDataDir").waitFor()
     usr.delete()
+
+    val libtallocSo2Path = File(prefix, "lib/libtalloc.so.2").apply {
+      if (exists()) delete()
+    }.toPath()
+    val libtallocSo241Path = File(prefix, "lib/libtalloc.so.2.4.1").toPath()
+    Files.createSymbolicLink(libtallocSo2Path, libtallocSo241Path)
     onComplete()
   }
 
