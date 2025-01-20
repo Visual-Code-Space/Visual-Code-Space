@@ -40,7 +40,6 @@ import androidx.compose.ui.util.fastForEachIndexed
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerNavController
 import com.teixeira.vcspace.activities.SettingsActivity
 import com.teixeira.vcspace.activities.TerminalActivity
-import com.teixeira.vcspace.activities.XTerminalActivity
 import com.teixeira.vcspace.app.drawables
 import com.teixeira.vcspace.extensions.open
 import com.teixeira.vcspace.resources.R
@@ -98,7 +97,7 @@ fun NavRail(
           when (index) {
             0 -> navController.navigateSingleTop(EditorDrawerScreens.FileExplorer)
             1 -> navController.navigateSingleTop(EditorDrawerScreens.GitManager)
-            2 -> context.open(XTerminalActivity::class.java)
+            2 -> context.open(TerminalActivity::class.java)
             3 -> context.open(SettingsActivity::class.java)
           }
         }

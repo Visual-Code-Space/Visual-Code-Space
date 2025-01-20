@@ -81,7 +81,6 @@ import com.teixeira.vcspace.activities.Editor.LocalCommandPaletteManager
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
 import com.teixeira.vcspace.activities.MarkdownPreviewActivity
 import com.teixeira.vcspace.activities.TerminalActivity
-import com.teixeira.vcspace.activities.XTerminalActivity
 import com.teixeira.vcspace.app.strings
 import com.teixeira.vcspace.compose.LocalMenuManager
 import com.teixeira.vcspace.core.components.Tooltip
@@ -312,7 +311,7 @@ fun EditorTopBar(
                   view = view
                 ) {
                   context.startActivity(
-                    Intent(context, XTerminalActivity::class.java).apply {
+                    Intent(context, TerminalActivity::class.java).apply {
                       putExtra(
                         TerminalActivity.KEY_PYTHON_FILE_PATH,
                         selectedFile.file.absolutePath
@@ -373,7 +372,7 @@ fun EditorTopBar(
       LaunchedEffect(Unit) {
         commandPaletteManager.addCommand(
           newCommand("Terminal", "Ctrl+T") {
-            context.open(XTerminalActivity::class.java)
+            context.open(TerminalActivity::class.java)
           },
           newCommand("Search", "Ctrl+K") {
             selectedEditor?.beginSearchMode()

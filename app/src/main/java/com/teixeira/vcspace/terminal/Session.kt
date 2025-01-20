@@ -15,19 +15,22 @@
 
 package com.teixeira.vcspace.terminal
 
-import android.content.Context
+import com.teixeira.vcspace.activities.TerminalActivity
+import com.teixeira.vcspace.extensions.child
+import com.teixeira.vcspace.extensions.tmpDir
 import com.termux.terminal.TerminalEmulator
 import com.termux.terminal.TerminalSession
 import com.termux.terminal.TerminalSessionClient
+import java.io.File
 
 // https://github.com/RohitKushvaha01/ReTerminal/blob/main/app/src/main/java/com/rk/terminal/terminal/MkSession.kt
 object Session {
   fun createSession(
-    context: Context,
+    activity: TerminalActivity,
     sessionClient: TerminalSessionClient,
-    cwd: String?
+    sessionId: String
   ): TerminalSession {
-    with(context) {
+    with(activity) {
       val envVariables = mapOf(
         "ANDROID_ART_ROOT" to System.getenv("ANDROID_ART_ROOT"),
         "ANDROID_DATA" to System.getenv("ANDROID_DATA"),
@@ -40,21 +43,59 @@ object Session {
         "EXTERNAL_STORAGE" to System.getenv("EXTERNAL_STORAGE")
       )
 
+      val workingDir = if (intent.hasExtra("cwd")) {
+        intent.getStringExtra("cwd").toString()
+      } else {
+        home.absolutePath
+      }
+
+      val tmpDir = File(activity.tmpDir, "terminal/$sessionId")
+
+      if (tmpDir.exists()) {
+        tmpDir.deleteRecursively()
+        tmpDir.mkdirs()
+      } else {
+        tmpDir.mkdirs()
+      }
+
       val env = mutableListOf(
-        "HOME=" + filesDir.absolutePath,
-        "PUBLIC_HOME=" + getExternalFilesDir(null)?.absolutePath,
+        "PROOT_TMP_DIR=${tmpDir.absolutePath}",
+        "HOME=${home.absolutePath}",
+        "PUBLIC_HOME=${getExternalFilesDir(null)?.absolutePath}",
         "COLORTERM=truecolor",
         "TERM=xterm-256color",
+        "LANG=C.UTF-8",
+        "PREFIX=${prefix.absolutePath}",
+        "LD_LIBRARY_PATH=${lib.absolutePath}",
+        "ALPINE=${alpineDir.absolutePath}",
+        "LINKER=${Executor.linker}",
+        "PROOT=${
+          File(filesDir, "proot").apply {
+            if (exists().not()) {
+              assets.open("terminal/proot").use {
+                writeBytes(it.readBytes())
+              }
+            }
+            setExecutable(true)
+          }.absolutePath
+        }"
       )
 
       env.addAll(envVariables.map { "${it.key}=${it.value}" })
 
+      val initHost = bin.child("init-host").apply {
+        writeText(assets.open("terminal/init-host.sh").bufferedReader().use { it.readText() })
+      }
+      bin.child("init").apply {
+        writeText(assets.open("terminal/init.sh").bufferedReader().use { it.readText() })
+      }
+
       val shell = "/system/bin/sh"
-      val args = arrayOf<String>()
+      val args = arrayOf("-c", initHost.absolutePath)
 
       return TerminalSession(
         shell,
-        cwd ?: filesDir.absolutePath,
+        workingDir,
         args,
         env.toTypedArray(),
         TerminalEmulator.DEFAULT_TERMINAL_TRANSCRIPT_ROWS,

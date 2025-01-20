@@ -8,6 +8,7 @@ add_subdirectory(third-party/tiny-AES-c)
 add_library(${CMAKE_PROJECT_NAME} SHARED
         vcspace.cpp
         gemini.cpp
+        terminal/executor.cpp
 )
 
 target_link_libraries(${CMAKE_PROJECT_NAME}

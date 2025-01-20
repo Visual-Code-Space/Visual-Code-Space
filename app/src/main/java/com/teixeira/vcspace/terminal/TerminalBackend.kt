@@ -21,6 +21,7 @@ import android.view.KeyEvent
 import android.view.MotionEvent
 import com.blankj.utilcode.util.ClipboardUtils
 import com.blankj.utilcode.util.KeyboardUtils
+import com.teixeira.vcspace.activities.TerminalActivity
 import com.teixeira.vcspace.ui.virtualkeys.SpecialButton
 import com.teixeira.vcspace.ui.virtualkeys.VirtualKeysView
 import com.termux.terminal.TerminalEmulator
@@ -32,7 +33,7 @@ import com.termux.view.TerminalViewClient
 // https://github.com/RohitKushvaha01/ReTerminal/blob/main/app/src/main/java/com/rk/terminal/terminal/TerminalBackEnd.kt
 class TerminalBackend(
   val terminal: TerminalView,
-  val activity: Activity
+  val activity: TerminalActivity
 ) : TerminalViewClient, TerminalSessionClient {
 
   override fun onTextChanged(changedSession: TerminalSession) {
@@ -41,7 +42,15 @@ class TerminalBackend(
 
   override fun onTitleChanged(changedSession: TerminalSession) {}
 
-  override fun onSessionFinished(finishedSession: TerminalSession) {}
+  override fun onSessionFinished(finishedSession: TerminalSession) {
+    activity.terminalBinder?.terminateSession(activity.terminalBinder!!.service.currentSession.value)
+    if (activity.terminalBinder!!.service.sessionList.isEmpty()) {
+      activity.finish()
+    } else {
+      val sessionId = activity.terminalBinder!!.service.sessionList.last()
+      changeSession(activity, sessionId)
+    }
+  }
 
   override fun onCopyTextToClipboard(session: TerminalSession, text: String) {
     ClipboardUtils.copyText("Terminal", text)
@@ -121,7 +130,13 @@ class TerminalBackend(
 
   override fun onKeyDown(keyCode: Int, e: KeyEvent, session: TerminalSession): Boolean {
     if (keyCode == KeyEvent.KEYCODE_ENTER && !session.isRunning) {
-      activity.finish()
+      activity.terminalBinder?.terminateSession(activity.terminalBinder!!.service.currentSession.value)
+      if (activity.terminalBinder!!.service.sessionList.isEmpty()) {
+        activity.finish()
+      } else {
+        val sessionId = activity.terminalBinder!!.service.sessionList.last()
+        changeSession(activity, sessionId)
+      }
       return true
     }
     return false

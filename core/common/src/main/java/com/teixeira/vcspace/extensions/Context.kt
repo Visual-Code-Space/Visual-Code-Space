@@ -17,11 +17,10 @@ package com.teixeira.vcspace.extensions
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import androidx.core.app.ActivityOptionsCompat
-import androidx.core.content.FileProvider
 import com.teixeira.vcspace.file.File
+import java.io.File as JFile
 
 fun <T> Context.open(clazz: Class<T>, newTask: Boolean = false) {
   val intent = Intent(this, clazz)
@@ -49,3 +48,48 @@ fun Context.openFile(file: File) {
     startActivity(this)
   }
 }
+
+val Context.tmpDir: JFile
+  get() {
+    return JFile(filesDir.parentFile, "tmp").also {
+      if (!it.exists()) {
+        it.mkdirs()
+      }
+    }
+  }
+
+val Context.localDir: JFile
+  get() {
+    return JFile(filesDir.parentFile, "local").also {
+      if (!it.exists()) {
+        it.mkdirs()
+      }
+    }
+  }
+
+val Context.localBinDir: JFile
+  get() {
+    return JFile(filesDir.parentFile, "local/bin").also {
+      if (!it.exists()) {
+        it.mkdirs()
+      }
+    }
+  }
+
+val Context.localLibDir: JFile
+  get() {
+    return JFile(filesDir.parentFile, "local/lib").also {
+      if (!it.exists()) {
+        it.mkdirs()
+      }
+    }
+  }
+
+val Context.alpineDir: JFile
+  get() {
+    return JFile(localDir, "alpine").also {
+      if (!it.exists()) {
+        it.mkdirs()
+      }
+    }
+  }

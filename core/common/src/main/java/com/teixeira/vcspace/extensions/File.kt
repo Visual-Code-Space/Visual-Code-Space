@@ -54,7 +54,7 @@ fun File.extractZipFile(destinationDir: File) {
   ZipInputStream(inputStream()).use { zipInputStream ->
     var entry: ZipEntry? = zipInputStream.nextEntry
 
-    while (entry != null) { 
+    while (entry != null) {
       val extractedFile = File(destinationDir, entry.name)
       if (!extractedFile.canonicalPath.startsWith(destinationDir.canonicalPath)) {
         throw SecurityException("Bad zip entry path: ${entry.name}")
@@ -73,4 +73,15 @@ fun File.extractZipFile(destinationDir: File) {
       entry = zipInputStream.nextEntry
     }
   }
+}
+
+fun File.child(fileName: String): File {
+  return File(this, fileName)
+}
+
+fun File.createFileIfNot(): File {
+  if (exists().not()) {
+    createNewFile()
+  }
+  return this
 }

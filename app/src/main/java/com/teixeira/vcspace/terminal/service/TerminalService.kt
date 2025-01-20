@@ -26,7 +26,7 @@ import android.os.IBinder
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.NotificationCompat
-import com.teixeira.vcspace.activities.XTerminalActivity
+import com.teixeira.vcspace.activities.TerminalActivity
 import com.teixeira.vcspace.app.drawables
 import com.teixeira.vcspace.terminal.Session
 import com.termux.terminal.TerminalSession
@@ -38,22 +38,20 @@ class TerminalService : Service() {
   val sessionList = mutableStateListOf<String>()
   var currentSession = mutableStateOf("main")
 
+  @Suppress("PrivatePropertyName")
+  private val ACTION_EXIT = "$packageName.action.ACTION_EXIT"
+  private val notificationId = 46536745
+
   inner class TerminalBinder : Binder() {
     val service
       get() = this@TerminalService
 
-    fun addSession(session: TerminalSession) {
-      sessions[session.mSessionName] = session
-      sessionList.add(session.mSessionName)
-      updateNotification()
-    }
-
     fun createSession(
       id: String,
       client: TerminalSessionClient,
-      activity: XTerminalActivity
+      activity: TerminalActivity
     ): TerminalSession {
-      return Session.createSession(activity, client, null).also {
+      return Session.createSession(activity, client, id).also {
         sessions[id] = it
         sessionList.add(id)
         updateNotification()
@@ -87,12 +85,12 @@ class TerminalService : Service() {
     super.onCreate()
     createNotificationChannel()
     val notification = createNotification()
-    startForeground(1, notification)
+    startForeground(notificationId, notification)
   }
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
     when (intent?.action) {
-      "ACTION_EXIT" -> {
+      ACTION_EXIT -> {
         sessions.forEach { session -> session.value.finishIfRunning() }
         stopSelf()
       }
@@ -106,19 +104,19 @@ class TerminalService : Service() {
   }
 
   private fun createNotification(): Notification {
-    val intent = Intent(this, XTerminalActivity::class.java)
+    val intent = Intent(this, TerminalActivity::class.java)
     val pendingIntent = PendingIntent.getActivity(
       this, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
     )
-    val exitIntent = Intent(this, TerminalSession::class.java).apply { action = "ACTION_EXIT" }
+    val exitIntent = Intent(this, TerminalService::class.java).apply { action = ACTION_EXIT }
     val exitPendingIntent = PendingIntent.getService(
-      this, 123, exitIntent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+      this, notificationId, exitIntent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
     )
 
     return NotificationCompat.Builder(this, CHANNEL_ID)
       .setContentTitle("Visual Code Space")
       .setContentText(getNotificationContentText())
-      .setSmallIcon(drawables.vcspace_icon)
+      .setSmallIcon(drawables.terminal)
       .setContentIntent(pendingIntent)
       .addAction(
         NotificationCompat.Action.Builder(
@@ -146,11 +144,11 @@ class TerminalService : Service() {
 
   private fun updateNotification() {
     val notification = createNotification()
-    notificationManager.notify(123, notification)
+    notificationManager.notify(notificationId, notification)
   }
 
   private fun getNotificationContentText(): String {
     val count = sessions.size
-    return "$count sessions running"
+    return "$count ${if (count == 1) "session" else "sessions"} running"
   }
 }
