@@ -30,13 +30,13 @@ import kotlinx.coroutines.withContext
 
 object Gemini {
   private val model = GenerativeModel(
-    modelName = "gemini-2.0-flash-exp",
+    modelName = "gemini-2.0-flash-thinking-exp-01-21",
     apiKey = Secrets.getGenerativeAiApiKey(),
     generationConfig = generationConfig {
-      temperature = 0.15f
-      topK = 32
-      topP = 1f
-      maxOutputTokens = 8192
+      temperature = 0.7f
+      topK = 64
+      topP = 0.95f
+      maxOutputTokens = 65536
     },
     safetySettings = listOf(
       SafetySetting(HarmCategory.HARASSMENT, BlockThreshold.MEDIUM_AND_ABOVE),

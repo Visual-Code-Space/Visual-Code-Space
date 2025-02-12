@@ -18,9 +18,10 @@ package com.teixeira.vcspace.core.components.editor
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabPosition
 import androidx.compose.material3.TabRowDefaults
@@ -39,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.teixeira.vcspace.ui.screens.editor.EditorViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FileTabLayout(
   modifier: Modifier = Modifier,
@@ -63,19 +65,10 @@ fun FileTabLayout(
     )
   }
 
-  ScrollableTabRow(
+  PrimaryScrollableTabRow(
     selectedTabIndex = selectedFileIndex.coerceIn(0, openedFiles.size - 1),
     modifier = modifier.fillMaxWidth(),
     edgePadding = 0.dp,
-    indicator = { tabPositions ->
-      tabPosition = tabPositions.getOrNull(selectedFileIndex)
-
-      if (tabPosition != null) {
-        TabRowDefaults.SecondaryIndicator(
-          Modifier.tabIndicatorOffset(tabPosition!!)
-        )
-      }
-    },
     divider = {
       val tabOffset by tabOffset(tabPosition)
 
