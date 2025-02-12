@@ -28,6 +28,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.NotificationCompat
 import com.teixeira.vcspace.activities.TerminalActivity
 import com.teixeira.vcspace.app.drawables
+import com.teixeira.vcspace.extensions.makePluralIf
 import com.teixeira.vcspace.terminal.Session
 import com.termux.terminal.TerminalSession
 import com.termux.terminal.TerminalSessionClient
@@ -39,7 +40,7 @@ class TerminalService : Service() {
   var currentSession = mutableStateOf("main")
 
   @Suppress("PrivatePropertyName")
-  private val ACTION_EXIT = "$packageName.action.ACTION_EXIT"
+  private val ACTION_EXIT by lazy { "com.teixeira.vcspace.action.ACTION_EXIT" }
   private val notificationId = 46536745
 
   inner class TerminalBinder : Binder() {
@@ -149,6 +150,6 @@ class TerminalService : Service() {
 
   private fun getNotificationContentText(): String {
     val count = sessions.size
-    return "$count ${if (count == 1) "session" else "sessions"} running"
+    return "$count${" session" makePluralIf (count > 1)} running"
   }
 }
