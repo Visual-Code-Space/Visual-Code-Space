@@ -18,23 +18,23 @@ package com.itsvks.monaco.option
 
 @JvmInline
 value class EditorAutoClosingStrategy private constructor(
-  override val value: String
+    override val value: String
 ) : Option<String> {
-  companion object {
-    val Never = EditorAutoClosingStrategy("never")
-    val Always = EditorAutoClosingStrategy("always")
-    val LanguageDefined = EditorAutoClosingStrategy("languageDefined")
-    val BeforeWhitespace = EditorAutoClosingStrategy("beforeWhitespace")
-  }
+    companion object {
+        val Never = EditorAutoClosingStrategy("never")
+        val Always = EditorAutoClosingStrategy("always")
+        val LanguageDefined = EditorAutoClosingStrategy("languageDefined")
+        val BeforeWhitespace = EditorAutoClosingStrategy("beforeWhitespace")
+    }
 }
 
 @JvmInline
 value class EditorAutoClosingEditStrategy private constructor(
-  override val value: String
+    override val value: String
 ) : Option<String> {
-  companion object {
-    val Always = EditorAutoClosingEditStrategy("always")
-    val Auto = EditorAutoClosingEditStrategy("auto")
-    val Never = EditorAutoClosingEditStrategy("never")
-  }
+    companion object {
+        val Always = EditorAutoClosingEditStrategy("always")
+        val Auto = EditorAutoClosingEditStrategy("auto")
+        val Never = EditorAutoClosingEditStrategy("never")
+    }
 }

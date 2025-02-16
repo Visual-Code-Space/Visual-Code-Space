@@ -24,7 +24,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
@@ -38,37 +37,38 @@ import com.teixeira.vcspace.core.components.common.VCSpaceLargeTopBar
 import com.teixeira.vcspace.ui.screens.settings.SettingsScreen
 
 class SettingsActivity : BaseComposeActivity() {
-  @OptIn(ExperimentalMaterial3Api::class)
-  @Composable
-  override fun MainScreen() {
-    val scrollBehavior =
-      TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
-    val backPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    override fun MainScreen() {
+        val scrollBehavior =
+            TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+        val backPressedDispatcher =
+            LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
 
-    Scaffold(
-      modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-      topBar = {
-        VCSpaceLargeTopBar(
-          title = stringResource(id = strings.settings),
-          navigationIcon = {
-            IconButton(
-              onClick = { backPressedDispatcher?.onBackPressed() },
-              modifier = Modifier.padding(start = 8.dp)
-            ) {
-              Icon(
-                imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                contentDescription = "back",
-              )
+        Scaffold(
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            topBar = {
+                VCSpaceLargeTopBar(
+                    title = stringResource(id = strings.settings),
+                    navigationIcon = {
+                        IconButton(
+                            onClick = { backPressedDispatcher?.onBackPressed() },
+                            modifier = Modifier.padding(start = 8.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                                contentDescription = "back",
+                            )
+                        }
+                    },
+                    scrollBehavior = scrollBehavior,
+                    modifier = Modifier.fillMaxWidth(),
+                )
             }
-          },
-          scrollBehavior = scrollBehavior,
-          modifier = Modifier.fillMaxWidth(),
-        )
-      }
-    ) { innerPadding ->
-      SettingsScreen(
-        modifier = Modifier.padding(innerPadding)
-      )
+        ) { innerPadding ->
+            SettingsScreen(
+                modifier = Modifier.padding(innerPadding)
+            )
+        }
     }
-  }
 }

@@ -25,13 +25,13 @@ import androidx.appcompat.app.AppCompatDelegate
  * @return If the app is in dark mode.
  */
 fun Context.isDarkMode(): Boolean {
-  val defaultNightMode = AppCompatDelegate.getDefaultNightMode()
-  if (defaultNightMode == AppCompatDelegate.MODE_NIGHT_YES) {
-    return true
-  } else if (defaultNightMode == AppCompatDelegate.MODE_NIGHT_NO) {
-    return false
-  }
+    val defaultNightMode = AppCompatDelegate.getDefaultNightMode()
+    if (defaultNightMode == AppCompatDelegate.MODE_NIGHT_YES) {
+        return true
+    } else if (defaultNightMode == AppCompatDelegate.MODE_NIGHT_NO) {
+        return false
+    }
 
-  val uiMode = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK)
-  return uiMode == Configuration.UI_MODE_NIGHT_YES
+    val uiMode = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK)
+    return uiMode == Configuration.UI_MODE_NIGHT_YES
 }

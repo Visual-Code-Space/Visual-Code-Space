@@ -16,5 +16,5 @@
 package com.itsvks.monaco.option
 
 interface Option<out T> {
-  val value: T
+    val value: T
 }

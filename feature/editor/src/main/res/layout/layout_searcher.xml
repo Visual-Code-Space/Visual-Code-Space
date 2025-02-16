@@ -1,137 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:app="http://schemas.android.com/apk/res-auto"
-  android:layout_width="match_parent"
-  android:layout_height="wrap_content">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
-  <View
-    android:id="@+id/top_divider"
-    android:layout_width="0dp"
-    android:layout_height="0.5px"
-    android:background="?attr/colorOutline"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintEnd_toEndOf="parent" />
+    <View
+        android:id="@+id/top_divider"
+        android:layout_width="0dp"
+        android:layout_height="0.5px"
+        android:background="?attr/colorOutline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-  <EditText
-    android:id="@+id/search_text"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:layout_marginEnd="2dp"
-    android:hint="@string/editor_search_text"
-    android:singleLine="true"
-    android:layout_marginStart="2dp"
-    android:inputType="text"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintEnd_toStartOf="@+id/search_options"
-    app:layout_constraintTop_toBottomOf="@+id/top_divider" />
-
-  <androidx.appcompat.widget.AppCompatImageButton
-    android:id="@+id/search_options"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:src="@drawable/ic_menu"
-    android:layout_marginEnd="2dp"
-    android:background="?attr/selectableItemBackgroundBorderless"
-    android:padding="3dp"
-    android:layout_marginStart="2dp"
-    app:layout_constraintTop_toTopOf="@+id/search_text"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintBottom_toBottomOf="@+id/search_text" />
-
-  <EditText
-    android:id="@+id/replace_text"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:layout_marginEnd="2dp"
-    android:hint="@string/editor_search_replace_text"
-    android:singleLine="true"
-    android:layout_marginStart="2dp"
-    android:inputType="text"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/search_text" />
-
-  <View
-    android:id="@+id/bottom_divider"
-    android:layout_width="0dp"
-    android:layout_height="0.5px"
-    android:layout_marginEnd="5dp"
-    android:background="?attr/colorOutline"
-    android:layout_marginStart="5dp"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/replace_text" />
-
-  <HorizontalScrollView
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:scrollbars="none"
-    android:layout_marginEnd="2dp"
-    android:layout_marginStart="2dp"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/bottom_divider">
-
-    <LinearLayout
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:orientation="horizontal">
-
-      <com.google.android.material.button.MaterialButton
-        android:id="@+id/goto_last"
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:textAllCaps="true"
+    <EditText
+        android:id="@+id/search_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="2dp"
-        android:layout_weight="1.0"
-        android:text="@string/editor_search_previous"
-        style="@style/Widget.Material3.Button.TextButton" />
-
-      <com.google.android.material.button.MaterialButton
-        android:id="@+id/goto_next"
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:textAllCaps="true"
-        android:layout_marginStart="2dp"
-        android:layout_weight="1.0"
-        android:text="@string/editor_search_next"
-        style="@style/Widget.Material3.Button.TextButton" />
-
-      <com.google.android.material.button.MaterialButton
-        android:id="@+id/replace"
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:textAllCaps="true"
-        android:layout_marginStart="2dp"
-        android:layout_weight="1.0"
-        android:text="@string/editor_search_replace"
-        style="@style/Widget.Material3.Button.TextButton" />
-
-      <com.google.android.material.button.MaterialButton
-        android:id="@+id/replace_all"
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
         android:layout_marginEnd="2dp"
-        android:textAllCaps="true"
+        android:hint="@string/editor_search_text"
+        android:inputType="text"
+        android:singleLine="true"
+        app:layout_constraintEnd_toStartOf="@+id/search_options"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/top_divider" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/search_options"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="2dp"
-        android:layout_weight="1.0"
-        android:text="@string/editor_search_replaceall"
-        style="@style/Widget.Material3.Button.TextButton" />
+        android:layout_marginEnd="2dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="3dp"
+        android:src="@drawable/ic_menu"
+        app:layout_constraintBottom_toBottomOf="@+id/search_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/search_text" />
 
-      <com.google.android.material.button.MaterialButton
-        android:id="@+id/close"
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:textAllCaps="true"
+    <EditText
+        android:id="@+id/replace_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="2dp"
-        android:layout_weight="1.0"
-        android:text="@string/editor_search_close"
-        style="@style/Widget.Material3.Button.TextButton" />
+        android:layout_marginEnd="2dp"
+        android:hint="@string/editor_search_replace_text"
+        android:inputType="text"
+        android:singleLine="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search_text" />
 
-    </LinearLayout>
+    <View
+        android:id="@+id/bottom_divider"
+        android:layout_width="0dp"
+        android:layout_height="0.5px"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:background="?attr/colorOutline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/replace_text" />
 
-  </HorizontalScrollView>
+    <HorizontalScrollView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="2dp"
+        android:scrollbars="none"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bottom_divider">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/goto_last"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginStart="2dp"
+                android:layout_weight="1.0"
+                android:text="@string/editor_search_previous"
+                android:textAllCaps="true" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/goto_next"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginStart="2dp"
+                android:layout_weight="1.0"
+                android:text="@string/editor_search_next"
+                android:textAllCaps="true" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/replace"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginStart="2dp"
+                android:layout_weight="1.0"
+                android:text="@string/editor_search_replace"
+                android:textAllCaps="true" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/replace_all"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp"
+                android:layout_weight="1.0"
+                android:text="@string/editor_search_replaceall"
+                android:textAllCaps="true" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/close"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginStart="2dp"
+                android:layout_weight="1.0"
+                android:text="@string/editor_search_close"
+                android:textAllCaps="true" />
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

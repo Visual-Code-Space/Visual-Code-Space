@@ -18,20 +18,20 @@ package com.itsvks.monaco.option.minimap
 import com.google.gson.Gson
 
 data class MinimapOptions(
-  val enabled: Boolean? = null,
-  val autohide: Boolean? = null,
-  val side: Side? = null,
-  val size: Size? = null,
-  val showSlider: ShowSlider? = null,
-  val renderCharacters: Boolean? = null,
-  val maxColumn: Number? = null,
-  val scale: Number? = null,
-  val showRegionSectionHeaders: Boolean? = null,
-  val showMarkSectionHeaders: Boolean? = null,
-  val sectionHeaderFontSize: Number? = null,
-  val sectionHeaderLetterSpacing: Number? = null
+    val enabled: Boolean? = null,
+    val autohide: Boolean? = null,
+    val side: Side? = null,
+    val size: Size? = null,
+    val showSlider: ShowSlider? = null,
+    val renderCharacters: Boolean? = null,
+    val maxColumn: Number? = null,
+    val scale: Number? = null,
+    val showRegionSectionHeaders: Boolean? = null,
+    val showMarkSectionHeaders: Boolean? = null,
+    val sectionHeaderFontSize: Number? = null,
+    val sectionHeaderLetterSpacing: Number? = null
 ) {
-  fun toJson(): String {
-    return Gson().toJson(this)
-  }
+    fun toJson(): String {
+        return Gson().toJson(this)
+    }
 }

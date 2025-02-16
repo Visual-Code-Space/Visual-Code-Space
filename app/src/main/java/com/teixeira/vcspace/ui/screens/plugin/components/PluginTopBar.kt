@@ -20,15 +20,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -38,29 +33,29 @@ import com.teixeira.vcspace.resources.R
 
 @Composable
 fun PluginTopBar(
-  modifier: Modifier = Modifier
+    modifier: Modifier = Modifier
 ) {
-  val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
+    val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
 
-  VCSpaceTopBar(
-    title = {
-      Text(
-        text = stringResource(R.string.pref_configure_plugins),
-        modifier = modifier
-          .padding(start = 8.dp)
-          .fillMaxWidth(),
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis
-      )
-    },
-    navigationIcon = {
-      IconButton(
-        onClick = {
-          onBackPressedDispatcher?.onBackPressed()
+    VCSpaceTopBar(
+        title = {
+            Text(
+                text = stringResource(R.string.pref_configure_plugins),
+                modifier = modifier
+                    .padding(start = 8.dp)
+                    .fillMaxWidth(),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        },
+        navigationIcon = {
+            IconButton(
+                onClick = {
+                    onBackPressedDispatcher?.onBackPressed()
+                }
+            ) {
+                Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "back")
+            }
         }
-      ) {
-        Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "back")
-      }
-    }
-  )
+    )
 }

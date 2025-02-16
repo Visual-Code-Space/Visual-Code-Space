@@ -19,27 +19,28 @@ import org.eclipse.jgit.lib.BatchingProgressMonitor
 import java.time.Duration
 
 abstract class SimpleProgressMonitor : BatchingProgressMonitor() {
-  override fun onUpdate(taskName: String?, workCurr: Int, duration: Duration?) {}
+    override fun onUpdate(taskName: String?, workCurr: Int, duration: Duration?) {}
 
-  override fun onUpdate(
-    taskName: String,
-    workCurr: Int,
-    workTotal: Int,
-    percentDone: Int,
-    duration: Duration?
-  ) {
-    onUpdate(percentDone, taskName)
-  }
+    override fun onUpdate(
+        taskName: String,
+        workCurr: Int,
+        workTotal: Int,
+        percentDone: Int,
+        duration: Duration?
+    ) {
+        onUpdate(percentDone, taskName)
+    }
 
-  override fun onEndTask(taskName: String?, workCurr: Int, duration: Duration?) {}
+    override fun onEndTask(taskName: String?, workCurr: Int, duration: Duration?) {}
 
-  override fun onEndTask(
-    taskName: String?,
-    workCurr: Int,
-    workTotal: Int,
-    percentDone: Int,
-    duration: Duration?
-  ) {}
+    override fun onEndTask(
+        taskName: String?,
+        workCurr: Int,
+        workTotal: Int,
+        percentDone: Int,
+        duration: Duration?
+    ) {
+    }
 
-  abstract fun onUpdate(progress: Int, taskName: String)
+    abstract fun onUpdate(progress: Int, taskName: String)
 }

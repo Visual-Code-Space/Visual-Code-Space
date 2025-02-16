@@ -19,5 +19,5 @@ import com.teixeira.vcspace.keyboard.model.Command;
 
 @FunctionalInterface
 public interface CommandAction {
-  void performAction(Command command);
+    void performAction(Command command);
 }

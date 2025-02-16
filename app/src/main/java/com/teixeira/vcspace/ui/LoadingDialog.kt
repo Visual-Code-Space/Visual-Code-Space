@@ -55,166 +55,168 @@ import com.teixeira.vcspace.ui.extensions.harmonizeWithPrimary
 
 @Composable
 fun LoadingDialog(
-  message: String,
-  onDismiss: (() -> Unit)? = null
+    message: String,
+    onDismiss: (() -> Unit)? = null
 ) {
-  Dialog(
-    properties = DialogProperties(
-      usePlatformDefaultWidth = false
-    ),
-    onDismissRequest = { onDismiss?.invoke() }
-  ) {
-    Box(
-      contentAlignment = Alignment.Center,
-      modifier = Modifier
-        .fillMaxSize()
-        .background(Color(0xAA000000))
+    Dialog(
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false
+        ),
+        onDismissRequest = { onDismiss?.invoke() }
     ) {
-      Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-          .padding(16.dp)
-          .clip(RoundedCornerShape(16.dp))
-          .background(MaterialTheme.colorScheme.surface)
-          .padding(24.dp)
-      ) {
-        LoadingAnimation()
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-          text = message,
-          color = MaterialTheme.colorScheme.onSurface,
-          fontSize = 16.sp,
-          fontWeight = FontWeight.Bold
-        )
-      }
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+              .fillMaxSize()
+              .background(Color(0xAA000000))
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                  .padding(16.dp)
+                  .clip(RoundedCornerShape(16.dp))
+                  .background(MaterialTheme.colorScheme.surface)
+                  .padding(24.dp)
+            ) {
+                LoadingAnimation()
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = message,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
     }
-  }
 }
 
 @Composable
 fun LoadingAnimation(modifier: Modifier = Modifier) {
-  val infiniteTransition = rememberInfiniteTransition(label = "InfiniteTransition")
+    val infiniteTransition = rememberInfiniteTransition(label = "InfiniteTransition")
 
-  val size by infiniteTransition.animateFloat(
-    initialValue = 24f,
-    targetValue = 32f,
-    animationSpec = infiniteRepeatable(
-      animation = tween(durationMillis = 600, easing = FastOutSlowInEasing),
-      repeatMode = RepeatMode.Reverse
-    ),
-    label = "FloatAnimation"
-  )
+    val size by infiniteTransition.animateFloat(
+        initialValue = 24f,
+        targetValue = 32f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 600, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "FloatAnimation"
+    )
 
-  Box(
-    modifier = modifier
-      .size(size.dp)
-      .clip(CircleShape)
-      .background(
-        Brush.linearGradient(
-          colors = listOf(
-            Color(0xFF42A5F5).harmonizeWithPrimary(fraction = 0.5f),
-            Color(0xFF1976D2).harmonizeWithPrimary(fraction = 0.5f)
+    Box(
+        modifier = modifier
+          .size(size.dp)
+          .clip(CircleShape)
+          .background(
+            Brush.linearGradient(
+              colors = listOf(
+                Color(0xFF42A5F5).harmonizeWithPrimary(fraction = 0.5f),
+                Color(0xFF1976D2).harmonizeWithPrimary(fraction = 0.5f)
+              )
+            )
           )
-        )
-      )
-  )
+    )
 }
 
 @Composable
 fun CoolLoadingDialog(
-  message: String,
-  onDismiss: (() -> Unit)? = null
+    message: String,
+    onDismiss: (() -> Unit)? = null
 ) {
-  Dialog(onDismissRequest = { onDismiss?.invoke() }) {
-    Box(
-      contentAlignment = Alignment.Center,
-      modifier = Modifier
-        .fillMaxSize()
-        .background(Color(0xAA000000))
-    ) {
-      Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-          .padding(16.dp)
-          .clip(RoundedCornerShape(16.dp))
-          .background(brush = Brush.linearGradient(
-            colors = listOf(
-              Color(0xFF4DD0E1),
-              Color(0xFF1E88E5)
-            )
-          ))
-          .padding(24.dp)
-      ) {
-        Column(
-          horizontalAlignment = Alignment.CenterHorizontally,
+    Dialog(onDismissRequest = { onDismiss?.invoke() }) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+              .fillMaxSize()
+              .background(Color(0xAA000000))
         ) {
-          GlowingLoadingAnimation()
-          Spacer(modifier = Modifier.height(24.dp))
-          Text(
-            text = message,
-            color = Color.White,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.SemiBold
-          )
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                  .padding(16.dp)
+                  .clip(RoundedCornerShape(16.dp))
+                  .background(
+                    brush = Brush.linearGradient(
+                      colors = listOf(
+                        Color(0xFF4DD0E1),
+                        Color(0xFF1E88E5)
+                      )
+                    )
+                  )
+                  .padding(24.dp)
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    GlowingLoadingAnimation()
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Text(
+                        text = message,
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            }
         }
-      }
     }
-  }
 }
 
 @Composable
 fun GlowingLoadingAnimation() {
-  val infiniteTransition = rememberInfiniteTransition(label = "")
+    val infiniteTransition = rememberInfiniteTransition(label = "")
 
-  // Glow animation
-  val glowAlpha by infiniteTransition.animateFloat(
-    initialValue = 0.2f,
-    targetValue = 0.8f,
-    animationSpec = infiniteRepeatable(
-      animation = tween(1000, easing = FastOutSlowInEasing),
-      repeatMode = RepeatMode.Reverse
-    ),
-    label = ""
-  )
-
-  // Circle rotation animation
-  val angle by infiniteTransition.animateFloat(
-    initialValue = 0f,
-    targetValue = 360f,
-    animationSpec = infiniteRepeatable(
-      animation = tween(1200, easing = LinearEasing),
-      repeatMode = RepeatMode.Restart
-    ),
-    label = ""
-  )
-
-  Box(
-    contentAlignment = Alignment.Center,
-    modifier = Modifier
-      .size(80.dp)
-      .background(Color.Transparent)
-  ) {
-    Canvas(modifier = Modifier.size(80.dp)) {
-      drawCircle(
-        brush = Brush.radialGradient(
-          colors = listOf(
-            Color(0xFF1E88E5).copy(alpha = glowAlpha),
-            Color.Transparent
-          )
+    // Glow animation
+    val glowAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.2f,
+        targetValue = 0.8f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
         ),
-        radius = 40f
-      )
+        label = ""
+    )
+
+    // Circle rotation animation
+    val angle by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1200, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = ""
+    )
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+          .size(80.dp)
+          .background(Color.Transparent)
+    ) {
+        Canvas(modifier = Modifier.size(80.dp)) {
+            drawCircle(
+                brush = Brush.radialGradient(
+                    colors = listOf(
+                        Color(0xFF1E88E5).copy(alpha = glowAlpha),
+                        Color.Transparent
+                    )
+                ),
+                radius = 40f
+            )
+        }
+        Canvas(modifier = Modifier.size(60.dp)) {
+            rotate(angle) {
+                drawRoundRect(
+                    color = Color.White,
+                    topLeft = Offset(x = size.width / 4, y = size.height / 4),
+                    size = size.copy(width = size.width / 2),
+                    cornerRadius = CornerRadius(50f, 50f),
+                    style = Stroke(4f)
+                )
+            }
+        }
     }
-    Canvas(modifier = Modifier.size(60.dp)) {
-      rotate(angle) {
-        drawRoundRect(
-          color = Color.White,
-          topLeft = Offset(x = size.width / 4, y = size.height / 4),
-          size = size.copy(width = size.width / 2),
-          cornerRadius = CornerRadius(50f, 50f),
-          style = Stroke(4f)
-        )
-      }
-    }
-  }
 }

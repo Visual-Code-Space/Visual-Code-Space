@@ -24,8 +24,8 @@ package com.vcspace.plugins.menu
  * @property action The action to perform when the menu item is selected.
  */
 data class MenuItem @JvmOverloads constructor(
-  val title: String,
-  val id: Int,
-  val shortcut: String? = null,
-  val action: MenuAction
+    val title: String,
+    val id: Int,
+    val shortcut: String? = null,
+    val action: MenuAction
 )

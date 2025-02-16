@@ -23,47 +23,47 @@ import android.os.Environment
 import androidx.core.content.ContextCompat
 import com.teixeira.vcspace.file.File
 import com.teixeira.vcspace.file.extension
-import java.io.File as JFile
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.io.File as JFile
 
 /** Regex used to check if file name extension is not of a text file. */
 val INVALID_TEXT_FILES_REGEX =
-  Regex(
-    ".*\\.(bin|ttf|png|jpe?g|bmp|mp4|mp3|m4a|iso|so|zip|rar|jar|dex|odex|vdex|7z|apk|apks|xapk)$"
-  )
+    Regex(
+        ".*\\.(bin|ttf|png|jpe?g|bmp|mp4|mp3|m4a|iso|so|zip|rar|jar|dex|odex|vdex|7z|apk|apks|xapk)$"
+    )
 
 fun isValidTextFile(file: JFile): Boolean {
-  val type = Files.probeContentType(Paths.get(file.absolutePath))
+    val type = Files.probeContentType(Paths.get(file.absolutePath))
 
-  // A comprehensive list of known text-based MIME types
-  val additionalTextTypes = listOf(
-    "application/json",
-    "application/xml",
-    "application/javascript",
-    "application/x-sh",
-    "application/x-www-form-urlencoded",
-    "application/x-yaml",
-    "application/x-php",
-    "application/x-httpd-php",
-    "application/x-perl",
-    "application/xhtml+xml",
-    "application/sql",
-    "application/rtf",   // Rich Text Format
-    "application/csv",   // CSV file, some systems may use this
-    "application/x-latex"
-  )
+    // A comprehensive list of known text-based MIME types
+    val additionalTextTypes = listOf(
+        "application/json",
+        "application/xml",
+        "application/javascript",
+        "application/x-sh",
+        "application/x-www-form-urlencoded",
+        "application/x-yaml",
+        "application/x-php",
+        "application/x-httpd-php",
+        "application/x-perl",
+        "application/xhtml+xml",
+        "application/sql",
+        "application/rtf",   // Rich Text Format
+        "application/csv",   // CSV file, some systems may use this
+        "application/x-latex"
+    )
 
-  return type == null || type.startsWith("text/") || type in additionalTextTypes
+    return type == null || type.startsWith("text/") || type in additionalTextTypes
 }
 
 private const val RUNNABLE_FILE_EXTENSIONS = "py,html,htm"
 
 fun isFileRunnable(file: File?): Boolean {
-  if (file != null) {
-    return file.extension in RUNNABLE_FILE_EXTENSIONS.split(",")
-  }
-  return false
+    if (file != null) {
+        return file.extension in RUNNABLE_FILE_EXTENSIONS.split(",")
+    }
+    return false
 }
 
 /**
@@ -72,12 +72,12 @@ fun isFileRunnable(file: File?): Boolean {
  * @return If permission has been granted.
  */
 fun Context.isStoragePermissionGranted(): Boolean {
-  return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-    Environment.isExternalStorageManager()
-  } else {
-    (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) ==
-      PackageManager.PERMISSION_GRANTED)
-  }
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        Environment.isExternalStorageManager()
+    } else {
+        (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) ==
+            PackageManager.PERMISSION_GRANTED)
+    }
 }
 
 /**
@@ -88,8 +88,8 @@ fun Context.isStoragePermissionGranted(): Boolean {
  * @return The parent path.
  */
 fun getParentDirPath(path: String): String {
-  val index = path.lastIndexOf("/")
-  return if (index >= 0) {
-    path.substring(0, index)
-  } else path
+    val index = path.lastIndexOf("/")
+    return if (index >= 0) {
+        path.substring(0, index)
+    } else path
 }

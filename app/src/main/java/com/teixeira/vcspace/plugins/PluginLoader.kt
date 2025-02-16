@@ -30,73 +30,73 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 object PluginLoader {
-  fun loadPlugins(context: Context): List<Pair<PluginInfo, Plugin>> {
-    val plugins = mutableListOf<Plugin>()
-    val pluginInfos = mutableListOf<PluginInfo>()
+    fun loadPlugins(context: Context): List<Pair<PluginInfo, Plugin>> {
+        val plugins = mutableListOf<Plugin>()
+        val pluginInfos = mutableListOf<PluginInfo>()
 
-    val pluginsPath = PluginConstants.PLUGIN_HOME_PATH.toFile()
-    FileUtils.createOrExistsDir(pluginsPath)
+        val pluginsPath = PluginConstants.PLUGIN_HOME_PATH.toFile()
+        FileUtils.createOrExistsDir(pluginsPath)
 
-    pluginsPath.listFiles()?.forEach { file ->
-      val properties = file.resolve("plugin.properties")
-      if (!properties.exists()) {
-        throw IllegalArgumentException("Plugin directory ${file.name} does not contain plugin.properties")
-      }
+        pluginsPath.listFiles()?.forEach { file ->
+            val properties = file.resolve("plugin.properties")
+            if (!properties.exists()) {
+                throw IllegalArgumentException("Plugin directory ${file.name} does not contain plugin.properties")
+            }
 
-      val pluginInfo = PluginInfo(properties)
-      pluginInfo.pluginFileName?.let {
-        val jarFilePath = file.resolve(it).apply {
-          setWritable(false)
-          setReadable(true, true)
+            val pluginInfo = PluginInfo(properties)
+            pluginInfo.pluginFileName?.let {
+                val jarFilePath = file.resolve(it).apply {
+                    setWritable(false)
+                    setReadable(true, true)
+                }
+
+                val dexClassLoader = DexClassLoader(
+                    jarFilePath.absolutePath,
+                    null,
+                    null,
+                    context.applicationContext.classLoader
+                )
+
+                val pluginClass = dexClassLoader.loadClass(pluginInfo.mainClass)
+
+                if (Plugin::class.java.isAssignableFrom(pluginClass)) {
+                    val constructor = pluginClass.getConstructor()
+                    plugins.add(constructor.newInstance() as Plugin)
+                    pluginInfos.add(pluginInfo)
+                } else {
+                    throw IllegalArgumentException("Class does not implement Plugin interface")
+                }
+            } ?: runOnUiThread {
+                showShortToast(context, "Plugin file not found for ${file.name}")
+            }
         }
 
-        val dexClassLoader = DexClassLoader(
-          jarFilePath.absolutePath,
-          null,
-          null,
-          context.applicationContext.classLoader
-        )
-
-        val pluginClass = dexClassLoader.loadClass(pluginInfo.mainClass)
-
-        if (Plugin::class.java.isAssignableFrom(pluginClass)) {
-          val constructor = pluginClass.getConstructor()
-          plugins.add(constructor.newInstance() as Plugin)
-          pluginInfos.add(pluginInfo)
-        } else {
-          throw IllegalArgumentException("Class does not implement Plugin interface")
-        }
-      } ?: runOnUiThread {
-        showShortToast(context, "Plugin file not found for ${file.name}")
-      }
+        return pluginInfos.zip(plugins)
     }
 
-    return pluginInfos.zip(plugins)
-  }
+    suspend fun extractPluginZip(pluginZipFile: File): File {
+        return withContext(Dispatchers.IO) {
+            val path = "${PluginConstants.PLUGIN_HOME_PATH}/${pluginZipFile.nameWithoutExtension}"
+            val internalFile = path.toFile()
+            runCatching {
+                FileUtils.createOrExistsDir(internalFile)
+                pluginZipFile.extractZipFile(internalFile)
+            }.onFailure {
+                ToastUtils.showShort(it.message)
+            }
 
-  suspend fun extractPluginZip(pluginZipFile: File): File {
-    return withContext(Dispatchers.IO) {
-      val path = "${PluginConstants.PLUGIN_HOME_PATH}/${pluginZipFile.nameWithoutExtension}"
-      val internalFile = path.toFile()
-      runCatching {
-        FileUtils.createOrExistsDir(internalFile)
-        pluginZipFile.extractZipFile(internalFile)
-      }.onFailure {
-        ToastUtils.showShort(it.message)
-      }
+            val properties = internalFile.resolve("plugin.properties")
+            if (!properties.exists()) {
+                throw IllegalArgumentException("Plugin directory ${internalFile.name} does not contain plugin.properties")
+            }
 
-      val properties = internalFile.resolve("plugin.properties")
-      if (!properties.exists()) {
-        throw IllegalArgumentException("Plugin directory ${internalFile.name} does not contain plugin.properties")
-      }
-
-      val pluginInfo = PluginInfo(properties)
-      internalFile.apply {
-        if (pluginInfo.name.isNullOrBlank()) {
-          throw NullPointerException("Plugin name is empty.")
+            val pluginInfo = PluginInfo(properties)
+            internalFile.apply {
+                if (pluginInfo.name.isNullOrBlank()) {
+                    throw NullPointerException("Plugin name is empty.")
+                }
+                FileUtils.rename(this, pluginInfo.name)
+            }
         }
-        FileUtils.rename(this, pluginInfo.name)
-      }
     }
-  }
 }

@@ -80,279 +80,288 @@ var virtualKeysId = View.generateViewId()
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Terminal(modifier: Modifier = Modifier, terminalActivity: TerminalActivity) {
-  val backgroundColor = MaterialTheme.colorScheme.surface.toArgb()
-  val foregroundColor = MaterialTheme.colorScheme.onSurface.toArgb()
-  val context = LocalContext.current
+    val backgroundColor = MaterialTheme.colorScheme.surface.toArgb()
+    val foregroundColor = MaterialTheme.colorScheme.onSurface.toArgb()
+    val context = LocalContext.current
 
-  LaunchedEffect(Unit) {
-    context.startService(Intent(context, TerminalService::class.java))
-  }
+    LaunchedEffect(Unit) {
+        context.startService(Intent(context, TerminalService::class.java))
+    }
 
-  Box(modifier = Modifier.imePadding()) {
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
-    val configuration = LocalConfiguration.current
-    val screenWidthDp = configuration.screenWidthDp
-    val drawerWidth = (screenWidthDp * 0.84).dp
+    Box(modifier = Modifier.imePadding()) {
+        val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+        val scope = rememberCoroutineScope()
+        val configuration = LocalConfiguration.current
+        val screenWidthDp = configuration.screenWidthDp
+        val drawerWidth = (screenWidthDp * 0.84).dp
 
-    ModalNavigationDrawer(
-      drawerState = drawerState,
-      gesturesEnabled = drawerState.isOpen,
-      drawerContent = {
-        ModalDrawerSheet(modifier = Modifier.width(drawerWidth)) {
-          Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-          ) {
-            Row(
-              modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-              horizontalArrangement = Arrangement.SpaceBetween,
-              verticalAlignment = Alignment.CenterVertically
-            ) {
-              Text(
-                text = "Sessions",
-                style = MaterialTheme.typography.titleLarge
-              )
-              IconButton(onClick = {
-                fun generateUniqueString(existingStrings: List<String>): String {
-                  var index = 1
-                  var newString: String
+        ModalNavigationDrawer(
+            drawerState = drawerState,
+            gesturesEnabled = drawerState.isOpen,
+            drawerContent = {
+                ModalDrawerSheet(modifier = Modifier.width(drawerWidth)) {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Sessions",
+                                style = MaterialTheme.typography.titleLarge
+                            )
+                            IconButton(onClick = {
+                                fun generateUniqueString(existingStrings: List<String>): String {
+                                    var index = 1
+                                    var newString: String
 
-                  do {
-                    newString = "main$index"
-                    index++
-                  } while (newString in existingStrings)
+                                    do {
+                                        newString = "main$index"
+                                        index++
+                                    } while (newString in existingStrings)
 
-                  return newString
-                }
-                terminalView.get()
-                  ?.let {
-                    val client = TerminalBackend(it, terminalActivity)
-                    terminalActivity.terminalBinder!!.createSession(
-                      generateUniqueString(terminalActivity.terminalBinder!!.service.sessionList),
-                      client,
-                      terminalActivity
-                    )
-                  }
+                                    return newString
+                                }
+                                terminalView.get()
+                                    ?.let {
+                                        val client = TerminalBackend(it, terminalActivity)
+                                        terminalActivity.terminalBinder!!.createSession(
+                                            generateUniqueString(terminalActivity.terminalBinder!!.service.sessionList),
+                                            client,
+                                            terminalActivity
+                                        )
+                                    }
 
-              }) {
-                Icon(
-                  imageVector = Icons.Default.Add, // Material Design "Add" icon
-                  contentDescription = "Add Session"
-                )
-              }
-            }
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Default.Add, // Material Design "Add" icon
+                                    contentDescription = "Add Session"
+                                )
+                            }
+                        }
 
-            terminalActivity.terminalBinder?.service?.sessionList?.let {
-              LazyColumn {
-                items(it) { session_id ->
-                  SelectableCard(
-                    selected = session_id == terminalActivity.terminalBinder?.service?.currentSession?.value,
-                    onSelect = { changeSession(terminalActivity, session_id) },
-                    modifier = Modifier
-                      .fillMaxWidth()
-                      .padding(8.dp)
-                  ) {
-                    Text(
-                      text = session_id,
-                      style = MaterialTheme.typography.bodyLarge
-                    )
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      content = {
-        Scaffold(topBar = {
-          TopAppBar(
-            title = { Text(text = "Terminal") },
-            navigationIcon = {
-              IconButton(onClick = {
-                scope.launch { drawerState.open() }
-              }) {
-                Icon(Icons.Default.Menu, null)
-              }
-            }
-          )
-        }) { paddingValues ->
-          Column(modifier = Modifier.padding(paddingValues)) {
-            AndroidView(
-              factory = { context ->
-                TerminalView(context, null).apply {
-                  terminalView = WeakReference(this)
-                  val client = TerminalBackend(this, terminalActivity)
-                  setTextSize(23)
-                  setTerminalViewClient(client)
-                  val session =
-                    terminalActivity.terminalBinder!!.getSession(terminalActivity.terminalBinder!!.service.currentSession.value)
-                      ?: terminalActivity.terminalBinder!!.createSession(
-                        terminalActivity.terminalBinder!!.service.currentSession.value,
-                        client,
-                        terminalActivity
-                      )
-
-                  session.updateTerminalSessionClient(client)
-                  attachSession(session)
-                  setTypeface(
-                    Typeface.createFromAsset(
-                      context.assets,
-                      "fonts/JetBrainsMono-Regular.ttf"
-                    )
-                  )
-
-                  post {
-                    setBackgroundColor(backgroundColor)
-                    keepScreenOn = true
-                    requestFocus()
-                    setFocusableInTouchMode(true)
-
-                    mEmulator?.mColors?.mCurrentColors?.apply {
-                      set(256, foregroundColor)
-                      set(258, foregroundColor)
+                        terminalActivity.terminalBinder?.service?.sessionList?.let {
+                            LazyColumn {
+                                items(it) { session_id ->
+                                    SelectableCard(
+                                        selected = session_id == terminalActivity.terminalBinder?.service?.currentSession?.value,
+                                        onSelect = { changeSession(terminalActivity, session_id) },
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(8.dp)
+                                    ) {
+                                        Text(
+                                            text = session_id,
+                                            style = MaterialTheme.typography.bodyLarge
+                                        )
+                                    }
+                                }
+                            }
+                        }
                     }
-                  }
                 }
-              },
-              modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-              update = { terminalView -> terminalView.onScreenUpdated() },
-            )
-
-            AndroidView(
-              factory = { context ->
-                VirtualKeysView(context, null).apply {
-                  virtualKeysView = WeakReference(this)
-                  id = virtualKeysId
-                  virtualKeysViewClient =
-                    terminalView.get()?.mTermSession?.let { VirtualKeysListener(it) }
-                  buttonTextColor = foregroundColor
-                  setBackgroundColor(backgroundColor)
-
-                  reload(
-                    VirtualKeysInfo(
-                      VIRTUAL_KEYS, "", VirtualKeysConstants.CONTROL_CHARS_ALIASES
+            },
+            content = {
+                Scaffold(topBar = {
+                    TopAppBar(
+                        title = { Text(text = "Terminal") },
+                        navigationIcon = {
+                            IconButton(onClick = {
+                                scope.launch { drawerState.open() }
+                            }) {
+                                Icon(Icons.Default.Menu, null)
+                            }
+                        }
                     )
-                  )
+                }) { paddingValues ->
+                    Column(modifier = Modifier.padding(paddingValues)) {
+                        AndroidView(
+                            factory = { context ->
+                                TerminalView(context, null).apply {
+                                    terminalView = WeakReference(this)
+                                    val client = TerminalBackend(this, terminalActivity)
+                                    setTextSize(23)
+                                    setTerminalViewClient(client)
+                                    val session =
+                                        terminalActivity.terminalBinder!!.getSession(
+                                            terminalActivity.terminalBinder!!.service.currentSession.value
+                                        )
+                                            ?: terminalActivity.terminalBinder!!.createSession(
+                                                terminalActivity.terminalBinder!!.service.currentSession.value,
+                                                client,
+                                                terminalActivity
+                                            )
+
+                                    session.updateTerminalSessionClient(client)
+                                    attachSession(session)
+                                    setTypeface(
+                                        Typeface.createFromAsset(
+                                            context.assets,
+                                            "fonts/JetBrainsMono-Regular.ttf"
+                                        )
+                                    )
+
+                                    post {
+                                        setBackgroundColor(backgroundColor)
+                                        keepScreenOn = true
+                                        requestFocus()
+                                        setFocusableInTouchMode(true)
+
+                                        mEmulator?.mColors?.mCurrentColors?.apply {
+                                            set(256, foregroundColor)
+                                            set(258, foregroundColor)
+                                        }
+                                    }
+                                }
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f),
+                            update = { terminalView -> terminalView.onScreenUpdated() },
+                        )
+
+                        AndroidView(
+                            factory = { context ->
+                                VirtualKeysView(context, null).apply {
+                                    virtualKeysView = WeakReference(this)
+                                    id = virtualKeysId
+                                    virtualKeysViewClient =
+                                        terminalView.get()?.mTermSession?.let {
+                                            VirtualKeysListener(
+                                                it
+                                            )
+                                        }
+                                    buttonTextColor = foregroundColor
+                                    setBackgroundColor(backgroundColor)
+
+                                    reload(
+                                        VirtualKeysInfo(
+                                            VIRTUAL_KEYS,
+                                            "",
+                                            VirtualKeysConstants.CONTROL_CHARS_ALIASES
+                                        )
+                                    )
+                                }
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(75.dp)
+                        )
+                    }
                 }
-              },
-              modifier = Modifier
-                .fillMaxWidth()
-                .height(75.dp)
-            )
-          }
-        }
-      }
-    )
-  }
+            }
+        )
+    }
 }
 
 @Composable
 fun SelectableCard(
-  selected: Boolean,
-  onSelect: () -> Unit,
-  modifier: Modifier = Modifier,
-  enabled: Boolean = true,
-  content: @Composable ColumnScope.() -> Unit
+    selected: Boolean,
+    onSelect: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    content: @Composable ColumnScope.() -> Unit
 ) {
-  val containerColor by animateColorAsState(
-    targetValue = when {
-      selected -> MaterialTheme.colorScheme.primaryContainer
-      else -> MaterialTheme.colorScheme.surface
-    },
-    label = "containerColor"
-  )
+    val containerColor by animateColorAsState(
+        targetValue = when {
+            selected -> MaterialTheme.colorScheme.primaryContainer
+            else -> MaterialTheme.colorScheme.surface
+        },
+        label = "containerColor"
+    )
 
-  Card(
-    modifier = modifier,
-    colors = CardDefaults.cardColors(
-      containerColor = containerColor,
-      contentColor = if (selected) {
-        MaterialTheme.colorScheme.onPrimaryContainer
-      } else {
-        MaterialTheme.colorScheme.onSurface
-      }
-    ),
-    elevation = CardDefaults.cardElevation(
-      defaultElevation = if (selected) 8.dp else 2.dp
-    ),
-    enabled = enabled,
-    onClick = onSelect
-  ) {
-    Column(
-      modifier = Modifier.padding(16.dp)
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(
+            containerColor = containerColor,
+            contentColor = if (selected) {
+                MaterialTheme.colorScheme.onPrimaryContainer
+            } else {
+                MaterialTheme.colorScheme.onSurface
+            }
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = if (selected) 8.dp else 2.dp
+        ),
+        enabled = enabled,
+        onClick = onSelect
     ) {
-      content()
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            content()
+        }
     }
-  }
 }
 
 fun changeSession(terminalActivity: TerminalActivity, session_id: String) {
-  terminalView.get()?.apply {
-    val client = TerminalBackend(this, terminalActivity)
-    val session =
-      terminalActivity.terminalBinder!!.getSession(session_id)
-        ?: terminalActivity.terminalBinder!!.createSession(
-          session_id,
-          client,
-          terminalActivity
-        )
-    session.updateTerminalSessionClient(client)
-    attachSession(session)
-    setTerminalViewClient(client)
-    post {
-      val typedValue = TypedValue()
+    terminalView.get()?.apply {
+        val client = TerminalBackend(this, terminalActivity)
+        val session =
+            terminalActivity.terminalBinder!!.getSession(session_id)
+                ?: terminalActivity.terminalBinder!!.createSession(
+                    session_id,
+                    client,
+                    terminalActivity
+                )
+        session.updateTerminalSessionClient(client)
+        attachSession(session)
+        setTerminalViewClient(client)
+        post {
+            val typedValue = TypedValue()
 
-      context.theme.resolveAttribute(
-        com.google.android.material.R.attr.colorOnSurface,
-        typedValue,
-        true
-      )
-      keepScreenOn = true
-      requestFocus()
-      setFocusableInTouchMode(true)
+            context.theme.resolveAttribute(
+                com.google.android.material.R.attr.colorOnSurface,
+                typedValue,
+                true
+            )
+            keepScreenOn = true
+            requestFocus()
+            setFocusableInTouchMode(true)
 
-      mEmulator?.mColors?.mCurrentColors?.apply {
-        set(256, typedValue.data)
-        set(258, typedValue.data)
-      }
+            mEmulator?.mColors?.mCurrentColors?.apply {
+                set(256, typedValue.data)
+                set(258, typedValue.data)
+            }
+        }
+        virtualKeysView.get()?.apply {
+            virtualKeysViewClient =
+                terminalView.get()?.mTermSession?.let { VirtualKeysListener(it) }
+        }
     }
-    virtualKeysView.get()?.apply {
-      virtualKeysViewClient = terminalView.get()?.mTermSession?.let { VirtualKeysListener(it) }
-    }
-  }
-  terminalActivity.terminalBinder!!.service.currentSession.value = session_id
-  showShortToast(terminalActivity, session_id)
+    terminalActivity.terminalBinder!!.service.currentSession.value = session_id
+    showShortToast(terminalActivity, session_id)
 }
 
 const val VIRTUAL_KEYS =
-  ("[" +
-    "\n  [" +
-    "\n    \"ESC\"," +
-    "\n    {" +
-    "\n      \"key\": \"/\"," +
-    "\n      \"popup\": \"\\\\\"" +
-    "\n    }," +
-    "\n    {" +
-    "\n      \"key\": \"-\"," +
-    "\n      \"popup\": \"|\"" +
-    "\n    }," +
-    "\n    \"HOME\"," +
-    "\n    \"UP\"," +
-    "\n    \"END\"," +
-    "\n    \"PGUP\"" +
-    "\n  ]," +
-    "\n  [" +
-    "\n    \"TAB\"," +
-    "\n    \"CTRL\"," +
-    "\n    \"ALT\"," +
-    "\n    \"LEFT\"," +
-    "\n    \"DOWN\"," +
-    "\n    \"RIGHT\"," +
-    "\n    \"PGDN\"" +
-    "\n  ]" +
-    "\n]")
+    ("[" +
+        "\n  [" +
+        "\n    \"ESC\"," +
+        "\n    {" +
+        "\n      \"key\": \"/\"," +
+        "\n      \"popup\": \"\\\\\"" +
+        "\n    }," +
+        "\n    {" +
+        "\n      \"key\": \"-\"," +
+        "\n      \"popup\": \"|\"" +
+        "\n    }," +
+        "\n    \"HOME\"," +
+        "\n    \"UP\"," +
+        "\n    \"END\"," +
+        "\n    \"PGUP\"" +
+        "\n  ]," +
+        "\n  [" +
+        "\n    \"TAB\"," +
+        "\n    \"CTRL\"," +
+        "\n    \"ALT\"," +
+        "\n    \"LEFT\"," +
+        "\n    \"DOWN\"," +
+        "\n    \"RIGHT\"," +
+        "\n    \"PGDN\"" +
+        "\n  ]" +
+        "\n]")

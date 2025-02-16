@@ -18,6 +18,6 @@ package com.vcspace.plugins.panel
 import androidx.compose.runtime.Composable
 
 fun interface ComposeFactory {
-  @Composable
-  fun Create()
+    @Composable
+    fun Create()
 }

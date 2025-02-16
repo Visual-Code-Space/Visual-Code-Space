@@ -16,5 +16,5 @@
 package com.itsvks.monaco.completion
 
 fun interface InlineCompletionProvider {
-  fun provide(language: String, textBeforeCursor: String, textAfterCursor: String): String?
+    fun provide(language: String, textBeforeCursor: String, textAfterCursor: String): String?
 }

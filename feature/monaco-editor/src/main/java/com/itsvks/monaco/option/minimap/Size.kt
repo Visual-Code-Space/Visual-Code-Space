@@ -17,9 +17,9 @@ package com.itsvks.monaco.option.minimap
 
 @JvmInline
 value class Size private constructor(val value: String) {
-  companion object {
-    val Fit = Size("fit")
-    val Fill = Size("fill")
-    val Proportional = Size("proportional")
-  }
+    companion object {
+        val Fit = Size("fit")
+        val Fill = Size("fill")
+        val Proportional = Size("proportional")
+    }
 }

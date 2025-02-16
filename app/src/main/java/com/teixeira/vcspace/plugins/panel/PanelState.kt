@@ -20,17 +20,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.Offset
 
 data class ComposePanelState(
-  val id: String,
-  val title: String,
-  val composable: @Composable () -> Unit,
-  var offset: Offset = Offset.Zero,
-  var isVisible: Boolean = false
+    val id: String,
+    val title: String,
+    val composable: @Composable () -> Unit,
+    var offset: Offset = Offset.Zero,
+    var isVisible: Boolean = false
 )
 
- data class ViewPanelState(
-  val id: String,
-  val title: String,
-  val view: View,
-  var offset: Offset = Offset.Zero,
-  var isVisible: Boolean = false
+data class ViewPanelState(
+    val id: String,
+    val title: String,
+    val view: View,
+    var offset: Offset = Offset.Zero,
+    var isVisible: Boolean = false
 )

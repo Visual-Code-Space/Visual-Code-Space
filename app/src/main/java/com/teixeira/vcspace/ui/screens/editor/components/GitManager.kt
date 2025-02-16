@@ -72,7 +72,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.blankj.utilcode.util.ToastUtils
-import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerNavController
 import com.teixeira.vcspace.app.drawables
 import com.teixeira.vcspace.app.strings
@@ -82,6 +81,7 @@ import com.teixeira.vcspace.file.wrapFile
 import com.teixeira.vcspace.git.GitActionStatus
 import com.teixeira.vcspace.git.GitManager.Companion.instance
 import com.teixeira.vcspace.git.GitViewModel
+import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.ui.LocalToastHostState
 import com.teixeira.vcspace.ui.ToastDuration
 import com.teixeira.vcspace.ui.extensions.harmonizeWithPrimary
@@ -102,525 +102,526 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun GitManager(
-  fileExplorerViewModel: FileExplorerViewModel,
-  gitViewModel: GitViewModel = viewModel()
+    fileExplorerViewModel: FileExplorerViewModel,
+    gitViewModel: GitViewModel = viewModel()
 ) {
-  val scope = rememberCoroutineScope()
-  val toastHostState = LocalToastHostState.current
-  val navController = LocalEditorDrawerNavController.current
+    val scope = rememberCoroutineScope()
+    val toastHostState = LocalToastHostState.current
+    val navController = LocalEditorDrawerNavController.current
 
-  val isGitRepo by fileExplorerViewModel.isGitRepo.collectAsStateWithLifecycle()
-  val openedFolder by fileExplorerViewModel.openedFolder.collectAsStateWithLifecycle()
+    val isGitRepo by fileExplorerViewModel.isGitRepo.collectAsStateWithLifecycle()
+    val openedFolder by fileExplorerViewModel.openedFolder.collectAsStateWithLifecycle()
 
-  LaunchedEffect(key1 = true) {
-    fileExplorerViewModel.checkIfGitRepo()
-  }
+    LaunchedEffect(key1 = true) {
+        fileExplorerViewModel.checkIfGitRepo()
+    }
 
-  val workingTree by gitViewModel.workingTree.collectAsStateWithLifecycle()
+    val workingTree by gitViewModel.workingTree.collectAsStateWithLifecycle()
 
-  val context = LocalContext.current
-  LaunchedEffect(key1 = isGitRepo, workingTree) {
-    if (isGitRepo && workingTree != null) {
-      gitViewModel.loadChangeStats {
-        scope.launch {
-          val errorMessage =
-            context.getString(
-              R.string.failed_to_retrieve_uncommitted_change_stats,
-              it.message ?: context.getString(R.string.unknown_error_occurred)
+    val context = LocalContext.current
+    LaunchedEffect(key1 = isGitRepo, workingTree) {
+        if (isGitRepo && workingTree != null) {
+            gitViewModel.loadChangeStats {
+                scope.launch {
+                    val errorMessage =
+                        context.getString(
+                            R.string.failed_to_retrieve_uncommitted_change_stats,
+                            it.message ?: context.getString(R.string.unknown_error_occurred)
+                        )
+                    toastHostState.showToast(
+                        message = errorMessage,
+                        duration = ToastDuration.Long
+                    )
+                }
+            }
+        }
+    }
+
+    LaunchedEffect(key1 = isGitRepo, workingTree) {
+        if (isGitRepo && workingTree != null) {
+            withContext(Dispatchers.IO) {
+                gitViewModel.loadRepoName()
+                gitViewModel.loadUnpushedCommits()
+                gitViewModel.loadChanges()
+            }
+        }
+    }
+
+    LaunchedEffect(openedFolder, isGitRepo) {
+        val jOpenedFolder = openedFolder?.asRawFile()
+        if (isGitRepo && jOpenedFolder != null) {
+            gitViewModel.open(jOpenedFolder)
+        }
+    }
+
+    var showGitCloneDialog by remember { mutableStateOf(false) }
+    var showGitInitDialog by remember { mutableStateOf(false) }
+
+    openedFolder?.let {
+        if (isGitRepo) {
+            GitManagerContent(gitViewModel = gitViewModel)
+        } else {
+            NoRepoFound(
+                onInitClick = { showGitInitDialog = true },
+                onCloneClick = { showGitCloneDialog = true }
             )
-          toastHostState.showToast(
-            message = errorMessage,
-            duration = ToastDuration.Long
-          )
         }
-      }
-    }
-  }
-
-  LaunchedEffect(key1 = isGitRepo, workingTree) {
-    if (isGitRepo && workingTree != null) {
-      withContext(Dispatchers.IO) {
-        gitViewModel.loadRepoName()
-        gitViewModel.loadUnpushedCommits()
-        gitViewModel.loadChanges()
-      }
-    }
-  }
-
-  LaunchedEffect(openedFolder, isGitRepo) {
-    val jOpenedFolder = openedFolder?.asRawFile()
-    if (isGitRepo && jOpenedFolder != null) {
-      gitViewModel.open(jOpenedFolder)
-    }
-  }
-
-  var showGitCloneDialog by remember { mutableStateOf(false) }
-  var showGitInitDialog by remember { mutableStateOf(false) }
-
-  openedFolder?.let {
-    if (isGitRepo) {
-      GitManagerContent(gitViewModel = gitViewModel)
-    } else {
-      NoRepoFound(
-        onInitClick = { showGitInitDialog = true },
-        onCloneClick = { showGitCloneDialog = true }
-      )
-    }
-  } ?: run {
-    Box(
-      contentAlignment = Alignment.Center,
-      modifier = Modifier.fillMaxSize()
-    ) {
-      CloneButton { showGitCloneDialog = true }
-    }
-  }
-
-  val rawOpenedFolder = openedFolder?.asRawFile()
-  if (showGitCloneDialog && rawOpenedFolder != null ) {
-    val url = clipUrl()
-
-    GitCloneDialog(
-      remoteUrl = url ?: "",
-      initialFolder = rawOpenedFolder,
-      onDismissRequest = { showGitCloneDialog = false },
-      onCloneSuccess = {
-        scope.launch {
-          toastHostState.showToast(
-            message = context.getString(R.string.successfully_cloned),
-            icon = Icons.Rounded.Check
-          )
-          fileExplorerViewModel.openFolder(it.wrapFile())
-
-          withContext(Dispatchers.Main) {
-            navController.navigateSingleTop(EditorDrawerScreens.FileExplorer)
-          }
+    } ?: run {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            CloneButton { showGitCloneDialog = true }
         }
-      },
-      onCloneFailure = {
-        showGitCloneDialog = false
-        it.printStackTrace()
-        scope.launch {
-          toastHostState.showToast(
-            message = it.message ?: context.getString(R.string.error),
-            icon = Icons.Rounded.ErrorOutline
-          )
-        }
-      }
-    )
-  }
+    }
 
-  if (showGitInitDialog) {
-    openedFolder?.let { folder ->
-      val successMessage =
-        stringResource(strings.initialized_empty_git_repo_in, folder.absolutePath)
+    val rawOpenedFolder = openedFolder?.asRawFile()
+    if (showGitCloneDialog && rawOpenedFolder != null) {
+        val url = clipUrl()
 
-      GitInitSheet(
-        folder = folder,
-        onDismissRequest = { showGitInitDialog = false },
-        onSuccess = {
-          navController.navigateSingleTop(EditorDrawerScreens.FileExplorer)
-          fileExplorerViewModel.refreshFolder()
+        GitCloneDialog(
+            remoteUrl = url ?: "",
+            initialFolder = rawOpenedFolder,
+            onDismissRequest = { showGitCloneDialog = false },
+            onCloneSuccess = {
+                scope.launch {
+                    toastHostState.showToast(
+                        message = context.getString(R.string.successfully_cloned),
+                        icon = Icons.Rounded.Check
+                    )
+                    fileExplorerViewModel.openFolder(it.wrapFile())
 
-          toastHostState.showToast(
-            message = successMessage,
-            icon = Icons.Sharp.Check
-          )
+                    withContext(Dispatchers.Main) {
+                        navController.navigateSingleTop(EditorDrawerScreens.FileExplorer)
+                    }
+                }
+            },
+            onCloneFailure = {
+                showGitCloneDialog = false
+                it.printStackTrace()
+                scope.launch {
+                    toastHostState.showToast(
+                        message = it.message ?: context.getString(R.string.error),
+                        icon = Icons.Rounded.ErrorOutline
+                    )
+                }
+            }
+        )
+    }
 
-          runCatching { instance.addMainBranch() }.onFailure {
-            toastHostState.showToast(
-              message = it.message ?: context.getString(R.string.error),
-              icon = Icons.Sharp.ErrorOutline
+    if (showGitInitDialog) {
+        openedFolder?.let { folder ->
+            val successMessage =
+                stringResource(strings.initialized_empty_git_repo_in, folder.absolutePath)
+
+            GitInitSheet(
+                folder = folder,
+                onDismissRequest = { showGitInitDialog = false },
+                onSuccess = {
+                    navController.navigateSingleTop(EditorDrawerScreens.FileExplorer)
+                    fileExplorerViewModel.refreshFolder()
+
+                    toastHostState.showToast(
+                        message = successMessage,
+                        icon = Icons.Sharp.Check
+                    )
+
+                    runCatching { instance.addMainBranch() }.onFailure {
+                        toastHostState.showToast(
+                            message = it.message ?: context.getString(R.string.error),
+                            icon = Icons.Sharp.ErrorOutline
+                        )
+                    }
+                },
+                onFailure = { throwable ->
+                    toastHostState.showToast(
+                        message = throwable.message ?: context.getString(R.string.error),
+                        icon = Icons.Sharp.ErrorOutline
+                    )
+                }
             )
-          }
-        },
-        onFailure = { throwable ->
-          toastHostState.showToast(
-            message = throwable.message ?: context.getString(R.string.error),
-            icon = Icons.Sharp.ErrorOutline
-          )
         }
-      )
     }
-  }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun GitManagerContent(
-  gitViewModel: GitViewModel
+    gitViewModel: GitViewModel
 ) {
-  val context = LocalContext.current
+    val context = LocalContext.current
 
-  val repoName by gitViewModel.repoName.collectAsStateWithLifecycle(context = Dispatchers.IO)
-  val unpushedCommits by gitViewModel.unpushedCommits.collectAsStateWithLifecycle(context = Dispatchers.IO)
-  val workingTree by gitViewModel.workingTree.collectAsStateWithLifecycle(context = Dispatchers.IO)
+    val repoName by gitViewModel.repoName.collectAsStateWithLifecycle(context = Dispatchers.IO)
+    val unpushedCommits by gitViewModel.unpushedCommits.collectAsStateWithLifecycle(context = Dispatchers.IO)
+    val workingTree by gitViewModel.workingTree.collectAsStateWithLifecycle(context = Dispatchers.IO)
 
-  val gitActionStatus by gitViewModel.gitStatus.collectAsStateWithLifecycle()
-  var showSuccessMessage by remember { mutableStateOf(false) }
-  var successMessage by remember { mutableStateOf("") }
+    val gitActionStatus by gitViewModel.gitStatus.collectAsStateWithLifecycle()
+    var showSuccessMessage by remember { mutableStateOf(false) }
+    var successMessage by remember { mutableStateOf("") }
 
-  LaunchedEffect(gitActionStatus) {
-    if (gitActionStatus is GitActionStatus.Success) {
-      successMessage = (gitActionStatus as GitActionStatus.Success).message
-      showSuccessMessage = true
-    }
-
-    delay(700.milliseconds)
-    showSuccessMessage = false
-  }
-
-  var status: Status? by remember { mutableStateOf(null) }
-  LaunchedEffect(key1 = true) {
-    withContext(Dispatchers.IO) {
-      status = instance.git.status().call()
-    }
-  }
-
-  var showSetRemoteSheet by remember { mutableStateOf(false) }
-  var showPushChangesSheet by remember { mutableStateOf(false) }
-  var showCommitDialog by remember { mutableStateOf(false) }
-
-  val scope = rememberCoroutineScope { Dispatchers.Main }
-  val toastHostState = LocalToastHostState.current
-
-  Scaffold(
-    modifier = Modifier.fillMaxSize(),
-    topBar = {
-      TopAppBar(
-        title = {
-          Column {
-            Row(
-              horizontalArrangement = Arrangement.spacedBy(3.dp),
-              verticalAlignment = Alignment.CenterVertically,
-              modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-            ) {
-              Text(
-                text = repoName ?: "remote not set",
-                fontWeight = FontWeight.SemiBold,
-                textAlign = TextAlign.Start,
-                modifier = Modifier.clickable {
-                  if (repoName == null) {
-                    showSetRemoteSheet = true
-                  }
-                },
-              )
-
-              if (repoName != null) {
-                Text(
-                  text = instance.getDefaultBranch()?.let { "($it)" } ?: "",
-                  fontSize = 16.sp
-                )
-              }
-            }
-
-            if (showSuccessMessage && (gitActionStatus !is GitActionStatus.Loading) && (gitActionStatus !is GitActionStatus.Failure)) {
-              Text(
-                text = successMessage.ifEmpty { stringResource(R.string.success) },
-                fontSize = 12.sp,
-                color = Color.Green.harmonizeWithPrimary()
-              )
-            }
-
-            if (gitActionStatus is GitActionStatus.Loading) {
-              val (progress, message) = gitActionStatus as GitActionStatus.Loading
-              val msgFormat = if (progress != null) "$message ($progress%)" else message
-
-              Text(
-                text = msgFormat,
-                fontSize = 12.sp
-              )
-
-              if (progress != null) {
-                LinearProgressIndicator(
-                  modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(end = 8.dp),
-                  progress = { progress / 100f }
-                )
-              } else {
-                LinearProgressIndicator(
-                  modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(end = 8.dp)
-                )
-              }
-            } else if (gitActionStatus is GitActionStatus.Failure) {
-              val (error) = gitActionStatus as GitActionStatus.Failure
-
-              error.message?.let {
-                Text(
-                  text = it,
-                  fontSize = 12.sp,
-                  color = MaterialTheme.colorScheme.error,
-                  style = MaterialTheme.typography.bodySmall,
-                  modifier = Modifier.verticalScroll(rememberScrollState())
-                )
-              }
-            }
-          }
-        }
-      )
-    }
-  ) { paddingValues ->
-    Column(
-      modifier = Modifier
-        .fillMaxSize()
-        .padding(paddingValues)
-    ) {
-      // Git Status Items
-      Column {
-        var statusMessage by remember { mutableStateOf("") }
-
-        LaunchedEffect(status) {
-          status?.let { gitStatus ->
-            if (workingTree == null) return@LaunchedEffect
-
-            statusMessage = if (gitStatus.hasUncommittedChanges()) {
-              val fileCount = gitStatus.uncommittedChanges.size
-
-              "${"$fileCount file" makePluralIf (fileCount > 1)} changed"
-            } else {
-              context.getString(R.string.no_uncommitted_changes)
-            }
-          }
+    LaunchedEffect(gitActionStatus) {
+        if (gitActionStatus is GitActionStatus.Success) {
+            successMessage = (gitActionStatus as GitActionStatus.Success).message
+            showSuccessMessage = true
         }
 
-        val statusItems = listOf(
-          StatusItem(
-            title = stringResource(R.string.uncommitted_changes),
-            subtitle = statusMessage.ifEmpty { stringResource(R.string.loading) },
-            icon = if (status?.hasUncommittedChanges() == true) Icons.Sharp.Check else Icons.Sharp.ErrorOutline,
-            onClick = {
-              if (repoName == null) {
+        delay(700.milliseconds)
+        showSuccessMessage = false
+    }
+
+    var status: Status? by remember { mutableStateOf(null) }
+    LaunchedEffect(key1 = true) {
+        withContext(Dispatchers.IO) {
+            status = instance.git.status().call()
+        }
+    }
+
+    var showSetRemoteSheet by remember { mutableStateOf(false) }
+    var showPushChangesSheet by remember { mutableStateOf(false) }
+    var showCommitDialog by remember { mutableStateOf(false) }
+
+    val scope = rememberCoroutineScope { Dispatchers.Main }
+    val toastHostState = LocalToastHostState.current
+
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                title = {
+                    Column {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(3.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                        ) {
+                            Text(
+                                text = repoName ?: "remote not set",
+                                fontWeight = FontWeight.SemiBold,
+                                textAlign = TextAlign.Start,
+                                modifier = Modifier.clickable {
+                                    if (repoName == null) {
+                                        showSetRemoteSheet = true
+                                    }
+                                },
+                            )
+
+                            if (repoName != null) {
+                                Text(
+                                    text = instance.getDefaultBranch()?.let { "($it)" } ?: "",
+                                    fontSize = 16.sp
+                                )
+                            }
+                        }
+
+                        if (showSuccessMessage && (gitActionStatus !is GitActionStatus.Loading) && (gitActionStatus !is GitActionStatus.Failure)) {
+                            Text(
+                                text = successMessage.ifEmpty { stringResource(R.string.success) },
+                                fontSize = 12.sp,
+                                color = Color.Green.harmonizeWithPrimary()
+                            )
+                        }
+
+                        if (gitActionStatus is GitActionStatus.Loading) {
+                            val (progress, message) = gitActionStatus as GitActionStatus.Loading
+                            val msgFormat =
+                                if (progress != null) "$message ($progress%)" else message
+
+                            Text(
+                                text = msgFormat,
+                                fontSize = 12.sp
+                            )
+
+                            if (progress != null) {
+                                LinearProgressIndicator(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(end = 8.dp),
+                                    progress = { progress / 100f }
+                                )
+                            } else {
+                                LinearProgressIndicator(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(end = 8.dp)
+                                )
+                            }
+                        } else if (gitActionStatus is GitActionStatus.Failure) {
+                            val (error) = gitActionStatus as GitActionStatus.Failure
+
+                            error.message?.let {
+                                Text(
+                                    text = it,
+                                    fontSize = 12.sp,
+                                    color = MaterialTheme.colorScheme.error,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    modifier = Modifier.verticalScroll(rememberScrollState())
+                                )
+                            }
+                        }
+                    }
+                }
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            // Git Status Items
+            Column {
+                var statusMessage by remember { mutableStateOf("") }
+
+                LaunchedEffect(status) {
+                    status?.let { gitStatus ->
+                        if (workingTree == null) return@LaunchedEffect
+
+                        statusMessage = if (gitStatus.hasUncommittedChanges()) {
+                            val fileCount = gitStatus.uncommittedChanges.size
+
+                            "${"$fileCount file" makePluralIf (fileCount > 1)} changed"
+                        } else {
+                            context.getString(R.string.no_uncommitted_changes)
+                        }
+                    }
+                }
+
+                val statusItems = listOf(
+                    StatusItem(
+                        title = stringResource(R.string.uncommitted_changes),
+                        subtitle = statusMessage.ifEmpty { stringResource(R.string.loading) },
+                        icon = if (status?.hasUncommittedChanges() == true) Icons.Sharp.Check else Icons.Sharp.ErrorOutline,
+                        onClick = {
+                            if (repoName == null) {
+                                scope.launch {
+                                    toastHostState.showToast(
+                                        message = context.getString(R.string.set_remote_first),
+                                        icon = Icons.Sharp.ErrorOutline
+                                    )
+                                }
+                            } else if ((status?.hasUncommittedChanges() == false) || statusMessage.isEmpty() || (status?.isClean == true)) {
+                                scope.launch {
+                                    toastHostState.showToast(
+                                        message = context.getString(R.string.nothing_to_commit),
+                                        icon = Icons.Sharp.NotInterested
+                                    )
+                                }
+                            } else {
+                                showCommitDialog = true
+                            }
+                        }
+                    ),
+                    StatusItem(
+                        title = stringResource(R.string.unpushed_commits),
+                        subtitle = "${unpushedCommits.size} commit" makePluralIf (unpushedCommits.size > 1),
+                        icon = if (unpushedCommits.isNotEmpty()) Icons.Sharp.Check else Icons.Sharp.ErrorOutline,
+                        onClick = {
+                            if (unpushedCommits.isEmpty()) {
+                                scope.launch {
+                                    toastHostState.showToast(
+                                        message = context.getString(R.string.nothing_to_push),
+                                        icon = Icons.Sharp.NotInterested
+                                    )
+                                }
+                            } else {
+                                showPushChangesSheet = true
+                            }
+                        }
+                    ),
+                )
+
+                statusItems.forEach {
+                    StatusRow(item = it)
+                }
+            }
+
+            // Git Actions
+            Column(modifier = Modifier.padding(top = 16.dp)) {
+                val gitActions = listOf(
+                    GitAction(stringResource(R.string.refresh), Icons.Sharp.Refresh) {
+                        scope.launch {
+                            withContext(Dispatchers.IO) {
+                                status = instance.git.status().call()
+                            }
+                            gitViewModel.refresh()
+                        }
+                    },
+                    GitAction(
+                        stringResource(R.string.pull),
+                        ImageVector.vectorResource(drawables.source_pull)
+                    ) {
+                        scope.launch { gitViewModel.pull() }
+                    },
+                    GitAction(stringResource(R.string.fetch), Icons.Sharp.Download) {
+                        scope.launch { gitViewModel.fetch() }
+                    }
+                )
+
+                gitActions.forEach { action ->
+                    GitActionButton(action = action)
+                }
+            }
+        }
+    }
+
+    if (showSetRemoteSheet) {
+        AddRemoteSheet(
+            onDismissRequest = { showSetRemoteSheet = false },
+            onSuccess = {
+                gitViewModel.refresh()
+                // gitViewModel.pull()
+            },
+            onFailure = {
+                ToastUtils.showLong(it.message ?: context.getString(R.string.error))
+            }
+        )
+    }
+
+    if (showPushChangesSheet) {
+        PushChangesSheet(
+            onDismissRequest = { showPushChangesSheet = false },
+            commits = unpushedCommits,
+            onPushClick = {
                 scope.launch {
-                  toastHostState.showToast(
-                    message = context.getString(R.string.set_remote_first),
+                    gitViewModel.push()
+                }
+            }
+        )
+    }
+
+    if (showCommitDialog) {
+        GitCommitSheet(
+            onDismissRequest = { showCommitDialog = false },
+            gitViewModel = gitViewModel,
+            onSuccess = {
+                gitViewModel.refresh()
+            },
+            onFailure = {
+                toastHostState.showToast(
+                    message = it.message ?: context.getString(R.string.error),
                     icon = Icons.Sharp.ErrorOutline
-                  )
-                }
-              } else if ((status?.hasUncommittedChanges() == false) || statusMessage.isEmpty() || (status?.isClean == true)) {
-                scope.launch {
-                  toastHostState.showToast(
-                    message = context.getString(R.string.nothing_to_commit),
-                    icon = Icons.Sharp.NotInterested
-                  )
-                }
-              } else {
-                showCommitDialog = true
-              }
+                )
             }
-          ),
-          StatusItem(
-            title = stringResource(R.string.unpushed_commits),
-            subtitle = "${unpushedCommits.size} commit" makePluralIf (unpushedCommits.size > 1),
-            icon = if (unpushedCommits.isNotEmpty()) Icons.Sharp.Check else Icons.Sharp.ErrorOutline,
-            onClick = {
-              if (unpushedCommits.isEmpty()) {
-                scope.launch {
-                  toastHostState.showToast(
-                    message = context.getString(R.string.nothing_to_push),
-                    icon = Icons.Sharp.NotInterested
-                  )
-                }
-              } else {
-                showPushChangesSheet = true
-              }
-            }
-          ),
         )
-
-        statusItems.forEach {
-          StatusRow(item = it)
-        }
-      }
-
-      // Git Actions
-      Column(modifier = Modifier.padding(top = 16.dp)) {
-        val gitActions = listOf(
-          GitAction(stringResource(R.string.refresh), Icons.Sharp.Refresh) {
-            scope.launch {
-              withContext(Dispatchers.IO) {
-                status = instance.git.status().call()
-              }
-              gitViewModel.refresh()
-            }
-          },
-          GitAction(
-            stringResource(R.string.pull),
-            ImageVector.vectorResource(drawables.source_pull)
-          ) {
-            scope.launch { gitViewModel.pull() }
-          },
-          GitAction(stringResource(R.string.fetch), Icons.Sharp.Download) {
-            scope.launch { gitViewModel.fetch() }
-          }
-        )
-
-        gitActions.forEach { action ->
-          GitActionButton(action = action)
-        }
-      }
     }
-  }
-
-  if (showSetRemoteSheet) {
-    AddRemoteSheet(
-      onDismissRequest = { showSetRemoteSheet = false },
-      onSuccess = {
-        gitViewModel.refresh()
-        // gitViewModel.pull()
-      },
-      onFailure = {
-        ToastUtils.showLong(it.message ?: context.getString(R.string.error))
-      }
-    )
-  }
-
-  if (showPushChangesSheet) {
-    PushChangesSheet(
-      onDismissRequest = { showPushChangesSheet = false },
-      commits = unpushedCommits,
-      onPushClick = {
-        scope.launch {
-          gitViewModel.push()
-        }
-      }
-    )
-  }
-
-  if (showCommitDialog) {
-    GitCommitSheet(
-      onDismissRequest = { showCommitDialog = false },
-      gitViewModel = gitViewModel,
-      onSuccess = {
-        gitViewModel.refresh()
-      },
-      onFailure = {
-        toastHostState.showToast(
-          message = it.message ?: context.getString(R.string.error),
-          icon = Icons.Sharp.ErrorOutline
-        )
-      }
-    )
-  }
 }
 
 @Composable
 private fun GitActionButton(action: GitAction) {
-  FilledTonalButton(
-    onClick = action.onClick,
-    modifier = Modifier
-      .fillMaxWidth()
-      .padding(horizontal = 16.dp, vertical = (0.5).dp),
-    shape = MaterialTheme.shapes.small,
-    colors = ButtonDefaults.filledTonalButtonColors(
-      containerColor = MaterialTheme.colorScheme.secondary.harmonizeWithPrimary(),
-      contentColor = MaterialTheme.colorScheme.onSecondary
-    )
-  ) {
-    Row(
-      modifier = Modifier.fillMaxWidth(),
-      verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.SpaceBetween
+    FilledTonalButton(
+        onClick = action.onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = (0.5).dp),
+        shape = MaterialTheme.shapes.small,
+        colors = ButtonDefaults.filledTonalButtonColors(
+            containerColor = MaterialTheme.colorScheme.secondary.harmonizeWithPrimary(),
+            contentColor = MaterialTheme.colorScheme.onSecondary
+        )
     ) {
-      Text(action.text, modifier = Modifier.weight(1f))
-      Icon(action.icon, contentDescription = action.text)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(action.text, modifier = Modifier.weight(1f))
+            Icon(action.icon, contentDescription = action.text)
+        }
     }
-  }
 }
 
 @Composable
 fun StatusRow(item: StatusItem) {
-  Card(
-    modifier = Modifier
-      .fillMaxWidth()
-      .padding(horizontal = 16.dp, vertical = 4.dp),
-    colors = CardDefaults.cardColors(
-      containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
-    ),
-    onClick = item.onClick
-  ) {
-    Row(
-      modifier = Modifier
-        .fillMaxWidth()
-        .padding(12.dp),
-      verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.SpaceBetween
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 4.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
+        ),
+        onClick = item.onClick
     ) {
-      Column(modifier = Modifier.weight(1f)) {
-        Text(text = item.title, fontSize = 16.sp, fontWeight = FontWeight.Medium)
-        Text(text = item.subtitle, fontSize = 14.sp)
-      }
-      Icon(item.icon, contentDescription = item.title)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(text = item.title, fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                Text(text = item.subtitle, fontSize = 14.sp)
+            }
+            Icon(item.icon, contentDescription = item.title)
+        }
     }
-  }
 }
 
 @Composable
 private fun CloneButton(onClick: () -> Unit) {
-  Button(onClick = onClick) {
-    Text(stringResource(strings.git_clone))
-  }
+    Button(onClick = onClick) {
+        Text(stringResource(strings.git_clone))
+    }
 }
 
 @Composable
 fun NoRepoFound(
-  modifier: Modifier = Modifier,
-  onInitClick: () -> Unit = {},
-  onCloneClick: () -> Unit = {}
+    modifier: Modifier = Modifier,
+    onInitClick: () -> Unit = {},
+    onCloneClick: () -> Unit = {}
 ) {
-  Column(
-    modifier = modifier
-      .fillMaxSize()
-      .padding(16.dp)
-  ) {
-    Text(
-      text = stringResource(R.string.init_or_clone_repo),
-      fontWeight = FontWeight.SemiBold,
-      style = MaterialTheme.typography.titleLarge
-    )
-
-    Spacer(modifier = Modifier.height(12.dp))
-
-    val options = listOf(
-      stringResource(R.string.initialize_git_repository) to onInitClick,
-      stringResource(R.string.clone_a_repository) to onCloneClick
-    )
-
-    options.forEach { (text, onClick) ->
-      Row(
-        modifier = Modifier
-          .fillMaxWidth()
-          .clip(MaterialTheme.shapes.small)
-          .clickable(onClick = onClick),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-      ) {
-        Text(
-          text = text,
-          fontSize = 16.sp,
-          fontWeight = FontWeight.Medium,
-          modifier = Modifier
-            .weight(1f)
+    Column(
+        modifier = modifier
+            .fillMaxSize()
             .padding(16.dp)
+    ) {
+        Text(
+            text = stringResource(R.string.init_or_clone_repo),
+            fontWeight = FontWeight.SemiBold,
+            style = MaterialTheme.typography.titleLarge
         )
-        Icon(Icons.Sharp.ChevronRight, contentDescription = null)
-      }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        val options = listOf(
+            stringResource(R.string.initialize_git_repository) to onInitClick,
+            stringResource(R.string.clone_a_repository) to onCloneClick
+        )
+
+        options.forEach { (text, onClick) ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(MaterialTheme.shapes.small)
+                    .clickable(onClick = onClick),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = text,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(16.dp)
+                )
+                Icon(Icons.Sharp.ChevronRight, contentDescription = null)
+            }
+        }
     }
-  }
 }
 
 data class GitAction(
-  val text: String,
-  val icon: ImageVector,
-  val onClick: () -> Unit
+    val text: String,
+    val icon: ImageVector,
+    val onClick: () -> Unit
 )
 
 data class StatusItem(
-  val title: String,
-  val subtitle: String,
-  val icon: ImageVector,
-  val onClick: () -> Unit
+    val title: String,
+    val subtitle: String,
+    val icon: ImageVector,
+    val onClick: () -> Unit
 )

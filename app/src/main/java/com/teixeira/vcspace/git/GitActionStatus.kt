@@ -16,8 +16,8 @@
 package com.teixeira.vcspace.git
 
 sealed class GitActionStatus {
-  data object Idle : GitActionStatus()
-  data class Success(val message: String = "") : GitActionStatus()
-  data class Failure(val throwable: Throwable) : GitActionStatus()
-  data class Loading(val progress: Int?, val message: String) : GitActionStatus()
+    data object Idle : GitActionStatus()
+    data class Success(val message: String = "") : GitActionStatus()
+    data class Failure(val throwable: Throwable) : GitActionStatus()
+    data class Loading(val progress: Int?, val message: String) : GitActionStatus()
 }

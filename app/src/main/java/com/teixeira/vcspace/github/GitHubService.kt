@@ -21,20 +21,20 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object GitHubService {
-  fun createGitHubApiService(token: String): GitHubApiService {
-    val client = OkHttpClient.Builder().addInterceptor { chain ->
-      val request = chain.request().newBuilder()
-        .header("Authorization", Credentials.basic("itsvks19", token))
-        .build()
-      chain.proceed(request)
-    }.build()
+    fun createGitHubApiService(token: String): GitHubApiService {
+        val client = OkHttpClient.Builder().addInterceptor { chain ->
+            val request = chain.request().newBuilder()
+                .header("Authorization", Credentials.basic("itsvks19", token))
+                .build()
+            chain.proceed(request)
+        }.build()
 
-    val retrofit = Retrofit.Builder()
-      .baseUrl("https://api.github.com/")
-      .client(client)
-      .addConverterFactory(GsonConverterFactory.create())
-      .build()
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://api.github.com/")
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
 
-    return retrofit.create(GitHubApiService::class.java)
-  }
+        return retrofit.create(GitHubApiService::class.java)
+    }
 }

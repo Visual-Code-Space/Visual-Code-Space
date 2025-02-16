@@ -18,11 +18,11 @@ package com.teixeira.vcspace.github
 import com.google.gson.annotations.SerializedName
 
 data class Content(
-  val name: String,
-  val path: String,
-  val sha: String,
-  val size: Int, // in bytes
-  val type: String, // "file" or "dir"
-  @SerializedName("download_url")
-  val downloadUrl: String?
+    val name: String,
+    val path: String,
+    val sha: String,
+    val size: Int, // in bytes
+    val type: String, // "file" or "dir"
+    @SerializedName("download_url")
+    val downloadUrl: String?
 )

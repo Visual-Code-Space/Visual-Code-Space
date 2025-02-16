@@ -23,28 +23,28 @@ import io.github.rosemoe.sora.text.Content
 import io.github.rosemoe.sora.text.TextRange
 
 class JavaQuoteHandler : QuickQuoteHandler {
-  override fun onHandleTyping(
-    candidateCharacter: String,
-    text: Content,
-    cursor: TextRange,
-    style: Styles?
-  ): HandleResult {
-    if (!checkNoCompletion(style, cursor.start) &&
-      !checkNoCompletion(style, cursor.end) &&
-      "\"" == candidateCharacter &&
-      cursor.start.line == cursor.end.line
-    ) {
-      text.insert(cursor.start.line, cursor.start.column, "\"")
-      text.insert(cursor.end.line, cursor.end.column + 1, "\"")
+    override fun onHandleTyping(
+        candidateCharacter: String,
+        text: Content,
+        cursor: TextRange,
+        style: Styles?
+    ): HandleResult {
+        if (!checkNoCompletion(style, cursor.start) &&
+            !checkNoCompletion(style, cursor.end) &&
+            "\"" == candidateCharacter &&
+            cursor.start.line == cursor.end.line
+        ) {
+            text.insert(cursor.start.line, cursor.start.column, "\"")
+            text.insert(cursor.end.line, cursor.end.column + 1, "\"")
 
-      return HandleResult(
-        /* consumed = */ true,
-        /* newCursorRange = */ TextRange(
-          text.indexer.getCharPosition(cursor.startIndex + 1),
-          text.indexer.getCharPosition(cursor.endIndex + 1)
-        )
-      )
+            return HandleResult(
+                /* consumed = */ true,
+                /* newCursorRange = */ TextRange(
+                    text.indexer.getCharPosition(cursor.startIndex + 1),
+                    text.indexer.getCharPosition(cursor.endIndex + 1)
+                )
+            )
+        }
+        return HandleResult.NOT_CONSUMED
     }
-    return HandleResult.NOT_CONSUMED
-  }
 }

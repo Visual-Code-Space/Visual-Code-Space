@@ -38,58 +38,60 @@ import org.greenrobot.eventbus.EventBus
 
 @Composable
 fun RenameFileDialog(
-  file: File,
-  openedFolder: File,
-  onDismissRequest: () -> Unit
+    file: File,
+    openedFolder: File,
+    onDismissRequest: () -> Unit
 ) {
-  var fileName by remember { mutableStateOf(file.name) }
+    var fileName by remember { mutableStateOf(file.name) }
 
-  val context = LocalContext.current
-  val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
-  AlertDialog(
-    onDismissRequest = onDismissRequest,
-    title = { Text(stringResource(R.string.file_rename)) },
-    text = {
-      OutlinedTextField(
-        value = fileName,
-        onValueChange = { fileName = it },
-        isError = fileName.isEmpty(),
-        placeholder = { Text(stringResource(R.string.file_enter_name)) }
-      )
-    },
-    confirmButton = {
-      TextButton(
-        onClick = {
-          scope.launchWithProgressDialog(
-            uiContext = context,
-            configureBuilder = { builder ->
-              builder.setMessage(R.string.file_renaming)
-              builder.setCancelable(false)
-            },
-            action = { _, _ ->
-              val renamedFile = file.renameTo(fileName) ?: return@launchWithProgressDialog
-
-              EventBus.getDefault().post(OnRenameFileEvent(file, renamedFile, openedFolder))
-
-              withContext(Dispatchers.Main) {
-                showShortToast(context, context.getString(R.string.file_renamed))
-                // refresh
-              }
-
-              onDismissRequest()
-            },
-          )
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        title = { Text(stringResource(R.string.file_rename)) },
+        text = {
+            OutlinedTextField(
+                value = fileName,
+                onValueChange = { fileName = it },
+                isError = fileName.isEmpty(),
+                placeholder = { Text(stringResource(R.string.file_enter_name)) }
+            )
         },
-        enabled = fileName.isNotEmpty()
-      ) {
-        Text(stringResource(R.string.yes))
-      }
-    },
-    dismissButton = {
-      TextButton(onClick = onDismissRequest) {
-        Text(stringResource(R.string.no))
-      }
-    }
-  )
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    scope.launchWithProgressDialog(
+                        uiContext = context,
+                        configureBuilder = { builder ->
+                            builder.setMessage(R.string.file_renaming)
+                            builder.setCancelable(false)
+                        },
+                        action = { _, _ ->
+                            val renamedFile =
+                                file.renameTo(fileName) ?: return@launchWithProgressDialog
+
+                            EventBus.getDefault()
+                                .post(OnRenameFileEvent(file, renamedFile, openedFolder))
+
+                            withContext(Dispatchers.Main) {
+                                showShortToast(context, context.getString(R.string.file_renamed))
+                                // refresh
+                            }
+
+                            onDismissRequest()
+                        },
+                    )
+                },
+                enabled = fileName.isNotEmpty()
+            ) {
+                Text(stringResource(R.string.yes))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismissRequest) {
+                Text(stringResource(R.string.no))
+            }
+        }
+    )
 }

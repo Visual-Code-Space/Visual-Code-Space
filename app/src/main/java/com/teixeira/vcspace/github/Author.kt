@@ -16,7 +16,7 @@
 package com.teixeira.vcspace.github
 
 data class Author(
-  val name: String,
-  val email: String,
-  val date: String?
+    val name: String,
+    val email: String,
+    val date: String?
 )

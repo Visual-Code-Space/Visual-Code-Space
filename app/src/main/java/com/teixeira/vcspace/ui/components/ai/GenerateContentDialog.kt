@@ -42,83 +42,84 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun GenerateContentDialog(
-  editor: View,
-  modifier: Modifier = Modifier,
-  fileExtension: String? = null,
+    editor: View,
+    modifier: Modifier = Modifier,
+    fileExtension: String? = null,
 ) {
-  val scope = rememberCoroutineScope()
-  val context = LocalContext.current
-  var prompt by remember { mutableStateOf("") }
-  var showDialog by remember { mutableStateOf(true) }
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    var prompt by remember { mutableStateOf("") }
+    var showDialog by remember { mutableStateOf(true) }
 
-  if (showDialog) {
-    AlertDialog(
-      modifier = modifier,
-      onDismissRequest = { showDialog = false },
-      title = {
-        Text(text = stringResource(strings.generate_code))
-      },
-      text = {
-        OutlinedTextField(
-          value = prompt,
-          onValueChange = { prompt = it },
-          label = { Text(stringResource(strings.tell_me_what_you_want_to_generate)) },
-          modifier = Modifier.fillMaxWidth()
-        )
-      },
-      dismissButton = {
-        TextButton(onClick = { showDialog = false }) {
-          Text(stringResource(strings.cancel))
-        }
-      },
-      confirmButton = {
-        TextButton(onClick = {
-          if (prompt.isNotEmpty()) {
-            scope.launchWithProgressDialog(
-              uiContext = context,
-              configureBuilder = {
-                it.apply {
-                  setMessage(strings.generating_code)
-                  setCancelable(false)
+    if (showDialog) {
+        AlertDialog(
+            modifier = modifier,
+            onDismissRequest = { showDialog = false },
+            title = {
+                Text(text = stringResource(strings.generate_code))
+            },
+            text = {
+                OutlinedTextField(
+                    value = prompt,
+                    onValueChange = { prompt = it },
+                    label = { Text(stringResource(strings.tell_me_what_you_want_to_generate)) },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            dismissButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text(stringResource(strings.cancel))
                 }
-              }
-            ) { _, _ ->
-              Gemini.generateCode(
-                prompt = prompt,
-                fileExtension = fileExtension
-              ).onSuccess { response ->
-                val text = response.candidates.first().content.parts.first().asTextOrNull()
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    if (prompt.isNotEmpty()) {
+                        scope.launchWithProgressDialog(
+                            uiContext = context,
+                            configureBuilder = {
+                                it.apply {
+                                    setMessage(strings.generating_code)
+                                    setCancelable(false)
+                                }
+                            }
+                        ) { _, _ ->
+                            Gemini.generateCode(
+                                prompt = prompt,
+                                fileExtension = fileExtension
+                            ).onSuccess { response ->
+                                val text =
+                                    response.candidates.first().content.parts.first().asTextOrNull()
 
-                withContext(Dispatchers.Main) {
-                  if (editor is MonacoEditor) {
-                    val position = editor.position
-                    editor.insert(
-                      text = Gemini.removeBackticksFromMarkdownCodeBlock(text),
-                      position = position
-                    )
-                  } else if (editor is CodeEditorView) {
-                    val vcSpaceEditor = editor.editor
-                    val cursor = vcSpaceEditor.cursor
-                    val content = vcSpaceEditor.text
-                    content.insert(
-                      cursor.leftLine,
-                      cursor.leftColumn,
-                      Gemini.removeBackticksFromMarkdownCodeBlock(text)
-                    )
-                  }
+                                withContext(Dispatchers.Main) {
+                                    if (editor is MonacoEditor) {
+                                        val position = editor.position
+                                        editor.insert(
+                                            text = Gemini.removeBackticksFromMarkdownCodeBlock(text),
+                                            position = position
+                                        )
+                                    } else if (editor is CodeEditorView) {
+                                        val vcSpaceEditor = editor.editor
+                                        val cursor = vcSpaceEditor.cursor
+                                        val content = vcSpaceEditor.text
+                                        content.insert(
+                                            cursor.leftLine,
+                                            cursor.leftColumn,
+                                            Gemini.removeBackticksFromMarkdownCodeBlock(text)
+                                        )
+                                    }
+                                }
+                            }.onFailure {
+                                ToastUtils.showShort(it.message)
+                            }
+                        }
+                        showDialog = false
+                    } else {
+                        ToastUtils.showShort(context.getString(strings.enter_prompt))
+                    }
+                }) {
+                    Text(stringResource(strings.generate))
                 }
-              }.onFailure {
-                ToastUtils.showShort(it.message)
-              }
             }
-            showDialog = false
-          } else {
-            ToastUtils.showShort(context.getString(strings.enter_prompt))
-          }
-        }) {
-          Text(stringResource(strings.generate))
-        }
-      }
-    )
-  }
+        )
+    }
 }

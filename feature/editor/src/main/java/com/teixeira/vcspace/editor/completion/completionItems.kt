@@ -22,71 +22,72 @@ import io.github.rosemoe.sora.text.Content
 import io.github.rosemoe.sora.widget.CodeEditor
 
 abstract class VCSpaceCompletionItem(
-  val completionKind: CompletionItemKind,
-  label: CharSequence,
-  desc: CharSequence?,
+    val completionKind: CompletionItemKind,
+    label: CharSequence,
+    desc: CharSequence?,
 ) : CompletionItem(label, desc, null)
 
 class SimpleCompletionItem(
-  completionKind: CompletionItemKind,
-  label: CharSequence,
-  desc: CharSequence,
-  val prefixLength: Int,
-  private val commitText: String,
+    completionKind: CompletionItemKind,
+    label: CharSequence,
+    desc: CharSequence,
+    val prefixLength: Int,
+    private val commitText: String,
 ) : VCSpaceCompletionItem(completionKind, label, desc) {
 
-  override fun performCompletion(editor: CodeEditor, text: Content, line: Int, column: Int) {
-    if (prefixLength == 0) {
-      text.insert(line, column, commitText)
-      return
+    override fun performCompletion(editor: CodeEditor, text: Content, line: Int, column: Int) {
+        if (prefixLength == 0) {
+            text.insert(line, column, commitText)
+            return
+        }
+        text.replace(line, column - prefixLength, line, column, commitText)
     }
-    text.replace(line, column - prefixLength, line, column, commitText)
-  }
 }
 
 class AICompletionItem(
-  label: CharSequence,
-  desc: CharSequence?,
-  private val commitText: String,
+    label: CharSequence,
+    desc: CharSequence?,
+    private val commitText: String,
 ) : VCSpaceCompletionItem(CompletionItemKind.AI_GENERATED, label, desc) {
-  override fun performCompletion(editor: CodeEditor, text: Content, line: Int, column: Int) {
-    text.insert(line, column, commitText)
-  }
+    override fun performCompletion(editor: CodeEditor, text: Content, line: Int, column: Int) {
+        text.insert(line, column, commitText)
+    }
 }
 
 class SimpleSnippetCompletionItem(
-  label: CharSequence,
-  desc: CharSequence,
-  val snippet: SnippetDescription,
+    label: CharSequence,
+    desc: CharSequence,
+    val snippet: SnippetDescription,
 ) : VCSpaceCompletionItem(CompletionItemKind.SNIPPET, label, desc) {
 
-  override fun performCompletion(editor: CodeEditor, text: Content, position: CharPosition) {
-    val prefixLength = snippet.selectedLength
+    override fun performCompletion(editor: CodeEditor, text: Content, position: CharPosition) {
+        val prefixLength = snippet.selectedLength
 
-    val selectedText = text.subSequence(position.index - prefixLength, position.index).toString()
+        val selectedText =
+            text.subSequence(position.index - prefixLength, position.index).toString()
 
-    var actionIndex = position.index
-    if (snippet.deleteSelected) {
-      text.delete(position.index - prefixLength, position.index)
-      actionIndex -= prefixLength
+        var actionIndex = position.index
+        if (snippet.deleteSelected) {
+            text.delete(position.index - prefixLength, position.index)
+            actionIndex -= prefixLength
+        }
+        editor.snippetController.startSnippet(actionIndex, snippet.snippet, selectedText)
     }
-    editor.snippetController.startSnippet(actionIndex, snippet.snippet, selectedText)
-  }
 
-  override fun performCompletion(editor: CodeEditor, text: Content, line: Int, column: Int) {
-    // do nothing
-  }
+    override fun performCompletion(editor: CodeEditor, text: Content, line: Int, column: Int) {
+        // do nothing
+    }
 }
 
 enum class CompletionItemKind {
-  AI_GENERATED,
-  VALUE,
-  KEYWORD,
-  SNIPPET,
-  FILE,
-  FOLDER,
-  TAG,
-  ATTRIBUTE,
-  IDENTIFIER,
-  UNKNOWN,
+    AI_GENERATED,
+    VALUE,
+    KEYWORD,
+    SNIPPET,
+    FILE,
+    FOLDER,
+    TAG,
+    ATTRIBUTE,
+    IDENTIFIER,
+    UNKNOWN,
 }

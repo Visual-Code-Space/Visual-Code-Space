@@ -60,104 +60,108 @@ import retrofit2.Response
 
 @Composable
 fun ContributorsCard(modifier: Modifier = Modifier) {
-  val githubApiService = GitHubService.createGitHubApiService(BuildConfig.GITHUB_TOKEN)
-  val contributorsCall = githubApiService.getContributors(
-    owner = ORGANIZATION_NAME,
-    repo = APPLICATION_REPOSITORY_NAME
-  )
-
-  var isLoadingContributors by remember { mutableStateOf(true) }
-  val contributorList = remember { mutableStateListOf<Contributor>() }
-
-  val uriHandler = LocalUriHandler.current
-
-  LaunchedEffect(Unit) {
-    contributorsCall.enqueue(object : Callback<List<Contributor>> {
-      override fun onResponse(
-        call: Call<List<Contributor>>,
-        response: Response<List<Contributor>>
-      ) {
-        if (response.isSuccessful) {
-          response.body()?.let { contributorList.addAll(it) }
-          isLoadingContributors = false
-        }
-      }
-
-      override fun onFailure(call: Call<List<Contributor>>, throwable: Throwable) {
-        isLoadingContributors = false
-      }
-    })
-  }
-
-  OutlinedCard(modifier = modifier) {
-    Text(
-      text = stringResource(R.string.contributors),
-      modifier = Modifier.padding(16.dp),
-      style = MaterialTheme.typography.bodyLarge,
-      fontWeight = FontWeight.SemiBold
+    val githubApiService = GitHubService.createGitHubApiService(BuildConfig.GITHUB_TOKEN)
+    val contributorsCall = githubApiService.getContributors(
+        owner = ORGANIZATION_NAME,
+        repo = APPLICATION_REPOSITORY_NAME
     )
 
-    if (isLoadingContributors) {
-      Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-      ) {
-        CircularProgressIndicator()
-      }
-    } else {
-      // I will improve this ui later
-      LazyColumn {
-        items(contributorList) { contributor ->
-          var user by remember { mutableStateOf<User?>(null) }
+    var isLoadingContributors by remember { mutableStateOf(true) }
+    val contributorList = remember { mutableStateListOf<Contributor>() }
 
-          LaunchedEffect(contributor) {
-            githubApiService.getUser(contributor.username).enqueue(object : Callback<User> {
-              override fun onResponse(call: Call<User>, response: Response<User>) {
-                if (response.isSuccessful) {
-                  user = response.body()
-                }
-              }
+    val uriHandler = LocalUriHandler.current
 
-              override fun onFailure(call: Call<User>, throwable: Throwable) {
-                throwable.printStackTrace()
-              }
-            })
-          }
-
-          Row(
-            modifier = Modifier
-              .clip(RoundedCornerShape(16.dp))
-              .clickable {
-                uriHandler.openUri(contributor.profileUrl)
-              },
-            verticalAlignment = Alignment.CenterVertically
-          ) {
-            AsyncImage(
-              model = user?.avatarUrl ?: contributor.avatarUrl,
-              contentDescription = null,
-              modifier = Modifier
-                .padding(start = 14.dp, end = 2.dp, top = 5.dp, bottom = 5.dp)
-                .clip(CircleShape)
-                .size(50.dp),
-            )
-
-            Column(
-              modifier = Modifier.padding(10.dp)
+    LaunchedEffect(Unit) {
+        contributorsCall.enqueue(object : Callback<List<Contributor>> {
+            override fun onResponse(
+                call: Call<List<Contributor>>,
+                response: Response<List<Contributor>>
             ) {
-              Text(
-                text = user?.name ?: contributor.username,
-                style = MaterialTheme.typography.bodyMedium
-              )
-
-              Text(
-                text = user?.bio ?: contributor.profileUrl,
-                color = Color(0xFF2A61E7).harmonizeWithPrimary(0.4f),
-                style = MaterialTheme.typography.bodySmall
-              )
+                if (response.isSuccessful) {
+                    response.body()?.let { contributorList.addAll(it) }
+                    isLoadingContributors = false
+                }
             }
-          }
-        }
-      }
+
+            override fun onFailure(call: Call<List<Contributor>>, throwable: Throwable) {
+                isLoadingContributors = false
+            }
+        })
     }
-  }
+
+    OutlinedCard(modifier = modifier) {
+        Text(
+            text = stringResource(R.string.contributors),
+            modifier = Modifier.padding(16.dp),
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.SemiBold
+        )
+
+        if (isLoadingContributors) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        } else {
+            // I will improve this ui later
+            LazyColumn {
+                items(contributorList) { contributor ->
+                    var user by remember { mutableStateOf<User?>(null) }
+
+                    LaunchedEffect(contributor) {
+                        githubApiService.getUser(contributor.username)
+                            .enqueue(object : Callback<User> {
+                                override fun onResponse(
+                                    call: Call<User>,
+                                    response: Response<User>
+                                ) {
+                                    if (response.isSuccessful) {
+                                        user = response.body()
+                                    }
+                                }
+
+                                override fun onFailure(call: Call<User>, throwable: Throwable) {
+                                    throwable.printStackTrace()
+                                }
+                            })
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(16.dp))
+                            .clickable {
+                                uriHandler.openUri(contributor.profileUrl)
+                            },
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        AsyncImage(
+                            model = user?.avatarUrl ?: contributor.avatarUrl,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .padding(start = 14.dp, end = 2.dp, top = 5.dp, bottom = 5.dp)
+                                .clip(CircleShape)
+                                .size(50.dp),
+                        )
+
+                        Column(
+                            modifier = Modifier.padding(10.dp)
+                        ) {
+                            Text(
+                                text = user?.name ?: contributor.username,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+
+                            Text(
+                                text = user?.bio ?: contributor.profileUrl,
+                                color = Color(0xFF2A61E7).harmonizeWithPrimary(0.4f),
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

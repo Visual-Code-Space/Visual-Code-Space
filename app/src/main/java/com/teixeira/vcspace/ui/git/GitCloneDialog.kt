@@ -54,156 +54,156 @@ import java.io.File
 
 @Composable
 fun GitCloneDialog(
-  remoteUrl: String,
-  initialFolder: File?,
-  onDismissRequest: () -> Unit,
-  onCloneSuccess: (File) -> Unit,
-  onCloneFailure: (Throwable) -> Unit,
-  modifier: Modifier = Modifier,
+    remoteUrl: String,
+    initialFolder: File?,
+    onDismissRequest: () -> Unit,
+    onCloneSuccess: (File) -> Unit,
+    onCloneFailure: (Throwable) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-  var localPath by remember {
-    mutableStateOf(
-      if (initialFolder?.isFile == true) {
-        initialFolder.parentFile?.absolutePath ?: APP_EXTERNAL_DIR
-      } else if (initialFolder?.startsWith("/data") == true) {
-        APP_EXTERNAL_DIR
-      } else {
-        initialFolder?.absolutePath ?: APP_EXTERNAL_DIR
-      }
-    )
-  }
-
-  var gitRemoteUrl by remember { mutableStateOf(remoteUrl) }
-  var localClonePath by remember { mutableStateOf(localPath) }
-  var isCloneInProgress by remember { mutableStateOf(false) }
-  var cloneProgress by remember { mutableIntStateOf(0) }
-  var cloneStatusMessage by remember { mutableStateOf("Starting clone...") }
-
-  val context = LocalContext.current
-  val pickCloneDestination = rememberLauncherForActivityResult(
-    contract = ActivityResultContracts.OpenDocumentTree()
-  ) { uri ->
-    if (uri != null) DocumentFile.fromTreeUri(context, uri)?.let {
-      localPath = UriUtils.uri2File(it.uri).absolutePath
+    var localPath by remember {
+        mutableStateOf(
+            if (initialFolder?.isFile == true) {
+                initialFolder.parentFile?.absolutePath ?: APP_EXTERNAL_DIR
+            } else if (initialFolder?.startsWith("/data") == true) {
+                APP_EXTERNAL_DIR
+            } else {
+                initialFolder?.absolutePath ?: APP_EXTERNAL_DIR
+            }
+        )
     }
-  }
 
-  LaunchedEffect(key1 = gitRemoteUrl, key2 = localPath) {
-    if (gitRemoteUrl.isNotEmpty()) {
-      var fullClonePath = "$localPath/${gitRemoteUrl.substringAfterLast("/")}"
-      if (fullClonePath.endsWith(".git")) {
-        fullClonePath = fullClonePath.substringBeforeLast(".")
-      }
-      localClonePath = fullClonePath
-    }
-  }
+    var gitRemoteUrl by remember { mutableStateOf(remoteUrl) }
+    var localClonePath by remember { mutableStateOf(localPath) }
+    var isCloneInProgress by remember { mutableStateOf(false) }
+    var cloneProgress by remember { mutableIntStateOf(0) }
+    var cloneStatusMessage by remember { mutableStateOf("Starting clone...") }
 
-  val ioScope = rememberCoroutineScope { Dispatchers.IO }
-
-  AlertDialog(
-    modifier = modifier,
-    onDismissRequest = onDismissRequest,
-    title = {
-      Text(text = stringResource(strings.git_clone_repo))
-    },
-    text = {
-      if (isCloneInProgress) {
-        Cloning(progress = cloneProgress, message = cloneStatusMessage)
-      } else {
-        Column {
-          UrlTextField(url = gitRemoteUrl, onUrlChange = { gitRemoteUrl = it })
-          Spacer(modifier = Modifier.height(8.dp))
-          DestinationTextField(
-            destination = localClonePath,
-            onDestinationChange = { localClonePath = it },
-            onPickDestinationClick = { pickCloneDestination.launch(null) }
-          )
+    val context = LocalContext.current
+    val pickCloneDestination = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocumentTree()
+    ) { uri ->
+        if (uri != null) DocumentFile.fromTreeUri(context, uri)?.let {
+            localPath = UriUtils.uri2File(it.uri).absolutePath
         }
-      }
-    },
-    confirmButton = {
-      DialogButton(
-        text = stringResource(strings.git_clone),
-        enabled = !isCloneInProgress && gitRemoteUrl.isNotEmpty() && localClonePath.isNotEmpty(),
-        onClick = {
-          ioScope.launch {
-            isCloneInProgress = true
+    }
 
-            runCatching {
-              VCSGit.instance.clone(
-                url = gitRemoteUrl,
-                destination = localClonePath,
-                onUpdate = { progressPercentage, progressStatus ->
-                  cloneProgress = progressPercentage
-                  cloneStatusMessage = progressStatus
+    LaunchedEffect(key1 = gitRemoteUrl, key2 = localPath) {
+        if (gitRemoteUrl.isNotEmpty()) {
+            var fullClonePath = "$localPath/${gitRemoteUrl.substringAfterLast("/")}"
+            if (fullClonePath.endsWith(".git")) {
+                fullClonePath = fullClonePath.substringBeforeLast(".")
+            }
+            localClonePath = fullClonePath
+        }
+    }
+
+    val ioScope = rememberCoroutineScope { Dispatchers.IO }
+
+    AlertDialog(
+        modifier = modifier,
+        onDismissRequest = onDismissRequest,
+        title = {
+            Text(text = stringResource(strings.git_clone_repo))
+        },
+        text = {
+            if (isCloneInProgress) {
+                Cloning(progress = cloneProgress, message = cloneStatusMessage)
+            } else {
+                Column {
+                    UrlTextField(url = gitRemoteUrl, onUrlChange = { gitRemoteUrl = it })
+                    Spacer(modifier = Modifier.height(8.dp))
+                    DestinationTextField(
+                        destination = localClonePath,
+                        onDestinationChange = { localClonePath = it },
+                        onPickDestinationClick = { pickCloneDestination.launch(null) }
+                    )
                 }
-              )
-            }.onSuccess {
-              isCloneInProgress = false
-              onCloneSuccess(localClonePath.toFile())
-              onDismissRequest()
-            }.onFailure(onCloneFailure)
-          }
-        }
-      )
-    },
-    dismissButton = {
-      if (isCloneInProgress.not()) {
-        DialogButton(text = stringResource(strings.cancel), onClick = onDismissRequest)
-      }
-    },
-    properties = DialogProperties(
-      dismissOnClickOutside = !isCloneInProgress,
-      dismissOnBackPress = !isCloneInProgress
+            }
+        },
+        confirmButton = {
+            DialogButton(
+                text = stringResource(strings.git_clone),
+                enabled = !isCloneInProgress && gitRemoteUrl.isNotEmpty() && localClonePath.isNotEmpty(),
+                onClick = {
+                    ioScope.launch {
+                        isCloneInProgress = true
+
+                        runCatching {
+                            VCSGit.instance.clone(
+                                url = gitRemoteUrl,
+                                destination = localClonePath,
+                                onUpdate = { progressPercentage, progressStatus ->
+                                    cloneProgress = progressPercentage
+                                    cloneStatusMessage = progressStatus
+                                }
+                            )
+                        }.onSuccess {
+                            isCloneInProgress = false
+                            onCloneSuccess(localClonePath.toFile())
+                            onDismissRequest()
+                        }.onFailure(onCloneFailure)
+                    }
+                }
+            )
+        },
+        dismissButton = {
+            if (isCloneInProgress.not()) {
+                DialogButton(text = stringResource(strings.cancel), onClick = onDismissRequest)
+            }
+        },
+        properties = DialogProperties(
+            dismissOnClickOutside = !isCloneInProgress,
+            dismissOnBackPress = !isCloneInProgress
+        )
     )
-  )
 }
 
 @Composable
 private fun Cloning(
-  progress: Int,
-  message: String
+    progress: Int,
+    message: String
 ) {
-  Column {
-    Text(text = "$message ($progress%)")
-    Spacer(modifier = Modifier.height(8.dp))
-    LinearProgressIndicator(progress = { progress / 100f })
-  }
+    Column {
+        Text(text = "$message ($progress%)")
+        Spacer(modifier = Modifier.height(8.dp))
+        LinearProgressIndicator(progress = { progress / 100f })
+    }
 }
 
 @Composable
 private fun UrlTextField(
-  url: String,
-  onUrlChange: (String) -> Unit
+    url: String,
+    onUrlChange: (String) -> Unit
 ) {
-  OutlinedTextField(
-    value = url,
-    onValueChange = onUrlChange,
-    label = {
-      Text(text = stringResource(strings.git_url))
-    }
-  )
+    OutlinedTextField(
+        value = url,
+        onValueChange = onUrlChange,
+        label = {
+            Text(text = stringResource(strings.git_url))
+        }
+    )
 }
 
 @Composable
 private fun DestinationTextField(
-  destination: String,
-  onDestinationChange: (String) -> Unit,
-  onPickDestinationClick: () -> Unit
+    destination: String,
+    onDestinationChange: (String) -> Unit,
+    onPickDestinationClick: () -> Unit
 ) {
-  OutlinedTextField(
-    value = destination,
-    onValueChange = onDestinationChange,
-    label = {
-      Text(text = stringResource(strings.git_destination_path))
-    },
-    trailingIcon = {
-      IconButton(onClick = onPickDestinationClick) {
-        Icon(
-          Icons.Rounded.Folder,
-          contentDescription = null
-        )
-      }
-    }
-  )
+    OutlinedTextField(
+        value = destination,
+        onValueChange = onDestinationChange,
+        label = {
+            Text(text = stringResource(strings.git_destination_path))
+        },
+        trailingIcon = {
+            IconButton(onClick = onPickDestinationClick) {
+                Icon(
+                    Icons.Rounded.Folder,
+                    contentDescription = null
+                )
+            }
+        }
+    )
 }

@@ -60,179 +60,180 @@ import java.util.UUID
 import kotlin.math.max
 
 class PluginContextImpl(
-  editorActivity: EditorActivity,
-  editorViewModel: EditorViewModel,
-  private val compositionContext: CompositionContext
+    editorActivity: EditorActivity,
+    editorViewModel: EditorViewModel,
+    private val compositionContext: CompositionContext
 ) : PluginContext {
-  override val appContext: Context = editorActivity
-  override val editor: Editor
-  override val rootView: ViewGroup
-    get() = activity.rootView()
+    override val appContext: Context = editorActivity
+    override val editor: Editor
+    override val rootView: ViewGroup
+        get() = activity.rootView()
 
-  private val activity = editorActivity
-  private var editorViewModel: EditorViewModel
+    private val activity = editorActivity
+    private var editorViewModel: EditorViewModel
 
-  init {
-    this.editorViewModel = editorViewModel
-    this.editor = EditorImpl(EditorListener())
-  }
-
-  override val openedFolder: File?
-    get() = activity.openedFolder()?.asRawFile()
-
-  override fun registerCommand(command: EditorCommand) {
-    val commandManager = CommandPaletteManager.instance
-    commandManager.addCommand(Command.newCommand(command.name, command.keyBinding) {
-      command.execute(editor)
-    })
-  }
-
-  override fun addMenu(menuItem: MenuItem) {
-    val menuManager = MenuManager.instance
-    menuManager.addMenu(
-      com.teixeira.vcspace.core.menu.MenuItem(
-        menuItem.title,
-        menuItem.id,
-        visible = true,
-        enabled = true,
-        shortcut = menuItem.shortcut,
-        icon = null,
-        trailingIcon = null,
-        onClick = menuItem.action::doAction
-      )
-    )
-  }
-
-  override fun openFile(file: File) {
-    activity.openFile(file.wrapFile())
-  }
-
-  override fun createComposePanel(
-    title: String,
-    content: ComposeFactory,
-    dismissOnClickOutside: Boolean
-  ): Panel {
-    return createComposePanelInternal(title, { content.Create() }, dismissOnClickOutside)
-  }
-
-  override fun <T : View> createViewPanel(
-    title: String,
-    factory: ViewFactory<T>,
-    update: ViewUpdater<T>,
-    dismissOnClickOutside: Boolean
-  ): Panel {
-    return createComposePanelInternal(title, @Composable {
-      AndroidView(
-        factory = factory::create,
-        modifier = Modifier.wrapContentSize(),
-        update = update::accept
-      )
-    }, dismissOnClickOutside)
-  }
-
-  override fun removePanel(panelId: String): Boolean {
-    val panelManager = PanelManager.instance
-    val panel = panelManager.getPanelById(panelId) ?: return false
-    panel.hide()
-
-    panelManager.removePanel(id = panelId)
-    return true
-  }
-
-  override fun doActionOnIOThread(action: Runnable) {
-    activity.lifecycleScope.launch(Dispatchers.IO + SupervisorJob()) {
-      action.run()
-    }
-  }
-
-  override fun doActionOnMainThread(action: Runnable) {
-    activity.lifecycleScope.launch(Dispatchers.Main.immediate + SupervisorJob()) {
-      action.run()
-    }
-  }
-
-  private fun createComposePanelInternal(
-    title: String,
-    content: @Composable () -> Unit,
-    dismissOnClickOutside: Boolean,
-  ): Panel {
-    val id = UUID.randomUUID().toString()
-    val panel = PanelManager.instance.addPanel(id, title) { content() }
-
-    @Composable
-    fun PanelComposable() {
-      val isVisible by remember { derivedStateOf { panel.isVisible } }
-      var internalOffset by remember { mutableStateOf(panel.offset) }
-      LaunchedEffect(panel.offset) {
-        internalOffset = panel.offset
-      }
-
-      if (isVisible) {
-        DraggableFloatingPanel(
-          title = title,
-          offset = internalOffset,
-          onOffsetChange = { newOffset ->
-            internalOffset = newOffset
-            panel.offset = newOffset
-          },
-          onDismiss = { panel.hide() },
-          dismissOnClickOutside = dismissOnClickOutside,
-        ) {
-          content()
-        }
-      }
+    init {
+        this.editorViewModel = editorViewModel
+        this.editor = EditorImpl(EditorListener())
     }
 
-    runOnUiThread {
-      val composeView = ComposeView(activity).apply {
-        setParentCompositionContext(compositionContext)
-        setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindowOrReleasedFromPool)
-        setContent {
-          if (panel.isVisible) {
-            PanelComposable()
-          }
-        }
-      }
-      activity.rootView().addView(composeView)
+    override val openedFolder: File?
+        get() = activity.openedFolder()?.asRawFile()
+
+    override fun registerCommand(command: EditorCommand) {
+        val commandManager = CommandPaletteManager.instance
+        commandManager.addCommand(Command.newCommand(command.name, command.keyBinding) {
+            command.execute(editor)
+        })
     }
 
-    return panel
-  }
+    override fun addMenu(menuItem: MenuItem) {
+        val menuManager = MenuManager.instance
+        menuManager.addMenu(
+            com.teixeira.vcspace.core.menu.MenuItem(
+                menuItem.title,
+                menuItem.id,
+                visible = true,
+                enabled = true,
+                shortcut = menuItem.shortcut,
+                icon = null,
+                trailingIcon = null,
+                onClick = menuItem.action::doAction
+            )
+        )
+    }
 
-  private inner class EditorListener : EditorImpl.Listener {
-    override val currentFile: File?
-      get() {
-        val selectedFile = editorViewModel.uiState.value.selectedFile ?: return null
-        return selectedFile.file.asRawFile()
-      }
+    override fun openFile(file: File) {
+        activity.openFile(file.wrapFile())
+    }
 
-    override val context: Context
-      get() = appContext
+    override fun createComposePanel(
+        title: String,
+        content: ComposeFactory,
+        dismissOnClickOutside: Boolean
+    ): Panel {
+        return createComposePanelInternal(title, { content.Create() }, dismissOnClickOutside)
+    }
 
-    override var cursorPosition: Position
-      get() {
-        val editor = activity.currentEditor
-        if (editor is MonacoEditor) {
-          val position = editor.position
-          return Position(position.lineNumber, position.column)
-        } else if (editor is CodeEditorView) {
-          val cursor = editor.editor.cursor
-          return Position(cursor.leftLine, cursor.leftColumn)
+    override fun <T : View> createViewPanel(
+        title: String,
+        factory: ViewFactory<T>,
+        update: ViewUpdater<T>,
+        dismissOnClickOutside: Boolean
+    ): Panel {
+        return createComposePanelInternal(title, @Composable {
+            AndroidView(
+                factory = factory::create,
+                modifier = Modifier.wrapContentSize(),
+                update = update::accept
+            )
+        }, dismissOnClickOutside)
+    }
+
+    override fun removePanel(panelId: String): Boolean {
+        val panelManager = PanelManager.instance
+        val panel = panelManager.getPanelById(panelId) ?: return false
+        panel.hide()
+
+        panelManager.removePanel(id = panelId)
+        return true
+    }
+
+    override fun doActionOnIOThread(action: Runnable) {
+        activity.lifecycleScope.launch(Dispatchers.IO + SupervisorJob()) {
+            action.run()
         }
-        return Position()
-      }
-      set(position) {
-        val editor = activity.currentEditor
-        if (editor is MonacoEditor) {
-          editor.position = com.itsvks.monaco.option.Position(position.lineNumber, position.column)
-        } else if (editor is CodeEditorView) {
-          val cursor = editor.editor.cursor
-          cursor.set(max(position.lineNumber - 1, 0), max(position.column - 1, 0))
-        }
-      }
-  }
+    }
 
-  fun setEditorViewModel(editorViewModel: EditorViewModel) {
-    this.editorViewModel = editorViewModel
-  }
+    override fun doActionOnMainThread(action: Runnable) {
+        activity.lifecycleScope.launch(Dispatchers.Main.immediate + SupervisorJob()) {
+            action.run()
+        }
+    }
+
+    private fun createComposePanelInternal(
+        title: String,
+        content: @Composable () -> Unit,
+        dismissOnClickOutside: Boolean,
+    ): Panel {
+        val id = UUID.randomUUID().toString()
+        val panel = PanelManager.instance.addPanel(id, title) { content() }
+
+        @Composable
+        fun PanelComposable() {
+            val isVisible by remember { derivedStateOf { panel.isVisible } }
+            var internalOffset by remember { mutableStateOf(panel.offset) }
+            LaunchedEffect(panel.offset) {
+                internalOffset = panel.offset
+            }
+
+            if (isVisible) {
+                DraggableFloatingPanel(
+                    title = title,
+                    offset = internalOffset,
+                    onOffsetChange = { newOffset ->
+                        internalOffset = newOffset
+                        panel.offset = newOffset
+                    },
+                    onDismiss = { panel.hide() },
+                    dismissOnClickOutside = dismissOnClickOutside,
+                ) {
+                    content()
+                }
+            }
+        }
+
+        runOnUiThread {
+            val composeView = ComposeView(activity).apply {
+                setParentCompositionContext(compositionContext)
+                setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindowOrReleasedFromPool)
+                setContent {
+                    if (panel.isVisible) {
+                        PanelComposable()
+                    }
+                }
+            }
+            activity.rootView().addView(composeView)
+        }
+
+        return panel
+    }
+
+    private inner class EditorListener : EditorImpl.Listener {
+        override val currentFile: File?
+            get() {
+                val selectedFile = editorViewModel.uiState.value.selectedFile ?: return null
+                return selectedFile.file.asRawFile()
+            }
+
+        override val context: Context
+            get() = appContext
+
+        override var cursorPosition: Position
+            get() {
+                val editor = activity.currentEditor
+                if (editor is MonacoEditor) {
+                    val position = editor.position
+                    return Position(position.lineNumber, position.column)
+                } else if (editor is CodeEditorView) {
+                    val cursor = editor.editor.cursor
+                    return Position(cursor.leftLine, cursor.leftColumn)
+                }
+                return Position()
+            }
+            set(position) {
+                val editor = activity.currentEditor
+                if (editor is MonacoEditor) {
+                    editor.position =
+                        com.itsvks.monaco.option.Position(position.lineNumber, position.column)
+                } else if (editor is CodeEditorView) {
+                    val cursor = editor.editor.cursor
+                    cursor.set(max(position.lineNumber - 1, 0), max(position.column - 1, 0))
+                }
+            }
+    }
+
+    fun setEditorViewModel(editorViewModel: EditorViewModel) {
+        this.editorViewModel = editorViewModel
+    }
 }

@@ -17,57 +17,57 @@ package com.itsvks.monaco.option
 
 @JvmInline
 value class TextEditorCursorStyle private constructor(override val value: Int) : Option<Int> {
-  override fun toString(): String {
-    return when (value) {
-      1 -> "Line"
-      2 -> "Block"
-      3 -> "Underline"
-      4 -> "LineThin"
-      5 -> "BlockOutline"
-      6 -> "UnderlineThin"
-      else -> throw IllegalArgumentException("Unknown value: $value")
-    }
-  }
-
-  companion object {
-    fun fromValue(value: Int) = when (value) {
-      1 -> Line
-      2 -> Block
-      3 -> Underline
-      4 -> LineThin
-      5 -> BlockOutline
-      6 -> UnderlineThin
-      else -> throw IllegalArgumentException("Unknown value: $value")
+    override fun toString(): String {
+        return when (value) {
+            1 -> "Line"
+            2 -> "Block"
+            3 -> "Underline"
+            4 -> "LineThin"
+            5 -> "BlockOutline"
+            6 -> "UnderlineThin"
+            else -> throw IllegalArgumentException("Unknown value: $value")
+        }
     }
 
-    /**
-     * As a vertical line (sitting between two characters).
-     */
-    val Line = TextEditorCursorStyle(1)
+    companion object {
+        fun fromValue(value: Int) = when (value) {
+            1 -> Line
+            2 -> Block
+            3 -> Underline
+            4 -> LineThin
+            5 -> BlockOutline
+            6 -> UnderlineThin
+            else -> throw IllegalArgumentException("Unknown value: $value")
+        }
 
-    /**
-     * As a block (sitting on top of a character).
-     */
-    val Block = TextEditorCursorStyle(2)
+        /**
+         * As a vertical line (sitting between two characters).
+         */
+        val Line = TextEditorCursorStyle(1)
 
-    /**
-     * As a horizontal line (sitting under a character).
-     */
-    val Underline = TextEditorCursorStyle(3)
+        /**
+         * As a block (sitting on top of a character).
+         */
+        val Block = TextEditorCursorStyle(2)
 
-    /**
-     * As a thin vertical line (sitting between two characters).
-     */
-    val LineThin = TextEditorCursorStyle(4)
+        /**
+         * As a horizontal line (sitting under a character).
+         */
+        val Underline = TextEditorCursorStyle(3)
 
-    /**
-     * As an outlined block (sitting on top of a character).
-     */
-    val BlockOutline = TextEditorCursorStyle(5)
+        /**
+         * As a thin vertical line (sitting between two characters).
+         */
+        val LineThin = TextEditorCursorStyle(4)
 
-    /**
-     * As a thin horizontal line (sitting under a character).
-     */
-    val UnderlineThin = TextEditorCursorStyle(6)
-  }
+        /**
+         * As an outlined block (sitting on top of a character).
+         */
+        val BlockOutline = TextEditorCursorStyle(5)
+
+        /**
+         * As a thin horizontal line (sitting under a character).
+         */
+        val UnderlineThin = TextEditorCursorStyle(6)
+    }
 }

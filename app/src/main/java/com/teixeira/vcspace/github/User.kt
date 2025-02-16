@@ -18,23 +18,23 @@ package com.teixeira.vcspace.github
 import com.google.gson.annotations.SerializedName
 
 data class User(
-  @SerializedName("login")
-  val username: String,
-  val id: Int,
-  @SerializedName("avatar_url")
-  val avatarUrl: String,
-  @SerializedName("html_url")
-  val profileUrl: String,
-  val name: String?,
-  val bio: String?,
-  val company: String?,
-  val blog: String?,
-  val location: String?,
-  val email: String?,
-  @SerializedName("public_repos")
-  val publicRepositories: Int,
-  @SerializedName("public_gists")
-  val publicGists: Int,
-  val followers: Int,
-  val following: Int
+    @SerializedName("login")
+    val username: String,
+    val id: Int,
+    @SerializedName("avatar_url")
+    val avatarUrl: String,
+    @SerializedName("html_url")
+    val profileUrl: String,
+    val name: String?,
+    val bio: String?,
+    val company: String?,
+    val blog: String?,
+    val location: String?,
+    val email: String?,
+    @SerializedName("public_repos")
+    val publicRepositories: Int,
+    @SerializedName("public_gists")
+    val publicGists: Int,
+    val followers: Int,
+    val following: Int
 )

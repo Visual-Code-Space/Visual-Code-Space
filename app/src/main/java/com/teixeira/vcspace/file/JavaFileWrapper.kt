@@ -27,96 +27,97 @@ import java.io.IOException
 import java.util.Locale
 
 internal data class JavaFileWrapper(
-  private val raw: java.io.File
+    private val raw: java.io.File
 ) : File {
-  override val absolutePath: String
-    get() = raw.absolutePath
-  override val canonicalPath: String
-    get() = raw.canonicalPath
-  override val canRestoreFromPath: Boolean
-    get() = true
-  override val isDirectory: Boolean
-    get() = raw.isDirectory
-  override val isFile: Boolean
-    get() = raw.isFile
-  override val isValidText: Boolean
-    get() = isValidTextFile(raw)
-  override val name: String
-    get() = raw.name
-  override val mimeType: String
-    get() {
-      val lastDot = name.lastIndexOf('.')
-      if (lastDot >= 0) {
-        val extension = name.substring(lastDot + 1).lowercase(Locale.getDefault())
-        val mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
-        if (mime != null) {
-          return mime
+    override val absolutePath: String
+        get() = raw.absolutePath
+    override val canonicalPath: String
+        get() = raw.canonicalPath
+    override val canRestoreFromPath: Boolean
+        get() = true
+    override val isDirectory: Boolean
+        get() = raw.isDirectory
+    override val isFile: Boolean
+        get() = raw.isFile
+    override val isValidText: Boolean
+        get() = isValidTextFile(raw)
+    override val name: String
+        get() = raw.name
+    override val mimeType: String
+        get() {
+            val lastDot = name.lastIndexOf('.')
+            if (lastDot >= 0) {
+                val extension = name.substring(lastDot + 1).lowercase(Locale.getDefault())
+                val mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+                if (mime != null) {
+                    return mime
+                }
+            }
+            return "application/octet-stream"
         }
-      }
-      return "application/octet-stream"
+    override val parent: String?
+        get() = raw.parent
+    override val parentFile: File?
+        get() = raw.parentFile?.let { JavaFileWrapper(it) }
+    override val path: String
+        get() = raw.path
+
+    override fun asRawFile(): java.io.File = raw
+
+    override fun childExists(childName: String): Boolean = java.io.File(raw, childName).exists()
+
+    override fun createNewFile(fileName: String): File? {
+        val target = java.io.File(raw, fileName)
+        try {
+            target.createNewFile()
+            return JavaFileWrapper(target)
+        } catch (e: IOException) {
+            return null
+        }
     }
-  override val parent: String?
-    get() = raw.parent
-  override val parentFile: File?
-    get() = raw.parentFile?.let { JavaFileWrapper(it) }
-  override val path: String
-    get() = raw.path
 
-  override fun asRawFile(): java.io.File = raw
-
-  override fun childExists(childName: String): Boolean = java.io.File(raw, childName).exists()
-
-  override fun createNewFile(fileName: String): File? {
-    val target = java.io.File(raw, fileName)
-    try {
-      target.createNewFile()
-      return JavaFileWrapper(target)
-    } catch (e: IOException) {
-      return null
+    override fun createNewDirectory(fileName: String): File? {
+        val target = java.io.File(raw, fileName)
+        try {
+            target.mkdirs()
+            return JavaFileWrapper(target)
+        } catch (e: IOException) {
+            return null
+        }
     }
-  }
 
-  override fun createNewDirectory(fileName: String): File? {
-    val target = java.io.File(raw, fileName)
-    try {
-      target.mkdirs()
-      return JavaFileWrapper(target)
-    } catch (e: IOException) {
-      return null
+    override fun delete(): Boolean = raw.delete()
+
+    override fun exists(): Boolean = raw.exists()
+
+    override fun lastModified(): Long =
+        raw.lastModified()
+
+    override fun listFiles(): Array<out File>? =
+        raw.listFiles()?.map { JavaFileWrapper(it) }?.toTypedArray()
+
+    override fun renameTo(newName: String): File? {
+        val dest = java.io.File(raw.parentFile, newName)
+        return if (raw.renameTo(dest)) JavaFileWrapper(dest) else null
     }
-  }
-  override fun delete(): Boolean = raw.delete()
 
-  override fun exists(): Boolean = raw.exists()
+    override fun uri(context: Context): Uri =
+        FileProvider.getUriForFile(
+            context,
+            "${context.packageName}.provider",
+            raw
+        )
 
-  override fun lastModified(): Long =
-    raw.lastModified()
+    override suspend fun readFile2String(context: Context): String? =
+        FileIOUtils.readFile2String(raw)
 
-  override fun listFiles(): Array<out File>?
-    = raw.listFiles()?.map { JavaFileWrapper(it) }?.toTypedArray()
-
-  override fun renameTo(newName: String): File? {
-    val dest = java.io.File(raw.parentFile, newName)
-    return if (raw.renameTo(dest)) JavaFileWrapper(dest) else null
-  }
-
-  override fun uri(context: Context): Uri =
-    FileProvider.getUriForFile(
-      context,
-      "${context.packageName}.provider",
-      raw
-    )
-
-  override suspend fun readFile2String(context: Context): String?
-    = FileIOUtils.readFile2String(raw)
-
-  override suspend fun write(
-    context: Context,
-    content: String,
-    ioDispatcher: CoroutineDispatcher,
-  ): Boolean = withContext(ioDispatcher) {
-    FileIOUtils.writeFileFromString(raw, content)
-  }
+    override suspend fun write(
+        context: Context,
+        content: String,
+        ioDispatcher: CoroutineDispatcher,
+    ): Boolean = withContext(ioDispatcher) {
+        FileIOUtils.writeFileFromString(raw, content)
+    }
 }
 
 /**

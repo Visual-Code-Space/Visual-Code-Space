@@ -41,71 +41,71 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun NavigationSpace(
-  modifier: Modifier = Modifier,
-  state: NavigationSpaceState = rememberNavigationSpaceState(),
-  onItemClick: (NavigationSpaceItem) -> Unit
+    modifier: Modifier = Modifier,
+    state: NavigationSpaceState = rememberNavigationSpaceState(),
+    onItemClick: (NavigationSpaceItem) -> Unit
 ) {
-  val items = remember { state.items }
+    val items = remember { state.items }
 
-  Row(
-    modifier = modifier
-      .height(52.dp)
-      .fillMaxWidth()
-      .padding(horizontal = 2.dp, vertical = 2.dp),
-    horizontalArrangement = Arrangement.SpaceBetween
-  ) {
-    repeat(items.size) {
-      val item = items[it]
+    Row(
+        modifier = modifier
+          .height(52.dp)
+          .fillMaxWidth()
+          .padding(horizontal = 2.dp, vertical = 2.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        repeat(items.size) {
+            val item = items[it]
 
-      ProvideTextStyle(
-        MaterialTheme.typography.labelSmall
-      ) {
-        Card(
-          modifier = Modifier
-            .fillMaxSize()
-            .padding(3.dp)
-            .weight(1f),
-          colors = CardDefaults.cardColors().copy(
-            containerColor = Color.Transparent
-          ),
-          onClick = { onItemClick(item) }
-        ) {
-          Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-          ) {
-            Icon(
-              imageVector = item.icon,
-              contentDescription = item.title,
-              modifier = Modifier.size(20.dp)
-            )
+            ProvideTextStyle(
+                MaterialTheme.typography.labelSmall
+            ) {
+                Card(
+                    modifier = Modifier
+                      .fillMaxSize()
+                      .padding(3.dp)
+                      .weight(1f),
+                    colors = CardDefaults.cardColors().copy(
+                        containerColor = Color.Transparent
+                    ),
+                    onClick = { onItemClick(item) }
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = item.icon,
+                            contentDescription = item.title,
+                            modifier = Modifier.size(20.dp)
+                        )
 
-            Text(text = item.title)
-          }
+                        Text(text = item.title)
+                    }
+                }
+            }
         }
-      }
     }
-  }
 }
 
 @Composable
 fun rememberNavigationSpaceState(
-  items: SnapshotStateList<NavigationSpaceItem> = mutableStateListOf()
+    items: SnapshotStateList<NavigationSpaceItem> = mutableStateListOf()
 ) = remember {
-  NavigationSpaceState(items = items)
+    NavigationSpaceState(items = items)
 }
 
 data class NavigationSpaceItem(
-  val id: Int,
-  val icon: ImageVector,
-  val title: String,
+    val id: Int,
+    val icon: ImageVector,
+    val title: String,
 )
 
 class NavigationSpaceState(
-  val items: SnapshotStateList<NavigationSpaceItem>
+    val items: SnapshotStateList<NavigationSpaceItem>
 ) {
-  fun add(item: NavigationSpaceItem) {
-    items.add(item)
-  }
+    fun add(item: NavigationSpaceItem) {
+        items.add(item)
+    }
 }

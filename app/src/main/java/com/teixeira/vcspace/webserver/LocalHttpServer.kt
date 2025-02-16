@@ -20,45 +20,49 @@ import java.io.File
 import java.io.IOException
 
 class LocalHttpServer(
-  private val directory: String,
-  port: Int = 0,
-  private val serve: ((File, IHTTPSession) -> Response?)? = null
+    private val directory: String,
+    port: Int = 0,
+    private val serve: ((File, IHTTPSession) -> Response?)? = null
 ) : NanoHTTPD(port) {
-  val assignedPort: Int
-    get() = listeningPort
+    val assignedPort: Int
+        get() = listeningPort
 
-  override fun serve(session: IHTTPSession): Response {
-    val requestedUri = session.uri
-    val file = if (requestedUri == "/") {
-      File(directory, "index.html").normalize()
-    } else {
-      File(directory, requestedUri).normalize()
-    }
+    override fun serve(session: IHTTPSession): Response {
+        val requestedUri = session.uri
+        val file = if (requestedUri == "/") {
+            File(directory, "index.html").normalize()
+        } else {
+            File(directory, requestedUri).normalize()
+        }
 
-    if (serve != null) {
-      val response = serve.invoke(file, session)
-      if (response != null) {
-        return response
-      }
-    }
+        if (serve != null) {
+            val response = serve.invoke(file, session)
+            if (response != null) {
+                return response
+            }
+        }
 
-    if (
-      !file.exists() ||
-      !file.isFile ||
-      !file.canonicalPath.startsWith(File(directory).canonicalPath)
-    ) {
-      return newFixedLengthResponse(Response.Status.NOT_FOUND, MIME_PLAINTEXT, "404 Not Found")
-    }
+        if (
+            !file.exists() ||
+            !file.isFile ||
+            !file.canonicalPath.startsWith(File(directory).canonicalPath)
+        ) {
+            return newFixedLengthResponse(
+                Response.Status.NOT_FOUND,
+                MIME_PLAINTEXT,
+                "404 Not Found"
+            )
+        }
 
-    return try {
-      val mimeType = getMimeTypeForFile(file.absolutePath)
-      newFixedLengthResponse(Response.Status.OK, mimeType, file.inputStream(), file.length())
-    } catch (e: IOException) {
-      newFixedLengthResponse(
-        Response.Status.INTERNAL_ERROR,
-        MIME_PLAINTEXT,
-        "500 Internal Server Error"
-      )
+        return try {
+            val mimeType = getMimeTypeForFile(file.absolutePath)
+            newFixedLengthResponse(Response.Status.OK, mimeType, file.inputStream(), file.length())
+        } catch (e: IOException) {
+            newFixedLengthResponse(
+                Response.Status.INTERNAL_ERROR,
+                MIME_PLAINTEXT,
+                "500 Internal Server Error"
+            )
+        }
     }
-  }
 }

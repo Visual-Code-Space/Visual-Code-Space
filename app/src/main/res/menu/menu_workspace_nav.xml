@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu
-  xmlns:android="http://schemas.android.com/apk/res/android">
-  <item
-    android:id="@id/fragmentExplorer"
-    android:icon="@drawable/ic_folder"
-    android:title="@string/file_explorer" />
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@id/fragmentExplorer"
+        android:icon="@drawable/ic_folder"
+        android:title="@string/file_explorer" />
 
-  <item
-    android:id="@+id/menu_terminal"
-    android:icon="@drawable/ic_console_line"
-    android:title="@string/terminal" />
+    <item
+        android:id="@+id/menu_terminal"
+        android:icon="@drawable/ic_console_line"
+        android:title="@string/terminal" />
 
-  <item
-    android:id="@+id/menu_preferences"
-    android:icon="@drawable/ic_settings"
-    android:title="@string/settings" />
+    <item
+        android:id="@+id/menu_preferences"
+        android:icon="@drawable/ic_settings"
+        android:title="@string/settings" />
 
 </menu>

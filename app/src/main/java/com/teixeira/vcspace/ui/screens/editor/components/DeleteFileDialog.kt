@@ -22,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import com.blankj.utilcode.util.FileUtils
 import com.teixeira.vcspace.events.OnDeleteFileEvent
 import com.teixeira.vcspace.file.File
 import com.teixeira.vcspace.resources.R
@@ -34,47 +33,48 @@ import org.greenrobot.eventbus.EventBus
 
 @Composable
 fun DeleteFileDialog(
-  file: File,
-  openedFolder: File,
-  onDismissRequest: () -> Unit
+    file: File,
+    openedFolder: File,
+    onDismissRequest: () -> Unit
 ) {
-  val context = LocalContext.current
-  val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
-  AlertDialog(
-    onDismissRequest = onDismissRequest,
-    title = { Text(stringResource(R.string.file_delete)) },
-    text = { Text(stringResource(R.string.file_delete_message, file.name)) },
-    confirmButton = {
-      TextButton(onClick = {
-        scope.launchWithProgressDialog(
-          uiContext = context,
-          configureBuilder = { builder ->
-            builder.setMessage(R.string.file_deleting)
-            builder.setCancelable(false)
-          },
-          action = { _, _ ->
-            val deleted = file.delete()
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        title = { Text(stringResource(R.string.file_delete)) },
+        text = { Text(stringResource(R.string.file_delete_message, file.name)) },
+        confirmButton = {
+            TextButton(onClick = {
+                scope.launchWithProgressDialog(
+                    uiContext = context,
+                    configureBuilder = { builder ->
+                        builder.setMessage(R.string.file_deleting)
+                        builder.setCancelable(false)
+                    },
+                    action = { _, _ ->
+                        val deleted = file.delete()
 
-            if (!deleted) {
-              return@launchWithProgressDialog
+                        if (!deleted) {
+                            return@launchWithProgressDialog
+                        }
+
+                        EventBus.getDefault()
+                            .post(OnDeleteFileEvent(file, openedFolder = openedFolder))
+
+                        withContext(Dispatchers.Main) {
+                            showShortToast(context, context.getString(R.string.file_deleted))
+                        }
+
+                        onDismissRequest()
+                    },
+                )
+            }) { Text(stringResource(R.string.yes)) }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismissRequest) {
+                Text(stringResource(R.string.no))
             }
-
-            EventBus.getDefault().post(OnDeleteFileEvent(file, openedFolder = openedFolder))
-
-            withContext(Dispatchers.Main) {
-              showShortToast(context, context.getString(R.string.file_deleted))
-            }
-
-            onDismissRequest()
-          },
-        )
-      }) { Text(stringResource(R.string.yes)) }
-    },
-    dismissButton = {
-      TextButton(onClick = onDismissRequest) {
-        Text(stringResource(R.string.no))
-      }
-    }
-  )
+        }
+    )
 }

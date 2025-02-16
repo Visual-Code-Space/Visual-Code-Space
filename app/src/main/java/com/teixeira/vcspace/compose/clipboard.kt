@@ -23,12 +23,12 @@ import androidx.compose.ui.platform.LocalClipboardManager
 @ReadOnlyComposable
 @Composable
 fun clipUrl(): String? {
-  val clipboardManager = LocalClipboardManager.current
-  clipboardManager.getText() ?: return null
+    val clipboardManager = LocalClipboardManager.current
+    clipboardManager.getText() ?: return null
 
-  return if (URLUtil.isValidUrl(clipboardManager.getText().toString())) {
-    clipboardManager.getText().toString()
-  } else {
-    null
-  }
+    return if (URLUtil.isValidUrl(clipboardManager.getText().toString())) {
+        clipboardManager.getText().toString()
+    } else {
+        null
+    }
 }

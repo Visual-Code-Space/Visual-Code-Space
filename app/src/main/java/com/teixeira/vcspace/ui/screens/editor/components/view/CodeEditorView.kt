@@ -57,213 +57,213 @@ import org.greenrobot.eventbus.ThreadMode
 @SuppressLint("ViewConstructor")
 class CodeEditorView(context: Context, file: File) : LinearLayout(context) {
 
-  private val binding = LayoutCodeEditorBinding.inflate(LayoutInflater.from(context))
+    private val binding = LayoutCodeEditorBinding.inflate(LayoutInflater.from(context))
 
-  private val editorScope = CoroutineScope(Dispatchers.Default)
+    private val editorScope = CoroutineScope(Dispatchers.Default)
 
-  val editor: VCSpaceEditor
-    get() = binding.editor
+    val editor: VCSpaceEditor
+        get() = binding.editor
 
-  val modified: Boolean
-    get() = editor.modified
+    val modified: Boolean
+        get() = editor.modified
 
-  var file: File?
-    get() = editor.file
-    set(value) {
-      editor.file = value
+    var file: File?
+        get() = editor.file
+        set(value) {
+            editor.file = value
+        }
+
+    init {
+        EventBus.getDefault().register(this)
+        binding.searcher.bindSearcher(editor.searcher)
+        binding.editor.apply {
+            this.colorScheme = createColorScheme()
+            this.lineSeparator = LineSeparator.LF
+            this.file = file
+        }
+        configureEditor()
+        readFile(context, file)
+
+        addView(binding.root, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
     }
 
-  init {
-    EventBus.getDefault().register(this)
-    binding.searcher.bindSearcher(editor.searcher)
-    binding.editor.apply {
-      this.colorScheme = createColorScheme()
-      this.lineSeparator = LineSeparator.LF
-      this.file = file
+    private fun readFile(context: Context, file: File) {
+        setLoading(true)
+        editorScope.launch(Dispatchers.IO) {
+            val content = file.readFile2String(context)
+            val language = createLanguage()
+
+            withContext(Dispatchers.Main) {
+                editor.colorScheme = TextMateColorScheme.create(ThemeRegistry.getInstance())
+                editor.setText(content, null)
+                editor.setEditorLanguage(language)
+                setLoading(false)
+            }
+        }
     }
-    configureEditor()
-    readFile(context, file)
 
-    addView(binding.root, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
-  }
-
-  private fun readFile(context: Context, file: File) {
-    setLoading(true)
-    editorScope.launch(Dispatchers.IO) {
-      val content = file.readFile2String(context)
-      val language = createLanguage()
-
-      withContext(Dispatchers.Main) {
-        editor.colorScheme = TextMateColorScheme.create(ThemeRegistry.getInstance())
-        editor.setText(content, null)
-        editor.setEditorLanguage(language)
-        setLoading(false)
-      }
+    fun confirmReload() {
+        if (modified) {
+            MaterialAlertDialogBuilder(context)
+                .setTitle(R.string.file_reload)
+                .setMessage(R.string.file_reload_unsaved_message)
+                .setPositiveButton(R.string.yes) { _, _ -> readFile(context, file!!) }
+                .setNegativeButton(R.string.no, null)
+                .show()
+        } else readFile(context, file!!)
     }
-  }
 
-  fun confirmReload() {
-    if (modified) {
-      MaterialAlertDialogBuilder(context)
-        .setTitle(R.string.file_reload)
-        .setMessage(R.string.file_reload_unsaved_message)
-        .setPositiveButton(R.string.yes) { _, _ -> readFile(context, file!!) }
-        .setNegativeButton(R.string.no, null)
-        .show()
-    } else readFile(context, file!!)
-  }
+    fun undo() = editor.undo()
 
-  fun undo() = editor.undo()
+    fun redo() = editor.redo()
 
-  fun redo() = editor.redo()
+    fun canUndo() = editor.canUndo()
 
-  fun canUndo() = editor.canUndo()
+    fun canRedo() = editor.canRedo()
 
-  fun canRedo() = editor.canRedo()
-
-  fun setModified(modified: Boolean) {
-    editor.modified = modified
-  }
-
-  fun updateFile(file: File, updateContent: Boolean) {
-    this.file = file
-
-    if (updateContent) {
-      readFile(context, file)
-    } else updateLanguage()
-  }
-
-  fun updateLanguage() {
-    setLoading(true)
-    editorScope.launch {
-      val language = createLanguage()
-
-      withContext(Dispatchers.Main) {
-        editor.setEditorLanguage(language)
-        setLoading(false)
-      }
+    fun setModified(modified: Boolean) {
+        editor.modified = modified
     }
-  }
 
-  fun release() {
-    EventBus.getDefault().unregister(this)
-    editorScope.cancelIfActive("Editor has been released")
-    editor.release()
-  }
+    fun updateFile(file: File, updateContent: Boolean) {
+        this.file = file
 
-  suspend fun saveFile() = withContext(Dispatchers.IO) {
-    val file = file
-    if (file != null && modified && file.write(context, editor.text.toString())) {
-      setModified(false)
-      true
-    } else false
-  }
-
-  fun beginSearchMode() {
-    binding.searcher.beginSearchMode()
-  }
-
-  @Subscribe(threadMode = ThreadMode.MAIN)
-  fun onSharedPreferenceChanged(event: OnPreferenceChangeEvent) {
-    when (event.prefKey) {
-      PREF_APPEARANCE_UI_MODE_KEY,
-      PREF_EDITOR_COLORSCHEME_KEY -> updateEditorColorScheme()
-
-      PREF_EDITOR_FONT_KEY -> updateEditorFont()
-      PREF_EDITOR_FONT_SIZE_KEY -> updateFontSize()
-      PREF_EDITOR_INDENT_KEY -> updateEditorIndent()
-      PREF_EDITOR_STICKYSCROLL_KEY -> updateStickyScroll()
-      PREF_EDITOR_FONTLIGATURES_KEY -> updateFontLigatures()
-      PREF_EDITOR_WORDWRAP_KEY -> updateWordWrap()
-      PREF_EDITOR_LINENUMBER_KEY -> updateLineNumbers()
-      PREF_EDITOR_USETAB_KEY -> updateEditorUseTab()
-      PREF_EDITOR_DELETELINEONBACKSPACE_KEY -> updateDeleteEmptyLineFast()
-      PREF_EDITOR_DELETETABONBACKSPACE_KEY -> updateDeleteTabs()
+        if (updateContent) {
+            readFile(context, file)
+        } else updateLanguage()
     }
-  }
 
-  private fun configureEditor() {
-    updateEditorFont()
-    updateFontSize()
-    updateEditorIndent()
-    updateStickyScroll()
-    updateFontLigatures()
-    updateWordWrap()
-    updateLineNumbers()
-    updateDeleteEmptyLineFast()
-    updateDeleteTabs()
-  }
+    fun updateLanguage() {
+        setLoading(true)
+        editorScope.launch {
+            val language = createLanguage()
 
-  private fun updateEditorColorScheme() {
-    ThemeRegistry.getInstance().setTheme(editorColorScheme)
-    // Required to update colors correctly :-)
-    editor.setText(editor.text.toString())
-  }
-
-  private fun updateEditorFont() {
-    val font = ResourcesCompat.getFont(context, editorFont)
-    editor.typefaceText = font
-    editor.typefaceLineNumber = font
-  }
-
-  private fun updateFontSize() {
-    editor.setTextSize(editorFontSize)
-  }
-
-  private fun updateEditorIndent() {
-    (editor.editorLanguage as? VCSpaceTMLanguage)?.tabSize = editorIndent
-    editor.tabWidth = editorIndent
-  }
-
-  private fun updateEditorUseTab() {
-    (editor.editorLanguage as? VCSpaceTMLanguage)?.useTab(editorUseTab)
-  }
-
-  private fun updateStickyScroll() {
-    editor.props.stickyScroll = editorStickyScroll
-  }
-
-  private fun updateFontLigatures() {
-    editor.isLigatureEnabled = editorFontLigatures
-  }
-
-  private fun updateWordWrap() {
-    editor.isWordwrap = editorWordWrap
-  }
-
-  private fun updateLineNumbers() {
-    editor.isLineNumberEnabled = editorLineNumber
-  }
-
-  private fun updateDeleteEmptyLineFast() {
-    editor.props.deleteEmptyLineFast = editorDeleteLineOnBackspace
-  }
-
-  private fun updateDeleteTabs() {
-    editor.props.deleteMultiSpaces = if (editorDeleteTabOnBackspace) -1 else 1
-  }
-
-  private fun setLoading(loading: Boolean) {
-    binding.progress.isVisible = loading
-    editor.isEditable = !loading
-  }
-
-  private fun createColorScheme(): EditorColorScheme {
-    return try {
-      TextMateColorScheme.create(ThemeRegistry.getInstance())
-    } catch (e: Exception) {
-      EditorColorScheme()
+            withContext(Dispatchers.Main) {
+                editor.setEditorLanguage(language)
+                setLoading(false)
+            }
+        }
     }
-  }
 
-  private suspend fun createLanguage(): Language {
-    val scopeName: String? = GrammarProvider.findScopeByFileExtension(file?.extension)
+    fun release() {
+        EventBus.getDefault().unregister(this)
+        editorScope.cancelIfActive("Editor has been released")
+        editor.release()
+    }
 
-    return if (scopeName != null) {
-      VCSpaceTMLanguage.create(scopeName, GrammarRegistry.getInstance(), true).apply {
-        tabSize = editorIndent
-        useTab(editorUseTab)
-      }
-    } else EmptyLanguage()
-  }
+    suspend fun saveFile() = withContext(Dispatchers.IO) {
+        val file = file
+        if (file != null && modified && file.write(context, editor.text.toString())) {
+            setModified(false)
+            true
+        } else false
+    }
+
+    fun beginSearchMode() {
+        binding.searcher.beginSearchMode()
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onSharedPreferenceChanged(event: OnPreferenceChangeEvent) {
+        when (event.prefKey) {
+            PREF_APPEARANCE_UI_MODE_KEY,
+            PREF_EDITOR_COLORSCHEME_KEY -> updateEditorColorScheme()
+
+            PREF_EDITOR_FONT_KEY -> updateEditorFont()
+            PREF_EDITOR_FONT_SIZE_KEY -> updateFontSize()
+            PREF_EDITOR_INDENT_KEY -> updateEditorIndent()
+            PREF_EDITOR_STICKYSCROLL_KEY -> updateStickyScroll()
+            PREF_EDITOR_FONTLIGATURES_KEY -> updateFontLigatures()
+            PREF_EDITOR_WORDWRAP_KEY -> updateWordWrap()
+            PREF_EDITOR_LINENUMBER_KEY -> updateLineNumbers()
+            PREF_EDITOR_USETAB_KEY -> updateEditorUseTab()
+            PREF_EDITOR_DELETELINEONBACKSPACE_KEY -> updateDeleteEmptyLineFast()
+            PREF_EDITOR_DELETETABONBACKSPACE_KEY -> updateDeleteTabs()
+        }
+    }
+
+    private fun configureEditor() {
+        updateEditorFont()
+        updateFontSize()
+        updateEditorIndent()
+        updateStickyScroll()
+        updateFontLigatures()
+        updateWordWrap()
+        updateLineNumbers()
+        updateDeleteEmptyLineFast()
+        updateDeleteTabs()
+    }
+
+    private fun updateEditorColorScheme() {
+        ThemeRegistry.getInstance().setTheme(editorColorScheme)
+        // Required to update colors correctly :-)
+        editor.setText(editor.text.toString())
+    }
+
+    private fun updateEditorFont() {
+        val font = ResourcesCompat.getFont(context, editorFont)
+        editor.typefaceText = font
+        editor.typefaceLineNumber = font
+    }
+
+    private fun updateFontSize() {
+        editor.setTextSize(editorFontSize)
+    }
+
+    private fun updateEditorIndent() {
+        (editor.editorLanguage as? VCSpaceTMLanguage)?.tabSize = editorIndent
+        editor.tabWidth = editorIndent
+    }
+
+    private fun updateEditorUseTab() {
+        (editor.editorLanguage as? VCSpaceTMLanguage)?.useTab(editorUseTab)
+    }
+
+    private fun updateStickyScroll() {
+        editor.props.stickyScroll = editorStickyScroll
+    }
+
+    private fun updateFontLigatures() {
+        editor.isLigatureEnabled = editorFontLigatures
+    }
+
+    private fun updateWordWrap() {
+        editor.isWordwrap = editorWordWrap
+    }
+
+    private fun updateLineNumbers() {
+        editor.isLineNumberEnabled = editorLineNumber
+    }
+
+    private fun updateDeleteEmptyLineFast() {
+        editor.props.deleteEmptyLineFast = editorDeleteLineOnBackspace
+    }
+
+    private fun updateDeleteTabs() {
+        editor.props.deleteMultiSpaces = if (editorDeleteTabOnBackspace) -1 else 1
+    }
+
+    private fun setLoading(loading: Boolean) {
+        binding.progress.isVisible = loading
+        editor.isEditable = !loading
+    }
+
+    private fun createColorScheme(): EditorColorScheme {
+        return try {
+            TextMateColorScheme.create(ThemeRegistry.getInstance())
+        } catch (e: Exception) {
+            EditorColorScheme()
+        }
+    }
+
+    private suspend fun createLanguage(): Language {
+        val scopeName: String? = GrammarProvider.findScopeByFileExtension(file?.extension)
+
+        return if (scopeName != null) {
+            VCSpaceTMLanguage.create(scopeName, GrammarRegistry.getInstance(), true).apply {
+                tabSize = editorIndent
+                useTab(editorUseTab)
+            }
+        } else EmptyLanguage()
+    }
 }

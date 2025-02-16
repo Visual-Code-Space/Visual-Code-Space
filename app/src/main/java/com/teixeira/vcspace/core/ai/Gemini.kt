@@ -29,84 +29,84 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 object Gemini {
-  private val model = GenerativeModel(
-    modelName = "gemini-2.0-flash-thinking-exp-01-21",
-    apiKey = Secrets.getGenerativeAiApiKey(),
-    generationConfig = generationConfig {
-      temperature = 0.7f
-      topK = 64
-      topP = 0.95f
-      maxOutputTokens = 65536
-    },
-    safetySettings = listOf(
-      SafetySetting(HarmCategory.HARASSMENT, BlockThreshold.MEDIUM_AND_ABOVE),
-      SafetySetting(HarmCategory.HATE_SPEECH, BlockThreshold.MEDIUM_AND_ABOVE),
-      SafetySetting(HarmCategory.SEXUALLY_EXPLICIT, BlockThreshold.MEDIUM_AND_ABOVE),
-      SafetySetting(HarmCategory.DANGEROUS_CONTENT, BlockThreshold.MEDIUM_AND_ABOVE),
-    )
-  )
-
-  private suspend fun generateContent(prompt: String) = withContext(Dispatchers.IO) {
-    runCatching {
-      model.generateContent(
-        content { text(prompt) }
-      )
-    }
-  }
-
-  suspend fun explainCode(code: String): Result<GenerateContentResponse> {
-    return generateContent(BaseApplication.instance.getString(R.string.explain_code_msg, code))
-  }
-
-  suspend fun importComponents(code: String): Result<GenerateContentResponse> {
-    if (!isJetpackComposeCode(code)) {
-      return Result.failure(IllegalArgumentException("The provided code does not appear to be Jetpack Compose code."))
-    }
-
-    return generateContent(
-      BaseApplication.instance.getString(
-        R.string.import_compose_components_msg,
-        code
-      )
-    )
-  }
-
-  private fun isJetpackComposeCode(code: String): Boolean {
-    val composeKeywords = listOf(
-      "@Composable", "Modifier", "Column", "Row", "Button", "Text", "Box",
-      "LazyColumn", "LazyRow", "remember", "mutableStateOf"
+    private val model = GenerativeModel(
+        modelName = "gemini-2.0-flash-thinking-exp-01-21",
+        apiKey = Secrets.getGenerativeAiApiKey(),
+        generationConfig = generationConfig {
+            temperature = 0.7f
+            topK = 64
+            topP = 0.95f
+            maxOutputTokens = 65536
+        },
+        safetySettings = listOf(
+            SafetySetting(HarmCategory.HARASSMENT, BlockThreshold.MEDIUM_AND_ABOVE),
+            SafetySetting(HarmCategory.HATE_SPEECH, BlockThreshold.MEDIUM_AND_ABOVE),
+            SafetySetting(HarmCategory.SEXUALLY_EXPLICIT, BlockThreshold.MEDIUM_AND_ABOVE),
+            SafetySetting(HarmCategory.DANGEROUS_CONTENT, BlockThreshold.MEDIUM_AND_ABOVE),
+        )
     )
 
-    return composeKeywords.any { keyword -> code.contains(keyword) }
-  }
-
-  suspend fun generateCode(
-    prompt: String,
-    fileExtension: String? = null
-  ): Result<GenerateContentResponse> {
-    return generateContent("Write the code on based on my prompt${if (!fileExtension.isNullOrEmpty()) " for file extension $fileExtension" else ""} and provide me only code:\nThe prompt:\n\n$prompt")
-  }
-
-  fun removeBackticksFromMarkdownCodeBlock(codeWithBackticks: String?): String {
-    codeWithBackticks ?: return ""
-
-    val trimmedCode = codeWithBackticks.trim()
-
-    if (trimmedCode.startsWith("```") && trimmedCode.endsWith("```")) {
-      val firstNewlineIndex = trimmedCode.indexOf("\n")
-      return if (firstNewlineIndex > 3) {
-        trimmedCode.substring(firstNewlineIndex + 1, trimmedCode.length - 3).trim()
-      } else {
-        trimmedCode.substring(3, trimmedCode.length - 3).trim()
-      }
+    private suspend fun generateContent(prompt: String) = withContext(Dispatchers.IO) {
+        runCatching {
+            model.generateContent(
+                content { text(prompt) }
+            )
+        }
     }
 
-    return codeWithBackticks
-  }
+    suspend fun explainCode(code: String): Result<GenerateContentResponse> {
+        return generateContent(BaseApplication.instance.getString(R.string.explain_code_msg, code))
+    }
 
-  suspend fun completeCode(completionMetadata: CompletionMetadata): Result<GenerateContentResponse> {
-    return generateContent(
-      """
+    suspend fun importComponents(code: String): Result<GenerateContentResponse> {
+        if (!isJetpackComposeCode(code)) {
+            return Result.failure(IllegalArgumentException("The provided code does not appear to be Jetpack Compose code."))
+        }
+
+        return generateContent(
+            BaseApplication.instance.getString(
+                R.string.import_compose_components_msg,
+                code
+            )
+        )
+    }
+
+    private fun isJetpackComposeCode(code: String): Boolean {
+        val composeKeywords = listOf(
+            "@Composable", "Modifier", "Column", "Row", "Button", "Text", "Box",
+            "LazyColumn", "LazyRow", "remember", "mutableStateOf"
+        )
+
+        return composeKeywords.any { keyword -> code.contains(keyword) }
+    }
+
+    suspend fun generateCode(
+        prompt: String,
+        fileExtension: String? = null
+    ): Result<GenerateContentResponse> {
+        return generateContent("Write the code on based on my prompt${if (!fileExtension.isNullOrEmpty()) " for file extension $fileExtension" else ""} and provide me only code:\nThe prompt:\n\n$prompt")
+    }
+
+    fun removeBackticksFromMarkdownCodeBlock(codeWithBackticks: String?): String {
+        codeWithBackticks ?: return ""
+
+        val trimmedCode = codeWithBackticks.trim()
+
+        if (trimmedCode.startsWith("```") && trimmedCode.endsWith("```")) {
+            val firstNewlineIndex = trimmedCode.indexOf("\n")
+            return if (firstNewlineIndex > 3) {
+                trimmedCode.substring(firstNewlineIndex + 1, trimmedCode.length - 3).trim()
+            } else {
+                trimmedCode.substring(3, trimmedCode.length - 3).trim()
+            }
+        }
+
+        return codeWithBackticks
+    }
+
+    suspend fun completeCode(completionMetadata: CompletionMetadata): Result<GenerateContentResponse> {
+        return generateContent(
+            """
       Please complete the following ${completionMetadata.language} code:
       
       ${completionMetadata.textBeforeCursor}
@@ -116,6 +116,6 @@ object Gemini {
       Use modern ${completionMetadata.language} practices and hooks where appropriate. Please provide only the completed part of the
       code without additional comments or explanations.
     """.trimIndent()
-    )
-  }
+        )
+    }
 }

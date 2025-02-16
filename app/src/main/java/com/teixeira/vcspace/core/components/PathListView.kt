@@ -48,75 +48,75 @@ import java.io.File
 
 @Composable
 fun PathListView(
-  path: File?,
-  modifier: Modifier = Modifier,
-  onPathClick: (File) -> Unit
+    path: File?,
+    modifier: Modifier = Modifier,
+    onPathClick: (File) -> Unit
 ) {
-  val paths = remember { mutableStateListOf<File>() }
-  val listState = rememberLazyListState()
+    val paths = remember { mutableStateListOf<File>() }
+    val listState = rememberLazyListState()
 
-  LaunchedEffect(path) {
-    val dir = if (path?.isDirectory == true) path else path?.parentFile
+    LaunchedEffect(path) {
+        val dir = if (path?.isDirectory == true) path else path?.parentFile
 
-    if (dir?.isDirectory == true) {
-      paths.clear()
+        if (dir?.isDirectory == true) {
+            paths.clear()
 
-      var temp: File? = dir
-      while (temp != null) {
-        if (temp.absolutePath.equals("/storage/emulated") || temp.absolutePath.equals("/")) {
-          break
-        } else if (temp.absolutePath.startsWith("/data")) {
-          temp = PathUtils.getExternalStoragePath().toFile()
+            var temp: File? = dir
+            while (temp != null) {
+                if (temp.absolutePath.equals("/storage/emulated") || temp.absolutePath.equals("/")) {
+                    break
+                } else if (temp.absolutePath.startsWith("/data")) {
+                    temp = PathUtils.getExternalStoragePath().toFile()
+                }
+                paths.add(temp)
+                temp = temp.parentFile
+            }
+            paths.reverse()
+
+            listState.animateScrollToItem(paths.size - 1)
         }
-        paths.add(temp)
-        temp = temp.parentFile
-      }
-      paths.reverse()
-
-      listState.animateScrollToItem(paths.size - 1)
     }
-  }
 
-  LazyRow(
-    modifier = modifier,
-    state = listState
-  ) {
-    itemsIndexed(paths) { index, file ->
-      Row(
-        verticalAlignment = Alignment.CenterVertically
-      ) {
-        Text(
-          text = when (file.absolutePath) {
-            "/storage/emulated/0" -> "Device storage"
-            else -> file.name
-          },
-          modifier = Modifier
-            .height(25.dp)
-            .widthIn(max = 150.dp)
-            .clip(MaterialTheme.shapes.small)
-            .clickable { onPathClick(file) }
-            .padding(horizontal = 6.dp, vertical = 3.dp),
-          maxLines = 1,
-          fontFamily = FontFamily.SansSerif,
-          fontWeight = FontWeight.Medium,
-          style = MaterialTheme.typography.bodySmall,
-          fontSize = 14.sp,
-          color = if (index == paths.size - 1) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
-          overflow = TextOverflow.Ellipsis
-        )
+    LazyRow(
+        modifier = modifier,
+        state = listState
+    ) {
+        itemsIndexed(paths) { index, file ->
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = when (file.absolutePath) {
+                        "/storage/emulated/0" -> "Device storage"
+                        else -> file.name
+                    },
+                    modifier = Modifier
+                      .height(25.dp)
+                      .widthIn(max = 150.dp)
+                      .clip(MaterialTheme.shapes.small)
+                      .clickable { onPathClick(file) }
+                      .padding(horizontal = 6.dp, vertical = 3.dp),
+                    maxLines = 1,
+                    fontFamily = FontFamily.SansSerif,
+                    fontWeight = FontWeight.Medium,
+                    style = MaterialTheme.typography.bodySmall,
+                    fontSize = 14.sp,
+                    color = if (index == paths.size - 1) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                    overflow = TextOverflow.Ellipsis
+                )
 
-        AnimatedVisibility(
-          visible = index != paths.size - 1
-        ) {
-          Icon(
-            imageVector = Icons.Default.ChevronRight,
-            contentDescription = null,
-            modifier = Modifier
-              .height(25.dp)
-              .width(16.dp)
-          )
+                AnimatedVisibility(
+                    visible = index != paths.size - 1
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ChevronRight,
+                        contentDescription = null,
+                        modifier = Modifier
+                          .height(25.dp)
+                          .width(16.dp)
+                    )
+                }
+            }
         }
-      }
     }
-  }
 }

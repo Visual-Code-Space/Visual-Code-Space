@@ -23,10 +23,10 @@ import com.teixeira.vcspace.activities.base.BaseComposeActivity
 import com.teixeira.vcspace.ui.screens.plugin.PluginsScreen
 
 class PluginsActivity : BaseComposeActivity() {
-  @Composable
-  override fun MainScreen() {
-    Surface(modifier = Modifier.fillMaxSize()) {
-      PluginsScreen()
+    @Composable
+    override fun MainScreen() {
+        Surface(modifier = Modifier.fillMaxSize()) {
+            PluginsScreen()
+        }
     }
-  }
 }

@@ -33,35 +33,35 @@ import com.vcspace.plugins.Editor;
  * and it carries out the action on a specified editor instance.
  */
 public interface EditorCommand {
-  /**
-   * Returns the unique ID of this command.
-   *
-   * @return the command ID
-   */
-  @NonNull
-  String getCommandId();
+    /**
+     * Returns the unique ID of this command.
+     *
+     * @return the command ID
+     */
+    @NonNull
+    String getCommandId();
 
-  /**
-   * Returns the user-friendly name of this command.
-   *
-   * @return the command name
-   */
-  @NonNull
-  String getName();
+    /**
+     * Returns the user-friendly name of this command.
+     *
+     * @return the command name
+     */
+    @NonNull
+    String getName();
 
-  /**
-   * Returns the key binding associated with this command, if any.
-   * The key binding is a string representation, e.g., "Ctrl+S".
-   *
-   * @return the key binding, or null if none
-   */
-  @Nullable
-  String getKeyBinding();
+    /**
+     * Returns the key binding associated with this command, if any.
+     * The key binding is a string representation, e.g., "Ctrl+S".
+     *
+     * @return the key binding, or null if none
+     */
+    @Nullable
+    String getKeyBinding();
 
-  /**
-   * Executes this command on the given editor instance.
-   *
-   * @param editor the editor instance
-   */
-  void execute(@NonNull Editor editor);
+    /**
+     * Executes this command on the given editor instance.
+     *
+     * @param editor the editor instance
+     */
+    void execute(@NonNull Editor editor);
 }

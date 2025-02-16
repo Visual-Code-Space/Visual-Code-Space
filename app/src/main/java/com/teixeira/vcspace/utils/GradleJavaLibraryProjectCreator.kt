@@ -31,57 +31,58 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.nio.file.Files
 
-const val ANDROID_JAR = "https://github.com/Sable/android-platforms/raw/refs/heads/master/android-35/android.jar"
+const val ANDROID_JAR =
+    "https://github.com/Sable/android-platforms/raw/refs/heads/master/android-35/android.jar"
 val ANDROID_JAR_PATH = "${PathUtils.getInternalAppFilesPath()}/android.jar"
 
 object GradleJavaLibraryProjectCreator {
-  suspend fun createGradleJavaLibraryProject(
-    context: Context,
-    baseDir: String,
-    packageName: String,
-    fullClassName: String
-  ) {
-    val className = fullClassName.substringAfterLast(".")
+    suspend fun createGradleJavaLibraryProject(
+        context: Context,
+        baseDir: String,
+        packageName: String,
+        fullClassName: String
+    ) {
+        val className = fullClassName.substringAfterLast(".")
 
-    withContext(Dispatchers.IO) {
-      val base = baseDir.toFile()
-      val projectPath = base.resolve("plugin")
-      if (!projectPath.exists()) projectPath.mkdirs()
+        withContext(Dispatchers.IO) {
+            val base = baseDir.toFile()
+            val projectPath = base.resolve("plugin")
+            if (!projectPath.exists()) projectPath.mkdirs()
 
-      val libsPath = projectPath.resolve("libs")
-      Files.createDirectories(libsPath.toPath())
+            val libsPath = projectPath.resolve("libs")
+            Files.createDirectories(libsPath.toPath())
 
-      val androidJar = libsPath.resolve("android.jar")
-      val androidJarInternal = ANDROID_JAR_PATH.toFile()
+            val androidJar = libsPath.resolve("android.jar")
+            val androidJarInternal = ANDROID_JAR_PATH.toFile()
 
-      if (androidJarInternal.exists()) {
-        androidJar.writeBytes(androidJarInternal.readBytes())
-      } else {
-        val file = File(context.filesDir, "android.jar")
-        runBlocking {
-          downloadAndroidJar(context, file) {
-            androidJarInternal.createNewFile()
-            androidJarInternal.writeBytes(it.readBytes())
-            androidJar.writeBytes(androidJarInternal.readBytes())
-          }
-        }
-      }
+            if (androidJarInternal.exists()) {
+                androidJar.writeBytes(androidJarInternal.readBytes())
+            } else {
+                val file = File(context.filesDir, "android.jar")
+                runBlocking {
+                    downloadAndroidJar(context, file) {
+                        androidJarInternal.createNewFile()
+                        androidJarInternal.writeBytes(it.readBytes())
+                        androidJar.writeBytes(androidJarInternal.readBytes())
+                    }
+                }
+            }
 
-      context.assets.open("plugin/plugins-api.jar").use {
-        libsPath.resolve("plugins-api.jar").writeBytes(it.readBytes())
-      }
+            context.assets.open("plugin/plugins-api.jar").use {
+                libsPath.resolve("plugins-api.jar").writeBytes(it.readBytes())
+            }
 
-      val srcMainJava = projectPath.resolve("src/main/java")
-      val srcMainResources = projectPath.resolve("src/main/resources")
-      Files.createDirectories(srcMainJava.toPath())
-      Files.createDirectories(srcMainResources.toPath())
+            val srcMainJava = projectPath.resolve("src/main/java")
+            val srcMainResources = projectPath.resolve("src/main/resources")
+            Files.createDirectories(srcMainJava.toPath())
+            Files.createDirectories(srcMainResources.toPath())
 
-      val packagePath = srcMainJava.resolve(packageName.replace(".", "/"))
-      Files.createDirectories(packagePath.toPath())
+            val packagePath = srcMainJava.resolve(packageName.replace(".", "/"))
+            Files.createDirectories(packagePath.toPath())
 
-      val settingsGradle = base.resolve("settings.gradle.kts")
+            val settingsGradle = base.resolve("settings.gradle.kts")
 
-      val settingsContent = """
+            val settingsContent = """
         @file:Suppress("UnstableApiUsage")
 
         plugins {
@@ -101,7 +102,7 @@ object GradleJavaLibraryProjectCreator {
         include("plugin")
       """.trimIndent()
 
-      val buildContentExtra = """
+            val buildContentExtra = """
         tasks.register<Jar>("fatJar") {
             group = "build"
             description = "Assembles a fat JAR file containing all dependencies."
@@ -126,23 +127,23 @@ object GradleJavaLibraryProjectCreator {
         }
       """.trimIndent()
 
-      settingsGradle.writeText(settingsContent)
-      context.assets.open("plugin/build.gradle.kts").bufferedReader().use {
-        projectPath.resolve("build.gradle.kts").apply {
-          writeText(it.readText())
-          appendText("\n$buildContentExtra")
-        }
-      }
+            settingsGradle.writeText(settingsContent)
+            context.assets.open("plugin/build.gradle.kts").bufferedReader().use {
+                projectPath.resolve("build.gradle.kts").apply {
+                    writeText(it.readText())
+                    appendText("\n$buildContentExtra")
+                }
+            }
 
-      val gradlewZip = base.resolve("gradlew.zip")
-      context.assets.open("plugin/gradlew.zip").use {
-        gradlewZip.writeBytes(it.readBytes())
-      }
+            val gradlewZip = base.resolve("gradlew.zip")
+            context.assets.open("plugin/gradlew.zip").use {
+                gradlewZip.writeBytes(it.readBytes())
+            }
 
-      gradlewZip.extractZipFile(base)
-      gradlewZip.delete()
+            gradlewZip.extractZipFile(base)
+            gradlewZip.delete()
 
-      val javaClassContent = """
+            val javaClassContent = """
         package $packageName;
 
         import androidx.annotation.NonNull;
@@ -158,10 +159,10 @@ object GradleJavaLibraryProjectCreator {
         
       """.trimIndent()
 
-      packagePath.resolve("$className.java").writeText(javaClassContent)
+            packagePath.resolve("$className.java").writeText(javaClassContent)
 
-      val buildPluginSh = base.resolve("build_plugin.sh")
-      val buildPluginContent = """
+            val buildPluginSh = base.resolve("build_plugin.sh")
+            val buildPluginContent = """
         #!/bin/bash
 
         set -e
@@ -223,31 +224,31 @@ object GradleJavaLibraryProjectCreator {
         echo "ZIP file created successfully: ${"$"}ZIP_FILE"
       """.trimIndent()
 
-      buildPluginSh.writeText(buildPluginContent)
-      buildPluginSh.setExecutable(true, false)
+            buildPluginSh.writeText(buildPluginContent)
+            buildPluginSh.setExecutable(true, false)
+        }
     }
-  }
 
-  private suspend fun downloadAndroidJar(
-    context: Context,
-    outputFile: File,
-    onDownloadComplete: (File) -> Unit
-  ) {
-    withContext(currentCoroutineContext()) {
-      PRDownloader.download(ANDROID_JAR, outputFile.parent, outputFile.name)
-        .build().start(object : OnDownloadListener {
-          override fun onDownloadComplete() {
-            onDownloadComplete(outputFile)
-          }
+    private suspend fun downloadAndroidJar(
+        context: Context,
+        outputFile: File,
+        onDownloadComplete: (File) -> Unit
+    ) {
+        withContext(currentCoroutineContext()) {
+            PRDownloader.download(ANDROID_JAR, outputFile.parent, outputFile.name)
+                .build().start(object : OnDownloadListener {
+                    override fun onDownloadComplete() {
+                        onDownloadComplete(outputFile)
+                    }
 
-          override fun onError(error: Error) {
-            runOnUiThread {
-              ToastUtils.showShort(
-                if (error.isConnectionError) context.getString(R.string.connection_failed) else if (error.isServerError) "Server error!" else "Download failed! Something went wrong.",
-              )
-            }
-          }
-        })
+                    override fun onError(error: Error) {
+                        runOnUiThread {
+                            ToastUtils.showShort(
+                                if (error.isConnectionError) context.getString(R.string.connection_failed) else if (error.isServerError) "Server error!" else "Download failed! Something went wrong.",
+                            )
+                        }
+                    }
+                })
+        }
     }
-  }
 }

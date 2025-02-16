@@ -20,12 +20,12 @@ import androidx.compose.runtime.Composable
 import com.teixeira.vcspace.activities.base.BaseComposeActivity
 
 class MarkdownPreviewActivity : BaseComposeActivity() {
-  companion object {
-    const val EXTRA_FILE_PATH = "file_path"
-  }
+    companion object {
+        const val EXTRA_FILE_PATH = "file_path"
+    }
 
-  @Composable
-  override fun MainScreen() {
-    val colorScheme = MaterialTheme.colorScheme
-  }
+    @Composable
+    override fun MainScreen() {
+        val colorScheme = MaterialTheme.colorScheme
+    }
 }

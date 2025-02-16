@@ -89,292 +89,306 @@ import me.zhanghai.compose.preference.textFieldPreference
 
 @Composable
 fun MonacoEditorSettingsScreen(
-  onNavigateUp: () -> Unit,
-  modifier: Modifier = Modifier
+    onNavigateUp: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-  val theme = rememberMonacoTheme()
-  val fontSize = rememberFontSize()
-  val lineNumbersMinChars = rememberLineNumbersMinChars()
-  val lineDecorationsWidth = rememberLineDecorationsWidth()
-  val letterSpacing = rememberLetterSpacing()
-  val matchBrackets = rememberMatchBrackets()
-  val acceptSuggestionOnCommitCharacter = rememberAcceptSuggestionOnCommitCharacter()
-  val acceptSuggestionOnEnter = rememberAcceptSuggestionOnEnter()
-  val folding = rememberFolding()
-  val glyphMargin = rememberGlyphMargin()
-  val wordWrap = rememberWordWrap()
-  val wordBreak = rememberWordBreak()
-  val wrappingStrategy = rememberWrappingStrategy()
-  val cursorStyle = rememberCursorStyle()
-  val cursorBlinkingStyle = rememberCursorBlinkingStyle()
+    val theme = rememberMonacoTheme()
+    val fontSize = rememberFontSize()
+    val lineNumbersMinChars = rememberLineNumbersMinChars()
+    val lineDecorationsWidth = rememberLineDecorationsWidth()
+    val letterSpacing = rememberLetterSpacing()
+    val matchBrackets = rememberMatchBrackets()
+    val acceptSuggestionOnCommitCharacter = rememberAcceptSuggestionOnCommitCharacter()
+    val acceptSuggestionOnEnter = rememberAcceptSuggestionOnEnter()
+    val folding = rememberFolding()
+    val glyphMargin = rememberGlyphMargin()
+    val wordWrap = rememberWordWrap()
+    val wordBreak = rememberWordBreak()
+    val wrappingStrategy = rememberWrappingStrategy()
+    val cursorStyle = rememberCursorStyle()
+    val cursorBlinkingStyle = rememberCursorBlinkingStyle()
 
-  BackHandler(onBack = onNavigateUp)
+    BackHandler(onBack = onNavigateUp)
 
-  val backgroundColor = MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
+    val backgroundColor = MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
 
-  LazyColumn(
-    modifier = modifier
-      .fillMaxWidth()
-      .padding(horizontal = 12.dp)
-      .padding(bottom = 12.dp),
-    verticalArrangement = Arrangement.spacedBy(3.dp)
-  ) {
-    preferenceCategory(
-      key = "theme_category",
-      title = { Text(text = "Theme") }
-    )
+    LazyColumn(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp)
+            .padding(bottom = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(3.dp)
+    ) {
+        preferenceCategory(
+            key = "theme_category",
+            title = { Text(text = "Theme") }
+        )
 
-    listPreference(
-      key = MONACO_THEME.name,
-      defaultValue = theme.value,
-      title = { Text(text = "Theme") },
-      summary = { Text(text = "Change the theme of the editor.") },
-      rememberState = { theme },
-      values = listOf(
-        MonacoTheme.VisualStudioLight.value,
-        MonacoTheme.VisualStudioDark.value,
-        MonacoTheme.HighContrastLight.value,
-        MonacoTheme.HighContrastDark.value
-      ),
-      valueToText = { AnnotatedString(MonacoTheme.fromString(it).toString()) },
-      icon = { Icon(Icons.Sharp.Palette, contentDescription = null) },
-      modifier = Modifier
-        .clip(PreferenceShape.Alone)
-        .background(backgroundColor)
-    )
+        listPreference(
+            key = MONACO_THEME.name,
+            defaultValue = theme.value,
+            title = { Text(text = "Theme") },
+            summary = { Text(text = "Change the theme of the editor.") },
+            rememberState = { theme },
+            values = listOf(
+                MonacoTheme.VisualStudioLight.value,
+                MonacoTheme.VisualStudioDark.value,
+                MonacoTheme.HighContrastLight.value,
+                MonacoTheme.HighContrastDark.value
+            ),
+            valueToText = { AnnotatedString(MonacoTheme.fromString(it).toString()) },
+            icon = { Icon(Icons.Sharp.Palette, contentDescription = null) },
+            modifier = Modifier
+                .clip(PreferenceShape.Alone)
+                .background(backgroundColor)
+        )
 
-    preferenceCategory(
-      key = "general_category",
-      title = { Text(text = "General") }
-    )
+        preferenceCategory(
+            key = "general_category",
+            title = { Text(text = "General") }
+        )
 
-    textFieldPreference(
-      key = FONT_SIZE.name,
-      title = { Text(text = "Font size") },
-      summary = { Text(text = "Change the font size of the editor.") },
-      rememberState = { fontSize },
-      defaultValue = 14,
-      textToValue = { it.toIntOrNull() },
-      icon = { Icon(Icons.Sharp.FormatSize, contentDescription = null) },
-      modifier = Modifier
-        .clip(PreferenceShape.Top)
-        .background(backgroundColor)
-    )
+        textFieldPreference(
+            key = FONT_SIZE.name,
+            title = { Text(text = "Font size") },
+            summary = { Text(text = "Change the font size of the editor.") },
+            rememberState = { fontSize },
+            defaultValue = 14,
+            textToValue = { it.toIntOrNull() },
+            icon = { Icon(Icons.Sharp.FormatSize, contentDescription = null) },
+            modifier = Modifier
+                .clip(PreferenceShape.Top)
+                .background(backgroundColor)
+        )
 
-    textFieldPreference(
-      key = LINE_NUMBERS_MIN_CHARS.name,
-      title = { Text(text = "Line numbers min chars") },
-      summary = { Text(text = "$it") },
-      rememberState = { lineNumbersMinChars },
-      defaultValue = 1,
-      textToValue = { it.toIntOrNull() },
-      icon = { Icon(Icons.AutoMirrored.Sharp.AlignHorizontalLeft, contentDescription = null) },
-      modifier = Modifier
-        .clip(PreferenceShape.Middle)
-        .background(backgroundColor)
-    )
+        textFieldPreference(
+            key = LINE_NUMBERS_MIN_CHARS.name,
+            title = { Text(text = "Line numbers min chars") },
+            summary = { Text(text = "$it") },
+            rememberState = { lineNumbersMinChars },
+            defaultValue = 1,
+            textToValue = { it.toIntOrNull() },
+            icon = {
+                Icon(
+                    Icons.AutoMirrored.Sharp.AlignHorizontalLeft,
+                    contentDescription = null
+                )
+            },
+            modifier = Modifier
+                .clip(PreferenceShape.Middle)
+                .background(backgroundColor)
+        )
 
-    textFieldPreference(
-      key = LINE_DECORATIONS_WIDTH.name,
-      title = { Text(text = "Line decorations width") },
-      summary = { Text(text = "$it") },
-      rememberState = { lineDecorationsWidth },
-      defaultValue = 1,
-      textToValue = { it.toIntOrNull() },
-      icon = { Icon(Icons.AutoMirrored.Sharp.AlignHorizontalLeft, contentDescription = null) },
-      modifier = Modifier
-        .clip(PreferenceShape.Middle)
-        .background(backgroundColor)
-    )
+        textFieldPreference(
+            key = LINE_DECORATIONS_WIDTH.name,
+            title = { Text(text = "Line decorations width") },
+            summary = { Text(text = "$it") },
+            rememberState = { lineDecorationsWidth },
+            defaultValue = 1,
+            textToValue = { it.toIntOrNull() },
+            icon = {
+                Icon(
+                    Icons.AutoMirrored.Sharp.AlignHorizontalLeft,
+                    contentDescription = null
+                )
+            },
+            modifier = Modifier
+                .clip(PreferenceShape.Middle)
+                .background(backgroundColor)
+        )
 
-    textFieldPreference(
-      key = LETTER_SPACING.name,
-      title = { Text(text = "Letter spacing") },
-      summary = { Text(text = "$it") },
-      rememberState = { letterSpacing },
-      defaultValue = 0f,
-      textToValue = { it.toFloatOrNull() },
-      icon = { Icon(FormatLetterSpacing, contentDescription = null) },
-      modifier = Modifier
-        .clip(PreferenceShape.Middle)
-        .background(backgroundColor)
-    )
+        textFieldPreference(
+            key = LETTER_SPACING.name,
+            title = { Text(text = "Letter spacing") },
+            summary = { Text(text = "$it") },
+            rememberState = { letterSpacing },
+            defaultValue = 0f,
+            textToValue = { it.toFloatOrNull() },
+            icon = { Icon(FormatLetterSpacing, contentDescription = null) },
+            modifier = Modifier
+                .clip(PreferenceShape.Middle)
+                .background(backgroundColor)
+        )
 
-    listPreference(
-      key = MATCH_BRACKETS.name,
-      defaultValue = matchBrackets.value,
-      title = { Text(text = "Match brackets") },
-      summary = { Text(text = it.capitalize()) },
-      rememberState = { matchBrackets },
-      values = listOf(
-        MatchBrackets.Always.value,
-        MatchBrackets.Never.value,
-        MatchBrackets.Near.value
-      ),
-      valueToText = { AnnotatedString(it.capitalize()) },
-      icon = { Icon(Icons.Sharp.DataObject, contentDescription = null) },
-      modifier = Modifier
-        .clip(PreferenceShape.Middle)
-        .background(backgroundColor)
-    )
+        listPreference(
+            key = MATCH_BRACKETS.name,
+            defaultValue = matchBrackets.value,
+            title = { Text(text = "Match brackets") },
+            summary = { Text(text = it.capitalize()) },
+            rememberState = { matchBrackets },
+            values = listOf(
+                MatchBrackets.Always.value,
+                MatchBrackets.Never.value,
+                MatchBrackets.Near.value
+            ),
+            valueToText = { AnnotatedString(it.capitalize()) },
+            icon = { Icon(Icons.Sharp.DataObject, contentDescription = null) },
+            modifier = Modifier
+                .clip(PreferenceShape.Middle)
+                .background(backgroundColor)
+        )
 
-    switchPreference(
-      key = ACCEPT_SUGGESTION_ON_COMMIT_CHARACTER.name,
-      title = { Text(text = "Accept suggestion on commit character") },
-      summary = { Text(text = "Should accept suggestion on commit character.") },
-      rememberState = { acceptSuggestionOnCommitCharacter },
-      defaultValue = acceptSuggestionOnCommitCharacter.value,
-      icon = { Icon(PromptSuggestion, contentDescription = null) },
-      modifier = Modifier
-        .clip(PreferenceShape.Middle)
-        .background(backgroundColor)
-    )
+        switchPreference(
+            key = ACCEPT_SUGGESTION_ON_COMMIT_CHARACTER.name,
+            title = { Text(text = "Accept suggestion on commit character") },
+            summary = { Text(text = "Should accept suggestion on commit character.") },
+            rememberState = { acceptSuggestionOnCommitCharacter },
+            defaultValue = acceptSuggestionOnCommitCharacter.value,
+            icon = { Icon(PromptSuggestion, contentDescription = null) },
+            modifier = Modifier
+                .clip(PreferenceShape.Middle)
+                .background(backgroundColor)
+        )
 
-    listPreference(
-      key = ACCEPT_SUGGESTION_ON_ENTER.name,
-      defaultValue = acceptSuggestionOnEnter.value,
-      title = { Text(text = "Accept suggestion on enter") },
-      summary = { Text(text = it.capitalize()) },
-      rememberState = { acceptSuggestionOnEnter },
-      values = listOf(
-        AcceptSuggestionOnEnter.On.value,
-        AcceptSuggestionOnEnter.Off.value,
-        AcceptSuggestionOnEnter.Smart.value
-      ),
-      valueToText = { AnnotatedString(it.capitalize()) },
-      icon = { Icon(PromptSuggestion, contentDescription = null) },
-      modifier = Modifier
-        .clip(PreferenceShape.Middle)
-        .background(backgroundColor)
-    )
+        listPreference(
+            key = ACCEPT_SUGGESTION_ON_ENTER.name,
+            defaultValue = acceptSuggestionOnEnter.value,
+            title = { Text(text = "Accept suggestion on enter") },
+            summary = { Text(text = it.capitalize()) },
+            rememberState = { acceptSuggestionOnEnter },
+            values = listOf(
+                AcceptSuggestionOnEnter.On.value,
+                AcceptSuggestionOnEnter.Off.value,
+                AcceptSuggestionOnEnter.Smart.value
+            ),
+            valueToText = { AnnotatedString(it.capitalize()) },
+            icon = { Icon(PromptSuggestion, contentDescription = null) },
+            modifier = Modifier
+                .clip(PreferenceShape.Middle)
+                .background(backgroundColor)
+        )
 
-    switchPreference(
-      key = FOLDING.name,
-      title = { Text(text = "Folding") },
-      summary = { Text(text = "Should fold code.") },
-      rememberState = { folding },
-      defaultValue = folding.value,
-      icon = { Icon(Icons.Sharp.Code, contentDescription = null) },
-      modifier = Modifier
-        .clip(PreferenceShape.Middle)
-        .background(backgroundColor)
-    )
+        switchPreference(
+            key = FOLDING.name,
+            title = { Text(text = "Folding") },
+            summary = { Text(text = "Should fold code.") },
+            rememberState = { folding },
+            defaultValue = folding.value,
+            icon = { Icon(Icons.Sharp.Code, contentDescription = null) },
+            modifier = Modifier
+                .clip(PreferenceShape.Middle)
+                .background(backgroundColor)
+        )
 
-    switchPreference(
-      key = GLYPH_MARGIN.name,
-      title = { Text(text = "Glyph margin") },
-      summary = { Text(text = "Should show glyph margin.") },
-      rememberState = { glyphMargin },
-      defaultValue = glyphMargin.value,
-      icon = { Icon(Glyphs, contentDescription = null) },
-      modifier = Modifier
-        .clip(PreferenceShape.Bottom)
-        .background(backgroundColor)
-    )
+        switchPreference(
+            key = GLYPH_MARGIN.name,
+            title = { Text(text = "Glyph margin") },
+            summary = { Text(text = "Should show glyph margin.") },
+            rememberState = { glyphMargin },
+            defaultValue = glyphMargin.value,
+            icon = { Icon(Glyphs, contentDescription = null) },
+            modifier = Modifier
+                .clip(PreferenceShape.Bottom)
+                .background(backgroundColor)
+        )
 
-    preferenceCategory(
-      key = "word_wrap_category",
-      title = { Text(text = "Word wrap") }
-    )
+        preferenceCategory(
+            key = "word_wrap_category",
+            title = { Text(text = "Word wrap") }
+        )
 
-    listPreference(
-      key = WORD_WRAP.name,
-      defaultValue = wordWrap.value,
-      title = { Text(text = "Word wrap") },
-      summary = { Text(text = it.capitalize()) },
-      rememberState = { wordWrap },
-      values = listOf(
-        WordWrap.On.value,
-        WordWrap.Off.value,
-        WordWrap.WordWrapColumn.value,
-        WordWrap.Bounded.value
-      ),
-      valueToText = { AnnotatedString(it.capitalize()) },
-      icon = { Icon(Icons.AutoMirrored.Sharp.WrapText, contentDescription = null) },
-      modifier = Modifier
-        .clip(PreferenceShape.Top)
-        .background(backgroundColor)
-    )
+        listPreference(
+            key = WORD_WRAP.name,
+            defaultValue = wordWrap.value,
+            title = { Text(text = "Word wrap") },
+            summary = { Text(text = it.capitalize()) },
+            rememberState = { wordWrap },
+            values = listOf(
+                WordWrap.On.value,
+                WordWrap.Off.value,
+                WordWrap.WordWrapColumn.value,
+                WordWrap.Bounded.value
+            ),
+            valueToText = { AnnotatedString(it.capitalize()) },
+            icon = { Icon(Icons.AutoMirrored.Sharp.WrapText, contentDescription = null) },
+            modifier = Modifier
+                .clip(PreferenceShape.Top)
+                .background(backgroundColor)
+        )
 
-    listPreference(
-      key = WORD_BREAK.name,
-      defaultValue = wordBreak.value,
-      title = { Text(text = "Word break") },
-      summary = { Text(text = it.capitalize()) },
-      rememberState = { wordBreak },
-      values = listOf(
-        WordBreak.Normal.value,
-        WordBreak.KeepAll.value
-      ),
-      valueToText = { AnnotatedString(it.capitalize()) },
-      icon = { Icon(Icons.AutoMirrored.Sharp.Notes, contentDescription = null) },
-      modifier = Modifier
-        .clip(PreferenceShape.Middle)
-        .background(backgroundColor)
-    )
+        listPreference(
+            key = WORD_BREAK.name,
+            defaultValue = wordBreak.value,
+            title = { Text(text = "Word break") },
+            summary = { Text(text = it.capitalize()) },
+            rememberState = { wordBreak },
+            values = listOf(
+                WordBreak.Normal.value,
+                WordBreak.KeepAll.value
+            ),
+            valueToText = { AnnotatedString(it.capitalize()) },
+            icon = { Icon(Icons.AutoMirrored.Sharp.Notes, contentDescription = null) },
+            modifier = Modifier
+                .clip(PreferenceShape.Middle)
+                .background(backgroundColor)
+        )
 
-    listPreference(
-      key = WRAPPING_STRATEGY.name,
-      defaultValue = wrappingStrategy.value,
-      title = { Text(text = "Wrapping strategy") },
-      summary = { Text(text = it.capitalize()) },
-      rememberState = { wrappingStrategy },
-      values = listOf(
-        WrappingStrategy.Simple.value,
-        WrappingStrategy.Advanced.value
-      ),
-      valueToText = { AnnotatedString(it.capitalize()) },
-      icon = { Icon(FormatTextWrap, contentDescription = null) },
-      modifier = Modifier
-        .clip(PreferenceShape.Bottom)
-        .background(backgroundColor)
-    )
+        listPreference(
+            key = WRAPPING_STRATEGY.name,
+            defaultValue = wrappingStrategy.value,
+            title = { Text(text = "Wrapping strategy") },
+            summary = { Text(text = it.capitalize()) },
+            rememberState = { wrappingStrategy },
+            values = listOf(
+                WrappingStrategy.Simple.value,
+                WrappingStrategy.Advanced.value
+            ),
+            valueToText = { AnnotatedString(it.capitalize()) },
+            icon = { Icon(FormatTextWrap, contentDescription = null) },
+            modifier = Modifier
+                .clip(PreferenceShape.Bottom)
+                .background(backgroundColor)
+        )
 
-    preferenceCategory(
-      key = "cursor_category",
-      title = { Text(text = "Cursor") }
-    )
+        preferenceCategory(
+            key = "cursor_category",
+            title = { Text(text = "Cursor") }
+        )
 
-    listPreference(
-      key = CURSOR_STYLE.name,
-      defaultValue = cursorStyle.value,
-      title = { Text(text = "Cursor style") },
-      summary = { Text(text = TextEditorCursorStyle.fromValue(it).toString()) },
-      rememberState = { cursorStyle },
-      values = listOf(
-        TextEditorCursorStyle.Line.value,
-        TextEditorCursorStyle.Block.value,
-        TextEditorCursorStyle.Underline.value,
-        TextEditorCursorStyle.LineThin.value,
-        TextEditorCursorStyle.BlockOutline.value,
-        TextEditorCursorStyle.UnderlineThin.value
-      ),
-      valueToText = { AnnotatedString(TextEditorCursorStyle.fromValue(it).toString()) },
-      icon = { Icon(CursorText, contentDescription = null) },
-      modifier = Modifier
-        .clip(PreferenceShape.Top)
-        .background(backgroundColor)
-    )
+        listPreference(
+            key = CURSOR_STYLE.name,
+            defaultValue = cursorStyle.value,
+            title = { Text(text = "Cursor style") },
+            summary = { Text(text = TextEditorCursorStyle.fromValue(it).toString()) },
+            rememberState = { cursorStyle },
+            values = listOf(
+                TextEditorCursorStyle.Line.value,
+                TextEditorCursorStyle.Block.value,
+                TextEditorCursorStyle.Underline.value,
+                TextEditorCursorStyle.LineThin.value,
+                TextEditorCursorStyle.BlockOutline.value,
+                TextEditorCursorStyle.UnderlineThin.value
+            ),
+            valueToText = { AnnotatedString(TextEditorCursorStyle.fromValue(it).toString()) },
+            icon = { Icon(CursorText, contentDescription = null) },
+            modifier = Modifier
+                .clip(PreferenceShape.Top)
+                .background(backgroundColor)
+        )
 
-    listPreference(
-      key = CURSOR_BLINKING_STYLE.name,
-      defaultValue = cursorBlinkingStyle.value,
-      title = { Text(text = "Cursor blinking style") },
-      summary = { Text(text = TextEditorCursorBlinkingStyle.fromValue(it).toString()) },
-      rememberState = { cursorBlinkingStyle },
-      values = listOf(
-        TextEditorCursorBlinkingStyle.Hidden.value,
-        TextEditorCursorBlinkingStyle.Blink.value,
-        TextEditorCursorBlinkingStyle.Smooth.value,
-        TextEditorCursorBlinkingStyle.Phase.value,
-        TextEditorCursorBlinkingStyle.Expand.value,
-        TextEditorCursorBlinkingStyle.Solid.value,
-      ),
-      valueToText = { AnnotatedString(TextEditorCursorBlinkingStyle.fromValue(it).toString()) },
-      icon = { Icon(CursorText, contentDescription = null) },
-      modifier = Modifier
-        .clip(PreferenceShape.Bottom)
-        .background(backgroundColor)
-    )
-  }
+        listPreference(
+            key = CURSOR_BLINKING_STYLE.name,
+            defaultValue = cursorBlinkingStyle.value,
+            title = { Text(text = "Cursor blinking style") },
+            summary = { Text(text = TextEditorCursorBlinkingStyle.fromValue(it).toString()) },
+            rememberState = { cursorBlinkingStyle },
+            values = listOf(
+                TextEditorCursorBlinkingStyle.Hidden.value,
+                TextEditorCursorBlinkingStyle.Blink.value,
+                TextEditorCursorBlinkingStyle.Smooth.value,
+                TextEditorCursorBlinkingStyle.Phase.value,
+                TextEditorCursorBlinkingStyle.Expand.value,
+                TextEditorCursorBlinkingStyle.Solid.value,
+            ),
+            valueToText = {
+                AnnotatedString(
+                    TextEditorCursorBlinkingStyle.fromValue(it).toString()
+                )
+            },
+            icon = { Icon(CursorText, contentDescription = null) },
+            modifier = Modifier
+                .clip(PreferenceShape.Bottom)
+                .background(backgroundColor)
+        )
+    }
 }

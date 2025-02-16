@@ -16,5 +16,5 @@
 package com.teixeira.vcspace.git
 
 object VCSGitConstants {
-  const val MAIN = "main"
+    const val MAIN = "main"
 }

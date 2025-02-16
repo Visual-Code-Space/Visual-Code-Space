@@ -20,5 +20,5 @@ import android.view.View;
 
 @FunctionalInterface
 public interface ViewFactory<T extends View> {
-  T create(Context context);
+    T create(Context context);
 }

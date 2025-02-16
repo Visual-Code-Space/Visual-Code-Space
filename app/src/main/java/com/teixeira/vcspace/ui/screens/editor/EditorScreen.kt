@@ -129,551 +129,561 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun EditorScreen(
-  modifier: Modifier = Modifier,
-  viewModel: EditorViewModel = viewModel(),
-  fileExplorerViewModel: FileExplorerViewModel = viewModel()
+    modifier: Modifier = Modifier,
+    viewModel: EditorViewModel = viewModel(),
+    fileExplorerViewModel: FileExplorerViewModel = viewModel()
 ) {
-  val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-  val editorConfigMap = remember { viewModel.editorConfigMap }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val editorConfigMap = remember { viewModel.editorConfigMap }
 
-  val openedFiles = uiState.openedFiles
-  val selectedFileIndex = uiState.selectedFileIndex
+    val openedFiles = uiState.openedFiles
+    val selectedFileIndex = uiState.selectedFileIndex
 
-  LaunchedEffect(selectedFileIndex) {
-    viewModel.rememberLastFiles()
-  }
-
-  val openLastFiles by rememberLastOpenedFile()
-  val currentEditor by rememberCurrentEditor()
-
-  DisposableEffect(openLastFiles) {
-    /*if (openLastFiles) {*/
-    for (file in viewModel.lastOpenedFiles()) {
-      viewModel.addFile(file)
-    }
-    /*}*/
-
-    onDispose {
-      viewModel.rememberLastFiles()
-    }
-  }
-
-  val context = LocalContext.current
-  val scope = rememberCoroutineScope()
-  val commandPaletteManager = LocalCommandPaletteManager.current
-  val toastHostState = LocalToastHostState.current
-
-  var codeExplanationResponse: GenerateContentResponse? by remember { mutableStateOf(null) }
-  var importComponentResponse: GenerateContentResponse? by remember { mutableStateOf(null) }
-
-  codeExplanationResponse?.let {
-    CodeExplanationSheet(
-      response = it,
-      onDismissRequest = { codeExplanationResponse = null }
-    )
-  }
-
-  importComponentResponse?.let {
-    ImportComponentsSheet(
-      response = it,
-      onDismissRequest = { importComponentResponse = null }
-    )
-  }
-
-  val compositionContext = rememberCompositionContext()
-  val showMonacoEditor = remember { mutableStateMapOf<String, Boolean>() }
-
-  Column(modifier = modifier.onKeyEvent {
-    if (it.isCtrlPressed && it.isShiftPressed && it.key == Key.P) {
-      println("Ctrl + Shift + P is pressed")
-      commandPaletteManager.show()
-      return@onKeyEvent true
+    LaunchedEffect(selectedFileIndex) {
+        viewModel.rememberLastFiles()
     }
 
-    if (it.type == KeyEventType.KeyDown) {
-      CommandPaletteManager.instance.applyKeyBindings(it, compositionContext)
-      return@onKeyEvent true
-    }
+    val openLastFiles by rememberLastOpenedFile()
+    val currentEditor by rememberCurrentEditor()
 
-    false
-  }) {
-    FileTabLayout(
-      editorViewModel = viewModel
-    )
-
-    val openedFile = openedFiles.getOrNull(selectedFileIndex)
-
-    openedFile?.let { fileEntry ->
-      val editorView = viewModel.getEditorForFile(
-        context,
-        fileEntry.file,
-        isAdvancedEditor = currentEditor.lowercase() == "monaco"
-      )
-
-      key(editorConfigMap[fileEntry.file.path]) {
-        if (editorView is CodeEditorView) {
-          SoraEditor(
-            editorView = editorView,
-            onExplainCodeResponse = { codeExplanationResponse = it },
-            onImportComponentResponse = { importComponentResponse = it }
-          )
-        } else if (editorView is MonacoEditor) {
-          val file = fileEntry.file
-
-          ConfigureMonacoEditor(editorView, file) { editor ->
-            viewModel.setModified(file, false)
-          }
+    DisposableEffect(openLastFiles) {
+        /*if (openLastFiles) {*/
+        for (file in viewModel.lastOpenedFiles()) {
+            viewModel.addFile(file)
         }
-        viewModel.setEditorConfiguredForFile(fileEntry.file)
-      }
+        /*}*/
 
-      key(fileEntry.file.path) {
-        if (editorView is MonacoEditor) {
-          AnimatedVisibility(
-            visible = true,
-          ) {
-            AndroidView(
-              factory = {
-                editorView.apply {
-                  layoutParams = ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-                  )
-                }
-              },
-              update = {
-                it.apply {
-                  layoutParams = ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-                  )
-                }
-              },
-              modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(fraction = 0.92f)
+        onDispose {
+            viewModel.rememberLastFiles()
+        }
+    }
+
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val commandPaletteManager = LocalCommandPaletteManager.current
+    val toastHostState = LocalToastHostState.current
+
+    var codeExplanationResponse: GenerateContentResponse? by remember { mutableStateOf(null) }
+    var importComponentResponse: GenerateContentResponse? by remember { mutableStateOf(null) }
+
+    codeExplanationResponse?.let {
+        CodeExplanationSheet(
+            response = it,
+            onDismissRequest = { codeExplanationResponse = null }
+        )
+    }
+
+    importComponentResponse?.let {
+        ImportComponentsSheet(
+            response = it,
+            onDismissRequest = { importComponentResponse = null }
+        )
+    }
+
+    val compositionContext = rememberCompositionContext()
+    val showMonacoEditor = remember { mutableStateMapOf<String, Boolean>() }
+
+    Column(modifier = modifier.onKeyEvent {
+        if (it.isCtrlPressed && it.isShiftPressed && it.key == Key.P) {
+            println("Ctrl + Shift + P is pressed")
+            commandPaletteManager.show()
+            return@onKeyEvent true
+        }
+
+        if (it.type == KeyEventType.KeyDown) {
+            CommandPaletteManager.instance.applyKeyBindings(it, compositionContext)
+            return@onKeyEvent true
+        }
+
+        false
+    }) {
+        FileTabLayout(
+            editorViewModel = viewModel
+        )
+
+        val openedFile = openedFiles.getOrNull(selectedFileIndex)
+
+        openedFile?.let { fileEntry ->
+            val editorView = viewModel.getEditorForFile(
+                context,
+                fileEntry.file,
+                isAdvancedEditor = currentEditor.lowercase() == "monaco"
             )
-          }
 
-          AnimatedVisibility(
-            visible = false,
-          ) {
-            Box(
-              modifier = Modifier.fillMaxSize(),
-              contentAlignment = Alignment.TopStart
-            ) {
-              Text("Loading...")
+            key(editorConfigMap[fileEntry.file.path]) {
+                if (editorView is CodeEditorView) {
+                    SoraEditor(
+                        editorView = editorView,
+                        onExplainCodeResponse = { codeExplanationResponse = it },
+                        onImportComponentResponse = { importComponentResponse = it }
+                    )
+                } else if (editorView is MonacoEditor) {
+                    val file = fileEntry.file
+
+                    ConfigureMonacoEditor(editorView, file) { editor ->
+                        viewModel.setModified(file, false)
+                    }
+                }
+                viewModel.setEditorConfiguredForFile(fileEntry.file)
             }
-          }
-        } else {
-          AndroidView(
-            factory = {
-              editorView.apply {
-                layoutParams = ViewGroup.LayoutParams(
-                  ViewGroup.LayoutParams.MATCH_PARENT,
-                  ViewGroup.LayoutParams.MATCH_PARENT
-                )
-              }
-            },
-            modifier = Modifier
-              .fillMaxWidth()
-              .fillMaxHeight(fraction = 0.92f)
-          )
+
+            key(fileEntry.file.path) {
+                if (editorView is MonacoEditor) {
+                    AnimatedVisibility(
+                        visible = true,
+                    ) {
+                        AndroidView(
+                            factory = {
+                                editorView.apply {
+                                    layoutParams = ViewGroup.LayoutParams(
+                                        ViewGroup.LayoutParams.MATCH_PARENT,
+                                        ViewGroup.LayoutParams.MATCH_PARENT
+                                    )
+                                }
+                            },
+                            update = {
+                                it.apply {
+                                    layoutParams = ViewGroup.LayoutParams(
+                                        ViewGroup.LayoutParams.MATCH_PARENT,
+                                        ViewGroup.LayoutParams.MATCH_PARENT
+                                    )
+                                }
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight(fraction = 0.92f)
+                        )
+                    }
+
+                    AnimatedVisibility(
+                        visible = false,
+                    ) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.TopStart
+                        ) {
+                            Text("Loading...")
+                        }
+                    }
+                } else {
+                    AndroidView(
+                        factory = {
+                            editorView.apply {
+                                layoutParams = ViewGroup.LayoutParams(
+                                    ViewGroup.LayoutParams.MATCH_PARENT,
+                                    ViewGroup.LayoutParams.MATCH_PARENT
+                                )
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(fraction = 0.92f)
+                    )
+                }
+
+                Symbols(editorView, modifier = Modifier.fillMaxWidth())
+            }
+        } ?: run {
+            val tempFile = java.io.File(context.cacheDir, "untitled.txt")
+            tempFile.deleteOnExit()
+            viewModel.addFile(tempFile.wrapFile())
+
+            // NoOpenedFiles()
         }
 
-        Symbols(editorView, modifier = Modifier.fillMaxWidth())
-      }
-    } ?: run {
-      val tempFile = java.io.File(context.cacheDir, "untitled.txt")
-      tempFile.deleteOnExit()
-      viewModel.addFile(tempFile.wrapFile())
+        if (commandPaletteManager.showCommandPalette.value) {
+            CommandPalette(
+                commands = commandPaletteManager.allCommands,
+                recentlyUsedCommands = commandPaletteManager.recentlyUsedCommands,
+                onCommandSelected = { command ->
+                    commandPaletteManager.hide()
 
-      // NoOpenedFiles()
+                    // do something
+                },
+                onDismissRequest = { commandPaletteManager.hide() }
+            )
+        }
     }
-
-    if (commandPaletteManager.showCommandPalette.value) {
-      CommandPalette(
-        commands = commandPaletteManager.allCommands,
-        recentlyUsedCommands = commandPaletteManager.recentlyUsedCommands,
-        onCommandSelected = { command ->
-          commandPaletteManager.hide()
-
-          // do something
-        },
-        onDismissRequest = { commandPaletteManager.hide() }
-      )
-    }
-  }
 }
 
 @Composable
 private fun ConfigureMonacoEditor(
-  editorView: MonacoEditor,
-  file: File,
-  onConfigure: (MonacoEditor) -> Unit = {}
+    editorView: MonacoEditor,
+    file: File,
+    onConfigure: (MonacoEditor) -> Unit = {}
 ) {
-  val theme by rememberMonacoTheme()
-  val fontSize by Monaco.rememberFontSize()
-  val lineNumbersMinChars by rememberLineNumbersMinChars()
-  val lineDecorationsWidth by rememberLineDecorationsWidth()
-  val letterSpacing by rememberLetterSpacing()
-  val matchBrackets by rememberMatchBrackets()
-  val acceptSuggestionOnCommitCharacter by rememberAcceptSuggestionOnCommitCharacter()
-  val acceptSuggestionOnEnter by rememberAcceptSuggestionOnEnter()
-  val folding by rememberFolding()
-  val glyphMargin by rememberGlyphMargin()
-  val wordWrap by Monaco.rememberWordWrap()
-  val wordBreak by rememberWordBreak()
-  val wrappingStrategy by rememberWrappingStrategy()
-  val cursorStyle by rememberCursorStyle()
-  val cursorBlinkingStyle by rememberCursorBlinkingStyle()
-  val scope = rememberCoroutineScope()
+    val theme by rememberMonacoTheme()
+    val fontSize by Monaco.rememberFontSize()
+    val lineNumbersMinChars by rememberLineNumbersMinChars()
+    val lineDecorationsWidth by rememberLineDecorationsWidth()
+    val letterSpacing by rememberLetterSpacing()
+    val matchBrackets by rememberMatchBrackets()
+    val acceptSuggestionOnCommitCharacter by rememberAcceptSuggestionOnCommitCharacter()
+    val acceptSuggestionOnEnter by rememberAcceptSuggestionOnEnter()
+    val folding by rememberFolding()
+    val glyphMargin by rememberGlyphMargin()
+    val wordWrap by Monaco.rememberWordWrap()
+    val wordBreak by rememberWordBreak()
+    val wrappingStrategy by rememberWrappingStrategy()
+    val cursorStyle by rememberCursorStyle()
+    val cursorBlinkingStyle by rememberCursorBlinkingStyle()
+    val scope = rememberCoroutineScope()
 
-  LaunchedEffect(Unit) {
-    editorView.addOnEditorLoadCallback {
-      editorView.text = "Loading..."
-      editorView.setReadOnly(true)
-      editorView.setLanguage(MonacoLanguage.Plaintext)
+    LaunchedEffect(Unit) {
+        editorView.addOnEditorLoadCallback {
+            editorView.text = "Loading..."
+            editorView.setReadOnly(true)
+            editorView.setLanguage(MonacoLanguage.Plaintext)
 
-      editorView.apply {
-        setTheme(MonacoTheme.fromString(theme))
-        setFontSize(fontSize)
-        setLineNumbersMinChars(lineNumbersMinChars)
-        setLineDecorationsWidth(lineDecorationsWidth)
-        setLetterSpacing(letterSpacing)
-        setMatchBrackets(MatchBrackets.fromValue(matchBrackets))
-        setAcceptSuggestionOnCommitCharacter(acceptSuggestionOnCommitCharacter)
-        setAcceptSuggestionOnEnter(AcceptSuggestionOnEnter.fromValue(acceptSuggestionOnEnter))
-        setFolding(folding)
-        setGlyphMargin(glyphMargin)
-        setWordWrap(WordWrap.fromValue(wordWrap))
-        setWordBreak(WordBreak.fromValue(wordBreak))
-        setWrappingStrategy(WrappingStrategy.fromValue(wrappingStrategy))
-        setCursorStyle(TextEditorCursorStyle.fromValue(cursorStyle))
-        setCursorBlinkingStyle(TextEditorCursorBlinkingStyle.fromValue(cursorBlinkingStyle))
-        setMinimapOptions(MinimapOptions(enabled = false))
+            editorView.apply {
+                setTheme(MonacoTheme.fromString(theme))
+                setFontSize(fontSize)
+                setLineNumbersMinChars(lineNumbersMinChars)
+                setLineDecorationsWidth(lineDecorationsWidth)
+                setLetterSpacing(letterSpacing)
+                setMatchBrackets(MatchBrackets.fromValue(matchBrackets))
+                setAcceptSuggestionOnCommitCharacter(acceptSuggestionOnCommitCharacter)
+                setAcceptSuggestionOnEnter(AcceptSuggestionOnEnter.fromValue(acceptSuggestionOnEnter))
+                setFolding(folding)
+                setGlyphMargin(glyphMargin)
+                setWordWrap(WordWrap.fromValue(wordWrap))
+                setWordBreak(WordBreak.fromValue(wordBreak))
+                setWrappingStrategy(WrappingStrategy.fromValue(wrappingStrategy))
+                setCursorStyle(TextEditorCursorStyle.fromValue(cursorStyle))
+                setCursorBlinkingStyle(TextEditorCursorBlinkingStyle.fromValue(cursorBlinkingStyle))
+                setMinimapOptions(MinimapOptions(enabled = false))
 
-        inlineCompletionProvider =
-          InlineCompletionProvider { language, textBeforeCursor, textAfterCursor -> language }
+                inlineCompletionProvider =
+                    InlineCompletionProvider { language, textBeforeCursor, textAfterCursor -> language }
 
-        if (file.exists()) {
-          setLanguage(MonacoLanguageMapper.getLanguageByExtension(file.extension))
-          setReadOnly(false)
-          text = file.asRawFile()?.readText() ?: ""
-        } else {
-          text = ""
+                if (file.exists()) {
+                    setLanguage(MonacoLanguageMapper.getLanguageByExtension(file.extension))
+                    setReadOnly(false)
+                    text = file.asRawFile()?.readText() ?: ""
+                } else {
+                    text = ""
+                }
+
+                onConfigure(this)
+            }
         }
-
-        onConfigure(this)
-      }
     }
-  }
 
-  LaunchedEffect(
-    theme,
-    fontSize,
-    lineNumbersMinChars,
-    lineDecorationsWidth,
-    letterSpacing,
-    matchBrackets,
-    acceptSuggestionOnCommitCharacter,
-    acceptSuggestionOnEnter,
-    folding,
-    glyphMargin,
-    wordWrap,
-    wordBreak,
-    wrappingStrategy,
-    cursorStyle,
-    cursorBlinkingStyle
-  ) {
-    editorView.reload()
+    LaunchedEffect(
+        theme,
+        fontSize,
+        lineNumbersMinChars,
+        lineDecorationsWidth,
+        letterSpacing,
+        matchBrackets,
+        acceptSuggestionOnCommitCharacter,
+        acceptSuggestionOnEnter,
+        folding,
+        glyphMargin,
+        wordWrap,
+        wordBreak,
+        wrappingStrategy,
+        cursorStyle,
+        cursorBlinkingStyle
+    ) {
+        editorView.reload()
 
-    editorView.apply {
-      if (file.exists()) {
-        setLanguage(MonacoLanguageMapper.getLanguageByExtension(file.extension))
-        setReadOnly(false)
-        scope.launch(Dispatchers.IO) {
-          val contents = file.readFile2String(context) ?: ""
-          withContext(Dispatchers.Main) {
-            text = contents
-          }
+        editorView.apply {
+            if (file.exists()) {
+                setLanguage(MonacoLanguageMapper.getLanguageByExtension(file.extension))
+                setReadOnly(false)
+                scope.launch(Dispatchers.IO) {
+                    val contents = file.readFile2String(context) ?: ""
+                    withContext(Dispatchers.Main) {
+                        text = contents
+                    }
+                }
+            } else {
+                text = ""
+            }
+
+            onConfigure(this)
         }
-      } else {
-        text = ""
-      }
-
-      onConfigure(this)
     }
-  }
 }
 
 @Composable
 fun SoraEditor(
-  editorView: CodeEditorView,
-  onExplainCodeResponse: (GenerateContentResponse) -> Unit = {},
-  onImportComponentResponse: (GenerateContentResponse) -> Unit = {}
+    editorView: CodeEditorView,
+    onExplainCodeResponse: (GenerateContentResponse) -> Unit = {},
+    onImportComponentResponse: (GenerateContentResponse) -> Unit = {}
 ) {
-  val context = LocalContext.current
-  val toastHostState = LocalToastHostState.current
-  val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val toastHostState = LocalToastHostState.current
+    val scope = rememberCoroutineScope()
 
-  ConfigureEditor(
-    editorView.editor, onExplainCodeListener = { code ->
-      scope.launchWithProgressDialog(
-        context = Dispatchers.IO,
-        uiContext = context,
-        configureBuilder = { builder ->
-          builder.apply {
-            setMessage("Analyzing Code")
-            setCancelable(false)
-          }
-        }
-      ) { _, _ ->
-        Gemini.explainCode(code.toString())
-          .onSuccess(onExplainCodeResponse)
-          .onFailure {
-            scope.launch {
-              toastHostState.showToast(
-                message = it.message ?: "Error",
-                icon = Icons.Sharp.ErrorOutline
-              )
+    ConfigureEditor(
+        editorView.editor, onExplainCodeListener = { code ->
+            scope.launchWithProgressDialog(
+                context = Dispatchers.IO,
+                uiContext = context,
+                configureBuilder = { builder ->
+                    builder.apply {
+                        setMessage("Analyzing Code")
+                        setCancelable(false)
+                    }
+                }
+            ) { _, _ ->
+                Gemini.explainCode(code.toString())
+                    .onSuccess(onExplainCodeResponse)
+                    .onFailure {
+                        scope.launch {
+                            toastHostState.showToast(
+                                message = it.message ?: "Error",
+                                icon = Icons.Sharp.ErrorOutline
+                            )
+                        }
+                    }
             }
-          }
-      }
-    },
-    onImportComponentListener = { code ->
-      scope.launchWithProgressDialog(
-        context = Dispatchers.IO,
-        uiContext = context,
-        configureBuilder = { builder ->
-          builder.apply {
-            setMessage("Analyzing Code")
-            setCancelable(false)
-          }
-        }
-      ) { _, _ ->
-        Gemini.importComponents(code.toString())
-          .onSuccess(onImportComponentResponse)
-          .onFailure {
-            scope.launch {
-              toastHostState.showToast(
-                message = it.message ?: "Error",
-                icon = Icons.Sharp.ErrorOutline
-              )
+        },
+        onImportComponentListener = { code ->
+            scope.launchWithProgressDialog(
+                context = Dispatchers.IO,
+                uiContext = context,
+                configureBuilder = { builder ->
+                    builder.apply {
+                        setMessage("Analyzing Code")
+                        setCancelable(false)
+                    }
+                }
+            ) { _, _ ->
+                Gemini.importComponents(code.toString())
+                    .onSuccess(onImportComponentResponse)
+                    .onFailure {
+                        scope.launch {
+                            toastHostState.showToast(
+                                message = it.message ?: "Error",
+                                icon = Icons.Sharp.ErrorOutline
+                            )
+                        }
+                    }
             }
-          }
-      }
-    }
-  )
+        }
+    )
 }
 
 @Composable
 private fun ConfigureEditor(
-  editor: VCSpaceEditor,
-  onExplainCodeListener: OnExplainCodeListener? = null,
-  onImportComponentListener: OnImportComponentListener? = null
+    editor: VCSpaceEditor,
+    onExplainCodeListener: OnExplainCodeListener? = null,
+    onImportComponentListener: OnImportComponentListener? = null
 ) {
-  val items = remember {
-    mutableStateListOf<EditorTextActionItem>().apply {
-      addAll(actionItems)
-    }
-  }
-  val editorTextActionWindowExpandThreshold by rememberEditorTextActionWindowExpandThreshold()
-
-  val editorTextActionWindow = editorTextActionWindow(
-    items = items,
-    editorTextActionWindowExpandThreshold = editorTextActionWindowExpandThreshold
-  ) {
-    if (it.id != R.string.editor_action_select_all) {
-      editor.textActions?.dismiss()
-    }
-
-    when (it.id) {
-      R.string.editor_action_comment_line -> {
-        val commentRule = editor.commentRule
-        if (!editor.cursor.isSelected) {
-          addSingleComment(commentRule, editor.text)
-        } else {
-          addBlockComment(commentRule, editor.text)
+    val items = remember {
+        mutableStateListOf<EditorTextActionItem>().apply {
+            addAll(actionItems)
         }
-        editor.setSelection(editor.cursor.rightLine, editor.cursor.rightColumn)
-      }
+    }
+    val editorTextActionWindowExpandThreshold by rememberEditorTextActionWindowExpandThreshold()
 
-      R.string.editor_action_select_all -> {
-        editor.selectAll()
-      }
-
-      R.string.editor_action_long_select -> editor.beginLongSelect()
-
-      R.string.editor_action_copy -> {
-        editor.copyText()
-        editor.setSelection(editor.cursor.rightLine, editor.cursor.rightColumn)
-      }
-
-      R.string.editor_action_paste -> {
-        editor.pasteText()
-        editor.setSelection(editor.cursor.rightLine, editor.cursor.rightColumn)
-      }
-
-      R.string.editor_action_cut -> {
-        if (editor.cursor.isSelected) {
-          editor.cutText()
+    val editorTextActionWindow = editorTextActionWindow(
+        items = items,
+        editorTextActionWindowExpandThreshold = editorTextActionWindowExpandThreshold
+    ) {
+        if (it.id != R.string.editor_action_select_all) {
+            editor.textActions?.dismiss()
         }
-      }
 
-      R.string.editor_action_format -> {
-        editor.setSelection(editor.cursor.rightLine, editor.cursor.rightColumn)
-        editor.formatCodeAsync()
-      }
+        when (it.id) {
+            R.string.editor_action_comment_line -> {
+                val commentRule = editor.commentRule
+                if (!editor.cursor.isSelected) {
+                    addSingleComment(commentRule, editor.text)
+                } else {
+                    addBlockComment(commentRule, editor.text)
+                }
+                editor.setSelection(editor.cursor.rightLine, editor.cursor.rightColumn)
+            }
 
-      R.string.editor_action_explain_code -> {
-        val content = editor.text
-        val cursor = content.cursor
-        editor.onExplainCodeListener?.onExplain(content.substring(cursor.left, cursor.right))
-      }
+            R.string.editor_action_select_all -> {
+                editor.selectAll()
+            }
 
-      R.string.editor_action_import_components -> {
-        val content = editor.text
-        val cursor = content.cursor
-        editor.onImportComponentListener?.onImport(content.substring(cursor.left, cursor.right))
-      }
+            R.string.editor_action_long_select -> editor.beginLongSelect()
+
+            R.string.editor_action_copy -> {
+                editor.copyText()
+                editor.setSelection(editor.cursor.rightLine, editor.cursor.rightColumn)
+            }
+
+            R.string.editor_action_paste -> {
+                editor.pasteText()
+                editor.setSelection(editor.cursor.rightLine, editor.cursor.rightColumn)
+            }
+
+            R.string.editor_action_cut -> {
+                if (editor.cursor.isSelected) {
+                    editor.cutText()
+                }
+            }
+
+            R.string.editor_action_format -> {
+                editor.setSelection(editor.cursor.rightLine, editor.cursor.rightColumn)
+                editor.formatCodeAsync()
+            }
+
+            R.string.editor_action_explain_code -> {
+                val content = editor.text
+                val cursor = content.cursor
+                editor.onExplainCodeListener?.onExplain(
+                    content.substring(
+                        cursor.left,
+                        cursor.right
+                    )
+                )
+            }
+
+            R.string.editor_action_import_components -> {
+                val content = editor.text
+                val cursor = content.cursor
+                editor.onImportComponentListener?.onImport(
+                    content.substring(
+                        cursor.left,
+                        cursor.right
+                    )
+                )
+            }
+        }
     }
-  }
 
-  editor.onExplainCodeListener = onExplainCodeListener
-  editor.onImportComponentListener = onImportComponentListener
-  editor.setTextActionWindow {
-    TextActionsWindow(it, editorTextActionWindow) {
-      fun updateAction(index: Int, visible: Boolean, clickable: Boolean = true) {
-        items[index] = items[index].copy(visible = visible, clickable = clickable)
-      }
+    editor.onExplainCodeListener = onExplainCodeListener
+    editor.onImportComponentListener = onImportComponentListener
+    editor.setTextActionWindow {
+        TextActionsWindow(it, editorTextActionWindow) {
+            fun updateAction(index: Int, visible: Boolean, clickable: Boolean = true) {
+                items[index] = items[index].copy(visible = visible, clickable = clickable)
+            }
 
-      // Comment action
-      val commentRule = editor.commentRule
-      updateAction(0, commentRule != null && editor.isEditable)
+            // Comment action
+            val commentRule = editor.commentRule
+            updateAction(0, commentRule != null && editor.isEditable)
 
-      // Select all action
-      updateAction(1, true)
+            // Select all action
+            updateAction(1, true)
 
-      // Long select action
-      updateAction(2, editor.isEditable)
+            // Long select action
+            updateAction(2, editor.isEditable)
 
-      // Cut action
-      updateAction(3, editor.isEditable && editor.cursor.isSelected)
+            // Cut action
+            updateAction(3, editor.isEditable && editor.cursor.isSelected)
 
-      // Copy action
-      updateAction(4, editor.cursor.isSelected, editor.cursor.isSelected)
+            // Copy action
+            updateAction(4, editor.cursor.isSelected, editor.cursor.isSelected)
 
-      // Paste action
-      updateAction(5, true, editor.hasClip())
+            // Paste action
+            updateAction(5, true, editor.hasClip())
 
-      // Format action
-      updateAction(6, editor.isEditable)
+            // Format action
+            updateAction(6, editor.isEditable)
 
-      // Explain Code Action
-      updateAction(7, editor.cursor.isSelected, editor.cursor.isSelected)
+            // Explain Code Action
+            updateAction(7, editor.cursor.isSelected, editor.cursor.isSelected)
 
-      // Import Action
-      updateAction(8, editor.cursor.isSelected, editor.cursor.isSelected)
+            // Import Action
+            updateAction(8, editor.cursor.isSelected, editor.cursor.isSelected)
+        }
     }
-  }
 
-  ConfigureFontSettings(editor)
-  ConfigureColorScheme(editor)
-  ConfigureIndentation(editor)
-  ConfigureMiscSettings(editor)
+    ConfigureFontSettings(editor)
+    ConfigureColorScheme(editor)
+    ConfigureIndentation(editor)
+    ConfigureMiscSettings(editor)
 }
 
 @Composable
 private fun ConfigureFontSettings(editor: VCSpaceEditor) {
-  val fontFamily by rememberFontFamily()
-  val fontSize by rememberFontSize()
+    val fontFamily by rememberFontFamily()
+    val fontSize by rememberFontSize()
 
-  val context = LocalContext.current
+    val context = LocalContext.current
 
-  LaunchedEffect(fontFamily, fontSize) {
-    editor.apply {
-      val font = ResourcesCompat.getFont(
-        context, when (fontFamily) {
-          context.getString(R.string.pref_editor_font_value_firacode) -> R.font.firacode_regular
-          context.getString(R.string.pref_editor_font_value_jetbrains) -> R.font.jetbrains_mono
-          else -> R.font.jetbrains_mono
+    LaunchedEffect(fontFamily, fontSize) {
+        editor.apply {
+            val font = ResourcesCompat.getFont(
+                context, when (fontFamily) {
+                    context.getString(R.string.pref_editor_font_value_firacode) -> R.font.firacode_regular
+                    context.getString(R.string.pref_editor_font_value_jetbrains) -> R.font.jetbrains_mono
+                    else -> R.font.jetbrains_mono
+                }
+            )
+
+            typefaceText = font
+            typefaceLineNumber = font
+            setTextSize(fontSize)
         }
-      )
-
-      typefaceText = font
-      typefaceLineNumber = font
-      setTextSize(fontSize)
     }
-  }
 }
 
 @Composable
 private fun ConfigureColorScheme(editor: VCSpaceEditor) {
-  val colorScheme by rememberColorScheme()
-  val isDarkTheme = isSystemInDarkTheme()
+    val colorScheme by rememberColorScheme()
+    val isDarkTheme = isSystemInDarkTheme()
 
-  val followSystemTheme by rememberFollowSystemTheme()
-  val isDarkMode by rememberIsDarkMode()
+    val followSystemTheme by rememberFollowSystemTheme()
+    val isDarkMode by rememberIsDarkMode()
 
-  val context = LocalContext.current
+    val context = LocalContext.current
 
-  LaunchedEffect(colorScheme, isDarkTheme, followSystemTheme, isDarkMode) {
-    editor.apply {
-      ThemeRegistry.getInstance().setTheme(
-        when (colorScheme) {
-          context.getString(R.string.pref_editor_colorscheme_value_followui) -> if ((followSystemTheme && isDarkTheme) || isDarkMode) "darcula" else "quietlight"
-          "Quietlight" -> "quietlight"
-          "Darcula" -> "darcula"
-          "Abyss" -> "abyss"
-          "Solarized Dark" -> "solarized_drak"
-          else -> if ((followSystemTheme && isDarkTheme) || isDarkMode) "darcula" else "quietlight"
+    LaunchedEffect(colorScheme, isDarkTheme, followSystemTheme, isDarkMode) {
+        editor.apply {
+            ThemeRegistry.getInstance().setTheme(
+                when (colorScheme) {
+                    context.getString(R.string.pref_editor_colorscheme_value_followui) -> if ((followSystemTheme && isDarkTheme) || isDarkMode) "darcula" else "quietlight"
+                    "Quietlight" -> "quietlight"
+                    "Darcula" -> "darcula"
+                    "Abyss" -> "abyss"
+                    "Solarized Dark" -> "solarized_drak"
+                    else -> if ((followSystemTheme && isDarkTheme) || isDarkMode) "darcula" else "quietlight"
+                }
+            ).also {
+                setText(text.toString()) // Required to update colors correctly
+            }
         }
-      ).also {
-        setText(text.toString()) // Required to update colors correctly
-      }
     }
-  }
 }
 
 @Composable
 private fun ConfigureIndentation(editor: VCSpaceEditor) {
-  val indentSize by rememberIndentSize()
-  val useTab by rememberUseTab()
+    val indentSize by rememberIndentSize()
+    val useTab by rememberUseTab()
 
-  LaunchedEffect(indentSize, useTab) {
-    editor.apply {
-      (editorLanguage as? TextMateLanguage)?.tabSize = indentSize
-      (editorLanguage as? TextMateLanguage)?.useTab(useTab)
-      tabWidth = indentSize
+    LaunchedEffect(indentSize, useTab) {
+        editor.apply {
+            (editorLanguage as? TextMateLanguage)?.tabSize = indentSize
+            (editorLanguage as? TextMateLanguage)?.useTab(useTab)
+            tabWidth = indentSize
+        }
     }
-  }
 }
 
 @Composable
 private fun ConfigureMiscSettings(editor: VCSpaceEditor) {
-  val stickyScroll by rememberStickyScroll()
-  val fontLigatures by rememberFontLigatures()
-  val wordWrap by rememberWordWrap()
-  val lineNumber by rememberLineNumber()
-  val deleteLineOnBackspace by rememberDeleteLineOnBackspace()
-  val deleteIndentOnBackspace by rememberDeleteIndentOnBackspace()
+    val stickyScroll by rememberStickyScroll()
+    val fontLigatures by rememberFontLigatures()
+    val wordWrap by rememberWordWrap()
+    val lineNumber by rememberLineNumber()
+    val deleteLineOnBackspace by rememberDeleteLineOnBackspace()
+    val deleteIndentOnBackspace by rememberDeleteIndentOnBackspace()
 
-  LaunchedEffect(
-    stickyScroll,
-    fontLigatures,
-    wordWrap,
-    lineNumber,
-    deleteLineOnBackspace,
-    deleteIndentOnBackspace
-  ) {
-    editor.apply {
-      props.stickyScroll = stickyScroll
-      isLigatureEnabled = fontLigatures
-      isWordwrap = wordWrap
-      isLineNumberEnabled = lineNumber
-      props.deleteEmptyLineFast = deleteLineOnBackspace
-      props.deleteMultiSpaces = if (deleteIndentOnBackspace) -1 else 1
+    LaunchedEffect(
+        stickyScroll,
+        fontLigatures,
+        wordWrap,
+        lineNumber,
+        deleteLineOnBackspace,
+        deleteIndentOnBackspace
+    ) {
+        editor.apply {
+            props.stickyScroll = stickyScroll
+            isLigatureEnabled = fontLigatures
+            isWordwrap = wordWrap
+            isLineNumberEnabled = lineNumber
+            props.deleteEmptyLineFast = deleteLineOnBackspace
+            props.deleteMultiSpaces = if (deleteIndentOnBackspace) -1 else 1
+        }
     }
-  }
 }

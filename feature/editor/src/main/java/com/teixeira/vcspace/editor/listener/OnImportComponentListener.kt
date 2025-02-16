@@ -16,5 +16,5 @@
 package com.teixeira.vcspace.editor.listener
 
 fun interface OnImportComponentListener {
-  fun onImport(code: CharSequence)
+    fun onImport(code: CharSequence)
 }

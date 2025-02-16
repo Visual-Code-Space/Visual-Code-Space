@@ -81,195 +81,197 @@ import com.teixeira.vcspace.utils.isStoragePermissionGranted
 import java.io.File
 
 abstract class BaseComposeActivity : AppCompatActivity() {
-  @OptIn(ExperimentalPermissionsApi::class)
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    enableEdgeToEdge()
-    // setupKotlinStdlib()
+    @OptIn(ExperimentalPermissionsApi::class)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        // setupKotlinStdlib()
 
-    setContent {
-      VCSpaceTheme {
-        val systemBarFollowThemeState by rememberSaveable { mutableStateOf(true) }
+        setContent {
+            VCSpaceTheme {
+                val systemBarFollowThemeState by rememberSaveable { mutableStateOf(true) }
 
-        val followSystemTheme by rememberFollowSystemTheme()
-        val localDarkTheme by rememberIsDarkMode()
-        val systemDarkTheme = isSystemInDarkTheme()
+                val followSystemTheme by rememberFollowSystemTheme()
+                val localDarkTheme by rememberIsDarkMode()
+                val systemDarkTheme = isSystemInDarkTheme()
 
-        val darkTheme by remember(followSystemTheme, localDarkTheme, systemDarkTheme) {
-          mutableStateOf(if (followSystemTheme) systemDarkTheme else localDarkTheme)
-        }
-
-        LaunchedEffect(darkTheme, systemBarFollowThemeState) {
-          enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.auto(
-              Color.TRANSPARENT,
-              Color.TRANSPARENT,
-            ) { darkTheme || !systemBarFollowThemeState },
-            navigationBarStyle = SystemBarStyle.auto(
-              Color.TRANSPARENT,
-              Color.TRANSPARENT,
-            ) { darkTheme || !systemBarFollowThemeState }
-          )
-        }
-
-        val storagePermissionsState = rememberMultiplePermissionsState(
-          listOf(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-          )
-        )
-        var hasPermission by remember { mutableStateOf(isStoragePermissionGranted()) }
-
-        LifecycleResumeEffect(hasPermission) {
-          hasPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            Environment.isExternalStorageManager()
-          } else {
-            storagePermissionsState.allPermissionsGranted
-          }
-
-          onPauseOrDispose { }
-        }
-
-        ProvideBaseCompositionLocals {
-
-          if (hasPermission) {
-            MainScreen()
-          } else {
-            SetupPermissionScreen(storagePermissionsState)
-          }
-
-          ToastHost()
-        }
-      }
-    }
-  }
-
-  @Composable
-  private fun ProvideBaseCompositionLocals(content: @Composable () -> Unit) {
-    val toastHostState = rememberToastHostState()
-
-    CompositionLocalProvider(
-      LocalLifecycleScope provides lifecycleScope,
-      LocalLayoutInflater provides layoutInflater,
-      LocalToastHostState provides toastHostState,
-      content = content
-    )
-  }
-
-  @Composable
-  protected abstract fun MainScreen()
-
-  @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
-  @Composable
-  private fun SetupPermissionScreen(permissionsState: MultiplePermissionsState) {
-    Scaffold(
-      topBar = {
-        VCSpaceLargeTopBar(
-          title = {
-            Text(
-              text = stringResource(strings.app_name),
-              fontWeight = FontWeight.ExtraBold,
-              fontFamily = FontFamily.SansSerif,
-            )
-          }
-        )
-      }
-    ) { innerPadding ->
-      BackHandler(onBack = AppUtils::exitApp)
-
-      Column(
-        modifier = Modifier
-          .padding(innerPadding)
-          .fillMaxSize()
-          .padding(16.dp)
-      ) {
-        Text(
-          text = stringResource(strings.file_storage_access),
-          style = MaterialTheme.typography.headlineMedium,
-          modifier = Modifier.padding(start = 4.dp)
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        ElevatedCard {
-          Text(
-            text = stringResource(strings.file_storage_access_message),
-            modifier = Modifier.padding(16.dp)
-          )
-        }
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Row(
-          horizontalArrangement = Arrangement.spacedBy(12.dp),
-          modifier = Modifier.padding(horizontal = 4.dp)
-        ) {
-
-          OutlinedButton(
-            onClick = AppUtils::exitApp,
-            modifier = Modifier
-              .fillMaxWidth()
-              .weight(1f)
-          ) {
-            Text(stringResource(strings.exit))
-          }
-
-          Button(
-            onClick = {
-              if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                try {
-                  val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-                  intent.data = Uri.parse("package:${packageName}")
-                  startActivity(intent)
-                } catch (e: Exception) {
-                  val intent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
-                  startActivity(intent)
+                val darkTheme by remember(followSystemTheme, localDarkTheme, systemDarkTheme) {
+                    mutableStateOf(if (followSystemTheme) systemDarkTheme else localDarkTheme)
                 }
-              } else {
-                permissionsState.launchMultiplePermissionRequest()
-              }
-            },
-            modifier = Modifier
-              .fillMaxWidth()
-              .weight(1f)
-          ) {
-            Text(stringResource(strings.file_storage_access_grant))
-          }
+
+                LaunchedEffect(darkTheme, systemBarFollowThemeState) {
+                    enableEdgeToEdge(
+                        statusBarStyle = SystemBarStyle.auto(
+                            Color.TRANSPARENT,
+                            Color.TRANSPARENT,
+                        ) { darkTheme || !systemBarFollowThemeState },
+                        navigationBarStyle = SystemBarStyle.auto(
+                            Color.TRANSPARENT,
+                            Color.TRANSPARENT,
+                        ) { darkTheme || !systemBarFollowThemeState }
+                    )
+                }
+
+                val storagePermissionsState = rememberMultiplePermissionsState(
+                    listOf(
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    )
+                )
+                var hasPermission by remember { mutableStateOf(isStoragePermissionGranted()) }
+
+                LifecycleResumeEffect(hasPermission) {
+                    hasPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        Environment.isExternalStorageManager()
+                    } else {
+                        storagePermissionsState.allPermissionsGranted
+                    }
+
+                    onPauseOrDispose { }
+                }
+
+                ProvideBaseCompositionLocals {
+
+                    if (hasPermission) {
+                        MainScreen()
+                    } else {
+                        SetupPermissionScreen(storagePermissionsState)
+                    }
+
+                    ToastHost()
+                }
+            }
         }
-      }
     }
-  }
 
-  private fun setupKotlinStdlib() {
-    val filesDir = PathUtils.getExternalAppFilesPath()
-    val kotlinStdlib = "$filesDir/kotlin-stdlib.jar"
+    @Composable
+    private fun ProvideBaseCompositionLocals(content: @Composable () -> Unit) {
+        val toastHostState = rememberToastHostState()
 
-    if (!File(kotlinStdlib).exists()) {
-      assets.open("kotlin-stdlib-2.0.20.jar").use { input ->
-        File(kotlinStdlib).outputStream().use { output ->
-          input.copyTo(output)
+        CompositionLocalProvider(
+            LocalLifecycleScope provides lifecycleScope,
+            LocalLayoutInflater provides layoutInflater,
+            LocalToastHostState provides toastHostState,
+            content = content
+        )
+    }
+
+    @Composable
+    protected abstract fun MainScreen()
+
+    @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
+    @Composable
+    private fun SetupPermissionScreen(permissionsState: MultiplePermissionsState) {
+        Scaffold(
+            topBar = {
+                VCSpaceLargeTopBar(
+                    title = {
+                        Text(
+                            text = stringResource(strings.app_name),
+                            fontWeight = FontWeight.ExtraBold,
+                            fontFamily = FontFamily.SansSerif,
+                        )
+                    }
+                )
+            }
+        ) { innerPadding ->
+            BackHandler(onBack = AppUtils::exitApp)
+
+            Column(
+                modifier = Modifier
+                  .padding(innerPadding)
+                  .fillMaxSize()
+                  .padding(16.dp)
+            ) {
+                Text(
+                    text = stringResource(strings.file_storage_access),
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier.padding(start = 4.dp)
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                ElevatedCard {
+                    Text(
+                        text = stringResource(strings.file_storage_access_message),
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.padding(horizontal = 4.dp)
+                ) {
+
+                    OutlinedButton(
+                        onClick = AppUtils::exitApp,
+                        modifier = Modifier
+                          .fillMaxWidth()
+                          .weight(1f)
+                    ) {
+                        Text(stringResource(strings.exit))
+                    }
+
+                    Button(
+                        onClick = {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                                try {
+                                    val intent =
+                                        Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                                    intent.data = Uri.parse("package:${packageName}")
+                                    startActivity(intent)
+                                } catch (e: Exception) {
+                                    val intent =
+                                        Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
+                                    startActivity(intent)
+                                }
+                            } else {
+                                permissionsState.launchMultiplePermissionRequest()
+                            }
+                        },
+                        modifier = Modifier
+                          .fillMaxWidth()
+                          .weight(1f)
+                    ) {
+                        Text(stringResource(strings.file_storage_access_grant))
+                    }
+                }
+            }
         }
-      }
     }
 
-    System.setProperty("kotlin.java.stdlib.jar", kotlinStdlib)
-  }
+    private fun setupKotlinStdlib() {
+        val filesDir = PathUtils.getExternalAppFilesPath()
+        val kotlinStdlib = "$filesDir/kotlin-stdlib.jar"
+
+        if (!File(kotlinStdlib).exists()) {
+            assets.open("kotlin-stdlib-2.0.20.jar").use { input ->
+                File(kotlinStdlib).outputStream().use { output ->
+                    input.copyTo(output)
+                }
+            }
+        }
+
+        System.setProperty("kotlin.java.stdlib.jar", kotlinStdlib)
+    }
 }
 
 @Composable
 fun ObserveLifecycleEvents(onStateChanged: (Lifecycle.Event) -> Unit) {
-  val currentOnStateChanged by rememberUpdatedState(onStateChanged)
+    val currentOnStateChanged by rememberUpdatedState(onStateChanged)
 
-  val lifecycleOwner = LocalLifecycleOwner.current
-  DisposableEffect(lifecycleOwner) {
-    val observer = LifecycleEventObserver { _, event ->
-      currentOnStateChanged(event)
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            currentOnStateChanged(event)
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
     }
-
-    lifecycleOwner.lifecycle.addObserver(observer)
-
-    onDispose {
-      lifecycleOwner.lifecycle.removeObserver(observer)
-    }
-  }
 }

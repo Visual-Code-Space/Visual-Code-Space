@@ -16,5 +16,5 @@
 package com.vcspace.plugins;
 
 public interface ExtensionPoint {
-  void apply(PluginContext context);
+    void apply(PluginContext context);
 }

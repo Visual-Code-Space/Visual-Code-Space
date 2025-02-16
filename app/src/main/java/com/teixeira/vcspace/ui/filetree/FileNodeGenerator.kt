@@ -23,47 +23,47 @@ import io.github.dingyi222666.view.treeview.TreeNodeGenerator
 import kotlinx.coroutines.CoroutineScope
 
 class FileNodeGenerator(
-  private val prefetchScope: CoroutineScope,
-  private val rootPath: File,
-  private val fileListLoader: FileListLoader
+    private val prefetchScope: CoroutineScope,
+    private val rootPath: File,
+    private val fileListLoader: FileListLoader
 ) : TreeNodeGenerator<File> {
 
-  override fun createNode(
-    parentNode: TreeNode<File>,
-    currentData: File,
-    tree: AbstractTree<File>
-  ): TreeNode<File> {
-    return TreeNode(
-      data = currentData,
-      depth = parentNode.depth + 1,
-      name = currentData.name,
-      id = tree.generateId(),
-      hasChild = currentData.isDirectory && fileListLoader.getCacheFileList(currentData)
-        .isNotEmpty(),
-      isChild = currentData.isDirectory,
-      expand = false
-    )
-  }
-
-  override suspend fun fetchChildData(targetNode: TreeNode<File>): Set<File> {
-    val path = targetNode.requireData()
-    var files = fileListLoader.getCacheFileList(path)
-
-    if (files.isEmpty()) {
-      files = fileListLoader.loadFileList(prefetchScope, path)
+    override fun createNode(
+        parentNode: TreeNode<File>,
+        currentData: File,
+        tree: AbstractTree<File>
+    ): TreeNode<File> {
+        return TreeNode(
+            data = currentData,
+            depth = parentNode.depth + 1,
+            name = currentData.name,
+            id = tree.generateId(),
+            hasChild = currentData.isDirectory && fileListLoader.getCacheFileList(currentData)
+                .isNotEmpty(),
+            isChild = currentData.isDirectory,
+            expand = false
+        )
     }
 
-    return files.toSet()
-  }
+    override suspend fun fetchChildData(targetNode: TreeNode<File>): Set<File> {
+        val path = targetNode.requireData()
+        var files = fileListLoader.getCacheFileList(path)
 
-  override fun createRootNode(): TreeNode<File> {
-    return TreeNode(
-      data = rootPath,
-      depth = 0,
-      name = rootPath.name,
-      id = Tree.ROOT_NODE_ID,
-      hasChild = true,
-      isChild = true,
-    )
-  }
+        if (files.isEmpty()) {
+            files = fileListLoader.loadFileList(prefetchScope, path)
+        }
+
+        return files.toSet()
+    }
+
+    override fun createRootNode(): TreeNode<File> {
+        return TreeNode(
+            data = rootPath,
+            depth = 0,
+            name = rootPath.name,
+            id = Tree.ROOT_NODE_ID,
+            hasChild = true,
+            isChild = true,
+        )
+    }
 }

@@ -17,7 +17,6 @@ package com.teixeira.vcspace.activities
 
 import android.os.Build
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.PredictiveBackHandler
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ContentCopy
@@ -54,112 +53,112 @@ import java.util.Calendar
 import java.util.Date
 
 class CrashActivity : BaseComposeActivity() {
-  companion object {
-    const val KEY_EXTRA_ERROR = "key_extra_error"
-  }
-
-  private val softwareInfo: String
-    get() =
-      StringBuilder("Manufacturer: ")
-        .append(DeviceUtils.getManufacturer())
-        .append("\n")
-        .append("Device: ")
-        .append(DeviceUtils.getModel())
-        .append("\n")
-        .append("SDK: ")
-        .append(Build.VERSION.SDK_INT)
-        .append("\n")
-        .append("Android: ")
-        .append(Build.VERSION.RELEASE)
-        .append("\n")
-        .append("Model: ")
-        .append(Build.VERSION.INCREMENTAL)
-        .append("\n")
-        .toString()
-
-  private val appInfo: String
-    get() =
-      StringBuilder("Version: ")
-        .append(BuildConfig.VERSION_NAME)
-        .append("\n")
-        .append("Build: ")
-        .append(BuildConfig.BUILD_TYPE)
-        .toString()
-
-  private val date: Date
-    get() = Calendar.getInstance().time
-
-  @OptIn(ExperimentalMaterial3Api::class)
-  @Composable
-  override fun MainScreen() {
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
-      state = rememberTopAppBarState()
-    )
-    val uriHandler = LocalUriHandler.current
-
-    val errorString = buildString {
-      append("$softwareInfo\n")
-      append("$appInfo\n\n")
-      append("$date\n\n")
-      append(intent.getStringExtra(KEY_EXTRA_ERROR))
-    }
-    val error by remember { mutableStateOf(errorString) }
-    val scope = rememberCoroutineScope()
-    val toastHostState = rememberToastHostState()
-
-    val appCrashedMessage = stringResource(strings.app_crashed)
-    SideEffect {
-      scope.launch {
-        toastHostState.showToast(
-          message = appCrashedMessage,
-          icon = Icons.Outlined.ErrorOutline
-        )
-      }
+    companion object {
+        const val KEY_EXTRA_ERROR = "key_extra_error"
     }
 
-    val copiedMessage = stringResource(strings.copied_to_clipboard)
+    private val softwareInfo: String
+        get() =
+            StringBuilder("Manufacturer: ")
+                .append(DeviceUtils.getManufacturer())
+                .append("\n")
+                .append("Device: ")
+                .append(DeviceUtils.getModel())
+                .append("\n")
+                .append("SDK: ")
+                .append(Build.VERSION.SDK_INT)
+                .append("\n")
+                .append("Android: ")
+                .append(Build.VERSION.RELEASE)
+                .append("\n")
+                .append("Model: ")
+                .append(Build.VERSION.INCREMENTAL)
+                .append("\n")
+                .toString()
 
-    Scaffold(
-      modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-      topBar = {
-        CrashTopBar(
-          scrollBehavior = scrollBehavior
+    private val appInfo: String
+        get() =
+            StringBuilder("Version: ")
+                .append(BuildConfig.VERSION_NAME)
+                .append("\n")
+                .append("Build: ")
+                .append(BuildConfig.BUILD_TYPE)
+                .toString()
+
+    private val date: Date
+        get() = Calendar.getInstance().time
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    override fun MainScreen() {
+        val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
+            state = rememberTopAppBarState()
         )
-      },
-      floatingActionButton = {
-        ExtendedFloatingActionButton(
-          onClick = {
-            ClipboardUtils.copyText(error).also {
-              scope.launch {
+        val uriHandler = LocalUriHandler.current
+
+        val errorString = buildString {
+            append("$softwareInfo\n")
+            append("$appInfo\n\n")
+            append("$date\n\n")
+            append(intent.getStringExtra(KEY_EXTRA_ERROR))
+        }
+        val error by remember { mutableStateOf(errorString) }
+        val scope = rememberCoroutineScope()
+        val toastHostState = rememberToastHostState()
+
+        val appCrashedMessage = stringResource(strings.app_crashed)
+        SideEffect {
+            scope.launch {
                 toastHostState.showToast(
-                  message = copiedMessage,
-                  icon = Icons.Outlined.ContentCopy
+                    message = appCrashedMessage,
+                    icon = Icons.Outlined.ErrorOutline
                 )
-              }
             }
+        }
 
-            uriHandler.openUri("https://github.com/Visual-Code-Space/Visual-Code-Space/issues/new?assignees=&labels=bug&projects=&template=bug_report.md&title=")
-          },
-          text = {
-            Text(stringResource(strings.copy_and_report))
-          },
-          icon = {
-            Icon(
-              imageVector = Icons.Outlined.ContentCopy,
-              contentDescription = stringResource(strings.copy)
+        val copiedMessage = stringResource(strings.copied_to_clipboard)
+
+        Scaffold(
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            topBar = {
+                CrashTopBar(
+                    scrollBehavior = scrollBehavior
+                )
+            },
+            floatingActionButton = {
+                ExtendedFloatingActionButton(
+                    onClick = {
+                        ClipboardUtils.copyText(error).also {
+                            scope.launch {
+                                toastHostState.showToast(
+                                    message = copiedMessage,
+                                    icon = Icons.Outlined.ContentCopy
+                                )
+                            }
+                        }
+
+                        uriHandler.openUri("https://github.com/Visual-Code-Space/Visual-Code-Space/issues/new?assignees=&labels=bug&projects=&template=bug_report.md&title=")
+                    },
+                    text = {
+                        Text(stringResource(strings.copy_and_report))
+                    },
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Outlined.ContentCopy,
+                            contentDescription = stringResource(strings.copy)
+                        )
+                    }
+                )
+            }
+        ) { innerPadding ->
+            ToastHost(hostState = toastHostState)
+
+            CrashScreen(
+                modifier = Modifier.padding(innerPadding),
+                error = error,
             )
-          }
-        )
-      }
-    ) { innerPadding ->
-      ToastHost(hostState = toastHostState)
 
-      CrashScreen(
-        modifier = Modifier.padding(innerPadding),
-        error = error,
-      )
-
-      BackHandler(onBack = AppUtils::exitApp)
+            BackHandler(onBack = AppUtils::exitApp)
+        }
     }
-  }
 }

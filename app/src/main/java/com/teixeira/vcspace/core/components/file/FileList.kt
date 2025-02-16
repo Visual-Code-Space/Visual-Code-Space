@@ -78,206 +78,214 @@ import kotlin.math.max
 @SuppressLint("SimpleDateFormat")
 @Composable
 fun FileList(
-  modifier: Modifier = Modifier,
-  files: List<File>,
-  selectedFile: EditorViewModel.OpenedFile? = null,
-  itemModifier: Modifier = Modifier,
-  onFileLongClick: ((File) -> Unit)? = null,
-  onFileClick: (File) -> Unit,
+    modifier: Modifier = Modifier,
+    files: List<File>,
+    selectedFile: EditorViewModel.OpenedFile? = null,
+    itemModifier: Modifier = Modifier,
+    onFileLongClick: ((File) -> Unit)? = null,
+    onFileClick: (File) -> Unit,
 ) {
-  val context = LocalContext.current
-  val haptics = LocalHapticFeedback.current
+    val context = LocalContext.current
+    val haptics = LocalHapticFeedback.current
 
-  val listState = rememberLazyListState()
+    val listState = rememberLazyListState()
 
-  LaunchedEffect(files, selectedFile) {
-    val index = files.indexOf(selectedFile?.file)
+    LaunchedEffect(files, selectedFile) {
+        val index = files.indexOf(selectedFile?.file)
 
-    listState.animateScrollToItem(if (index != -1) index else 0)
-  }
-
-  if (files.isEmpty()) {
-    Box(
-      modifier = modifier.fillMaxSize(),
-      contentAlignment = Alignment.Center
-    ) {
-      Text(
-        text = stringResource(R.string.file_empty_folder)
-      )
+        listState.animateScrollToItem(if (index != -1) index else 0)
     }
-  } else {
-    LazyColumn(
-      modifier = modifier.fillMaxWidth(),
-      state = listState
-    ) {
-      items(files) { file ->
-        val isSelectedFile = selectedFile?.file == file
 
-        val itemBackgroundModifier = if (isSelectedFile) {
-          Modifier.background(color = MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
-        } else Modifier
-
-        val icon = if (file.isFile) {
-          ImageVector.vectorResource(FileIconProvider.findFileIconResource(file))
-        } else Icons.Rounded.Folder
-
-        Surface(
-          modifier = itemModifier
-            .then(itemBackgroundModifier)
-            .semantics(mergeDescendants = true) {}
-            .combinedClickable(
-              onClick = { onFileClick(file) },
-              onLongClick = {
-                haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                onFileLongClick?.invoke(file)
-              }
-            ),
-          color = Color.Transparent
+    if (files.isEmpty()) {
+        Box(
+            modifier = modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
         ) {
-          val edgeWidth = 8.dp
-
-          val fileName = @Composable {
-            ProvideTextStyle(MaterialTheme.typography.bodyMedium) {
-              fun ContentDrawScope.drawFadedEdge(leftEdge: Boolean) {
-                val edgeWidthPx = edgeWidth.toPx()
-                drawRect(
-                  topLeft = Offset(if (leftEdge) 0f else size.width - edgeWidthPx, 0f),
-                  size = Size(edgeWidthPx, size.height),
-                  brush = Brush.horizontalGradient(
-                    colors = listOf(Color.Transparent, Color.Black),
-                    startX = if (leftEdge) 0f else size.width,
-                    endX = if (leftEdge) edgeWidthPx else size.width - edgeWidthPx
-                  ),
-                  blendMode = BlendMode.DstIn
-                )
-              }
-
-              Text(
-                text = file.name,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier
-                  .fillMaxWidth()
-                  .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
-                  .drawWithContent {
-                    drawContent()
-                    drawFadedEdge(leftEdge = true)
-                    drawFadedEdge(leftEdge = false)
-                  }
-                  .basicMarquee(
-                    // Animate forever.
-                    iterations = Int.MAX_VALUE,
-                    spacing = MarqueeSpacing(0.dp)
-                  )
-                  .padding(start = edgeWidth)
-              )
-            }
-          }
-
-          val modifiedIn = @Composable {
-            ProvideTextStyle(MaterialTheme.typography.labelSmall) {
-              Text(
-                text = context.getString(
-                  R.string.file_modified_in,
-                  SimpleDateFormat("yy/MM/dd").format(file.lastModified()),
-                ),
-                fontWeight = FontWeight.Light,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(start = edgeWidth)
-              )
-            }
-          }
-
-          val fileIcon = @Composable {
-            Box {
-              CompositionLocalProvider(
-                LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant
-              ) {
-                Icon(
-                  imageVector = icon,
-                  contentDescription = file.name,
-                  modifier = Modifier.size(24.dp)
-                )
-              }
-            }
-          }
-
-          Layout(
-            contents = listOf(fileName, modifiedIn, fileIcon),
-            measurePolicy = { measurables, constraints ->
-              val (fileNameMeasurable, modifiedInMeasurable, fileIconMeasurable) = measurables
-              var currentTotalWidth = 0
-              var currentTotalHeight = 0
-
-              val looseConstraints = constraints.copy(minWidth = 0, minHeight = 0)
-              val startPadding = 8.dp
-              val endPadding = 8.dp
-              val horizontalPadding = (startPadding + endPadding).roundToPx()
-
-              val paddedLooseConstraints = looseConstraints.offset(
-                horizontal = -horizontalPadding,
-                vertical = 0,
-              )
-
-              val fileIconPlaceable = fileIconMeasurable
-                .firstOrNull()?.measure(paddedLooseConstraints)
-              currentTotalWidth += widthOrZero(fileIconPlaceable)
-
-              val fileNamePlaceable = fileNameMeasurable.firstOrNull()?.measure(
-                paddedLooseConstraints.offset(
-                  horizontal = -currentTotalWidth
-                )
-              )
-              currentTotalHeight += heightOrZero(fileNamePlaceable)
-
-              val modifiedInPlaceable = modifiedInMeasurable.firstOrNull()?.measure(
-                paddedLooseConstraints.offset(
-                  horizontal = -currentTotalWidth,
-                  vertical = -currentTotalHeight
-                )
-              )
-              currentTotalHeight += heightOrZero(modifiedInPlaceable)
-
-              val width = calculateWidth(
-                iconWidth = widthOrZero(fileIconPlaceable),
-                nameWidth = widthOrZero(fileNamePlaceable),
-                descriptionWidth = widthOrZero(modifiedInPlaceable),
-                horizontalPadding = horizontalPadding,
-                constraints = constraints,
-              )
-              val height = calculateHeight(
-                iconHeight = heightOrZero(fileIconPlaceable),
-                nameHeight = heightOrZero(fileNamePlaceable),
-                descriptionHeight = heightOrZero(modifiedInPlaceable),
-                verticalPadding = 0,
-                constraints = constraints
-              )
-
-              layout(width, height) {
-                fileIconPlaceable?.let {
-                  it.placeRelative(
-                    x = startPadding.roundToPx(),
-                    y = CenterVertically.align(it.height, height)
-                  )
-                }
-
-                val mainContentX = startPadding.roundToPx() + widthOrZero(fileIconPlaceable)
-                val totalHeight =
-                  heightOrZero(fileNamePlaceable) + heightOrZero(modifiedInPlaceable)
-                val mainContentY = CenterVertically.align(totalHeight, height)
-                var currentY = mainContentY
-
-                fileNamePlaceable?.placeRelative(mainContentX, currentY)
-                currentY += heightOrZero(fileNamePlaceable)
-
-                modifiedInPlaceable?.placeRelative(mainContentX, currentY)
-              }
-            }
-          )
+            Text(
+                text = stringResource(R.string.file_empty_folder)
+            )
         }
-      }
+    } else {
+        LazyColumn(
+            modifier = modifier.fillMaxWidth(),
+            state = listState
+        ) {
+            items(files) { file ->
+                val isSelectedFile = selectedFile?.file == file
+
+                val itemBackgroundModifier = if (isSelectedFile) {
+                    Modifier.background(color = MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
+                } else Modifier
+
+                val icon = if (file.isFile) {
+                    ImageVector.vectorResource(FileIconProvider.findFileIconResource(file))
+                } else Icons.Rounded.Folder
+
+                Surface(
+                    modifier = itemModifier
+                      .then(itemBackgroundModifier)
+                      .semantics(mergeDescendants = true) {}
+                      .combinedClickable(
+                        onClick = { onFileClick(file) },
+                        onLongClick = {
+                          haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                          onFileLongClick?.invoke(file)
+                        }
+                      ),
+                    color = Color.Transparent
+                ) {
+                    val edgeWidth = 8.dp
+
+                    val fileName = @Composable {
+                        ProvideTextStyle(MaterialTheme.typography.bodyMedium) {
+                            fun ContentDrawScope.drawFadedEdge(leftEdge: Boolean) {
+                                val edgeWidthPx = edgeWidth.toPx()
+                                drawRect(
+                                    topLeft = Offset(
+                                        if (leftEdge) 0f else size.width - edgeWidthPx,
+                                        0f
+                                    ),
+                                    size = Size(edgeWidthPx, size.height),
+                                    brush = Brush.horizontalGradient(
+                                        colors = listOf(Color.Transparent, Color.Black),
+                                        startX = if (leftEdge) 0f else size.width,
+                                        endX = if (leftEdge) edgeWidthPx else size.width - edgeWidthPx
+                                    ),
+                                    blendMode = BlendMode.DstIn
+                                )
+                            }
+
+                            Text(
+                                text = file.name,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier
+                                  .fillMaxWidth()
+                                  .graphicsLayer {
+                                    compositingStrategy = CompositingStrategy.Offscreen
+                                  }
+                                  .drawWithContent {
+                                    drawContent()
+                                    drawFadedEdge(leftEdge = true)
+                                    drawFadedEdge(leftEdge = false)
+                                  }
+                                  .basicMarquee(
+                                    // Animate forever.
+                                    iterations = Int.MAX_VALUE,
+                                    spacing = MarqueeSpacing(0.dp)
+                                  )
+                                  .padding(start = edgeWidth)
+                            )
+                        }
+                    }
+
+                    val modifiedIn = @Composable {
+                        ProvideTextStyle(MaterialTheme.typography.labelSmall) {
+                            Text(
+                                text = context.getString(
+                                    R.string.file_modified_in,
+                                    SimpleDateFormat("yy/MM/dd").format(file.lastModified()),
+                                ),
+                                fontWeight = FontWeight.Light,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(start = edgeWidth)
+                            )
+                        }
+                    }
+
+                    val fileIcon = @Composable {
+                        Box {
+                            CompositionLocalProvider(
+                                LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant
+                            ) {
+                                Icon(
+                                    imageVector = icon,
+                                    contentDescription = file.name,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                        }
+                    }
+
+                    Layout(
+                        contents = listOf(fileName, modifiedIn, fileIcon),
+                        measurePolicy = { measurables, constraints ->
+                            val (fileNameMeasurable, modifiedInMeasurable, fileIconMeasurable) = measurables
+                            var currentTotalWidth = 0
+                            var currentTotalHeight = 0
+
+                            val looseConstraints = constraints.copy(minWidth = 0, minHeight = 0)
+                            val startPadding = 8.dp
+                            val endPadding = 8.dp
+                            val horizontalPadding = (startPadding + endPadding).roundToPx()
+
+                            val paddedLooseConstraints = looseConstraints.offset(
+                                horizontal = -horizontalPadding,
+                                vertical = 0,
+                            )
+
+                            val fileIconPlaceable = fileIconMeasurable
+                                .firstOrNull()?.measure(paddedLooseConstraints)
+                            currentTotalWidth += widthOrZero(fileIconPlaceable)
+
+                            val fileNamePlaceable = fileNameMeasurable.firstOrNull()?.measure(
+                                paddedLooseConstraints.offset(
+                                    horizontal = -currentTotalWidth
+                                )
+                            )
+                            currentTotalHeight += heightOrZero(fileNamePlaceable)
+
+                            val modifiedInPlaceable = modifiedInMeasurable.firstOrNull()?.measure(
+                                paddedLooseConstraints.offset(
+                                    horizontal = -currentTotalWidth,
+                                    vertical = -currentTotalHeight
+                                )
+                            )
+                            currentTotalHeight += heightOrZero(modifiedInPlaceable)
+
+                            val width = calculateWidth(
+                                iconWidth = widthOrZero(fileIconPlaceable),
+                                nameWidth = widthOrZero(fileNamePlaceable),
+                                descriptionWidth = widthOrZero(modifiedInPlaceable),
+                                horizontalPadding = horizontalPadding,
+                                constraints = constraints,
+                            )
+                            val height = calculateHeight(
+                                iconHeight = heightOrZero(fileIconPlaceable),
+                                nameHeight = heightOrZero(fileNamePlaceable),
+                                descriptionHeight = heightOrZero(modifiedInPlaceable),
+                                verticalPadding = 0,
+                                constraints = constraints
+                            )
+
+                            layout(width, height) {
+                                fileIconPlaceable?.let {
+                                    it.placeRelative(
+                                        x = startPadding.roundToPx(),
+                                        y = CenterVertically.align(it.height, height)
+                                    )
+                                }
+
+                                val mainContentX =
+                                    startPadding.roundToPx() + widthOrZero(fileIconPlaceable)
+                                val totalHeight =
+                                    heightOrZero(fileNamePlaceable) + heightOrZero(
+                                        modifiedInPlaceable
+                                    )
+                                val mainContentY = CenterVertically.align(totalHeight, height)
+                                var currentY = mainContentY
+
+                                fileNamePlaceable?.placeRelative(mainContentX, currentY)
+                                currentY += heightOrZero(fileNamePlaceable)
+
+                                modifiedInPlaceable?.placeRelative(mainContentX, currentY)
+                            }
+                        }
+                    )
+                }
+            }
+        }
     }
-  }
 }
 
 internal fun widthOrZero(placeable: Placeable?) = placeable?.width ?: 0
@@ -285,32 +293,32 @@ internal fun widthOrZero(placeable: Placeable?) = placeable?.width ?: 0
 internal fun heightOrZero(placeable: Placeable?) = placeable?.height ?: 0
 
 private fun IntrinsicMeasureScope.calculateWidth(
-  iconWidth: Int,
-  nameWidth: Int,
-  descriptionWidth: Int,
-  horizontalPadding: Int,
-  constraints: Constraints,
+    iconWidth: Int,
+    nameWidth: Int,
+    descriptionWidth: Int,
+    horizontalPadding: Int,
+    constraints: Constraints,
 ): Int {
-  if (constraints.hasBoundedWidth) {
-    return constraints.maxWidth
-  }
-  // Fallback behavior if width constraints are infinite
-  val mainContentWidth = maxOf(nameWidth, descriptionWidth)
-  return horizontalPadding + iconWidth + mainContentWidth
+    if (constraints.hasBoundedWidth) {
+        return constraints.maxWidth
+    }
+    // Fallback behavior if width constraints are infinite
+    val mainContentWidth = maxOf(nameWidth, descriptionWidth)
+    return horizontalPadding + iconWidth + mainContentWidth
 }
 
 private fun IntrinsicMeasureScope.calculateHeight(
-  iconHeight: Int,
-  nameHeight: Int,
-  descriptionHeight: Int,
-  verticalPadding: Int,
-  constraints: Constraints,
+    iconHeight: Int,
+    nameHeight: Int,
+    descriptionHeight: Int,
+    verticalPadding: Int,
+    constraints: Constraints,
 ): Int {
-  val defaultMinHeight = 48.dp
-  val minHeight = max(constraints.minHeight, defaultMinHeight.roundToPx())
+    val defaultMinHeight = 48.dp
+    val minHeight = max(constraints.minHeight, defaultMinHeight.roundToPx())
 
-  val mainContentHeight = nameHeight + descriptionHeight
+    val mainContentHeight = nameHeight + descriptionHeight
 
-  return max(minHeight, verticalPadding + maxOf(iconHeight, mainContentHeight))
-    .coerceAtMost(constraints.maxHeight)
+    return max(minHeight, verticalPadding + maxOf(iconHeight, mainContentHeight))
+        .coerceAtMost(constraints.maxHeight)
 }

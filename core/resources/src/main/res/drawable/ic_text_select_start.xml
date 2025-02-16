@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<?xml version="1.0" encoding="utf-8"?><!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ~    sora-editor - the awesome code editor for Android
   ~    https://github.com/Rosemoe/sora-editor
   ~    Copyright (C) 2020-2023  Rosemoe
@@ -22,16 +21,15 @@
   ~     Please contact Rosemoe by email 2073412493@qq.com if you need
   ~     additional information or have any questions
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-<vector
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:width="20dp"
-  android:height="20dp"
-  android:viewportWidth="960"
-  android:viewportHeight="960"
-  android:tint="?android:colorControlNormal">
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="20dp"
+    android:height="20dp"
+    android:tint="?android:colorControlNormal"
+    android:viewportWidth="960"
+    android:viewportHeight="960">
 
-  <path
-    android:fillColor="@android:color/white"
-    android:pathData="M439,840v-60h83v60h-83ZM439,180v-60h83v60h-83ZM609,840v-60h83v60h-83ZM609,180v-60h83v60h-83ZM780,840v-60h60v60h-60ZM780,692v-83h60v83h-60ZM780,521v-83h60v83h-60ZM780,351v-83h60v83h-60ZM780,180v-60h60v60h-60ZM120,840v-60h86v-600h-86v-60h231v60h-85v600h85v60L120,840Z" />
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M439,840v-60h83v60h-83ZM439,180v-60h83v60h-83ZM609,840v-60h83v60h-83ZM609,180v-60h83v60h-83ZM780,840v-60h60v60h-60ZM780,692v-83h60v83h-60ZM780,521v-83h60v83h-60ZM780,351v-83h60v83h-60ZM780,180v-60h60v60h-60ZM120,840v-60h86v-600h-86v-60h231v60h-85v600h85v60L120,840Z" />
 
 </vector>

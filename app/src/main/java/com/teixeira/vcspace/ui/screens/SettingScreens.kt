@@ -19,18 +19,18 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class SettingScreens {
-  @Serializable
-  data object Default : SettingScreens()
+    @Serializable
+    data object Default : SettingScreens()
 
-  @Serializable
-  data object General : SettingScreens()
+    @Serializable
+    data object General : SettingScreens()
 
-  @Serializable
-  data object File : SettingScreens()
+    @Serializable
+    data object File : SettingScreens()
 
-  @Serializable
-  data object Editor : SettingScreens()
+    @Serializable
+    data object Editor : SettingScreens()
 
-  @Serializable
-  data object MonacoEditor : SettingScreens()
+    @Serializable
+    data object MonacoEditor : SettingScreens()
 }

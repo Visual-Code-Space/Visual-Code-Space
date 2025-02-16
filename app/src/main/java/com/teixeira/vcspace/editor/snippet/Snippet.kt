@@ -16,7 +16,7 @@
 package com.teixeira.vcspace.editor.snippet
 
 data class Snippet(
-  val trigger: String,
-  val description: String,
-  val snippet: String
+    val trigger: String,
+    val description: String,
+    val snippet: String
 )

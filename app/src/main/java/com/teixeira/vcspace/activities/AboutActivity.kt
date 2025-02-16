@@ -41,46 +41,46 @@ import com.teixeira.vcspace.ui.screens.about.SocialCard
 import com.teixeira.vcspace.ui.screens.about.VersionCard
 
 class AboutActivity : BaseComposeActivity() {
-  @OptIn(ExperimentalMaterial3Api::class)
-  @Composable
-  override fun MainScreen() {
-    val backPressedDispatcherOwner = LocalOnBackPressedDispatcherOwner.current
-    val backPressedDispatcher = backPressedDispatcherOwner?.onBackPressedDispatcher
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    override fun MainScreen() {
+        val backPressedDispatcherOwner = LocalOnBackPressedDispatcherOwner.current
+        val backPressedDispatcher = backPressedDispatcherOwner?.onBackPressedDispatcher
 
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+        val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
-    Scaffold(
-      modifier = Modifier
-        .fillMaxSize()
-        .nestedScroll(scrollBehavior.nestedScrollConnection),
-      topBar = {
-        VCSpaceLargeTopBar(
-          title = stringResource(strings.about),
-          navigationIcon = {
-            IconButton(onClick = {
-              backPressedDispatcher?.onBackPressed()
-            }) {
-              Icon(
-                Icons.AutoMirrored.Rounded.ArrowBack,
-                contentDescription = null
-              )
+        Scaffold(
+            modifier = Modifier
+              .fillMaxSize()
+              .nestedScroll(scrollBehavior.nestedScrollConnection),
+            topBar = {
+                VCSpaceLargeTopBar(
+                    title = stringResource(strings.about),
+                    navigationIcon = {
+                        IconButton(onClick = {
+                            backPressedDispatcher?.onBackPressed()
+                        }) {
+                            Icon(
+                                Icons.AutoMirrored.Rounded.ArrowBack,
+                                contentDescription = null
+                            )
+                        }
+                    },
+                    scrollBehavior = scrollBehavior
+                )
             }
-          },
-          scrollBehavior = scrollBehavior
-        )
-      }
-    ) { innerPadding ->
-      Column(
-        modifier = Modifier
-          .fillMaxSize()
-          .padding(innerPadding)
-          .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-      ) {
-        VersionCard(modifier = Modifier.fillMaxWidth())
-        SocialCard(modifier = Modifier.fillMaxWidth())
-        ContributorsCard(modifier = Modifier.fillMaxWidth())
-      }
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier
+                  .fillMaxSize()
+                  .padding(innerPadding)
+                  .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                VersionCard(modifier = Modifier.fillMaxWidth())
+                SocialCard(modifier = Modifier.fillMaxWidth())
+                ContributorsCard(modifier = Modifier.fillMaxWidth())
+            }
+        }
     }
-  }
 }

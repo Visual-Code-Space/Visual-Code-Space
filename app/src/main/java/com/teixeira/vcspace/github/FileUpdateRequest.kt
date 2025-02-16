@@ -16,9 +16,9 @@
 package com.teixeira.vcspace.github
 
 data class FileUpdateRequest(
-  val message: String,
-  val content: String,
-  val sha: String,
-  val branch: String = "main",
-  val author: Author? = null
+    val message: String,
+    val content: String,
+    val sha: String,
+    val branch: String = "main",
+    val author: Author? = null
 )

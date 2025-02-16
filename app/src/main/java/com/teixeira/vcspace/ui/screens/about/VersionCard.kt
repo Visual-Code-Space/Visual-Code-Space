@@ -42,65 +42,65 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.blankj.utilcode.util.ClipboardUtils
 import com.teixeira.vcspace.BuildConfig
-import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.app.drawables
 import com.teixeira.vcspace.app.strings
+import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.ui.extensions.harmonizeWithPrimary
 
 @Composable
 fun VersionCard(modifier: Modifier = Modifier) {
-  OutlinedCard(modifier = modifier) {
-    Column(
-      horizontalAlignment = Alignment.CenterHorizontally,
-      modifier = Modifier.fillMaxWidth()
-    ) {
-      Image(
-        ImageBitmap.imageResource(drawables.vcspace_icon),
-        contentDescription = null,
-        modifier = Modifier
-          .padding(16.dp)
-          .clip(CircleShape)
-          .size(64.dp)
-      )
-
-      Text(
-        text = stringResource(strings.app_name),
-        style = MaterialTheme.typography.titleLarge,
-        fontWeight = FontWeight.Bold,
-        fontFamily = FontFamily.SansSerif
-      )
-      Text(
-        text = stringResource(R.string.app_description),
-        style = MaterialTheme.typography.titleMedium,
-        fontFamily = FontFamily.SansSerif,
-        fontWeight = FontWeight.Light
-      )
-
-      Text(
-        text = buildAnnotatedString {
-          append("v${BuildConfig.VERSION_NAME} (")
-          withStyle(
-            style = SpanStyle(
-              color = (if (BuildConfig.DEBUG) Color(0xFFFF1E1E)
-              else Color(0xFF19E319)).harmonizeWithPrimary(0.2f)
+    OutlinedCard(modifier = modifier) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Image(
+                ImageBitmap.imageResource(drawables.vcspace_icon),
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(16.dp)
+                    .clip(CircleShape)
+                    .size(64.dp)
             )
-          ) {
-            append(BuildConfig.BUILD_TYPE)
-          }
-          append(")")
-        },
-        style = MaterialTheme.typography.labelSmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        modifier = Modifier
-          .padding(5.dp)
-          .pointerInput(Unit) {
-            detectTapGestures(
-              onTap = {
-                ClipboardUtils.copyText("Version: ${BuildConfig.VERSION_NAME}")
-              }
+
+            Text(
+                text = stringResource(strings.app_name),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.SansSerif
             )
-          }
-      )
+            Text(
+                text = stringResource(R.string.app_description),
+                style = MaterialTheme.typography.titleMedium,
+                fontFamily = FontFamily.SansSerif,
+                fontWeight = FontWeight.Light
+            )
+
+            Text(
+                text = buildAnnotatedString {
+                    append("v${BuildConfig.VERSION_NAME} (")
+                    withStyle(
+                        style = SpanStyle(
+                            color = (if (BuildConfig.DEBUG) Color(0xFFFF1E1E)
+                            else Color(0xFF19E319)).harmonizeWithPrimary(0.2f)
+                        )
+                    ) {
+                        append(BuildConfig.BUILD_TYPE)
+                    }
+                    append(")")
+                },
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier
+                    .padding(5.dp)
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onTap = {
+                                ClipboardUtils.copyText("Version: ${BuildConfig.VERSION_NAME}")
+                            }
+                        )
+                    }
+            )
+        }
     }
-  }
 }

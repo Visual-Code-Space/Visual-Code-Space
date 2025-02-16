@@ -24,17 +24,17 @@ import com.teixeira.vcspace.ui.theme.VCSpaceTheme
 
 @Composable
 fun VCSpaceBottomSheet(
-  modifier: Modifier = Modifier
+    modifier: Modifier = Modifier
 ) {
-  VCSpaceTheme {
-    Box(modifier) {
-      Text(text = "VCSpaceBottomSheet")
+    VCSpaceTheme {
+        Box(modifier) {
+            Text(text = "VCSpaceBottomSheet")
+        }
     }
-  }
 }
 
 @Preview(name = "VCSpaceBottomSheet")
 @Composable
 private fun PreviewVCSpaceBottomSheet() {
-  VCSpaceBottomSheet()
+    VCSpaceBottomSheet()
 }

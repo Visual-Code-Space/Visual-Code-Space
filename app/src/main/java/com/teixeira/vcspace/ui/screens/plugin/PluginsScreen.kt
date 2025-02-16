@@ -64,148 +64,151 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun PluginsScreen(
-  modifier: Modifier = Modifier,
-  viewModel: PluginViewModel = viewModel(),
-  coroutineScope: CoroutineScope = rememberCoroutineScope()
+    modifier: Modifier = Modifier,
+    viewModel: PluginViewModel = viewModel(),
+    coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) {
-  val installedPluginListState = rememberLazyListState()
-  val expandedFab by remember { derivedStateOf { installedPluginListState.firstVisibleItemIndex == 0 } }
+    val installedPluginListState = rememberLazyListState()
+    val expandedFab by remember { derivedStateOf { installedPluginListState.firstVisibleItemIndex == 0 } }
 
-  val navController = rememberNavController()
-  val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val navController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
 
-  var showNewPluginDialog by remember { mutableStateOf(false) }
+    var showNewPluginDialog by remember { mutableStateOf(false) }
 
-  val toastHostState = LocalToastHostState.current
-  val context = LocalContext.current
+    val toastHostState = LocalToastHostState.current
+    val context = LocalContext.current
 
-  LaunchedEffect(Unit) {
-    viewModel.loadInstalledPlugins(context)
-  }
+    LaunchedEffect(Unit) {
+        viewModel.loadInstalledPlugins(context)
+    }
 
-  var pluginToUpdate: PluginInfo? by remember { mutableStateOf(null) }
+    var pluginToUpdate: PluginInfo? by remember { mutableStateOf(null) }
 
-  val openFile = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-    if (uri != null) {
-      coroutineScope.launch {
-        pluginToUpdate?.let {
-          val file = "${PluginConstants.PLUGIN_HOME_PATH}/${it.name}".toFile()
-          if (file.exists()) {
-            file.deleteRecursively()
-          }
-          viewModel.loadInstalledPlugins(context)
+    val openFile =
+        rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+            if (uri != null) {
+                coroutineScope.launch {
+                    pluginToUpdate?.let {
+                        val file = "${PluginConstants.PLUGIN_HOME_PATH}/${it.name}".toFile()
+                        if (file.exists()) {
+                            file.deleteRecursively()
+                        }
+                        viewModel.loadInstalledPlugins(context)
+                    }
+
+                    val pluginDir = PluginLoader.extractPluginZip(UriUtils.uri2File(uri))
+                    viewModel.loadInstalledPlugins(
+                        context = context,
+                        onSuccessfullyLoaded = {
+                            toastHostState.showToast(
+                                message = "Plugin ${if (pluginToUpdate != null) "updated" else "imported"} successfully",
+                                icon = Icons.Rounded.Check
+                            )
+                            pluginToUpdate = null
+                        },
+                        onError = {
+                            withContext(Dispatchers.Main) {
+                                toastHostState.showToast(
+                                    message = it.message ?: "Error loading plugin",
+                                    icon = Icons.Rounded.ErrorOutline
+                                )
+                            }
+
+                            if (pluginDir.exists()) pluginDir.deleteRecursively()
+                            pluginToUpdate = null
+                        }
+                    )
+                }
+            }
         }
 
-        val pluginDir = PluginLoader.extractPluginZip(UriUtils.uri2File(uri))
-        viewModel.loadInstalledPlugins(
-          context = context,
-          onSuccessfullyLoaded = {
-            toastHostState.showToast(
-              message = "Plugin ${if (pluginToUpdate != null) "updated" else "imported"} successfully",
-              icon = Icons.Rounded.Check
-            )
-            pluginToUpdate = null
-          },
-          onError = {
-            withContext(Dispatchers.Main) {
-              toastHostState.showToast(
-                message = it.message ?: "Error loading plugin",
-                icon = Icons.Rounded.ErrorOutline
-              )
-            }
-
-            if (pluginDir.exists()) pluginDir.deleteRecursively()
-            pluginToUpdate = null
-          }
-        )
-      }
-    }
-  }
-
-  Scaffold(
-    modifier = modifier.fillMaxSize(),
-    topBar = {
-      PluginTopBar()
-    },
-    floatingActionButton = {
-      AnimatedVisibility(
-        visible = (navBackStackEntry?.destination?.route == PluginScreens.Installed.route)
-      ) {
-        NewPluginButton(
-          expanded = expandedFab,
-          onCreatePlugin = { showNewPluginDialog = true },
-          onImportPlugin = {
-            openFile.launch(
-              arrayOf(
-                MimeTypeMap.getSingleton().getMimeTypeFromExtension("zip") ?: "application/zip"
-              )
-            )
-          }
-        )
-      }
-    }
-  ) { innerPadding ->
-    val currentRoute = navBackStackEntry?.destination?.route ?: PluginScreens.Installed.route
-
-    Column(
-      modifier = modifier.padding(innerPadding)
-    ) {
-      PluginTabs(
-        currentRoute = currentRoute,
-        navController = navController
-      )
-
-      NavHost(
-        navController = navController,
-        startDestination = PluginScreens.Installed.route
-      ) {
-        composable(PluginScreens.Installed.route) {
-          InstalledPluginList(
-            viewModel = viewModel,
-            listState = installedPluginListState,
-            scope = coroutineScope,
-            onUpdateClick = {
-              pluginToUpdate = it
-              openFile.launch(
-                arrayOf(
-                  MimeTypeMap.getSingleton().getMimeTypeFromExtension("zip") ?: "application/zip"
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        topBar = {
+            PluginTopBar()
+        },
+        floatingActionButton = {
+            AnimatedVisibility(
+                visible = (navBackStackEntry?.destination?.route == PluginScreens.Installed.route)
+            ) {
+                NewPluginButton(
+                    expanded = expandedFab,
+                    onCreatePlugin = { showNewPluginDialog = true },
+                    onImportPlugin = {
+                        openFile.launch(
+                            arrayOf(
+                                MimeTypeMap.getSingleton().getMimeTypeFromExtension("zip")
+                                    ?: "application/zip"
+                            )
+                        )
+                    }
                 )
-              )
             }
-          )
         }
-      }
-    }
-  }
+    ) { innerPadding ->
+        val currentRoute = navBackStackEntry?.destination?.route ?: PluginScreens.Installed.route
 
-  if (showNewPluginDialog) {
-    NewPluginSheet(
-      onCreate = { pluginInfo, pluginDir ->
-        coroutineScope.launchWithProgressDialog(
-          uiContext = context,
-          configureBuilder = {
-            it.apply {
-              setMessage("Creating plugin...")
-              setCancelable(false)
-            }
-          }
-        ) { _, _ ->
-          GradleJavaLibraryProjectCreator.createGradleJavaLibraryProject(
-            context = context,
-            baseDir = pluginDir,
-            packageName = pluginInfo.packageName!!,
-            fullClassName = pluginInfo.mainClass!!
-          )
-        }.invokeOnCompletion {
-          coroutineScope.launch {
-            toastHostState.showToast(
-              message = context.getString(strings.plugin_created_successfully),
-              icon = Icons.Rounded.Check
+        Column(
+            modifier = modifier.padding(innerPadding)
+        ) {
+            PluginTabs(
+                currentRoute = currentRoute,
+                navController = navController
             )
-          }
+
+            NavHost(
+                navController = navController,
+                startDestination = PluginScreens.Installed.route
+            ) {
+                composable(PluginScreens.Installed.route) {
+                    InstalledPluginList(
+                        viewModel = viewModel,
+                        listState = installedPluginListState,
+                        scope = coroutineScope,
+                        onUpdateClick = {
+                            pluginToUpdate = it
+                            openFile.launch(
+                                arrayOf(
+                                    MimeTypeMap.getSingleton().getMimeTypeFromExtension("zip")
+                                        ?: "application/zip"
+                                )
+                            )
+                        }
+                    )
+                }
+            }
         }
-      },
-      onDismiss = { showNewPluginDialog = false }
-    )
-  }
+    }
+
+    if (showNewPluginDialog) {
+        NewPluginSheet(
+            onCreate = { pluginInfo, pluginDir ->
+                coroutineScope.launchWithProgressDialog(
+                    uiContext = context,
+                    configureBuilder = {
+                        it.apply {
+                            setMessage("Creating plugin...")
+                            setCancelable(false)
+                        }
+                    }
+                ) { _, _ ->
+                    GradleJavaLibraryProjectCreator.createGradleJavaLibraryProject(
+                        context = context,
+                        baseDir = pluginDir,
+                        packageName = pluginInfo.packageName!!,
+                        fullClassName = pluginInfo.mainClass!!
+                    )
+                }.invokeOnCompletion {
+                    coroutineScope.launch {
+                        toastHostState.showToast(
+                            message = context.getString(strings.plugin_created_successfully),
+                            icon = Icons.Rounded.Check
+                        )
+                    }
+                }
+            },
+            onDismiss = { showNewPluginDialog = false }
+        )
+    }
 }

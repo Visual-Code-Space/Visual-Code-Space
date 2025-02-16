@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<navigation
-  xmlns:app="http://schemas.android.com/apk/res-auto"
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  app:startDestination="@id/fragmentExplorer">
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:startDestination="@id/fragmentExplorer">
 
-  <fragment
-    android:id="@+id/fragmentExplorer"
-    android:name="com.teixeira.vcspace.fragments.workspace.explorer.FileExplorerFragment"
-    android:label="@string/file_explorer" />
+    <fragment
+        android:id="@+id/fragmentExplorer"
+        android:name="com.teixeira.vcspace.fragments.workspace.explorer.FileExplorerFragment"
+        android:label="@string/file_explorer" />
 
 </navigation>

@@ -11,44 +11,44 @@ import java.util.HashMap;
  */
 public record SpecialButton(String key) {
 
-  private static final HashMap<String, SpecialButton> map = new HashMap<>();
-  public static final SpecialButton CTRL = new SpecialButton("CTRL");
-  public static final SpecialButton ALT = new SpecialButton("ALT");
-  public static final SpecialButton SHIFT = new SpecialButton("SHIFT");
-  public static final SpecialButton FN = new SpecialButton("FN");
+    public static final SpecialButton CTRL = new SpecialButton("CTRL");
+    public static final SpecialButton ALT = new SpecialButton("ALT");
+    public static final SpecialButton SHIFT = new SpecialButton("SHIFT");
+    public static final SpecialButton FN = new SpecialButton("FN");
+    private static final HashMap<String, SpecialButton> map = new HashMap<>();
 
-  /**
-   * Initialize a {@link SpecialButton}.
-   *
-   * @param key The unique key name for the special button. The key is registered in {@link #map}
-   *            with which the {@link SpecialButton} can be retrieved via a call to {@link
-   *            #valueOf(String)}.
-   */
-  public SpecialButton(@NonNull final String key) {
-    this.key = key;
-    map.put(key, this);
-  }
+    /**
+     * Initialize a {@link SpecialButton}.
+     *
+     * @param key The unique key name for the special button. The key is registered in {@link #map}
+     *            with which the {@link SpecialButton} can be retrieved via a call to {@link
+     *            #valueOf(String)}.
+     */
+    public SpecialButton(@NonNull final String key) {
+        this.key = key;
+        map.put(key, this);
+    }
 
-  /**
-   * Get the {@link SpecialButton} for {@code key}.
-   *
-   * @param key The unique key name for the special button.
-   */
-  public static SpecialButton valueOf(String key) {
-    return map.get(key);
-  }
+    /**
+     * Get the {@link SpecialButton} for {@code key}.
+     *
+     * @param key The unique key name for the special button.
+     */
+    public static SpecialButton valueOf(String key) {
+        return map.get(key);
+    }
 
-  /**
-   * Get {@link #key} for this {@link SpecialButton}.
-   */
-  @Override
-  public String key() {
-    return key;
-  }
+    /**
+     * Get {@link #key} for this {@link SpecialButton}.
+     */
+    @Override
+    public String key() {
+        return key;
+    }
 
-  @NonNull
-  @Override
-  public String toString() {
-    return key;
-  }
+    @NonNull
+    @Override
+    public String toString() {
+        return key;
+    }
 }

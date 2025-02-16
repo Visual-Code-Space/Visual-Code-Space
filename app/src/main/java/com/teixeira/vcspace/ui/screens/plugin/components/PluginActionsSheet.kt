@@ -48,69 +48,69 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PluginActionsSheet(
-  modifier: Modifier = Modifier,
-  pluginInfo: PluginInfo,
-  viewModel: PluginViewModel,
-  scope: CoroutineScope,
-  onDismissSheet: () -> Unit,
-  onUpdateClick: () -> Unit
+    modifier: Modifier = Modifier,
+    pluginInfo: PluginInfo,
+    viewModel: PluginViewModel,
+    scope: CoroutineScope,
+    onDismissSheet: () -> Unit,
+    onUpdateClick: () -> Unit
 ) {
-  var showDeleteDialog by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
-  val toastHostState = LocalToastHostState.current
-  val context = LocalContext.current
+    val toastHostState = LocalToastHostState.current
+    val context = LocalContext.current
 
-  ModalBottomSheet(
-    modifier = modifier,
-    onDismissRequest = onDismissSheet
-  ) {
-    LazyColumn {
-      item {
-        ElevatedCard(
-          modifier = Modifier.padding(5.dp),
-          onClick = {
-            onUpdateClick()
-            onDismissSheet()
-          }
-        ) {
-          ListItem(
-            headlineContent = { Text(stringResource(R.string.update_plugin)) },
-            leadingContent = { Icon(Icons.Rounded.Update, contentDescription = null) }
-          )
+    ModalBottomSheet(
+        modifier = modifier,
+        onDismissRequest = onDismissSheet
+    ) {
+        LazyColumn {
+            item {
+                ElevatedCard(
+                    modifier = Modifier.padding(5.dp),
+                    onClick = {
+                        onUpdateClick()
+                        onDismissSheet()
+                    }
+                ) {
+                    ListItem(
+                        headlineContent = { Text(stringResource(R.string.update_plugin)) },
+                        leadingContent = { Icon(Icons.Rounded.Update, contentDescription = null) }
+                    )
+                }
+            }
+
+            item {
+                ElevatedCard(
+                    modifier = Modifier.padding(5.dp),
+                    onClick = { showDeleteDialog = true }
+                ) {
+                    ListItem(
+                        headlineContent = { Text(stringResource(R.string.delete_plugin)) },
+                        leadingContent = { Icon(Icons.Rounded.Delete, contentDescription = null) }
+                    )
+                }
+            }
         }
-      }
-
-      item {
-        ElevatedCard(
-          modifier = Modifier.padding(5.dp),
-          onClick = { showDeleteDialog = true }
-        ) {
-          ListItem(
-            headlineContent = { Text(stringResource(R.string.delete_plugin)) },
-            leadingContent = { Icon(Icons.Rounded.Delete, contentDescription = null) }
-          )
-        }
-      }
     }
-  }
 
-  if (showDeleteDialog) {
-    DeletePluginDialog(
-      onConfirm = {
-        val file = "${PluginConstants.PLUGIN_HOME_PATH}/${pluginInfo.name}".toFile()
-        if (file.exists()) {
-          file.deleteRecursively()
-        }
-        onDismissSheet()
-        viewModel.loadInstalledPlugins(context)
-        scope.launch {
-          toastHostState.showToast(
-            message = context.getString(R.string.plugin_deleted_successfully),
-            icon = Icons.Outlined.CheckCircle
-          )
-        }
-      },
-      onDismiss = { showDeleteDialog = false }
-    )
-  }
+    if (showDeleteDialog) {
+        DeletePluginDialog(
+            onConfirm = {
+                val file = "${PluginConstants.PLUGIN_HOME_PATH}/${pluginInfo.name}".toFile()
+                if (file.exists()) {
+                    file.deleteRecursively()
+                }
+                onDismissSheet()
+                viewModel.loadInstalledPlugins(context)
+                scope.launch {
+                    toastHostState.showToast(
+                        message = context.getString(R.string.plugin_deleted_successfully),
+                        icon = Icons.Outlined.CheckCircle
+                    )
+                }
+            },
+            onDismiss = { showDeleteDialog = false }
+        )
+    }
 }

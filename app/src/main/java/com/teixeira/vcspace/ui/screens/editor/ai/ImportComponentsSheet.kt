@@ -28,24 +28,24 @@ import dev.jeziellago.compose.markdowntext.MarkdownText
 
 @Composable
 fun ImportComponentsSheet(
-  response: GenerateContentResponse,
-  onDismissRequest: () -> Unit,
-  modifier: Modifier = Modifier
+    response: GenerateContentResponse,
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-  AiResponseSheet(
-    title = "Import Components",
-    response = response,
-    onDismissRequest = onDismissRequest,
-    modifier = modifier,
-    subtitle = {
-      MarkdownText(
-        markdown = stringResource(strings.caution_import_compose_components),
-        style = TextStyle(
-          fontSize = 10.sp,
-          fontWeight = FontWeight.Light,
-          color = MaterialTheme.colorScheme.error
-        )
-      )
-    }
-  )
+    AiResponseSheet(
+        title = "Import Components",
+        response = response,
+        onDismissRequest = onDismissRequest,
+        modifier = modifier,
+        subtitle = {
+            MarkdownText(
+                markdown = stringResource(strings.caution_import_compose_components),
+                style = TextStyle(
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Light,
+                    color = MaterialTheme.colorScheme.error
+                )
+            )
+        }
+    )
 }

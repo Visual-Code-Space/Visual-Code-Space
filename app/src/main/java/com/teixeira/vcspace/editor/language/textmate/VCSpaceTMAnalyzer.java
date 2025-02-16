@@ -59,19 +59,18 @@ import io.github.rosemoe.sora.util.MyCharacter;
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme;
 
 public class VCSpaceTMAnalyzer extends AsyncIncrementalAnalyzeManager<MyState, Span> implements FoldingHelper, ThemeRegistry.ThemeChangeListener {
+  final IdentifierAutoComplete.SyncIdentifiers syncIdentifiers = new IdentifierAutoComplete.SyncIdentifiers();
   private final IGrammar grammar;
-  private Theme theme;
   private final VCSpaceTMLanguage language;
   private final LanguageConfiguration configuration;
 
   //private final GrammarRegistry grammarRegistry;
 
   private final ThemeRegistry themeRegistry;
-
+  private Theme theme;
   private OnigRegExp cachedRegExp;
   private boolean foldingOffside;
   private BracketsProvider bracketsProvider;
-  final IdentifierAutoComplete.SyncIdentifiers syncIdentifiers = new IdentifierAutoComplete.SyncIdentifiers();
 
 
   public VCSpaceTMAnalyzer(VCSpaceTMLanguage language, IGrammar grammar, LanguageConfiguration languageConfiguration,/* GrammarRegistry grammarRegistry,*/ ThemeRegistry themeRegistry) {

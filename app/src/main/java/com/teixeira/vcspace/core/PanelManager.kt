@@ -15,25 +15,25 @@
 
 package com.teixeira.vcspace.core
 
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateMapOf
 import com.vcspace.plugins.panel.ComposeFactory
 import com.vcspace.plugins.panel.Panel
 
 class PanelManager private constructor() {
-  companion object {
-    @JvmStatic
-    val instance by lazy { PanelManager() }
-  }
+    companion object {
+        @JvmStatic
+        val instance by lazy { PanelManager() }
+    }
 
-  private val _panels = mutableStateMapOf<String, Panel>()
-  val panels get() = _panels.toMap()
+    private val _panels = mutableStateMapOf<String, Panel>()
+    val panels get() = _panels.toMap()
 
-  fun addPanel(id: String, title: String, factory: ComposeFactory) = Panel(id, title, factory).also {
-    _panels[id] = it
-  }
+    fun addPanel(id: String, title: String, factory: ComposeFactory) =
+        Panel(id, title, factory).also {
+            _panels[id] = it
+        }
 
-  fun getPanelById(id: String) = _panels[id]
+    fun getPanelById(id: String) = _panels[id]
 
-  fun removePanel(id: String) = _panels.remove(id)
+    fun removePanel(id: String) = _panels.remove(id)
 }

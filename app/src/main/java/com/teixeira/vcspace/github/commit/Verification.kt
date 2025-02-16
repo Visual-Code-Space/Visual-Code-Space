@@ -16,8 +16,8 @@
 package com.teixeira.vcspace.github.commit
 
 data class Verification(
-  val reason: String,
-  val verified: Boolean,
-  val signature: String?,
-  val payload: String?
+    val reason: String,
+    val verified: Boolean,
+    val signature: String?,
+    val payload: String?
 )

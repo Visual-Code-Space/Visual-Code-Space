@@ -16,7 +16,7 @@
 package com.teixeira.vcspace.core.ai
 
 data class CompletionMetadata(
-  val language: String,
-  val textBeforeCursor: String,
-  val textAfterCursor: String
+    val language: String,
+    val textBeforeCursor: String,
+    val textAfterCursor: String
 )

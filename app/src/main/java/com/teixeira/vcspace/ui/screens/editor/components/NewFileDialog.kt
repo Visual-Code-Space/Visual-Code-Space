@@ -45,109 +45,109 @@ import java.io.IOException
 
 @Composable
 fun NewFileDialog(
-  path: File,
-  onDismissRequest: () -> Unit,
-  onFileCreated: (File) -> Unit = {},
-  onFolderCreated: (File) -> Unit = {},
+    path: File,
+    onDismissRequest: () -> Unit,
+    onFileCreated: (File) -> Unit = {},
+    onFolderCreated: (File) -> Unit = {},
 ) {
-  var fileName by remember { mutableStateOf("") }
+    var fileName by remember { mutableStateOf("") }
 
-  val toastHostState = LocalToastHostState.current
-  val lifecycleScope = LocalLifecycleScope.current
-  val context = LocalContext.current
-  val scope = rememberCoroutineScope()
+    val toastHostState = LocalToastHostState.current
+    val lifecycleScope = LocalLifecycleScope.current
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
-  AlertDialog(
-    onDismissRequest = onDismissRequest,
-    title = { Text(stringResource(R.string.create)) },
-    text = {
-      OutlinedTextField(
-        value = fileName,
-        onValueChange = { fileName = it },
-        isError = fileName.isEmpty(),
-        textStyle = MaterialTheme.typography.bodyLarge,
-        placeholder = { Text(stringResource(R.string.file_enter_name)) }
-      )
-    },
-    confirmButton = {
-      Row(
-        horizontalArrangement = Arrangement.spacedBy(2.dp)
-      ) {
-        TextButton(
-          onClick = {
-            try {
-              if (!path.childExists(fileName)) {
-                lifecycleScope.launch(Dispatchers.IO) {
-                  path.createNewFile(fileName)?.let{
-                    withContext(Dispatchers.Main) {
-                      onFileCreated(it)
-                    }
-                  }
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        title = { Text(stringResource(string.create)) },
+        text = {
+            OutlinedTextField(
+                value = fileName,
+                onValueChange = { fileName = it },
+                isError = fileName.isEmpty(),
+                textStyle = MaterialTheme.typography.bodyLarge,
+                placeholder = { Text(stringResource(string.file_enter_name)) }
+            )
+        },
+        confirmButton = {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
+                TextButton(
+                    onClick = {
+                        try {
+                            if (!path.childExists(fileName)) {
+                                lifecycleScope.launch(Dispatchers.IO) {
+                                    path.createNewFile(fileName)?.let {
+                                        withContext(Dispatchers.Main) {
+                                            onFileCreated(it)
+                                        }
+                                    }
+                                }
+                            } else {
+                                scope.launch {
+                                    toastHostState.showToast(
+                                        message = context.getString(string.already_exists),
+                                        icon = Icons.Rounded.ErrorOutline
+                                    )
+                                }
+                            }
+                        } catch (ioe: IOException) {
+                            ioe.printStackTrace()
+                            scope.launch {
+                                toastHostState.showToast(
+                                    message = ioe.message ?: context.getString(string.error),
+                                    icon = Icons.Rounded.ErrorOutline
+                                )
+                            }
+                        }
+
+                        onDismissRequest()
+                    },
+                    enabled = fileName.isNotEmpty()
+                ) {
+                    Text(stringResource(string.file))
                 }
-              } else {
-                scope.launch {
-                  toastHostState.showToast(
-                    message = context.getString(string.already_exists),
-                    icon = Icons.Rounded.ErrorOutline
-                  )
+                TextButton(
+                    onClick = {
+                        try {
+                            if (!path.childExists(fileName)) {
+                                lifecycleScope.launch(Dispatchers.IO) {
+                                    path.createNewDirectory(fileName)?.let {
+                                        withContext(Dispatchers.Main) {
+                                            onFolderCreated(it)
+                                        }
+                                    }
+                                }
+                            } else {
+                                scope.launch {
+                                    toastHostState.showToast(
+                                        message = context.getString(string.already_exists),
+                                        icon = Icons.Rounded.ErrorOutline
+                                    )
+                                }
+                            }
+                        } catch (ioe: IOException) {
+                            ioe.printStackTrace()
+                            scope.launch {
+                                toastHostState.showToast(
+                                    message = ioe.message ?: context.getString(string.error),
+                                    icon = Icons.Rounded.ErrorOutline
+                                )
+                            }
+                        }
+                        onDismissRequest()
+                    },
+                    enabled = fileName.isNotEmpty()
+                ) {
+                    Text(stringResource(string.file_folder))
                 }
-              }
-            } catch (ioe: IOException) {
-              ioe.printStackTrace()
-              scope.launch {
-                toastHostState.showToast(
-                  message = ioe.message ?: context.getString(string.error),
-                  icon = Icons.Rounded.ErrorOutline
-                )
-              }
             }
-
-            onDismissRequest()
-          },
-          enabled = fileName.isNotEmpty()
-        ) {
-          Text(stringResource(R.string.file))
-        }
-        TextButton(
-          onClick = {
-            try {
-              if (!path.childExists(fileName)) {
-                lifecycleScope.launch(Dispatchers.IO) {
-                  path.createNewDirectory(fileName)?.let {
-                    withContext(Dispatchers.Main) {
-                      onFolderCreated(it)
-                    }
-                  }
-                }
-              } else {
-                scope.launch {
-                  toastHostState.showToast(
-                    message = context.getString(string.already_exists),
-                    icon = Icons.Rounded.ErrorOutline
-                  )
-                }
-              }
-            } catch (ioe: IOException) {
-              ioe.printStackTrace()
-              scope.launch {
-                toastHostState.showToast(
-                  message = ioe.message ?: context.getString(string.error),
-                  icon = Icons.Rounded.ErrorOutline
-                )
-              }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismissRequest) {
+                Text(stringResource(string.no))
             }
-            onDismissRequest()
-          },
-          enabled = fileName.isNotEmpty()
-        ) {
-          Text(stringResource(R.string.file_folder))
         }
-      }
-    },
-    dismissButton = {
-      TextButton(onClick = onDismissRequest) {
-        Text(stringResource(R.string.no))
-      }
-    }
-  )
+    )
 }

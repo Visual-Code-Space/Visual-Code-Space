@@ -28,24 +28,24 @@ import dev.jeziellago.compose.markdowntext.MarkdownText
 
 @Composable
 fun CodeExplanationSheet(
-  response: GenerateContentResponse,
-  onDismissRequest: () -> Unit,
-  modifier: Modifier = Modifier
+    response: GenerateContentResponse,
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-  AiResponseSheet(
-    title = stringResource(strings.code_explanation),
-    response = response,
-    onDismissRequest = onDismissRequest,
-    modifier = modifier,
-    subtitle = {
-      MarkdownText(
-        markdown = stringResource(strings.caution_code_explanation),
-        style = TextStyle(
-          fontSize = 10.sp,
-          fontWeight = FontWeight.Light,
-          color = MaterialTheme.colorScheme.error
-        )
-      )
-    }
-  )
+    AiResponseSheet(
+        title = stringResource(strings.code_explanation),
+        response = response,
+        onDismissRequest = onDismissRequest,
+        modifier = modifier,
+        subtitle = {
+            MarkdownText(
+                markdown = stringResource(strings.caution_code_explanation),
+                style = TextStyle(
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Light,
+                    color = MaterialTheme.colorScheme.error
+                )
+            )
+        }
+    )
 }

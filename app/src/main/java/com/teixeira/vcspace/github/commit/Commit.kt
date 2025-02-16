@@ -18,9 +18,9 @@ package com.teixeira.vcspace.github.commit
 import com.teixeira.vcspace.github.Author
 
 data class Commit(
-  val author: Author,
-  val message: String,
-  val sha: String,
-  val url: String,
-  val verification: Verification
+    val author: Author,
+    val message: String,
+    val sha: String,
+    val url: String,
+    val verification: Verification
 )

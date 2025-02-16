@@ -18,30 +18,30 @@ package com.teixeira.vcspace.editor.language.java
 import java.util.Objects
 
 class State {
-  var state: Int = 0
-  var hasBraces: Boolean = false
-  var identifiers: MutableList<String>? = null
+    var state: Int = 0
+    var hasBraces: Boolean = false
+    var identifiers: MutableList<String>? = null
 
-  fun addIdentifier(idt: CharSequence) {
-    if (identifiers == null) {
-      identifiers = ArrayList()
+    fun addIdentifier(idt: CharSequence) {
+        if (identifiers == null) {
+            identifiers = ArrayList()
+        }
+        if (idt is String) {
+            identifiers!!.add(idt)
+        } else {
+            identifiers!!.add(idt.toString())
+        }
     }
-    if (idt is String) {
-      identifiers!!.add(idt)
-    } else {
-      identifiers!!.add(idt.toString())
+
+    override fun equals(other: Any?): Boolean {
+        // `identifiers` is ignored because it is unrelated to tokenization for next line
+        if (this === other) return true
+        if (other == null || javaClass != other.javaClass) return false
+        val state1 = other as State
+        return state == state1.state && hasBraces == state1.hasBraces
     }
-  }
 
-  override fun equals(other: Any?): Boolean {
-    // `identifiers` is ignored because it is unrelated to tokenization for next line
-    if (this === other) return true
-    if (other == null || javaClass != other.javaClass) return false
-    val state1 = other as State
-    return state == state1.state && hasBraces == state1.hasBraces
-  }
-
-  override fun hashCode(): Int {
-    return Objects.hash(state, hasBraces)
-  }
+    override fun hashCode(): Int {
+        return Objects.hash(state, hasBraces)
+    }
 }

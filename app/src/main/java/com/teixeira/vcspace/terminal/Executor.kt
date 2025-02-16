@@ -45,50 +45,50 @@ import android.os.Process
  */
 object Executor {
 
-  /**
-   * Executes a native binary with the specified arguments and environment variables.
-   *
-   * This method provides enhanced functionality compared to `Runtime.getRuntime().exec(...)`,
-   * enabling users to:
-   * - Set custom environment variables such as `LD_LIBRARY_PATH`.
-   * - Pass precise command-line arguments to the binary.
-   * - Optionally specify a dynamic linker for executing ELF binaries.
-   *
-   * @param binaryPath The absolute path to the binary to execute.
-   *                   Example: `/system/bin/ls`, `/system/bin/sh`, or `/sdcard/local/tmp/binary`.
-   * @param args       The arguments to pass to the binary.
-   *                   Example: `arrayOf("-l", "/data")`.
-   * @param env        The environment variables to set during execution.
-   *                   Example: `arrayOf("LD_LIBRARY_PATH=/system/lib:/system/lib64")`.
-   * @param linker     (Optional) The dynamic linker to use for ELF binaries.
-   *                   Defaults to `/system/bin/linker` for 32-bit and `/system/bin/linker64` for 64-bit.
-   *                   Set this to an empty string to skip using a linker explicitly.
-   *
-   * @return The exit code of the binary. A return value of `0` indicates success, while
-   *         non-zero values indicate errors or failures during execution.
-   *
-   * Example:
-   * ```
-   * val binaryPath = "/system/bin/ls"
-   * val args = arrayOf("-l", "/data")
-   * val env = arrayOf(
-   *     "LD_LIBRARY_PATH=/system/lib:/system/lib64:/data/local/tmp/libs"
-   * )
-   *
-   * val result = Executor.runBinary(binaryPath, args, env)
-   * println("Execution result: $result")
-   * ```
-   *
-   * @throws IllegalArgumentException If the `binaryPath` is empty or null.
-   * @throws Exception If the native binary fails to execute due to internal errors.
-   */
-  external fun runBinary(
-    binaryPath: String,
-    args: Array<String>,
-    env: Array<String>,
-    linker: String = Executor.linker
-  ): Int
+    /**
+     * Executes a native binary with the specified arguments and environment variables.
+     *
+     * This method provides enhanced functionality compared to `Runtime.getRuntime().exec(...)`,
+     * enabling users to:
+     * - Set custom environment variables such as `LD_LIBRARY_PATH`.
+     * - Pass precise command-line arguments to the binary.
+     * - Optionally specify a dynamic linker for executing ELF binaries.
+     *
+     * @param binaryPath The absolute path to the binary to execute.
+     *                   Example: `/system/bin/ls`, `/system/bin/sh`, or `/sdcard/local/tmp/binary`.
+     * @param args       The arguments to pass to the binary.
+     *                   Example: `arrayOf("-l", "/data")`.
+     * @param env        The environment variables to set during execution.
+     *                   Example: `arrayOf("LD_LIBRARY_PATH=/system/lib:/system/lib64")`.
+     * @param linker     (Optional) The dynamic linker to use for ELF binaries.
+     *                   Defaults to `/system/bin/linker` for 32-bit and `/system/bin/linker64` for 64-bit.
+     *                   Set this to an empty string to skip using a linker explicitly.
+     *
+     * @return The exit code of the binary. A return value of `0` indicates success, while
+     *         non-zero values indicate errors or failures during execution.
+     *
+     * Example:
+     * ```
+     * val binaryPath = "/system/bin/ls"
+     * val args = arrayOf("-l", "/data")
+     * val env = arrayOf(
+     *     "LD_LIBRARY_PATH=/system/lib:/system/lib64:/data/local/tmp/libs"
+     * )
+     *
+     * val result = Executor.runBinary(binaryPath, args, env)
+     * println("Execution result: $result")
+     * ```
+     *
+     * @throws IllegalArgumentException If the `binaryPath` is empty or null.
+     * @throws Exception If the native binary fails to execute due to internal errors.
+     */
+    external fun runBinary(
+        binaryPath: String,
+        args: Array<String>,
+        env: Array<String>,
+        linker: String = Executor.linker
+    ): Int
 
-  val linker: String
-    get() = if (Process.is64Bit()) "/system/bin/linker64" else "/system/bin/linker"
+    val linker: String
+        get() = if (Process.is64Bit()) "/system/bin/linker64" else "/system/bin/linker"
 }

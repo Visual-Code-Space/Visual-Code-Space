@@ -18,35 +18,35 @@ package com.itsvks.monaco
 import android.webkit.JavascriptInterface
 
 class MonacoWebInterface(private val editor: MonacoEditor) {
-  @set:JavascriptInterface
-  var value = ""
+    @set:JavascriptInterface
+    var value = ""
 
-  @set:JavascriptInterface
-  var canUndo = false
+    @set:JavascriptInterface
+    var canUndo = false
 
-  @set:JavascriptInterface
-  var canRedo = false
+    @set:JavascriptInterface
+    var canRedo = false
 
-  @set:JavascriptInterface
-  var isModified = false
+    @set:JavascriptInterface
+    var isModified = false
 
-  @set:JavascriptInterface
-  var lineNumber: Int = 1
+    @set:JavascriptInterface
+    var lineNumber: Int = 1
 
-  @set:JavascriptInterface
-  var column: Int = 1
+    @set:JavascriptInterface
+    var column: Int = 1
 
-  @JavascriptInterface
-  fun onTextChanged(content: String) {
-    editor.onContentChange(content)
-  }
+    @JavascriptInterface
+    fun onTextChanged(content: String) {
+        editor.onContentChange(content)
+    }
 
-  @JavascriptInterface
-  fun onInlineCompletion(
-    language: String,
-    textBeforeCursor: String,
-    textAfterCursor: String
-  ): String? {
-    return editor.inlineCompletionProvider?.provide(language, textBeforeCursor, textAfterCursor)
-  }
+    @JavascriptInterface
+    fun onInlineCompletion(
+        language: String,
+        textBeforeCursor: String,
+        textAfterCursor: String
+    ): String? {
+        return editor.inlineCompletionProvider?.provide(language, textBeforeCursor, textAfterCursor)
+    }
 }

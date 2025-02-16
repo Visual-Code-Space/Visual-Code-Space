@@ -29,46 +29,59 @@ import kotlinx.coroutines.flow.update
 import org.greenrobot.eventbus.EventBus
 
 class FileExplorerViewModel : ViewModel() {
-  private val _openedFolder = MutableStateFlow<File?>(null)
-  val openedFolder get() = _openedFolder.asStateFlow()
+    private val _openedFolder = MutableStateFlow<File?>(null)
+    val openedFolder get() = _openedFolder.asStateFlow()
 
-  private val _isGitRepo = MutableStateFlow(false)
-  val isGitRepo get() = _isGitRepo.asStateFlow()
+    private val _isGitRepo = MutableStateFlow(false)
+    val isGitRepo get() = _isGitRepo.asStateFlow()
 
-  fun openFolder(path: File) {
-    defaultPrefs.edit(commit = true) {
-      putString(PreferenceKeys.RECENT_FOLDER_5, defaultPrefs.getString(PreferenceKeys.RECENT_FOLDER_4, ""))
-      putString(PreferenceKeys.RECENT_FOLDER_4, defaultPrefs.getString(PreferenceKeys.RECENT_FOLDER_3, ""))
-      putString(PreferenceKeys.RECENT_FOLDER_3, defaultPrefs.getString(PreferenceKeys.RECENT_FOLDER_2, ""))
-      putString(PreferenceKeys.RECENT_FOLDER_2, defaultPrefs.getString(PreferenceKeys.RECENT_FOLDER_1, ""))
-      putString(PreferenceKeys.RECENT_FOLDER_1, path.absolutePath)
+    fun openFolder(path: File) {
+        defaultPrefs.edit(commit = true) {
+            putString(
+                PreferenceKeys.RECENT_FOLDER_5,
+                defaultPrefs.getString(PreferenceKeys.RECENT_FOLDER_4, "")
+            )
+            putString(
+                PreferenceKeys.RECENT_FOLDER_4,
+                defaultPrefs.getString(PreferenceKeys.RECENT_FOLDER_3, "")
+            )
+            putString(
+                PreferenceKeys.RECENT_FOLDER_3,
+                defaultPrefs.getString(PreferenceKeys.RECENT_FOLDER_2, "")
+            )
+            putString(
+                PreferenceKeys.RECENT_FOLDER_2,
+                defaultPrefs.getString(PreferenceKeys.RECENT_FOLDER_1, "")
+            )
+            putString(PreferenceKeys.RECENT_FOLDER_1, path.absolutePath)
+        }
+        _openedFolder.update { path }
+        EventBus.getDefault().post(OnOpenFolderEvent(path))
     }
-    _openedFolder.update { path }
-    EventBus.getDefault().post(OnOpenFolderEvent(path))
-  }
 
-  fun closeFolder() {
-    _openedFolder.update { null }
-  }
-
-  private fun updateGitRepoStatus(file: File) {
-    _isGitRepo.update {
-      file.asRawFile()?.let { jfile ->
-        GitManager.isGitRepository(jfile).also { if (it) GitManager.instance.initialize(jfile) }
-      } ?: false
+    fun closeFolder() {
+        _openedFolder.update { null }
     }
-  }
 
-  fun checkIfGitRepo() {
-    _openedFolder.value?.let { file ->
-      updateGitRepoStatus(file)
+    private fun updateGitRepoStatus(file: File) {
+        _isGitRepo.update {
+            file.asRawFile()?.let { jfile ->
+                GitManager.isGitRepository(jfile)
+                    .also { if (it) GitManager.instance.initialize(jfile) }
+            } ?: false
+        }
     }
-  }
 
-  fun refreshFolder() {
-    _openedFolder.value?.let {
-      updateGitRepoStatus(it)
-      EventBus.getDefault().post(OnRefreshFolderEvent(it))
+    fun checkIfGitRepo() {
+        _openedFolder.value?.let { file ->
+            updateGitRepoStatus(file)
+        }
     }
-  }
+
+    fun refreshFolder() {
+        _openedFolder.value?.let {
+            updateGitRepoStatus(it)
+            EventBus.getDefault().post(OnRefreshFolderEvent(it))
+        }
+    }
 }

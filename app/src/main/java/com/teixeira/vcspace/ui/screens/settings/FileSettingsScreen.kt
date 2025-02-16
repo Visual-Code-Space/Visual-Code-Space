@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -41,70 +40,70 @@ import me.zhanghai.compose.preference.switchPreference
 
 @Composable
 fun FileSettingsScreen(
-  modifier: Modifier = Modifier,
-  onNavigateUp: () -> Unit
+    modifier: Modifier = Modifier,
+    onNavigateUp: () -> Unit
 ) {
-  val showHiddenFiles = rememberShowHiddenFiles()
-  val rememberLastOpenedFile = rememberLastOpenedFile()
+    val showHiddenFiles = rememberShowHiddenFiles()
+    val rememberLastOpenedFile = rememberLastOpenedFile()
 
-  BackHandler(onBack = onNavigateUp)
+    BackHandler(onBack = onNavigateUp)
 
-  val backgroundColor = MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
+    val backgroundColor = MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
 
-  LazyColumn(
-    modifier = modifier
-      .fillMaxWidth()
-      .padding(horizontal = 12.dp)
-      .padding(bottom = 12.dp),
-    verticalArrangement = Arrangement.spacedBy(3.dp)
-  ) {
-    preferenceCategory(
-      key = "file_settings_category",
-      title = { Text(text = stringResource(R.string.file_settings)) }
-    )
-
-    switchPreference(
-      key = "show_hidden_files_preference",
-      title = { Text(text = stringResource(R.string.show_hidden_files_title)) },
-      summary = {
-        Text(
-          text = if (it) stringResource(R.string.show_hidden_files_summary_true)
-          else stringResource(R.string.show_hidden_files_summary_false)
+    LazyColumn(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp)
+            .padding(bottom = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(3.dp)
+    ) {
+        preferenceCategory(
+            key = "file_settings_category",
+            title = { Text(text = stringResource(R.string.file_settings)) }
         )
-      },
-      rememberState = { showHiddenFiles },
-      defaultValue = showHiddenFiles.value,
-      icon = {
-        Icon(
-          imageVector = Icons.Default.VisibilityOff,
-          contentDescription = null
-        )
-      },
-      modifier = Modifier
-        .clip(PreferenceShape.Alone /* PreferenceShape.Top */)
-        .background(backgroundColor)
-    )
 
-    /*switchPreference(
-      key = "remember_last_opened_file_preference",
-      title = { Text(text = stringResource(R.string.remember_last_opened_file_title)) },
-      summary = {
-        Text(
-          text = if (it) stringResource(R.string.remember_last_opened_file_summary_true)
-          else stringResource(R.string.remember_last_opened_file_summary_false)
+        switchPreference(
+            key = "show_hidden_files_preference",
+            title = { Text(text = stringResource(R.string.show_hidden_files_title)) },
+            summary = {
+                Text(
+                    text = if (it) stringResource(R.string.show_hidden_files_summary_true)
+                    else stringResource(R.string.show_hidden_files_summary_false)
+                )
+            },
+            rememberState = { showHiddenFiles },
+            defaultValue = showHiddenFiles.value,
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.VisibilityOff,
+                    contentDescription = null
+                )
+            },
+            modifier = Modifier
+                .clip(PreferenceShape.Alone /* PreferenceShape.Top */)
+                .background(backgroundColor)
         )
-      },
-      rememberState = { rememberLastOpenedFile },
-      defaultValue = rememberLastOpenedFile.value,
-      icon = {
-        Icon(
-          imageVector = Icons.Default.History,
-          contentDescription = null
-        )
-      },
-      modifier = Modifier
-        .clip(PreferenceShape.Bottom)
-        .background(backgroundColor)
-    )*/
-  }
+
+        /*switchPreference(
+          key = "remember_last_opened_file_preference",
+          title = { Text(text = stringResource(R.string.remember_last_opened_file_title)) },
+          summary = {
+            Text(
+              text = if (it) stringResource(R.string.remember_last_opened_file_summary_true)
+              else stringResource(R.string.remember_last_opened_file_summary_false)
+            )
+          },
+          rememberState = { rememberLastOpenedFile },
+          defaultValue = rememberLastOpenedFile.value,
+          icon = {
+            Icon(
+              imageVector = Icons.Default.History,
+              contentDescription = null
+            )
+          },
+          modifier = Modifier
+            .clip(PreferenceShape.Bottom)
+            .background(backgroundColor)
+        )*/
+    }
 }

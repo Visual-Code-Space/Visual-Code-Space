@@ -23,45 +23,45 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface GitHubApiService {
-  @PUT("repos/{owner}/{repo}/contents/{path}")
-  fun createFile(
-    @Path("owner") owner: String,
-    @Path("repo") repo: String,
-    @Path("path") path: String,
-    @Body request: FileCreateRequest
-  ): Call<FileCreateResponse>
+    @PUT("repos/{owner}/{repo}/contents/{path}")
+    fun createFile(
+        @Path("owner") owner: String,
+        @Path("repo") repo: String,
+        @Path("path") path: String,
+        @Body request: FileCreateRequest
+    ): Call<FileCreateResponse>
 
-  @PUT("repos/{owner}/{repo}/contents/{path}")
-  fun updateFile(
-    @Path("owner") owner: String,
-    @Path("repo") repo: String,
-    @Path("path") path: String,
-    @Body request: FileUpdateRequest
-  ): Call<FileUpdateResponse>
+    @PUT("repos/{owner}/{repo}/contents/{path}")
+    fun updateFile(
+        @Path("owner") owner: String,
+        @Path("repo") repo: String,
+        @Path("path") path: String,
+        @Body request: FileUpdateRequest
+    ): Call<FileUpdateResponse>
 
-  @GET("repos/{owner}/{repo}/contents/{path}")
-  fun getContents(
-    @Path("owner") owner: String,
-    @Path("repo") repo: String,
-    @Path("path") path: String = "", // Default is the root of the repo
-    @Query("ref") branch: String = "main"
-  ): Call<List<Content>>
+    @GET("repos/{owner}/{repo}/contents/{path}")
+    fun getContents(
+        @Path("owner") owner: String,
+        @Path("repo") repo: String,
+        @Path("path") path: String = "", // Default is the root of the repo
+        @Query("ref") branch: String = "main"
+    ): Call<List<Content>>
 
-  @GET("repos/{owner}/{repo}/contents/{path}")
-  fun getFileContent(
-    @Path("owner") owner: String,
-    @Path("repo") repo: String,
-    @Path("path") path: String
-  ): Call<FileContent>
+    @GET("repos/{owner}/{repo}/contents/{path}")
+    fun getFileContent(
+        @Path("owner") owner: String,
+        @Path("repo") repo: String,
+        @Path("path") path: String
+    ): Call<FileContent>
 
-  @GET("repos/{owner}/{repo}/contributors")
-  fun getContributors(
-    @Path("owner") owner: String,
-    @Path("repo") repo: String
-  ): Call<List<Contributor>>
+    @GET("repos/{owner}/{repo}/contributors")
+    fun getContributors(
+        @Path("owner") owner: String,
+        @Path("repo") repo: String
+    ): Call<List<Contributor>>
 
-  @GET("users/{username}")
-  fun getUser(
-    @Path("username") username: String
-  ): Call<User>
+    @GET("users/{username}")
+    fun getUser(
+        @Path("username") username: String
+    ): Call<User>
 }

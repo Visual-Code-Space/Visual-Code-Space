@@ -16,13 +16,12 @@
 package com.teixeira.vcspace.plugins.panel
 
 import androidx.compose.runtime.Composable
-import com.teixeira.vcspace.core.components.DraggableFloatingPanel
 
 @Composable
 fun PopupPanel(panelStates: Map<String, ComposePanelState>, onRemovePanel: (String) -> Unit) {
-  for ((panelId, panelState) in panelStates) {
-    if (panelState.isVisible) {
+    for ((panelId, panelState) in panelStates) {
+        if (panelState.isVisible) {
 
+        }
     }
-  }
 }

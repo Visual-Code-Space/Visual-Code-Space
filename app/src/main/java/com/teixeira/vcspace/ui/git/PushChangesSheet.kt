@@ -43,77 +43,77 @@ import org.eclipse.jgit.revwalk.RevCommit
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PushChangesSheet(
-  onDismissRequest: () -> Unit,
-  commits: List<RevCommit>,
-  modifier: Modifier = Modifier,
-  onPushClick: () -> Unit = {},
+    onDismissRequest: () -> Unit,
+    commits: List<RevCommit>,
+    modifier: Modifier = Modifier,
+    onPushClick: () -> Unit = {},
 ) {
-  val coroutineScope = rememberCoroutineScope()
-  val sheetState = rememberModalBottomSheetState()
+    val coroutineScope = rememberCoroutineScope()
+    val sheetState = rememberModalBottomSheetState()
 
-  val hide = remember {
-    suspend {
-      coroutineScope.launch { sheetState.hide() }.invokeOnCompletion {
-        if (!sheetState.isVisible) {
-          onDismissRequest()
+    val hide = remember {
+        suspend {
+            coroutineScope.launch { sheetState.hide() }.invokeOnCompletion {
+                if (!sheetState.isVisible) {
+                    onDismissRequest()
+                }
+            }
         }
-      }
     }
-  }
 
-  ModalBottomSheet(
-    onDismissRequest = onDismissRequest,
-    modifier = modifier
-  ) {
-    Column(
-      modifier = Modifier
-        .padding(16.dp)
-        .fillMaxSize(),
-      horizontalAlignment = Alignment.Start
+    ModalBottomSheet(
+        onDismissRequest = onDismissRequest,
+        modifier = modifier
     ) {
-      Text(
-        text = stringResource(R.string.push_commits),
-        fontSize = 22.sp,
-        fontWeight = FontWeight.Bold,
-        lineHeight = 28.sp,
-        letterSpacing = (-0.015).sp
-      )
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.Start
+        ) {
+            Text(
+                text = stringResource(R.string.push_commits),
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold,
+                lineHeight = 28.sp,
+                letterSpacing = (-0.015).sp
+            )
 
-      Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-      Text(
-        text = stringResource(R.string.push_commits_msg),
-        fontSize = 16.sp,
-        lineHeight = 20.sp
-      )
+            Text(
+                text = stringResource(R.string.push_commits_msg),
+                fontSize = 16.sp,
+                lineHeight = 20.sp
+            )
 
-      Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-      repeat(commits.size) {
-        Text(
-          text = commits[it].shortMessage,
-          modifier = Modifier.padding(8.dp)
-        )
-      }
+            repeat(commits.size) {
+                Text(
+                    text = commits[it].shortMessage,
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
 
-      Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-      Button(
-        onClick = {
-          coroutineScope.launch {
-            hide()
-            onPushClick()
-          }
-        },
-        modifier = Modifier.fillMaxWidth(),
-        enabled = commits.isNotEmpty()
-      ) {
-        Text(
-          text = stringResource(R.string.push),
-          fontWeight = FontWeight.SemiBold,
-          letterSpacing = (0.015).em
-        )
-      }
+            Button(
+                onClick = {
+                    coroutineScope.launch {
+                        hide()
+                        onPushClick()
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = commits.isNotEmpty()
+            ) {
+                Text(
+                    text = stringResource(R.string.push),
+                    fontWeight = FontWeight.SemiBold,
+                    letterSpacing = (0.015).em
+                )
+            }
+        }
     }
-  }
 }

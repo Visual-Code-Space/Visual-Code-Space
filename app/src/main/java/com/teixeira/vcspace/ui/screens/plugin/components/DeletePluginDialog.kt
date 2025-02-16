@@ -27,23 +27,23 @@ import com.teixeira.vcspace.resources.R.string
 
 @Composable
 fun DeletePluginDialog(
-  modifier: Modifier = Modifier,
-  onConfirm: () -> Unit,
-  onDismiss: () -> Unit
+    modifier: Modifier = Modifier,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
 ) {
-  AlertDialog(
-    modifier = modifier,
-    onDismissRequest = onDismiss,
-    title = { Text(stringResource(string.delete_plugin)) },
-    text = { Text(stringResource(string.delete_plugin_msg)) },
-    confirmButton = {
-      Button(onClick = {
-        onDismiss()
-        onConfirm()
-      }) { Text(stringResource(R.string.confirm)) }
-    },
-    dismissButton = {
-      OutlinedButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
-    }
-  )
+    AlertDialog(
+        modifier = modifier,
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(string.delete_plugin)) },
+        text = { Text(stringResource(string.delete_plugin_msg)) },
+        confirmButton = {
+            Button(onClick = {
+                onDismiss()
+                onConfirm()
+            }) { Text(stringResource(string.confirm)) }
+        },
+        dismissButton = {
+            OutlinedButton(onClick = onDismiss) { Text(stringResource(string.cancel)) }
+        }
+    )
 }

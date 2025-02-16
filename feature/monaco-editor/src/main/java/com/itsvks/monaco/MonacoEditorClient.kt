@@ -20,34 +20,38 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import androidx.webkit.WebViewAssetLoader
-import androidx.webkit.WebViewAssetLoader.AssetsPathHandler
 import androidx.webkit.WebViewAssetLoader.InternalStoragePathHandler
 import androidx.webkit.WebViewClientCompat
-import com.blankj.utilcode.util.PathUtils
 import java.io.File
 
 class MonacoEditorClient(private val editor: MonacoEditor) : WebViewClientCompat() {
-  private val assetLoader = WebViewAssetLoader.Builder()
-    .addPathHandler("/monaco/", InternalStoragePathHandler(editor.context, File(editor.context.filesDir, "monaco-editor-main")))
-    .build()
+    private val assetLoader = WebViewAssetLoader.Builder()
+        .addPathHandler(
+            "/monaco/",
+            InternalStoragePathHandler(
+                editor.context,
+                File(editor.context.filesDir, "monaco-editor-main")
+            )
+        )
+        .build()
 
-  override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
-    return false
-  }
-
-  override fun shouldInterceptRequest(
-    view: WebView,
-    request: WebResourceRequest
-  ): WebResourceResponse? {
-    return assetLoader.shouldInterceptRequest(request.url)
-  }
-
-  override fun onPageFinished(view: WebView, url: String) {
-    super.onPageFinished(view, url)
-    editor.isLoaded = true
-    view.requestFocus(View.FOCUS_DOWN)
-    editor.apply {
-      onEditorLoadCallbacks.forEach { callback -> callback(this@apply) }
+    override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
+        return false
     }
-  }
+
+    override fun shouldInterceptRequest(
+        view: WebView,
+        request: WebResourceRequest
+    ): WebResourceResponse? {
+        return assetLoader.shouldInterceptRequest(request.url)
+    }
+
+    override fun onPageFinished(view: WebView, url: String) {
+        super.onPageFinished(view, url)
+        editor.isLoaded = true
+        view.requestFocus(View.FOCUS_DOWN)
+        editor.apply {
+            onEditorLoadCallbacks.forEach { callback -> callback(this@apply) }
+        }
+    }
 }

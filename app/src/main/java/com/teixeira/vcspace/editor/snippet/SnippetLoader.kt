@@ -19,12 +19,12 @@ import com.google.gson.Gson
 import com.teixeira.vcspace.extensions.toFile
 
 object SnippetLoader {
-  @JvmStatic
-  fun loadSnippets(filePath: String): List<Snippet> {
-    val file = filePath.toFile()
-    if (!file.exists()) return emptyList()
+    @JvmStatic
+    fun loadSnippets(filePath: String): List<Snippet> {
+        val file = filePath.toFile()
+        if (!file.exists()) return emptyList()
 
-    val snippetFile = Gson().fromJson(file.readText(), SnippetFile::class.java)
-    return snippetFile.snippets
-  }
+        val snippetFile = Gson().fromJson(file.readText(), SnippetFile::class.java)
+        return snippetFile.snippets
+    }
 }

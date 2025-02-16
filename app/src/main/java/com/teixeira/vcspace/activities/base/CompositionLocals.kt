@@ -21,9 +21,9 @@ import com.teixeira.vcspace.app.noLocalProvidedFor
 import kotlinx.coroutines.CoroutineScope
 
 val LocalLifecycleScope = compositionLocalOf<CoroutineScope> {
-  noLocalProvidedFor("LocalLifecycleScope")
+    noLocalProvidedFor("LocalLifecycleScope")
 }
 
 val LocalLayoutInflater = compositionLocalOf<LayoutInflater> {
-  noLocalProvidedFor("LocalLayoutInflater")
+    noLocalProvidedFor("LocalLayoutInflater")
 }

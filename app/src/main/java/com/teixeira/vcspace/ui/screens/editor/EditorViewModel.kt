@@ -39,198 +39,198 @@ import kotlinx.coroutines.launch
 import java.io.File as JFile
 
 class EditorViewModel : ViewModel() {
-  data class OpenedFile(
-    val file: File,
-    val isModified: Boolean = false
-  )
+    data class OpenedFile(
+        val file: File,
+        val isModified: Boolean = false
+    )
 
-  data class UiState(
-    val openedFiles: List<OpenedFile> = emptyList(),
-    val selectedFileIndex: Int = 0
-  ) {
-    val selectedFile get() = openedFiles.getOrNull(selectedFileIndex)
-  }
-
-  private val _uiState = MutableStateFlow(UiState())
-  val uiState get() = _uiState.asStateFlow()
-
-  private val _editors = mutableStateMapOf<String, CodeEditorView>()
-  val editors get() = _editors
-
-  private val _monacoEditors = mutableStateMapOf<String, MonacoEditor>()
-  val monacoEditors get() = _monacoEditors
-
-  private val _editorConfigMap = mutableStateMapOf<String, Boolean>()
-  val editorConfigMap get() = _editorConfigMap
-
-  private val _canEditorHandleCurrentKeyBinding = MutableStateFlow(false)
-  val canEditorHandleCurrentKeyBinding get() = _canEditorHandleCurrentKeyBinding.asStateFlow()
-
-  fun setCanEditorHandleCurrentKeyBinding(value: Boolean) {
-    _canEditorHandleCurrentKeyBinding.value = value
-  }
-
-  fun setEditorConfiguredForFile(file: File) {
-    _editorConfigMap[file.path] = true
-  }
-
-  fun getEditorForFile(
-    context: Context,
-    file: File,
-    isAdvancedEditor: Boolean = false
-  ): View {
-    return if (isAdvancedEditor) {
-      _monacoEditors.getOrPut(file.path) {
-        MonacoEditor(context).apply {
-          layoutParams = ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT
-          )
-        }
-      }
-    } else {
-      _editors.getOrPut(file.path) {
-        CodeEditorView(context, file)
-      }
+    data class UiState(
+        val openedFiles: List<OpenedFile> = emptyList(),
+        val selectedFileIndex: Int = 0
+    ) {
+        val selectedFile get() = openedFiles.getOrNull(selectedFileIndex)
     }
-  }
 
-  fun getEditorForFile(file: File): CodeEditorView? {
-    return _editors[file.path]
-  }
+    private val _uiState = MutableStateFlow(UiState())
+    val uiState get() = _uiState.asStateFlow()
 
-  fun getSelectedEditor(): View? {
-    return _monacoEditors[uiState.value.openedFiles[uiState.value.selectedFileIndex].file.path]
-      ?: _editors[uiState.value.openedFiles[uiState.value.selectedFileIndex].file.path]
-  }
+    private val _editors = mutableStateMapOf<String, CodeEditorView>()
+    val editors get() = _editors
 
-  fun rememberLastFiles() {
-    val lastOpenedFiles = Gson().toJson(FileHistory(uiState.value.openedFiles.mapNotNull{
-      if (it.file.canRestoreFromPath) it.file.path else null
-    }))
+    private val _monacoEditors = mutableStateMapOf<String, MonacoEditor>()
+    val monacoEditors get() = _monacoEditors
 
-    viewModelScope.launch(Dispatchers.IO) {
-      JFile(LAST_OPENED_FILES_JSON_PATH).apply {
-        FileUtils.createOrExistsFile(this)
-        writeText(lastOpenedFiles)
-      }
+    private val _editorConfigMap = mutableStateMapOf<String, Boolean>()
+    val editorConfigMap get() = _editorConfigMap
+
+    private val _canEditorHandleCurrentKeyBinding = MutableStateFlow(false)
+    val canEditorHandleCurrentKeyBinding get() = _canEditorHandleCurrentKeyBinding.asStateFlow()
+
+    fun setCanEditorHandleCurrentKeyBinding(value: Boolean) {
+        _canEditorHandleCurrentKeyBinding.value = value
     }
-  }
 
-  fun lastOpenedFiles(): List<File> {
-    val file = JFile(LAST_OPENED_FILES_JSON_PATH)
-    if (!file.exists()) return emptyList()
+    fun setEditorConfiguredForFile(file: File) {
+        _editorConfigMap[file.path] = true
+    }
 
-    val fileHistory =
-      Gson().fromJson(file.readText(), FileHistory::class.java) ?: return emptyList()
-    return fileHistory.lastOpenedFilesPath.map { it.toFile().wrapFile() }
-  }
-
-  fun setModified(file: File, modified: Boolean) {
-    _uiState.update { currentState ->
-      val updatedFiles = currentState.openedFiles.map { openedFile ->
-        if (openedFile.file == file) {
-          openedFile.copy(isModified = modified)
+    fun getEditorForFile(
+        context: Context,
+        file: File,
+        isAdvancedEditor: Boolean = false
+    ): View {
+        return if (isAdvancedEditor) {
+            _monacoEditors.getOrPut(file.path) {
+                MonacoEditor(context).apply {
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+                }
+            }
         } else {
-          openedFile
+            _editors.getOrPut(file.path) {
+                CodeEditorView(context, file)
+            }
         }
-      }
-      currentState.copy(openedFiles = updatedFiles)
     }
-  }
 
-  suspend fun saveFile(editorView: View? = null) {
-    val editor = getSelectedEditor() ?: editorView
-    if (editor is CodeEditorView) {
-      editor.saveFile()
-      editor.file?.let { setModified(it, false) }
-    } else if (editor is MonacoEditor) {
-      uiState.value.selectedFile?.file?.let {
-        it.write(editor.context, editor.text)
-        setModified(it, false)
-      }
+    fun getEditorForFile(file: File): CodeEditorView? {
+        return _editors[file.path]
     }
-  }
 
-  suspend fun saveAll() {
-    editors.values.forEach {
-      it.saveFile()
-      it.file?.let { file -> setModified(file, false) }
+    fun getSelectedEditor(): View? {
+        return _monacoEditors[uiState.value.openedFiles[uiState.value.selectedFileIndex].file.path]
+            ?: _editors[uiState.value.openedFiles[uiState.value.selectedFileIndex].file.path]
     }
-  }
 
-  fun addFile(file: File) {
-    runCatching {
-      val openedFile = OpenedFile(file)
+    fun rememberLastFiles() {
+        val lastOpenedFiles = Gson().toJson(FileHistory(uiState.value.openedFiles.mapNotNull {
+            if (it.file.canRestoreFromPath) it.file.path else null
+        }))
 
-      val newOpenedFiles = uiState.value.openedFiles.toMutableList()
-
-      newOpenedFiles.remove(
-        newOpenedFiles.find {
-          it.file.name == "untitled.txt" && !it.isModified
+        viewModelScope.launch(Dispatchers.IO) {
+            JFile(LAST_OPENED_FILES_JSON_PATH).apply {
+                FileUtils.createOrExistsFile(this)
+                writeText(lastOpenedFiles)
+            }
         }
-      )
-
-      if (!newOpenedFiles.contains(openedFile)) newOpenedFiles.add(openedFile)
-
-      val newSelectedFileIndex = newOpenedFiles.indexOf(openedFile)
-
-      _uiState.value = uiState.value.copy(
-        openedFiles = newOpenedFiles,
-        selectedFileIndex = newSelectedFileIndex
-      )
-    }.onFailure {
-      ToastUtils.showShort(it.message)
-    }
-  }
-
-  fun addFiles(files: List<File>) {
-    viewModelScope.launch {
-      files.forEach { addFile(it) }
-    }
-  }
-
-  fun selectFile(index: Int) {
-    _uiState.value = uiState.value.copy(selectedFileIndex = index)
-  }
-
-  fun closeFile(index: Int) {
-    val newOpenedFiles = uiState.value.openedFiles.toMutableList()
-    val closingFilePath = newOpenedFiles[index].file.path
-    newOpenedFiles.removeAt(index)
-
-    val newSelectedFileIndex = if (newOpenedFiles.isEmpty()) {
-      0
-    } else {
-      index.coerceAtMost(newOpenedFiles.size - 1)
     }
 
-    _editorConfigMap[closingFilePath] = false
+    fun lastOpenedFiles(): List<File> {
+        val file = JFile(LAST_OPENED_FILES_JSON_PATH)
+        if (!file.exists()) return emptyList()
 
-    _uiState.value = uiState.value.copy(
-      openedFiles = newOpenedFiles,
-      selectedFileIndex = newSelectedFileIndex
-    )
+        val fileHistory =
+            Gson().fromJson(file.readText(), FileHistory::class.java) ?: return emptyList()
+        return fileHistory.lastOpenedFilesPath.map { it.toFile().wrapFile() }
+    }
 
-    _editors.remove(closingFilePath)?.release()
-  }
+    fun setModified(file: File, modified: Boolean) {
+        _uiState.update { currentState ->
+            val updatedFiles = currentState.openedFiles.map { openedFile ->
+                if (openedFile.file == file) {
+                    openedFile.copy(isModified = modified)
+                } else {
+                    openedFile
+                }
+            }
+            currentState.copy(openedFiles = updatedFiles)
+        }
+    }
 
-  fun closeOthers(index: Int) {
-    val newOpenedFiles = uiState.value.openedFiles.toMutableList()
-    val selectedFile = newOpenedFiles[index]
-    newOpenedFiles.removeAll { it != selectedFile }
-    _uiState.value = uiState.value.copy(
-      openedFiles = newOpenedFiles,
-      selectedFileIndex = 0
-    )
-  }
+    suspend fun saveFile(editorView: View? = null) {
+        val editor = getSelectedEditor() ?: editorView
+        if (editor is CodeEditorView) {
+            editor.saveFile()
+            editor.file?.let { setModified(it, false) }
+        } else if (editor is MonacoEditor) {
+            uiState.value.selectedFile?.file?.let {
+                it.write(editor.context, editor.text)
+                setModified(it, false)
+            }
+        }
+    }
 
-  fun closeAll() {
-    _editorConfigMap.clear()
+    suspend fun saveAll() {
+        editors.values.forEach {
+            it.saveFile()
+            it.file?.let { file -> setModified(file, false) }
+        }
+    }
 
-    _uiState.value = uiState.value.copy(openedFiles = emptyList())
+    fun addFile(file: File) {
+        runCatching {
+            val openedFile = OpenedFile(file)
 
-    _editors.values.forEach { it.release() }
-    _editors.clear()
-  }
+            val newOpenedFiles = uiState.value.openedFiles.toMutableList()
+
+            newOpenedFiles.remove(
+                newOpenedFiles.find {
+                    it.file.name == "untitled.txt" && !it.isModified
+                }
+            )
+
+            if (!newOpenedFiles.contains(openedFile)) newOpenedFiles.add(openedFile)
+
+            val newSelectedFileIndex = newOpenedFiles.indexOf(openedFile)
+
+            _uiState.value = uiState.value.copy(
+                openedFiles = newOpenedFiles,
+                selectedFileIndex = newSelectedFileIndex
+            )
+        }.onFailure {
+            ToastUtils.showShort(it.message)
+        }
+    }
+
+    fun addFiles(files: List<File>) {
+        viewModelScope.launch {
+            files.forEach { addFile(it) }
+        }
+    }
+
+    fun selectFile(index: Int) {
+        _uiState.value = uiState.value.copy(selectedFileIndex = index)
+    }
+
+    fun closeFile(index: Int) {
+        val newOpenedFiles = uiState.value.openedFiles.toMutableList()
+        val closingFilePath = newOpenedFiles[index].file.path
+        newOpenedFiles.removeAt(index)
+
+        val newSelectedFileIndex = if (newOpenedFiles.isEmpty()) {
+            0
+        } else {
+            index.coerceAtMost(newOpenedFiles.size - 1)
+        }
+
+        _editorConfigMap[closingFilePath] = false
+
+        _uiState.value = uiState.value.copy(
+            openedFiles = newOpenedFiles,
+            selectedFileIndex = newSelectedFileIndex
+        )
+
+        _editors.remove(closingFilePath)?.release()
+    }
+
+    fun closeOthers(index: Int) {
+        val newOpenedFiles = uiState.value.openedFiles.toMutableList()
+        val selectedFile = newOpenedFiles[index]
+        newOpenedFiles.removeAll { it != selectedFile }
+        _uiState.value = uiState.value.copy(
+            openedFiles = newOpenedFiles,
+            selectedFileIndex = 0
+        )
+    }
+
+    fun closeAll() {
+        _editorConfigMap.clear()
+
+        _uiState.value = uiState.value.copy(openedFiles = emptyList())
+
+        _editors.values.forEach { it.release() }
+        _editors.clear()
+    }
 }

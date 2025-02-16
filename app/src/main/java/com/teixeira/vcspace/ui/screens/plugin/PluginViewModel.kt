@@ -28,20 +28,20 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class PluginViewModel : ViewModel() {
-  private val _installedPlugins = MutableStateFlow(mutableListOf<PluginInfo>())
-  val installedPlugins = _installedPlugins.asStateFlow()
+    private val _installedPlugins = MutableStateFlow(mutableListOf<PluginInfo>())
+    val installedPlugins = _installedPlugins.asStateFlow()
 
-  fun loadInstalledPlugins(
-    context: Context,
-    onSuccessfullyLoaded: suspend CoroutineScope.() -> Unit = {},
-    onError: suspend CoroutineScope.(exception: Throwable) -> Unit = {}
-  ) {
-    viewModelScope.launch(Dispatchers.IO) {
-      runCatching {
-        _installedPlugins.update {
-          PluginLoader.loadPlugins(context).map { it.first }.toMutableList()
+    fun loadInstalledPlugins(
+        context: Context,
+        onSuccessfullyLoaded: suspend CoroutineScope.() -> Unit = {},
+        onError: suspend CoroutineScope.(exception: Throwable) -> Unit = {}
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            runCatching {
+                _installedPlugins.update {
+                    PluginLoader.loadPlugins(context).map { it.first }.toMutableList()
+                }
+            }.onSuccess { onSuccessfullyLoaded() }.onFailure { onError(it) }
         }
-      }.onSuccess { onSuccessfullyLoaded() }.onFailure { onError(it) }
     }
-  }
 }

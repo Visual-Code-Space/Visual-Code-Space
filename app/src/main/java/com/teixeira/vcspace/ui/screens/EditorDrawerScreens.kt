@@ -19,9 +19,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class EditorDrawerScreens {
-  @Serializable
-  data object FileExplorer : EditorDrawerScreens()
+    @Serializable
+    data object FileExplorer : EditorDrawerScreens()
 
-  @Serializable
-  data object GitManager : EditorDrawerScreens()
+    @Serializable
+    data object GitManager : EditorDrawerScreens()
 }

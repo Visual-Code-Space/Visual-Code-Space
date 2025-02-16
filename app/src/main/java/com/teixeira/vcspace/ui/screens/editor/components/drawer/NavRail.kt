@@ -48,60 +48,60 @@ import com.teixeira.vcspace.ui.screens.EditorDrawerScreens
 
 @Composable
 fun NavRail(
-  modifier: Modifier = Modifier,
-  selectedItemIndex: Int
+    modifier: Modifier = Modifier,
+    selectedItemIndex: Int
 ) {
-  val navigationRailItems = listOf(
-    stringResource(R.string.files),
-    stringResource(R.string.git),
-    stringResource(R.string.terminal),
-    stringResource(R.string.settings)
-  )
-  val navRailItemIconsUnselected = listOf(
-    Icons.Outlined.Folder,
-    ImageVector.vectorResource(drawables.ic_git),
-    Icons.Outlined.Terminal,
-    Icons.Outlined.Settings
-  )
-  val navRailItemIconsSelected = listOf(
-    Icons.Rounded.Folder,
-    ImageVector.vectorResource(drawables.ic_git),
-    Icons.Rounded.Terminal,
-    Icons.Rounded.Settings
-  )
+    val navigationRailItems = listOf(
+        stringResource(R.string.files),
+        stringResource(R.string.git),
+        stringResource(R.string.terminal),
+        stringResource(R.string.settings)
+    )
+    val navRailItemIconsUnselected = listOf(
+        Icons.Outlined.Folder,
+        ImageVector.vectorResource(drawables.ic_git),
+        Icons.Outlined.Terminal,
+        Icons.Outlined.Settings
+    )
+    val navRailItemIconsSelected = listOf(
+        Icons.Rounded.Folder,
+        ImageVector.vectorResource(drawables.ic_git),
+        Icons.Rounded.Terminal,
+        Icons.Rounded.Settings
+    )
 
-  val context = LocalContext.current
-  val navController = LocalEditorDrawerNavController.current
+    val context = LocalContext.current
+    val navController = LocalEditorDrawerNavController.current
 
-  NavigationRail(
-    modifier = modifier.widthIn(max = 60.dp)
-  ) {
-    navigationRailItems.fastForEachIndexed { index, name ->
-      NavigationRailItem(
-        icon = {
-          Icon(
-            imageVector = if (selectedItemIndex == index) navRailItemIconsSelected[index] else navRailItemIconsUnselected[index],
-            contentDescription = name,
-            modifier = Modifier.size(20.dp),
-          )
-        },
-        label = {
-          Text(
-            text = name,
-            overflow = TextOverflow.Ellipsis
-          )
-        },
-        alwaysShowLabel = true,
-        selected = selectedItemIndex == index,
-        onClick = {
-          when (index) {
-            0 -> navController.navigateSingleTop(EditorDrawerScreens.FileExplorer)
-            1 -> navController.navigateSingleTop(EditorDrawerScreens.GitManager)
-            2 -> context.open(TerminalActivity::class.java)
-            3 -> context.open(SettingsActivity::class.java)
-          }
+    NavigationRail(
+        modifier = modifier.widthIn(max = 60.dp)
+    ) {
+        navigationRailItems.fastForEachIndexed { index, name ->
+            NavigationRailItem(
+                icon = {
+                    Icon(
+                        imageVector = if (selectedItemIndex == index) navRailItemIconsSelected[index] else navRailItemIconsUnselected[index],
+                        contentDescription = name,
+                        modifier = Modifier.size(20.dp),
+                    )
+                },
+                label = {
+                    Text(
+                        text = name,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                },
+                alwaysShowLabel = true,
+                selected = selectedItemIndex == index,
+                onClick = {
+                    when (index) {
+                        0 -> navController.navigateSingleTop(EditorDrawerScreens.FileExplorer)
+                        1 -> navController.navigateSingleTop(EditorDrawerScreens.GitManager)
+                        2 -> context.open(TerminalActivity::class.java)
+                        3 -> context.open(SettingsActivity::class.java)
+                    }
+                }
+            )
         }
-      )
     }
-  }
 }

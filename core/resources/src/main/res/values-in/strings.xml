@@ -14,5 +14,5 @@
   -->
 
 <resources>
-  <string name="explain_code_msg">Jelaskan kode berikut dalam istilah sederhana:\n\n%1$s\n</string>
+    <string name="explain_code_msg">Jelaskan kode berikut dalam istilah sederhana:\n\n%1$s\n</string>
 </resources>

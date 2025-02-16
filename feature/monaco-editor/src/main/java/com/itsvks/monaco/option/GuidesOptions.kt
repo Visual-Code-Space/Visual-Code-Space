@@ -18,29 +18,30 @@ package com.itsvks.monaco.option
 import com.google.gson.Gson
 
 data class GuidesOptions(
-  val bracketPairs: BracketPairs? = null,
-  val bracketPairsHorizontal: BracketPairs? = null,
-  val highlightActiveBracketPair: Boolean? = null,
-  val indentation: Boolean? = null,
-  val highlightActiveIndentation: HighlightActiveIndentation? = null,
+    val bracketPairs: BracketPairs? = null,
+    val bracketPairsHorizontal: BracketPairs? = null,
+    val highlightActiveBracketPair: Boolean? = null,
+    val indentation: Boolean? = null,
+    val highlightActiveIndentation: HighlightActiveIndentation? = null,
 ) {
-  fun toJson() = Gson().toJson(this)
+    fun toJson() = Gson().toJson(this)
 }
 
 @JvmInline
 value class BracketPairs private constructor(override val value: String) : Option<String> {
-  companion object {
-    val On = BracketPairs("true")
-    val Off = BracketPairs("false")
-    val Active = BracketPairs("active")
-  }
+    companion object {
+        val On = BracketPairs("true")
+        val Off = BracketPairs("false")
+        val Active = BracketPairs("active")
+    }
 }
 
 @JvmInline
-value class HighlightActiveIndentation private constructor(override val value: String) : Option<String> {
-  companion object {
-    val True = HighlightActiveIndentation("true")
-    val False = HighlightActiveIndentation("false")
-    val Always = HighlightActiveIndentation("always")
-  }
+value class HighlightActiveIndentation private constructor(override val value: String) :
+    Option<String> {
+    companion object {
+        val True = HighlightActiveIndentation("true")
+        val False = HighlightActiveIndentation("false")
+        val Always = HighlightActiveIndentation("always")
+    }
 }

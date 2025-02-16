@@ -46,95 +46,95 @@ import com.teixeira.vcspace.ui.icons.Telegram
 
 @Composable
 fun SocialCard(modifier: Modifier = Modifier) {
-  val socials = listOf(
-    SocialItem(
-      icon = Icons.Rounded.Language,
-      title = stringResource(R.string.website),
-      url = "https://visualcodespace.com.br/"
-    ),
-    SocialItem(
-      icon = Icons.Rounded.MailOutline,
-      title = stringResource(R.string.email),
-      url = "contact@visualcodespace.com.br"
-    ),
-    SocialItem(
-      icon = Telegram,
-      title = stringResource(R.string.telegram),
-      url = "https://t.me/visualcodespace"
+    val socials = listOf(
+        SocialItem(
+            icon = Icons.Rounded.Language,
+            title = stringResource(R.string.website),
+            url = "https://visualcodespace.com.br/"
+        ),
+        SocialItem(
+            icon = Icons.Rounded.MailOutline,
+            title = stringResource(R.string.email),
+            url = "contact@visualcodespace.com.br"
+        ),
+        SocialItem(
+            icon = Telegram,
+            title = stringResource(R.string.telegram),
+            url = "https://t.me/visualcodespace"
+        )
     )
-  )
 
-  OutlinedCard(modifier = modifier) {
-    Column {
-      Text(
-        text = stringResource(R.string.socials),
-        modifier = Modifier.padding(16.dp),
-        style = MaterialTheme.typography.bodyLarge,
-        fontWeight = FontWeight.SemiBold
-      )
+    OutlinedCard(modifier = modifier) {
+        Column {
+            Text(
+                text = stringResource(R.string.socials),
+                modifier = Modifier.padding(16.dp),
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.SemiBold
+            )
 
-      LazyColumn {
-        items(socials) {
-          SocialListItem(
-            modifier = Modifier.fillMaxWidth(),
-            icon = it.icon,
-            title = it.title,
-            url = it.url
-          )
+            LazyColumn {
+                items(socials) {
+                    SocialListItem(
+                        modifier = Modifier.fillMaxWidth(),
+                        icon = it.icon,
+                        title = it.title,
+                        url = it.url
+                    )
+                }
+            }
         }
-      }
     }
-  }
 }
 
 @Composable
 fun SocialListItem(
-  modifier: Modifier = Modifier,
-  icon: ImageVector,
-  title: String,
-  url: String
+    modifier: Modifier = Modifier,
+    icon: ImageVector,
+    title: String,
+    url: String
 ) {
-  val uriHandler = LocalUriHandler.current
+    val uriHandler = LocalUriHandler.current
 
-  val emailText = stringResource(R.string.email)
+    val emailText = stringResource(R.string.email)
 
-  Row(
-    modifier = modifier
-      .clip(RoundedCornerShape(16.dp))
-      .clickable {
-        if (title == emailText) {
-          uriHandler.openUri("mailto:${url}")
-        } else {
-          uriHandler.openUri(url)
-        }
-      },
-    verticalAlignment = Alignment.CenterVertically
-  ) {
-    Icon(
-      imageVector = icon,
-      contentDescription = null,
-      modifier = Modifier.padding(start = 14.dp, end = 2.dp)
-    )
-
-    Column(
-      modifier = Modifier.padding(10.dp)
+    Row(
+        modifier = modifier
+            .clip(RoundedCornerShape(16.dp))
+            .clickable {
+                if (title == emailText) {
+                    uriHandler.openUri("mailto:${url}")
+                } else {
+                    uriHandler.openUri(url)
+                }
+            },
+        verticalAlignment = Alignment.CenterVertically
     ) {
-      Text(
-        text = title,
-        style = MaterialTheme.typography.bodyMedium
-      )
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.padding(start = 14.dp, end = 2.dp)
+        )
 
-      Text(
-        text = url,
-        color = Color(0xFF2A61E7).harmonizeWithPrimary(0.4f),
-        style = MaterialTheme.typography.bodySmall
-      )
+        Column(
+            modifier = Modifier.padding(10.dp)
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyMedium
+            )
+
+            Text(
+                text = url,
+                color = Color(0xFF2A61E7).harmonizeWithPrimary(0.4f),
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
     }
-  }
 }
 
 data class SocialItem(
-  val icon: ImageVector,
-  val title: String,
-  val url: String
+    val icon: ImageVector,
+    val title: String,
+    val url: String
 )

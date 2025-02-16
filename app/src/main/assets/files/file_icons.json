@@ -1,112 +1,137 @@
 [
-  {
-    "drawableName": "ic_language_c",
-    "fileExtensions": [
-      "c"
-    ]
-  },
-  {
-    "drawableName": "ic_language_cpp",
-    "fileExtensions": [
-      "cpp", "h", "hh", "hpp"
-    ]
-  },
-  {
-    "drawableName": "ic_language_csharp",
-    "fileExtensions": [
-      "cs"
-    ]
-  },
-  {
-    "drawableName": "ic_language_css",
-    "fileExtensions": [
-      "css"
-    ]
-  },
-  {
-    "drawableName": "ic_language_go",
-    "fileExtensions": [
-      "go"
-    ]
-  },
-  {
-    "drawableName": "ic_language_html",
-    "fileExtensions": [
-      "htm", "html", "xhtml", "xht"
-    ]
-  },
-  {
-    "drawableName": "ic_language_java",
-    "fileExtensions": [
-      "java"
-    ]
-  },
-  {
-    "drawableName": "ic_language_js",
-    "fileExtensions": [
-      "js"
-    ]
-  },
-  {
-    "drawableName": "ic_language_json",
-    "fileExtensions": [
-      "json", "webmanifest"
-    ]
-  },
-  {
-    "drawableName": "ic_language_kotlin",
-    "fileExtensions": [
-      "kt", "kts"
-    ]
-  },
-  {
-    "drawableName": "ic_language_lua",
-    "fileExtensions": [
-      "lua"
-    ]
-  },
-  {
-    "drawableName": "ic_language_php",
-    "fileExtensions": [
-      "php", "php4", "php5", "phtml", "ctp"
-    ]
-  },
-  {
-    "drawableName": "ic_language_python",
-    "fileExtensions": [
-      "py"
-    ]
-  },
-  {
-    "drawableName": "ic_language_typescript",
-    "fileExtensions": [
-      "ts"
-    ]
-  },
-  {
-    "drawableName": "ic_language_xml",
-    "fileExtensions": [
-      "xml"
-    ]
-  },
-  {
-    "drawableName": "ic_file_document",
-    "fileExtensions": [
-      "txt", "groovy", "gradle", "gvy", "gy", "gsh",
-      "yml", "eyaml", "eyml", "yaml", "cff",
-      "properties", "md", "bat"
-    ]
-  },
-  {
-    "drawableName": "ic_apk_document",
-    "fileExtensions": [
-      "apk", "xapk"
-    ]
-  },
-  {
-    "drawableName": "ic_folder_zip",
-    "fileExtensions": [
-      "zip", "7z"
-    ]
-  }
+    {
+        "drawableName": "ic_language_c",
+        "fileExtensions": [
+            "c"
+        ]
+    },
+    {
+        "drawableName": "ic_language_cpp",
+        "fileExtensions": [
+            "cpp",
+            "h",
+            "hh",
+            "hpp"
+        ]
+    },
+    {
+        "drawableName": "ic_language_csharp",
+        "fileExtensions": [
+            "cs"
+        ]
+    },
+    {
+        "drawableName": "ic_language_css",
+        "fileExtensions": [
+            "css"
+        ]
+    },
+    {
+        "drawableName": "ic_language_go",
+        "fileExtensions": [
+            "go"
+        ]
+    },
+    {
+        "drawableName": "ic_language_html",
+        "fileExtensions": [
+            "htm",
+            "html",
+            "xhtml",
+            "xht"
+        ]
+    },
+    {
+        "drawableName": "ic_language_java",
+        "fileExtensions": [
+            "java"
+        ]
+    },
+    {
+        "drawableName": "ic_language_js",
+        "fileExtensions": [
+            "js"
+        ]
+    },
+    {
+        "drawableName": "ic_language_json",
+        "fileExtensions": [
+            "json",
+            "webmanifest"
+        ]
+    },
+    {
+        "drawableName": "ic_language_kotlin",
+        "fileExtensions": [
+            "kt",
+            "kts"
+        ]
+    },
+    {
+        "drawableName": "ic_language_lua",
+        "fileExtensions": [
+            "lua"
+        ]
+    },
+    {
+        "drawableName": "ic_language_php",
+        "fileExtensions": [
+            "php",
+            "php4",
+            "php5",
+            "phtml",
+            "ctp"
+        ]
+    },
+    {
+        "drawableName": "ic_language_python",
+        "fileExtensions": [
+            "py"
+        ]
+    },
+    {
+        "drawableName": "ic_language_typescript",
+        "fileExtensions": [
+            "ts"
+        ]
+    },
+    {
+        "drawableName": "ic_language_xml",
+        "fileExtensions": [
+            "xml"
+        ]
+    },
+    {
+        "drawableName": "ic_file_document",
+        "fileExtensions": [
+            "txt",
+            "groovy",
+            "gradle",
+            "gvy",
+            "gy",
+            "gsh",
+            "yml",
+            "eyaml",
+            "eyml",
+            "yaml",
+            "cff",
+            "properties",
+            "md",
+            "bat"
+        ]
+    },
+    {
+        "drawableName": "ic_apk_document",
+        "fileExtensions": [
+            "apk",
+            "xapk"
+        ]
+    },
+    {
+        "drawableName": "ic_folder_zip",
+        "fileExtensions": [
+            "zip",
+            "7z"
+        ]
+    }
 ]

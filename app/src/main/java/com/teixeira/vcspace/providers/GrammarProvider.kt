@@ -21,8 +21,8 @@ import com.google.gson.reflect.TypeToken
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.model.DefaultGrammarDefinition
-import java.nio.charset.Charset
 import org.eclipse.tm4e.core.registry.IGrammarSource
+import java.nio.charset.Charset
 
 /**
  * Class to register and provide TextMate grammars
@@ -31,83 +31,84 @@ import org.eclipse.tm4e.core.registry.IGrammarSource
  */
 object GrammarProvider {
 
-  private val grammarRegistry = GrammarRegistry.getInstance()
-  private var _grammars: List<GrammarModel> = mutableListOf()
+    private val grammarRegistry = GrammarRegistry.getInstance()
+    private var _grammars: List<GrammarModel> = mutableListOf()
 
-  val grammars: List<GrammarModel>
-    get() = _grammars
+    val grammars: List<GrammarModel>
+        get() = _grammars
 
-  fun initialize(context: Context) {
-    if (_grammars.isNotEmpty()) {
-      return
+    fun initialize(context: Context) {
+        if (_grammars.isNotEmpty()) {
+            return
+        }
+
+        val grammarsJson =
+            context.assets.open("editor/textmate/grammars.json").bufferedReader()
+                .use { it.readText() }
+        _grammars = Gson().fromJson(grammarsJson, object : TypeToken<List<GrammarModel>>() {})
     }
 
-    val grammarsJson =
-      context.assets.open("editor/textmate/grammars.json").bufferedReader().use { it.readText() }
-    _grammars = Gson().fromJson(grammarsJson, object : TypeToken<List<GrammarModel>>() {})
-  }
-
-  suspend fun findScopeByFileExtension(extension: String?): String? {
-    val grammar = findGrammarByFileExtension(extension) ?: return null
-    if (grammarRegistry.findGrammar(grammar.scopeName) == null) {
-      registerGrammar(grammar)
+    suspend fun findScopeByFileExtension(extension: String?): String? {
+        val grammar = findGrammarByFileExtension(extension) ?: return null
+        if (grammarRegistry.findGrammar(grammar.scopeName) == null) {
+            registerGrammar(grammar)
+        }
+        return grammar.scopeName
     }
-    return grammar.scopeName
-  }
 
-  suspend fun registerGrammarByFileExtension(extension: String?) {
-    val grammar = findGrammarByFileExtension(extension) ?: return
-    registerGrammar(grammar)
-  }
-
-  private suspend fun registerGrammar(grammar: GrammarModel) {
-    if (grammarRegistry.findGrammar(grammar.scopeName) == null) {
-      registerEmbeddedLanguagesGrammar(grammar)
-
-      val grammarSource =
-        IGrammarSource.fromInputStream(
-          FileProviderRegistry.getInstance().tryGetInputStream(grammar.grammar),
-          grammar.grammar,
-          Charset.defaultCharset(),
-        )
-
-      grammarRegistry.loadGrammar(
-        DefaultGrammarDefinition.withLanguageConfiguration(
-            grammarSource,
-            grammar.languageConfiguration,
-            grammar.name,
-            grammar.scopeName,
-          )
-          .withEmbeddedLanguages(grammar.embeddedLanguages)
-      )
+    suspend fun registerGrammarByFileExtension(extension: String?) {
+        val grammar = findGrammarByFileExtension(extension) ?: return
+        registerGrammar(grammar)
     }
-  }
 
-  private suspend fun registerEmbeddedLanguagesGrammar(grammar: GrammarModel) {
-    val embeddedLanguages = grammar.embeddedLanguages ?: return
+    private suspend fun registerGrammar(grammar: GrammarModel) {
+        if (grammarRegistry.findGrammar(grammar.scopeName) == null) {
+            registerEmbeddedLanguagesGrammar(grammar)
 
-    for ((_, name) in embeddedLanguages) {
-      val embeddedGrammar = findGrammarByName(name)
-      if (embeddedGrammar != null) {
-        registerGrammar(embeddedGrammar)
-      }
+            val grammarSource =
+                IGrammarSource.fromInputStream(
+                    FileProviderRegistry.getInstance().tryGetInputStream(grammar.grammar),
+                    grammar.grammar,
+                    Charset.defaultCharset(),
+                )
+
+            grammarRegistry.loadGrammar(
+                DefaultGrammarDefinition.withLanguageConfiguration(
+                    grammarSource,
+                    grammar.languageConfiguration,
+                    grammar.name,
+                    grammar.scopeName,
+                )
+                    .withEmbeddedLanguages(grammar.embeddedLanguages)
+            )
+        }
     }
-  }
 
-  fun findGrammarByFileExtension(extension: String?): GrammarModel? =
-    _grammars.find { it.fileExtensions?.contains(extension) ?: false }
+    private suspend fun registerEmbeddedLanguagesGrammar(grammar: GrammarModel) {
+        val embeddedLanguages = grammar.embeddedLanguages ?: return
 
-  fun findGrammarByName(name: String): GrammarModel? = _grammars.find { it.name == name }
+        for ((_, name) in embeddedLanguages) {
+            val embeddedGrammar = findGrammarByName(name)
+            if (embeddedGrammar != null) {
+                registerGrammar(embeddedGrammar)
+            }
+        }
+    }
 
-  fun findGrammarByScope(scopeName: String): GrammarModel? =
-    _grammars.find { it.scopeName == scopeName }
+    fun findGrammarByFileExtension(extension: String?): GrammarModel? =
+        _grammars.find { it.fileExtensions?.contains(extension) ?: false }
 
-  class GrammarModel(
-    val name: String,
-    val scopeName: String,
-    val grammar: String,
-    val languageConfiguration: String? = null,
-    val embeddedLanguages: Map<String, String>? = null,
-    val fileExtensions: Array<String>? = null,
-  )
+    fun findGrammarByName(name: String): GrammarModel? = _grammars.find { it.name == name }
+
+    fun findGrammarByScope(scopeName: String): GrammarModel? =
+        _grammars.find { it.scopeName == scopeName }
+
+    class GrammarModel(
+        val name: String,
+        val scopeName: String,
+        val grammar: String,
+        val languageConfiguration: String? = null,
+        val embeddedLanguages: Map<String, String>? = null,
+        val fileExtensions: Array<String>? = null,
+    )
 }

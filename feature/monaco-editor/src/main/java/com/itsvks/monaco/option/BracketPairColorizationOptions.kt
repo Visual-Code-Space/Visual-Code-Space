@@ -18,8 +18,8 @@ package com.itsvks.monaco.option
 import com.google.gson.Gson
 
 data class BracketPairColorizationOptions(
-  val enabled: Boolean? = null,
-  val independentColorPoolPerBracketType: Boolean? = null,
+    val enabled: Boolean? = null,
+    val independentColorPoolPerBracketType: Boolean? = null,
 ) {
-  fun toJson() = Gson().toJson(this)
+    fun toJson() = Gson().toJson(this)
 }

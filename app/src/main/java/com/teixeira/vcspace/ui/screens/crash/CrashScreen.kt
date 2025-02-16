@@ -27,15 +27,15 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun CrashScreen(
-  error: String,
-  modifier: Modifier = Modifier
+    error: String,
+    modifier: Modifier = Modifier
 ) {
-  Column(
-    modifier = modifier
-      .padding(15.dp)
-      .verticalScroll(rememberScrollState())
-      .horizontalScroll(rememberScrollState())
-  ) {
-    Text(text = error)
-  }
+    Column(
+        modifier = modifier
+            .padding(15.dp)
+            .verticalScroll(rememberScrollState())
+            .horizontalScroll(rememberScrollState())
+    ) {
+        Text(text = error)
+    }
 }

@@ -48,9 +48,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.app.Folder
 import com.teixeira.vcspace.app.strings
+import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.ui.LocalToastHostState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -61,134 +61,134 @@ import com.teixeira.vcspace.git.GitManager.Companion.instance as git
 
 @Composable
 fun GitInitSheet(
-  folder: Folder,
-  onDismissRequest: () -> Unit,
-  modifier: Modifier = Modifier,
-  onSuccess: suspend CoroutineScope.() -> Unit = {},
-  onFailure: suspend CoroutineScope.(Throwable) -> Unit = {}
+    folder: Folder,
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
+    onSuccess: suspend CoroutineScope.() -> Unit = {},
+    onFailure: suspend CoroutineScope.(Throwable) -> Unit = {}
 ) {
-  val toastHostState = LocalToastHostState.current
-  val context = LocalContext.current
+    val toastHostState = LocalToastHostState.current
+    val context = LocalContext.current
 
-  val ioScope = rememberCoroutineScope { Dispatchers.IO }
-  var isInitializing by rememberSaveable { mutableStateOf(false) }
+    val ioScope = rememberCoroutineScope { Dispatchers.IO }
+    var isInitializing by rememberSaveable { mutableStateOf(false) }
 
-  val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState()
 
-  val hide = remember {
-    suspend {
-      ioScope.launch(Dispatchers.Main) { sheetState.hide() }.invokeOnCompletion {
-        if (!sheetState.isVisible) {
-          onDismissRequest()
-        }
-      }
-    }
-  }
-
-  ModalBottomSheet(
-    onDismissRequest = onDismissRequest,
-    modifier = modifier,
-    sheetState = sheetState
-  ) {
-    Column(
-      modifier = Modifier
-        .padding(16.dp)
-        .fillMaxSize(),
-      horizontalAlignment = Alignment.Start
-    ) {
-      Text(
-        text = stringResource(R.string.initialize_git_repository),
-        fontSize = 22.sp,
-        fontWeight = FontWeight.Bold,
-        lineHeight = 28.sp,
-        letterSpacing = (-0.015).sp
-      )
-
-      Spacer(modifier = Modifier.height(8.dp))
-
-      Text(
-        text = stringResource(R.string.initialize_git_repository_msg),
-        fontSize = 16.sp,
-        lineHeight = 20.sp
-      )
-
-      Spacer(modifier = Modifier.height(16.dp))
-
-      OutlinedTextField(
-        value = folder.canonicalPath,
-        onValueChange = { /* No direct input, only through the bottom sheet */ },
-        modifier = Modifier.fillMaxWidth(),
-        label = { Text(text = stringResource(R.string.select_folder)) },
-        trailingIcon = {
-          IconButton(onClick = {
-            ioScope.launch(Dispatchers.Main) {
-              toastHostState.showToast(
-                message = context.getString(R.string.not_yet_implemented),
-                icon = Icons.Default.NotInterested
-              )
-            }
-          }) {
-            Icon(Icons.Sharp.Folder, contentDescription = "Select Folder")
-          }
-        },
-        readOnly = true
-      )
-
-      Spacer(modifier = Modifier.height(16.dp))
-
-      Button(
-        onClick = {
-          isInitializing = true
-
-          doInit(
-            folder = folder,
-            scope = ioScope,
-            onSuccess = {
-              ioScope.launch(Dispatchers.Main) {
-                hide().also { isInitializing = false }
-
-                withContext(Dispatchers.Main.immediate + SupervisorJob()) {
-                  onSuccess()
+    val hide = remember {
+        suspend {
+            ioScope.launch(Dispatchers.Main) { sheetState.hide() }.invokeOnCompletion {
+                if (!sheetState.isVisible) {
+                    onDismissRequest()
                 }
-              }
-            },
-            onFailure = {
-              ioScope.launch(Dispatchers.Main) {
-                hide().also { isInitializing = false }
-
-                onFailure(it)
-              }
             }
-          )
-        },
-        modifier = Modifier.fillMaxWidth(),
-        enabled = !isInitializing
-      ) {
-        Text(
-          text = if (isInitializing) {
-            stringResource(strings.initializing)
-          } else {
-            stringResource(strings.initialize)
-          },
-          fontWeight = FontWeight.SemiBold,
-          letterSpacing = (0.015).sp
-        )
-      }
+        }
     }
-  }
+
+    ModalBottomSheet(
+        onDismissRequest = onDismissRequest,
+        modifier = modifier,
+        sheetState = sheetState
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.Start
+        ) {
+            Text(
+                text = stringResource(R.string.initialize_git_repository),
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold,
+                lineHeight = 28.sp,
+                letterSpacing = (-0.015).sp
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = stringResource(R.string.initialize_git_repository_msg),
+                fontSize = 16.sp,
+                lineHeight = 20.sp
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = folder.canonicalPath,
+                onValueChange = { /* No direct input, only through the bottom sheet */ },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text(text = stringResource(R.string.select_folder)) },
+                trailingIcon = {
+                    IconButton(onClick = {
+                        ioScope.launch(Dispatchers.Main) {
+                            toastHostState.showToast(
+                                message = context.getString(R.string.not_yet_implemented),
+                                icon = Icons.Default.NotInterested
+                            )
+                        }
+                    }) {
+                        Icon(Icons.Sharp.Folder, contentDescription = "Select Folder")
+                    }
+                },
+                readOnly = true
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = {
+                    isInitializing = true
+
+                    doInit(
+                        folder = folder,
+                        scope = ioScope,
+                        onSuccess = {
+                            ioScope.launch(Dispatchers.Main) {
+                                hide().also { isInitializing = false }
+
+                                withContext(Dispatchers.Main.immediate + SupervisorJob()) {
+                                    onSuccess()
+                                }
+                            }
+                        },
+                        onFailure = {
+                            ioScope.launch(Dispatchers.Main) {
+                                hide().also { isInitializing = false }
+
+                                onFailure(it)
+                            }
+                        }
+                    )
+                },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !isInitializing
+            ) {
+                Text(
+                    text = if (isInitializing) {
+                        stringResource(strings.initializing)
+                    } else {
+                        stringResource(strings.initialize)
+                    },
+                    fontWeight = FontWeight.SemiBold,
+                    letterSpacing = (0.015).sp
+                )
+            }
+        }
+    }
 }
 
 private fun doInit(
-  folder: Folder,
-  scope: CoroutineScope,
-  onSuccess: () -> Unit,
-  onFailure: (Throwable) -> Unit
+    folder: Folder,
+    scope: CoroutineScope,
+    onSuccess: () -> Unit,
+    onFailure: (Throwable) -> Unit
 ) {
-  scope.launch {
-    runCatching {
-      git.init(folder.asRawFile() ?: error("can't handle documents from other apps"))
-      git.addAll()
-    }.onSuccess { onSuccess() }.onFailure(onFailure)
-  }
+    scope.launch {
+        runCatching {
+            git.init(folder.asRawFile() ?: error("can't handle documents from other apps"))
+            git.addAll()
+        }.onSuccess { onSuccess() }.onFailure(onFailure)
+    }
 }
 

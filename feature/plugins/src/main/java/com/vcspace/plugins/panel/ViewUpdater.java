@@ -19,5 +19,5 @@ import android.view.View;
 
 @FunctionalInterface
 public interface ViewUpdater<T extends View> {
-  void accept(T view);
+    void accept(T view);
 }

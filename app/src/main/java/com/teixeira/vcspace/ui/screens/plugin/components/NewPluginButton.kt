@@ -42,102 +42,102 @@ import com.teixeira.vcspace.ui.icons.Import
 
 @Composable
 fun NewPluginButton(
-  modifier: Modifier = Modifier,
-  expanded: Boolean,
-  onCreatePlugin: () -> Unit,
-  onImportPlugin: () -> Unit
+    modifier: Modifier = Modifier,
+    expanded: Boolean,
+    onCreatePlugin: () -> Unit,
+    onImportPlugin: () -> Unit
 ) {
-  var showNewPluginSheet by remember { mutableStateOf(false) }
+    var showNewPluginSheet by remember { mutableStateOf(false) }
 
-  ExtendedFloatingActionButton(
-    onClick = { showNewPluginSheet = true },
-    text = { Text(stringResource(R.string.new_plugin)) },
-    icon = { Icon(Icons.Rounded.Add, contentDescription = "add plugin") },
-    expanded = expanded,
-    modifier = modifier
-  )
-
-  if (showNewPluginSheet) {
-    NewPluginSheet(
-      onDismissRequest = { showNewPluginSheet = false },
-      onCreatePlugin = onCreatePlugin,
-      onImportPlugin = onImportPlugin
+    ExtendedFloatingActionButton(
+        onClick = { showNewPluginSheet = true },
+        text = { Text(stringResource(R.string.new_plugin)) },
+        icon = { Icon(Icons.Rounded.Add, contentDescription = "add plugin") },
+        expanded = expanded,
+        modifier = modifier
     )
-  }
+
+    if (showNewPluginSheet) {
+        NewPluginSheet(
+            onDismissRequest = { showNewPluginSheet = false },
+            onCreatePlugin = onCreatePlugin,
+            onImportPlugin = onImportPlugin
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun NewPluginSheet(
-  onDismissRequest: () -> Unit,
-  onCreatePlugin: () -> Unit,
-  onImportPlugin: () -> Unit,
-  modifier: Modifier = Modifier,
+    onDismissRequest: () -> Unit,
+    onCreatePlugin: () -> Unit,
+    onImportPlugin: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-  ModalBottomSheet(
-    onDismissRequest = onDismissRequest,
-    modifier = modifier
-  ) {
-    LazyColumn {
-      item {
-        Card(
-          onClick = {
-            onCreatePlugin()
-            onDismissRequest()
-          },
-          colors = CardDefaults.cardColors(
-            containerColor = Color.Transparent
-          ),
-          modifier = Modifier.padding(vertical = 3.dp, horizontal = 5.dp)
-        ) {
-          ListItem(
-            colors = ListItemDefaults.colors(
-              containerColor = Color.Transparent
-            ),
-            headlineContent = {
-              Text(
-                text = "Create new plugin"
-              )
-            },
-            leadingContent = {
-              Icon(
-                imageVector = Icons.Rounded.Add,
-                contentDescription = null
-              )
+    ModalBottomSheet(
+        onDismissRequest = onDismissRequest,
+        modifier = modifier
+    ) {
+        LazyColumn {
+            item {
+                Card(
+                    onClick = {
+                        onCreatePlugin()
+                        onDismissRequest()
+                    },
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color.Transparent
+                    ),
+                    modifier = Modifier.padding(vertical = 3.dp, horizontal = 5.dp)
+                ) {
+                    ListItem(
+                        colors = ListItemDefaults.colors(
+                            containerColor = Color.Transparent
+                        ),
+                        headlineContent = {
+                            Text(
+                                text = "Create new plugin"
+                            )
+                        },
+                        leadingContent = {
+                            Icon(
+                                imageVector = Icons.Rounded.Add,
+                                contentDescription = null
+                            )
+                        }
+                    )
+                }
             }
-          )
-        }
-      }
 
-      item {
-        Card(
-          onClick = {
-            onImportPlugin()
-            onDismissRequest()
-          },
-          colors = CardDefaults.cardColors(
-            containerColor = Color.Transparent
-          ),
-          modifier = Modifier.padding(vertical = 3.dp, horizontal = 5.dp)
-        ) {
-          ListItem(
-            colors = ListItemDefaults.colors(
-              containerColor = Color.Transparent
-            ),
-            headlineContent = {
-              Text(
-                text = "Import plugin"
-              )
-            },
-            leadingContent = {
-              Icon(
-                imageVector = Import,
-                contentDescription = null
-              )
+            item {
+                Card(
+                    onClick = {
+                        onImportPlugin()
+                        onDismissRequest()
+                    },
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color.Transparent
+                    ),
+                    modifier = Modifier.padding(vertical = 3.dp, horizontal = 5.dp)
+                ) {
+                    ListItem(
+                        colors = ListItemDefaults.colors(
+                            containerColor = Color.Transparent
+                        ),
+                        headlineContent = {
+                            Text(
+                                text = "Import plugin"
+                            )
+                        },
+                        leadingContent = {
+                            Icon(
+                                imageVector = Import,
+                                contentDescription = null
+                            )
+                        }
+                    )
+                }
             }
-          )
         }
-      }
     }
-  }
 }

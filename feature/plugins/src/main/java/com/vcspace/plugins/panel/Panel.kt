@@ -21,17 +21,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 
 data class Panel(val id: String, val title: String, val factory: ComposeFactory) {
-  private var _offset = mutableStateOf(Offset.Zero)
-  var offset: Offset by _offset
+    private var _offset = mutableStateOf(Offset.Zero)
+    var offset: Offset by _offset
 
-  private var _isVisible = mutableStateOf(false)
-  val isVisible by _isVisible
+    private var _isVisible = mutableStateOf(false)
+    val isVisible by _isVisible
 
-  fun show() {
-    _isVisible.value = true
-  }
+    fun show() {
+        _isVisible.value = true
+    }
 
-  fun hide() {
-    _isVisible.value = false
-  }
+    fun hide() {
+        _isVisible.value = false
+    }
 }

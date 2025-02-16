@@ -44,134 +44,133 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
-import com.teixeira.vcspace.keyboard.model.Command
 import com.teixeira.vcspace.keyboard.CommandPaletteManager
+import com.teixeira.vcspace.keyboard.model.Command
 import com.teixeira.vcspace.ui.extensions.harmonizeWithPrimary
 
 @Composable
 fun CommandPalette(
-  commands: List<Command>,
-  recentlyUsedCommands: List<Command>,
-  modifier: Modifier = Modifier,
-  onCommandSelected: (Command) -> Unit = {},
-  onDismissRequest: () -> Unit
+    commands: List<Command>,
+    recentlyUsedCommands: List<Command>,
+    modifier: Modifier = Modifier,
+    onCommandSelected: (Command) -> Unit = {},
+    onDismissRequest: () -> Unit
 ) {
-  val focusRequester = remember { FocusRequester() }
+    val focusRequester = remember { FocusRequester() }
 
-  // Combine recently used commands with the rest of the commands, removing duplicates
-  val sortedCommands = remember {
-    val allCommands = recentlyUsedCommands + commands.filter {
-      it !in recentlyUsedCommands
-    }.toMutableList().apply { sortBy { it.name.lowercase() } }
+    // Combine recently used commands with the rest of the commands, removing duplicates
+    val sortedCommands = remember {
+        val allCommands = recentlyUsedCommands + commands.filter {
+            it !in recentlyUsedCommands
+        }.toMutableList().apply { sortBy { it.name.lowercase() } }
 
-    allCommands
-  }
-
-  val currentCompositonContext = rememberCompositionContext()
-
-  Popup(
-    onDismissRequest = onDismissRequest,
-    properties = PopupProperties(
-      focusable = true,
-      dismissOnBackPress = true,
-      dismissOnClickOutside = true,
-      excludeFromSystemGesture = true
-    ),
-    alignment = Alignment.TopCenter
-  ) {
-    ElevatedCard(
-      modifier = modifier
-        .fillMaxWidth(0.9f)
-        .wrapContentHeight()
-        .imePadding()
-        .heightIn(min = 100.dp, max = 500.dp)
-    ) {
-      var searchQuery by remember { mutableStateOf("") }
-
-      TextField(
-        value = searchQuery,
-        onValueChange = { searchQuery = it },
-        modifier = Modifier
-          .fillMaxWidth()
-          .focusable()
-          .focusRequester(focusRequester),
-        placeholder = { Text("Type command") }
-      )
-
-      val filteredCommands = sortedCommands.filter {
-        it.name.contains(searchQuery, ignoreCase = true)
-      }
-
-      LazyColumn(
-        modifier = Modifier.padding(3.dp)
-      ) {
-        items(filteredCommands) { command ->
-          val isRecentlyUsed = command in recentlyUsedCommands
-
-          CommandItem(command, isRecentlyUsed = isRecentlyUsed) {
-            CommandPaletteManager.instance.addRecentlyUsedCommand(command)
-
-            it.action(command, currentCompositonContext)
-            onCommandSelected(it)
-          }
-        }
-      }
+        allCommands
     }
-  }
+
+    val currentCompositonContext = rememberCompositionContext()
+
+    Popup(
+        onDismissRequest = onDismissRequest,
+        properties = PopupProperties(
+            focusable = true,
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true,
+            excludeFromSystemGesture = true
+        ),
+        alignment = Alignment.TopCenter
+    ) {
+        ElevatedCard(
+            modifier = modifier
+                .fillMaxWidth(0.9f)
+                .wrapContentHeight()
+                .imePadding()
+                .heightIn(min = 100.dp, max = 500.dp)
+        ) {
+            var searchQuery by remember { mutableStateOf("") }
+
+            TextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .focusable()
+                    .focusRequester(focusRequester),
+                placeholder = { Text("Type command") }
+            )
+
+            val filteredCommands = sortedCommands.filter {
+                it.name.contains(searchQuery, ignoreCase = true)
+            }
+
+            LazyColumn(
+                modifier = Modifier.padding(3.dp)
+            ) {
+                items(filteredCommands) { command ->
+                    val isRecentlyUsed = command in recentlyUsedCommands
+
+                    CommandItem(command, isRecentlyUsed = isRecentlyUsed) {
+                        CommandPaletteManager.instance.addRecentlyUsedCommand(command)
+
+                        it.action(command, currentCompositonContext)
+                        onCommandSelected(it)
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Composable
 private fun LazyItemScope.CommandItem(
-  command: Command,
-  isRecentlyUsed: Boolean = false,
-  onCommandSelected: (Command) -> Unit
+    command: Command,
+    isRecentlyUsed: Boolean = false,
+    onCommandSelected: (Command) -> Unit
 ) {
-  Box(
-    modifier = Modifier
-      .fillMaxWidth()
-      .wrapContentHeight()
-      .clip(CardDefaults.elevatedShape)
-      .clickable { onCommandSelected(command) }
-  ) {
-    Row(
-      modifier = Modifier.padding(5.dp),
-      verticalAlignment = Alignment.CenterVertically
-    ) {
-      Text(
-        text = command.name,
-        modifier = if (isRecentlyUsed) Modifier else Modifier
-          .fillMaxWidth()
-          .weight(1f),
-        fontFamily = FontFamily.SansSerif,
-        fontSize = 14.sp
-      )
-
-      if (isRecentlyUsed) {
-        Text(
-          text = "Recently used",
-          modifier = Modifier
+    Box(
+        modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 8.dp)
-            .weight(1f),
-          fontSize = 9.sp,
-          color = MaterialTheme.colorScheme.onSurfaceVariant.harmonizeWithPrimary(0.6f)
-        )
-      }
+            .wrapContentHeight()
+            .clip(CardDefaults.elevatedShape)
+            .clickable { onCommandSelected(command) }
+    ) {
+        Row(
+            modifier = Modifier.padding(5.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = command.name,
+                modifier = if (isRecentlyUsed) Modifier else Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                fontFamily = FontFamily.SansSerif,
+                fontSize = 14.sp
+            )
 
-      command.keybinding?.let {
-        Text(
-          text = it,
-          color = Color(0xFF1369FF).harmonizeWithPrimary(fraction = 0.5f),
-          fontSize = 11.sp,
-          fontFamily = FontFamily.Monospace
-        )
-      }
+            if (isRecentlyUsed) {
+                Text(
+                    text = "Recently used",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 8.dp)
+                        .weight(1f),
+                    fontSize = 9.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.harmonizeWithPrimary(0.6f)
+                )
+            }
+
+            command.keybinding?.let {
+                Text(
+                    text = it,
+                    color = Color(0xFF1369FF).harmonizeWithPrimary(fraction = 0.5f),
+                    fontSize = 11.sp,
+                    fontFamily = FontFamily.Monospace
+                )
+            }
+        }
     }
-  }
 }

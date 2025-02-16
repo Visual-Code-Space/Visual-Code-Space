@@ -16,12 +16,6 @@ package com.teixeira.vcspace.editor.language.textmate
 
 import android.os.Bundle
 import androidx.annotation.WorkerThread
-import com.google.ai.client.generativeai.type.asTextOrNull
-import com.teixeira.vcspace.core.ai.CompletionMetadata
-import com.teixeira.vcspace.core.ai.Gemini
-import com.teixeira.vcspace.editor.completion.AICompletionItem
-import com.teixeira.vcspace.editor.completion.CompletionItemKind
-import com.teixeira.vcspace.editor.completion.SimpleCompletionItem
 import io.github.rosemoe.sora.lang.EmptyLanguage
 import io.github.rosemoe.sora.lang.analysis.AnalyzeManager
 import io.github.rosemoe.sora.lang.completion.CompletionHelper
@@ -35,9 +29,7 @@ import io.github.rosemoe.sora.langs.textmate.utils.StringUtils
 import io.github.rosemoe.sora.text.CharPosition
 import io.github.rosemoe.sora.text.ContentReference
 import io.github.rosemoe.sora.util.MyCharacter
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import org.eclipse.tm4e.core.grammar.IGrammar
 import org.eclipse.tm4e.core.registry.IGrammarSource
 import org.eclipse.tm4e.core.registry.IThemeSource
@@ -45,152 +37,153 @@ import org.eclipse.tm4e.languageconfiguration.internal.model.LanguageConfigurati
 import java.io.Reader
 
 class VCSpaceTMLanguage protected constructor(
-  val grammar: IGrammar?,
-  @JvmField
-  var languageConfiguration: LanguageConfiguration?,
-  var grammarRegistry: GrammarRegistry,
-  var themeRegistry: ThemeRegistry,
-  @JvmField val createIdentifiers: Boolean
+    val grammar: IGrammar?,
+    @JvmField
+    var languageConfiguration: LanguageConfiguration?,
+    var grammarRegistry: GrammarRegistry,
+    var themeRegistry: ThemeRegistry,
+    @JvmField val createIdentifiers: Boolean
 ) : EmptyLanguage() {
-  /**
-   * Set tab size. The tab size is used to compute code blocks.
-   */
-  @JvmField
-  var tabSize: Int = 4
+    /**
+     * Set tab size. The tab size is used to compute code blocks.
+     */
+    @JvmField
+    var tabSize: Int = 4
 
-  private var useTab = false
+    private var useTab = false
 
-  val autoCompleter: IdentifierAutoComplete = IdentifierAutoComplete()
-  var isAutoCompleteEnabled: Boolean = true
+    val autoCompleter: IdentifierAutoComplete = IdentifierAutoComplete()
+    var isAutoCompleteEnabled: Boolean = true
 
-  var textMateAnalyzer: VCSpaceTMAnalyzer? = null
+    var textMateAnalyzer: VCSpaceTMAnalyzer? = null
 
-  private lateinit var newlineHandlers: Array<VCSpaceTMNewlineHandler>
+    private lateinit var newlineHandlers: Array<VCSpaceTMNewlineHandler>
 
-  // this.grammar = grammar;
-  var symbolPairMatch: VCSpaceTMSymbolPairMatch = VCSpaceTMSymbolPairMatch(this)
+    // this.grammar = grammar;
+    var symbolPairMatch: VCSpaceTMSymbolPairMatch = VCSpaceTMSymbolPairMatch(this)
 
-  var newlineHandler: VCSpaceTMNewlineHandler? = null
-    private set
+    var newlineHandler: VCSpaceTMNewlineHandler? = null
+        private set
 
-  init {
-    createAnalyzerAndNewlineHandler(grammar, languageConfiguration)
-  }
-
-
-  /**
-   * When you update the [TextMateColorScheme] for editor, you need to synchronize the updates here
-   *
-   * @param theme IThemeSource creates from file
-   */
-  @WorkerThread
-  @Deprecated(
-    "Use {@link ThemeRegistry#setTheme(String)}",
-    ReplaceWith("themeRegistry.loadTheme(theme)")
-  )
-  @Throws(
-    Exception::class
-  )
-  fun updateTheme(theme: IThemeSource?) {
-    //if (textMateAnalyzer != null) {
-    //  textMateAnalyzer.updateTheme(theme);
-    //}
-    themeRegistry.loadTheme(theme)
-  }
-
-
-  private fun createAnalyzerAndNewlineHandler(
-    grammar: IGrammar?,
-    languageConfiguration: LanguageConfiguration?
-  ) {
-    val old = textMateAnalyzer
-    if (old != null) {
-      old.receiver = null
-      old.destroy()
+    init {
+        createAnalyzerAndNewlineHandler(grammar, languageConfiguration)
     }
-    try {
-      textMateAnalyzer =
-        VCSpaceTMAnalyzer(this, grammar, languageConfiguration,  /*grammarRegistry,*/themeRegistry)
-    } catch (e: Exception) {
-      e.printStackTrace()
-    }
-    this.languageConfiguration = languageConfiguration
-    newlineHandler = VCSpaceTMNewlineHandler(this)
-    newlineHandlers = arrayOf(newlineHandler!!)
-    if (languageConfiguration != null) {
-      // because the editor will only get the symbol pair matcher once
-      // (caching object to stop repeated new object created),
-      // the symbol pair needs to be updated inside the symbol pair matcher.
-      symbolPairMatch.updatePair()
-    }
-  }
 
-  fun updateLanguage(scopeName: String?) {
-    val grammar = grammarRegistry.findGrammar(scopeName)
-    val languageConfiguration = grammarRegistry.findLanguageConfiguration(
-      grammar!!.scopeName
+
+    /**
+     * When you update the [TextMateColorScheme] for editor, you need to synchronize the updates here
+     *
+     * @param theme IThemeSource creates from file
+     */
+    @WorkerThread
+    @Deprecated(
+        "Use {@link ThemeRegistry#setTheme(String)}",
+        ReplaceWith("themeRegistry.loadTheme(theme)")
     )
-    createAnalyzerAndNewlineHandler(grammar, languageConfiguration)
-  }
-
-  fun updateLanguage(grammarDefinition: GrammarDefinition?) {
-    val grammar = grammarRegistry.loadGrammar(grammarDefinition)
-
-    val languageConfiguration = grammarRegistry.findLanguageConfiguration(grammar.scopeName)
-
-    createAnalyzerAndNewlineHandler(grammar, languageConfiguration)
-  }
-
-  override fun getAnalyzeManager(): AnalyzeManager {
-    if (textMateAnalyzer == null) {
-      return EmptyAnalyzeManager.INSTANCE
+    @Throws(
+        Exception::class
+    )
+    fun updateTheme(theme: IThemeSource?) {
+        //if (textMateAnalyzer != null) {
+        //  textMateAnalyzer.updateTheme(theme);
+        //}
+        themeRegistry.loadTheme(theme)
     }
-    return textMateAnalyzer as VCSpaceTMAnalyzer
-  }
-
-  override fun destroy() {
-    super.destroy()
-  }
 
 
-  override fun useTab(): Boolean {
-    return useTab
-  }
-
-  fun useTab(useTab: Boolean) {
-    this.useTab = useTab
-  }
-
-  override fun getSymbolPairs(): VCSpaceTMSymbolPairMatch {
-    return symbolPairMatch
-  }
-
-  override fun getNewlineHandlers(): Array<VCSpaceTMNewlineHandler> {
-    return newlineHandlers
-  }
-
-  override fun requireAutoComplete(
-    content: ContentReference,
-    position: CharPosition,
-    publisher: CompletionPublisher,
-    extraArguments: Bundle
-  ) {
-    if (!isAutoCompleteEnabled) {
-      return
+    private fun createAnalyzerAndNewlineHandler(
+        grammar: IGrammar?,
+        languageConfiguration: LanguageConfiguration?
+    ) {
+        val old = textMateAnalyzer
+        if (old != null) {
+            old.receiver = null
+            old.destroy()
+        }
+        try {
+            textMateAnalyzer =
+                VCSpaceTMAnalyzer(
+                    this,
+                    grammar,
+                    languageConfiguration,  /*grammarRegistry,*/
+                    themeRegistry
+                )
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        this.languageConfiguration = languageConfiguration
+        newlineHandler = VCSpaceTMNewlineHandler(this)
+        newlineHandlers = arrayOf(newlineHandler!!)
+        if (languageConfiguration != null) {
+            // because the editor will only get the symbol pair matcher once
+            // (caching object to stop repeated new object created),
+            // the symbol pair needs to be updated inside the symbol pair matcher.
+            symbolPairMatch.updatePair()
+        }
     }
-    val prefix =
-      CompletionHelper.computePrefix(content, position, MyCharacter::isJavaIdentifierPart)
 
-    val ref = content.reference
-    val cursor = ref.cursor
+    fun updateLanguage(scopeName: String?) {
+        val grammar = grammarRegistry.findGrammar(scopeName)
+        val languageConfiguration = grammarRegistry.findLanguageConfiguration(
+            grammar!!.scopeName
+        )
+        createAnalyzerAndNewlineHandler(grammar, languageConfiguration)
+    }
 
-    if (prefix.isNotEmpty()) {
-      runBlocking {
-        val idt = textMateAnalyzer!!.syncIdentifiers
-        autoCompleter.requireAutoComplete(content, position, prefix, publisher, idt)
+    fun updateLanguage(grammarDefinition: GrammarDefinition?) {
+        val grammar = grammarRegistry.loadGrammar(grammarDefinition)
 
-        grammar?.name?.let { grammarName ->
-          println(grammarName)
+        val languageConfiguration = grammarRegistry.findLanguageConfiguration(grammar.scopeName)
+
+        createAnalyzerAndNewlineHandler(grammar, languageConfiguration)
+    }
+
+    override fun getAnalyzeManager(): AnalyzeManager {
+        if (textMateAnalyzer == null) {
+            return EmptyAnalyzeManager.INSTANCE
+        }
+        return textMateAnalyzer as VCSpaceTMAnalyzer
+    }
+
+
+    override fun useTab(): Boolean {
+        return useTab
+    }
+
+    fun useTab(useTab: Boolean) {
+        this.useTab = useTab
+    }
+
+    override fun getSymbolPairs(): VCSpaceTMSymbolPairMatch {
+        return symbolPairMatch
+    }
+
+    override fun getNewlineHandlers(): Array<VCSpaceTMNewlineHandler> {
+        return newlineHandlers
+    }
+
+    override fun requireAutoComplete(
+        content: ContentReference,
+        position: CharPosition,
+        publisher: CompletionPublisher,
+        extraArguments: Bundle
+    ) {
+        if (!isAutoCompleteEnabled) {
+            return
+        }
+        val prefix =
+            CompletionHelper.computePrefix(content, position, MyCharacter::isJavaIdentifierPart)
+
+        val ref = content.reference
+        val cursor = ref.cursor
+
+        if (prefix.isNotEmpty()) {
+            runBlocking {
+                val idt = textMateAnalyzer!!.syncIdentifiers
+                autoCompleter.requireAutoComplete(content, position, prefix, publisher, idt)
+
+                grammar?.name?.let { grammarName ->
+                    println(grammarName)
 //          Gemini.completeCode(
 //            CompletionMetadata(
 //              language = grammarName,
@@ -222,169 +215,169 @@ class VCSpaceTMLanguage protected constructor(
 //              )
 //            }
 //          }.onFailure(Throwable::printStackTrace)
+                }
+            }
         }
-      }
-    }
-  }
-
-  fun setCompleterKeywords(keywords: Array<String?>?) {
-    autoCompleter.setKeywords(keywords, false)
-  }
-
-  companion object {
-    @Deprecated("")
-    fun prepareLoad(
-      grammarSource: IGrammarSource,
-      languageConfiguration: Reader?,
-      themeSource: IThemeSource?
-    ): IGrammar {
-      val definition = DefaultGrammarDefinition.withGrammarSource(
-        grammarSource,
-        StringUtils.getFileNameWithoutExtension(grammarSource.filePath),
-        null
-      )
-      val languageRegistry = GrammarRegistry.getInstance()
-      val grammar = languageRegistry.loadGrammar(definition)
-      if (languageConfiguration != null) {
-        languageRegistry.languageConfigurationToGrammar(
-          LanguageConfiguration.load(
-            languageConfiguration
-          ), grammar
-        )
-      }
-      val themeRegistry = ThemeRegistry.getInstance()
-      try {
-        themeRegistry.loadTheme(themeSource)
-      } catch (e: Exception) {
-        e.printStackTrace()
-      }
-      return grammar
     }
 
-    @Deprecated("")
-    fun create(
-      grammarSource: IGrammarSource,
-      languageConfiguration: Reader?,
-      themeSource: IThemeSource?
-    ): VCSpaceTMLanguage {
-      val grammar = prepareLoad(grammarSource, languageConfiguration, themeSource)
-      return create(grammar.scopeName, true)
+    fun setCompleterKeywords(keywords: Array<String?>?) {
+        autoCompleter.setKeywords(keywords, false)
     }
 
-    @Deprecated("")
-    fun create(grammarSource: IGrammarSource, themeSource: IThemeSource?): VCSpaceTMLanguage {
-      val grammar = prepareLoad(grammarSource, null, themeSource)
-      return create(grammar.scopeName, true)
+    companion object {
+        @Deprecated("")
+        fun prepareLoad(
+            grammarSource: IGrammarSource,
+            languageConfiguration: Reader?,
+            themeSource: IThemeSource?
+        ): IGrammar {
+            val definition = DefaultGrammarDefinition.withGrammarSource(
+                grammarSource,
+                StringUtils.getFileNameWithoutExtension(grammarSource.filePath),
+                null
+            )
+            val languageRegistry = GrammarRegistry.getInstance()
+            val grammar = languageRegistry.loadGrammar(definition)
+            if (languageConfiguration != null) {
+                languageRegistry.languageConfigurationToGrammar(
+                    LanguageConfiguration.load(
+                        languageConfiguration
+                    ), grammar
+                )
+            }
+            val themeRegistry = ThemeRegistry.getInstance()
+            try {
+                themeRegistry.loadTheme(themeSource)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            return grammar
+        }
+
+        @Deprecated("")
+        fun create(
+            grammarSource: IGrammarSource,
+            languageConfiguration: Reader?,
+            themeSource: IThemeSource?
+        ): VCSpaceTMLanguage {
+            val grammar = prepareLoad(grammarSource, languageConfiguration, themeSource)
+            return create(grammar.scopeName, true)
+        }
+
+        @Deprecated("")
+        fun create(grammarSource: IGrammarSource, themeSource: IThemeSource?): VCSpaceTMLanguage {
+            val grammar = prepareLoad(grammarSource, null, themeSource)
+            return create(grammar.scopeName, true)
+        }
+
+        @Deprecated("")
+        fun createNoCompletion(
+            grammarSource: IGrammarSource,
+            languageConfiguration: Reader?,
+            themeSource: IThemeSource?
+        ): VCSpaceTMLanguage {
+            val grammar = prepareLoad(grammarSource, languageConfiguration, themeSource)
+            return create(grammar.scopeName, false)
+        }
+
+        @Deprecated("")
+        fun createNoCompletion(
+            grammarSource: IGrammarSource,
+            themeSource: IThemeSource?
+        ): VCSpaceTMLanguage {
+            val grammar = prepareLoad(grammarSource, null, themeSource)
+            return create(grammar.scopeName, false)
+        }
+
+        fun create(languageScopeName: String?, autoCompleteEnabled: Boolean): VCSpaceTMLanguage {
+            return create(languageScopeName, GrammarRegistry.getInstance(), autoCompleteEnabled)
+        }
+
+        fun create(
+            languageScopeName: String?,
+            grammarRegistry: GrammarRegistry,
+            autoCompleteEnabled: Boolean
+        ): VCSpaceTMLanguage {
+            return create(
+                languageScopeName,
+                grammarRegistry,
+                ThemeRegistry.getInstance(),
+                autoCompleteEnabled
+            )
+        }
+
+        fun create(
+            languageScopeName: String?,
+            grammarRegistry: GrammarRegistry,
+            themeRegistry: ThemeRegistry,
+            autoCompleteEnabled: Boolean
+        ): VCSpaceTMLanguage {
+            val grammar = grammarRegistry.findGrammar(languageScopeName)
+
+            requireNotNull(grammar) {
+                String.format(
+                    "Language with %s scope name not found",
+                    grammarRegistry
+                )
+            }
+
+            val languageConfiguration = grammarRegistry.findLanguageConfiguration(grammar.scopeName)
+
+
+            return VCSpaceTMLanguage(
+                grammar,
+                languageConfiguration,
+                grammarRegistry,
+                themeRegistry,
+                autoCompleteEnabled
+            )
+        }
+
+
+        fun create(
+            grammarDefinition: GrammarDefinition?,
+            autoCompleteEnabled: Boolean
+        ): VCSpaceTMLanguage {
+            return create(grammarDefinition, GrammarRegistry.getInstance(), autoCompleteEnabled)
+        }
+
+        fun create(
+            grammarDefinition: GrammarDefinition?,
+            grammarRegistry: GrammarRegistry,
+            autoCompleteEnabled: Boolean
+        ): VCSpaceTMLanguage {
+            return create(
+                grammarDefinition,
+                grammarRegistry,
+                ThemeRegistry.getInstance(),
+                autoCompleteEnabled
+            )
+        }
+
+        fun create(
+            grammarDefinition: GrammarDefinition?,
+            grammarRegistry: GrammarRegistry,
+            themeRegistry: ThemeRegistry,
+            autoCompleteEnabled: Boolean
+        ): VCSpaceTMLanguage {
+            val grammar = grammarRegistry.loadGrammar(grammarDefinition)
+
+            requireNotNull(grammar) {
+                String.format(
+                    "Language with %s scope name not found",
+                    grammarRegistry
+                )
+            }
+
+            val languageConfiguration = grammarRegistry.findLanguageConfiguration(grammar.scopeName)
+
+            return VCSpaceTMLanguage(
+                grammar,
+                languageConfiguration,
+                grammarRegistry,
+                themeRegistry,
+                autoCompleteEnabled
+            )
+        }
     }
-
-    @Deprecated("")
-    fun createNoCompletion(
-      grammarSource: IGrammarSource,
-      languageConfiguration: Reader?,
-      themeSource: IThemeSource?
-    ): VCSpaceTMLanguage {
-      val grammar = prepareLoad(grammarSource, languageConfiguration, themeSource)
-      return create(grammar.scopeName, false)
-    }
-
-    @Deprecated("")
-    fun createNoCompletion(
-      grammarSource: IGrammarSource,
-      themeSource: IThemeSource?
-    ): VCSpaceTMLanguage {
-      val grammar = prepareLoad(grammarSource, null, themeSource)
-      return create(grammar.scopeName, false)
-    }
-
-    fun create(languageScopeName: String?, autoCompleteEnabled: Boolean): VCSpaceTMLanguage {
-      return create(languageScopeName, GrammarRegistry.getInstance(), autoCompleteEnabled)
-    }
-
-    fun create(
-      languageScopeName: String?,
-      grammarRegistry: GrammarRegistry,
-      autoCompleteEnabled: Boolean
-    ): VCSpaceTMLanguage {
-      return create(
-        languageScopeName,
-        grammarRegistry,
-        ThemeRegistry.getInstance(),
-        autoCompleteEnabled
-      )
-    }
-
-    fun create(
-      languageScopeName: String?,
-      grammarRegistry: GrammarRegistry,
-      themeRegistry: ThemeRegistry,
-      autoCompleteEnabled: Boolean
-    ): VCSpaceTMLanguage {
-      val grammar = grammarRegistry.findGrammar(languageScopeName)
-
-      requireNotNull(grammar) {
-        String.format(
-          "Language with %s scope name not found",
-          grammarRegistry
-        )
-      }
-
-      val languageConfiguration = grammarRegistry.findLanguageConfiguration(grammar.scopeName)
-
-
-      return VCSpaceTMLanguage(
-        grammar,
-        languageConfiguration,
-        grammarRegistry,
-        themeRegistry,
-        autoCompleteEnabled
-      )
-    }
-
-
-    fun create(
-      grammarDefinition: GrammarDefinition?,
-      autoCompleteEnabled: Boolean
-    ): VCSpaceTMLanguage {
-      return create(grammarDefinition, GrammarRegistry.getInstance(), autoCompleteEnabled)
-    }
-
-    fun create(
-      grammarDefinition: GrammarDefinition?,
-      grammarRegistry: GrammarRegistry,
-      autoCompleteEnabled: Boolean
-    ): VCSpaceTMLanguage {
-      return create(
-        grammarDefinition,
-        grammarRegistry,
-        ThemeRegistry.getInstance(),
-        autoCompleteEnabled
-      )
-    }
-
-    fun create(
-      grammarDefinition: GrammarDefinition?,
-      grammarRegistry: GrammarRegistry,
-      themeRegistry: ThemeRegistry,
-      autoCompleteEnabled: Boolean
-    ): VCSpaceTMLanguage {
-      val grammar = grammarRegistry.loadGrammar(grammarDefinition)
-
-      requireNotNull(grammar) {
-        String.format(
-          "Language with %s scope name not found",
-          grammarRegistry
-        )
-      }
-
-      val languageConfiguration = grammarRegistry.findLanguageConfiguration(grammar.scopeName)
-
-      return VCSpaceTMLanguage(
-        grammar,
-        languageConfiguration,
-        grammarRegistry,
-        themeRegistry,
-        autoCompleteEnabled
-      )
-    }
-  }
 }

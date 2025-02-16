@@ -20,12 +20,12 @@ import androidx.annotation.UiContext
 import androidx.appcompat.app.AlertDialog
 import com.blankj.utilcode.util.ThreadUtils.runOnUiThread
 import com.teixeira.vcspace.dialogs.ProgressDialogBuilder
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 /**
  * Calls [CoroutineScope.cancel] only if a job is active in the scope.
@@ -36,7 +36,7 @@ import kotlinx.coroutines.launch
  * @author Akash Yadav
  */
 fun CoroutineScope.cancelIfActive(message: String, cause: Throwable? = null) =
-  cancelIfActive(CancellationException(message, cause))
+    cancelIfActive(CancellationException(message, cause))
 
 /**
  * Calls [CoroutineScope.cancel] only if a job is active in the scope.
@@ -45,8 +45,8 @@ fun CoroutineScope.cancelIfActive(message: String, cause: Throwable? = null) =
  * @author Akash Yadav
  */
 fun CoroutineScope.cancelIfActive(exception: CancellationException? = null) {
-  val job = coroutineContext[Job]
-  job?.cancel(exception)
+    val job = coroutineContext[Job]
+    job?.cancel(exception)
 }
 
 /**
@@ -62,23 +62,23 @@ fun CoroutineScope.cancelIfActive(exception: CancellationException? = null) {
  * @param action Function of the action to be executed when launching the coroutine.
  */
 inline fun CoroutineScope.launchWithProgressDialog(
-  @UiContext uiContext: Context,
-  context: CoroutineContext = EmptyCoroutineContext,
-  configureBuilder: (builder: ProgressDialogBuilder) -> Unit = {},
-  crossinline invokeOnCompletion: (throwable: Throwable?) -> Unit = {},
-  crossinline action: suspend CoroutineScope.(builder: ProgressDialogBuilder, dialog: AlertDialog) -> Unit,
+    @UiContext uiContext: Context,
+    context: CoroutineContext = EmptyCoroutineContext,
+    configureBuilder: (builder: ProgressDialogBuilder) -> Unit = {},
+    crossinline invokeOnCompletion: (throwable: Throwable?) -> Unit = {},
+    crossinline action: suspend CoroutineScope.(builder: ProgressDialogBuilder, dialog: AlertDialog) -> Unit,
 ): Job {
 
-  val builder = ProgressDialogBuilder(uiContext)
-  configureBuilder(builder)
+    val builder = ProgressDialogBuilder(uiContext)
+    configureBuilder(builder)
 
-  val dialog = builder.show()
+    val dialog = builder.show()
 
-  return launch(context) { action(builder, dialog) }
-    .also { job ->
-      job.invokeOnCompletion { throwable ->
-        runOnUiThread { dialog.dismiss() }
-        invokeOnCompletion(throwable)
-      }
-    }
+    return launch(context) { action(builder, dialog) }
+        .also { job ->
+            job.invokeOnCompletion { throwable ->
+                runOnUiThread { dialog.dismiss() }
+                invokeOnCompletion(throwable)
+            }
+        }
 }

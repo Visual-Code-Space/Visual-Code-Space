@@ -36,41 +36,41 @@ import com.teixeira.vcspace.resources.R
 
 @Composable
 fun Heading(
-  modifier: Modifier = Modifier,
-  title: String,
-  onCloseDrawerRequest: () -> Unit
+    modifier: Modifier = Modifier,
+    title: String,
+    onCloseDrawerRequest: () -> Unit
 ) {
-  Row(modifier = modifier) {
-    Column(
-      modifier = Modifier
-        .padding(5.dp)
-        .padding(start = 5.dp, bottom = 0.dp)
-        .fillMaxWidth()
-        .weight(1f),
-    ) {
-      Text(
-        text = stringResource(R.string.workspace),
-        style = MaterialTheme.typography.titleLarge,
-        color = MaterialTheme.colorScheme.primary
-      )
-      Spacer(Modifier.height(2.dp))
-      Text(
-        text = title,
-        style = MaterialTheme.typography.titleSmall,
-        color = MaterialTheme.colorScheme.secondary
-      )
-    }
+    Row(modifier = modifier) {
+        Column(
+            modifier = Modifier
+                .padding(5.dp)
+                .padding(start = 5.dp, bottom = 0.dp)
+                .fillMaxWidth()
+                .weight(1f),
+        ) {
+            Text(
+                text = stringResource(R.string.workspace),
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Spacer(Modifier.height(2.dp))
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.secondary
+            )
+        }
 
-    Tooltip(stringResource(R.string.close_drawer)) {
-      IconButton(
-        onClick = onCloseDrawerRequest,
-        modifier = Modifier.padding(horizontal = 5.dp, vertical = 0.dp)
-      ) {
-        Icon(
-          imageVector = Icons.AutoMirrored.Rounded.MenuOpen,
-          contentDescription = stringResource(R.string.close_drawer)
-        )
-      }
+        Tooltip(stringResource(R.string.close_drawer)) {
+            IconButton(
+                onClick = onCloseDrawerRequest,
+                modifier = Modifier.padding(horizontal = 5.dp, vertical = 0.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Rounded.MenuOpen,
+                    contentDescription = stringResource(R.string.close_drawer)
+                )
+            }
+        }
     }
-  }
 }

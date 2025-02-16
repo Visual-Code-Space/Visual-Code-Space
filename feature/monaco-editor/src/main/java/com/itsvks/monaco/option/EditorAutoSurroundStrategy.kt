@@ -16,11 +16,12 @@
 package com.itsvks.monaco.option
 
 @JvmInline
-value class EditorAutoSurroundStrategy private constructor(override val value: String) : Option<String> {
-  companion object {
-    val Never = EditorAutoSurroundStrategy("never")
-    val Quotes = EditorAutoSurroundStrategy("quotes")
-    val Brackets = EditorAutoSurroundStrategy("brackets")
-    val LanguageDefined = EditorAutoSurroundStrategy("languageDefined")
-  }
+value class EditorAutoSurroundStrategy private constructor(override val value: String) :
+    Option<String> {
+    companion object {
+        val Never = EditorAutoSurroundStrategy("never")
+        val Quotes = EditorAutoSurroundStrategy("quotes")
+        val Brackets = EditorAutoSurroundStrategy("brackets")
+        val LanguageDefined = EditorAutoSurroundStrategy("languageDefined")
+    }
 }

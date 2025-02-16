@@ -45,7 +45,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.nio.file.Files
 
 /**
  * A WebView-based Monaco Editor component for Android.
@@ -63,253 +62,256 @@ import java.nio.file.Files
  */
 @SuppressLint("SetJavaScriptEnabled", "ClickableViewAccessibility")
 class MonacoEditor @JvmOverloads constructor(
-  context: Context, attrs: AttributeSet? = null
+    context: Context, attrs: AttributeSet? = null
 ) : WebView(context, attrs) {
-  companion object {
-    private const val TAG = "MonacoEditor"
+    companion object {
+        private const val TAG = "MonacoEditor"
 
-    @JvmStatic
-    fun downloadMonaco(context: Context, url: String): Long {
-      val request = DownloadManager.Request(url.toUri())
-      request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "vcspace-monaco.zip")
-      request.setTitle("Visual Code Space")
-      request.setDescription("Downloading monaco editor for Visual Code Space")
-      request.setAllowedOverMetered(true)
-      val downloadManager = context.getSystemService(DownloadManager::class.java)
-      return downloadManager.enqueue(request)
-    }
-
-    @JvmStatic
-    suspend fun doSetup(context: Context, downloadedFile: File) {
-      withContext(Dispatchers.IO) {
-        if (downloadedFile.exists()) {
-          downloadedFile.extractZipFile(context.filesDir)
+        @JvmStatic
+        fun downloadMonaco(context: Context, url: String): Long {
+            val request = DownloadManager.Request(url.toUri())
+            request.setDestinationInExternalPublicDir(
+                Environment.DIRECTORY_DOWNLOADS,
+                "vcspace-monaco.zip"
+            )
+            request.setTitle("Visual Code Space")
+            request.setDescription("Downloading monaco editor for Visual Code Space")
+            request.setAllowedOverMetered(true)
+            val downloadManager = context.getSystemService(DownloadManager::class.java)
+            return downloadManager.enqueue(request)
         }
-      }
-    }
-  }
 
-  private val client = MonacoEditorClient(this)
-  private val webInterface = MonacoWebInterface(this)
-
-  var isLoaded = false
-  var onEditorLoadCallbacks = mutableListOf<(MonacoEditor) -> Unit>()
-  var onContentChange: (String) -> Unit = {}
-
-  val editorScope = CoroutineScope(Dispatchers.Unconfined)
-  var inlineCompletionProvider: InlineCompletionProvider? = null
-
-  init {
-    settings.mixedContentMode = 0
-    setLayerType(View.LAYER_TYPE_HARDWARE, null)
-
-    addJavascriptInterface(webInterface, "MonacoAndroid")
-    webViewClient = client
-    webChromeClient = object : WebChromeClient() {
-      override fun onConsoleMessage(consoleMessage: ConsoleMessage): Boolean {
-        @Suppress("WHEN_ENUM_CAN_BE_NULL_IN_JAVA")
-        when (consoleMessage.messageLevel()) {
-          ConsoleMessage.MessageLevel.LOG -> Log.d(TAG, consoleMessage.message())
-          ConsoleMessage.MessageLevel.DEBUG -> Log.d(TAG, consoleMessage.message())
-          ConsoleMessage.MessageLevel.TIP -> Log.i(TAG, consoleMessage.message())
-          ConsoleMessage.MessageLevel.WARNING -> Log.w(TAG, consoleMessage.message())
-
-          ConsoleMessage.MessageLevel.ERROR -> {
-            Log.e(TAG, consoleMessage.message())
-            // ToastUtils.showShort(consoleMessage.message())
-            // insert(consoleMessage.message(), position)
-          }
+        @JvmStatic
+        suspend fun doSetup(context: Context, downloadedFile: File) {
+            withContext(Dispatchers.IO) {
+                if (downloadedFile.exists()) {
+                    downloadedFile.extractZipFile(context.filesDir)
+                }
+            }
         }
-        return super.onConsoleMessage(consoleMessage)
-      }
     }
 
-    isFocusable = true
-    isFocusableInTouchMode = true
-    requestFocus(View.FOCUS_DOWN)
+    private val client = MonacoEditorClient(this)
+    private val webInterface = MonacoWebInterface(this)
 
-    settings.apply {
-      javaScriptEnabled = true
-      loadWithOverviewMode = true
-      useWideViewPort = true
-      allowFileAccess = true
-      allowContentAccess = true
-      setWebContentsDebuggingEnabled(true)
+    var isLoaded = false
+    var onEditorLoadCallbacks = mutableListOf<(MonacoEditor) -> Unit>()
+    var onContentChange: (String) -> Unit = {}
+
+    val editorScope = CoroutineScope(Dispatchers.Unconfined)
+    var inlineCompletionProvider: InlineCompletionProvider? = null
+
+    init {
+        settings.mixedContentMode = 0
+        setLayerType(View.LAYER_TYPE_HARDWARE, null)
+
+        addJavascriptInterface(webInterface, "MonacoAndroid")
+        webViewClient = client
+        webChromeClient = object : WebChromeClient() {
+            override fun onConsoleMessage(consoleMessage: ConsoleMessage): Boolean {
+                @Suppress("WHEN_ENUM_CAN_BE_NULL_IN_JAVA")
+                when (consoleMessage.messageLevel()) {
+                    ConsoleMessage.MessageLevel.LOG -> Log.d(TAG, consoleMessage.message())
+                    ConsoleMessage.MessageLevel.DEBUG -> Log.d(TAG, consoleMessage.message())
+                    ConsoleMessage.MessageLevel.TIP -> Log.i(TAG, consoleMessage.message())
+                    ConsoleMessage.MessageLevel.WARNING -> Log.w(TAG, consoleMessage.message())
+
+                    ConsoleMessage.MessageLevel.ERROR -> {
+                        Log.e(TAG, consoleMessage.message())
+                        // ToastUtils.showShort(consoleMessage.message())
+                        // insert(consoleMessage.message(), position)
+                    }
+                }
+                return super.onConsoleMessage(consoleMessage)
+            }
+        }
+
+        isFocusable = true
+        isFocusableInTouchMode = true
+        requestFocus(View.FOCUS_DOWN)
+
+        settings.apply {
+            javaScriptEnabled = true
+            loadWithOverviewMode = true
+            useWideViewPort = true
+            allowFileAccess = true
+            allowContentAccess = true
+            setWebContentsDebuggingEnabled(true)
+        }
+
+        loadUrl("https://appassets.androidplatform.net/monaco/index.html")
+
+        setOnTouchListener { _, event ->
+            if (event.actionMasked == MotionEvent.ACTION_UP) {
+                requestFocus()
+                //editorScope.launch { focusEditor() }
+            }
+            false
+        }
     }
 
-    loadUrl("https://appassets.androidplatform.net/monaco/index.html")
-
-    setOnTouchListener { _, event ->
-      if (event.actionMasked == MotionEvent.ACTION_UP) {
-        requestFocus()
-        //editorScope.launch { focusEditor() }
-      }
-      false
+    fun addOnEditorLoadCallback(callback: (MonacoEditor) -> Unit) {
+        onEditorLoadCallbacks.add(callback)
+        Log.i(TAG, "addOnEditorLoadCallback: $callback")
+        Log.i(TAG, "Total callbacks: ${onEditorLoadCallbacks.size}, $onEditorLoadCallbacks")
     }
-  }
 
-  fun addOnEditorLoadCallback(callback: (MonacoEditor) -> Unit) {
-    onEditorLoadCallbacks.add(callback)
-    Log.i(TAG, "addOnEditorLoadCallback: $callback")
-    Log.i(TAG, "Total callbacks: ${onEditorLoadCallbacks.size}, $onEditorLoadCallbacks")
-  }
-
-  override fun reload() {
-    loadUrl("https://appassets.androidplatform.net/monaco/index.html")
-  }
-
-  private fun loadJs(script: String, resultCallback: (String) -> Unit = {}) {
-    editorScope.launch {
-      withContext(Dispatchers.Unconfined) {
-        evaluateJavascript(script, resultCallback)
-      }
+    override fun reload() {
+        loadUrl("https://appassets.androidplatform.net/monaco/index.html")
     }
-  }
 
-  private fun setEditorOptionInternal(option: String, value: Any) {
-    loadJs("setEditorOptions(`$option`, `$value`);")
-  }
-
-  fun <T : Option<Any>> setEditorOption(option: IEditorOption<T>) {
-    setEditorOptionInternal(option.option.name, option.defaultValue.value)
-  }
-
-  fun <T : Option<Any>> setEditorOption(option: EditorOption, value: T) {
-    setEditorOption(IEditorOption(option, value))
-  }
-
-  fun setEditorOption(option: EditorOption, value: String) {
-    setEditorOptionInternal(option.name, value)
-  }
-
-  fun setEditorOption(option: EditorOption, value: Number) {
-    setEditorOptionInternal(option.name, value)
-  }
-
-  fun setEditorOption(option: EditorOption, value: Boolean) {
-    setEditorOptionInternal(option.name, value)
-  }
-
-  fun focusEditor() {
-    loadJs("focusEditor();")
-  }
-
-  fun undo() = editorScope.launch { loadJs("undo();") }
-  fun redo() = editorScope.launch { loadJs("redo();") }
-
-  var text
-    get() = webInterface.value
-    set(text) {
-      webInterface.value = text
-      loadJs("setText(`$text`);")
+    private fun loadJs(script: String, resultCallback: (String) -> Unit = {}) {
+        editorScope.launch {
+            withContext(Dispatchers.Unconfined) {
+                evaluateJavascript(script, resultCallback)
+            }
+        }
     }
-  val canUndo get() = webInterface.canUndo
-  val canRedo get() = webInterface.canRedo
-  val isContentModified = webInterface.isModified
 
-  var position
-    get() = Position(webInterface.lineNumber, webInterface.column)
-    set(value) = loadJs(
-      """
+    private fun setEditorOptionInternal(option: String, value: Any) {
+        loadJs("setEditorOptions(`$option`, `$value`);")
+    }
+
+    fun <T : Option<Any>> setEditorOption(option: IEditorOption<T>) {
+        setEditorOptionInternal(option.option.name, option.defaultValue.value)
+    }
+
+    fun <T : Option<Any>> setEditorOption(option: EditorOption, value: T) {
+        setEditorOption(IEditorOption(option, value))
+    }
+
+    fun setEditorOption(option: EditorOption, value: String) {
+        setEditorOptionInternal(option.name, value)
+    }
+
+    fun setEditorOption(option: EditorOption, value: Number) {
+        setEditorOptionInternal(option.name, value)
+    }
+
+    fun setEditorOption(option: EditorOption, value: Boolean) {
+        setEditorOptionInternal(option.name, value)
+    }
+
+    fun focusEditor() {
+        loadJs("focusEditor();")
+    }
+
+    fun undo() = editorScope.launch { loadJs("undo();") }
+    fun redo() = editorScope.launch { loadJs("redo();") }
+
+    var text
+        get() = webInterface.value
+        set(text) {
+            webInterface.value = text
+            loadJs("setText(`$text`);")
+        }
+    val canUndo get() = webInterface.canUndo
+    val canRedo get() = webInterface.canRedo
+    val isContentModified = webInterface.isModified
+
+    var position
+        get() = Position(webInterface.lineNumber, webInterface.column)
+        set(value) = loadJs(
+            """
       if (editor) {
         let position = { lineNumber: ${value.lineNumber}, column: ${value.column}};
         editor.setPosition(position);
       }
     """.trimIndent()
-    )
+        )
 
-  fun selectText(range: Range) {
-    loadJs("selectText(${range.startLineNumber}, ${range.startColumn}, ${range.endLineNumber}, ${range.endColumn});")
-  }
-
-  fun replaceSelectedText(newText: String) = loadJs("replaceSelectedText($newText);")
-
-  fun scrollToSelection() = loadJs("editor.revealRangeInCenter(editor.getSelection());")
-
-  fun setLanguage(language: MonacoLanguage) = loadJs("setLanguage(`${language.value}`);")
-
-  fun setFontSize(fontSize: Int) = setEditorOption(EditorOption.fontSize, fontSize)
-
-  fun setTheme(theme: MonacoTheme) = loadJs("setTheme(`${theme.value}`);")
-
-  fun setWordWrap(wordWrap: WordWrap) {
-    setEditorOption(EditorOption.wordWrap, wordWrap)
-  }
-
-  fun setWrappingStrategy(wrappingStrategy: WrappingStrategy) {
-    setEditorOption(EditorOption.wrappingStrategy, wrappingStrategy)
-  }
-
-  fun setWordBreak(wordBreak: WordBreak) {
-    setEditorOption(EditorOption.wordBreak, wordBreak)
-  }
-
-  fun setMatchBrackets(matchBrackets: MatchBrackets) {
-    setEditorOption(EditorOption.matchBrackets, matchBrackets)
-  }
-
-  fun setCursorStyle(cursorStyle: TextEditorCursorStyle) {
-    loadJs("setCursorStyle(${cursorStyle.value});")
-  }
-
-  fun setReadOnly(readOnly: Boolean) {
-    setEditorOption(EditorOption.readOnly, readOnly)
-  }
-
-  fun setMinimapOptions(minimapOptions: MinimapOptions) {
-    loadJs("applyMinimapOptions(`${minimapOptions.toJson()}`);")
-  }
-
-  fun setGlyphMargin(glyphMargin: Boolean) {
-    setEditorOption(EditorOption.glyphMargin, glyphMargin)
-  }
-
-  fun setFolding(folding: Boolean) = setEditorOption(EditorOption.folding, folding)
-
-  fun setInDiffEditor(inDiffEditor: Boolean) {
-    setEditorOption(EditorOption.inDiffEditor, inDiffEditor)
-  }
-
-  fun setLetterSpacing(letterSpacing: Number) {
-    setEditorOption(EditorOption.letterSpacing, letterSpacing)
-  }
-
-  fun setLineDecorationsWidth(lineDecorationsWidth: Number) {
-    setEditorOption(EditorOption.lineDecorationsWidth, lineDecorationsWidth)
-  }
-
-  fun setLineNumbersMinChars(lineNumbersMinChars: Number) {
-    setEditorOption(EditorOption.lineNumbersMinChars, lineNumbersMinChars)
-  }
-
-  fun setAcceptSuggestionOnCommitCharacter(acceptSuggestionOnCommitCharacter: Boolean) {
-    setEditorOption(
-      EditorOption.acceptSuggestionOnCommitCharacter,
-      acceptSuggestionOnCommitCharacter
-    )
-  }
-
-  fun setAcceptSuggestionOnEnter(acceptSuggestionOnEnter: AcceptSuggestionOnEnter) {
-    setEditorOption(EditorOption.acceptSuggestionOnEnter, acceptSuggestionOnEnter)
-  }
-
-  fun setCursorBlinkingStyle(cursorBlinkingStyle: TextEditorCursorBlinkingStyle) {
-    loadJs("setCursorBlinkingStyle(${cursorBlinkingStyle.value});")
-  }
-
-  fun insert(text: CharSequence, position: Position) {
-    loadJs("insert(`$text`, ${position.lineNumber}, ${position.column});")
-  }
-
-  fun insert(text: CharSequence, lineNumber: Int, column: Int = 1) {
-    insert(text, Position(lineNumber, column))
-  }
-
-  fun dispatchKey(key: String) {
-    if (key == "\\") {
-      loadJs("simulateKeyPress(`\\\\`);")
-      return
+    fun selectText(range: Range) {
+        loadJs("selectText(${range.startLineNumber}, ${range.startColumn}, ${range.endLineNumber}, ${range.endColumn});")
     }
-    loadJs("simulateKeyPress(`$key`);")
-  }
+
+    fun replaceSelectedText(newText: String) = loadJs("replaceSelectedText($newText);")
+
+    fun scrollToSelection() = loadJs("editor.revealRangeInCenter(editor.getSelection());")
+
+    fun setLanguage(language: MonacoLanguage) = loadJs("setLanguage(`${language.value}`);")
+
+    fun setFontSize(fontSize: Int) = setEditorOption(EditorOption.fontSize, fontSize)
+
+    fun setTheme(theme: MonacoTheme) = loadJs("setTheme(`${theme.value}`);")
+
+    fun setWordWrap(wordWrap: WordWrap) {
+        setEditorOption(EditorOption.wordWrap, wordWrap)
+    }
+
+    fun setWrappingStrategy(wrappingStrategy: WrappingStrategy) {
+        setEditorOption(EditorOption.wrappingStrategy, wrappingStrategy)
+    }
+
+    fun setWordBreak(wordBreak: WordBreak) {
+        setEditorOption(EditorOption.wordBreak, wordBreak)
+    }
+
+    fun setMatchBrackets(matchBrackets: MatchBrackets) {
+        setEditorOption(EditorOption.matchBrackets, matchBrackets)
+    }
+
+    fun setCursorStyle(cursorStyle: TextEditorCursorStyle) {
+        loadJs("setCursorStyle(${cursorStyle.value});")
+    }
+
+    fun setReadOnly(readOnly: Boolean) {
+        setEditorOption(EditorOption.readOnly, readOnly)
+    }
+
+    fun setMinimapOptions(minimapOptions: MinimapOptions) {
+        loadJs("applyMinimapOptions(`${minimapOptions.toJson()}`);")
+    }
+
+    fun setGlyphMargin(glyphMargin: Boolean) {
+        setEditorOption(EditorOption.glyphMargin, glyphMargin)
+    }
+
+    fun setFolding(folding: Boolean) = setEditorOption(EditorOption.folding, folding)
+
+    fun setInDiffEditor(inDiffEditor: Boolean) {
+        setEditorOption(EditorOption.inDiffEditor, inDiffEditor)
+    }
+
+    fun setLetterSpacing(letterSpacing: Number) {
+        setEditorOption(EditorOption.letterSpacing, letterSpacing)
+    }
+
+    fun setLineDecorationsWidth(lineDecorationsWidth: Number) {
+        setEditorOption(EditorOption.lineDecorationsWidth, lineDecorationsWidth)
+    }
+
+    fun setLineNumbersMinChars(lineNumbersMinChars: Number) {
+        setEditorOption(EditorOption.lineNumbersMinChars, lineNumbersMinChars)
+    }
+
+    fun setAcceptSuggestionOnCommitCharacter(acceptSuggestionOnCommitCharacter: Boolean) {
+        setEditorOption(
+            EditorOption.acceptSuggestionOnCommitCharacter,
+            acceptSuggestionOnCommitCharacter
+        )
+    }
+
+    fun setAcceptSuggestionOnEnter(acceptSuggestionOnEnter: AcceptSuggestionOnEnter) {
+        setEditorOption(EditorOption.acceptSuggestionOnEnter, acceptSuggestionOnEnter)
+    }
+
+    fun setCursorBlinkingStyle(cursorBlinkingStyle: TextEditorCursorBlinkingStyle) {
+        loadJs("setCursorBlinkingStyle(${cursorBlinkingStyle.value});")
+    }
+
+    fun insert(text: CharSequence, position: Position) {
+        loadJs("insert(`$text`, ${position.lineNumber}, ${position.column});")
+    }
+
+    fun insert(text: CharSequence, lineNumber: Int, column: Int = 1) {
+        insert(text, Position(lineNumber, column))
+    }
+
+    fun dispatchKey(key: String) {
+        if (key == "\\") {
+            loadJs("simulateKeyPress(`\\\\`);")
+            return
+        }
+        loadJs("simulateKeyPress(`$key`);")
+    }
 }

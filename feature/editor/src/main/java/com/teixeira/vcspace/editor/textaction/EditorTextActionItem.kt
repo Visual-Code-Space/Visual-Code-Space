@@ -29,57 +29,57 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.teixeira.vcspace.resources.R
 
 data class EditorTextActionItem(
-  val id: Int,
-  val icon: ImageVector,
-  val description: String,
-  var visible: Boolean = true,
-  var clickable: Boolean = true
+    val id: Int,
+    val icon: ImageVector,
+    val description: String,
+    var visible: Boolean = true,
+    var clickable: Boolean = true
 )
 
 val actionItems = listOf(
-  EditorTextActionItem(
-    id = R.string.editor_action_comment_line,
-    icon = Icons.Rounded.EditNote,
-    description = "Add a comment to the current line."
-  ),
-  EditorTextActionItem(
-    id = R.string.editor_action_select_all,
-    icon = Icons.Rounded.SelectAll,
-    description = "Select all text in the editor."
-  ),
-  EditorTextActionItem(
-    id = R.string.editor_action_long_select,
-    icon = Icons.Rounded.TouchApp,
-    description = "Enable long selection mode."
-  ),
-  EditorTextActionItem(
-    id = R.string.editor_action_cut,
-    icon = Icons.Rounded.ContentCut,
-    description = "Cut the selected text to the clipboard."
-  ),
-  EditorTextActionItem(
-    id = R.string.editor_action_copy,
-    icon = Icons.Rounded.ContentCopy,
-    description = "Copy the selected text to the clipboard."
-  ),
-  EditorTextActionItem(
-    id = R.string.editor_action_paste,
-    icon = Icons.Rounded.ContentPaste,
-    description = "Paste text from the clipboard."
-  ),
-  EditorTextActionItem(
-    id = R.string.editor_action_format,
-    icon = Icons.AutoMirrored.Rounded.FormatAlignLeft,
-    description = "Format the selected text."
-  ),
-  EditorTextActionItem(
-    id = R.string.editor_action_explain_code,
-    icon = Icons.AutoMirrored.Rounded.Comment,
-    description = "Explain the selected code."
-  ),
-  EditorTextActionItem(
-    id = R.string.editor_action_import_components,
-    icon = Icons.AutoMirrored.Rounded.ManageSearch,
-    description = "Import components (Jetpack Compose)."
-  )
+    EditorTextActionItem(
+        id = R.string.editor_action_comment_line,
+        icon = Icons.Rounded.EditNote,
+        description = "Add a comment to the current line."
+    ),
+    EditorTextActionItem(
+        id = R.string.editor_action_select_all,
+        icon = Icons.Rounded.SelectAll,
+        description = "Select all text in the editor."
+    ),
+    EditorTextActionItem(
+        id = R.string.editor_action_long_select,
+        icon = Icons.Rounded.TouchApp,
+        description = "Enable long selection mode."
+    ),
+    EditorTextActionItem(
+        id = R.string.editor_action_cut,
+        icon = Icons.Rounded.ContentCut,
+        description = "Cut the selected text to the clipboard."
+    ),
+    EditorTextActionItem(
+        id = R.string.editor_action_copy,
+        icon = Icons.Rounded.ContentCopy,
+        description = "Copy the selected text to the clipboard."
+    ),
+    EditorTextActionItem(
+        id = R.string.editor_action_paste,
+        icon = Icons.Rounded.ContentPaste,
+        description = "Paste text from the clipboard."
+    ),
+    EditorTextActionItem(
+        id = R.string.editor_action_format,
+        icon = Icons.AutoMirrored.Rounded.FormatAlignLeft,
+        description = "Format the selected text."
+    ),
+    EditorTextActionItem(
+        id = R.string.editor_action_explain_code,
+        icon = Icons.AutoMirrored.Rounded.Comment,
+        description = "Explain the selected code."
+    ),
+    EditorTextActionItem(
+        id = R.string.editor_action_import_components,
+        icon = Icons.AutoMirrored.Rounded.ManageSearch,
+        description = "Import components (Jetpack Compose)."
+    )
 )

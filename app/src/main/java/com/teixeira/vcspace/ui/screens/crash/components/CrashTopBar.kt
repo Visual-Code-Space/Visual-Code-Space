@@ -42,49 +42,50 @@ import java.util.Calendar
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CrashTopBar(
-  modifier: Modifier = Modifier,
-  scrollBehavior: TopAppBarScrollBehavior
+    modifier: Modifier = Modifier,
+    scrollBehavior: TopAppBarScrollBehavior
 ) {
-  VCSpaceLargeTopBar(
-    modifier = modifier,
-    title = {
-      Column {
-        Text(
-          text = stringResource(strings.app_name),
-          fontWeight = FontWeight.ExtraBold,
-          fontFamily = FontFamily.SansSerif,
-        )
+    VCSpaceLargeTopBar(
+        modifier = modifier,
+        title = {
+            Column {
+                Text(
+                    text = stringResource(strings.app_name),
+                    fontWeight = FontWeight.ExtraBold,
+                    fontFamily = FontFamily.SansSerif,
+                )
 
-        Row(
-          horizontalArrangement = Arrangement.spacedBy(5.dp),
-          verticalAlignment = Alignment.CenterVertically
-        ) {
-          Text(
-            text = "App crashed,".uppercase(),
-            fontWeight = FontWeight.SemiBold,
-            fontFamily = FontFamily.SansSerif,
-            style = MaterialTheme.typography.labelLarge
-          )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(5.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "App crashed,".uppercase(),
+                        fontWeight = FontWeight.SemiBold,
+                        fontFamily = FontFamily.SansSerif,
+                        style = MaterialTheme.typography.labelLarge
+                    )
 
-          val timeNow = DateFormat.format("MMMM d, yyyy 'at' hh:mm:ss a", Calendar.getInstance())
+                    val timeNow =
+                        DateFormat.format("MMMM d, yyyy 'at' hh:mm:ss a", Calendar.getInstance())
 
-          Text(
-            text = timeNow.toString(),
-            fontWeight = FontWeight.Medium,
-            fontFamily = FontFamily.SansSerif,
-            style = MaterialTheme.typography.labelLarge,
-          )
-        }
-      }
-    },
-    actions = {
-      IconButton(onClick = AppUtils::exitApp) {
-        Icon(
-          imageVector = Icons.Rounded.Close,
-          contentDescription = stringResource(strings.close)
-        )
-      }
-    },
-    scrollBehavior = scrollBehavior
-  )
+                    Text(
+                        text = timeNow.toString(),
+                        fontWeight = FontWeight.Medium,
+                        fontFamily = FontFamily.SansSerif,
+                        style = MaterialTheme.typography.labelLarge,
+                    )
+                }
+            }
+        },
+        actions = {
+            IconButton(onClick = AppUtils::exitApp) {
+                Icon(
+                    imageVector = Icons.Rounded.Close,
+                    contentDescription = stringResource(strings.close)
+                )
+            }
+        },
+        scrollBehavior = scrollBehavior
+    )
 }

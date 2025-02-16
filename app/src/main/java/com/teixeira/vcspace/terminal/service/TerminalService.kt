@@ -35,121 +35,124 @@ import com.termux.terminal.TerminalSessionClient
 
 // https://github.com/Xed-Editor/Xed-Editor/blob/main/core/main/src/main/java/com/rk/xededitor/service/SessionService.kt
 class TerminalService : Service() {
-  private val sessions = hashMapOf<String, TerminalSession>()
-  val sessionList = mutableStateListOf<String>()
-  var currentSession = mutableStateOf("main")
+    private val sessions = hashMapOf<String, TerminalSession>()
+    val sessionList = mutableStateListOf<String>()
+    var currentSession = mutableStateOf("main")
 
-  @Suppress("PrivatePropertyName")
-  private val ACTION_EXIT by lazy { "com.teixeira.vcspace.action.ACTION_EXIT" }
-  private val notificationId = 46536745
+    @Suppress("PrivatePropertyName")
+    private val ACTION_EXIT by lazy { "com.teixeira.vcspace.action.ACTION_EXIT" }
+    private val notificationId = 46536745
 
-  inner class TerminalBinder : Binder() {
-    val service
-      get() = this@TerminalService
+    inner class TerminalBinder : Binder() {
+        val service
+            get() = this@TerminalService
 
-    fun createSession(
-      id: String,
-      client: TerminalSessionClient,
-      activity: TerminalActivity
-    ): TerminalSession {
-      return Session.createSession(activity, client, id).also {
-        sessions[id] = it
-        sessionList.add(id)
-        updateNotification()
-      }
+        fun createSession(
+            id: String,
+            client: TerminalSessionClient,
+            activity: TerminalActivity
+        ): TerminalSession {
+            return Session.createSession(activity, client, id).also {
+                sessions[id] = it
+                sessionList.add(id)
+                updateNotification()
+            }
+        }
+
+        fun getSession(id: String): TerminalSession? {
+            return sessions[id]
+        }
+
+        fun terminateSession(id: String) {
+            sessions[id]?.finishIfRunning()
+            sessions.remove(id)
+            sessionList.remove(id)
+            if (sessions.isEmpty()) {
+                stopSelf()
+            } else {
+                updateNotification()
+            }
+        }
     }
 
-    fun getSession(id: String): TerminalSession? {
-      return sessions[id]
+    private val binder = TerminalBinder()
+    private val notificationManager by lazy { getSystemService(NotificationManager::class.java) }
+
+    override fun onBind(intent: Intent): IBinder {
+        return binder
     }
 
-    fun terminateSession(id: String) {
-      sessions[id]?.finishIfRunning()
-      sessions.remove(id)
-      sessionList.remove(id)
-      if (sessions.isEmpty()) {
-        stopSelf()
-      } else {
-        updateNotification()
-      }
+    override fun onCreate() {
+        super.onCreate()
+        createNotificationChannel()
+        val notification = createNotification()
+        startForeground(notificationId, notification)
     }
-  }
 
-  private val binder = TerminalBinder()
-  private val notificationManager by lazy { getSystemService(NotificationManager::class.java) }
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        when (intent?.action) {
+            ACTION_EXIT -> {
+                sessions.forEach { session -> session.value.finishIfRunning() }
+                stopSelf()
+            }
+        }
+        return super.onStartCommand(intent, flags, startId)
+    }
 
-  override fun onBind(intent: Intent): IBinder {
-    return binder
-  }
-
-  override fun onCreate() {
-    super.onCreate()
-    createNotificationChannel()
-    val notification = createNotification()
-    startForeground(notificationId, notification)
-  }
-
-  override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-    when (intent?.action) {
-      ACTION_EXIT -> {
+    override fun onDestroy() {
         sessions.forEach { session -> session.value.finishIfRunning() }
-        stopSelf()
-      }
+        super.onDestroy()
     }
-    return super.onStartCommand(intent, flags, startId)
-  }
 
-  override fun onDestroy() {
-    sessions.forEach { session -> session.value.finishIfRunning() }
-    super.onDestroy()
-  }
+    private fun createNotification(): Notification {
+        val intent = Intent(this, TerminalActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(
+            this, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        val exitIntent = Intent(this, TerminalService::class.java).apply { action = ACTION_EXIT }
+        val exitPendingIntent = PendingIntent.getService(
+            this,
+            notificationId,
+            exitIntent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
 
-  private fun createNotification(): Notification {
-    val intent = Intent(this, TerminalActivity::class.java)
-    val pendingIntent = PendingIntent.getActivity(
-      this, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-    )
-    val exitIntent = Intent(this, TerminalService::class.java).apply { action = ACTION_EXIT }
-    val exitPendingIntent = PendingIntent.getService(
-      this, notificationId, exitIntent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-    )
-
-    return NotificationCompat.Builder(this, CHANNEL_ID)
-      .setContentTitle("Visual Code Space")
-      .setContentText(getNotificationContentText())
-      .setSmallIcon(drawables.terminal)
-      .setContentIntent(pendingIntent)
-      .addAction(
-        NotificationCompat.Action.Builder(
-          null,
-          "Exit",
-          exitPendingIntent
-        ).build()
-      )
-      .setOngoing(true)
-      .build()
-  }
-
-  private val CHANNEL_ID = "session_service_channel"
-
-  private fun createNotificationChannel() {
-    val channel = NotificationChannel(
-      CHANNEL_ID,
-      "Session Service",
-      NotificationManager.IMPORTANCE_LOW
-    ).apply {
-      description = "Notification for Terminal Service"
+        return NotificationCompat.Builder(this, CHANNEL_ID)
+            .setContentTitle("Visual Code Space")
+            .setContentText(getNotificationContentText())
+            .setSmallIcon(drawables.terminal)
+            .setContentIntent(pendingIntent)
+            .addAction(
+                NotificationCompat.Action.Builder(
+                    null,
+                    "Exit",
+                    exitPendingIntent
+                ).build()
+            )
+            .setOngoing(true)
+            .build()
     }
-    notificationManager.createNotificationChannel(channel)
-  }
 
-  private fun updateNotification() {
-    val notification = createNotification()
-    notificationManager.notify(notificationId, notification)
-  }
+    private val CHANNEL_ID = "session_service_channel"
 
-  private fun getNotificationContentText(): String {
-    val count = sessions.size
-    return "$count${" session" makePluralIf (count > 1)} running"
-  }
+    private fun createNotificationChannel() {
+        val channel = NotificationChannel(
+            CHANNEL_ID,
+            "Session Service",
+            NotificationManager.IMPORTANCE_LOW
+        ).apply {
+            description = "Notification for Terminal Service"
+        }
+        notificationManager.createNotificationChannel(channel)
+    }
+
+    private fun updateNotification() {
+        val notification = createNotification()
+        notificationManager.notify(notificationId, notification)
+    }
+
+    private fun getNotificationContentText(): String {
+        val count = sessions.size
+        return "$count${" session" makePluralIf (count > 1)} running"
+    }
 }

@@ -16,17 +16,17 @@
 package com.itsvks.monaco.option
 
 @JvmInline
-value class MatchBrackets private constructor(override val value: String):Option<String> {
-  companion object {
-    fun fromValue(value: String) = when (value) {
-      "always" -> Always
-      "never" -> Never
-      "near" -> Near
-      else -> throw IllegalArgumentException("Unknown value: $value")
-    }
+value class MatchBrackets private constructor(override val value: String) : Option<String> {
+    companion object {
+        fun fromValue(value: String) = when (value) {
+            "always" -> Always
+            "never" -> Never
+            "near" -> Near
+            else -> throw IllegalArgumentException("Unknown value: $value")
+        }
 
-    val Always = MatchBrackets("always")
-    val Never = MatchBrackets("never")
-    val Near = MatchBrackets("near")
-  }
+        val Always = MatchBrackets("always")
+        val Never = MatchBrackets("never")
+        val Near = MatchBrackets("near")
+    }
 }

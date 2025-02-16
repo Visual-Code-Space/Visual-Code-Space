@@ -19,129 +19,129 @@ import java.io.File
 import java.util.Properties
 
 class PluginInfo(private val file: File) {
-  private val properties = Properties()
-  private val comment = "VCSpace Plugin Properties"
+    private val properties = Properties()
+    private val comment = "VCSpace Plugin Properties"
 
-  var enabled: Boolean
-    get() = properties.getProperty("enabled", "true") == "true"
-    set(value) {
-      properties.setProperty("enabled", value.toString())
-      updateProperties()
+    var enabled: Boolean
+        get() = properties.getProperty("enabled", "true") == "true"
+        set(value) {
+            properties.setProperty("enabled", value.toString())
+            updateProperties()
+        }
+
+    init {
+        properties.load(file.inputStream())
+        enabled = true
+        updateProperties()
     }
 
-  init {
-    properties.load(file.inputStream())
-    enabled = true
-    updateProperties()
-  }
-
-  private fun updateProperties() {
-    properties.store(file.outputStream(), comment)
-  }
-
-  var name: String?
-    get() = properties.getProperty("name")
-    set(value) {
-      if (value == null) {
-        properties.remove("name")
-      } else properties.setProperty("name", value)
-      updateProperties()
+    private fun updateProperties() {
+        properties.store(file.outputStream(), comment)
     }
 
-  var icon: String?
-    get() = properties.getProperty("icon")
-    set(value) {
-      if (value == null) {
-        properties.remove("icon")
-      } else properties.setProperty("icon", value)
-      updateProperties()
-    }
+    var name: String?
+        get() = properties.getProperty("name")
+        set(value) {
+            if (value == null) {
+                properties.remove("name")
+            } else properties.setProperty("name", value)
+            updateProperties()
+        }
 
-  var id: String
-    get() = properties.getProperty("id", name)
-    set(value) {
-      properties.setProperty("id", value)
-      updateProperties()
-    }
+    var icon: String?
+        get() = properties.getProperty("icon")
+        set(value) {
+            if (value == null) {
+                properties.remove("icon")
+            } else properties.setProperty("icon", value)
+            updateProperties()
+        }
 
-  var pluginFileName: String?
-    get() = properties.getProperty("pluginFileName")
-    set(value) {
-      if (value == null) {
-        properties.remove("pluginFileName")
-      } else properties.setProperty("pluginFileName", value)
-      updateProperties()
-    }
+    var id: String
+        get() = properties.getProperty("id", name)
+        set(value) {
+            properties.setProperty("id", value)
+            updateProperties()
+        }
 
-  var version: String?
-    get() = properties.getProperty("version")
-    set(value) {
-      if (value == null) {
-        properties.remove("version")
-      } else properties.setProperty("version", value)
-      updateProperties()
-    }
+    var pluginFileName: String?
+        get() = properties.getProperty("pluginFileName")
+        set(value) {
+            if (value == null) {
+                properties.remove("pluginFileName")
+            } else properties.setProperty("pluginFileName", value)
+            updateProperties()
+        }
 
-  var description: String?
-    get() = properties.getProperty("description")
-    set(value) {
-      if (value == null) {
-        properties.remove("description")
-      } else properties.setProperty("description", value)
-      updateProperties()
-    }
+    var version: String?
+        get() = properties.getProperty("version")
+        set(value) {
+            if (value == null) {
+                properties.remove("version")
+            } else properties.setProperty("version", value)
+            updateProperties()
+        }
 
-  var author: String?
-    get() = properties.getProperty("author")
-    set(value) {
-      if (value == null) {
-        properties.remove("author")
-      } else properties.setProperty("author", value)
-      updateProperties()
-    }
+    var description: String?
+        get() = properties.getProperty("description")
+        set(value) {
+            if (value == null) {
+                properties.remove("description")
+            } else properties.setProperty("description", value)
+            updateProperties()
+        }
 
-  var website: String?
-    get() = properties.getProperty("website")
-    set(value) {
-      if (value == null) {
-        properties.remove("website")
-      } else properties.setProperty("website", value)
-      updateProperties()
-    }
+    var author: String?
+        get() = properties.getProperty("author")
+        set(value) {
+            if (value == null) {
+                properties.remove("author")
+            } else properties.setProperty("author", value)
+            updateProperties()
+        }
 
-  var license: String?
-    get() = properties.getProperty("license")
-    set(value) {
-      if (value == null) {
-        properties.remove("license")
-      } else properties.setProperty("license", value)
-      updateProperties()
-    }
+    var website: String?
+        get() = properties.getProperty("website")
+        set(value) {
+            if (value == null) {
+                properties.remove("website")
+            } else properties.setProperty("website", value)
+            updateProperties()
+        }
 
-  var dependencies: List<String>
-    get() = properties.getProperty("dependencies", "").split(",")
-    set(value) {
-      if (value.isEmpty()) {
-        properties.remove("dependencies")
-      } else properties.setProperty("dependencies", value.joinToString(","))
-      updateProperties()
-    }
+    var license: String?
+        get() = properties.getProperty("license")
+        set(value) {
+            if (value == null) {
+                properties.remove("license")
+            } else properties.setProperty("license", value)
+            updateProperties()
+        }
 
-  var mainClass: String?
-    get() = properties.getProperty("mainClass")
-    set(value) {
-      if (value == null) {
-        properties.remove("mainClass")
-      } else properties.setProperty("mainClass", value)
-      updateProperties()
-    }
+    var dependencies: List<String>
+        get() = properties.getProperty("dependencies", "").split(",")
+        set(value) {
+            if (value.isEmpty()) {
+                properties.remove("dependencies")
+            } else properties.setProperty("dependencies", value.joinToString(","))
+            updateProperties()
+        }
 
-  var packageName: String?
-    get() = properties.getProperty("packageName")
-    set(value) {
-      if (value == null) {
-        properties.remove("packageName")
-      } else properties.setProperty("packageName", value)
-      updateProperties()
-    }
+    var mainClass: String?
+        get() = properties.getProperty("mainClass")
+        set(value) {
+            if (value == null) {
+                properties.remove("mainClass")
+            } else properties.setProperty("mainClass", value)
+            updateProperties()
+        }
+
+    var packageName: String?
+        get() = properties.getProperty("packageName")
+        set(value) {
+            if (value == null) {
+                properties.remove("packageName")
+            } else properties.setProperty("packageName", value)
+            updateProperties()
+        }
 }

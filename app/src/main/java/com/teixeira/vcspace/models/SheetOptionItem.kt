@@ -18,4 +18,5 @@ package com.teixeira.vcspace.models
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
-@Parcelize class SheetOptionItem(val icon: Int, val name: String) : Parcelable
+@Parcelize
+class SheetOptionItem(val icon: Int, val name: String) : Parcelable

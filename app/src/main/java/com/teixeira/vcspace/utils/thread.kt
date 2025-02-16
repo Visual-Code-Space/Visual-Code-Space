@@ -21,25 +21,25 @@ import okhttp3.internal.notify
 import okhttp3.internal.wait
 
 fun <R> runOnUiThread(block: () -> R): R {
-  if (Looper.myLooper() == Looper.getMainLooper()) {
-    return block()
-  }
+    if (Looper.myLooper() == Looper.getMainLooper()) {
+        return block()
+    }
 
-  val lock = Any()
-  var result: R? = null
+    val lock = Any()
+    var result: R? = null
 
-  Handler(Looper.getMainLooper()).post {
+    Handler(Looper.getMainLooper()).post {
+        synchronized(lock) {
+            result = block()
+            lock.notify()
+        }
+    }
+
     synchronized(lock) {
-      result = block()
-      lock.notify()
+        while (result == null) {
+            lock.wait()
+        }
     }
-  }
 
-  synchronized(lock) {
-    while (result == null) {
-      lock.wait()
-    }
-  }
-
-  return result!!
+    return result!!
 }

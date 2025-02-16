@@ -56,140 +56,140 @@ import me.zhanghai.compose.preference.switchPreference
 
 @Composable
 fun GeneralSettingsScreen(
-  modifier: Modifier = Modifier,
-  onNavigateUp: () -> Unit
+    modifier: Modifier = Modifier,
+    onNavigateUp: () -> Unit
 ) {
-  val isSystemInDarkTheme = isSystemInDarkTheme()
-  val isSystemDarkTheme by remember(isSystemInDarkTheme) { mutableStateOf(isSystemInDarkTheme) }
+    val isSystemInDarkTheme = isSystemInDarkTheme()
+    val isSystemDarkTheme by remember(isSystemInDarkTheme) { mutableStateOf(isSystemInDarkTheme) }
 
-  val followSystemTheme = rememberFollowSystemTheme()
-  val darkMode = rememberIsDarkMode()
-  val amoledMode = rememberIsAmoledMode()
-  val dynamicColor = rememberIsDynamicColor()
-  val enableGestureInDrawer = rememberEnableGestureInDrawer()
+    val followSystemTheme = rememberFollowSystemTheme()
+    val darkMode = rememberIsDarkMode()
+    val amoledMode = rememberIsAmoledMode()
+    val dynamicColor = rememberIsDynamicColor()
+    val enableGestureInDrawer = rememberEnableGestureInDrawer()
 
-  BackHandler(onBack = onNavigateUp)
+    BackHandler(onBack = onNavigateUp)
 
-  val backgroundColor = MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
+    val backgroundColor = MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
 
-  LazyColumn(
-    modifier = modifier
-      .fillMaxWidth()
-      .padding(horizontal = 12.dp)
-      .padding(bottom = 12.dp),
-    verticalArrangement = Arrangement.spacedBy(3.dp)
-  ) {
-    preferenceCategory(
-      key = "general_settings_category",
-      title = { Text(text = stringResource(R.string.general)) }
-    )
-
-    switchPreference(
-      key = FOLLOW_SYSTEM_THEME.name,
-      title = { Text(text = stringResource(R.string.follow_system_theme_title)) },
-      summary = {
-        Text(
-          text = if (it) stringResource(R.string.follow_system_theme_summary_true)
-          else stringResource(R.string.follow_system_theme_summary_false)
+    LazyColumn(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp)
+            .padding(bottom = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(3.dp)
+    ) {
+        preferenceCategory(
+            key = "general_settings_category",
+            title = { Text(text = stringResource(R.string.general)) }
         )
-      },
-      rememberState = { followSystemTheme },
-      defaultValue = followSystemTheme.value,
-      icon = {
-        Icon(
-          imageVector = Icons.Default.Palette,
-          contentDescription = null
-        )
-      },
-      modifier = Modifier
-        .clip(PreferenceShape.Top)
-        .background(backgroundColor)
-    )
 
-    switchPreference(
-      key = DARK_MODE.name,
-      title = { Text(text = stringResource(R.string.use_dark_mode_title)) },
-      summary = {
-        Text(
-          text = if (it || (followSystemTheme.value && isSystemDarkTheme))
-            stringResource(R.string.use_dark_mode_summary_enabled)
-          else stringResource(R.string.use_dark_mode_summary_disabled)
+        switchPreference(
+            key = FOLLOW_SYSTEM_THEME.name,
+            title = { Text(text = stringResource(R.string.follow_system_theme_title)) },
+            summary = {
+                Text(
+                    text = if (it) stringResource(R.string.follow_system_theme_summary_true)
+                    else stringResource(R.string.follow_system_theme_summary_false)
+                )
+            },
+            rememberState = { followSystemTheme },
+            defaultValue = followSystemTheme.value,
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Palette,
+                    contentDescription = null
+                )
+            },
+            modifier = Modifier
+                .clip(PreferenceShape.Top)
+                .background(backgroundColor)
         )
-      },
-      rememberState = { darkMode },
-      defaultValue = darkMode.value,
-      enabled = { !followSystemTheme.value },
-      icon = {
-        Icon(
-          imageVector = Icons.Default.Brightness4,
-          contentDescription = null
-        )
-      },
-      modifier = Modifier
-        .clip(PreferenceShape.Middle)
-        .background(backgroundColor)
-    )
 
-    switchPreference(
-      key = AMOLED_MODE.name,
-      title = { Text(text = stringResource(R.string.use_amoled_mode_title)) },
-      summary = {
-        Text(
-          text = if ((it && darkMode.value) || (followSystemTheme.value && isSystemDarkTheme && it))
-            stringResource(R.string.use_amoled_mode_summary_enabled)
-          else stringResource(R.string.use_amoled_mode_summary_disabled)
+        switchPreference(
+            key = DARK_MODE.name,
+            title = { Text(text = stringResource(R.string.use_dark_mode_title)) },
+            summary = {
+                Text(
+                    text = if (it || (followSystemTheme.value && isSystemDarkTheme))
+                        stringResource(R.string.use_dark_mode_summary_enabled)
+                    else stringResource(R.string.use_dark_mode_summary_disabled)
+                )
+            },
+            rememberState = { darkMode },
+            defaultValue = darkMode.value,
+            enabled = { !followSystemTheme.value },
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Brightness4,
+                    contentDescription = null
+                )
+            },
+            modifier = Modifier
+                .clip(PreferenceShape.Middle)
+                .background(backgroundColor)
         )
-      },
-      rememberState = { amoledMode },
-      defaultValue = amoledMode.value,
-      enabled = { darkMode.value || (followSystemTheme.value && isSystemDarkTheme) },
-      icon = {
-        Icon(
-          imageVector = Icons.Default.InvertColors,
-          contentDescription = null
-        )
-      },
-      modifier = Modifier
-        .clip(PreferenceShape.Middle)
-        .background(backgroundColor)
-    )
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-      switchPreference(
-        key = DYNAMIC_COLOR.name,
-        title = { Text(text = stringResource(R.string.dynamic_colors_title)) },
-        summary = {
-          Text(
-            text = if (it) stringResource(R.string.dynamic_colors_summary_enabled)
-            else stringResource(R.string.dynamic_colors_summary_disabled)
-          )
-        },
-        rememberState = { dynamicColor },
-        defaultValue = dynamicColor.value,
-        icon = {
-          Icon(
-            imageVector = Icons.Default.Palette,
-            contentDescription = null
-          )
-        },
-        modifier = Modifier
-          .clip(PreferenceShape.Middle)
-          .background(backgroundColor)
-      )
+        switchPreference(
+            key = AMOLED_MODE.name,
+            title = { Text(text = stringResource(R.string.use_amoled_mode_title)) },
+            summary = {
+                Text(
+                    text = if ((it && darkMode.value) || (followSystemTheme.value && isSystemDarkTheme && it))
+                        stringResource(R.string.use_amoled_mode_summary_enabled)
+                    else stringResource(R.string.use_amoled_mode_summary_disabled)
+                )
+            },
+            rememberState = { amoledMode },
+            defaultValue = amoledMode.value,
+            enabled = { darkMode.value || (followSystemTheme.value && isSystemDarkTheme) },
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.InvertColors,
+                    contentDescription = null
+                )
+            },
+            modifier = Modifier
+                .clip(PreferenceShape.Middle)
+                .background(backgroundColor)
+        )
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            switchPreference(
+                key = DYNAMIC_COLOR.name,
+                title = { Text(text = stringResource(R.string.dynamic_colors_title)) },
+                summary = {
+                    Text(
+                        text = if (it) stringResource(R.string.dynamic_colors_summary_enabled)
+                        else stringResource(R.string.dynamic_colors_summary_disabled)
+                    )
+                },
+                rememberState = { dynamicColor },
+                defaultValue = dynamicColor.value,
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Palette,
+                        contentDescription = null
+                    )
+                },
+                modifier = Modifier
+                    .clip(PreferenceShape.Middle)
+                    .background(backgroundColor)
+            )
+        }
+
+        switchPreference(
+            key = ENABLE_GESTURE_IN_DRAWER.name,
+            title = { Text(text = stringResource(R.string.enable_gesture_in_drawer_title)) },
+            summary = { Text(text = stringResource(R.string.enable_gesture_in_drawer_summary)) },
+            rememberState = { enableGestureInDrawer },
+            defaultValue = enableGestureInDrawer.value,
+            icon = {
+                Icon(Icons.Rounded.Gesture, contentDescription = null)
+            },
+            modifier = Modifier
+                .clip(PreferenceShape.Bottom)
+                .background(backgroundColor)
+        )
     }
-
-    switchPreference(
-      key = ENABLE_GESTURE_IN_DRAWER.name,
-      title = { Text(text = stringResource(R.string.enable_gesture_in_drawer_title)) },
-      summary = { Text(text = stringResource(R.string.enable_gesture_in_drawer_summary)) },
-      rememberState = { enableGestureInDrawer },
-      defaultValue = enableGestureInDrawer.value,
-      icon = {
-        Icon(Icons.Rounded.Gesture, contentDescription = null)
-      },
-      modifier = Modifier
-        .clip(PreferenceShape.Bottom)
-        .background(backgroundColor)
-    )
-  }
 }

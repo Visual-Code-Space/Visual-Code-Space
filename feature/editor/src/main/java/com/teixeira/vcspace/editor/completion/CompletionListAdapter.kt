@@ -15,59 +15,50 @@
 
 package com.teixeira.vcspace.editor.completion
 
-import android.graphics.drawable.GradientDrawable
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.PopupWindow
-import android.widget.TextView
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
-import androidx.core.view.setPadding
-import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import com.blankj.utilcode.util.SizeUtils
 import com.teixeira.vcspace.editor.databinding.LayoutCompletionItemBinding
-import com.teixeira.vcspace.utils.getAttrColor
 import io.github.rosemoe.sora.lang.completion.SimpleCompletionItem
 import io.github.rosemoe.sora.widget.component.EditorCompletionAdapter
 
 class CompletionListAdapter : EditorCompletionAdapter() {
 
-  override fun getItemHeight(): Int {
-    return SizeUtils.dp2px(44f)
-  }
-
-  override fun getView(pos: Int, v: View?, parent: ViewGroup?, isSelected: Boolean): View {
-    val binding = v?.let {
-      LayoutCompletionItemBinding.bind(it)
-    } ?: LayoutCompletionItemBinding.inflate(LayoutInflater.from(context), parent, false)
-
-    val item = getItem(pos)
-    val kind = when (item) {
-      is VCSpaceCompletionItem -> item.completionKind.toString()
-      is SimpleCompletionItem -> item.desc
-      else -> CompletionItemKind.IDENTIFIER.name
+    override fun getItemHeight(): Int {
+        return SizeUtils.dp2px(44f)
     }
 
-    binding.apply {
-      itemIcon.text = kind[0].toString().uppercase()
-      itemType.text = kind.toString().uppercase()
+    override fun getView(pos: Int, v: View?, parent: ViewGroup?, isSelected: Boolean): View {
+        val binding = v?.let {
+            LayoutCompletionItemBinding.bind(it)
+        } ?: LayoutCompletionItemBinding.inflate(LayoutInflater.from(context), parent, false)
 
-      if (!TextUtils.isEmpty(item.label)) {
-        itemLabel.text = item.label
-        itemDesc.text = item.label
-      }
-      if (!TextUtils.isEmpty(item.desc)) {
-        itemDesc.text = item.desc
-      }
+        val item = getItem(pos)
+        val kind = when (item) {
+            is VCSpaceCompletionItem -> item.completionKind.toString()
+            is SimpleCompletionItem -> item.desc
+            else -> CompletionItemKind.IDENTIFIER.name
+        }
 
-      root.updatePadding(
-        top = SizeUtils.dp2px(4f),
-        bottom = SizeUtils.dp2px(4f)
-      )
+        binding.apply {
+            itemIcon.text = kind[0].toString().uppercase()
+            itemType.text = kind.toString().uppercase()
+
+            if (!TextUtils.isEmpty(item.label)) {
+                itemLabel.text = item.label
+                itemDesc.text = item.label
+            }
+            if (!TextUtils.isEmpty(item.desc)) {
+                itemDesc.text = item.desc
+            }
+
+            root.updatePadding(
+                top = SizeUtils.dp2px(4f),
+                bottom = SizeUtils.dp2px(4f)
+            )
 
 //      root.setOnLongClickListener {
 //        PopupWindow(context).apply {
@@ -102,7 +93,7 @@ class CompletionListAdapter : EditorCompletionAdapter() {
 //        }.showAsDropDown(root)
 //        true
 //      }
+        }
+        return binding.root
     }
-    return binding.root
-  }
 }

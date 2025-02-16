@@ -24,5 +24,5 @@ inline fun Any?.isNotNull() = this != null
 inline fun Any?.isNull() = this == null
 
 fun String.capitalize(): String {
-  return replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+    return replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
 }

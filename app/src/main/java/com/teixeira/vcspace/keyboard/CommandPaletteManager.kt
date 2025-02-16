@@ -32,111 +32,112 @@ import com.teixeira.vcspace.keyboard.model.Command.Companion.toKey
 import java.io.File
 
 class CommandPaletteManager private constructor() {
-  companion object {
-    @JvmStatic
-    val instance by lazy { CommandPaletteManager() }
+    companion object {
+        @JvmStatic
+        val instance by lazy { CommandPaletteManager() }
 
-    private const val COMMANDS_FILE_NAME = "recently_used_commands.json"
-  }
-
-  init {
-    // loadRecentlyUsedCommands()
-  }
-
-  private val _showCommandPalette = mutableStateOf(false)
-  val showCommandPalette get() = _showCommandPalette
-
-  fun show() {
-    _showCommandPalette.value = true
-  }
-
-  fun hide() {
-    _showCommandPalette.value = false
-  }
-
-  private val _allCommands = mutableListOf<Command>()
-  val allCommands get() = _allCommands.toList()
-
-  fun addCommand(vararg command: Command) {
-    _allCommands.addAll(command)
-  }
-
-  val clear = { _allCommands.clear() }
-
-  private var _recentlyUsedCommands = mutableListOf<Command>()
-  val recentlyUsedCommands get() = _recentlyUsedCommands.toList()
-
-  fun addRecentlyUsedCommand(command: Command) {
-    _recentlyUsedCommands.remove(command)
-
-    // Add the command to the top of the list
-    _recentlyUsedCommands.add(0, command)
-
-    if (_recentlyUsedCommands.size > 10) {
-      _recentlyUsedCommands.removeAt(_recentlyUsedCommands.lastIndex) // Remove the oldest command
+        private const val COMMANDS_FILE_NAME = "recently_used_commands.json"
     }
 
-    // saveRecentlyUsedCommands()
-  }
-
-  private fun saveRecentlyUsedCommands() {
-    val json = Gson().toJson(_recentlyUsedCommands)
-    val filesDir = PathUtils.getFilesPathExternalFirst()
-    File("$filesDir/configs/$COMMANDS_FILE_NAME").apply {
-      FileUtils.createOrExistsFile(this)
-      writeText(json)
+    init {
+        // loadRecentlyUsedCommands()
     }
-  }
 
-  private fun loadRecentlyUsedCommands() {
-    val filesDir = PathUtils.getFilesPathExternalFirst()
-    val file = File("$filesDir/configs/$COMMANDS_FILE_NAME")
+    private val _showCommandPalette = mutableStateOf(false)
+    val showCommandPalette get() = _showCommandPalette
 
-    if (file.exists()) {
-      val json = file.readText()
-      val type = object : TypeToken<List<Command>>() {}.type
-
-      val commands: List<Command> = Gson().fromJson(json, type)
-      _recentlyUsedCommands.clear()
-      _recentlyUsedCommands.addAll(commands)
+    fun show() {
+        _showCommandPalette.value = true
     }
-  }
 
-  fun applyKeyBindings(event: KeyEvent, compositionContext: CompositionContext) {
-    val pressedKey = event.key
+    fun hide() {
+        _showCommandPalette.value = false
+    }
 
-    val isCtrlPressed = event.isCtrlPressed
-    val isShiftPressed = event.isShiftPressed
-    val isAltPressed = event.isAltPressed
+    private val _allCommands = mutableListOf<Command>()
+    val allCommands get() = _allCommands.toList()
 
-    for (command in allCommands) {
-      val keyBinding = command.keybinding
-      val keys = keyBinding?.split("+")
+    fun addCommand(vararg command: Command) {
+        _allCommands.addAll(command)
+    }
 
-      var isCtrlRequired = false
-      var isShiftRequired = false
-      var isAltRequired = false
-      var bindingKey: Key? = null
+    val clear = { _allCommands.clear() }
 
-      if (keys != null) {
-        for (key in keys) {
-          when (key) {
-            "Ctrl" -> isCtrlRequired = true
-            "Shift" -> isShiftRequired = true
-            "Alt" -> isAltRequired = true
-            else -> bindingKey = key.toKey() // This is the actual key (e.g., "P", "V", etc.)
-          }
+    private var _recentlyUsedCommands = mutableListOf<Command>()
+    val recentlyUsedCommands get() = _recentlyUsedCommands.toList()
+
+    fun addRecentlyUsedCommand(command: Command) {
+        _recentlyUsedCommands.remove(command)
+
+        // Add the command to the top of the list
+        _recentlyUsedCommands.add(0, command)
+
+        if (_recentlyUsedCommands.size > 10) {
+            _recentlyUsedCommands.removeAt(_recentlyUsedCommands.lastIndex) // Remove the oldest command
         }
-      }
 
-      if (isCtrlPressed == isCtrlRequired &&
-        isShiftPressed == isShiftRequired &&
-        isAltPressed == isAltRequired &&
-        pressedKey == bindingKey
-      ) {
-        println("Keybinding '${keyBinding}' is pressed")
-        command.action(command, compositionContext)
-      }
+        // saveRecentlyUsedCommands()
     }
-  }
+
+    private fun saveRecentlyUsedCommands() {
+        val json = Gson().toJson(_recentlyUsedCommands)
+        val filesDir = PathUtils.getFilesPathExternalFirst()
+        File("$filesDir/configs/$COMMANDS_FILE_NAME").apply {
+            FileUtils.createOrExistsFile(this)
+            writeText(json)
+        }
+    }
+
+    private fun loadRecentlyUsedCommands() {
+        val filesDir = PathUtils.getFilesPathExternalFirst()
+        val file = File("$filesDir/configs/$COMMANDS_FILE_NAME")
+
+        if (file.exists()) {
+            val json = file.readText()
+            val type = object : TypeToken<List<Command>>() {}.type
+
+            val commands: List<Command> = Gson().fromJson(json, type)
+            _recentlyUsedCommands.clear()
+            _recentlyUsedCommands.addAll(commands)
+        }
+    }
+
+    fun applyKeyBindings(event: KeyEvent, compositionContext: CompositionContext) {
+        val pressedKey = event.key
+
+        val isCtrlPressed = event.isCtrlPressed
+        val isShiftPressed = event.isShiftPressed
+        val isAltPressed = event.isAltPressed
+
+        for (command in allCommands) {
+            val keyBinding = command.keybinding
+            val keys = keyBinding?.split("+")
+
+            var isCtrlRequired = false
+            var isShiftRequired = false
+            var isAltRequired = false
+            var bindingKey: Key? = null
+
+            if (keys != null) {
+                for (key in keys) {
+                    when (key) {
+                        "Ctrl" -> isCtrlRequired = true
+                        "Shift" -> isShiftRequired = true
+                        "Alt" -> isAltRequired = true
+                        else -> bindingKey =
+                            key.toKey() // This is the actual key (e.g., "P", "V", etc.)
+                    }
+                }
+            }
+
+            if (isCtrlPressed == isCtrlRequired &&
+                isShiftPressed == isShiftRequired &&
+                isAltPressed == isAltRequired &&
+                pressedKey == bindingKey
+            ) {
+                println("Keybinding '${keyBinding}' is pressed")
+                command.action(command, compositionContext)
+            }
+        }
+    }
 }

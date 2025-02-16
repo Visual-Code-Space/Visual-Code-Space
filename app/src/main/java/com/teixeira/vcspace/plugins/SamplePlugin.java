@@ -23,8 +23,8 @@ import com.vcspace.plugins.Plugin;
 import com.vcspace.plugins.PluginContext;
 
 public class SamplePlugin implements Plugin {
-  @Override
-  public void onPluginLoaded(@NonNull PluginContext context) {
-    Toast.makeText(context.getAppContext(), "Hello from the plugin!", Toast.LENGTH_SHORT).show();
-  }
+    @Override
+    public void onPluginLoaded(@NonNull PluginContext context) {
+        Toast.makeText(context.getAppContext(), "Hello from the plugin!", Toast.LENGTH_SHORT).show();
+    }
 }

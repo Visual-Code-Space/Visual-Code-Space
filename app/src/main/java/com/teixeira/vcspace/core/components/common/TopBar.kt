@@ -27,66 +27,66 @@ import androidx.compose.ui.Modifier
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VCSpaceLargeTopBar(
-  title: String,
-  modifier: Modifier = Modifier,
-  scrollBehavior: TopAppBarScrollBehavior? = null,
-  navigationIcon: @Composable () -> Unit = {},
-  actions: @Composable RowScope.() -> Unit = {},
+    title: String,
+    modifier: Modifier = Modifier,
+    scrollBehavior: TopAppBarScrollBehavior? = null,
+    navigationIcon: @Composable () -> Unit = {},
+    actions: @Composable RowScope.() -> Unit = {},
 ) {
-  VCSpaceLargeTopBar(
-    modifier = modifier,
-    title = { Text(text = title) },
-    scrollBehavior = scrollBehavior,
-    actions = actions,
-    navigationIcon = navigationIcon
-  )
+    VCSpaceLargeTopBar(
+        modifier = modifier,
+        title = { Text(text = title) },
+        scrollBehavior = scrollBehavior,
+        actions = actions,
+        navigationIcon = navigationIcon
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VCSpaceLargeTopBar(
-  title: @Composable () -> Unit,
-  modifier: Modifier = Modifier,
-  scrollBehavior: TopAppBarScrollBehavior? = null,
-  navigationIcon: @Composable () -> Unit = {},
-  actions: @Composable RowScope.() -> Unit = {},
+    title: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    scrollBehavior: TopAppBarScrollBehavior? = null,
+    navigationIcon: @Composable () -> Unit = {},
+    actions: @Composable RowScope.() -> Unit = {},
 ) {
-  LargeTopAppBar(
-    modifier = modifier,
-    title = title,
-    scrollBehavior = scrollBehavior,
-    actions = actions,
-    navigationIcon = navigationIcon
-  )
+    LargeTopAppBar(
+        modifier = modifier,
+        title = title,
+        scrollBehavior = scrollBehavior,
+        actions = actions,
+        navigationIcon = navigationIcon
+    )
 }
 
 @Composable
 fun VCSpaceTopBar(
-  title: String,
-  modifier: Modifier = Modifier,
-  navigationIcon: @Composable () -> Unit = {},
-  actions: @Composable RowScope.() -> Unit = {},
+    title: String,
+    modifier: Modifier = Modifier,
+    navigationIcon: @Composable () -> Unit = {},
+    actions: @Composable RowScope.() -> Unit = {},
 ) {
-  VCSpaceTopBar(
-    modifier = modifier,
-    title = { Text(text = title) },
-    navigationIcon = navigationIcon,
-    actions = actions
-  )
+    VCSpaceTopBar(
+        modifier = modifier,
+        title = { Text(text = title) },
+        navigationIcon = navigationIcon,
+        actions = actions
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VCSpaceTopBar(
-  title: @Composable () -> Unit,
-  modifier: Modifier = Modifier,
-  navigationIcon: @Composable () -> Unit = {},
-  actions: @Composable RowScope.() -> Unit = {},
+    title: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    navigationIcon: @Composable () -> Unit = {},
+    actions: @Composable RowScope.() -> Unit = {},
 ) {
-  TopAppBar(
-    modifier = modifier,
-    title = title,
-    navigationIcon = navigationIcon,
-    actions = actions
-  )
+    TopAppBar(
+        modifier = modifier,
+        title = title,
+        navigationIcon = navigationIcon,
+        actions = actions
+    )
 }

@@ -65,137 +65,147 @@ import com.teixeira.vcspace.plugins.internal.PluginInfo
 
 @Composable
 fun PluginListItem(
-  modifier: Modifier = Modifier,
-  pluginInfo: PluginInfo,
-  onLongClick: ((PluginInfo) -> Unit)? = null,
-  onClick: ((PluginInfo) -> Unit)? = null,
-  onEnabledOrDisabledCallback: (() -> Unit)? = null
+    modifier: Modifier = Modifier,
+    pluginInfo: PluginInfo,
+    onLongClick: ((PluginInfo) -> Unit)? = null,
+    onClick: ((PluginInfo) -> Unit)? = null,
+    onEnabledOrDisabledCallback: (() -> Unit)? = null
 ) {
-  PluginCard(
-    pluginInfo = pluginInfo,
-    modifier = modifier,
-    onClick = onClick,
-    onLongClick = onLongClick,
-    onEnabledOrDisabledCallback = onEnabledOrDisabledCallback
-  )
+    PluginCard(
+        pluginInfo = pluginInfo,
+        modifier = modifier,
+        onClick = onClick,
+        onLongClick = onLongClick,
+        onEnabledOrDisabledCallback = onEnabledOrDisabledCallback
+    )
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PluginCard(
-  pluginInfo: PluginInfo,
-  modifier: Modifier=Modifier,
-  onClick: ((PluginInfo) -> Unit)? = null,
-  onLongClick: ((PluginInfo) -> Unit)? = null,
-  onEnabledOrDisabledCallback: (() -> Unit)? = null
+    pluginInfo: PluginInfo,
+    modifier: Modifier = Modifier,
+    onClick: ((PluginInfo) -> Unit)? = null,
+    onLongClick: ((PluginInfo) -> Unit)? = null,
+    onEnabledOrDisabledCallback: (() -> Unit)? = null
 ) {
-  val haptics = LocalHapticFeedback.current
+    val haptics = LocalHapticFeedback.current
 
-  var expanded by remember { mutableStateOf(false) }
-  var enabled by remember { mutableStateOf(pluginInfo.enabled) }
+    var expanded by remember { mutableStateOf(false) }
+    var enabled by remember { mutableStateOf(pluginInfo.enabled) }
 
-  ElevatedCard(
-    modifier = modifier
-      .fillMaxWidth()
-      .clip(CardDefaults.elevatedShape)
-      .combinedClickable(
-        onClick = {
-          expanded = !expanded
-          onClick?.invoke(pluginInfo)
-        },
-        onLongClick = {
-          haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-          onLongClick?.invoke(pluginInfo)
-        },
-        role = Role.Switch,
-        indication = null,
-        interactionSource = remember { MutableInteractionSource() }
-      ),
-    elevation = CardDefaults.cardElevation(defaultElevation = if (expanded) 8.dp else 2.dp)
-  ) {
-    Column(Modifier.padding(16.dp)) {
-      Row(verticalAlignment = Alignment.CenterVertically) {
-        val iconFile = "${PluginConstants.PLUGIN_HOME_PATH}/${pluginInfo.name}/${pluginInfo.icon}".toFile()
-        if (pluginInfo.icon != null && iconFile.exists()) {
-          Image(
-            BitmapFactory.decodeFile(iconFile.absolutePath).asImageBitmap(),
-            contentDescription = null,
-            modifier = Modifier
-              .size(50.dp)
-              .padding(end = 12.dp)
-              .clip(RoundedCornerShape(4.dp)),
-            contentScale = ContentScale.Crop
-          )
-        } else {
-          Icon(
-            imageVector = Icons.Filled.ElectricalServices,
-            contentDescription = "info",
-            modifier = Modifier.padding(end = 12.dp)
-              .size(40.dp),
-            tint = MaterialTheme.colorScheme.tertiary
-          )
-        }
+    ElevatedCard(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(CardDefaults.elevatedShape)
+            .combinedClickable(
+                onClick = {
+                    expanded = !expanded
+                    onClick?.invoke(pluginInfo)
+                },
+                onLongClick = {
+                    haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                    onLongClick?.invoke(pluginInfo)
+                },
+                role = Role.Switch,
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            ),
+        elevation = CardDefaults.cardElevation(defaultElevation = if (expanded) 8.dp else 2.dp)
+    ) {
+        Column(Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                val iconFile =
+                    "${PluginConstants.PLUGIN_HOME_PATH}/${pluginInfo.name}/${pluginInfo.icon}".toFile()
+                if (pluginInfo.icon != null && iconFile.exists()) {
+                    Image(
+                        BitmapFactory.decodeFile(iconFile.absolutePath).asImageBitmap(),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(50.dp)
+                            .padding(end = 12.dp)
+                            .clip(RoundedCornerShape(4.dp)),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Filled.ElectricalServices,
+                        contentDescription = "info",
+                        modifier = Modifier
+                            .padding(end = 12.dp)
+                            .size(40.dp),
+                        tint = MaterialTheme.colorScheme.tertiary
+                    )
+                }
 
-        Column(Modifier.weight(1f)) {
-          Text(
-            text = pluginInfo.name ?: "Plugin name not set",
-            style = MaterialTheme.typography.titleMedium,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-          )
-          Text(
-            text = "v${pluginInfo.version}",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-          )
-        }
+                Column(Modifier.weight(1f)) {
+                    Text(
+                        text = pluginInfo.name ?: "Plugin name not set",
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(
+                        text = "v${pluginInfo.version}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                    )
+                }
 
-        Switch(
-          checked = enabled,
-          onCheckedChange = {
-            enabled = it
-            pluginInfo.enabled = enabled
-            onEnabledOrDisabledCallback?.invoke()
-          },
-          thumbContent = if (enabled) {
-            {
-              Icon(
-                imageVector = Icons.Rounded.Check,
-                contentDescription = null,
-                modifier = Modifier.size(SwitchDefaults.IconSize)
-              )
+                Switch(
+                    checked = enabled,
+                    onCheckedChange = {
+                        enabled = it
+                        pluginInfo.enabled = enabled
+                        onEnabledOrDisabledCallback?.invoke()
+                    },
+                    thumbContent = if (enabled) {
+                        {
+                            Icon(
+                                imageVector = Icons.Rounded.Check,
+                                contentDescription = null,
+                                modifier = Modifier.size(SwitchDefaults.IconSize)
+                            )
+                        }
+                    } else null
+                )
             }
-          } else null
-        )
-      }
 
-      AnimatedVisibility(
-        visible = expanded,
-        enter = fadeIn(animationSpec = tween(300)) + expandVertically(animationSpec = tween(300)),
-        exit = fadeOut(animationSpec = tween(300)) + shrinkVertically(animationSpec = tween(300))
-      ) {
-        Column(Modifier.padding(top = 12.dp)) {
-          DetailRow("Description", pluginInfo.description ?: "No description.")
-          DetailRow("Author", pluginInfo.author ?: "Unknown")
-          if (pluginInfo.website != null) {
-            DetailRow("Website", pluginInfo.website!!)
-          }
-          DetailRow("License", pluginInfo.license ?: "License not set")
-          DetailRow("Package", pluginInfo.packageName!!)
+            AnimatedVisibility(
+                visible = expanded,
+                enter = fadeIn(animationSpec = tween(300)) + expandVertically(
+                    animationSpec = tween(
+                        300
+                    )
+                ),
+                exit = fadeOut(animationSpec = tween(300)) + shrinkVertically(
+                    animationSpec = tween(
+                        300
+                    )
+                )
+            ) {
+                Column(Modifier.padding(top = 12.dp)) {
+                    DetailRow("Description", pluginInfo.description ?: "No description.")
+                    DetailRow("Author", pluginInfo.author ?: "Unknown")
+                    if (pluginInfo.website != null) {
+                        DetailRow("Website", pluginInfo.website!!)
+                    }
+                    DetailRow("License", pluginInfo.license ?: "License not set")
+                    DetailRow("Package", pluginInfo.packageName!!)
+                }
+            }
         }
-      }
     }
-  }
 }
 
 @Composable
 private fun DetailRow(label: String, value: String) {
-  Row(Modifier.padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-    Text(
-      text = "$label:",
-      fontWeight = FontWeight.SemiBold,
-      modifier = Modifier.width(100.dp)
-    )
-    Text(text = value, style = MaterialTheme.typography.bodyMedium)
-  }
+    Row(Modifier.padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            text = "$label:",
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.width(100.dp)
+        )
+        Text(text = value, style = MaterialTheme.typography.bodyMedium)
+    }
 }

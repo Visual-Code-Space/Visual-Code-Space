@@ -18,14 +18,14 @@ package com.teixeira.vcspace.github
 import com.google.gson.annotations.SerializedName
 
 data class Contributor(
-  @SerializedName("login")
-  val username: String,
-  @SerializedName("avatar_url")
-  val avatarUrl: String,
-  @SerializedName("html_url")
-  val profileUrl: String,
-  val type: String,
-  val email: String?,
-  val name: String?,
-  val contributions: Int
+    @SerializedName("login")
+    val username: String,
+    @SerializedName("avatar_url")
+    val avatarUrl: String,
+    @SerializedName("html_url")
+    val profileUrl: String,
+    val type: String,
+    val email: String?,
+    val name: String?,
+    val contributions: Int
 )

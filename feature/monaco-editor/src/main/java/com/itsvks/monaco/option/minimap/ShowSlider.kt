@@ -17,8 +17,8 @@ package com.itsvks.monaco.option.minimap
 
 @JvmInline
 value class ShowSlider private constructor(val value: String) {
-  companion object {
-    val Always = ShowSlider("always")
-    val Mouseover = ShowSlider("mouseover")
-  }
+    companion object {
+        val Always = ShowSlider("always")
+        val Mouseover = ShowSlider("mouseover")
+    }
 }

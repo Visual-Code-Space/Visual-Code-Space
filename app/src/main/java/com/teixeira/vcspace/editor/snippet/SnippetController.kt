@@ -16,15 +16,15 @@
 package com.teixeira.vcspace.editor.snippet
 
 class SnippetController {
-  companion object {
-    @JvmStatic
-    val instance by lazy { SnippetController() }
-  }
+    companion object {
+        @JvmStatic
+        val instance by lazy { SnippetController() }
+    }
 
-  private val _javaSnippets = mutableListOf<Snippet>()
-  val javaSnippets: List<Snippet> get() = _javaSnippets
+    private val _javaSnippets = mutableListOf<Snippet>()
+    val javaSnippets: List<Snippet> get() = _javaSnippets
 
-  fun addJavaSnippet(vararg snippet: Snippet) {
-    _javaSnippets.addAll(snippet)
-  }
+    fun addJavaSnippet(vararg snippet: Snippet) {
+        _javaSnippets.addAll(snippet)
+    }
 }

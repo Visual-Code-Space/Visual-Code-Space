@@ -20,25 +20,25 @@ import io.github.rosemoe.sora.text.batchEdit
 import org.eclipse.tm4e.languageconfiguration.internal.model.CommentRule
 
 fun addSingleComment(commentRule: CommentRule?, text: Content) {
-  if (commentRule == null) return
-  val comment = commentRule.lineComment ?: return
-  text.insert(text.cursor.leftLine, 0, comment)
+    if (commentRule == null) return
+    val comment = commentRule.lineComment ?: return
+    text.insert(text.cursor.leftLine, 0, comment)
 }
 
 fun addBlockComment(commentRule: CommentRule?, text: Content) {
-  if (commentRule == null) return
-  val blockComment = commentRule.blockComment ?: return
-  val openPrefix = blockComment.open
-  val closePrefix = blockComment.close
+    if (commentRule == null) return
+    val blockComment = commentRule.blockComment ?: return
+    val openPrefix = blockComment.open
+    val closePrefix = blockComment.close
 
-  val cursor = text.cursor
-  if (cursor.isSelected) {
-    text.batchEdit {
-      // Insert multi-line comment at the beginning of the start line
-      it.insert(cursor.leftLine, cursor.leftColumn, openPrefix)
+    val cursor = text.cursor
+    if (cursor.isSelected) {
+        text.batchEdit {
+            // Insert multi-line comment at the beginning of the start line
+            it.insert(cursor.leftLine, cursor.leftColumn, openPrefix)
 
-      // Insert multi-line comment end at the end of the end line
-      it.insert(cursor.rightLine, cursor.rightColumn, closePrefix)
+            // Insert multi-line comment end at the end of the end line
+            it.insert(cursor.rightLine, cursor.rightColumn, closePrefix)
+        }
     }
-  }
 }

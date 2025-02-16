@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ This file is part of Visual Code Space.
   ~
   ~ Visual Code Space is free software: you can redistribute it and/or modify it under the terms of
@@ -13,18 +12,17 @@
   ~ You should have received a copy of the GNU General Public License along with Visual Code Space.
   ~ If not, see <https://www.gnu.org/licenses/>.
   -->
-<com.google.android.material.button.MaterialButton
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:app="http://schemas.android.com/apk/res-auto"
-  android:id="@+id/item"
-  android:layout_width="48dp"
-  android:layout_height="48dp"
-  android:drawablePadding="16dp"
-  android:paddingEnd="0dp"
-  android:gravity="start|center_vertical"
-  android:paddingBottom="4dp"
-  android:paddingStart="16dp"
-  android:focusable="true"
-  android:paddingTop="4dp"
-  app:iconPadding="0dp"
-  style="@style/Widget.Material3.Button.TextButton.Icon" />
+<com.google.android.material.button.MaterialButton xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/item"
+    style="@style/Widget.Material3.Button.TextButton.Icon"
+    android:layout_width="48dp"
+    android:layout_height="48dp"
+    android:drawablePadding="16dp"
+    android:focusable="true"
+    android:gravity="start|center_vertical"
+    android:paddingStart="16dp"
+    android:paddingTop="4dp"
+    android:paddingEnd="0dp"
+    android:paddingBottom="4dp"
+    app:iconPadding="0dp" />

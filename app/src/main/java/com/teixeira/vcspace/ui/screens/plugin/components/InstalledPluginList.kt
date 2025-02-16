@@ -46,70 +46,70 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun InstalledPluginList(
-  modifier: Modifier = Modifier,
-  viewModel: PluginViewModel,
-  listState: LazyListState,
-  scope: CoroutineScope,
-  onUpdateClick: (PluginInfo) -> Unit
+    modifier: Modifier = Modifier,
+    viewModel: PluginViewModel,
+    listState: LazyListState,
+    scope: CoroutineScope,
+    onUpdateClick: (PluginInfo) -> Unit
 ) {
-  val plugins by viewModel.installedPlugins.collectAsStateWithLifecycle()
+    val plugins by viewModel.installedPlugins.collectAsStateWithLifecycle()
 
-  var selectedPlugin by remember { mutableStateOf<PluginInfo?>(null) }
-  val context = LocalContext.current
-  val toastHostState = LocalToastHostState.current
+    var selectedPlugin by remember { mutableStateOf<PluginInfo?>(null) }
+    val context = LocalContext.current
+    val toastHostState = LocalToastHostState.current
 
-  if (plugins.isEmpty()) {
-    NoPlugins()
-  } else {
-    LazyColumn(
-      state = listState,
-      modifier = modifier.fillMaxSize(),
-      contentPadding = PaddingValues(vertical = 5.dp, horizontal = 5.dp),
-      verticalArrangement = Arrangement.spacedBy(5.dp)
-    ) {
-      items(plugins, key = { "${it.name}${it.pluginFileName}${it.version}" }) { plugin ->
-        PluginListItem(
-          modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null),
-          pluginInfo = plugin,
-          onLongClick = { selectedPlugin = it },
-          onClick = {
+    if (plugins.isEmpty()) {
+        NoPlugins()
+    } else {
+        LazyColumn(
+            state = listState,
+            modifier = modifier.fillMaxSize(),
+            contentPadding = PaddingValues(vertical = 5.dp, horizontal = 5.dp),
+            verticalArrangement = Arrangement.spacedBy(5.dp)
+        ) {
+            items(plugins, key = { "${it.name}${it.pluginFileName}${it.version}" }) { plugin ->
+                PluginListItem(
+                    modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null),
+                    pluginInfo = plugin,
+                    onLongClick = { selectedPlugin = it },
+                    onClick = {
 
-          },
-          onEnabledOrDisabledCallback = {
-            scope.launch {
-              toastHostState.showToast(
-                message = context.getString(R.string.restart_application),
-                icon = Icons.Rounded.Refresh
-              )
+                    },
+                    onEnabledOrDisabledCallback = {
+                        scope.launch {
+                            toastHostState.showToast(
+                                message = context.getString(R.string.restart_application),
+                                icon = Icons.Rounded.Refresh
+                            )
+                        }
+                    }
+                )
             }
-          }
-        )
-      }
+        }
     }
-  }
 
-  selectedPlugin?.let {
-    PluginActionsSheet(
-      pluginInfo = it,
-      viewModel = viewModel,
-      scope = scope,
-      onDismissSheet = { selectedPlugin = null },
-      onUpdateClick = { onUpdateClick(it) }
-    )
-  }
+    selectedPlugin?.let {
+        PluginActionsSheet(
+            pluginInfo = it,
+            viewModel = viewModel,
+            scope = scope,
+            onDismissSheet = { selectedPlugin = null },
+            onUpdateClick = { onUpdateClick(it) }
+        )
+    }
 }
 
 @Composable
 fun NoPlugins(modifier: Modifier = Modifier) {
-  Box(
-    modifier = modifier.fillMaxSize(),
-    contentAlignment = Alignment.Center
-  ) {
-    Text(
-      text = stringResource(R.string.no_plugins_found),
-      style = MaterialTheme.typography.bodyLarge,
-      color = MaterialTheme.colorScheme.onBackground
-    )
-  }
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = stringResource(R.string.no_plugins_found),
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+    }
 }
 

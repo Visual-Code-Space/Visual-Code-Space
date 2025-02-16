@@ -25,6 +25,6 @@ package com.vcspace.plugins.editor
  *
  */
 data class Position @JvmOverloads constructor(
-  val lineNumber: Int = 1,
-  val column: Int = 1
+    val lineNumber: Int = 1,
+    val column: Int = 1
 )

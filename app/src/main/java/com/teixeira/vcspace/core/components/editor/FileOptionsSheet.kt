@@ -35,51 +35,51 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FileOptionsSheet(
-  modifier: Modifier = Modifier,
-  onDismissRequest: () -> Unit,
-  options: () -> List<FileOptionItem>
+    modifier: Modifier = Modifier,
+    onDismissRequest: () -> Unit,
+    options: () -> List<FileOptionItem>
 ) {
-  ModalBottomSheet(
-    modifier = modifier,
-    onDismissRequest = onDismissRequest
-  ) {
-    LazyColumn {
-      items(options()) {
-        Card(
-          onClick = {
-            it.onClick()
-            onDismissRequest()
-          },
-          colors = CardDefaults.cardColors(
-            containerColor = Color.Transparent
-          ),
-          modifier = Modifier.padding(vertical = 3.dp, horizontal = 5.dp)
-        ) {
-          ListItem(
-            colors = ListItemDefaults.colors(
-              containerColor = Color.Transparent
-            ),
-            headlineContent = {
-              Text(
-                text = it.name
-              )
-            },
-            leadingContent = {
-              Icon(
-                imageVector = it.icon,
-                contentDescription = null
-              )
+    ModalBottomSheet(
+        modifier = modifier,
+        onDismissRequest = onDismissRequest
+    ) {
+        LazyColumn {
+            items(options()) {
+                Card(
+                    onClick = {
+                        it.onClick()
+                        onDismissRequest()
+                    },
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color.Transparent
+                    ),
+                    modifier = Modifier.padding(vertical = 3.dp, horizontal = 5.dp)
+                ) {
+                    ListItem(
+                        colors = ListItemDefaults.colors(
+                            containerColor = Color.Transparent
+                        ),
+                        headlineContent = {
+                            Text(
+                                text = it.name
+                            )
+                        },
+                        leadingContent = {
+                            Icon(
+                                imageVector = it.icon,
+                                contentDescription = null
+                            )
+                        }
+                    )
+                }
             }
-          )
         }
-      }
     }
-  }
 }
 
 data class FileOptionItem(
-  val name: String,
-  val icon: ImageVector,
-  val onClick: () -> Unit
+    val name: String,
+    val icon: ImageVector,
+    val onClick: () -> Unit
 )
 

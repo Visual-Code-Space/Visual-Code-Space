@@ -18,12 +18,12 @@ package com.teixeira.vcspace.core.menu
 import androidx.compose.ui.graphics.vector.ImageVector
 
 data class MenuItem @JvmOverloads constructor(
-  var title: String,
-  var id: Int,
-  var visible: Boolean = true,
-  var enabled: Boolean = true,
-  var shortcut: String? = null,
-  var icon: ImageVector? = null,
-  var trailingIcon: ImageVector? = null,
-  var onClick: () -> Unit = {},
+    var title: String,
+    var id: Int,
+    var visible: Boolean = true,
+    var enabled: Boolean = true,
+    var shortcut: String? = null,
+    var icon: ImageVector? = null,
+    var trailingIcon: ImageVector? = null,
+    var onClick: () -> Unit = {},
 )

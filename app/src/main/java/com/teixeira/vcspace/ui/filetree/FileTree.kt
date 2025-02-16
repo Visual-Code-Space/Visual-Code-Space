@@ -32,58 +32,59 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun FileTree(
-  modifier: Modifier = Modifier,
-  path: File,
-  onFileLongClick: (File) -> Unit = {},
-  onFileClick: (File) -> Unit
+    modifier: Modifier = Modifier,
+    path: File,
+    onFileLongClick: (File) -> Unit = {},
+    onFileClick: (File) -> Unit
 ) {
-  val coroutineScope = rememberCoroutineScope()
-  val fileListLoader = rememberSaveable(saver = FileListLoader.FileListLoaderSaver) { FileListLoader() }
-  val tree = remember { createTree(coroutineScope, fileListLoader, path) }
+    val coroutineScope = rememberCoroutineScope()
+    val fileListLoader =
+        rememberSaveable(saver = FileListLoader.FileListLoaderSaver) { FileListLoader() }
+    val tree = remember { createTree(coroutineScope, fileListLoader, path) }
 
-  val onSurfaceColor = MaterialTheme.colorScheme.onSurface
+    val onSurfaceColor = MaterialTheme.colorScheme.onSurface
 
-  val lifecycleScope = LocalLifecycleScope.current
-  AndroidViewBinding(LayoutFileTreeBinding::inflate, modifier) {
-    @Suppress("UNCHECKED_CAST")
-    (treeview as TreeView<File>).apply {
-      supportHorizontalScroll = true
-      bindCoroutineScope(lifecycleScope)
-      this.tree = tree
-      binder = FileViewBinder(
-        fileTreeBinding = this@AndroidViewBinding,
-        fileListLoader = fileListLoader,
-        onFileLongClick = onFileLongClick,
-        onFileClick = onFileClick,
-        onSurfaceColor = onSurfaceColor
-      )
-      nodeEventListener = binder as FileViewBinder
-      selectionMode = TreeView.SelectionMode.MULTIPLE_WITH_CHILDREN
+    val lifecycleScope = LocalLifecycleScope.current
+    AndroidViewBinding(LayoutFileTreeBinding::inflate, modifier) {
+        @Suppress("UNCHECKED_CAST")
+        (treeview as TreeView<File>).apply {
+            supportHorizontalScroll = true
+            bindCoroutineScope(lifecycleScope)
+            this.tree = tree
+            binder = FileViewBinder(
+                fileTreeBinding = this@AndroidViewBinding,
+                fileListLoader = fileListLoader,
+                onFileLongClick = onFileLongClick,
+                onFileClick = onFileClick,
+                onSurfaceColor = onSurfaceColor
+            )
+            nodeEventListener = binder as FileViewBinder
+            selectionMode = TreeView.SelectionMode.MULTIPLE_WITH_CHILDREN
+        }
+
+        lifecycleScope.launch {
+            fileListLoader.loadFileList(coroutineScope, path)
+            treeview.refresh()
+        }
     }
-
-    lifecycleScope.launch {
-      fileListLoader.loadFileList(coroutineScope, path)
-      treeview.refresh()
-    }
-  }
 }
 
 private fun createTree(
-  prefetchScope: CoroutineScope,
-  fileListLoader: FileListLoader,
-  rootPath: File
+    prefetchScope: CoroutineScope,
+    fileListLoader: FileListLoader,
+    rootPath: File
 ): Tree<File> {
-  val tree = Tree.createTree<File>()
+    val tree = Tree.createTree<File>()
 
-  tree.apply {
-    this.generator = FileNodeGenerator(
-      prefetchScope,
-      rootPath,
-      fileListLoader
-    )
+    tree.apply {
+        this.generator = FileNodeGenerator(
+            prefetchScope,
+            rootPath,
+            fileListLoader
+        )
 
-    initTree()
-  }
+        initTree()
+    }
 
-  return tree
+    return tree
 }

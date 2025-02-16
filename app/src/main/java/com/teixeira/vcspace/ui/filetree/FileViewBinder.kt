@@ -50,159 +50,165 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
 class FileViewBinder(
-  private val fileTreeBinding: LayoutFileTreeBinding,
-  private val fileListLoader: FileListLoader,
-  private val onFileLongClick: (File) -> Unit = {},
-  private val onFileClick: (File) -> Unit = {},
-  private val onSurfaceColor: Color
+    private val fileTreeBinding: LayoutFileTreeBinding,
+    private val fileListLoader: FileListLoader,
+    private val onFileLongClick: (File) -> Unit = {},
+    private val onFileClick: (File) -> Unit = {},
+    private val onSurfaceColor: Color
 ) : TreeViewBinder<File>(), TreeNodeEventListener<File> {
 
-  override fun bindView(
-    holder: TreeView.ViewHolder,
-    node: TreeNode<File>,
-    listener: TreeNodeEventListener<File>
-  ) {
-    if (node.isChild) {
-      applyDir(holder, node)
-    } else {
-      applyFile(holder, node)
+    override fun bindView(
+        holder: TreeView.ViewHolder,
+        node: TreeNode<File>,
+        listener: TreeNodeEventListener<File>
+    ) {
+        if (node.isChild) {
+            applyDir(holder, node)
+        } else {
+            applyFile(holder, node)
+        }
+
+        val itemView = holder.itemView.findViewById<Space>(R.id.space)
+
+        itemView.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+            width = node.depth * 22.dp
+        }
     }
 
-    val itemView = holder.itemView.findViewById<Space>(R.id.space)
+    override fun createView(parent: ViewGroup, viewType: Int): View {
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this)
+        }
 
-    itemView.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-      width = node.depth * 22.dp
-    }
-  }
-
-  override fun createView(parent: ViewGroup, viewType: Int): View {
-    if (!EventBus.getDefault().isRegistered(this)) {
-      EventBus.getDefault().register(this)
-    }
-
-    val layoutInflater = LayoutInflater.from(parent.context)
-    return if (viewType == 1) {
-      LayoutFileItemDirBinding.inflate(layoutInflater, parent, false).root
-    } else {
-      LayoutFileItemFileBinding.inflate(layoutInflater, parent, false).root
-    }
-  }
-
-  override fun getItemViewType(node: TreeNode<File>): Int {
-    if (node.isChild) {
-      return 1
-    }
-    return 0
-  }
-
-  private fun applyFile(holder: TreeView.ViewHolder, node: TreeNode<File>) {
-    val binding = LayoutFileItemFileBinding.bind(holder.itemView)
-
-    val icon = AppCompatResources.getDrawable(
-      /* context = */ binding.root.context,
-      /* resId = */ FileIconProvider.findFileIconResource(node.requireData())
-    )!!
-    icon.setBounds(0, 0, 16.dp, 16.dp)
-    icon.setTint(onSurfaceColor.toArgb())
-
-    binding.tvName.apply {
-      text = node.name.toString()
-      setCompoundDrawables(
-        /* left = */ icon,
-        /* top = */ null,
-        /* right = */ null,
-        /* bottom = */ null
-      )
-      TextViewCompat.setCompoundDrawableTintList(this, ColorStateList.valueOf(onSurfaceColor.toArgb()))
-      setTextColor(onSurfaceColor.toArgb())
-    }
-  }
-
-  private fun applyDir(holder: TreeView.ViewHolder, node: TreeNode<File>) {
-    val binding = LayoutFileItemDirBinding.bind(holder.itemView)
-    val icon = AppCompatResources.getDrawable(
-      /* context = */ binding.root.context,
-      /* resId = */ drawables.ic_folder
-    )!!
-    icon.setBounds(0, 0, 16.dp, 16.dp)
-    icon.setTint(onSurfaceColor.toArgb())
-
-    binding.tvName.apply {
-      text = node.name.toString()
-      setCompoundDrawables(
-        /* left = */ icon,
-        /* top = */ null,
-        /* right = */ null,
-        /* bottom = */ null
-      )
-      TextViewCompat.setCompoundDrawableTintList(this, ColorStateList.valueOf(onSurfaceColor.toArgb()))
-      setTextColor(onSurfaceColor.toArgb())
+        val layoutInflater = LayoutInflater.from(parent.context)
+        return if (viewType == 1) {
+            LayoutFileItemDirBinding.inflate(layoutInflater, parent, false).root
+        } else {
+            LayoutFileItemFileBinding.inflate(layoutInflater, parent, false).root
+        }
     }
 
-    binding
-      .ivArrow
-      .animate()
-      .rotation(if (node.expand) 90f else 0f)
-      .setDuration(200)
-      .start()
-
-    binding.ivArrow.imageTintList = ColorStateList.valueOf(onSurfaceColor.toArgb())
-  }
-
-  override fun onClick(node: TreeNode<File>, holder: TreeView.ViewHolder) {
-    if (node.isChild) {
-      applyDir(holder, node)
-    } else {
-      onFileClick(node.requireData())
+    override fun getItemViewType(node: TreeNode<File>): Int {
+        if (node.isChild) {
+            return 1
+        }
+        return 0
     }
-  }
 
-  override fun onLongClick(node: TreeNode<File>, holder: TreeView.ViewHolder): Boolean {
-    onFileLongClick(node.requireData())
-    return true
-  }
+    private fun applyFile(holder: TreeView.ViewHolder, node: TreeNode<File>) {
+        val binding = LayoutFileItemFileBinding.bind(holder.itemView)
 
-  override fun onRefresh(status: Boolean) {
-    fileTreeBinding.progress.isInvisible = !status
-  }
+        val icon = AppCompatResources.getDrawable(
+            /* context = */ binding.root.context,
+            /* resId = */ FileIconProvider.findFileIconResource(node.requireData())
+        )!!
+        icon.setBounds(0, 0, 16.dp, 16.dp)
+        icon.setTint(onSurfaceColor.toArgb())
 
-  override fun onToggle(
-    node: TreeNode<File>,
-    isExpand: Boolean,
-    holder: TreeView.ViewHolder
-  ) {
-    applyDir(holder, node)
-  }
-
-  @Subscribe(threadMode = ThreadMode.ASYNC)
-  fun onRefreshFolderEvent(event: OnRefreshFolderEvent) {
-    CoroutineScope(Dispatchers.Main).launch {
-      fileListLoader.removeFileInCache(event.openedFolder)
-      fileTreeBinding.treeview.refresh(withExpandable = true)
+        binding.tvName.apply {
+            text = node.name.toString()
+            setCompoundDrawables(
+                /* left = */ icon,
+                /* top = */ null,
+                /* right = */ null,
+                /* bottom = */ null
+            )
+            TextViewCompat.setCompoundDrawableTintList(
+                this,
+                ColorStateList.valueOf(onSurfaceColor.toArgb())
+            )
+            setTextColor(onSurfaceColor.toArgb())
+        }
     }
-  }
 
-  @Subscribe(threadMode = ThreadMode.ASYNC)
-  fun onDeleteFileEvent(event: OnDeleteFileEvent) {
-    CoroutineScope(Dispatchers.Main).launch {
-      fileListLoader.removeFileInCache(event.openedFolder)
-      fileTreeBinding.treeview.refresh(withExpandable = true)
-    }
-  }
+    private fun applyDir(holder: TreeView.ViewHolder, node: TreeNode<File>) {
+        val binding = LayoutFileItemDirBinding.bind(holder.itemView)
+        val icon = AppCompatResources.getDrawable(
+            /* context = */ binding.root.context,
+            /* resId = */ drawables.ic_folder
+        )!!
+        icon.setBounds(0, 0, 16.dp, 16.dp)
+        icon.setTint(onSurfaceColor.toArgb())
 
-  @Subscribe(threadMode = ThreadMode.ASYNC)
-  fun onCreateFileEvent(event: OnCreateFileEvent) {
-    CoroutineScope(Dispatchers.Main).launch {
-      fileListLoader.removeFileInCache(event.openedFolder)
-      fileTreeBinding.treeview.refresh(withExpandable = true)
-    }
-  }
+        binding.tvName.apply {
+            text = node.name.toString()
+            setCompoundDrawables(
+                /* left = */ icon,
+                /* top = */ null,
+                /* right = */ null,
+                /* bottom = */ null
+            )
+            TextViewCompat.setCompoundDrawableTintList(
+                this,
+                ColorStateList.valueOf(onSurfaceColor.toArgb())
+            )
+            setTextColor(onSurfaceColor.toArgb())
+        }
 
-  @Subscribe(threadMode = ThreadMode.ASYNC)
-  fun onCreateFolderEvent(event: OnCreateFolderEvent) {
-    CoroutineScope(Dispatchers.Main).launch {
-      fileListLoader.removeFileInCache(event.openedFolder)
-      fileTreeBinding.treeview.refresh(withExpandable = true)
+        binding
+            .ivArrow
+            .animate()
+            .rotation(if (node.expand) 90f else 0f)
+            .setDuration(200)
+            .start()
+
+        binding.ivArrow.imageTintList = ColorStateList.valueOf(onSurfaceColor.toArgb())
     }
-  }
+
+    override fun onClick(node: TreeNode<File>, holder: TreeView.ViewHolder) {
+        if (node.isChild) {
+            applyDir(holder, node)
+        } else {
+            onFileClick(node.requireData())
+        }
+    }
+
+    override fun onLongClick(node: TreeNode<File>, holder: TreeView.ViewHolder): Boolean {
+        onFileLongClick(node.requireData())
+        return true
+    }
+
+    override fun onRefresh(status: Boolean) {
+        fileTreeBinding.progress.isInvisible = !status
+    }
+
+    override fun onToggle(
+        node: TreeNode<File>,
+        isExpand: Boolean,
+        holder: TreeView.ViewHolder
+    ) {
+        applyDir(holder, node)
+    }
+
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    fun onRefreshFolderEvent(event: OnRefreshFolderEvent) {
+        CoroutineScope(Dispatchers.Main).launch {
+            fileListLoader.removeFileInCache(event.openedFolder)
+            fileTreeBinding.treeview.refresh(withExpandable = true)
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    fun onDeleteFileEvent(event: OnDeleteFileEvent) {
+        CoroutineScope(Dispatchers.Main).launch {
+            fileListLoader.removeFileInCache(event.openedFolder)
+            fileTreeBinding.treeview.refresh(withExpandable = true)
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    fun onCreateFileEvent(event: OnCreateFileEvent) {
+        CoroutineScope(Dispatchers.Main).launch {
+            fileListLoader.removeFileInCache(event.openedFolder)
+            fileTreeBinding.treeview.refresh(withExpandable = true)
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    fun onCreateFolderEvent(event: OnCreateFolderEvent) {
+        CoroutineScope(Dispatchers.Main).launch {
+            fileListLoader.removeFileInCache(event.openedFolder)
+            fileTreeBinding.treeview.refresh(withExpandable = true)
+        }
+    }
 }

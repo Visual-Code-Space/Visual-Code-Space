@@ -17,8 +17,8 @@ package com.itsvks.monaco.option.minimap
 
 @JvmInline
 value class Side private constructor(val value: String) {
-  companion object {
-    val Left = Side("left")
-    val Right = Side("right")
-  }
+    companion object {
+        val Left = Side("left")
+        val Right = Side("right")
+    }
 }

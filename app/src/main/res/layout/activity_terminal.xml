@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:tools="http://schemas.android.com/tools"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent"
-  android:background="@android:color/black"
-  android:orientation="vertical">
-
-  <com.teixeira.vcspace.ui.virtualkeys.VirtualKeysView
-    android:id="@+id/virtual_keys"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="75dp" />
+    android:layout_height="match_parent"
+    android:background="@android:color/black"
+    android:orientation="vertical">
+
+    <com.teixeira.vcspace.ui.virtualkeys.VirtualKeysView
+        android:id="@+id/virtual_keys"
+        android:layout_width="match_parent"
+        android:layout_height="75dp" />
 
 </LinearLayout>

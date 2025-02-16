@@ -17,12 +17,12 @@ package com.itsvks.monaco.option
 
 @JvmInline
 value class AccessibilitySupport private constructor(val value: Int) {
-  companion object {
-    /**
-     * This should be the browser case where it is not known if a screen reader is attached or no.
-     */
-    val Unknown = AccessibilitySupport(0)
-    val Disabled = AccessibilitySupport(1)
-    val Enabled = AccessibilitySupport(2)
-  }
+    companion object {
+        /**
+         * This should be the browser case where it is not known if a screen reader is attached or no.
+         */
+        val Unknown = AccessibilitySupport(0)
+        val Disabled = AccessibilitySupport(1)
+        val Enabled = AccessibilitySupport(2)
+    }
 }

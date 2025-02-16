@@ -18,64 +18,64 @@ package com.teixeira.vcspace.app
 import android.app.Application
 import android.content.Intent
 import android.content.SharedPreferences
-import android.net.Uri
+import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 
 open class BaseApplication : Application() {
 
-  companion object {
-    const val REPO_URL = "https://github.com/Visual-Code-Space/Visual-Code-Space"
+    companion object {
+        const val REPO_URL = "https://github.com/Visual-Code-Space/Visual-Code-Space"
 
-    private var _instance: BaseApplication? = null
-    val instance: BaseApplication
-      get() = checkNotNull(_instance) { "Application instance not found" }
-  }
-
-  val defaultPrefs: SharedPreferences by lazy {
-    PreferenceManager.getDefaultSharedPreferences(this)
-  }
-
-  val encryptedPrefs: SharedPreferences by lazy {
-    try {
-      val masterKey = MasterKey.Builder(this)
-        .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-        .build()
-
-      EncryptedSharedPreferences.create(
-        this,
-        "encrypted_prefs",
-        masterKey,
-        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-      )
-    } catch (err: Exception) {
-      err.printStackTrace()
-      defaultPrefs
+        private var _instance: BaseApplication? = null
+        val instance: BaseApplication
+            get() = checkNotNull(_instance) { "Application instance not found" }
     }
-  }
 
-  override fun onCreate() {
-    _instance = this
-    super.onCreate()
-  }
+    val defaultPrefs: SharedPreferences by lazy {
+        PreferenceManager.getDefaultSharedPreferences(this)
+    }
 
-  fun openProjectRepo() {
-    openUrl(REPO_URL)
-  }
+    val encryptedPrefs: SharedPreferences by lazy {
+        try {
+            val masterKey = MasterKey.Builder(this)
+                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                .build()
 
-  fun openUrl(url: String) {
-    try {
-      startActivity(
-        Intent().apply {
-          addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-          action = Intent.ACTION_VIEW
-          data = Uri.parse(url)
+            EncryptedSharedPreferences.create(
+                this,
+                "encrypted_prefs",
+                masterKey,
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            )
+        } catch (err: Exception) {
+            err.printStackTrace()
+            defaultPrefs
         }
-      )
-    } catch (th: Throwable) {
-      th.printStackTrace()
     }
-  }
+
+    override fun onCreate() {
+        _instance = this
+        super.onCreate()
+    }
+
+    fun openProjectRepo() {
+        openUrl(REPO_URL)
+    }
+
+    fun openUrl(url: String) {
+        try {
+            startActivity(
+                Intent().apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    action = Intent.ACTION_VIEW
+                    data = url.toUri()
+                }
+            )
+        } catch (th: Throwable) {
+            th.printStackTrace()
+        }
+    }
 }

@@ -18,8 +18,8 @@ package com.teixeira.vcspace;
 import com.itsvks.monaco.MonacoWebInterface;
 
 public class Temp {
-  static {
-    var inter = new MonacoWebInterface(null);
-    inter.setModified(true);
-  }
+    static {
+        var inter = new MonacoWebInterface(null);
+        inter.setModified(true);
+    }
 }

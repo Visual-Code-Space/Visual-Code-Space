@@ -16,8 +16,8 @@
 package com.teixeira.vcspace.github
 
 data class FileCreateRequest(
-  val message: String,
-  val content: String,
-  val branch: String = "main",
-  val author: Author? = null
+    val message: String,
+    val content: String,
+    val branch: String = "main",
+    val author: Author? = null
 )

@@ -16,8 +16,8 @@
 package com.teixeira.vcspace.core
 
 class EditorManager private constructor() {
-  companion object {
-    @JvmStatic
-    val instance by lazy { EditorManager() }
-  }
+    companion object {
+        @JvmStatic
+        val instance by lazy { EditorManager() }
+    }
 }

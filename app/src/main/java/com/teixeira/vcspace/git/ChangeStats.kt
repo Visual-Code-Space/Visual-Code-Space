@@ -16,7 +16,7 @@
 package com.teixeira.vcspace.git
 
 data class ChangeStats(
-  val filesChanged: Int,
-  val insertions: Int,
-  val deletions: Int
+    val filesChanged: Int,
+    val insertions: Int,
+    val deletions: Int
 )

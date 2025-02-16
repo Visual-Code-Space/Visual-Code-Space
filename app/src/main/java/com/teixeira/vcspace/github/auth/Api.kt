@@ -32,97 +32,101 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object Api {
-  private val retrofits: (String) -> Retrofit = { url ->
-    Retrofit.Builder()
-      .baseUrl(url)
-      .addConverterFactory(GsonConverterFactory.create())
-      .build()
-  }
-
-  val gitHubClient: GitHubClient by lazy {
-    retrofits("https://github.com/").create(GitHubClient::class.java)
-  }
-
-  val gitHubApiClient: GitHubClient by lazy {
-    retrofits("https://api.github.com/").create(GitHubClient::class.java)
-  }
-
-  val startLogin: (UriHandler) -> Unit = { uriHandler ->
-    val clientId = BuildConfig.CLIENT_ID
-    val callback = BuildConfig.OAUTH_REDIRECT_URL
-    val url =
-      "https://github.com/login/oauth/authorize?client_id=$clientId&redirect_uri=$callback&scope=repo"
-
-    uriHandler.openUri(url)
-  }
-
-  suspend fun exchangeCodeForToken(
-    code: String,
-    onSuccess: suspend CoroutineScope.(AccessToken) -> Unit = {},
-    onFailure: suspend CoroutineScope.(Throwable) -> Unit = {}
-  ) {
-    withContext(Dispatchers.IO) {
-      gitHubClient.getAccessToken(
-        clientId = BuildConfig.CLIENT_ID,
-        clientSecret = BuildConfig.CLIENT_SECRET,
-        code = code
-      ).awaitResult().onSuccess { accessToken ->
-        withContext(Dispatchers.Main) {
-          onSuccess(accessToken)
-        }
-      }.onFailure { throwable ->
-        withContext(Dispatchers.Main) {
-          onFailure(throwable)
-        }
-      }
+    private val retrofits: (String) -> Retrofit = { url ->
+        Retrofit.Builder()
+            .baseUrl(url)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
     }
-  }
 
-  suspend fun getUser(
-    token: String,
-    onSuccess: suspend CoroutineScope.(User) -> Unit = {},
-    onFailure: suspend CoroutineScope.(Throwable) -> Unit = {}
-  ) {
-    withContext(Dispatchers.IO) {
-      gitHubApiClient.getUserInfo(
-        token = "Bearer $token"
-      ).awaitResult().onSuccess { user ->
-        withContext(Dispatchers.Main) {
-          onSuccess(user)
+    val gitHubClient: GitHubClient by lazy {
+        retrofits("https://github.com/").create(GitHubClient::class.java)
+    }
+
+    val gitHubApiClient: GitHubClient by lazy {
+        retrofits("https://api.github.com/").create(GitHubClient::class.java)
+    }
+
+    val startLogin: (UriHandler) -> Unit = { uriHandler ->
+        val clientId = BuildConfig.CLIENT_ID
+        val callback = BuildConfig.OAUTH_REDIRECT_URL
+        val url =
+            "https://github.com/login/oauth/authorize?client_id=$clientId&redirect_uri=$callback&scope=repo"
+
+        uriHandler.openUri(url)
+    }
+
+    suspend fun exchangeCodeForToken(
+        code: String,
+        onSuccess: suspend CoroutineScope.(AccessToken) -> Unit = {},
+        onFailure: suspend CoroutineScope.(Throwable) -> Unit = {}
+    ) {
+        withContext(Dispatchers.IO) {
+            gitHubClient.getAccessToken(
+                clientId = BuildConfig.CLIENT_ID,
+                clientSecret = BuildConfig.CLIENT_SECRET,
+                code = code
+            ).awaitResult().onSuccess { accessToken ->
+                withContext(Dispatchers.Main) {
+                    onSuccess(accessToken)
+                }
+            }.onFailure { throwable ->
+                withContext(Dispatchers.Main) {
+                    onFailure(throwable)
+                }
+            }
         }
-      }.onFailure { throwable ->
-        withContext(Dispatchers.Main) {
-          onFailure(throwable)
+    }
+
+    suspend fun getUser(
+        token: String,
+        onSuccess: suspend CoroutineScope.(User) -> Unit = {},
+        onFailure: suspend CoroutineScope.(Throwable) -> Unit = {}
+    ) {
+        withContext(Dispatchers.IO) {
+            gitHubApiClient.getUserInfo(
+                token = "Bearer $token"
+            ).awaitResult().onSuccess { user ->
+                withContext(Dispatchers.Main) {
+                    onSuccess(user)
+                }
+            }.onFailure { throwable ->
+                withContext(Dispatchers.Main) {
+                    onFailure(throwable)
+                }
+            }
         }
-      }
     }
-  }
 
-  val saveUser: (UserInfo) -> Unit = { userInfo ->
-    encryptedPrefs.edit(commit = true) {
-      putString(KEY_GIT_USER_INFO, Gson().toJson(userInfo.user))
-      putString("$KEY_GIT_USER_ACCESS_TOKEN${userInfo.user.username}", Gson().toJson(userInfo.accessToken))
+    val saveUser: (UserInfo) -> Unit = { userInfo ->
+        encryptedPrefs.edit(commit = true) {
+            putString(KEY_GIT_USER_INFO, Gson().toJson(userInfo.user))
+            putString(
+                "$KEY_GIT_USER_ACCESS_TOKEN${userInfo.user.username}",
+                Gson().toJson(userInfo.accessToken)
+            )
+        }
     }
-  }
 
-  val removeUserFromDevice: (User) -> Unit = {
-    encryptedPrefs.edit(commit = true) {
-      remove(KEY_GIT_USER_INFO)
-      remove("$KEY_GIT_USER_ACCESS_TOKEN${it.username}")
+    val removeUserFromDevice: (User) -> Unit = {
+        encryptedPrefs.edit(commit = true) {
+            remove(KEY_GIT_USER_INFO)
+            remove("$KEY_GIT_USER_ACCESS_TOKEN${it.username}")
+        }
     }
-  }
 
-  val getUserInfo = {
-    val userJson = encryptedPrefs.getString(KEY_GIT_USER_INFO, null)
-    val user = userJson?.let { Gson().fromJson(it, User::class.java) }
+    val getUserInfo = {
+        val userJson = encryptedPrefs.getString(KEY_GIT_USER_INFO, null)
+        val user = userJson?.let { Gson().fromJson(it, User::class.java) }
 
-    if (user.isNotNull()) UserInfo(user!!, getUserAccessToken(user)) else null
-  }
+        if (user.isNotNull()) UserInfo(user!!, getUserAccessToken(user)) else null
+    }
 
-  val getUserAccessToken: (User) -> AccessToken = { user ->
-    val accessTokenJson = encryptedPrefs.getString("$KEY_GIT_USER_ACCESS_TOKEN${user.username}", "")
-    Gson().fromJson(accessTokenJson, AccessToken::class.java)
-  }
+    val getUserAccessToken: (User) -> AccessToken = { user ->
+        val accessTokenJson =
+            encryptedPrefs.getString("$KEY_GIT_USER_ACCESS_TOKEN${user.username}", "")
+        Gson().fromJson(accessTokenJson, AccessToken::class.java)
+    }
 }
 
 data class UserInfo(val user: User, val accessToken: AccessToken)

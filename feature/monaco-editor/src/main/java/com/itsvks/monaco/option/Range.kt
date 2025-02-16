@@ -16,8 +16,8 @@
 package com.itsvks.monaco.option
 
 data class Range(
-  val startLineNumber: Int,
-  val startColumn: Int,
-  val endLineNumber: Int,
-  val endColumn: Int
+    val startLineNumber: Int,
+    val startColumn: Int,
+    val endLineNumber: Int,
+    val endColumn: Int
 )

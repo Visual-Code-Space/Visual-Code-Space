@@ -50,71 +50,71 @@ import dev.jeziellago.compose.markdowntext.MarkdownText
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AiResponseSheet(
-  title: String,
-  response: GenerateContentResponse,
-  onDismissRequest: () -> Unit,
-  modifier: Modifier = Modifier,
-  subtitle: (@Composable () -> Unit)? = null,
+    title: String,
+    response: GenerateContentResponse,
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
+    subtitle: (@Composable () -> Unit)? = null,
 ) {
-  val text = response.candidates[0].content.parts[0].asTextOrNull().toString()
-  val usageMetadata = response.usageMetadata
+    val text = response.candidates[0].content.parts[0].asTextOrNull().toString()
+    val usageMetadata = response.usageMetadata
 
-  var showUsageMetadata by remember { mutableStateOf(false) }
+    var showUsageMetadata by remember { mutableStateOf(false) }
 
-  ModalBottomSheet(onDismissRequest = onDismissRequest, modifier = modifier) {
-    Column(
-      modifier = Modifier
-        .padding(16.dp)
-        .verticalScroll(rememberScrollState())
-    ) {
-      Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(bottom = 16.dp)
-      ) {
+    ModalBottomSheet(onDismissRequest = onDismissRequest, modifier = modifier) {
         Column(
-          modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState())
         ) {
-          Text(
-            text = title,
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 4.dp)
-          )
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(bottom = 16.dp)
+            ) {
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(bottom = 4.dp)
+                    )
 
-          subtitle?.invoke()
-        }
+                    subtitle?.invoke()
+                }
 
-        AnimatedVisibility(visible = !showUsageMetadata) {
-          IconButton(
-            onClick = { showUsageMetadata = !showUsageMetadata },
-            modifier = Modifier.size(12.dp)
-          ) {
-            Icon(
-              Icons.Default.QuestionMark,
-              contentDescription = null
+                AnimatedVisibility(visible = !showUsageMetadata) {
+                    IconButton(
+                        onClick = { showUsageMetadata = !showUsageMetadata },
+                        modifier = Modifier.size(12.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.QuestionMark,
+                            contentDescription = null
+                        )
+                    }
+                }
+
+                AnimatedVisibility(visible = showUsageMetadata) {
+                    Text(
+                        text = "total: ${usageMetadata?.totalTokenCount}, prompt: ${usageMetadata?.promptTokenCount}, candidates: ${usageMetadata?.candidatesTokenCount}",
+                        fontSize = 9.sp,
+                        fontWeight = FontWeight.W200,
+                        modifier = Modifier.clickable(
+                            onClick = { showUsageMetadata = !showUsageMetadata },
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        )
+                    )
+                }
+            }
+
+            MarkdownText(
+                markdown = text,
+                isTextSelectable = true
             )
-          }
         }
-
-        AnimatedVisibility(visible = showUsageMetadata) {
-          Text(
-            text = "total: ${usageMetadata?.totalTokenCount}, prompt: ${usageMetadata?.promptTokenCount}, candidates: ${usageMetadata?.candidatesTokenCount}",
-            fontSize = 9.sp,
-            fontWeight = FontWeight.W200,
-            modifier = Modifier.clickable(
-              onClick = { showUsageMetadata = !showUsageMetadata },
-              interactionSource = remember { MutableInteractionSource() },
-              indication = null
-            )
-          )
-        }
-      }
-
-      MarkdownText(
-        markdown = text,
-        isTextSelectable = true
-      )
     }
-  }
 }

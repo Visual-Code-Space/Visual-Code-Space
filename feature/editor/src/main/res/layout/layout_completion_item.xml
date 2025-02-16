@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ This file is part of Visual Code Space.
   ~
   ~ Visual Code Space is free software: you can redistribute it and/or modify it under the terms of
@@ -13,54 +12,53 @@
   ~ You should have received a copy of the GNU General Public License along with Visual Code Space.
   ~ If not, see <https://www.gnu.org/licenses/>.
   -->
-<RelativeLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="match_parent"
-  android:layout_height="wrap_content"
-  android:minHeight="44dp"
-  android:padding="2dp">
-
-  <TextView
-    android:id="@+id/item_icon"
-    android:layout_width="wrap_content"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minWidth="20dp"
-    android:gravity="center"
-    android:layout_centerVertical="true"
-    android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-    android:layout_marginHorizontal="8dp"
-    android:textSize="13sp"
-    android:paddingHorizontal="4dp" />
+    android:minHeight="44dp"
+    android:padding="2dp">
 
-  <TextView
-    android:id="@+id/item_label"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_toEndOf="@id/item_icon"
-    android:ellipsize="start"
-    android:textSize="13sp"
-    android:singleLine="true"
-    android:layout_marginStart="2dp" />
+    <TextView
+        android:id="@+id/item_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginHorizontal="8dp"
+        android:gravity="center"
+        android:minWidth="20dp"
+        android:paddingHorizontal="4dp"
+        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+        android:textSize="13sp" />
 
-  <TextView
-    android:id="@+id/item_desc"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_toEndOf="@id/item_icon"
-    android:layout_marginEnd="8dp"
-    android:layout_below="@id/item_label"
-    android:textSize="11sp"
-    android:textColor="?attr/colorSecondaryVariant"
-    android:layout_marginTop="2dp"
-    android:layout_marginStart="2dp" />
+    <TextView
+        android:id="@+id/item_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_toEndOf="@id/item_icon"
+        android:ellipsize="start"
+        android:singleLine="true"
+        android:textSize="13sp" />
 
-  <TextView
-    android:id="@+id/item_type"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginEnd="2dp"
-    android:textSize="11sp"
-    android:layout_alignParentEnd="true"
-    android:textColor="?attr/colorSecondaryVariant" />
+    <TextView
+        android:id="@+id/item_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/item_label"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="8dp"
+        android:layout_toEndOf="@id/item_icon"
+        android:textColor="?attr/colorSecondaryVariant"
+        android:textSize="11sp" />
+
+    <TextView
+        android:id="@+id/item_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="2dp"
+        android:textColor="?attr/colorSecondaryVariant"
+        android:textSize="11sp" />
 
 </RelativeLayout>

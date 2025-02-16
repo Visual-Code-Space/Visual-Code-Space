@@ -10,15 +10,15 @@ import com.teixeira.vcspace.file.File
  * [ApkInstaller.java](https://github.com/tyron12233/CodeAssist/blob/main/app/src/main/java/com/tyron/code/util/ApkInstaller.java)
  */
 object ApkInstaller {
-  fun installApplication(context: Context, file: File) {
-    val intent = Intent(Intent.ACTION_VIEW)
-    intent.setDataAndType(file.uri(context), "application/vnd.android.package-archive")
-    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-    try {
-      context.startActivity(intent)
-    } catch (e: ActivityNotFoundException) {
-      e.printStackTrace()
+    fun installApplication(context: Context, file: File) {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.setDataAndType(file.uri(context), "application/vnd.android.package-archive")
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        try {
+            context.startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            e.printStackTrace()
+        }
     }
-  }
 }

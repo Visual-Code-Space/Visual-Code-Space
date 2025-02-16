@@ -61,121 +61,121 @@ import java.io.File
 
 @Composable
 fun OpenFolderActions(
-  modifier: Modifier = Modifier,
-  fileExplorerViewModel: FileExplorerViewModel
+    modifier: Modifier = Modifier,
+    fileExplorerViewModel: FileExplorerViewModel
 ) {
-  val context = LocalContext.current
+    val context = LocalContext.current
 
-  val openFolder = rememberLauncherForActivityResult(
-    contract = ActivityResultContracts.OpenDocumentTree()
-  ) { uri ->
-    if (uri != null) DocumentFile.fromTreeUri(context, uri)?.let {
-      val file = if (DocumentFileWrapper.shouldWrap(uri)) {
-        DocumentFileWrapper(it)
-      } else {
-        UriUtils.uri2File(it.uri).wrapFile()
-      }
-      fileExplorerViewModel.openFolder(file)
-    }
-  }
-
-  var showRecentFoldersDialog by remember { mutableStateOf(false) }
-
-  Column(
-    modifier = modifier,
-    verticalArrangement = Arrangement.Center,
-    horizontalAlignment = Alignment.CenterHorizontally
-  ) {
-    Button(onClick = { openFolder.launch(null) }) {
-      Text(text = stringResource(strings.open_folder))
+    val openFolder = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocumentTree()
+    ) { uri ->
+        if (uri != null) DocumentFile.fromTreeUri(context, uri)?.let {
+            val file = if (DocumentFileWrapper.shouldWrap(uri)) {
+                DocumentFileWrapper(it)
+            } else {
+                UriUtils.uri2File(it.uri).wrapFile()
+            }
+            fileExplorerViewModel.openFolder(file)
+        }
     }
 
-    Button(onClick = { showRecentFoldersDialog = true }) {
-      Text(text = stringResource(strings.open_recent))
-    }
-  }
+    var showRecentFoldersDialog by remember { mutableStateOf(false) }
 
-  if (showRecentFoldersDialog) {
-    RecentFoldersDialog(
-      onDismissRequest = { showRecentFoldersDialog = false },
-      onOpenFolder = {
-        val treeUri = DocumentFile.fromFile(it).uri
-        fileExplorerViewModel.openFolder(UriUtils.uri2File(treeUri).wrapFile())
-        showRecentFoldersDialog = false
-      }
-    )
-  }
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Button(onClick = { openFolder.launch(null) }) {
+            Text(text = stringResource(strings.open_folder))
+        }
+
+        Button(onClick = { showRecentFoldersDialog = true }) {
+            Text(text = stringResource(strings.open_recent))
+        }
+    }
+
+    if (showRecentFoldersDialog) {
+        RecentFoldersDialog(
+            onDismissRequest = { showRecentFoldersDialog = false },
+            onOpenFolder = {
+                val treeUri = DocumentFile.fromFile(it).uri
+                fileExplorerViewModel.openFolder(UriUtils.uri2File(treeUri).wrapFile())
+                showRecentFoldersDialog = false
+            }
+        )
+    }
 }
 
 @Composable
 fun RecentFoldersDialog(
-  onDismissRequest: () -> Unit,
-  onOpenFolder: (File) -> Unit,
-  modifier: Modifier = Modifier
+    onDismissRequest: () -> Unit,
+    onOpenFolder: (File) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-  val context = LocalContext.current
+    val context = LocalContext.current
 
-  val recentFolders = listOfNotNull(
-    defaultPrefs.getString(PreferenceKeys.RECENT_FOLDER_1, ""),
-    defaultPrefs.getString(PreferenceKeys.RECENT_FOLDER_2, ""),
-    defaultPrefs.getString(PreferenceKeys.RECENT_FOLDER_3, ""),
-    defaultPrefs.getString(PreferenceKeys.RECENT_FOLDER_4, ""),
-    defaultPrefs.getString(PreferenceKeys.RECENT_FOLDER_5, "")
-  ).filter { it.isNotEmpty() }.distinct()
+    val recentFolders = listOfNotNull(
+        defaultPrefs.getString(PreferenceKeys.RECENT_FOLDER_1, ""),
+        defaultPrefs.getString(PreferenceKeys.RECENT_FOLDER_2, ""),
+        defaultPrefs.getString(PreferenceKeys.RECENT_FOLDER_3, ""),
+        defaultPrefs.getString(PreferenceKeys.RECENT_FOLDER_4, ""),
+        defaultPrefs.getString(PreferenceKeys.RECENT_FOLDER_5, "")
+    ).filter { it.isNotEmpty() }.distinct()
 
-  SideEffect {
-    if (recentFolders.isEmpty()) {
-      showShortToast(context, context.getString(R.string.no_recent_folder_found))
-      onDismissRequest()
-    }
-  }
-
-  AlertDialog(
-    modifier = modifier,
-    onDismissRequest = onDismissRequest,
-    title = { Text(text = stringResource(strings.open_recent)) },
-    text = {
-      LazyColumn {
-        items(recentFolders) { folderPath ->
-          val folder = folderPath.toFile()
-
-          ListItem(
-            headlineContent = {
-              Text(text = folder.name)
-            },
-            modifier = Modifier
-              .clip(MaterialTheme.shapes.small)
-              .clickable(
-                onClick = { onOpenFolder(folder) },
-                role = Role.Button
-              ),
-            supportingContent = {
-              Text(
-                text = folder.absolutePath,
-                maxLines = 1,
-                modifier = Modifier.basicMarquee()
-              )
-            },
-            leadingContent = {
-              Icon(
-                Icons.Sharp.Folder,
-                contentDescription = null
-              )
-            },
-            colors = ListItemDefaults.colors(
-              containerColor = AlertDialogDefaults.containerColor,
-              headlineColor = AlertDialogDefaults.titleContentColor,
-              supportingColor = AlertDialogDefaults.textContentColor,
-              leadingIconColor = AlertDialogDefaults.iconContentColor
-            )
-          )
+    SideEffect {
+        if (recentFolders.isEmpty()) {
+            showShortToast(context, context.getString(R.string.no_recent_folder_found))
+            onDismissRequest()
         }
-      }
-    },
-    confirmButton = {
-      TextButton(onClick = onDismissRequest) {
-        Text(text = stringResource(strings.cancel))
-      }
     }
-  )
+
+    AlertDialog(
+        modifier = modifier,
+        onDismissRequest = onDismissRequest,
+        title = { Text(text = stringResource(strings.open_recent)) },
+        text = {
+            LazyColumn {
+                items(recentFolders) { folderPath ->
+                    val folder = folderPath.toFile()
+
+                    ListItem(
+                        headlineContent = {
+                            Text(text = folder.name)
+                        },
+                        modifier = Modifier
+                            .clip(MaterialTheme.shapes.small)
+                            .clickable(
+                                onClick = { onOpenFolder(folder) },
+                                role = Role.Button
+                            ),
+                        supportingContent = {
+                            Text(
+                                text = folder.absolutePath,
+                                maxLines = 1,
+                                modifier = Modifier.basicMarquee()
+                            )
+                        },
+                        leadingContent = {
+                            Icon(
+                                Icons.Sharp.Folder,
+                                contentDescription = null
+                            )
+                        },
+                        colors = ListItemDefaults.colors(
+                            containerColor = AlertDialogDefaults.containerColor,
+                            headlineColor = AlertDialogDefaults.titleContentColor,
+                            supportingColor = AlertDialogDefaults.textContentColor,
+                            leadingIconColor = AlertDialogDefaults.iconContentColor
+                        )
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismissRequest) {
+                Text(text = stringResource(strings.cancel))
+            }
+        }
+    )
 }

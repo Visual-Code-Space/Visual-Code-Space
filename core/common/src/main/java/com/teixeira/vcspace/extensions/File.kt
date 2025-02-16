@@ -29,59 +29,59 @@ fun File.toBase64String(): String = Base64.encodeToString(readBytes(), Base64.NO
 fun String.decodeBase64(): ByteArray = Base64.decode(this, Base64.NO_WRAP)
 
 fun File.toZipFile(): File {
-  val zipFile = File(parent, "$name.zip")
+    val zipFile = File(parent, "$name.zip")
 
-  ZipOutputStream(BufferedOutputStream(FileOutputStream(zipFile))).use { zos ->
-    walkTopDown().forEach { file ->
-      val relativePath = file.relativeTo(this).path
-      if (file.isDirectory) {
-        if (relativePath.isNotEmpty()) {
-          zos.putNextEntry(ZipEntry("$relativePath/"))
-          zos.closeEntry()
+    ZipOutputStream(BufferedOutputStream(FileOutputStream(zipFile))).use { zos ->
+        walkTopDown().forEach { file ->
+            val relativePath = file.relativeTo(this).path
+            if (file.isDirectory) {
+                if (relativePath.isNotEmpty()) {
+                    zos.putNextEntry(ZipEntry("$relativePath/"))
+                    zos.closeEntry()
+                }
+            } else {
+                zos.putNextEntry(ZipEntry(relativePath))
+                file.inputStream().use { it.copyTo(zos) }
+                zos.closeEntry()
+            }
         }
-      } else {
-        zos.putNextEntry(ZipEntry(relativePath))
-        file.inputStream().use { it.copyTo(zos) }
-        zos.closeEntry()
-      }
     }
-  }
 
-  return zipFile
+    return zipFile
 }
 
 fun File.extractZipFile(destinationDir: File) {
-  ZipInputStream(inputStream()).use { zipInputStream ->
-    var entry: ZipEntry? = zipInputStream.nextEntry
+    ZipInputStream(inputStream()).use { zipInputStream ->
+        var entry: ZipEntry? = zipInputStream.nextEntry
 
-    while (entry != null) {
-      val extractedFile = File(destinationDir, entry.name)
-      if (!extractedFile.canonicalPath.startsWith(destinationDir.canonicalPath)) {
-        throw SecurityException("Bad zip entry path: ${entry.name}")
-      }
+        while (entry != null) {
+            val extractedFile = File(destinationDir, entry.name)
+            if (!extractedFile.canonicalPath.startsWith(destinationDir.canonicalPath)) {
+                throw SecurityException("Bad zip entry path: ${entry.name}")
+            }
 
-      if (entry.isDirectory) {
-        extractedFile.mkdirs()
-      } else {
-        extractedFile.parentFile?.mkdirs() // Ensure parent directories exist
-        extractedFile.outputStream().use { output ->
-          zipInputStream.copyTo(output)
+            if (entry.isDirectory) {
+                extractedFile.mkdirs()
+            } else {
+                extractedFile.parentFile?.mkdirs() // Ensure parent directories exist
+                extractedFile.outputStream().use { output ->
+                    zipInputStream.copyTo(output)
+                }
+            }
+
+            zipInputStream.closeEntry()
+            entry = zipInputStream.nextEntry
         }
-      }
-
-      zipInputStream.closeEntry()
-      entry = zipInputStream.nextEntry
     }
-  }
 }
 
 fun File.child(fileName: String): File {
-  return File(this, fileName)
+    return File(this, fileName)
 }
 
 fun File.createFileIfNot(): File {
-  if (exists().not()) {
-    createNewFile()
-  }
-  return this
+    if (exists().not()) {
+        createNewFile()
+    }
+    return this
 }

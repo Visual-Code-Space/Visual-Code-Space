@@ -22,15 +22,15 @@ import androidx.compose.ui.res.vectorResource
 import com.teixeira.vcspace.resources.R
 
 sealed class PluginScreens(
-  val route: String,
-  val title: String,
-  val icon: (@Composable () -> Unit)? = null
+    val route: String,
+    val title: String,
+    val icon: (@Composable () -> Unit)? = null
 ) {
-  data object Installed : PluginScreens(
-    route = "installed",
-    title = "Installed",
-    icon = {
-      Icon(ImageVector.vectorResource(R.drawable.ic_download), contentDescription = null)
-    }
-  )
+    data object Installed : PluginScreens(
+        route = "installed",
+        title = "Installed",
+        icon = {
+            Icon(ImageVector.vectorResource(R.drawable.ic_download), contentDescription = null)
+        }
+    )
 }

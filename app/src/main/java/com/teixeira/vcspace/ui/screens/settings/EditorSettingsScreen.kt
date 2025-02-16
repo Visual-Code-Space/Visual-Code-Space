@@ -105,427 +105,456 @@ import kotlin.concurrent.thread
 
 @Composable
 fun EditorSettingsScreen(
-  onNavigateUp: () -> Unit,
-  onNavigateToMonacoEditorSettings: () -> Unit,
-  modifier: Modifier = Modifier,
+    onNavigateUp: () -> Unit,
+    onNavigateToMonacoEditorSettings: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-  val context = LocalContext.current
-  val uriHandler = LocalUriHandler.current
-  val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val uriHandler = LocalUriHandler.current
+    val coroutineScope = rememberCoroutineScope()
 
-  val currentEditor = rememberCurrentEditor()
-  val showInputMethodPickerAtStart = rememberShowInputMethodPickerAtStart()
+    val currentEditor = rememberCurrentEditor()
+    val showInputMethodPickerAtStart = rememberShowInputMethodPickerAtStart()
 
-  val fontSize = rememberFontSize()
-  val indentSize = rememberIndentSize()
-  val fontFamily = rememberFontFamily()
-  val colorScheme = rememberColorScheme()
-  val fontLigatures = rememberFontLigatures()
-  val symbols = rememberSymbols()
-  val stickyScroll = rememberStickyScroll()
-  val wordWrap = rememberWordWrap()
-  val lineNumber = rememberLineNumber()
-  val useTab = rememberUseTab()
-  val deleteLineOnBackspace = rememberDeleteLineOnBackspace()
-  val deleteIndentOnBackspace = rememberDeleteIndentOnBackspace()
-  val editorTextActionWindowExpandThreshold = rememberEditorTextActionWindowExpandThreshold()
+    val fontSize = rememberFontSize()
+    val indentSize = rememberIndentSize()
+    val fontFamily = rememberFontFamily()
+    val colorScheme = rememberColorScheme()
+    val fontLigatures = rememberFontLigatures()
+    val symbols = rememberSymbols()
+    val stickyScroll = rememberStickyScroll()
+    val wordWrap = rememberWordWrap()
+    val lineNumber = rememberLineNumber()
+    val useTab = rememberUseTab()
+    val deleteLineOnBackspace = rememberDeleteLineOnBackspace()
+    val deleteIndentOnBackspace = rememberDeleteIndentOnBackspace()
+    val editorTextActionWindowExpandThreshold = rememberEditorTextActionWindowExpandThreshold()
 
-  LaunchedEffect(currentEditor.value) {
-    if (currentEditor.value.lowercase() == "monaco") {
-      val internal = File(context.filesDir, "monaco-editor-main")
+    LaunchedEffect(currentEditor.value) {
+        if (currentEditor.value.lowercase() == "monaco") {
+            val internal = File(context.filesDir, "monaco-editor-main")
 
-      if (internal.exists().not()) {
-        runOnUiThread { ToastUtils.showShort("Downloading Monaco editor...") }
-        val id = MonacoEditor.downloadMonaco(context, MONACO_EDITOR_ARCHIVE)
-        val downloadManager = context.getSystemService(DownloadManager::class.java)
-        val query = DownloadManager.Query().setFilterById(id)
+            if (internal.exists().not()) {
+                runOnUiThread { ToastUtils.showShort("Downloading Monaco editor...") }
+                val id = MonacoEditor.downloadMonaco(context, MONACO_EDITOR_ARCHIVE)
+                val downloadManager = context.getSystemService(DownloadManager::class.java)
+                val query = DownloadManager.Query().setFilterById(id)
 
-        thread {
-          var downloading = true
+                thread {
+                    var downloading = true
 
-          while (downloading) {
-            val cursor = downloadManager.query(query)
+                    while (downloading) {
+                        val cursor = downloadManager.query(query)
 
-            if (cursor != null && cursor.moveToFirst()) {
-              val status = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS))
-              downloading = status == DownloadManager.STATUS_RUNNING || status == DownloadManager.STATUS_PAUSED || status == DownloadManager.STATUS_PENDING
+                        if (cursor != null && cursor.moveToFirst()) {
+                            val status =
+                                cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS))
+                            downloading =
+                                status == DownloadManager.STATUS_RUNNING || status == DownloadManager.STATUS_PAUSED || status == DownloadManager.STATUS_PENDING
 
-              if (status == DownloadManager.STATUS_SUCCESSFUL) {
-                downloading = false
-                val filePath = cursor.getString(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_LOCAL_URI))
-                runOnUiThread { ToastUtils.showShort("Monaco editor downloaded successfully") }
+                            if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                                downloading = false
+                                val filePath =
+                                    cursor.getString(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_LOCAL_URI))
+                                runOnUiThread { ToastUtils.showShort("Monaco editor downloaded successfully") }
 
-                coroutineScope.launch {
-                  MonacoEditor.doSetup(context, filePath.toUri().toFile())
+                                coroutineScope.launch {
+                                    MonacoEditor.doSetup(context, filePath.toUri().toFile())
+                                }
+                            } else if (status == DownloadManager.STATUS_FAILED) {
+                                downloading = false
+                                val reason =
+                                    cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_REASON))
+                                runOnUiThread { ToastUtils.showShort("Monaco editor download failed: $reason") }
+                            }
+                        }
+
+                        cursor?.close()
+
+                        runCatching { Thread.sleep(1000) }
+                    }
                 }
-              } else if (status == DownloadManager.STATUS_FAILED) {
-                downloading = false
-                val reason = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_REASON))
-                runOnUiThread { ToastUtils.showShort("Monaco editor download failed: $reason") }
-              }
             }
-
-            cursor?.close()
-
-            runCatching { Thread.sleep(1000) }
-          }
         }
-      }
-    }
-  }
-
-  val autoSave = rememberAutoSave()
-
-  BackHandler(onBack = onNavigateUp)
-
-  val backgroundColor = MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
-
-  LazyColumn(
-    modifier = modifier
-      .fillMaxWidth()
-      .padding(horizontal = 12.dp)
-      .padding(bottom = 12.dp),
-    verticalArrangement = Arrangement.spacedBy(3.dp)
-  ) {
-    preferenceCategory(
-      key = "editor_category",
-      title = { Text(text = stringResource(R.string.editor)) }
-    )
-
-    listPreference(
-      key = CURRENT_EDITOR.name,
-      title = { Text(text = "${stringResource(R.string.current_editor)} ($it Editor)") },
-      summary = { Text(text = getEditorDescription(it)) },
-      rememberState = { currentEditor },
-      defaultValue = currentEditor.value,
-      values = listOf("Sora", "Monaco"),
-      valueToText = { AnnotatedString("$it Editor") },
-      icon = { Icon(Icons.Default.Code, contentDescription = null) },
-      modifier = Modifier
-        .clip(PreferenceShape.Top)
-        .background(backgroundColor)
-    )
-
-    if (currentEditor.value.lowercase() == "monaco") {
-      preference(
-        key = "monaco_settings",
-        title = { Text(text = "Monaco Editor Settings") },
-        summary = { Text(text = "Open Monaco editor settings.") },
-        onClick = onNavigateToMonacoEditorSettings,
-        icon = { Icon(Icons.Default.Code, contentDescription = null) },
-        modifier = Modifier
-          .clip(PreferenceShape.Middle)
-          .background(backgroundColor)
-      )
     }
 
-    preference(
-      key = "keyboard_suggestion",
-      title = {
-        Text(
-          text = when (currentEditor.value) {
-            "Monaco" -> "Enhance Your Monaco Experience"
-            else -> "Typing Tip"
-          }
+    val autoSave = rememberAutoSave()
+
+    BackHandler(onBack = onNavigateUp)
+
+    val backgroundColor = MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
+
+    LazyColumn(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp)
+            .padding(bottom = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(3.dp)
+    ) {
+        preferenceCategory(
+            key = "editor_category",
+            title = { Text(text = stringResource(R.string.editor)) }
         )
-      },
-      summary = {
-        Text(
-          text = when (currentEditor.value) {
-            "Monaco" -> "Consider using a keyboard with extra keys like Hacker's Keyboard for a more efficient coding workflow. (Click to learn more)"
-            else -> "For optimal typing efficiency, explore keyboard customization options."
-          }
+
+        listPreference(
+            key = CURRENT_EDITOR.name,
+            title = { Text(text = "${stringResource(R.string.current_editor)} ($it Editor)") },
+            summary = { Text(text = getEditorDescription(it)) },
+            rememberState = { currentEditor },
+            defaultValue = currentEditor.value,
+            values = listOf("Sora", "Monaco"),
+            valueToText = { AnnotatedString("$it Editor") },
+            icon = { Icon(Icons.Default.Code, contentDescription = null) },
+            modifier = Modifier
+                .clip(PreferenceShape.Top)
+                .background(backgroundColor)
         )
-      },
-      onClick = {
-        if (currentEditor.value == "Monaco") {
-          uriHandler.openUri("https://play.google.com/store/apps/details?id=org.pocketworkstation.pckeyboard")
+
+        if (currentEditor.value.lowercase() == "monaco") {
+            preference(
+                key = "monaco_settings",
+                title = { Text(text = "Monaco Editor Settings") },
+                summary = { Text(text = "Open Monaco editor settings.") },
+                onClick = onNavigateToMonacoEditorSettings,
+                icon = { Icon(Icons.Default.Code, contentDescription = null) },
+                modifier = Modifier
+                    .clip(PreferenceShape.Middle)
+                    .background(backgroundColor)
+            )
         }
-      },
-      icon = { Icon(Icons.Default.Keyboard, contentDescription = null) },
-      modifier = Modifier
-        .clip(PreferenceShape.Middle)
-        .background(backgroundColor)
-    )
 
-    switchPreference(
-      key = SHOW_INPUT_METHOD_PICKER_AT_START.name,
-      title = { Text(text = "Show Input Method Picker at Start") },
-      summary = { Text(text = "Show the input method picker at start.") },
-      rememberState = { showInputMethodPickerAtStart },
-      defaultValue = showInputMethodPickerAtStart.value,
-      icon = { Icon(Icons.Default.Language, contentDescription = null) },
-      modifier = Modifier
-        .clip(PreferenceShape.Bottom)
-        .background(backgroundColor)
-    )
-
-    preferenceCategory(
-      key = "editor_settings_category",
-      title = { Text(text = stringResource(R.string.editor_settings)) }
-    )
-
-    sliderPreference(
-      key = FONT_SIZE.name,
-      title = { Text(text = stringResource(R.string.font_size)) },
-      defaultValue = fontSize.value,
-      rememberState = { fontSize },
-      valueRange = 11f..28f,
-      valueSteps = 16,
-      valueText = { Text(stringResource(R.string.font_size_value, it.fastRoundToInt())) },
-      icon = { Icon(Icons.Default.TextFields, contentDescription = null) },
-      modifier = Modifier
-        .clip(PreferenceShape.Top)
-        .background(backgroundColor)
-    )
-
-    listPreference(
-      key = INDENT_SIZE.name,
-      title = { Text(stringResource(R.string.indent_size)) },
-      summary = { Text(stringResource(R.string.indent_size_summary, indentSize.value)) },
-      rememberState = { indentSize },
-      defaultValue = indentSize.value,
-      values = (2..8 step 2).map { it },
-      icon = { Icon(Icons.AutoMirrored.Filled.FormatIndentIncrease, contentDescription = null) },
-      modifier = Modifier
-        .clip(PreferenceShape.Middle)
-        .background(backgroundColor)
-    )
-
-    listPreference(
-      key = FONT_FAMILY.name,
-      title = { Text(stringResource(R.string.font_family)) },
-      summary = { Text(stringResource(R.string.font_family_summary)) },
-      rememberState = { fontFamily },
-      defaultValue = fontFamily.value,
-      values = listOf(
-        context.getString(R.string.pref_editor_font_value_firacode),
-        context.getString(R.string.pref_editor_font_value_jetbrains),
-      ),
-      icon = { Icon(Icons.Filled.TextFields, contentDescription = null) },
-      modifier = Modifier
-        .clip(PreferenceShape.Middle)
-        .background(backgroundColor)
-    )
-
-    listPreference(
-      key = COLOR_SCHEME.name,
-      title = { Text(stringResource(R.string.color_scheme)) },
-      summary = { Text(stringResource(R.string.color_scheme_summary)) },
-      rememberState = { colorScheme },
-      defaultValue = colorScheme.value,
-      values = listOf(
-        context.getString(R.string.pref_editor_colorscheme_value_followui),
-        "Quietlight",
-        "Darcula",
-        "Abyss",
-        "Solarized Dark",
-      ),
-      icon = { Icon(Icons.Filled.Palette, contentDescription = null) },
-      modifier = Modifier
-        .clip(PreferenceShape.Middle)
-        .background(backgroundColor)
-    )
-
-    switchPreference(
-      key = FONT_LIGATURES.name,
-      title = { Text(text = stringResource(R.string.font_ligatures)) },
-      summary = {
-        Text(
-          text = if (it) stringResource(R.string.font_ligatures_enabled) else stringResource(
-            R.string.font_ligatures_disabled
-          )
+        preference(
+            key = "keyboard_suggestion",
+            title = {
+                Text(
+                    text = when (currentEditor.value) {
+                        "Monaco" -> "Enhance Your Monaco Experience"
+                        else -> "Typing Tip"
+                    }
+                )
+            },
+            summary = {
+                Text(
+                    text = when (currentEditor.value) {
+                        "Monaco" -> "Consider using a keyboard with extra keys like Hacker's Keyboard for a more efficient coding workflow. (Click to learn more)"
+                        else -> "For optimal typing efficiency, explore keyboard customization options."
+                    }
+                )
+            },
+            onClick = {
+                if (currentEditor.value == "Monaco") {
+                    uriHandler.openUri("https://play.google.com/store/apps/details?id=org.pocketworkstation.pckeyboard")
+                }
+            },
+            icon = { Icon(Icons.Default.Keyboard, contentDescription = null) },
+            modifier = Modifier
+                .clip(PreferenceShape.Middle)
+                .background(backgroundColor)
         )
-      },
-      rememberState = { fontLigatures },
-      defaultValue = fontLigatures.value,
-      icon = { Icon(imageVector = Icons.Default.FontDownload, contentDescription = null) },
-      modifier = Modifier
-        .clip(PreferenceShape.Middle)
-        .background(backgroundColor)
-    )
 
-    textFieldPreference(
-      key = SYMBOLS.name,
-      title = { Text(text = "Symbols") },
-      summary = { Text(text = it) },
-      rememberState = { symbols },
-      defaultValue = symbols.value,
-      textToValue = { it },
-      icon = {
-        Icon(
-          imageVector = Icons.Default.DataArray,
-          contentDescription = null
+        switchPreference(
+            key = SHOW_INPUT_METHOD_PICKER_AT_START.name,
+            title = { Text(text = "Show Input Method Picker at Start") },
+            summary = { Text(text = "Show the input method picker at start.") },
+            rememberState = { showInputMethodPickerAtStart },
+            defaultValue = showInputMethodPickerAtStart.value,
+            icon = { Icon(Icons.Default.Language, contentDescription = null) },
+            modifier = Modifier
+                .clip(PreferenceShape.Bottom)
+                .background(backgroundColor)
         )
-      },
-      modifier = Modifier
-        .clip(PreferenceShape.Middle)
-        .background(backgroundColor)
-    )
 
-    switchPreference(
-      key = STICKY_SCROLL.name,
-      title = { Text(text = stringResource(R.string.sticky_scroll)) },
-      summary = {
-        Text(
-          text = if (it) stringResource(R.string.sticky_scroll_enabled) else stringResource(
-            R.string.sticky_scroll_disabled
-          )
+        preferenceCategory(
+            key = "editor_settings_category",
+            title = { Text(text = stringResource(R.string.editor_settings)) }
         )
-      },
-      rememberState = { stickyScroll },
-      defaultValue = stickyScroll.value,
-      icon = { Icon(imageVector = Icons.Default.VerticalAlignTop, contentDescription = null) },
-      modifier = Modifier
-        .clip(PreferenceShape.Middle)
-        .background(backgroundColor)
-    )
 
-    switchPreference(
-      key = WORD_WRAP.name,
-      title = { Text(text = stringResource(R.string.word_wrap)) },
-      summary = {
-        Text(
-          text = if (it) stringResource(R.string.word_wrap_enabled) else stringResource(
-            R.string.word_wrap_disabled
-          )
+        sliderPreference(
+            key = FONT_SIZE.name,
+            title = { Text(text = stringResource(R.string.font_size)) },
+            defaultValue = fontSize.value,
+            rememberState = { fontSize },
+            valueRange = 11f..28f,
+            valueSteps = 16,
+            valueText = { Text(stringResource(R.string.font_size_value, it.fastRoundToInt())) },
+            icon = { Icon(Icons.Default.TextFields, contentDescription = null) },
+            modifier = Modifier
+                .clip(PreferenceShape.Top)
+                .background(backgroundColor)
         )
-      },
-      rememberState = { wordWrap },
-      defaultValue = wordWrap.value,
-      icon = { Icon(imageVector = Icons.AutoMirrored.Filled.WrapText, contentDescription = null) },
-      modifier = Modifier
-        .clip(PreferenceShape.Middle)
-        .background(backgroundColor)
-    )
 
-    switchPreference(
-      key = LINE_NUMBER.name,
-      title = { Text(text = stringResource(R.string.line_numbers)) },
-      summary = {
-        Text(
-          text = if (it) stringResource(R.string.line_numbers_displayed) else stringResource(
-            R.string.line_numbers_hidden
-          )
+        listPreference(
+            key = INDENT_SIZE.name,
+            title = { Text(stringResource(R.string.indent_size)) },
+            summary = { Text(stringResource(R.string.indent_size_summary, indentSize.value)) },
+            rememberState = { indentSize },
+            defaultValue = indentSize.value,
+            values = (2..8 step 2).map { it },
+            icon = {
+                Icon(
+                    Icons.AutoMirrored.Filled.FormatIndentIncrease,
+                    contentDescription = null
+                )
+            },
+            modifier = Modifier
+                .clip(PreferenceShape.Middle)
+                .background(backgroundColor)
         )
-      },
-      rememberState = { lineNumber },
-      defaultValue = lineNumber.value,
-      icon = { Icon(imageVector = Icons.AutoMirrored.Filled.List, contentDescription = null) },
-      modifier = Modifier
-        .clip(PreferenceShape.Middle)
-        .background(backgroundColor)
-    )
 
-    switchPreference(
-      key = USE_TAB.name,
-      title = { Text(text = stringResource(R.string.use_tabs)) },
-      summary = {
-        Text(
-          text = if (it) stringResource(R.string.use_tabs_enabled) else stringResource(
-            R.string.use_tabs_disabled
-          )
+        listPreference(
+            key = FONT_FAMILY.name,
+            title = { Text(stringResource(R.string.font_family)) },
+            summary = { Text(stringResource(R.string.font_family_summary)) },
+            rememberState = { fontFamily },
+            defaultValue = fontFamily.value,
+            values = listOf(
+                context.getString(R.string.pref_editor_font_value_firacode),
+                context.getString(R.string.pref_editor_font_value_jetbrains),
+            ),
+            icon = { Icon(Icons.Filled.TextFields, contentDescription = null) },
+            modifier = Modifier
+                .clip(PreferenceShape.Middle)
+                .background(backgroundColor)
         )
-      },
-      rememberState = { useTab },
-      defaultValue = useTab.value,
-      icon = { Icon(imageVector = Icons.Default.Tab, contentDescription = null) },
-      modifier = Modifier
-        .clip(PreferenceShape.Middle)
-        .background(backgroundColor)
-    )
 
-    switchPreference(
-      key = DELETE_LINE_ON_BACKSPACE.name,
-      title = { Text(text = stringResource(R.string.delete_line_on_backspace)) },
-      summary = {
-        Text(
-          text = if (it) stringResource(R.string.delete_line_on_backspace_enabled) else stringResource(
-            R.string.delete_line_on_backspace_disabled
-          )
+        listPreference(
+            key = COLOR_SCHEME.name,
+            title = { Text(stringResource(R.string.color_scheme)) },
+            summary = { Text(stringResource(R.string.color_scheme_summary)) },
+            rememberState = { colorScheme },
+            defaultValue = colorScheme.value,
+            values = listOf(
+                context.getString(R.string.pref_editor_colorscheme_value_followui),
+                "Quietlight",
+                "Darcula",
+                "Abyss",
+                "Solarized Dark",
+            ),
+            icon = { Icon(Icons.Filled.Palette, contentDescription = null) },
+            modifier = Modifier
+                .clip(PreferenceShape.Middle)
+                .background(backgroundColor)
         )
-      },
-      rememberState = { deleteLineOnBackspace },
-      defaultValue = deleteLineOnBackspace.value,
-      icon = { Icon(imageVector = Icons.AutoMirrored.Filled.Backspace, contentDescription = null) },
-      modifier = Modifier
-        .clip(PreferenceShape.Middle)
-        .background(backgroundColor)
-    )
 
-    switchPreference(
-      key = DELETE_INDENT_ON_BACKSPACE.name,
-      title = { Text(text = stringResource(R.string.delete_indent_on_backspace)) },
-      summary = {
-        Text(
-          text = if (it) stringResource(R.string.delete_indent_on_backspace_enabled) else stringResource(
-            R.string.delete_indent_on_backspace_disabled
-          )
+        switchPreference(
+            key = FONT_LIGATURES.name,
+            title = { Text(text = stringResource(R.string.font_ligatures)) },
+            summary = {
+                Text(
+                    text = if (it) stringResource(R.string.font_ligatures_enabled) else stringResource(
+                        R.string.font_ligatures_disabled
+                    )
+                )
+            },
+            rememberState = { fontLigatures },
+            defaultValue = fontLigatures.value,
+            icon = { Icon(imageVector = Icons.Default.FontDownload, contentDescription = null) },
+            modifier = Modifier
+                .clip(PreferenceShape.Middle)
+                .background(backgroundColor)
         )
-      },
-      rememberState = { deleteIndentOnBackspace },
-      defaultValue = deleteIndentOnBackspace.value,
-      icon = {
-        Icon(
-          imageVector = Icons.AutoMirrored.Filled.FormatIndentDecrease,
-          contentDescription = null
-        )
-      },
-      modifier = Modifier
-        .clip(PreferenceShape.Middle)
-        .background(backgroundColor)
-    )
 
-    textFieldPreference(
-      key = EDITOR_TEXT_ACTION_WINDOW_EXPAND_THRESHOLD.name,
-      title = { Text(text = stringResource(R.string.editor_text_action_window_expand_threshold)) },
-      summary = { Text(text = stringResource(R.string.editor_text_action_window_expand_threshold_summary)) },
-      rememberState = { editorTextActionWindowExpandThreshold },
-      defaultValue = editorTextActionWindowExpandThreshold.value,
-      textToValue = { it.toIntOrNull() },
-      icon = {
-        Icon(
-          imageVector = Icons.Default.Expand,
-          contentDescription = null
+        textFieldPreference(
+            key = SYMBOLS.name,
+            title = { Text(text = "Symbols") },
+            summary = { Text(text = it) },
+            rememberState = { symbols },
+            defaultValue = symbols.value,
+            textToValue = { it },
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.DataArray,
+                    contentDescription = null
+                )
+            },
+            modifier = Modifier
+                .clip(PreferenceShape.Middle)
+                .background(backgroundColor)
         )
-      },
-      modifier = Modifier
-        .clip(PreferenceShape.Bottom)
-        .background(backgroundColor)
-    )
 
-    preferenceCategory(
-      key = "tabs_category",
-      title = { Text(text = stringResource(R.string.tabs_category)) }
-    )
+        switchPreference(
+            key = STICKY_SCROLL.name,
+            title = { Text(text = stringResource(R.string.sticky_scroll)) },
+            summary = {
+                Text(
+                    text = if (it) stringResource(R.string.sticky_scroll_enabled) else stringResource(
+                        R.string.sticky_scroll_disabled
+                    )
+                )
+            },
+            rememberState = { stickyScroll },
+            defaultValue = stickyScroll.value,
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.VerticalAlignTop,
+                    contentDescription = null
+                )
+            },
+            modifier = Modifier
+                .clip(PreferenceShape.Middle)
+                .background(backgroundColor)
+        )
 
-    switchPreference(
-      key = AUTO_SAVE.name,
-      title = { Text(text = stringResource(R.string.auto_save)) },
-      summary = {
-        Text(
-          text = if (it) stringResource(R.string.auto_save_enabled) else stringResource(R.string.auto_save_disabled)
+        switchPreference(
+            key = WORD_WRAP.name,
+            title = { Text(text = stringResource(R.string.word_wrap)) },
+            summary = {
+                Text(
+                    text = if (it) stringResource(R.string.word_wrap_enabled) else stringResource(
+                        R.string.word_wrap_disabled
+                    )
+                )
+            },
+            rememberState = { wordWrap },
+            defaultValue = wordWrap.value,
+            icon = {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.WrapText,
+                    contentDescription = null
+                )
+            },
+            modifier = Modifier
+                .clip(PreferenceShape.Middle)
+                .background(backgroundColor)
         )
-      },
-      rememberState = { autoSave },
-      defaultValue = autoSave.value,
-      icon = {
-        Icon(
-          imageVector = Icons.Default.Save,
-          contentDescription = null
+
+        switchPreference(
+            key = LINE_NUMBER.name,
+            title = { Text(text = stringResource(R.string.line_numbers)) },
+            summary = {
+                Text(
+                    text = if (it) stringResource(R.string.line_numbers_displayed) else stringResource(
+                        R.string.line_numbers_hidden
+                    )
+                )
+            },
+            rememberState = { lineNumber },
+            defaultValue = lineNumber.value,
+            icon = {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.List,
+                    contentDescription = null
+                )
+            },
+            modifier = Modifier
+                .clip(PreferenceShape.Middle)
+                .background(backgroundColor)
         )
-      },
-      modifier = Modifier
-        .clip(PreferenceShape.Alone)
-        .background(backgroundColor)
-    )
-  }
+
+        switchPreference(
+            key = USE_TAB.name,
+            title = { Text(text = stringResource(R.string.use_tabs)) },
+            summary = {
+                Text(
+                    text = if (it) stringResource(R.string.use_tabs_enabled) else stringResource(
+                        R.string.use_tabs_disabled
+                    )
+                )
+            },
+            rememberState = { useTab },
+            defaultValue = useTab.value,
+            icon = { Icon(imageVector = Icons.Default.Tab, contentDescription = null) },
+            modifier = Modifier
+                .clip(PreferenceShape.Middle)
+                .background(backgroundColor)
+        )
+
+        switchPreference(
+            key = DELETE_LINE_ON_BACKSPACE.name,
+            title = { Text(text = stringResource(R.string.delete_line_on_backspace)) },
+            summary = {
+                Text(
+                    text = if (it) stringResource(R.string.delete_line_on_backspace_enabled) else stringResource(
+                        R.string.delete_line_on_backspace_disabled
+                    )
+                )
+            },
+            rememberState = { deleteLineOnBackspace },
+            defaultValue = deleteLineOnBackspace.value,
+            icon = {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.Backspace,
+                    contentDescription = null
+                )
+            },
+            modifier = Modifier
+                .clip(PreferenceShape.Middle)
+                .background(backgroundColor)
+        )
+
+        switchPreference(
+            key = DELETE_INDENT_ON_BACKSPACE.name,
+            title = { Text(text = stringResource(R.string.delete_indent_on_backspace)) },
+            summary = {
+                Text(
+                    text = if (it) stringResource(R.string.delete_indent_on_backspace_enabled) else stringResource(
+                        R.string.delete_indent_on_backspace_disabled
+                    )
+                )
+            },
+            rememberState = { deleteIndentOnBackspace },
+            defaultValue = deleteIndentOnBackspace.value,
+            icon = {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.FormatIndentDecrease,
+                    contentDescription = null
+                )
+            },
+            modifier = Modifier
+                .clip(PreferenceShape.Middle)
+                .background(backgroundColor)
+        )
+
+        textFieldPreference(
+            key = EDITOR_TEXT_ACTION_WINDOW_EXPAND_THRESHOLD.name,
+            title = { Text(text = stringResource(R.string.editor_text_action_window_expand_threshold)) },
+            summary = { Text(text = stringResource(R.string.editor_text_action_window_expand_threshold_summary)) },
+            rememberState = { editorTextActionWindowExpandThreshold },
+            defaultValue = editorTextActionWindowExpandThreshold.value,
+            textToValue = { it.toIntOrNull() },
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Expand,
+                    contentDescription = null
+                )
+            },
+            modifier = Modifier
+                .clip(PreferenceShape.Bottom)
+                .background(backgroundColor)
+        )
+
+        preferenceCategory(
+            key = "tabs_category",
+            title = { Text(text = stringResource(R.string.tabs_category)) }
+        )
+
+        switchPreference(
+            key = AUTO_SAVE.name,
+            title = { Text(text = stringResource(R.string.auto_save)) },
+            summary = {
+                Text(
+                    text = if (it) stringResource(R.string.auto_save_enabled) else stringResource(R.string.auto_save_disabled)
+                )
+            },
+            rememberState = { autoSave },
+            defaultValue = autoSave.value,
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Save,
+                    contentDescription = null
+                )
+            },
+            modifier = Modifier
+                .clip(PreferenceShape.Alone)
+                .background(backgroundColor)
+        )
+    }
 }
 
 private fun getEditorDescription(editorName: String): String {
-  return when (editorName.lowercase()) {
-    "sora" -> "Prioritizes stability for a smooth editing experience."
-    "monaco" -> "Offers more advanced features, but may be less stable. Some settings may not be fully supported."
-    else -> ""
-  }
+    return when (editorName.lowercase()) {
+        "sora" -> "Prioritizes stability for a smooth editing experience."
+        "monaco" -> "Offers more advanced features, but may be less stable. Some settings may not be fully supported."
+        else -> ""
+    }
 }

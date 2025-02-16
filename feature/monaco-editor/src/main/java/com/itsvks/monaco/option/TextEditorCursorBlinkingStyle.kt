@@ -20,57 +20,57 @@ package com.itsvks.monaco.option
  */
 @JvmInline
 value class TextEditorCursorBlinkingStyle private constructor(val value: Int) {
-  override fun toString(): String {
-    return when (value) {
-      0 -> "Hidden"
-      1 -> "Blink"
-      2 -> "Smooth"
-      3 -> "Phase"
-      4 -> "Expand"
-      5 -> "Solid"
-      else -> throw IllegalArgumentException("Unknown value: $value")
-    }
-  }
-
-  companion object {
-    fun fromValue(value: Int) = when (value) {
-      0 -> Hidden
-      1 -> Blink
-      2 -> Smooth
-      3 -> Phase
-      4 -> Expand
-      5 -> Solid
-      else -> throw IllegalArgumentException("Unknown value: $value")
+    override fun toString(): String {
+        return when (value) {
+            0 -> "Hidden"
+            1 -> "Blink"
+            2 -> "Smooth"
+            3 -> "Phase"
+            4 -> "Expand"
+            5 -> "Solid"
+            else -> throw IllegalArgumentException("Unknown value: $value")
+        }
     }
 
-    /**
-     * Hidden
-     */
-    val Hidden = TextEditorCursorBlinkingStyle(0)
+    companion object {
+        fun fromValue(value: Int) = when (value) {
+            0 -> Hidden
+            1 -> Blink
+            2 -> Smooth
+            3 -> Phase
+            4 -> Expand
+            5 -> Solid
+            else -> throw IllegalArgumentException("Unknown value: $value")
+        }
 
-    /**
-     * Blinking
-     */
-    val Blink = TextEditorCursorBlinkingStyle(1)
+        /**
+         * Hidden
+         */
+        val Hidden = TextEditorCursorBlinkingStyle(0)
 
-    /**
-     * Blinking with smooth fading
-     */
-    val Smooth = TextEditorCursorBlinkingStyle(2)
+        /**
+         * Blinking
+         */
+        val Blink = TextEditorCursorBlinkingStyle(1)
 
-    /**
-     * Blinking with prolonged filled state and smooth fading
-     */
-    val Phase = TextEditorCursorBlinkingStyle(3)
+        /**
+         * Blinking with smooth fading
+         */
+        val Smooth = TextEditorCursorBlinkingStyle(2)
 
-    /**
-     * Expand collapse animation on the y axis
-     */
-    val Expand = TextEditorCursorBlinkingStyle(4)
+        /**
+         * Blinking with prolonged filled state and smooth fading
+         */
+        val Phase = TextEditorCursorBlinkingStyle(3)
 
-    /**
-     * No-Blinking
-     */
-    val Solid = TextEditorCursorBlinkingStyle(5)
-  }
+        /**
+         * Expand collapse animation on the y axis
+         */
+        val Expand = TextEditorCursorBlinkingStyle(4)
+
+        /**
+         * No-Blinking
+         */
+        val Solid = TextEditorCursorBlinkingStyle(5)
+    }
 }

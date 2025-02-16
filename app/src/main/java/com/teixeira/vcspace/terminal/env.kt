@@ -19,50 +19,50 @@ import com.blankj.utilcode.util.PathUtils
 import java.io.File
 
 val appDataDir: File
-  get() = File(PathUtils.getInternalAppDataPath(), "files").apply {
-    if (!exists()) {
-      mkdirs()
+    get() = File(PathUtils.getInternalAppDataPath(), "files").apply {
+        if (!exists()) {
+            mkdirs()
+        }
     }
-  }
 
 val prefix: File
-  get() = File(appDataDir, "usr").apply {
-    if (!exists()) {
-      mkdirs()
+    get() = File(appDataDir, "usr").apply {
+        if (!exists()) {
+            mkdirs()
+        }
     }
-  }
 
 val home: File
-  get() = File(appDataDir, "home").apply {
-    if (!exists()) {
-      mkdirs()
+    get() = File(appDataDir, "home").apply {
+        if (!exists()) {
+            mkdirs()
+        }
     }
-  }
 
 val tmp: File
-  get() = File(appDataDir, "tmp").apply {
-    if (!exists()) {
-      mkdirs()
+    get() = File(appDataDir, "tmp").apply {
+        if (!exists()) {
+            mkdirs()
+        }
     }
-  }
 
 val bin: File
-  get() = File(prefix, "bin").apply {
-    if (!exists()) {
-      mkdirs()
+    get() = File(prefix, "bin").apply {
+        if (!exists()) {
+            mkdirs()
+        }
     }
-  }
 
 val lib: File
-  get() = File(prefix, "lib").apply {
-    if (!exists()) {
-      mkdirs()
+    get() = File(prefix, "lib").apply {
+        if (!exists()) {
+            mkdirs()
+        }
     }
-  }
 
 val alpineDir: File
-  get() = File(appDataDir, "local/alpine").apply {
-    if (!exists()) {
-      mkdirs()
+    get() = File(appDataDir, "local/alpine").apply {
+        if (!exists()) {
+            mkdirs()
+        }
     }
-  }

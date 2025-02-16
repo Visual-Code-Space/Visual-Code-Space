@@ -74,169 +74,174 @@ import kotlin.math.abs
 
 @Composable
 fun editorTextActionWindow(
-  items: List<EditorTextActionItem>,
-  modifier: Modifier = Modifier,
-  editorTextActionWindowExpandThreshold: Int = 10,
-  onItemClick: (EditorTextActionItem) -> Unit
+    items: List<EditorTextActionItem>,
+    modifier: Modifier = Modifier,
+    editorTextActionWindowExpandThreshold: Int = 10,
+    onItemClick: (EditorTextActionItem) -> Unit
 ): FrameLayout {
-  val compositionContext = rememberCompositionContext()
-  val context = LocalContext.current
-  val view = LocalView.current
-  val viewTreeLifecycleOwner = view.findViewTreeLifecycleOwner()
-  val viewTreeSavedStateRegistryOwner = view.findViewTreeSavedStateRegistryOwner()
+    val compositionContext = rememberCompositionContext()
+    val context = LocalContext.current
+    val view = LocalView.current
+    val viewTreeLifecycleOwner = view.findViewTreeLifecycleOwner()
+    val viewTreeSavedStateRegistryOwner = view.findViewTreeSavedStateRegistryOwner()
 
-  val composeView = ComposeView(context).apply {
-    setParentCompositionContext(compositionContext)
-    setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindowOrReleasedFromPool)
-    setContent {
-      Card(
-        border = BorderStroke(
-          width = 1.dp,
-          color = MaterialTheme.colorScheme.outline
-        ),
-        colors = CardDefaults.cardColors(
-          containerColor = MaterialTheme.colorScheme.surface
-        ),
-      ) {
-        EditorTextActionContent(items, modifier, editorTextActionWindowExpandThreshold, onItemClick)
-      }
+    val composeView = ComposeView(context).apply {
+        setParentCompositionContext(compositionContext)
+        setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindowOrReleasedFromPool)
+        setContent {
+            Card(
+                border = BorderStroke(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.outline
+                ),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                ),
+            ) {
+                EditorTextActionContent(
+                    items,
+                    modifier,
+                    editorTextActionWindowExpandThreshold,
+                    onItemClick
+                )
+            }
+        }
     }
-  }
-  val parentView = FrameLayout(context).apply {
-    id = android.R.id.content
-    setViewTreeLifecycleOwner(viewTreeLifecycleOwner)
-    setViewTreeSavedStateRegistryOwner(viewTreeSavedStateRegistryOwner)
-    layoutParams = FrameLayout.LayoutParams(
-      ViewGroup.LayoutParams.WRAP_CONTENT,
-      ViewGroup.LayoutParams.WRAP_CONTENT
-    )
-    addView(composeView)
-  }
-  return parentView
+    val parentView = FrameLayout(context).apply {
+        id = android.R.id.content
+        setViewTreeLifecycleOwner(viewTreeLifecycleOwner)
+        setViewTreeSavedStateRegistryOwner(viewTreeSavedStateRegistryOwner)
+        layoutParams = FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        addView(composeView)
+    }
+    return parentView
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun EditorTextActionContent(
-  items: List<EditorTextActionItem>,
-  modifier: Modifier = Modifier,
-  editorTextActionWindowExpandThreshold: Int,
-  onItemClick: (EditorTextActionItem) -> Unit,
+    items: List<EditorTextActionItem>,
+    modifier: Modifier = Modifier,
+    editorTextActionWindowExpandThreshold: Int,
+    onItemClick: (EditorTextActionItem) -> Unit,
 ) {
-  val tooltipStates = items.map { rememberTooltipState(isPersistent = true) }
-  var isColumn by remember { mutableStateOf(false) }
-  var previousHorizontalScrollOffset by remember { mutableIntStateOf(0) }
-  val horizontalScrollState = rememberScrollState()
+    val tooltipStates = items.map { rememberTooltipState(isPersistent = true) }
+    var isColumn by remember { mutableStateOf(false) }
+    var previousHorizontalScrollOffset by remember { mutableIntStateOf(0) }
+    val horizontalScrollState = rememberScrollState()
 
-  val animatedIsColumn by animateFloatAsState(
-    targetValue = if (isColumn) 1f else 0f,
-    animationSpec = tween(durationMillis = 1000)
-  )
+    val animatedIsColumn by animateFloatAsState(
+        targetValue = if (isColumn) 1f else 0f,
+        animationSpec = tween(durationMillis = 1000)
+    )
 
-  LaunchedEffect(horizontalScrollState.value) {
-    val currentOffset = horizontalScrollState.value
-    val offsetChange = currentOffset - previousHorizontalScrollOffset
-    previousHorizontalScrollOffset = currentOffset
+    LaunchedEffect(horizontalScrollState.value) {
+        val currentOffset = horizontalScrollState.value
+        val offsetChange = currentOffset - previousHorizontalScrollOffset
+        previousHorizontalScrollOffset = currentOffset
 
-    if (abs(offsetChange) > editorTextActionWindowExpandThreshold) {
-      isColumn = offsetChange > 0
-    }
-  }
-
-  val tooltip: @Composable (EditorTextActionItem, TooltipState, @Composable () -> Unit) -> Unit =
-    { item, tooltipState, content ->
-      TooltipBox(
-        positionProvider = TooltipDefaults.rememberRichTooltipPositionProvider(
-          spacingBetweenTooltipAndAnchor = 2.dp
-        ),
-        tooltip = {
-          RichTooltip(
-            title = { Text(stringResource(item.id)) },
-            action = {
-              Text(
-                text = stringResource(R.string.ok),
-                modifier = Modifier.clickable(
-                  onClick = {
-                    tooltipState.dismiss()
-                  },
-                  role = Role.Button
-                )
-              )
-            }
-          ) {
-            Text(item.description)
-          }
-        },
-        state = tooltipState,
-        content = content
-      )
-    }
-
-  val content = @Composable {
-    if (isColumn.not()) {
-      Row(
-        modifier = modifier
-          .horizontalScroll(horizontalScrollState)
-          .width(IntrinsicSize.Max)
-          .alpha(1f - animatedIsColumn)
-      ) {
-        items.filter { it.visible }.forEachIndexed { index, item ->
-          tooltip(item, tooltipStates[index]) {
-            IconButton(
-              onClick = { onItemClick(item) },
-              enabled = item.clickable
-            ) {
-              Icon(
-                imageVector = item.icon,
-                contentDescription = stringResource(item.id),
-                modifier = Modifier.size(20.dp)
-              )
-            }
-          }
+        if (abs(offsetChange) > editorTextActionWindowExpandThreshold) {
+            isColumn = offsetChange > 0
         }
-      }
-    } else {
-      Column(
-        modifier = modifier
-          .alpha(animatedIsColumn)
-          .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.Center
-      ) {
-        items.filter { it.visible }.forEachIndexed { index, item ->
-          tooltip(item, tooltipStates[index]) {
-            Box(
-              modifier = Modifier
-                .padding(2.dp)
-                .clip(MaterialTheme.shapes.small)
-                .clickable(
-                  onClick = { onItemClick(item) },
-                  role = Role.Button,
-                  enabled = item.clickable
-                )
-            ) {
-              Row(
-                modifier = Modifier
-                  .fillMaxWidth()
-                  .padding(4.dp)
-                  .padding(start = 6.dp),
-                verticalAlignment = Alignment.CenterVertically
-              ) {
-                Icon(
-                  imageVector = item.icon,
-                  contentDescription = stringResource(item.id),
-                  modifier = Modifier.size(20.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                  text = stringResource(item.id)
-                )
-              }
-            }
-          }
-        }
-      }
     }
-  }
 
-  content()
+    val tooltip: @Composable (EditorTextActionItem, TooltipState, @Composable () -> Unit) -> Unit =
+        { item, tooltipState, content ->
+            TooltipBox(
+                positionProvider = TooltipDefaults.rememberRichTooltipPositionProvider(
+                    spacingBetweenTooltipAndAnchor = 2.dp
+                ),
+                tooltip = {
+                    RichTooltip(
+                        title = { Text(stringResource(item.id)) },
+                        action = {
+                            Text(
+                                text = stringResource(R.string.ok),
+                                modifier = Modifier.clickable(
+                                    onClick = {
+                                        tooltipState.dismiss()
+                                    },
+                                    role = Role.Button
+                                )
+                            )
+                        }
+                    ) {
+                        Text(item.description)
+                    }
+                },
+                state = tooltipState,
+                content = content
+            )
+        }
+
+    val content = @Composable {
+        if (isColumn.not()) {
+            Row(
+                modifier = modifier
+                    .horizontalScroll(horizontalScrollState)
+                    .width(IntrinsicSize.Max)
+                    .alpha(1f - animatedIsColumn)
+            ) {
+                items.filter { it.visible }.forEachIndexed { index, item ->
+                    tooltip(item, tooltipStates[index]) {
+                        IconButton(
+                            onClick = { onItemClick(item) },
+                            enabled = item.clickable
+                        ) {
+                            Icon(
+                                imageVector = item.icon,
+                                contentDescription = stringResource(item.id),
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
+                }
+            }
+        } else {
+            Column(
+                modifier = modifier
+                    .alpha(animatedIsColumn)
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.Center
+            ) {
+                items.filter { it.visible }.forEachIndexed { index, item ->
+                    tooltip(item, tooltipStates[index]) {
+                        Box(
+                            modifier = Modifier
+                                .padding(2.dp)
+                                .clip(MaterialTheme.shapes.small)
+                                .clickable(
+                                    onClick = { onItemClick(item) },
+                                    role = Role.Button,
+                                    enabled = item.clickable
+                                )
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(4.dp)
+                                    .padding(start = 6.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = item.icon,
+                                    contentDescription = stringResource(item.id),
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = stringResource(item.id)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    content()
 }

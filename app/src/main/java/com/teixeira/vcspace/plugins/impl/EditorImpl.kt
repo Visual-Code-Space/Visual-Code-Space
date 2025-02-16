@@ -20,25 +20,25 @@ import com.vcspace.plugins.editor.Position
 import java.io.File
 
 class EditorImpl(private val listener: Listener) : Editor {
-  override fun getCurrentFile(): File? {
-    return listener.currentFile
-  }
+    override fun getCurrentFile(): File? {
+        return listener.currentFile
+    }
 
-  override fun getContext(): Context {
-    return listener.context
-  }
+    override fun getContext(): Context {
+        return listener.context
+    }
 
-  override fun getCursorPosition(): Position {
-    return listener.cursorPosition
-  }
+    override fun getCursorPosition(): Position {
+        return listener.cursorPosition
+    }
 
-  override fun setCursorPosition(position: Position) {
-    listener.cursorPosition = position
-  }
+    override fun setCursorPosition(position: Position) {
+        listener.cursorPosition = position
+    }
 
-  interface Listener {
-    val currentFile: File?
-    val context: Context
-    var cursorPosition: Position
-  }
+    interface Listener {
+        val currentFile: File?
+        val context: Context
+        var cursorPosition: Position
+    }
 }
