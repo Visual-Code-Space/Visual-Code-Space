@@ -57,37 +57,6 @@ class CrashActivity : BaseComposeActivity() {
         const val KEY_EXTRA_ERROR = "key_extra_error"
     }
 
-    private val softwareInfo: String
-        get() =
-            StringBuilder("Manufacturer: ")
-                .append(DeviceUtils.getManufacturer())
-                .append("\n")
-                .append("Device: ")
-                .append(DeviceUtils.getModel())
-                .append("\n")
-                .append("SDK: ")
-                .append(Build.VERSION.SDK_INT)
-                .append("\n")
-                .append("Android: ")
-                .append(Build.VERSION.RELEASE)
-                .append("\n")
-                .append("Model: ")
-                .append(Build.VERSION.INCREMENTAL)
-                .append("\n")
-                .toString()
-
-    private val appInfo: String
-        get() =
-            StringBuilder("Version: ")
-                .append(BuildConfig.VERSION_NAME)
-                .append("\n")
-                .append("Build: ")
-                .append(BuildConfig.BUILD_TYPE)
-                .toString()
-
-    private val date: Date
-        get() = Calendar.getInstance().time
-
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun MainScreen() {
@@ -96,13 +65,8 @@ class CrashActivity : BaseComposeActivity() {
         )
         val uriHandler = LocalUriHandler.current
 
-        val errorString = buildString {
-            append("$softwareInfo\n")
-            append("$appInfo\n\n")
-            append("$date\n\n")
-            append(intent.getStringExtra(KEY_EXTRA_ERROR))
-        }
-        val error by remember { mutableStateOf(errorString) }
+        val errorString = intent.getStringExtra(KEY_EXTRA_ERROR)
+        val error by remember { mutableStateOf(errorString!!) }
         val scope = rememberCoroutineScope()
         val toastHostState = rememberToastHostState()
 

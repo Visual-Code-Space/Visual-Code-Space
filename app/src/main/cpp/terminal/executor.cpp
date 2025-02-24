@@ -25,7 +25,7 @@ Java_com_teixeira_vcspace_terminal_Executor_runBinary(
     args.push_back(strdup(linker));// First argument: linker path
     args.push_back(strdup(binary));// Second argument: binary path
     for (int i = 0; i < argsLen; i++) {
-        jstring arg = (jstring) env->GetObjectArrayElement(argsArray, i);
+        auto arg = (jstring) env->GetObjectArrayElement(argsArray, i);
         const char* argStr = env->GetStringUTFChars(arg, 0);
         args.push_back(strdup(argStr));
         env->ReleaseStringUTFChars(arg, argStr);

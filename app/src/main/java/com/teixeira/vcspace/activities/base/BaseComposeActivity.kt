@@ -79,6 +79,7 @@ import com.teixeira.vcspace.ui.rememberToastHostState
 import com.teixeira.vcspace.ui.theme.VCSpaceTheme
 import com.teixeira.vcspace.utils.isStoragePermissionGranted
 import java.io.File
+import androidx.core.net.toUri
 
 abstract class BaseComposeActivity : AppCompatActivity() {
     @OptIn(ExperimentalPermissionsApi::class)
@@ -220,7 +221,7 @@ abstract class BaseComposeActivity : AppCompatActivity() {
                                 try {
                                     val intent =
                                         Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-                                    intent.data = Uri.parse("package:${packageName}")
+                                    intent.data = "package:${packageName}".toUri()
                                     startActivity(intent)
                                 } catch (e: Exception) {
                                     val intent =
