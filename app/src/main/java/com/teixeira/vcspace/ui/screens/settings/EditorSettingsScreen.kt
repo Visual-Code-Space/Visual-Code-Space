@@ -202,8 +202,8 @@ fun EditorSettingsScreen(
             summary = { Text(text = getEditorDescription(it)) },
             rememberState = { currentEditor },
             defaultValue = currentEditor.value,
-            values = listOf("Sora", "Monaco"),
-            valueToText = { AnnotatedString("$it Editor") },
+            values = listOf("Sora Editor", "Monaco Editor (deprecated)"),
+            valueToText = { AnnotatedString(it) },
             icon = { Icon(Icons.Default.Code, contentDescription = null) },
             modifier = Modifier
                 .clip(PreferenceShape.Top)

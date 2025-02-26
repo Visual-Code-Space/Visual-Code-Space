@@ -18,8 +18,7 @@ buildscript {
 
 fun Project.configureBaseExtension() {
   extensions.findByType(BaseExtension::class)?.run {
-    compileSdkVersion(34)
-    buildToolsVersion = "34.0.0"
+    compileSdkVersion(35)
 
     defaultConfig {
       minSdk = 26

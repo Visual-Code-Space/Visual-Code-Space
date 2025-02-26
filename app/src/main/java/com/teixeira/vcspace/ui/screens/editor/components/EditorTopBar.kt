@@ -26,7 +26,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.Redo
 import androidx.compose.material.icons.automirrored.rounded.Undo
@@ -36,13 +35,11 @@ import androidx.compose.material.icons.rounded.KeyboardCommandKey
 import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.PlayArrow
+import androidx.compose.material.icons.rounded.Save
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -102,6 +99,9 @@ import com.teixeira.vcspace.utils.launchWithProgressDialog
 import com.teixeira.vcspace.webserver.LocalHttpServer
 import io.github.rosemoe.sora.event.ContentChangeEvent
 import io.github.rosemoe.sora.event.KeyBindingEvent
+import kiwi.orbit.compose.ui.controls.Icon
+import kiwi.orbit.compose.ui.controls.IconButton
+import kiwi.orbit.compose.ui.controls.Text
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -346,33 +346,43 @@ fun EditorTopBar(
                 }
             }
 
-            AnimatedVisibility(
-                visible = isKeyboardOpen
-            ) {
-                Row {
-                    Tooltip(stringResource(id = strings.editor_undo)) {
-                        IconButton(
-                            onClick = { selectedEditor?.undo() ?: selectedMonacoEditor?.undo() },
-                            enabled = canUndo
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Rounded.Undo,
-                                contentDescription = null
-                            )
+            Tooltip(stringResource(strings.save)) {
+                IconButton(
+                    onClick = {
+                        scope.launch {
+                            editorViewModel.saveFile()
                         }
-                    }
+                    },
+                    enabled = selectedFile?.isModified == true
+                ) {
+                    Icon(
+                        Icons.Rounded.Save,
+                        contentDescription = null
+                    )
+                }
+            }
 
-                    Tooltip(stringResource(id = strings.editor_redo)) {
-                        IconButton(
-                            onClick = { selectedEditor?.redo() ?: selectedMonacoEditor?.redo() },
-                            enabled = canRedo
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Rounded.Redo,
-                                contentDescription = null
-                            )
-                        }
-                    }
+            Tooltip(stringResource(id = strings.editor_undo)) {
+                IconButton(
+                    onClick = { selectedEditor?.undo() ?: selectedMonacoEditor?.undo() },
+                    enabled = canUndo
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Rounded.Undo,
+                        contentDescription = null
+                    )
+                }
+            }
+
+            Tooltip(stringResource(id = strings.editor_redo)) {
+                IconButton(
+                    onClick = { selectedEditor?.redo() ?: selectedMonacoEditor?.redo() },
+                    enabled = canRedo
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Rounded.Redo,
+                        contentDescription = null
+                    )
                 }
             }
 

@@ -120,12 +120,14 @@ class CommandPaletteManager private constructor() {
 
             if (keys != null) {
                 for (key in keys) {
-                    when (key) {
-                        "Ctrl" -> isCtrlRequired = true
-                        "Shift" -> isShiftRequired = true
-                        "Alt" -> isAltRequired = true
-                        else -> bindingKey =
-                            key.toKey() // This is the actual key (e.g., "P", "V", etc.)
+                    when (key.lowercase()) {
+                        "ctrl" -> isCtrlRequired = true
+                        "shift" -> isShiftRequired = true
+                        "alt" -> isAltRequired = true
+                        else -> {
+                            // This is the actual key (e.g., "P", "V", etc.)
+                            bindingKey = key.toKey()
+                        }
                     }
                 }
             }

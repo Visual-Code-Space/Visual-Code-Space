@@ -11,11 +11,12 @@ import java.util.HashMap;
  */
 public record SpecialButton(String key) {
 
+    private static final HashMap<String, SpecialButton> map = new HashMap<>();
+
     public static final SpecialButton CTRL = new SpecialButton("CTRL");
     public static final SpecialButton ALT = new SpecialButton("ALT");
     public static final SpecialButton SHIFT = new SpecialButton("SHIFT");
     public static final SpecialButton FN = new SpecialButton("FN");
-    private static final HashMap<String, SpecialButton> map = new HashMap<>();
 
     /**
      * Initialize a {@link SpecialButton}.

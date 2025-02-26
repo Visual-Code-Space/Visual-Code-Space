@@ -15,6 +15,7 @@
 
 package com.teixeira.vcspace.terminal
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Typeface
 import android.util.TypedValue
@@ -77,6 +78,7 @@ private var terminalView = WeakReference<TerminalView?>(null)
 var virtualKeysView = WeakReference<VirtualKeysView?>(null)
 var virtualKeysId = View.generateViewId()
 
+@SuppressLint("MaterialDesignInsteadOrbitDesign")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Terminal(modifier: Modifier = Modifier, terminalActivity: TerminalActivity) {
@@ -259,6 +261,7 @@ fun Terminal(modifier: Modifier = Modifier, terminalActivity: TerminalActivity) 
     }
 }
 
+@SuppressLint("MaterialDesignInsteadOrbitDesign")
 @Composable
 fun SelectableCard(
     selected: Boolean,

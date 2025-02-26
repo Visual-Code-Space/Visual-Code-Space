@@ -15,6 +15,7 @@
 
 package com.teixeira.vcspace.ui.theme
 
+import android.annotation.SuppressLint
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
@@ -24,6 +25,7 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -35,6 +37,7 @@ import com.teixeira.vcspace.core.settings.Settings.General.rememberFollowSystemT
 import com.teixeira.vcspace.core.settings.Settings.General.rememberIsAmoledMode
 import com.teixeira.vcspace.core.settings.Settings.General.rememberIsDarkMode
 import com.teixeira.vcspace.core.settings.Settings.General.rememberIsDynamicColor
+import kiwi.orbit.compose.ui.foundation.LocalContentColor
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -276,6 +279,7 @@ val unspecified_scheme = ColorFamily(
     Color.Unspecified, Color.Unspecified, Color.Unspecified, Color.Unspecified
 )
 
+@SuppressLint("MaterialDesignInsteadOrbitDesign")
 @Composable
 fun VCSpaceTheme(
     systemTheme: Boolean = isSystemInDarkTheme(),
@@ -305,8 +309,13 @@ fun VCSpaceTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
-        content = content
-    )
+    ) {
+        CompositionLocalProvider(
+            LocalContentColor provides androidx.compose.material3.LocalContentColor.current
+        ) {
+            content()
+        }
+    }
 }
 
 @Composable

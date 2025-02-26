@@ -1,6 +1,7 @@
 #include <android/log.h>
 #include <jni.h>
 #include <string>
+#include <vector>
 #include <sys/wait.h>
 #include <unistd.h>
 

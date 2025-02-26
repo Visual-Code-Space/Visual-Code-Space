@@ -34,6 +34,7 @@ webkit = "1.12.1"
 junit = "4.13.2"
 junit-version = "1.2.1"
 espresso-core = "3.6.1"
+orbit = "0.39.0"
 
 [libraries]
 
@@ -117,9 +118,13 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junit-version" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
 
+orbit-ui = { module = "kiwi.orbit.compose:ui", version.ref = "orbit" }
+orbit-icons = { module = "kiwi.orbit.compose:icons", version.ref = "orbit" }
+orbit-illustrations = { module = "kiwi.orbit.compose:illustrations", version.ref = "orbit" }
+
 [plugins]
-android-application = { id = "com.android.application", version = "8.6.0" }
-android-library = { id = "com.android.library", version = "8.6.0" }
+android-application = { id = "com.android.application", version = "8.8.0" }
+android-library = { id = "com.android.library", version = "8.8.0" }
 kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

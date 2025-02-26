@@ -11,6 +11,7 @@ plugins {
 
 android {
     namespace = "com.teixeira.vcspace"
+    ndkVersion = "28.0.13004108"
 
     androidResources {
         @Suppress("UnstableApiUsage")
@@ -128,6 +129,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
 
     coreLibraryDesugaring(libs.androidx.desugar)
+
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core)
@@ -178,7 +180,6 @@ dependencies {
     implementation(libs.bsh)
     implementation(libs.org.eclipse.jgit)
     implementation(libs.treeview)
-
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
     implementation(libs.okhttp)
@@ -187,6 +188,10 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
     implementation(libs.compose.markdown)
+
+    implementation(libs.orbit.ui)
+    implementation(libs.orbit.icons)
+    implementation(libs.orbit.illustrations)
 
     debugImplementation(libs.common.leakcanary)
     debugImplementation(libs.androidx.ui.tooling)

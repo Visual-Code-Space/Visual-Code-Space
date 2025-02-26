@@ -18,7 +18,6 @@ package com.teixeira.vcspace.activities.base
 import android.Manifest
 import android.content.Intent
 import android.graphics.Color
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
@@ -42,7 +41,6 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -59,13 +57,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.blankj.utilcode.util.AppUtils
-import com.blankj.utilcode.util.PathUtils
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -78,15 +76,13 @@ import com.teixeira.vcspace.ui.ToastHost
 import com.teixeira.vcspace.ui.rememberToastHostState
 import com.teixeira.vcspace.ui.theme.VCSpaceTheme
 import com.teixeira.vcspace.utils.isStoragePermissionGranted
-import java.io.File
-import androidx.core.net.toUri
+import kiwi.orbit.compose.ui.controls.Scaffold
 
 abstract class BaseComposeActivity : AppCompatActivity() {
     @OptIn(ExperimentalPermissionsApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        // setupKotlinStdlib()
 
         setContent {
             VCSpaceTheme {
@@ -241,21 +237,6 @@ abstract class BaseComposeActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    private fun setupKotlinStdlib() {
-        val filesDir = PathUtils.getExternalAppFilesPath()
-        val kotlinStdlib = "$filesDir/kotlin-stdlib.jar"
-
-        if (!File(kotlinStdlib).exists()) {
-            assets.open("kotlin-stdlib-2.0.20.jar").use { input ->
-                File(kotlinStdlib).outputStream().use { output ->
-                    input.copyTo(output)
-                }
-            }
-        }
-
-        System.setProperty("kotlin.java.stdlib.jar", kotlinStdlib)
     }
 }
 

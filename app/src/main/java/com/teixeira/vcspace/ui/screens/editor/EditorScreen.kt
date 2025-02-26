@@ -15,6 +15,7 @@
 
 package com.teixeira.vcspace.ui.screens.editor
 
+import android.graphics.Typeface
 import android.view.ViewGroup
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -32,7 +33,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCompositionContext
@@ -56,7 +56,6 @@ import com.google.ai.client.generativeai.type.GenerateContentResponse
 import com.itsvks.monaco.MonacoEditor
 import com.itsvks.monaco.MonacoLanguage
 import com.itsvks.monaco.MonacoTheme
-import com.itsvks.monaco.completion.InlineCompletionProvider
 import com.itsvks.monaco.option.AcceptSuggestionOnEnter
 import com.itsvks.monaco.option.MatchBrackets
 import com.itsvks.monaco.option.TextEditorCursorBlinkingStyle
@@ -67,8 +66,10 @@ import com.itsvks.monaco.option.WrappingStrategy
 import com.itsvks.monaco.option.minimap.MinimapOptions
 import com.itsvks.monaco.util.MonacoLanguageMapper
 import com.teixeira.vcspace.activities.Editor.LocalCommandPaletteManager
+import com.teixeira.vcspace.activities.Editor.LocalEditorSnackbarHostState
+import com.teixeira.vcspace.compose.ui.EditorTab
+import com.teixeira.vcspace.compose.ui.dialog.ConfirmDialog
 import com.teixeira.vcspace.core.ai.Gemini
-import com.teixeira.vcspace.core.components.editor.FileTabLayout
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberColorScheme
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberCurrentEditor
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberDeleteIndentOnBackspace
@@ -119,10 +120,10 @@ import com.teixeira.vcspace.ui.screens.editor.ai.CodeExplanationSheet
 import com.teixeira.vcspace.ui.screens.editor.ai.ImportComponentsSheet
 import com.teixeira.vcspace.ui.screens.editor.components.Symbols
 import com.teixeira.vcspace.ui.screens.editor.components.view.CodeEditorView
-import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
 import com.teixeira.vcspace.utils.launchWithProgressDialog
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
+import kiwi.orbit.compose.icons.IconName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -130,8 +131,7 @@ import kotlinx.coroutines.withContext
 @Composable
 fun EditorScreen(
     modifier: Modifier = Modifier,
-    viewModel: EditorViewModel = viewModel(),
-    fileExplorerViewModel: FileExplorerViewModel = viewModel()
+    viewModel: EditorViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val editorConfigMap = remember { viewModel.editorConfigMap }
@@ -159,9 +159,8 @@ fun EditorScreen(
     }
 
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
+    val toastHostState = LocalEditorSnackbarHostState.current
     val commandPaletteManager = LocalCommandPaletteManager.current
-    val toastHostState = LocalToastHostState.current
 
     var codeExplanationResponse: GenerateContentResponse? by remember { mutableStateOf(null) }
     var importComponentResponse: GenerateContentResponse? by remember { mutableStateOf(null) }
@@ -181,7 +180,6 @@ fun EditorScreen(
     }
 
     val compositionContext = rememberCompositionContext()
-    val showMonacoEditor = remember { mutableStateMapOf<String, Boolean>() }
 
     Column(modifier = modifier.onKeyEvent {
         if (it.isCtrlPressed && it.isShiftPressed && it.key == Key.P) {
@@ -197,9 +195,35 @@ fun EditorScreen(
 
         false
     }) {
-        FileTabLayout(
-            editorViewModel = viewModel
-        )
+        if (openedFiles.isNotEmpty()) {
+            var closeFileIndex: Int? by remember { mutableStateOf(null) }
+
+            closeFileIndex?.let {
+                ConfirmDialog(
+                    title = "Close File",
+                    message = "Are you sure you want to close this file?",
+                    onConfirm = {
+                        viewModel.closeFile(it)
+                        closeFileIndex = null
+                    },
+                    onDismiss = { closeFileIndex = null }
+                )
+            }
+
+            EditorTab(
+                files = openedFiles,
+                selectedFileIndex = selectedFileIndex,
+                onTabSelected = viewModel::selectFile,
+                onTabClose = { index -> closeFileIndex = index },
+                onTabReselected = { index ->
+                    toastHostState.showToast(
+                        message = "Tab reselected (Not yet implemented)",
+                        actionLabel = "dismiss",
+                        iconName = IconName.AlertCircle
+                    )
+                }
+            )
+        }
 
         val openedFile = openedFiles.getOrNull(selectedFileIndex)
 
@@ -352,9 +376,6 @@ private fun ConfigureMonacoEditor(
                 setCursorStyle(TextEditorCursorStyle.fromValue(cursorStyle))
                 setCursorBlinkingStyle(TextEditorCursorBlinkingStyle.fromValue(cursorBlinkingStyle))
                 setMinimapOptions(MinimapOptions(enabled = false))
-
-                inlineCompletionProvider =
-                    InlineCompletionProvider { language, textBeforeCursor, textAfterCursor -> language }
 
                 if (file.exists()) {
                     setLanguage(MonacoLanguageMapper.getLanguageByExtension(file.extension))
@@ -603,13 +624,21 @@ private fun ConfigureFontSettings(editor: VCSpaceEditor) {
 
     LaunchedEffect(fontFamily, fontSize) {
         editor.apply {
-            val font = ResourcesCompat.getFont(
-                context, when (fontFamily) {
-                    context.getString(R.string.pref_editor_font_value_firacode) -> R.font.firacode_regular
-                    context.getString(R.string.pref_editor_font_value_jetbrains) -> R.font.jetbrains_mono
-                    else -> R.font.jetbrains_mono
+            val font = with(context) {
+                when (fontFamily) {
+                    getString(R.string.pref_editor_font_value_firacode) -> {
+                        ResourcesCompat.getFont(this, R.font.firacode_regular)
+                    }
+
+                    getString(R.string.pref_editor_font_value_jetbrains) -> {
+                        Typeface.createFromAsset(assets, "fonts/JetBrainsMono-Regular.ttf")
+                    }
+
+                    else -> {
+                        Typeface.createFromAsset(assets, "fonts/JetBrainsMono-Regular.ttf")
+                    }
                 }
-            )
+            }
 
             typefaceText = font
             typefaceLineNumber = font
