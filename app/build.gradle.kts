@@ -191,7 +191,6 @@ dependencies {
 
     implementation(libs.orbit.ui)
     implementation(libs.orbit.icons)
-    implementation(libs.orbit.illustrations)
 
     debugImplementation(libs.common.leakcanary)
     debugImplementation(libs.androidx.ui.tooling)
