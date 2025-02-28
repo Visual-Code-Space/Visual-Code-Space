@@ -40,8 +40,11 @@ jobs:
       - name: Get Release Notes
         id: release_notes
         run: |
-          release_notes=$(cat RELEASE_NOTES.md)
-          echo "release_notes=$release_notes" >> $GITHUB_OUTPUT
+          {
+            echo 'release_notes<<EOF'
+            cat RELEASE_NOTES.md
+            echo 'EOF'
+          } >> "$GITHUB_ENV"
 
       - name: Create GitHub Release
         id: create_release
@@ -50,10 +53,10 @@ jobs:
           access_token: ${{ github.token }}
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
-          body: ${{ steps.release_notes.outputs.release_notes }}
+          body: ${{ env.release_notes }}
           draft: false
           prerelease: false
-
+          
       - name: Upload APK to Release
         uses: actions/upload-release-asset@v1
         with:
