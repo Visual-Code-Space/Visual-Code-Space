@@ -48,8 +48,9 @@ jobs:
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         with:
-          access_token: ${{ github.token }}
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
           body: ${{ env.RELEASE_NOTES }}
@@ -58,8 +59,9 @@ jobs:
           
       - name: Upload APK to Release
         uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         with:
-          access_token: ${{ github.token }}
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: app/build/outputs/apk/release/app-release.apk
           asset_name: app-release.apk
