@@ -40,11 +40,10 @@ jobs:
       - name: Get Release Notes
         id: release_notes
         run: |
-          {
-            echo 'release_notes<<EOF'
-            cat RELEASE_NOTES.md
-            echo 'EOF'
-          } >> "$GITHUB_ENV"
+          RELEASE_NOTES="$(cat RELEASE_NOTES.md)"
+          echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV
+          echo "$RELEASE_NOTES" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Create GitHub Release
         id: create_release
@@ -53,7 +52,7 @@ jobs:
           access_token: ${{ github.token }}
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
-          body: ${{ env.release_notes }}
+          body: ${{ env.RELEASE_NOTES }}
           draft: false
           prerelease: false
           
