@@ -15,9 +15,15 @@
 
 package com.teixeira.vcspace.ui.screens.editor.components
 
+import android.annotation.SuppressLint
+import android.widget.Toast
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Close
@@ -25,6 +31,7 @@ import androidx.compose.material.icons.rounded.ContentCopy
 import androidx.compose.material.icons.rounded.DeleteForever
 import androidx.compose.material.icons.rounded.DriveFileRenameOutline
 import androidx.compose.material.icons.rounded.Refresh
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -33,9 +40,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -44,6 +53,9 @@ import com.blankj.utilcode.util.ClipboardUtils
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerNavController
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
 import com.teixeira.vcspace.app.strings
+import com.teixeira.vcspace.compose.ui.filetree.FileTreeNode
+import com.teixeira.vcspace.compose.ui.filetree.FileTreeView
+import com.teixeira.vcspace.compose.ui.filetree.createFileTreeFromPath
 import com.teixeira.vcspace.core.components.editor.FileOptionItem
 import com.teixeira.vcspace.core.components.editor.FileOptionsSheet
 import com.teixeira.vcspace.core.components.editor.NavigationSpace
@@ -53,11 +65,11 @@ import com.teixeira.vcspace.events.OnCreateFileEvent
 import com.teixeira.vcspace.events.OnCreateFolderEvent
 import com.teixeira.vcspace.events.OnRefreshFolderEvent
 import com.teixeira.vcspace.extensions.openFile
+import com.teixeira.vcspace.extensions.toFile
 import com.teixeira.vcspace.file.File
+import com.teixeira.vcspace.file.wrapFile
 import com.teixeira.vcspace.git.GitViewModel
-import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.resources.R.string
-import com.teixeira.vcspace.ui.filetree.FileTree
 import com.teixeira.vcspace.ui.screens.EditorDrawerScreens
 import com.teixeira.vcspace.ui.screens.editor.EditorViewModel
 import com.teixeira.vcspace.ui.screens.editor.components.drawer.Heading
@@ -65,9 +77,13 @@ import com.teixeira.vcspace.ui.screens.editor.components.drawer.NavRail
 import com.teixeira.vcspace.ui.screens.editor.components.drawer.OpenFolderActions
 import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
 import com.teixeira.vcspace.utils.ApkInstaller
+import kiwi.orbit.compose.ui.controls.Text
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 
+@SuppressLint("MaterialDesignInsteadOrbitDesign")
 @Composable
 fun EditorDrawerSheet(
     fileExplorerViewModel: FileExplorerViewModel,
@@ -126,17 +142,31 @@ fun EditorDrawerSheet(
                     openedFolder?.let { folder ->
                         var selectedFile by remember { mutableStateOf<File?>(null) }
                         var showNewFileDialog by remember { mutableStateOf(false) }
-
                         var selectedFolder by remember { mutableStateOf(folder) }
+                        var rootNode: FileTreeNode? by remember { mutableStateOf(null) }
+                        //val _loadingProgress = MutableStateFlow(FileTreeNodeLoadingProgress())
+                        //val loadingProgress by _loadingProgress.collectAsStateWithLifecycle()
+
+                        LaunchedEffect(folder) {
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(context, "Loading Folder... It should not take longer than 10 seconds", Toast.LENGTH_SHORT).show()
+                            }
+
+                            rootNode = createFileTreeFromPath(folder.absolutePath)
+                        }
 
                         Column(
                             modifier = Modifier.fillMaxSize()
                         ) {
-                            FileTree(
-                                modifier = Modifier.weight(1f),
-                                path = folder,
-                                onFileClick = { file ->
-                                    if (!file.isDirectory) {
+                            rootNode?.let { node ->
+                                FileTreeView(
+                                    rootNode = node,
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .weight(1f),
+                                    onFileClick = {
+                                        val file = it.path.toFile().wrapFile()
+
                                         if (file.name.endsWith(".apk")) {
                                             ApkInstaller.installApplication(context, file)
                                         } else if (file.isValidText) {
@@ -145,10 +175,25 @@ fun EditorDrawerSheet(
                                         } else {
                                             context.openFile(file)
                                         }
+                                    },
+                                    onFileLongClick = { selectedFile = it.path.toFile().wrapFile() }
+                                )
+                            } ?: run {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .weight(1f),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Text("Loading Folder")
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        LinearProgressIndicator()
                                     }
-                                },
-                                onFileLongClick = { selectedFile = it }
-                            )
+                                }
+                            }
 
                             NavigationSpaceActions {
                                 when (it.id) {

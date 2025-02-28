@@ -113,6 +113,16 @@
             android:name=".terminal.service.TerminalService"
             android:exported="false"
             android:foregroundServiceType="specialUse" />
+
+        <service
+            android:name=".activities.TestActivity$HtmlService"
+            android:enabled="true"
+            android:exported="false"
+            android:process=":languageServerService" />
+
+        <profileable
+            android:shell="true"
+            tools:targetApi="q" />
     </application>
 
     <queries>

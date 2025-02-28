@@ -179,6 +179,8 @@ dependencies {
 
     implementation(libs.bsh)
     implementation(libs.org.eclipse.jgit)
+    implementation(libs.org.eclipse.lsp4j)
+    implementation(libs.org.eclipse.lsp4j.jsonrpc)
     implementation(libs.treeview)
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
@@ -188,6 +190,7 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
     implementation(libs.compose.markdown)
+    implementation(libs.androidsvg)
 
     implementation(libs.orbit.ui)
     implementation(libs.orbit.icons)

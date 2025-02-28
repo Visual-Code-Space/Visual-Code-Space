@@ -17,7 +17,11 @@ package com.teixeira.vcspace.ui.screens.file
 
 import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.teixeira.vcspace.PreferenceKeys
+import com.teixeira.vcspace.compose.ui.filetree.FileTreeNode
+import com.teixeira.vcspace.compose.ui.filetree.FileTreeNodeLoadingProgress
+import com.teixeira.vcspace.compose.ui.filetree.createFileTreeFromPath
 import com.teixeira.vcspace.events.OnOpenFolderEvent
 import com.teixeira.vcspace.events.OnRefreshFolderEvent
 import com.teixeira.vcspace.file.File
@@ -26,6 +30,7 @@ import com.teixeira.vcspace.preferences.defaultPrefs
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 
 class FileExplorerViewModel : ViewModel() {
@@ -34,6 +39,25 @@ class FileExplorerViewModel : ViewModel() {
 
     private val _isGitRepo = MutableStateFlow(false)
     val isGitRepo get() = _isGitRepo.asStateFlow()
+
+    private val _loadingProgress = MutableStateFlow(FileTreeNodeLoadingProgress())
+    val loadingProgress get() = _loadingProgress.asStateFlow()
+
+    private val _rootNode = MutableStateFlow<FileTreeNode?>(null)
+    val rootNode get() = _rootNode.asStateFlow()
+
+    fun loadFileTree(folderPath: String) {
+        viewModelScope.launch {
+            _rootNode.update { null }
+            _loadingProgress.update { FileTreeNodeLoadingProgress() }
+
+            val node = createFileTreeFromPath(folderPath) { progress ->
+                _loadingProgress.update { progress }
+            }
+
+            _rootNode.update { node }
+        }
+    }
 
     fun openFolder(path: File) {
         defaultPrefs.edit(commit = true) {

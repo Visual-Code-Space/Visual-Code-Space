@@ -1,5 +1,6 @@
 [versions]
 android-tree-sitter = "4.3.1"
+androidsvg = "1.4"
 browser = "1.8.0"
 bsh = "3.0.0-SNAPSHOT"
 compose-markdown = "0.5.4"
@@ -86,6 +87,7 @@ org-eclipse-lsp4j = { module = "org.eclipse.lsp4j:org.eclipse.lsp4j", version.re
 org-eclipse-lsp4j-jsonrpc = { module = "org.eclipse.lsp4j:org.eclipse.lsp4j.jsonrpc", version.ref = "lsp4j" }
 prdownloader = { module = "com.github.amitshekhariitbhu:PRDownloader", version.ref = "prdownloader" }
 bsh = { module = "org.beanshell:bsh", version.ref = "bsh" }
+androidsvg = { module = "com.caverock:androidsvg-aar", version.ref = "androidsvg" }
 
 android-tree-sitter = { module = "com.itsaky.androidide.treesitter:android-tree-sitter", version.ref = "android-tree-sitter" }
 tree-sitter-java = { module = "com.itsaky.androidide.treesitter:tree-sitter-java", version.ref = "android-tree-sitter" }
@@ -120,7 +122,6 @@ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-co
 
 orbit-ui = { module = "kiwi.orbit.compose:ui", version.ref = "orbit" }
 orbit-icons = { module = "kiwi.orbit.compose:icons", version.ref = "orbit" }
-orbit-illustrations = { module = "kiwi.orbit.compose:illustrations", version.ref = "orbit" }
 
 [plugins]
 android-application = { id = "com.android.application", version = "8.8.0" }

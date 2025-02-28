@@ -17,6 +17,8 @@ package com.teixeira.vcspace.utils
 
 import android.os.Handler
 import android.os.Looper
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import okhttp3.internal.notify
 import okhttp3.internal.wait
 
@@ -41,5 +43,16 @@ fun <R> runOnUiThread(block: () -> R): R {
         }
     }
 
+    return result!!
+}
+
+fun <R> CoroutineScope.execute(block: suspend () -> R): R {
+    var result: R? = null
+    launch {
+        result = block()
+    }
+    while (result == null) {
+        Thread.sleep(100)
+    }
     return result!!
 }
