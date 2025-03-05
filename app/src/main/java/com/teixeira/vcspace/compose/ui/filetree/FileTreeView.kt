@@ -19,6 +19,7 @@ import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
@@ -33,6 +34,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.InsertDriveFile
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.FolderOpen
@@ -51,6 +53,8 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.teixeira.vcspace.compose.ui.graphics.rememberSvgAssetImageBitmap
+import com.teixeira.vcspace.core.FileIcons
 
 @SuppressLint("MaterialDesignInsteadOrbitDesign")
 @Composable
@@ -137,22 +141,46 @@ private fun FileTreeNodeItem(
                 Spacer(modifier = Modifier.width(24.dp))
             }
 
-            Icon(
-                imageVector = if (node.isDirectory) {
-                    if (isExpanded) Icons.Default.FolderOpen else Icons.Default.Folder
-                } else getIconForFile(node),
-                contentDescription = if (node.isDirectory) "Folder" else "File",
-                tint = if (node.isDirectory) Color(0xFFFFCA28) else MaterialTheme.colorScheme.onSurface.copy(
-                    alpha = 0.8f
-                ),
-                modifier = Modifier.size(20.dp)
-            )
-
-//            Image(
-//                bitmap = rememberSvgAssetImageBitmap("files/icons/3d.svg"),
-//                contentDescription = null,
-//                modifier = Modifier.size(20.dp)
-//            )
+            if (node.isDirectory) {
+                if (FileIcons.getSvgIconForFolder(
+                        node.path,
+                        isExpanded = false
+                    ) == "files/icons/folder.svg"
+                ) {
+                    Icon(
+                        imageVector = if (isExpanded) Icons.Default.FolderOpen else Icons.Default.Folder,
+                        contentDescription = "Folder",
+                        tint = Color(0xFFFFCA28),
+                        modifier = Modifier.size(20.dp)
+                    )
+                } else {
+                    Image(
+                        bitmap = rememberSvgAssetImageBitmap(
+                            FileIcons.getSvgIconForFolder(
+                                node.path,
+                                isExpanded = isExpanded
+                            )
+                        ),
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            } else {
+                if (FileIcons.getSvgIconForFile(node.path) == "files/icons/file.svg") {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.InsertDriveFile,
+                        contentDescription = "File",
+                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+                        modifier = Modifier.size(20.dp)
+                    )
+                } else {
+                    Image(
+                        bitmap = rememberSvgAssetImageBitmap(FileIcons.getSvgIconForFile(node.path)),
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.width(8.dp))
 

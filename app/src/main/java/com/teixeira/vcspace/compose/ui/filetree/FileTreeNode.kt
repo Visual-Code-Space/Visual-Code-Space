@@ -86,7 +86,7 @@ suspend fun createFileTreeFromPath(
         return withContext(Dispatchers.IO) {
             if (isDirectory) {
                 val childFiles = file.listFiles()
-                    ?.filter { !it.isHidden }
+                    // ?.filter { !it.isHidden }
                     ?.sortedWith(compareBy({ !it.isDirectory }, { it.name.lowercase() }))
                     ?: emptyList()
 

@@ -143,7 +143,7 @@ fun EditorDrawerSheet(
                         var selectedFile by remember { mutableStateOf<File?>(null) }
                         var showNewFileDialog by remember { mutableStateOf(false) }
                         var selectedFolder by remember { mutableStateOf(folder) }
-                        var rootNode: FileTreeNode? by remember { mutableStateOf(null) }
+                        val rootNode by fileExplorerViewModel.rootNode.collectAsStateWithLifecycle()
                         //val _loadingProgress = MutableStateFlow(FileTreeNodeLoadingProgress())
                         //val loadingProgress by _loadingProgress.collectAsStateWithLifecycle()
 
@@ -151,8 +151,7 @@ fun EditorDrawerSheet(
                             withContext(Dispatchers.Main) {
                                 Toast.makeText(context, "Loading Folder... It should not take longer than 10 seconds", Toast.LENGTH_SHORT).show()
                             }
-
-                            rootNode = createFileTreeFromPath(folder.absolutePath)
+                            fileExplorerViewModel.loadFileTree(folder.absolutePath)
                         }
 
                         Column(
