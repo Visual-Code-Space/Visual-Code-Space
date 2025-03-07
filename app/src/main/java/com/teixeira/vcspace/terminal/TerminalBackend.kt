@@ -45,7 +45,7 @@ class TerminalBackend(
     override fun onSessionFinished(finishedSession: TerminalSession) {
         activity.terminalBinder?.terminateSession(activity.terminalBinder!!.service.currentSession.value)
         if (activity.terminalBinder!!.service.sessionList.isEmpty()) {
-            activity.finish()
+            //activity.finish()
         } else {
             val sessionId = activity.terminalBinder!!.service.sessionList.last()
             changeSession(activity, sessionId)
@@ -58,7 +58,7 @@ class TerminalBackend(
 
     override fun onPasteTextFromClipboard(session: TerminalSession) {
         val clip = ClipboardUtils.getText().toString()
-        if (clip.trim { it <= ' ' }.isNotEmpty() && terminal.mEmulator != null) {
+        if (clip.trim().isNotEmpty() && terminal.mEmulator != null) {
             terminal.mEmulator.paste(clip)
         }
     }

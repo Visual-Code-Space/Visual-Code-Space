@@ -20,7 +20,6 @@ import android.content.Context
 // From
 // https://github.com/PsiCodes/KtxPy/blob/master/app/src/main/java/github/psicodes/ktxpy/utils/Commands.kt
 object TerminalPythonCommands {
-
     fun getInterpreterCommand(context: Context, filePath: String): String {
         val appLibDirPath = context.applicationInfo.nativeLibraryDir
         val appFileDirPath = context.filesDir.absolutePath

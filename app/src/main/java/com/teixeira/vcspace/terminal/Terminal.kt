@@ -62,6 +62,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.teixeira.vcspace.activities.TerminalActivity
+import com.teixeira.vcspace.activities.TerminalActivity.Companion.KEY_PYTHON_FILE_PATH
 import com.teixeira.vcspace.terminal.service.TerminalService
 import com.teixeira.vcspace.ui.virtualkeys.VirtualKeysConstants
 import com.teixeira.vcspace.ui.virtualkeys.VirtualKeysInfo
@@ -88,6 +89,12 @@ fun Terminal(modifier: Modifier = Modifier, terminalActivity: TerminalActivity) 
 
     LaunchedEffect(Unit) {
         context.startService(Intent(context, TerminalService::class.java))
+
+        if (terminalActivity.intent.extras?.containsKey(KEY_PYTHON_FILE_PATH) == true
+            && terminalView.get() != null
+        ) {
+            terminalActivity.compilePython(terminalView.get()!!)
+        }
     }
 
     Box(modifier = Modifier.imePadding()) {

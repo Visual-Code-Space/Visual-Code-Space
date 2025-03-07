@@ -68,6 +68,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.teixeira.vcspace.app.strings
+import com.teixeira.vcspace.compose.LocalDarkMode
 import com.teixeira.vcspace.core.components.common.VCSpaceLargeTopBar
 import com.teixeira.vcspace.core.settings.Settings.General.rememberFollowSystemTheme
 import com.teixeira.vcspace.core.settings.Settings.General.rememberIsDarkMode
@@ -127,7 +128,7 @@ abstract class BaseComposeActivity : AppCompatActivity() {
                     onPauseOrDispose { }
                 }
 
-                ProvideBaseCompositionLocals {
+                ProvideBaseCompositionLocals(darkMode = darkTheme) {
 
                     if (hasPermission) {
                         MainScreen()
@@ -142,13 +143,17 @@ abstract class BaseComposeActivity : AppCompatActivity() {
     }
 
     @Composable
-    private fun ProvideBaseCompositionLocals(content: @Composable () -> Unit) {
+    private fun ProvideBaseCompositionLocals(
+        darkMode: Boolean,
+        content: @Composable () -> Unit
+    ) {
         val toastHostState = rememberToastHostState()
 
         CompositionLocalProvider(
             LocalLifecycleScope provides lifecycleScope,
             LocalLayoutInflater provides layoutInflater,
             LocalToastHostState provides toastHostState,
+            LocalDarkMode provides darkMode,
             content = content
         )
     }
@@ -176,9 +181,9 @@ abstract class BaseComposeActivity : AppCompatActivity() {
 
             Column(
                 modifier = Modifier
-                  .padding(innerPadding)
-                  .fillMaxSize()
-                  .padding(16.dp)
+                    .padding(innerPadding)
+                    .fillMaxSize()
+                    .padding(16.dp)
             ) {
                 Text(
                     text = stringResource(strings.file_storage_access),
@@ -205,8 +210,8 @@ abstract class BaseComposeActivity : AppCompatActivity() {
                     OutlinedButton(
                         onClick = AppUtils::exitApp,
                         modifier = Modifier
-                          .fillMaxWidth()
-                          .weight(1f)
+                            .fillMaxWidth()
+                            .weight(1f)
                     ) {
                         Text(stringResource(strings.exit))
                     }
@@ -229,8 +234,8 @@ abstract class BaseComposeActivity : AppCompatActivity() {
                             }
                         },
                         modifier = Modifier
-                          .fillMaxWidth()
-                          .weight(1f)
+                            .fillMaxWidth()
+                            .weight(1f)
                     ) {
                         Text(stringResource(strings.file_storage_access_grant))
                     }

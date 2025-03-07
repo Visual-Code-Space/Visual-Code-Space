@@ -15,15 +15,25 @@
 
 package com.teixeira.vcspace.compose.ui
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -34,6 +44,7 @@ import kiwi.orbit.compose.ui.controls.Separator
 import kiwi.orbit.compose.ui.controls.Tab
 import kiwi.orbit.compose.ui.controls.Text
 
+@SuppressLint("MaterialDesignInsteadOrbitDesign")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditorTab(
@@ -42,7 +53,9 @@ fun EditorTab(
     onTabSelected: (Int) -> Unit,
     onTabClose: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    onTabReselected: (Int) -> Unit = {}
+    onTabReselected: (Int) -> Unit = {},
+    onCloseOthers: (Int) -> Unit = {},
+    onCloseAll: () -> Unit = {}
 ) {
     PrimaryScrollableTabRow(
         selectedTabIndex = selectedFileIndex,
@@ -51,10 +64,13 @@ fun EditorTab(
         divider = {}
     ) {
         files.forEachIndexed { index, file ->
+            var expanded by remember { mutableStateOf(false) }
+
             Tab(
                 selected = index == selectedFileIndex,
                 onClick = {
                     if (index == selectedFileIndex) {
+                        expanded = true
                         onTabReselected(index)
                     } else {
                         onTabSelected(index)
@@ -78,6 +94,35 @@ fun EditorTab(
                             onTabClose(index)
                         }
                     )
+
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text("Close This") },
+                            onClick = {
+                                expanded = false
+                                onTabClose(index)
+                            }
+                        )
+
+                        DropdownMenuItem(
+                            text = { Text("Close Others") },
+                            onClick = {
+                                expanded = false
+                                onCloseOthers(index)
+                            }
+                        )
+
+                        DropdownMenuItem(
+                            text = { Text("Close All") },
+                            onClick = {
+                                expanded = false
+                                onCloseAll()
+                            }
+                        )
+                    }
                 }
             }
         }

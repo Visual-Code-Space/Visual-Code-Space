@@ -1,3 +1,4 @@
+import com.android.build.api.dsl.LintOptions
 import java.util.Properties
 
 plugins {
@@ -102,6 +103,10 @@ android {
             path = file("src/main/cpp/CMakeLists.txt")
             version = "3.22.1"
         }
+    }
+
+    lint {
+        disable += listOf("MaterialDesignInsteadOrbitDesign")
     }
 }
 

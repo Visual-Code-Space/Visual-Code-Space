@@ -53,6 +53,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.teixeira.vcspace.compose.LocalDarkMode
 import com.teixeira.vcspace.compose.ui.graphics.rememberSvgAssetImageBitmap
 import com.teixeira.vcspace.core.FileIcons
 
@@ -90,7 +91,6 @@ fun FileTreeView(
 }
 
 @OptIn(ExperimentalFoundationApi::class)
-@SuppressLint("MaterialDesignInsteadOrbitDesign")
 @Composable
 private fun FileTreeNodeItem(
     node: FileTreeNode,
@@ -101,6 +101,8 @@ private fun FileTreeNodeItem(
     var isExpanded by remember { mutableStateOf(false) }
     val hasChildren = node.isDirectory && node.children.isNotEmpty()
     val horizontalPadding = (depth * 16).dp
+
+    val isLight = LocalDarkMode.current.not()
 
     Column {
         Row(
@@ -157,8 +159,9 @@ private fun FileTreeNodeItem(
                     Image(
                         bitmap = rememberSvgAssetImageBitmap(
                             FileIcons.getSvgIconForFolder(
-                                node.path,
-                                isExpanded = isExpanded
+                                folderPath = node.path,
+                                isExpanded = isExpanded,
+                                isLight = isLight
                             )
                         ),
                         contentDescription = null,
@@ -175,7 +178,12 @@ private fun FileTreeNodeItem(
                     )
                 } else {
                     Image(
-                        bitmap = rememberSvgAssetImageBitmap(FileIcons.getSvgIconForFile(node.path)),
+                        bitmap = rememberSvgAssetImageBitmap(
+                            FileIcons.getSvgIconForFile(
+                                filePath = node.path,
+                                isLight = isLight
+                            )
+                        ),
                         contentDescription = null,
                         modifier = Modifier.size(20.dp)
                     )

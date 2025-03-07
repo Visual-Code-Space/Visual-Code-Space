@@ -91,7 +91,7 @@ class TerminalActivity : ComponentActivity() {
             val extras = intent.extras
             if (extras != null && extras.containsKey(KEY_WORKING_DIRECTORY)) {
                 val directory = extras.getString(KEY_WORKING_DIRECTORY, null)
-                return if (directory != null && directory.trim { it <= ' ' }.isNotEmpty()) directory
+                return if (directory != null && directory.trim().isNotEmpty()) directory
                 else PathUtils.getRootPathExternalFirst()
             }
             return PathUtils.getRootPathExternalFirst()
@@ -195,7 +195,8 @@ class TerminalActivity : ComponentActivity() {
                         error.printStackTrace()
                         ToastUtils.showShort("Setup Failed: ${error.message}")
                         finish()
-                    })
+                    }
+                )
             } catch (e: Exception) {
                 e.printStackTrace()
                 ToastUtils.showShort("Setup Failed: ${e.message}")
@@ -229,10 +230,15 @@ class TerminalActivity : ComponentActivity() {
 
     fun compilePython(terminal: TerminalView) {
         val filePath = intent?.extras?.getString(KEY_PYTHON_FILE_PATH, null) ?: return
-        if (filePath.trim { it <= ' ' }.isNotEmpty()) {
+        if (filePath.trim().isNotEmpty()) {
+            val message = "\\033[32;49;1mCompiling\\033[0m $filePath\n"
             ThreadUtils.getMainHandler().post {
                 terminal.mTermSession.write(
-                    "${TerminalPythonCommands.getInterpreterCommand(this, filePath)}\r"
+                    if (alpineDir.resolve("usr/bin/python").exists()) {
+                        "clear && python $filePath && exit\r"
+                    } else {
+                        "clear && apk add python3 && clear && python $filePath && exit\r"
+                    }
                 )
             }
         }

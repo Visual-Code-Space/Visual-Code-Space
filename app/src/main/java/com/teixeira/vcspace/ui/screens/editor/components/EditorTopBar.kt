@@ -308,20 +308,14 @@ fun EditorTopBar(
                                     }
                                 }
 
-                                "py" -> downloadPythonPackage(
-                                    scope = scope,
-                                    context = context,
-                                    view = view
-                                ) {
-                                    context.startActivity(
-                                        Intent(context, TerminalActivity::class.java).apply {
-                                            putExtra(
-                                                TerminalActivity.KEY_PYTHON_FILE_PATH,
-                                                selectedFile.file.absolutePath
-                                            )
-                                        }
-                                    )
-                                }
+                                "py" -> context.startActivity(
+                                    Intent(context, TerminalActivity::class.java).apply {
+                                        putExtra(
+                                            TerminalActivity.KEY_PYTHON_FILE_PATH,
+                                            selectedFile.file.absolutePath
+                                        )
+                                    }
+                                )
 
                                 "md" -> {
                                     context.startActivity(

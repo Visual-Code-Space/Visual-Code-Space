@@ -15,7 +15,9 @@
 
 package com.teixeira.vcspace.compose
 
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.staticCompositionLocalOf
 import com.teixeira.vcspace.core.MenuManager
 
 val LocalMenuManager = staticCompositionLocalOf { MenuManager.instance }
+val LocalDarkMode = compositionLocalOf { false }

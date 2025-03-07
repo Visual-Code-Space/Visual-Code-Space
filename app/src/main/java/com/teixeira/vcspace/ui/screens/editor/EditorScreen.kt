@@ -199,9 +199,11 @@ fun EditorScreen(
             var closeFileIndex: Int? by remember { mutableStateOf(null) }
 
             closeFileIndex?.let {
+                val file = openedFiles[it].file
+
                 ConfirmDialog(
                     title = "Close File",
-                    message = "Are you sure you want to close this file?",
+                    message = "Are you sure you want to close ${file.name} ?",
                     onConfirm = {
                         viewModel.closeFile(it)
                         closeFileIndex = null
@@ -215,13 +217,8 @@ fun EditorScreen(
                 selectedFileIndex = selectedFileIndex,
                 onTabSelected = viewModel::selectFile,
                 onTabClose = { index -> closeFileIndex = index },
-                onTabReselected = { index ->
-                    toastHostState.showToast(
-                        message = "Tab reselected (Not yet implemented)",
-                        actionLabel = "dismiss",
-                        iconName = IconName.AlertCircle
-                    )
-                }
+                onCloseOthers = viewModel::closeOthers,
+                onCloseAll = viewModel::closeAll
             )
         }
 

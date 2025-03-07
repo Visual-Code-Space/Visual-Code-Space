@@ -218,7 +218,7 @@ object FileIcons {
         FileIcon("react_ts", fileExtensions = listOf("tsx")),
         FileIcon(
             name = "rocket",
-            fileExtensions = listOf(
+            fileNames = listOf(
                 ".release-it.json",
                 ".release-it.ts",
                 ".release-it.js",
@@ -832,8 +832,8 @@ object FileIcons {
         val fileName = file.name.lowercase()
         val extension = fileName.substringAfter(".", "").lowercase()
 
-        val icon = fileIcons.find {
-            fileName in it.fileNames || extension in it.fileExtensions
+        val icon = fileIcons.find { fileName in it.fileNames } ?: fileIcons.find {
+            extension in it.fileExtensions
         } ?: defaultFileIcon
 
         return if (icon.light && isLight) {
