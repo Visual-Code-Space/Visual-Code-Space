@@ -67,9 +67,6 @@ import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.KeyboardUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.blankj.utilcode.util.UriUtils
-import com.downloader.Error
-import com.downloader.OnDownloadListener
-import com.downloader.PRDownloader
 import com.google.android.material.snackbar.Snackbar
 import com.hzy.libp7zip.P7ZipApi
 import com.teixeira.vcspace.PYTHON_PACKAGE_URL_32_BIT
@@ -199,7 +196,6 @@ fun EditorTopBar(
     }
 
     val context = LocalContext.current
-    val view = LocalView.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
     var isKeyboardOpen by remember { mutableStateOf(KeyboardUtils.isSoftInputVisible(context as Activity)) }
@@ -642,66 +638,5 @@ private fun extractPythonFile(
                 file.delete()
             }
         }
-    }
-}
-
-private fun downloadPythonPackage(
-    scope: CoroutineScope,
-    context: Context,
-    view: View,
-    onDownloaded: () -> Unit
-) {
-    if (pythonDownloaded) {
-        onDownloaded()
-        return
-    }
-
-    if (pythonExtracted) {
-        FileUtils.deleteAllInDir(context.filesDir)
-    }
-
-    val url = if (Process.is64Bit()) PYTHON_PACKAGE_URL_64_BIT else PYTHON_PACKAGE_URL_32_BIT
-    val outputFile = JFile(context.filesDir, "python.7z")
-
-    scope.launchWithProgressDialog(
-        uiContext = context,
-        context = Dispatchers.IO,
-        configureBuilder = {
-            it.setTitle("Downloading Python")
-                .setMessage(strings.python_downloading_python_compiler)
-                .setCancelable(false)
-                .setIndeterminate(false)
-                .setMax(100)
-        }
-    ) { builder, dialog ->
-        PRDownloader.download(url, outputFile.parent, outputFile.name)
-            .build()
-            .setOnProgressListener {
-                val progress = (it.currentBytes * 100 / it.totalBytes).toInt()
-                builder.setProgress(progress).setMessage("Downloading... $progress%")
-            }
-            .start(object : OnDownloadListener {
-                override fun onDownloadComplete() {
-                    extractPythonFile(
-                        scope = scope,
-                        context = context,
-                        filePath = outputFile.absolutePath
-                    ) {
-                        outputFile.delete()
-                        pythonDownloaded = true
-                        onDownloaded()
-                    }
-                }
-
-                override fun onError(error: Error) {
-                    dialog.dismiss()
-
-                    Snackbar.make(
-                        view,
-                        if (error.isConnectionError) context.getString(R.string.connection_failed) else if (error.isServerError) "Server error!" else "Download failed! Something went wrong.",
-                        Snackbar.LENGTH_SHORT
-                    ).setAnimationMode(Snackbar.ANIMATION_MODE_FADE).show()
-                }
-            })
     }
 }

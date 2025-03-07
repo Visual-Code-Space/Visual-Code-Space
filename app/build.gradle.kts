@@ -1,4 +1,3 @@
-import com.android.build.api.dsl.LintOptions
 import java.util.Properties
 
 plugins {
@@ -90,7 +89,10 @@ android {
         jniLibs { useLegacyPackaging = true }
     }
 
-    lint { abortOnError = false }
+    lint {
+        abortOnError = false
+        disable += listOf("MaterialDesignInsteadOrbitDesign")
+    }
 
     buildFeatures {
         viewBinding = true
@@ -103,10 +105,6 @@ android {
             path = file("src/main/cpp/CMakeLists.txt")
             version = "3.22.1"
         }
-    }
-
-    lint {
-        disable += listOf("MaterialDesignInsteadOrbitDesign")
     }
 }
 
@@ -166,7 +164,6 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.browser)
 
-    implementation(libs.prdownloader)
     implementation(libs.retrofit)
 
     implementation(project(":core:common"))
@@ -186,7 +183,6 @@ dependencies {
     implementation(libs.org.eclipse.jgit)
     implementation(libs.org.eclipse.lsp4j)
     implementation(libs.org.eclipse.lsp4j.jsonrpc)
-    implementation(libs.treeview)
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
     implementation(libs.okhttp)

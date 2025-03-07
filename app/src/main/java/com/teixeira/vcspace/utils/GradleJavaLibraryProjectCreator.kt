@@ -18,12 +18,10 @@ package com.teixeira.vcspace.utils
 import android.content.Context
 import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.ToastUtils
-import com.downloader.Error
-import com.downloader.OnDownloadListener
-import com.downloader.PRDownloader
 import com.teixeira.vcspace.extensions.extractZipFile
 import com.teixeira.vcspace.extensions.toFile
 import com.teixeira.vcspace.resources.R
+import com.teixeira.vcspace.tasks.Downloader
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.runBlocking
@@ -60,7 +58,7 @@ object GradleJavaLibraryProjectCreator {
             } else {
                 val file = File(context.filesDir, "android.jar")
                 runBlocking {
-                    downloadAndroidJar(context, file) {
+                    downloadAndroidJar(file) {
                         androidJarInternal.createNewFile()
                         androidJarInternal.writeBytes(it.readBytes())
                         androidJar.writeBytes(androidJarInternal.readBytes())
@@ -230,25 +228,26 @@ object GradleJavaLibraryProjectCreator {
     }
 
     private suspend fun downloadAndroidJar(
-        context: Context,
         outputFile: File,
         onDownloadComplete: (File) -> Unit
     ) {
         withContext(currentCoroutineContext()) {
-            PRDownloader.download(ANDROID_JAR, outputFile.parent, outputFile.name)
-                .build().start(object : OnDownloadListener {
-                    override fun onDownloadComplete() {
-                        onDownloadComplete(outputFile)
-                    }
-
-                    override fun onError(error: Error) {
-                        runOnUiThread {
-                            ToastUtils.showShort(
-                                if (error.isConnectionError) context.getString(R.string.connection_failed) else if (error.isServerError) "Server error!" else "Download failed! Something went wrong.",
-                            )
+            try {
+                Downloader
+                    .download(url = ANDROID_JAR, outputFile = outputFile)
+                    .collect { progress ->
+                        if (progress.error != null) {
+                            throw progress.error!!
+                        }
+                        if (progress.isCompleted) {
+                            onDownloadComplete(outputFile)
                         }
                     }
-                })
+            } catch (e: Exception) {
+                outputFile.delete() // Clean up incomplete file
+                ToastUtils.showLong("Failed to download Android JAR")
+                throw e
+            }
         }
     }
 }

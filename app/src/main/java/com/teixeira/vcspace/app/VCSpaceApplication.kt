@@ -2,7 +2,6 @@ package com.teixeira.vcspace.app
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -10,7 +9,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.Process
@@ -23,10 +21,7 @@ import androidx.core.content.FileProvider
 import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.PermissionUtils
 import com.blankj.utilcode.util.PermissionUtils.SimpleCallback
-import com.blankj.utilcode.util.ThrowableUtils
-import com.downloader.PRDownloader
 import com.teixeira.vcspace.activities.CrashActivity
-import com.teixeira.vcspace.activities.EditorActivity
 import com.teixeira.vcspace.extensions.doIfNull
 import com.teixeira.vcspace.providers.GrammarProvider
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry
@@ -72,7 +67,6 @@ class VCSpaceApplication : BaseApplication() {
         Thread.setDefaultUncaughtExceptionHandler(CrashHandler())
         appInstance = this
 
-        PRDownloader.initialize(applicationContext)
         GrammarProvider.initialize(this)
         loadDefaultThemes()
     }

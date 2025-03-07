@@ -198,7 +198,7 @@ fun EditorSettingsScreen(
 
         listPreference(
             key = CURRENT_EDITOR.name,
-            title = { Text(text = "${stringResource(R.string.current_editor)} ($it Editor)") },
+            title = { Text(text = "${stringResource(R.string.current_editor)} ($it)") },
             summary = { Text(text = getEditorDescription(it)) },
             rememberState = { currentEditor },
             defaultValue = currentEditor.value,
@@ -552,7 +552,7 @@ fun EditorSettingsScreen(
 }
 
 private fun getEditorDescription(editorName: String): String {
-    return when (editorName.lowercase()) {
+    return when (editorName.substringBefore(" ").lowercase()) {
         "sora" -> "Prioritizes stability for a smooth editing experience."
         "monaco" -> "Offers more advanced features, but may be less stable. Some settings may not be fully supported."
         else -> ""
