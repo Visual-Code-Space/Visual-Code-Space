@@ -339,4 +339,6 @@
     <string name="enter_prompt">Please enter a prompt</string>
     <string name="generating_code">Generating code…</string>
     <string name="tell_me_what_you_want_to_generate">Tell me what you want to generate…</string>
+
+    <string name="open_source_licences">Open Source Licences</string>
 </resources>

@@ -7,6 +7,7 @@ plugins {
     id("androidx.navigation.safeargs.kotlin")
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.aboutlibraries)
 }
 
 android {
@@ -192,6 +193,8 @@ dependencies {
     implementation(libs.coil.network.okhttp)
     implementation(libs.compose.markdown)
     implementation(libs.androidsvg)
+    implementation(libs.aboutlibraries.core)
+    implementation(libs.aboutlibraries.compose.m3)
 
     implementation(libs.orbit.ui)
     implementation(libs.orbit.icons)

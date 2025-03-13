@@ -21,7 +21,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Public
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -172,8 +175,7 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
 
                     preference(
                         key = "about_vcspace",
-                        title = { Text("About VCSpace") },
-                        summary = { Text("More about ${stringResource(strings.app_name)}.") },
+                        title = { Text(stringResource(strings.open_source_licences)) },
                         onClick = {
                             context.open(AboutActivity::class.java)
                         }
