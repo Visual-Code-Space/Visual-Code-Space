@@ -36,7 +36,7 @@ fun rememberSvgAssetImageBitmap(path: String): ImageBitmap {
 }
 
 private fun getBitmapFromSvg(svg: SVG): Bitmap {
-    val bitmap = createBitmap(max(svg.documentWidth.toInt(), 24), max(svg.documentHeight.toInt(), 24))
+    val bitmap = createBitmap(max(svg.documentWidth.toInt(), 300), max(svg.documentHeight.toInt(), 300))
     svg.renderToCanvas(Canvas(bitmap))
     return bitmap
 }

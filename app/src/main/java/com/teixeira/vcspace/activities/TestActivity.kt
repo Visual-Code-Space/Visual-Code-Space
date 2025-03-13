@@ -34,6 +34,7 @@ import com.teixeira.vcspace.lsp.html.HtmlLanguageServer
 import io.github.rosemoe.sora.lsp.client.connection.SocketStreamConnectionProvider
 import io.github.rosemoe.sora.lsp.client.languageserver.serverdefinition.CustomLanguageServerDefinition
 import io.github.rosemoe.sora.lsp.client.languageserver.serverdefinition.CustomLanguageServerDefinition.ServerConnectProvider
+import io.github.rosemoe.sora.lsp.client.languageserver.wrapper.EventHandler
 import io.github.rosemoe.sora.lsp.editor.LspEditor
 import io.github.rosemoe.sora.lsp.editor.LspLanguage
 import io.github.rosemoe.sora.lsp.editor.LspProject
@@ -62,31 +63,50 @@ class TestActivity : BaseComposeActivity() {
             withContext(Dispatchers.Main) {
                 println("Starting Language Server...")
                 editor.editable = false
+                
+                // Configure editor for better LSP integration
+                editor.apply {
+                    nonPrintablePaintingFlags = CodeEditor.FLAG_DRAW_WHITESPACE_LEADING or 
+                                               CodeEditor.FLAG_DRAW_LINE_SEPARATOR or
+                                               CodeEditor.FLAG_DRAW_WHITESPACE_IN_SELECTION
+                    getComponent<EditorAutoCompletion>().apply {
+                        isEnabled = true
+                        setMaxHeight(300)
+                    }
+                }
             }
 
             val intent = Intent(this@TestActivity, HtmlService::class.java)
             intent.putExtra("port", 2087)
             startService(intent)
 
+            // Wait a moment for the service to start
+            delay(500)
+
             val serverDefinition =
                 object : CustomLanguageServerDefinition("html", ServerConnectProvider {
                     SocketStreamConnectionProvider(2087)
                 }) {
-
+                    override val eventListener: EventHandler.EventListener
+                        get() = super.eventListener
                 }
 
             lspProject = LspProject(filesDir.absolutePath)
             lspProject.addServerDefinition(serverDefinition)
 
             withContext(Dispatchers.Main) {
-                lspEditor = lspProject.createEditor(filesDir.resolve("index.html").absolutePath)
-                lspEditor.wrapperLanguage = LspLanguage(lspEditor)
+                val htmlFile = filesDir.resolve("index.html").absolutePath
+                lspEditor = lspProject.createEditor(htmlFile)
+                val lspLanguage = LspLanguage(lspEditor)
+                lspEditor.wrapperLanguage = lspLanguage
+                editor.setEditorLanguage(lspLanguage)
                 lspEditor.editor = editor
             }
 
-            var connected: Boolean
-            delay(Timeout[Timeouts.INIT].toLong())
+            // Give more time for connection
+            delay(1000)
 
+            var connected = false
             try {
                 lspEditor.connectWithTimeout()
                 connected = true
@@ -125,7 +145,11 @@ class TestActivity : BaseComposeActivity() {
             )
 
             connectToLsp()
-            editor.setText(file.readText(), null)
+            
+            // Set text after LSP connection is established
+            withContext(Dispatchers.Main) {
+                editor.setText(file.readText(), null)
+            }
         }
 
         Box(
@@ -151,6 +175,9 @@ class TestActivity : BaseComposeActivity() {
     }
 
     class HtmlService : Service() {
+        private var serverSocket: ServerSocket? = null
+        private var running = true
+        
         override fun onBind(intent: Intent): IBinder? {
             return null
         }
@@ -158,33 +185,51 @@ class TestActivity : BaseComposeActivity() {
         override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
             thread {
                 val port = intent?.getIntExtra("port", 0) ?: 0
-                val socket = ServerSocket(port)
+                serverSocket = ServerSocket(port)
                 println("Server started on port $port")
-                val client = socket.accept()
-                println("Client connected: ${client.inetAddress.hostAddress}")
+                
+                while (running) {
+                    try {
+                        val client = serverSocket?.accept() ?: break
+                        println("Client connected: ${client.inetAddress.hostAddress}")
 
-                runCatching {
-                    val inputStream = client.getInputStream()
-                    val outputStream = client.getOutputStream()
+                        runCatching {
+                            val inputStream = client.getInputStream()
+                            val outputStream = client.getOutputStream()
 
-                    val server = HtmlLanguageServer()
+                            val server = HtmlLanguageServer()
 
-                    val launcher = LSPLauncher.createServerLauncher(server, inputStream, outputStream)
-                    val languageClient = launcher.remoteProxy
-                    server.connect(languageClient)
+                            val launcher = LSPLauncher.createServerLauncher(server, inputStream, outputStream)
+                            val languageClient = launcher.remoteProxy
+                            server.connect(languageClient)
 
-                    val startListening = launcher.startListening()
-                    startListening.get()
-                }.onFailure {
-                    println("Error: ${it.message}")
-                    it.printStackTrace()
+                            val startListening = launcher.startListening()
+                            startListening.get()
+                        }.onFailure {
+                            println("Error in LSP connection: ${it.message}")
+                            it.printStackTrace()
+                        }
+
+                        client.close()
+                    } catch (e: Exception) {
+                        if (running) {
+                            println("Socket error: ${e.message}")
+                            e.printStackTrace()
+                        }
+                        break
+                    }
                 }
-
-                client.close()
-                socket.close()
+                
+                serverSocket?.close()
             }
 
             return START_STICKY
+        }
+        
+        override fun onDestroy() {
+            running = false
+            serverSocket?.close()
+            super.onDestroy()
         }
     }
 }

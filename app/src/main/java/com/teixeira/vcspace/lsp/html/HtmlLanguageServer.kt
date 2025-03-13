@@ -38,9 +38,11 @@ class HtmlLanguageServer : LanguageServer, LanguageClientAware {
         val capabilities = ServerCapabilities().apply {
             textDocumentSync = Either.forLeft(TextDocumentSyncKind.Full)
             completionProvider = CompletionOptions().apply {
-                triggerCharacters = listOf("<")
+                triggerCharacters = listOf("<", "/", ":", " ", "=", "\"", "'")
+                resolveProvider = false
             }
             documentHighlightProvider = Either.forLeft(true)
+            hoverProvider = Either.forLeft(true)
         }
         val result = InitializeResult(capabilities)
         return CompletableFuture.supplyAsync { result }
@@ -64,5 +66,6 @@ class HtmlLanguageServer : LanguageServer, LanguageClientAware {
 
     override fun connect(client: LanguageClient) {
         this.client = client
+        textDocumentService.connect(client)
     }
 }
