@@ -20,7 +20,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.teixeira.vcspace.PreferenceKeys
 import com.teixeira.vcspace.compose.ui.filetree.FileTreeNode
-import com.teixeira.vcspace.compose.ui.filetree.FileTreeNodeLoadingProgress
 import com.teixeira.vcspace.compose.ui.filetree.createFileTreeFromPath
 import com.teixeira.vcspace.events.OnOpenFolderEvent
 import com.teixeira.vcspace.events.OnRefreshFolderEvent
@@ -40,21 +39,14 @@ class FileExplorerViewModel : ViewModel() {
     private val _isGitRepo = MutableStateFlow(false)
     val isGitRepo get() = _isGitRepo.asStateFlow()
 
-    private val _loadingProgress = MutableStateFlow(FileTreeNodeLoadingProgress())
-    val loadingProgress get() = _loadingProgress.asStateFlow()
-
     private val _rootNode = MutableStateFlow<FileTreeNode?>(null)
     val rootNode get() = _rootNode.asStateFlow()
 
-    fun loadFileTree(folderPath: String) {
+    fun loadFileTree(folder: File) {
+        _rootNode.update { null }
+
         viewModelScope.launch {
-            _rootNode.update { null }
-            _loadingProgress.update { FileTreeNodeLoadingProgress() }
-
-            val node = createFileTreeFromPath(folderPath) { progress ->
-                _loadingProgress.update { progress }
-            }
-
+            val node = createFileTreeFromPath(folder)
             _rootNode.update { node }
         }
     }

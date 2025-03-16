@@ -98,8 +98,8 @@ private fun FileTreeNodeItem(
     onFileClick: (FileTreeNode) -> Unit,
     onFileLongClick: (FileTreeNode) -> Unit
 ) {
-    var isExpanded by remember { mutableStateOf(false) }
-    val hasChildren = node.isDirectory && node.children.isNotEmpty()
+    var isExpanded by remember { mutableStateOf(depth == 0) }
+    val hasChildren = node.file.isDirectory && node.children.isNotEmpty()
     val horizontalPadding = (depth * 16).dp
 
     val isLight = LocalDarkMode.current.not()
@@ -110,7 +110,7 @@ private fun FileTreeNodeItem(
                 .fillMaxWidth()
                 .combinedClickable(
                     onClick = {
-                        if (node.isDirectory) {
+                        if (node.file.isDirectory) {
                             isExpanded = !isExpanded
                         } else {
                             onFileClick(node)
@@ -143,9 +143,9 @@ private fun FileTreeNodeItem(
                 Spacer(modifier = Modifier.width(24.dp))
             }
 
-            if (node.isDirectory) {
+            if (node.file.isDirectory) {
                 if (FileIcons.getSvgIconForFolder(
-                        node.path,
+                        node.file.path,
                         isExpanded = false
                     ) == "files/icons/folder.svg"
                 ) {
@@ -159,7 +159,7 @@ private fun FileTreeNodeItem(
                     Image(
                         bitmap = rememberSvgAssetImageBitmap(
                             FileIcons.getSvgIconForFolder(
-                                folderPath = node.path,
+                                folderPath = node.file.path,
                                 isExpanded = isExpanded,
                                 isLight = isLight
                             )
@@ -169,7 +169,7 @@ private fun FileTreeNodeItem(
                     )
                 }
             } else {
-                if (FileIcons.getSvgIconForFile(node.path) == "files/icons/file.svg") {
+                if (FileIcons.getSvgIconForFile(node.file.path) == "files/icons/file.svg") {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.InsertDriveFile,
                         contentDescription = "File",
@@ -180,7 +180,7 @@ private fun FileTreeNodeItem(
                     Image(
                         bitmap = rememberSvgAssetImageBitmap(
                             FileIcons.getSvgIconForFile(
-                                filePath = node.path,
+                                filePath = node.file.path,
                                 isLight = isLight
                             )
                         ),
@@ -194,7 +194,7 @@ private fun FileTreeNodeItem(
 
             // File or folder name
             Text(
-                text = node.name,
+                text = node.file.name,
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,

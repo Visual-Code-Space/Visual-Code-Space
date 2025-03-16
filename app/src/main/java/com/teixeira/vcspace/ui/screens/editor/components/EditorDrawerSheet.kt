@@ -15,14 +15,12 @@
 
 package com.teixeira.vcspace.ui.screens.editor.components
 
-import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
@@ -53,9 +51,7 @@ import com.blankj.utilcode.util.ClipboardUtils
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerNavController
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
 import com.teixeira.vcspace.app.strings
-import com.teixeira.vcspace.compose.ui.filetree.FileTreeNode
 import com.teixeira.vcspace.compose.ui.filetree.FileTreeView
-import com.teixeira.vcspace.compose.ui.filetree.createFileTreeFromPath
 import com.teixeira.vcspace.core.components.editor.FileOptionItem
 import com.teixeira.vcspace.core.components.editor.FileOptionsSheet
 import com.teixeira.vcspace.core.components.editor.NavigationSpace
@@ -65,9 +61,7 @@ import com.teixeira.vcspace.events.OnCreateFileEvent
 import com.teixeira.vcspace.events.OnCreateFolderEvent
 import com.teixeira.vcspace.events.OnRefreshFolderEvent
 import com.teixeira.vcspace.extensions.openFile
-import com.teixeira.vcspace.extensions.toFile
 import com.teixeira.vcspace.file.File
-import com.teixeira.vcspace.file.wrapFile
 import com.teixeira.vcspace.git.GitViewModel
 import com.teixeira.vcspace.resources.R.string
 import com.teixeira.vcspace.ui.screens.EditorDrawerScreens
@@ -83,7 +77,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 
-@SuppressLint("MaterialDesignInsteadOrbitDesign")
 @Composable
 fun EditorDrawerSheet(
     fileExplorerViewModel: FileExplorerViewModel,
@@ -144,14 +137,12 @@ fun EditorDrawerSheet(
                         var showNewFileDialog by remember { mutableStateOf(false) }
                         var selectedFolder by remember { mutableStateOf(folder) }
                         val rootNode by fileExplorerViewModel.rootNode.collectAsStateWithLifecycle()
-                        //val _loadingProgress = MutableStateFlow(FileTreeNodeLoadingProgress())
-                        //val loadingProgress by _loadingProgress.collectAsStateWithLifecycle()
 
                         LaunchedEffect(folder) {
                             withContext(Dispatchers.Main) {
                                 Toast.makeText(context, "Loading Folder... It should not take longer than 10 seconds", Toast.LENGTH_SHORT).show()
                             }
-                            fileExplorerViewModel.loadFileTree(folder.absolutePath)
+                            fileExplorerViewModel.loadFileTree(folder)
                         }
 
                         Column(
@@ -164,7 +155,7 @@ fun EditorDrawerSheet(
                                         .fillMaxSize()
                                         .weight(1f),
                                     onFileClick = {
-                                        val file = it.path.toFile().wrapFile()
+                                        val file = it.file
 
                                         if (file.name.endsWith(".apk")) {
                                             ApkInstaller.installApplication(context, file)
@@ -175,7 +166,7 @@ fun EditorDrawerSheet(
                                             context.openFile(file)
                                         }
                                     },
-                                    onFileLongClick = { selectedFile = it.path.toFile().wrapFile() }
+                                    onFileLongClick = { selectedFile = it.file }
                                 )
                             } ?: run {
                                 Box(

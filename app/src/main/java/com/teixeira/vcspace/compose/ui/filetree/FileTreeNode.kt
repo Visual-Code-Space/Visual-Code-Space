@@ -20,7 +20,8 @@ import androidx.compose.material.icons.automirrored.filled.InsertDriveFile
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.VideoFile
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.teixeira.vcspace.extensions.toFile
+import com.teixeira.vcspace.file.File
+import com.teixeira.vcspace.file.extension
 import com.teixeira.vcspace.ui.icon.LanguageCpp
 import com.teixeira.vcspace.ui.icons.Icons
 import com.teixeira.vcspace.ui.icons.LanguageC
@@ -48,92 +49,37 @@ import kotlinx.coroutines.withContext
  * Data class representing a file or directory in the file tree
  */
 data class FileTreeNode(
-    val name: String,
-    val path: String,
-    val isDirectory: Boolean,
+    val file: File,
     val children: List<FileTreeNode> = emptyList()
 )
 
-data class FileTreeNodeLoadingProgress(
-    val totalFiles: Int = 0,
-    val loadedFiles: Int = 0
-) {
-    val percentComplete: Int
-        get() = if (totalFiles > 0) {
-            ((loadedFiles.toFloat() / totalFiles) * 100).toInt().coerceIn(0, 100)
-        } else 0
-}
+suspend fun createFileTreeFromPath(file: File): FileTreeNode {
+    val mutex = Mutex()
 
-suspend fun createFileTreeFromPath(
-    path: String,
-    progressCallback: (FileTreeNodeLoadingProgress) -> Unit = {}
-): FileTreeNode {
-    val progress = FileTreeNodeLoadingProgress()
-    val progressMutex = Mutex()
-
-    suspend fun updateProgress(update: (FileTreeNodeLoadingProgress) -> FileTreeNodeLoadingProgress) {
-        progressMutex.withLock {
-            val updatedProgress = update(progress)
-            progressCallback(updatedProgress)
-        }
-    }
-
-    suspend fun buildTree(filePath: String, isRootCall: Boolean = false): FileTreeNode {
-        val file = java.io.File(filePath)
-        val name = file.name
-        val isDirectory = file.isDirectory
-
-        return withContext(Dispatchers.IO) {
-            if (isDirectory) {
-                val childFiles = file.listFiles()
-                    // ?.filter { !it.isHidden }
-                    ?.sortedWith(compareBy({ !it.isDirectory }, { it.name.lowercase() }))
+    return withContext(Dispatchers.IO) {
+        FileTreeNode(
+            file = file,
+            children = if (file.isDirectory) {
+                file.listFiles()?.map { file ->
+                    mutex.withLock {
+                        if (file.isDirectory) {
+                            createFileTreeFromPath(file)
+                        } else {
+                            FileTreeNode(file)
+                        }
+                    }
+                }?.sortedWith(compareBy({ !it.file.isDirectory }, { it.file.name.lowercase() }))
                     ?: emptyList()
-
-                if (isRootCall) {
-                    val totalCount = countFilesRecursively(file)
-                    updateProgress { it.copy(totalFiles = totalCount) }
-                }
-
-                val children = childFiles.map { childFile ->
-                    val node = buildTree(childFile.absolutePath)
-                    updateProgress { it.copy(loadedFiles = it.loadedFiles + 1) }
-                    node
-                }
-
-                FileTreeNode(name, filePath, true, children)
             } else {
-                if (isRootCall) {
-                    updateProgress { it.copy(totalFiles = 1, loadedFiles = 1) }
-                }
-
-                FileTreeNode(name, filePath, false)
+                emptyList()
             }
-        }
+        )
     }
-
-    return buildTree(path, true)
-}
-
-/**
- * Helper function to count all files and directories recursively
- */
-private fun countFilesRecursively(directory: java.io.File): Int {
-    if (!directory.isDirectory) return 1
-
-    var count = 1 // Count this directory
-    directory.listFiles()
-        ?.filter { !it.isHidden }
-        ?.forEach { file ->
-            count += countFilesRecursively(file)
-        }
-
-    return count
 }
 
 @SuppressLint("MaterialDesignInsteadOrbitDesign")
-fun getIconForFile(file: FileTreeNode): ImageVector {
-    return when (file.path.toFile().extension) {
+fun getIconForFile(node: FileTreeNode): ImageVector {
+    return when (node.file.extension) {
         "c" -> Icons.LanguageC
         "cpp" -> Icons.LanguageCpp
         "cs" -> Icons.LanguageCsharp

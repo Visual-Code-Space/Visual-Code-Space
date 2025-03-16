@@ -71,7 +71,10 @@ import com.teixeira.vcspace.editor.addBlockComment
 import com.teixeira.vcspace.editor.addSingleComment
 import com.teixeira.vcspace.editor.events.OnContentChangeEvent
 import com.teixeira.vcspace.editor.events.OnKeyBindingEvent
+import com.teixeira.vcspace.events.OnCreateFileEvent
+import com.teixeira.vcspace.events.OnCreateFolderEvent
 import com.teixeira.vcspace.events.OnOpenFolderEvent
+import com.teixeira.vcspace.events.OnRefreshFolderEvent
 import com.teixeira.vcspace.extensions.open
 import com.teixeira.vcspace.file.File
 import com.teixeira.vcspace.file.extension
@@ -134,6 +137,21 @@ class EditorActivity : BaseComposeActivity() {
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onKeyBindingEvent(event: OnKeyBindingEvent) {
         editorViewModel.setCanEditorHandleCurrentKeyBinding(event.canEditorHandle)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onRefreshFolderEvent(event: OnRefreshFolderEvent) {
+        fileExplorerViewModel.loadFileTree(event.openedFolder)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onCreateFileEvent(event: OnCreateFileEvent) {
+        fileExplorerViewModel.loadFileTree(event.openedFolder)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onCreateFolderEvent(event: OnCreateFolderEvent) {
+        fileExplorerViewModel.loadFileTree(event.openedFolder)
     }
 
     private fun onCreate() {
