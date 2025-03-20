@@ -35,15 +35,18 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.InsertDriveFile
-import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.FolderOpen
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -99,9 +102,18 @@ private fun FileTreeNodeItem(
     onFileLongClick: (FileTreeNode) -> Unit
 ) {
     var isExpanded by remember { mutableStateOf(depth == 0) }
-    val hasChildren = node.file.isDirectory && node.children.isNotEmpty()
+    val children = remember { mutableStateListOf<FileTreeNode>() }
     val horizontalPadding = (depth * 16).dp
 
+    LaunchedEffect(node) {
+        children.clear()
+
+        node.children.collect { childNode ->
+            children.add(childNode)
+        }
+    }
+
+    val hasChildren = node.file.isDirectory && children.isNotEmpty()
     val isLight = LocalDarkMode.current.not()
 
     Column {
@@ -128,14 +140,15 @@ private fun FileTreeNodeItem(
             // Show arrow only for directories with children
             if (hasChildren) {
                 val rotationDegree by animateFloatAsState(
-                    targetValue = if (isExpanded) 0f else -90f,
+                    targetValue = if (!isExpanded) 0f else 90f,
                     label = "Arrow rotation animation"
                 )
+
                 Icon(
-                    imageVector = Icons.Default.ArrowDropDown,
+                    imageVector = Icons.Default.ChevronRight,
                     contentDescription = "Expand/Collapse",
                     modifier = Modifier
-                        .size(24.dp)
+                        .size(20.dp)
                         .rotate(rotationDegree),
                     tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
                 )
@@ -200,12 +213,21 @@ private fun FileTreeNodeItem(
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.padding(end = 16.dp)
             )
+
+            val isLoading = !node.file.asRawFile()?.list().isNullOrEmpty() && children.isEmpty()
+
+            if (node.file.isDirectory && isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(10.dp),
+                    strokeWidth = (1.5f).dp,
+                )
+            }
         }
 
         // Show children if expanded
         AnimatedVisibility(visible = isExpanded && hasChildren) {
             Column {
-                node.children.forEach { childNode ->
+                children.forEach { childNode ->
                     FileTreeNodeItem(
                         node = childNode,
                         depth = depth + 1,

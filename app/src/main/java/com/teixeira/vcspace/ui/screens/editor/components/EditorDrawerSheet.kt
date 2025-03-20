@@ -15,7 +15,6 @@
 
 package com.teixeira.vcspace.ui.screens.editor.components
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,7 +28,7 @@ import androidx.compose.material.icons.rounded.ContentCopy
 import androidx.compose.material.icons.rounded.DeleteForever
 import androidx.compose.material.icons.rounded.DriveFileRenameOutline
 import androidx.compose.material.icons.rounded.Refresh
-import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -72,9 +71,7 @@ import com.teixeira.vcspace.ui.screens.editor.components.drawer.OpenFolderAction
 import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
 import com.teixeira.vcspace.utils.ApkInstaller
 import kiwi.orbit.compose.ui.controls.Text
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 
 @Composable
@@ -139,9 +136,6 @@ fun EditorDrawerSheet(
                         val rootNode by fileExplorerViewModel.rootNode.collectAsStateWithLifecycle()
 
                         LaunchedEffect(folder) {
-                            withContext(Dispatchers.Main) {
-                                Toast.makeText(context, "Loading Folder... It should not take longer than 10 seconds", Toast.LENGTH_SHORT).show()
-                            }
                             fileExplorerViewModel.loadFileTree(folder)
                         }
 
@@ -180,7 +174,7 @@ fun EditorDrawerSheet(
                                     ) {
                                         Text("Loading Folder")
                                         Spacer(modifier = Modifier.height(8.dp))
-                                        LinearProgressIndicator()
+                                        CircularProgressIndicator()
                                     }
                                 }
                             }

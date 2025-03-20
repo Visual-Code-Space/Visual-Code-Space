@@ -94,7 +94,7 @@ class Logger private constructor(private val tag: String) {
         private val map: MutableMap<String, Logger> = WeakHashMap()
 
         val newInstance: (String) -> Logger by lazy {
-            { tag: String -> map[tag] ?: Logger(tag).also { map[tag] = it } }
+            { tag -> map[tag] ?: Logger(tag).also { map[tag] = it } }
         }
     }
 }

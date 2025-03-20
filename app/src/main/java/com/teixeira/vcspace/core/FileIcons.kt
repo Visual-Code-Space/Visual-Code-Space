@@ -749,7 +749,7 @@ object FileIcons {
         FileIcon("rust", fileExtensions = listOf("rs", "ron")),
         FileIcon("xaml", fileExtensions = listOf("xaml")),
         FileIcon("haskell", fileExtensions = listOf("hs", "lhs")),
-        FileIcon("kotlin", fileExtensions = listOf("kt", "kts")),
+        FileIcon("kotlin", fileExtensions = listOf("kt", "kts", "gradle.kts")),
         FileIcon(
             name = "git",
             fileExtensions = listOf("patch"),

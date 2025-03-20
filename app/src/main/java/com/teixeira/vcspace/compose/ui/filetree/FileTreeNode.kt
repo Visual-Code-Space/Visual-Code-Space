@@ -41,8 +41,10 @@ import com.teixeira.vcspace.ui.icons.LanguageSwift
 import com.teixeira.vcspace.ui.icons.LanguageTypescript
 import com.teixeira.vcspace.ui.icons.LanguageXml
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 
 /**
@@ -50,31 +52,25 @@ import kotlinx.coroutines.withContext
  */
 data class FileTreeNode(
     val file: File,
-    val children: List<FileTreeNode> = emptyList()
+    val isLoading: Boolean = false,
+    val children: Flow<FileTreeNode> = emptyFlow()
 )
 
-suspend fun createFileTreeFromPath(file: File): FileTreeNode {
-    val mutex = Mutex()
+fun createFileTreeFromPath(file: File): FileTreeNode {
+    return FileTreeNode(
+        file = file,
+        children = if (file.isDirectory) {
+            flow {
+                val files = withContext(Dispatchers.IO) {
+                    file.listFiles()?.toList().orEmpty()
+                }.sortedWith(compareBy({ !it.isDirectory }, { it.name.lowercase() }))
 
-    return withContext(Dispatchers.IO) {
-        FileTreeNode(
-            file = file,
-            children = if (file.isDirectory) {
-                file.listFiles()?.map { file ->
-                    mutex.withLock {
-                        if (file.isDirectory) {
-                            createFileTreeFromPath(file)
-                        } else {
-                            FileTreeNode(file)
-                        }
-                    }
-                }?.sortedWith(compareBy({ !it.file.isDirectory }, { it.file.name.lowercase() }))
-                    ?: emptyList()
-            } else {
-                emptyList()
-            }
-        )
-    }
+                files.forEach { emit(createFileTreeFromPath(it)) }
+            }.flowOn(Dispatchers.IO)
+        } else {
+            emptyFlow()
+        }
+    )
 }
 
 @SuppressLint("MaterialDesignInsteadOrbitDesign")

@@ -35,6 +35,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,10 +50,12 @@ import androidx.compose.ui.semantics.Role
 import androidx.documentfile.provider.DocumentFile
 import com.blankj.utilcode.util.UriUtils
 import com.teixeira.vcspace.PreferenceKeys
+import com.teixeira.vcspace.activities.Editor.LocalCommandPaletteManager
 import com.teixeira.vcspace.app.strings
 import com.teixeira.vcspace.extensions.toFile
 import com.teixeira.vcspace.file.DocumentFileWrapper
 import com.teixeira.vcspace.file.wrapFile
+import com.teixeira.vcspace.keyboard.model.Command.Companion.newCommand
 import com.teixeira.vcspace.preferences.defaultPrefs
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
@@ -65,6 +68,7 @@ fun OpenFolderActions(
     fileExplorerViewModel: FileExplorerViewModel
 ) {
     val context = LocalContext.current
+    val commandPaletteManager = LocalCommandPaletteManager.current
 
     val openFolder = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocumentTree()
@@ -79,6 +83,14 @@ fun OpenFolderActions(
         }
     }
 
+    LaunchedEffect(Unit) {
+        commandPaletteManager.addCommand(
+            newCommand("Open Folder", "Ctrl+Shift+O") {
+                openFolder.launch(null)
+            }
+        )
+    }
+
     var showRecentFoldersDialog by remember { mutableStateOf(false) }
 
     Column(
@@ -86,11 +98,17 @@ fun OpenFolderActions(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Button(onClick = { openFolder.launch(null) }) {
+        Button(
+            onClick = { openFolder.launch(null) },
+            shape = MaterialTheme.shapes.medium
+        ) {
             Text(text = stringResource(strings.open_folder))
         }
 
-        Button(onClick = { showRecentFoldersDialog = true }) {
+        Button(
+            onClick = { showRecentFoldersDialog = true },
+            shape = MaterialTheme.shapes.medium
+        ) {
             Text(text = stringResource(strings.open_recent))
         }
     }
