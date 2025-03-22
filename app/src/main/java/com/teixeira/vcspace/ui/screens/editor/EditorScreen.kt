@@ -20,20 +20,13 @@ import android.view.KeyEvent
 import android.view.ViewGroup
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.ErrorOutline
-import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -56,8 +49,6 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -127,7 +118,6 @@ import com.teixeira.vcspace.keyboard.createKeyEvent
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.ui.LocalToastHostState
 import com.teixeira.vcspace.ui.components.keyboard.CommandPalette
-import com.teixeira.vcspace.ui.extensions.harmonizeWithPrimary
 import com.teixeira.vcspace.ui.screens.editor.ai.CodeExplanationSheet
 import com.teixeira.vcspace.ui.screens.editor.ai.ImportComponentsSheet
 import com.teixeira.vcspace.ui.screens.editor.components.Symbols
@@ -358,91 +348,22 @@ private fun NoOpenedFiles() {
         )
     }
 
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            modifier = Modifier.fillMaxWidth(fraction = 0.6f),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-//                Icon(
-//                    Icons.AutoMirrored.Filled.InsertDriveFile,
-//                    contentDescription = null,
-//                    tint = MaterialTheme.colorScheme.onSurface,
-//                    modifier = Modifier.size(40.dp)
-//                )
-
-                Column(
-                    //modifier = Modifier.padding(start = 8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = "No file is currently open",
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 18.sp
-                    )
-
-                    Text(
-                        text = "Open a file to start coding",
-                        fontSize = 16.sp,
-                        color = MaterialTheme.colorScheme.outline.harmonizeWithPrimary()
-                    )
-                }
+    WelcomeScreen(
+        onOpenFile = {
+            dispatchKeyEvent(KeyEvent.KEYCODE_O, KeyEvent.META_CTRL_ON)
+        },
+        onNewFile = {
+            dispatchKeyEvent(KeyEvent.KEYCODE_N, KeyEvent.META_CTRL_ON)
+        },
+        onOpenFolder = {
+            dispatchKeyEvent(KeyEvent.KEYCODE_O, KeyEvent.META_CTRL_ON or KeyEvent.META_SHIFT_ON)
+            scope.launch {
+                delay(500)
+                drawerState.open()
             }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Column(
-                verticalArrangement = Arrangement.spacedBy(2.dp)
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    FilledTonalButton(
-                        onClick = {
-                            dispatchKeyEvent(KeyEvent.KEYCODE_O, KeyEvent.META_CTRL_ON)
-                        },
-                        shape = MaterialTheme.shapes.medium,
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text("Open File")
-                    }
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    FilledTonalButton(
-                        onClick = {
-                            dispatchKeyEvent(KeyEvent.KEYCODE_N, KeyEvent.META_CTRL_ON)
-                        },
-                        shape = MaterialTheme.shapes.medium,
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text("New File")
-                    }
-                }
-
-                Row {
-                    FilledTonalButton(
-                        onClick = {
-                            dispatchKeyEvent(KeyEvent.KEYCODE_O, KeyEvent.META_CTRL_ON or KeyEvent.META_SHIFT_ON)
-                            scope.launch {
-                                delay(500)
-                                drawerState.open()
-                            }
-                        },
-                        shape = MaterialTheme.shapes.medium,
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text("Open Folder")
-                    }
-                }
-            }
-        }
-    }
+        },
+        modifier = Modifier.fillMaxSize()
+    )
 }
 
 @Composable
