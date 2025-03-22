@@ -16,9 +16,11 @@
 package com.teixeira.vcspace.ui.screens.editor.components
 
 import android.view.View
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -29,10 +31,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.itsvks.monaco.MonacoEditor
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberSymbols
+import com.teixeira.vcspace.ui.extensions.blend
 import com.teixeira.vcspace.ui.screens.editor.components.view.CodeEditorView
 
 @Composable
@@ -43,11 +47,15 @@ fun Symbols(
     val symbol by rememberSymbols()
     val symbolItems = symbol.toList()
 
-    LazyRow(modifier = modifier.navigationBarsPadding()) {
+    LazyRow(
+        modifier = modifier.heightIn(min = 50.dp),
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         items(symbolItems) { item ->
             Box(
                 modifier = Modifier
-                    .size(40.dp)
+                    .size(45.dp)
                     .clip(MaterialTheme.shapes.small)
                     .clickable(
                         onClick = {
@@ -63,6 +71,14 @@ fun Symbols(
                             }
                         },
                         role = Role.Button
+                    )
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.onSurface.blend(
+                            color = Color.Transparent,
+                            fraction = 0.6f
+                        ),
+                        shape = MaterialTheme.shapes.small
                     ),
                 contentAlignment = Alignment.Center
             ) {
