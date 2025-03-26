@@ -55,6 +55,7 @@ fun isValidTextFile(file: JFile): Boolean {
     )
 
     return type == null || type.startsWith("text/") || type in additionalTextTypes
+        || file.extension in listOf("ts")
 }
 
 private const val RUNNABLE_FILE_EXTENSIONS = "py,html,htm"
