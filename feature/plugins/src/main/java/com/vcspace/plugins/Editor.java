@@ -106,7 +106,6 @@ public interface Editor {
      * @param range the range of text to delete.
      */
     default void deleteText(@NonNull Range range) {
-        // Default implementation: replace with an empty string
         replaceText(range, "");
     }
 
