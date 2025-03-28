@@ -27,8 +27,11 @@ import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.PathUtils
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.teixeira.vcspace.core.EventManager
 import com.teixeira.vcspace.keyboard.model.Command
-import com.teixeira.vcspace.keyboard.model.Command.Companion.toKey
+import com.teixeira.vcspace.keyboard.model.toKey
+import com.teixeira.vcspace.keyboard.model.toShortcut
+import com.vcspace.plugins.event.KeyPressEvent
 import java.io.File
 
 class CommandPaletteManager private constructor() {
@@ -57,8 +60,15 @@ class CommandPaletteManager private constructor() {
     private val _allCommands = mutableListOf<Command>()
     val allCommands get() = _allCommands.toList()
 
+    private val _shortcuts = mutableMapOf<String, () -> Unit>()
+    val shortcuts get() = _shortcuts.toMap()
+
     fun addCommand(vararg command: Command) {
         _allCommands.addAll(command)
+    }
+
+    fun addShortcut(key: String, action: () -> Unit) {
+        _shortcuts[key] = action
     }
 
     val clear = { _allCommands.clear() }
@@ -109,37 +119,65 @@ class CommandPaletteManager private constructor() {
         val isShiftPressed = event.isShiftPressed
         val isAltPressed = event.isAltPressed
 
+        EventManager.instance.postEvent(
+            KeyPressEvent(
+                key = event.key.toShortcut(),
+                keyCode = event.key.keyCode,
+                isCtrlPressed = isCtrlPressed,
+                isShiftPressed = isShiftPressed,
+                isAltPressed = isAltPressed
+            )
+        )
+
+        for ((keyBinding, action) in shortcuts) {
+            val keys = keyBinding.split("+")
+            runAction(keys, isCtrlPressed, isShiftPressed, isAltPressed, pressedKey, action)
+            return
+        }
+
         for (command in allCommands) {
             val keyBinding = command.keybinding
             val keys = keyBinding?.split("+")
 
-            var isCtrlRequired = false
-            var isShiftRequired = false
-            var isAltRequired = false
-            var bindingKey: Key? = null
-
             if (keys != null) {
-                for (key in keys) {
-                    when (key.lowercase()) {
-                        "ctrl" -> isCtrlRequired = true
-                        "shift" -> isShiftRequired = true
-                        "alt" -> isAltRequired = true
-                        else -> {
-                            // This is the actual key (e.g., "P", "V", etc.)
-                            bindingKey = key.toKey()
-                        }
-                    }
+                runAction(keys, isCtrlPressed, isShiftPressed, isAltPressed, pressedKey) {
+                    command.action(command, compositionContext)
                 }
             }
+        }
+    }
 
-            if (isCtrlPressed == isCtrlRequired &&
-                isShiftPressed == isShiftRequired &&
-                isAltPressed == isAltRequired &&
-                pressedKey == bindingKey
-            ) {
-                println("Keybinding '${keyBinding}' is pressed")
-                command.action(command, compositionContext)
+    private fun runAction(
+        keys: List<String>,
+        isCtrlPressed: Boolean,
+        isShiftPressed: Boolean,
+        isAltPressed: Boolean,
+        pressedKey: Key,
+        action: () -> Unit
+    ) {
+        var isCtrlRequired = false
+        var isShiftRequired = false
+        var isAltRequired = false
+        var bindingKey: Key? = null
+
+        for (key in keys) {
+            when (key.lowercase()) {
+                "ctrl" -> isCtrlRequired = true
+                "shift" -> isShiftRequired = true
+                "alt" -> isAltRequired = true
+                else -> {
+                    // This is the actual key (e.g., "P", "V", etc.)
+                    bindingKey = key.toKey()
+                }
             }
+        }
+
+        if (isCtrlPressed == isCtrlRequired &&
+            isShiftPressed == isShiftRequired &&
+            isAltPressed == isAltRequired &&
+            pressedKey == bindingKey
+        ) {
+            action.invoke()
         }
     }
 }

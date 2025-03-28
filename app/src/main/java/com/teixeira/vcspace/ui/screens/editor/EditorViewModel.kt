@@ -26,11 +26,16 @@ import com.blankj.utilcode.util.ToastUtils
 import com.google.gson.Gson
 import com.itsvks.monaco.MonacoEditor
 import com.teixeira.vcspace.activities.EditorActivity.Companion.LAST_OPENED_FILES_JSON_PATH
+import com.teixeira.vcspace.core.EventManager
 import com.teixeira.vcspace.extensions.toFile
 import com.teixeira.vcspace.file.File
 import com.teixeira.vcspace.file.wrapFile
 import com.teixeira.vcspace.models.FileHistory
 import com.teixeira.vcspace.ui.screens.editor.components.view.CodeEditorView
+import com.vcspace.plugins.event.FileCloseEvent
+import com.vcspace.plugins.event.FileModifiedEvent
+import com.vcspace.plugins.event.FileOpenedEvent
+import com.vcspace.plugins.event.FileSaveEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -137,12 +142,17 @@ class EditorViewModel : ViewModel() {
             }
             currentState.copy(openedFiles = updatedFiles)
         }
+
+        if (modified) {
+            EventManager.instance.postEvent(FileModifiedEvent(java.io.File(file.absolutePath)))
+        }
     }
 
     suspend fun saveFile(editorView: View? = null) {
         val editor = getSelectedEditor() ?: editorView
         if (editor is CodeEditorView) {
             editor.saveFile()
+            EventManager.instance.postEvent(FileSaveEvent(java.io.File(editor.file!!.absolutePath)))
             editor.file?.let { setModified(it, false) }
         } else if (editor is MonacoEditor) {
             uiState.value.selectedFile?.file?.let {
@@ -155,6 +165,7 @@ class EditorViewModel : ViewModel() {
     suspend fun saveAll() {
         editors.values.forEach {
             it.saveFile()
+            EventManager.instance.postEvent(FileSaveEvent(java.io.File(it.file!!.absolutePath)))
             it.file?.let { file -> setModified(file, false) }
         }
     }
@@ -179,6 +190,8 @@ class EditorViewModel : ViewModel() {
                 openedFiles = newOpenedFiles,
                 selectedFileIndex = newSelectedFileIndex
             )
+
+            EventManager.instance.postEvent(FileOpenedEvent(java.io.File(file.absolutePath)))
         }.onFailure {
             ToastUtils.showShort(it.message)
         }
@@ -192,6 +205,8 @@ class EditorViewModel : ViewModel() {
 
     fun selectFile(index: Int) {
         _uiState.value = uiState.value.copy(selectedFileIndex = index)
+        val selectedFile = uiState.value.openedFiles[index].file
+        EventManager.instance.postEvent(FileOpenedEvent(java.io.File(selectedFile.absolutePath)))
     }
 
     fun closeFile(index: Int) {
@@ -211,6 +226,7 @@ class EditorViewModel : ViewModel() {
             openedFiles = newOpenedFiles,
             selectedFileIndex = newSelectedFileIndex
         )
+        EventManager.instance.postEvent(FileCloseEvent(java.io.File(closingFilePath)))
 
         _editors.remove(closingFilePath)?.release()
     }
@@ -230,7 +246,10 @@ class EditorViewModel : ViewModel() {
 
         _uiState.value = uiState.value.copy(openedFiles = emptyList())
 
-        _editors.values.forEach { it.release() }
+        _editors.values.forEach {
+            EventManager.instance.postEvent(FileCloseEvent(java.io.File(it.file!!.absolutePath)))
+            it.release()
+        }
         _editors.clear()
     }
 }

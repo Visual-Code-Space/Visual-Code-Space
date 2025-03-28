@@ -21,9 +21,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.vcspace.plugins.command.EditorCommand
+import com.vcspace.plugins.dialog.DialogButtonClickListener
 import com.vcspace.plugins.editor.Position
+import com.vcspace.plugins.event.EventListener
+import com.vcspace.plugins.event.EventType
 import com.vcspace.plugins.menu.MenuAction
 import com.vcspace.plugins.menu.MenuItem
+import com.vcspace.plugins.network.HttpResponse
 import com.vcspace.plugins.panel.ComposeFactory
 import com.vcspace.plugins.panel.Panel
 import com.vcspace.plugins.panel.ViewFactory
@@ -155,6 +159,103 @@ interface PluginContext {
 
     fun removePanel(panelId: String): Boolean
 
+    /**
+     * Executes the specified action on the IO thread.
+     *
+     * @param action the action to execute.
+     */
     fun doActionOnIOThread(action: Runnable)
+
+    /**
+     * Executes the specified action on the main thread.
+     *
+     * @param action the action to execute.
+     */
     fun doActionOnMainThread(action: Runnable)
+
+    /**
+     * Registers an event listener for a specific event type.
+     *
+     * @param type    the type of event to listen for.
+     * @param listener the listener to be notified when the event occurs.
+     */
+    fun registerEventListener(type: EventType, listener: EventListener)
+
+    /**
+     * Unregisters an event listener for a specific event type.
+     *
+     * @param type    the type of event to stop listening for.
+     * @param listener the listener to be removed.
+     */
+    fun unregisterEventListener(type: EventType, listener: EventListener)
+
+    /**
+     * Saves a configuration value associated with a key.
+     *
+     * @param key   the key to associate with the value.
+     * @param value the value to save.
+     */
+    fun saveConfig(key: String, value: String)
+
+    /**
+     * Retrieves a configuration value associated with a key.
+     *
+     * @param key          the key to look up.
+     * @param defaultValue the default value to return if the key is not found.
+     * @return the configuration value associated with the key, or the default value if not found.
+     */
+    fun loadConfig(key: String, defaultValue: String): String
+
+    /**
+     * Displays a dialog with a title, message, and two buttons (positive and negative).
+     *
+     * @param title             the title of the dialog.
+     * @param message           the message to display in the dialog.
+     * @param positiveButtonText the text for the positive button.
+     * @param negativeButtonText the text for the negative button.
+     * @param onPositiveClick   the action to perform when the positive button is clicked.
+     * @param onNegativeClick   the action to perform when the negative button is clicked.
+     */
+    fun showDialog(
+        title: String,
+        message: String,
+        positiveButtonText: String,
+        negativeButtonText: String?,
+        onPositiveClick: DialogButtonClickListener?,
+        onNegativeClick: DialogButtonClickListener?
+    )
+
+    fun showDialog(
+        title: String,
+        message: String,
+        positiveButtonText: String,
+        negativeButtonText: String? = null,
+        onPositiveClick: DialogButtonClickListener? = null
+    ) = showDialog(title, message, positiveButtonText, negativeButtonText, onPositiveClick, null)
+
+    fun showDialog(
+        title: String,
+        message: String,
+        positiveButtonText: String
+    ) = showDialog(title, message, positiveButtonText, null, null)
+
+    /**
+     * Retrieves the current workspace instance.
+     *
+     * @return the current workspace instance, or null if not available.
+     */
+    fun getWorkspace(): Workspace?
+
+    /**
+     * Registers a shortcut key binding for a specific action.
+     *
+     * @param keyBinding the key binding to register.
+     * @param action     the action to execute when the key binding is triggered.
+     */
+    fun registerShortcut(keyBinding: String, action: Runnable)
+
+    /**
+     * Performs an HTTP GET request to the specified URL.
+     */
+    fun httpGet(url: String): HttpResponse
 }

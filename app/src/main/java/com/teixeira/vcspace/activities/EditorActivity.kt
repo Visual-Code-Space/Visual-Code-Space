@@ -62,6 +62,7 @@ import com.teixeira.vcspace.app.MONACO_EDITOR_ARCHIVE
 import com.teixeira.vcspace.app.noLocalProvidedFor
 import com.teixeira.vcspace.app.rootView
 import com.teixeira.vcspace.app.strings
+import com.teixeira.vcspace.core.EventManager
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberShowInputMethodPickerAtStart
 import com.teixeira.vcspace.core.settings.Settings.General.rememberEnableGestureInDrawer
 import com.teixeira.vcspace.editor.addBlockComment
@@ -89,6 +90,7 @@ import com.teixeira.vcspace.ui.screens.editor.components.EditorDrawerSheet
 import com.teixeira.vcspace.ui.screens.editor.components.EditorTopBar
 import com.teixeira.vcspace.ui.screens.editor.components.view.CodeEditorView
 import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
+import com.vcspace.plugins.event.FileCreateEvent
 import kiwi.orbit.compose.ui.controls.Scaffold
 import kiwi.orbit.compose.ui.controls.ToastHostState
 import kiwi.orbit.compose.ui.controls.rememberToastHostState
@@ -124,7 +126,7 @@ class EditorActivity : BaseComposeActivity() {
     }
 
     private val editorViewModel: EditorViewModel by viewModels()
-    private val fileExplorerViewModel: FileExplorerViewModel by viewModels()
+    val fileExplorerViewModel: FileExplorerViewModel by viewModels()
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onContentChangeEvent(event: OnContentChangeEvent) {
@@ -144,11 +146,13 @@ class EditorActivity : BaseComposeActivity() {
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onCreateFileEvent(event: OnCreateFileEvent) {
         fileExplorerViewModel.loadFileTree(event.openedFolder)
+        EventManager.instance.postEvent(FileCreateEvent(java.io.File(event.file.absolutePath)))
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onCreateFolderEvent(event: OnCreateFolderEvent) {
         fileExplorerViewModel.loadFileTree(event.openedFolder)
+        EventManager.instance.postEvent(FileCreateEvent(java.io.File(event.file.absolutePath)))
     }
 
     private fun onCreate() {
@@ -183,8 +187,8 @@ class EditorActivity : BaseComposeActivity() {
 
             ModalNavigationDrawer(
                 modifier = Modifier
-                  .fillMaxSize()
-                  .imePadding(),
+                    .fillMaxSize()
+                    .imePadding(),
                 drawerState = drawerState,
                 gesturesEnabled = if (enableGestureInDrawer) drawerState.isOpen else false,
                 drawerContent = {
@@ -215,8 +219,8 @@ class EditorActivity : BaseComposeActivity() {
                     EditorScreen(
                         viewModel = editorViewModel,
                         modifier = Modifier
-                          .fillMaxSize()
-                          .padding(innerPadding)
+                            .fillMaxSize()
+                            .padding(innerPadding)
                     )
                 }
             }

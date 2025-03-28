@@ -15,8 +15,10 @@
 package com.teixeira.vcspace.plugins.impl
 
 import android.content.Context
+import com.teixeira.vcspace.editor.VCSpaceEditor
 import com.vcspace.plugins.Editor
 import com.vcspace.plugins.editor.Position
+import com.vcspace.plugins.editor.Range
 import java.io.File
 
 class EditorImpl(private val listener: Listener) : Editor {
@@ -36,9 +38,54 @@ class EditorImpl(private val listener: Listener) : Editor {
         listener.cursorPosition = position
     }
 
+    override fun insertText(position: Position, text: String) {
+        val editor = listener.editor ?: return
+        editor.text.insert(position.lineNumber, position.column, text)
+    }
+
+    override fun replaceText(start: Position, end: Position, text: String?) {
+        val editor = listener.editor ?: return
+        editor.text.replace(start.lineNumber, start.column, end.lineNumber, end.column, text)
+    }
+
+    override fun getSelectionRange(): Range? {
+        val editor = listener.editor ?: return null
+
+        if (editor.cursor.isSelected) {
+            val leftLine = editor.cursor.leftLine
+            val leftColumn = editor.cursor.leftColumn
+            val rightLine = editor.cursor.rightLine
+            val rightColumn = editor.cursor.rightColumn
+            return Range(
+                Position(leftLine, leftColumn),
+                Position(rightLine, rightColumn)
+            )
+        } else {
+            return null
+        }
+    }
+
+    override fun getText(): String {
+        val editor = listener.editor ?: return ""
+        return editor.text.toString()
+    }
+
+    override fun getText(range: Range?): String? {
+        if (range == null) return null
+        if (range.isEmpty()) return ""
+
+        val editor = listener.editor ?: return null
+        val content = editor.text
+        return content.substring(
+            content.getCharIndex(range.start.lineNumber, range.start.column),
+            content.getCharIndex(range.end.lineNumber, range.end.column)
+        )
+    }
+
     interface Listener {
         val currentFile: File?
         val context: Context
         var cursorPosition: Position
+        val editor: VCSpaceEditor?
     }
 }

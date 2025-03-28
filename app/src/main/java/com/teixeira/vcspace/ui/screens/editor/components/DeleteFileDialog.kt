@@ -22,11 +22,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import com.teixeira.vcspace.core.EventManager
 import com.teixeira.vcspace.events.OnDeleteFileEvent
 import com.teixeira.vcspace.file.File
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.utils.launchWithProgressDialog
 import com.teixeira.vcspace.utils.showShortToast
+import com.vcspace.plugins.event.FileDeleteEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
@@ -61,6 +63,7 @@ fun DeleteFileDialog(
 
                         EventBus.getDefault()
                             .post(OnDeleteFileEvent(file, openedFolder = openedFolder))
+                        EventManager.instance.postEvent(FileDeleteEvent(java.io.File(file.absolutePath)))
 
                         withContext(Dispatchers.Main) {
                             showShortToast(context, context.getString(R.string.file_deleted))

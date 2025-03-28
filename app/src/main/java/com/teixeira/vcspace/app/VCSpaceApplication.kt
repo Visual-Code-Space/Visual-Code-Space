@@ -22,6 +22,7 @@ import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.PermissionUtils
 import com.blankj.utilcode.util.PermissionUtils.SimpleCallback
 import com.teixeira.vcspace.activities.CrashActivity
+import com.teixeira.vcspace.core.EventManager
 import com.teixeira.vcspace.extensions.doIfNull
 import com.teixeira.vcspace.providers.GrammarProvider
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry
@@ -66,6 +67,7 @@ class VCSpaceApplication : BaseApplication() {
         super.onCreate()
         Thread.setDefaultUncaughtExceptionHandler(CrashHandler())
         appInstance = this
+        EventManager.instance.clearListeners()
 
         GrammarProvider.initialize(this)
         loadDefaultThemes()

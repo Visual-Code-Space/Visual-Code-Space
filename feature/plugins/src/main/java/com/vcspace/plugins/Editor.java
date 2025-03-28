@@ -21,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.vcspace.plugins.editor.Position;
+import com.vcspace.plugins.editor.Range;
 
 import java.io.File;
 
@@ -59,4 +60,78 @@ public interface Editor {
      * @param position the new cursor position.
      */
     void setCursorPosition(@NonNull Position position);
+
+    /**
+     * Inserts text at the specified position in the editor.
+     *
+     * @param position the position to insert the text at.
+     * @param text     the text to insert.
+     */
+    void insertText(@NonNull Position position, @NonNull String text);
+
+    /**
+     * Replaces text in the editor between the specified start and end positions with the given text.
+     *
+     * @param start the starting position of the text to replace.
+     * @param end   the ending position of the text to replace.
+     * @param text  the text to replace with.
+     */
+    void replaceText(@NonNull Position start, @NonNull Position end, String text);
+
+    /**
+     * Replaces text in the editor within the specified range with the given text.
+     *
+     * @param range the range of text to replace.
+     * @param text  the text to replace with.
+     */
+    default void replaceText(@NonNull Range range, String text) {
+        // Default implementation: replace with the specified text
+        replaceText(range.getStart(), range.getEnd(), text);
+    }
+
+    /**
+     * Deletes text in the editor between the specified start and end positions.
+     *
+     * @param start the starting position of the text to delete.
+     * @param end   the ending position of the text to delete.
+     */
+    default void deleteText(@NonNull Position start, Position end) {
+        // Default implementation: replace with an empty string
+        replaceText(start, end, "");
+    }
+
+    /**
+     * Deletes text in the editor within the specified range.
+     *
+     * @param range the range of text to delete.
+     */
+    default void deleteText(@NonNull Range range) {
+        // Default implementation: replace with an empty string
+        replaceText(range, "");
+    }
+
+    /**
+     * Gets the current selection range in the editor.
+     *
+     * @return the current selection range.
+     */
+    @Nullable
+    Range getSelectionRange();
+
+    /**
+     * Gets the text in the editor.
+     *
+     * @return the text in the editor.
+     */
+    @NonNull
+    String getText();
+
+    /**
+     * Gets the text in the editor within the specified range.
+     *
+     * @param range the range of text to get.
+     * @return the text within the specified range.
+     */
+    @Nullable
+    String getText(@Nullable Range range);
 }

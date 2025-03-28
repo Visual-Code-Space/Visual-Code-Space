@@ -18,9 +18,7 @@ package com.teixeira.vcspace.ui.screens.editor.components
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.os.Process
 import android.util.Log
-import android.view.View
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.browser.customtabs.CustomTabsIntent
@@ -52,7 +50,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
@@ -63,20 +60,17 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.KeyboardUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.blankj.utilcode.util.UriUtils
-import com.google.android.material.snackbar.Snackbar
 import com.hzy.libp7zip.P7ZipApi
-import com.teixeira.vcspace.PYTHON_PACKAGE_URL_32_BIT
-import com.teixeira.vcspace.PYTHON_PACKAGE_URL_64_BIT
 import com.teixeira.vcspace.activities.Editor.LocalCommandPaletteManager
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
 import com.teixeira.vcspace.activities.MarkdownPreviewActivity
 import com.teixeira.vcspace.activities.TerminalActivity
 import com.teixeira.vcspace.app.strings
 import com.teixeira.vcspace.compose.LocalMenuManager
+import com.teixeira.vcspace.core.EventManager
 import com.teixeira.vcspace.core.components.Tooltip
 import com.teixeira.vcspace.core.components.common.VCSpaceTopBar
 import com.teixeira.vcspace.core.settings.Settings.EditorTabs.rememberAutoSave
@@ -87,13 +81,15 @@ import com.teixeira.vcspace.file.extension
 import com.teixeira.vcspace.file.wrapFile
 import com.teixeira.vcspace.keyboard.model.Command.Companion.newCommand
 import com.teixeira.vcspace.preferences.pythonDownloaded
-import com.teixeira.vcspace.preferences.pythonExtracted
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.ui.screens.editor.EditorViewModel
 import com.teixeira.vcspace.ui.screens.editor.components.view.CodeEditorView
 import com.teixeira.vcspace.utils.isFileRunnable
 import com.teixeira.vcspace.utils.launchWithProgressDialog
 import com.teixeira.vcspace.webserver.LocalHttpServer
+import com.vcspace.plugins.editor.Position
+import com.vcspace.plugins.event.CursorChangedEvent
+import com.vcspace.plugins.event.TextChangeEvent
 import io.github.rosemoe.sora.event.ContentChangeEvent
 import io.github.rosemoe.sora.event.KeyBindingEvent
 import kiwi.orbit.compose.ui.controls.Icon
@@ -155,6 +151,14 @@ fun EditorTopBar(
                         //editorView.editor.getComponent(EditorAutoCompletion::class.java).requireCompletion()
                     }
                 }
+
+                EventManager.instance.postEvent(
+                    CursorChangedEvent(
+                        Position(event.editor.cursor.leftLine, event.editor.cursor.leftColumn)
+                    )
+                )
+
+                EventManager.instance.postEvent(TextChangeEvent(selectedFile.file.asRawFile()!!))
 
                 EventBus.getDefault().post(OnContentChangeEvent(selectedFile.file))
                 editorView.setModified(event.action != ContentChangeEvent.ACTION_SET_NEW_TEXT)

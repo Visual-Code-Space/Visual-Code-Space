@@ -27,7 +27,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.ErrorOutline
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -71,6 +73,7 @@ import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
 import com.teixeira.vcspace.activities.Editor.LocalEditorSnackbarHostState
 import com.teixeira.vcspace.compose.ui.EditorTab
 import com.teixeira.vcspace.compose.ui.dialog.ConfirmDialog
+import com.teixeira.vcspace.core.EventManager
 import com.teixeira.vcspace.core.ai.Gemini
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberColorScheme
 import com.teixeira.vcspace.core.settings.Settings.Editor.rememberCurrentEditor
@@ -115,6 +118,8 @@ import com.teixeira.vcspace.file.File
 import com.teixeira.vcspace.file.extension
 import com.teixeira.vcspace.keyboard.CommandPaletteManager
 import com.teixeira.vcspace.keyboard.createKeyEvent
+import com.teixeira.vcspace.keyboard.model.toShortcut
+import com.teixeira.vcspace.plugins.DialogManager
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.ui.LocalToastHostState
 import com.teixeira.vcspace.ui.components.keyboard.CommandPalette
@@ -123,6 +128,7 @@ import com.teixeira.vcspace.ui.screens.editor.ai.ImportComponentsSheet
 import com.teixeira.vcspace.ui.screens.editor.components.Symbols
 import com.teixeira.vcspace.ui.screens.editor.components.view.CodeEditorView
 import com.teixeira.vcspace.utils.launchWithProgressDialog
+import com.vcspace.plugins.event.KeyPressEvent
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 import kotlinx.coroutines.Dispatchers
@@ -186,6 +192,14 @@ fun EditorScreen(
     Column(modifier = modifier.onKeyEvent {
         if (it.isCtrlPressed && it.isShiftPressed && it.key == Key.P) {
             println("Ctrl + Shift + P is pressed")
+            EventManager.instance.postEvent(
+                KeyPressEvent(
+                    key = it.key.toShortcut(),
+                    keyCode = it.key.keyCode,
+                    isCtrlPressed = it.isCtrlPressed,
+                    isShiftPressed = it.isShiftPressed
+                )
+            )
             commandPaletteManager.show()
             return@onKeyEvent true
         }
@@ -324,6 +338,32 @@ fun EditorScreen(
                     // do something
                 },
                 onDismissRequest = { commandPaletteManager.hide() }
+            )
+        }
+
+        if (DialogManager.instance.showDialog.value) {
+            val dialogManager = DialogManager.instance
+
+            AlertDialog(
+                onDismissRequest = { dialogManager.hideDialog() },
+                title = { Text(dialogManager.title.value) },
+                text = { Text(dialogManager.message.value) },
+                dismissButton = if (dialogManager.negativeButtonText.value.isNotEmpty()) {
+                    {
+                        TextButton(onClick = {
+                            dialogManager.negativeButtonClickListener.value?.onClick()
+                        }) {
+                            Text(dialogManager.negativeButtonText.value)
+                        }
+                    }
+                } else null,
+                confirmButton = {
+                    TextButton(onClick = {
+                        dialogManager.positiveButtonClickListener.value?.onClick()
+                    }) {
+                        Text(dialogManager.positiveButtonText.value)
+                    }
+                }
             )
         }
     }

@@ -30,24 +30,34 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.edit
 import androidx.lifecycle.lifecycleScope
 import com.itsvks.monaco.MonacoEditor
 import com.teixeira.vcspace.activities.EditorActivity
 import com.teixeira.vcspace.app.rootView
+import com.teixeira.vcspace.core.EventManager
 import com.teixeira.vcspace.core.MenuManager
 import com.teixeira.vcspace.core.PanelManager
 import com.teixeira.vcspace.core.components.DraggableFloatingPanel
+import com.teixeira.vcspace.editor.VCSpaceEditor
 import com.teixeira.vcspace.file.wrapFile
 import com.teixeira.vcspace.keyboard.CommandPaletteManager
 import com.teixeira.vcspace.keyboard.model.Command
+import com.teixeira.vcspace.plugins.DialogManager
+import com.teixeira.vcspace.preferences.defaultPrefs
 import com.teixeira.vcspace.ui.screens.editor.EditorViewModel
 import com.teixeira.vcspace.ui.screens.editor.components.view.CodeEditorView
 import com.teixeira.vcspace.utils.runOnUiThread
 import com.vcspace.plugins.Editor
 import com.vcspace.plugins.PluginContext
+import com.vcspace.plugins.Workspace
 import com.vcspace.plugins.command.EditorCommand
+import com.vcspace.plugins.dialog.DialogButtonClickListener
 import com.vcspace.plugins.editor.Position
+import com.vcspace.plugins.event.EventListener
+import com.vcspace.plugins.event.EventType
 import com.vcspace.plugins.menu.MenuItem
+import com.vcspace.plugins.network.HttpResponse
 import com.vcspace.plugins.panel.ComposeFactory
 import com.vcspace.plugins.panel.Panel
 import com.vcspace.plugins.panel.ViewFactory
@@ -55,7 +65,10 @@ import com.vcspace.plugins.panel.ViewUpdater
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import java.io.File
+import java.io.IOException
 import java.util.UUID
 import kotlin.math.max
 
@@ -151,6 +164,76 @@ class PluginContextImpl(
         }
     }
 
+    override fun registerEventListener(type: EventType, listener: EventListener) {
+        val eventManager = EventManager.instance
+        eventManager.registerListener(type, listener)
+    }
+
+    override fun unregisterEventListener(type: EventType, listener: EventListener) {
+        val eventManager = EventManager.instance
+        eventManager.unregisterListener(type, listener)
+    }
+
+    override fun saveConfig(key: String, value: String) {
+        defaultPrefs.edit(commit = true) { putString(key, value) }
+    }
+
+    override fun loadConfig(key: String, defaultValue: String): String {
+        return defaultPrefs.getString(key, defaultValue) ?: defaultValue
+    }
+
+    override fun showDialog(
+        title: String,
+        message: String,
+        positiveButtonText: String,
+        negativeButtonText: String?,
+        onPositiveClick: DialogButtonClickListener?,
+        onNegativeClick: DialogButtonClickListener?
+    ) {
+        val dialogManager = DialogManager.instance
+
+        dialogManager.title.value = title
+        dialogManager.message.value = message
+        dialogManager.positiveButtonText.value = positiveButtonText
+        dialogManager.negativeButtonText.value = negativeButtonText ?: ""
+        dialogManager.positiveButtonClickListener.value = onPositiveClick
+        dialogManager.negativeButtonClickListener.value = onNegativeClick
+
+        dialogManager.showDialog()
+    }
+
+    override fun getWorkspace(): Workspace? {
+        if (activity.fileExplorerViewModel.openedFolder.value == null) return null
+
+        return WorkspaceImpl(activity.fileExplorerViewModel)
+    }
+
+    override fun registerShortcut(keyBinding: String, action: Runnable) {
+        CommandPaletteManager.instance.addShortcut(keyBinding) { action.run() }
+    }
+
+    override fun httpGet(url: String): HttpResponse {
+        val client = OkHttpClient()
+        val request = Request.Builder().url(url).build()
+
+        return try {
+            client.newCall(request).execute().use { response ->
+                HttpResponse(
+                    statusCode = response.code,
+                    headers = response.headers.toMultimap(),
+                    body = response.body?.string().orEmpty()
+                )
+            }
+        } catch (e: IOException) {
+            HttpResponse(
+                statusCode = -1,
+                headers = emptyMap(),
+                body = "",
+                error = e.message
+            )
+        }
+    }
+
     private fun createComposePanelInternal(
         title: String,
         content: @Composable () -> Unit,
@@ -231,6 +314,9 @@ class PluginContextImpl(
                     cursor.set(max(position.lineNumber - 1, 0), max(position.column - 1, 0))
                 }
             }
+
+        override val editor: VCSpaceEditor?
+            get() = (activity.currentEditor as? CodeEditorView)?.editor
     }
 
     fun setEditorViewModel(editorViewModel: EditorViewModel) {

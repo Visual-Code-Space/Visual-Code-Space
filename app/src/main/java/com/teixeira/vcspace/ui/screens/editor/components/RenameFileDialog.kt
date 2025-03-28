@@ -27,11 +27,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import com.teixeira.vcspace.core.EventManager
 import com.teixeira.vcspace.events.OnRenameFileEvent
 import com.teixeira.vcspace.file.File
 import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.utils.launchWithProgressDialog
 import com.teixeira.vcspace.utils.showShortToast
+import com.vcspace.plugins.event.FileRenameEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
@@ -73,6 +75,7 @@ fun RenameFileDialog(
 
                             EventBus.getDefault()
                                 .post(OnRenameFileEvent(file, renamedFile, openedFolder))
+                            EventManager.instance.postEvent(FileRenameEvent(java.io.File(file.absolutePath), java.io.File(renamedFile.absolutePath)))
 
                             withContext(Dispatchers.Main) {
                                 showShortToast(context, context.getString(R.string.file_renamed))
