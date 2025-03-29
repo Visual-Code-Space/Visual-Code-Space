@@ -176,7 +176,7 @@ fun GitManager(
     }
 
     val rawOpenedFolder = openedFolder?.asRawFile()
-    if (showGitCloneDialog && rawOpenedFolder != null) {
+    if (showGitCloneDialog) {
         val url = clipUrl()
 
         GitCloneDialog(
