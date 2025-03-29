@@ -20,11 +20,9 @@ import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.teixeira.vcspace.extensions.extractZipFile
 import com.teixeira.vcspace.extensions.toFile
-import com.teixeira.vcspace.resources.R
 import com.teixeira.vcspace.tasks.Downloader
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.nio.file.Files
@@ -44,94 +42,188 @@ object GradleJavaLibraryProjectCreator {
 
         withContext(Dispatchers.IO) {
             val base = baseDir.toFile()
-            val projectPath = base.resolve("plugin")
+            val projectPath = base.resolve("app")
             if (!projectPath.exists()) projectPath.mkdirs()
 
             val libsPath = projectPath.resolve("libs")
             Files.createDirectories(libsPath.toPath())
-
-            val androidJar = libsPath.resolve("android.jar")
-            val androidJarInternal = ANDROID_JAR_PATH.toFile()
-
-            if (androidJarInternal.exists()) {
-                androidJar.writeBytes(androidJarInternal.readBytes())
-            } else {
-                val file = File(context.filesDir, "android.jar")
-                runBlocking {
-                    downloadAndroidJar(file) {
-                        androidJarInternal.createNewFile()
-                        androidJarInternal.writeBytes(it.readBytes())
-                        androidJar.writeBytes(androidJarInternal.readBytes())
-                    }
-                }
-            }
 
             context.assets.open("plugin/plugins-api.jar").use {
                 libsPath.resolve("plugins-api.jar").writeBytes(it.readBytes())
             }
 
             val srcMainJava = projectPath.resolve("src/main/java")
-            val srcMainResources = projectPath.resolve("src/main/resources")
+            val srcMainResources = projectPath.resolve("src/main/res")
             Files.createDirectories(srcMainJava.toPath())
             Files.createDirectories(srcMainResources.toPath())
 
             val packagePath = srcMainJava.resolve(packageName.replace(".", "/"))
             Files.createDirectories(packagePath.toPath())
 
+            projectPath.resolve("src/main/AndroidManifest.xml").writeText("""
+                <?xml version="1.0" encoding="utf-8"?>
+                <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:tools="http://schemas.android.com/tools">
+
+                    <application
+                        android:allowBackup="true"
+                        android:dataExtractionRules="@xml/data_extraction_rules"
+                        android:fullBackupContent="@xml/backup_rules"
+                        android:icon="@mipmap/ic_launcher"
+                        android:label="@string/app_name"
+                        android:roundIcon="@mipmap/ic_launcher_round"
+                        android:supportsRtl="true"
+                        android:theme="@style/Theme.${base.name}"
+                        tools:targetApi="31" />
+
+                </manifest>
+            """.trimIndent())
+
+            val resZip = srcMainResources.resolve("res.zip")
+            context.assets.open("plugin/res.zip").use {
+                resZip.writeBytes(it.readBytes())
+            }
+            resZip.extractZipFile(projectPath.resolve("src/main"))
+            resZip.delete()
+
+            srcMainResources.resolve("values/strings.xml").writeText("""
+                <resources>
+                    <string name="app_name">${base.name}</string>
+                </resources>
+            """.trimIndent())
+
+            srcMainResources.resolve("values/themes.xml").writeText("""
+                <resources xmlns:tools="http://schemas.android.com/tools">
+                    <!-- Base application theme. -->
+                    <style name="Theme.${base.name}" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+                        <!-- Primary brand color. -->
+                        <item name="colorPrimary">@color/purple_500</item>
+                        <item name="colorPrimaryVariant">@color/purple_700</item>
+                        <item name="colorOnPrimary">@color/white</item>
+                        <!-- Secondary brand color. -->
+                        <item name="colorSecondary">@color/teal_200</item>
+                        <item name="colorSecondaryVariant">@color/teal_700</item>
+                        <item name="colorOnSecondary">@color/black</item>
+                        <!-- Status bar color. -->
+                        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+                        <!-- Customize your theme here. -->
+                    </style>
+                </resources>
+            """.trimIndent())
+
+            srcMainResources.resolve("values-night/themes.xml").writeText("""
+                <resources xmlns:tools="http://schemas.android.com/tools">
+                    <!-- Base application theme. -->
+                    <style name="Theme.${base.name}" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+                        <!-- Primary brand color. -->
+                        <item name="colorPrimary">@color/purple_200</item>
+                        <item name="colorPrimaryVariant">@color/purple_700</item>
+                        <item name="colorOnPrimary">@color/black</item>
+                        <!-- Secondary brand color. -->
+                        <item name="colorSecondary">@color/teal_200</item>
+                        <item name="colorSecondaryVariant">@color/teal_200</item>
+                        <item name="colorOnSecondary">@color/black</item>
+                        <!-- Status bar color. -->
+                        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+                        <!-- Customize your theme here. -->
+                    </style>
+                </resources>
+            """.trimIndent())
+
             val settingsGradle = base.resolve("settings.gradle.kts")
 
             val settingsContent = """
-        @file:Suppress("UnstableApiUsage")
+                pluginManagement {
+                    repositories {
+                        google {
+                            content {
+                                includeGroupByRegex("com\\.android.*")
+                                includeGroupByRegex("com\\.google.*")
+                                includeGroupByRegex("androidx.*")
+                            }
+                        }
+                        mavenCentral()
+                        gradlePluginPortal()
+                    }
+                }
+                dependencyResolutionManagement {
+                    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+                    repositories {
+                        google()
+                        mavenCentral()
+                    }
+                }
 
-        plugins {
-            // Apply the foojay-resolver plugin to allow automatic download of JDKs
-            id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
-        }
-
-        dependencyResolutionManagement {
-            repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-            repositories {
-                google()
-                mavenCentral()
-            }
-        }
-
-        rootProject.name = "${base.name}"
-        include("plugin")
-      """.trimIndent()
-
-            val buildContentExtra = """
-        tasks.register<Jar>("fatJar") {
-            group = "build"
-            description = "Assembles a fat JAR file containing all dependencies."
-
-            archiveBaseName.set("${base.name.lowercase().replace(" ", "-")}-all")
-
-            from({
-                configurations.runtimeClasspath.get().filter {
-                    it.name.endsWith(".jar") && it.name.equals("android.jar").not()
-                }.map { zipTree(it) }
-            })
-
-            from(sourceSets.main.get().output)
-
-            exclude("com/google/**")
-
-            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        }
-
-        tasks.build {
-            dependsOn(tasks["fatJar"])
-        }
-      """.trimIndent()
+                rootProject.name = "${base.name}"
+                include(":app")
+            """.trimIndent()
 
             settingsGradle.writeText(settingsContent)
-            context.assets.open("plugin/build.gradle.kts").bufferedReader().use {
-                projectPath.resolve("build.gradle.kts").apply {
-                    writeText(it.readText())
-                    appendText("\n$buildContentExtra")
-                }
+
+            projectPath.resolve("build.gradle.kts").apply {
+                writeText(
+                    """
+                        plugins {
+                            alias(libs.plugins.android.application)
+                        }
+
+                        android {
+                            namespace = "$packageName"
+                            compileSdk = 35
+
+                            defaultConfig {
+                                applicationId = "$packageName"
+                                minSdk = 26
+                                targetSdk = 35
+                                versionCode = 1
+                                versionName = "1.0"
+                            }
+
+                            buildTypes {
+                                release {
+                                    isMinifyEnabled = false
+                                    proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+                                }
+                            }
+                            compileOptions {
+                                sourceCompatibility = JavaVersion.VERSION_17
+                                targetCompatibility = JavaVersion.VERSION_17
+                            }
+                        }
+
+                        dependencies {
+                            implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+
+                            implementation(libs.appcompat)
+                            implementation(libs.material)
+                        }
+                    """.trimIndent()
+                )
             }
+
+            projectPath.resolve("proguard-rules.pro").writeText("""
+                # Add project specific ProGuard rules here.
+                # You can control the set of applied configuration files using the
+                # proguardFiles setting in build.gradle.
+                #
+                # For more details, see
+                #   http://developer.android.com/guide/developing/tools/proguard.html
+
+                # If your project uses WebView with JS, uncomment the following
+                # and specify the fully qualified class name to the JavaScript interface
+                # class:
+                #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
+                #   public *;
+                #}
+
+                # Uncomment this to preserve the line number information for
+                # debugging stack traces.
+                #-keepattributes SourceFile,LineNumberTable
+
+                # If you keep the line number information, uncomment this to
+                # hide the original source file name.
+                #-renamesourcefileattribute SourceFile
+            """.trimIndent())
 
             val gradlewZip = base.resolve("gradlew.zip")
             context.assets.open("plugin/gradlew.zip").use {
@@ -142,87 +234,28 @@ object GradleJavaLibraryProjectCreator {
             gradlewZip.delete()
 
             val javaClassContent = """
-        package $packageName;
+                package $packageName;
 
-        import androidx.annotation.NonNull;
-        import com.vcspace.plugins.Plugin;
-        import com.vcspace.plugins.PluginContext;
+                import androidx.annotation.NonNull;
 
-        public class $className implements Plugin {
-            @Override
-            public void onPluginLoaded(@NonNull PluginContext context) {
-                context.toast("Hello from $className!");
-            }
-        }
-        
-      """.trimIndent()
+                import com.vcspace.plugins.Plugin;
+                import com.vcspace.plugins.PluginContext;
+
+                public class $className implements Plugin {
+                    @Override
+                    public void onPluginLoaded(@NonNull PluginContext pluginContext) {
+                        pluginContext.toast("Hello from $className");
+                    }
+                }
+
+            """.trimIndent()
 
             packagePath.resolve("$className.java").writeText(javaClassContent)
 
-            val buildPluginSh = base.resolve("build_plugin.sh")
-            val buildPluginContent = """
-        #!/bin/bash
-
-        set -e
-
-        OUTPUT_DIR="plugin/build/libs"
-        INPUT_JAR="${"$"}OUTPUT_DIR/${base.name.lowercase().replace(" ", "-")}-all.jar"
-        DEX_OUTPUT_DIR="plugin/build/dex"
-        DEX_FILE="${"$"}DEX_OUTPUT_DIR/${base.name.lowercase().replace(" ", "-")}-all.jar"
-        PLUGIN_PROPERTIES="plugin.properties"
-        ZIP_FILE="${base.name}.zip"
-        
-        command_exists() {
-            command -v "${'$'}1" >/dev/null 2>&1
-        }
-
-        # Ensure gradle is installed
-        if ! command_exists gradle; then
-            echo "Gradle not found. Installing gradle..."
-            apt update
-            apt install -y gradle
-        else
-            echo "Gradle is installed."
-        fi
-
-        # Ensure d8 is installed
-        if ! command_exists d8; then
-            echo "d8 not found. Installing d8..."
-            apt update
-            apt install -y d8
-        else
-            echo "d8 is installed."
-        fi
-
-        echo "Running Gradle build..."
-        gradle build
-
-        if [ ! -f "${"$"}INPUT_JAR" ]; then
-          echo "Error: JAR file not found at ${"$"}INPUT_JAR"
-          exit 1
-        fi
-
-        echo "Running d8 to convert JAR to DEX format..."
-        mkdir -p "${"$"}DEX_OUTPUT_DIR"
-        d8 "${"$"}INPUT_JAR" --output "${"$"}DEX_FILE"
-
-        if [ ! -f "${"$"}DEX_FILE" ]; then
-          echo "Error: DEX file not created."
-          exit 1
-        fi
-
-        if [ ! -f "${"$"}PLUGIN_PROPERTIES" ]; then
-          echo "Error: plugin.properties file not found."
-          exit 1
-        fi
-
-        echo "Creating ZIP file..."
-        zip -j "${"$"}ZIP_FILE" "${"$"}DEX_FILE" "${"$"}PLUGIN_PROPERTIES"
-
-        echo "ZIP file created successfully: ${"$"}ZIP_FILE"
-      """.trimIndent()
-
-            buildPluginSh.writeText(buildPluginContent)
+            val buildPluginSh = base.resolve("build.sh")
+            context.assets.open("plugin/build.sh").bufferedReader().use {
+                buildPluginSh.writeText(it.readText())
+            }
             buildPluginSh.setExecutable(true, false)
         }
     }

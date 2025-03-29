@@ -281,6 +281,7 @@ class EditorActivity : BaseComposeActivity() {
                                 }
                             }
                         }.onFailure {
+                            it.printStackTrace()
                             toastHostState.showToast(it.message ?: "Error loading plugin")
                         }
                     }

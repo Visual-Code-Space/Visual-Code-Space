@@ -15,6 +15,12 @@
 
 package com.teixeira.vcspace
 
+import java.io.File
+
 fun hello() {
     println("Hello, World!")
+
+    File("").apply {
+        writeText("")
+    }
 }

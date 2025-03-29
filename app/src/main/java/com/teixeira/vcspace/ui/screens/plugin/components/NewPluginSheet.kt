@@ -262,8 +262,7 @@ fun NewPluginSheet(
 
                                 val pluginInfo = PluginInfo(properties).apply {
                                     this.name = name
-                                    this.pluginFileName =
-                                        "${name.lowercase().replace(" ", "-")}-all.jar"
+                                    this.pluginFileName = "app-release-unsigned.apk"
                                     this.packageName = packageName
                                     this.author = author.ifBlank { null }
                                     this.description = description.ifBlank { null }
