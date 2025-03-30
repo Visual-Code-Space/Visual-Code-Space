@@ -51,6 +51,7 @@ import com.blankj.utilcode.util.PathUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.blankj.utilcode.util.UriUtils
 import com.itsvks.monaco.MonacoEditor
+import com.teixeira.vcspace.APP_EXTERNAL_DIR
 import com.teixeira.vcspace.BuildConfig
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerNavController
 import com.teixeira.vcspace.activities.Editor.LocalEditorDrawerState
@@ -90,6 +91,7 @@ import com.teixeira.vcspace.ui.screens.editor.components.EditorDrawerSheet
 import com.teixeira.vcspace.ui.screens.editor.components.EditorTopBar
 import com.teixeira.vcspace.ui.screens.editor.components.view.CodeEditorView
 import com.teixeira.vcspace.ui.screens.file.FileExplorerViewModel
+import com.teixeira.vcspace.utils.createNomediaFile
 import com.vcspace.plugins.event.FileCreateEvent
 import kiwi.orbit.compose.ui.controls.Scaffold
 import kiwi.orbit.compose.ui.controls.ToastHostState
@@ -257,6 +259,7 @@ class EditorActivity : BaseComposeActivity() {
                 Lifecycle.Event.ON_CREATE -> {
                     onCreate()
                     EventBus.getDefault().register(this@EditorActivity)
+                    createNomediaFile(APP_EXTERNAL_DIR)
 
                     lifecycleScope.launch {
                         //fileExplorerViewModel.openFolder(PathUtils.getInternalAppFilesPath().toFile().wrapFile())

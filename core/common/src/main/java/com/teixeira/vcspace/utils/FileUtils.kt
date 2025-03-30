@@ -94,3 +94,15 @@ fun getParentDirPath(path: String): String {
         path.substring(0, index)
     } else path
 }
+
+fun createNomediaFile(directoryPath: String) {
+    val directory = java.io.File(directoryPath)
+    if (!directory.exists()) {
+        directory.mkdirs() // Create directory if it doesn't exist
+    }
+
+    val nomediaFile = java.io.File(directory, ".nomedia")
+    if (!nomediaFile.exists()) {
+        nomediaFile.createNewFile() // Create .nomedia file if it doesn't exist
+    }
+}
