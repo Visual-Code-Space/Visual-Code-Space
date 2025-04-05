@@ -61,7 +61,6 @@ import com.teixeira.vcspace.terminal.nameserver
 import com.teixeira.vcspace.terminal.prefix
 import com.teixeira.vcspace.terminal.service.TerminalService
 import com.teixeira.vcspace.ui.theme.VCSpaceTheme
-import com.teixeira.vcspace.utils.TerminalPythonCommands
 import com.termux.view.TerminalView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -229,8 +228,13 @@ class TerminalActivity : ComponentActivity() {
     }
 
     fun compilePython(terminal: TerminalView) {
-        val filePath = intent?.extras?.getString(KEY_PYTHON_FILE_PATH, null) ?: return
-        if (filePath.trim().isNotEmpty()) {
+        var filePath = intent?.extras?.getString(KEY_PYTHON_FILE_PATH, null) ?: return
+
+        if (filePath.contains(" ")) {
+            filePath = "'$filePath'"
+        }
+
+        if (filePath.isNotEmpty()) {
             val message = "\\033[32;49;1mCompiling\\033[0m $filePath\n"
             ThreadUtils.getMainHandler().post {
                 terminal.mTermSession.write(
