@@ -36,6 +36,9 @@ class TerminalBackend(
     val activity: TerminalActivity
 ) : TerminalViewClient, TerminalSessionClient {
 
+    private val minFontSize = 12f
+    private val maxFontSize = 48f
+
     override fun onTextChanged(changedSession: TerminalSession) {
         terminal.onScreenUpdated()
     }
@@ -103,7 +106,9 @@ class TerminalBackend(
     }
 
     override fun onScale(scale: Float): Float {
-        return 24f
+        val fontSize = scale.coerceIn(minFontSize, maxFontSize)
+        terminal.setTextSize(fontSize.toInt())
+        return fontSize
     }
 
     override fun onSingleTapUp(e: MotionEvent) {
