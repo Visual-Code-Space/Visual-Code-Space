@@ -40,7 +40,7 @@ orbit = "0.39.0"
 
 # AndroidX
 androidx-annotation = { module = "androidx.annotation:annotation", version = "1.9.1" }
-androidx-appcompat = { module = "androidx.appcompat:appcompat", version = "1.7.0" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version = "1.7.1" }
 androidx-browser = { module = "androidx.browser:browser", version.ref = "browser" }
 androidx-core = { module = "androidx.core:core", version = "1.15.0" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version = "1.15.0" }
