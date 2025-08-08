@@ -58,7 +58,7 @@ fun isValidTextFile(file: JFile): Boolean {
         || file.extension in listOf("ts")
 }
 
-private const val RUNNABLE_FILE_EXTENSIONS = "py,html,htm"
+private const val RUNNABLE_FILE_EXTENSIONS = "py,html,htm,md"
 
 fun isFileRunnable(file: File?): Boolean {
     if (file != null) {

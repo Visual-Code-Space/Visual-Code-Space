@@ -15,9 +15,20 @@
 
 package com.teixeira.vcspace.activities
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.teixeira.vcspace.activities.base.BaseComposeActivity
+import dev.jeziellago.compose.markdowntext.MarkdownText
+import java.io.File
 
 class MarkdownPreviewActivity : BaseComposeActivity() {
     companion object {
@@ -26,6 +37,28 @@ class MarkdownPreviewActivity : BaseComposeActivity() {
 
     @Composable
     override fun MainScreen() {
-        val colorScheme = MaterialTheme.colorScheme
+        val filePath = intent.getStringExtra(EXTRA_FILE_PATH)
+
+        if (filePath != null) {
+            val fileContent = remember { File(filePath).readText() }
+
+            Scaffold { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    MarkdownText(
+                        markdown = fileContent,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        isTextSelectable = true,
+                        linkColor = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+        }
     }
 }

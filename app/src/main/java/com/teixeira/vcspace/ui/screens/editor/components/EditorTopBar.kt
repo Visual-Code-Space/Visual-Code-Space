@@ -280,8 +280,8 @@ fun EditorTopBar(
                                         server = LocalHttpServer(directory)
 
                                         runCatching {
-                                            server?.start()
-                                            val assignedPort = server?.assignedPort ?: 8000
+                                            server.start()
+                                            val assignedPort = server.assignedPort
                                             ToastUtils.showLong("Server started on http://localhost:$assignedPort")
 
                                             val customTabs = CustomTabsIntent.Builder()
@@ -327,7 +327,8 @@ fun EditorTopBar(
                                                 MarkdownPreviewActivity.EXTRA_FILE_PATH,
                                                 selectedFile.file.absolutePath
                                             )
-                                        })
+                                        }
+                                    )
                                 }
                             }
                         }
