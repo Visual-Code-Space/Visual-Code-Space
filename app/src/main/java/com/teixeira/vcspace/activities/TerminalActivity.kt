@@ -397,8 +397,8 @@ private const val x86_64_packages =
     "https://github.com/itsvks19/vcspace-packages/raw/refs/heads/main/x86_64/usr.tar.gz"
 
 private const val alpine_arm =
-    "https://dl-cdn.alpinelinux.org/alpine/latest-stable/releases/armhf/alpine-minirootfs-3.21.1-armhf.tar.gz"
+    "https://dl-cdn.alpinelinux.org/alpine/v3.22/releases/armhf/alpine-minirootfs-3.22.1-armhf.tar.gz"
 private const val alpine_aarch64 =
-    "https://dl-cdn.alpinelinux.org/alpine/latest-stable/releases/aarch64/alpine-minirootfs-3.21.1-aarch64.tar.gz"
+    "https://dl-cdn.alpinelinux.org/alpine/v3.22/releases/aarch64/alpine-minirootfs-3.22.1-aarch64.tar.gz"
 private const val alpine_x86_64 =
-    "https://dl-cdn.alpinelinux.org/alpine/latest-stable/releases/x86_64/alpine-minirootfs-3.21.1-x86_64.tar.gz"
+    "https://dl-cdn.alpinelinux.org/alpine/v3.22/releases/x86_64/alpine-minirootfs-3.22.1-x86_64.tar.gz"
