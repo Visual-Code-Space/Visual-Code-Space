@@ -30,6 +30,7 @@ Java_com_teixeira_vcspace_terminal_Executor_runBinary(
         const char* argStr = env->GetStringUTFChars(arg, 0);
         args.push_back(strdup(argStr));
         env->ReleaseStringUTFChars(arg, argStr);
+        env->DeleteLocalRef(arg);
     }
     args.push_back(nullptr);// Null-terminate the array
 
@@ -41,6 +42,7 @@ Java_com_teixeira_vcspace_terminal_Executor_runBinary(
         const char* envStr = env->GetStringUTFChars(envVar, 0);
         envp.push_back(strdup(envStr));
         env->ReleaseStringUTFChars(envVar, envStr);
+        env->DeleteLocalRef(envVar);
     }
     envp.push_back(nullptr);// Null-terminate the array
 
