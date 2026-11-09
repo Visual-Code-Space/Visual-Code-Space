@@ -386,7 +386,9 @@ class EditorActivity : BaseComposeActivity() {
     }
 
     private fun initCommands() {
-        //CommandPaletteManager.instance.clear()
+        // Reset so Compose-registered commands (e.g. Open File with ActivityResultLauncher)
+        // from a previous activity instance cannot run after their launchers are unregistered.
+        CommandPaletteManager.instance.clear()
         CommandPaletteManager.instance.addCommand(
             newCommand("Paste", "Ctrl+V") {
                 if (currentEditor !is CodeEditorView) return@newCommand
